@@ -1,9 +1,28 @@
 import { AlbumIcon, Heart, LayoutTemplate } from 'lucide-react';
-import Image from 'next/image';
 import type { BaseLayoutProps, LinkItemType } from 'fumadocs-ui/layouts/shared';
-import { FumadocsIcon } from '@/app/layout.client';
-import Logo from '@/public/logo.png';
 
+// Brand-aware configuration
+const brandId = (process.env.NEXT_PUBLIC_BRAND ?? 'hanzo') as 'hanzo' | 'lux' | 'zoo';
+
+/**
+ * Hanzo AI Icon
+ */
+export function HanzoIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+    </svg>
+  );
+}
+
+/**
+ * Link items for navigation
+ */
 export const linkItems: LinkItemType[] = [
   {
     icon: <AlbumIcon />,
@@ -24,7 +43,7 @@ export const linkItems: LinkItemType[] = [
   },
   {
     type: 'icon',
-    url: 'https://github.com/fuma-nama/fumadocs',
+    url: 'https://github.com/hanzoai',
     label: 'github',
     text: 'Github',
     icon: (
@@ -36,29 +55,28 @@ export const linkItems: LinkItemType[] = [
   },
 ];
 
+/**
+ * Logo component based on brand
+ */
 export const logo = (
   <>
-    <Image
-      alt="Fumadocs"
-      src={Logo}
-      sizes="100px"
-      className="hidden w-22 in-[.uwu]:block"
-      aria-label="Fumadocs"
-    />
-
-    <FumadocsIcon className="size-5 in-[.uwu]:hidden" />
+    <HanzoIcon className="size-5" />
   </>
 );
 
+/**
+ * Base layout options
+ */
 export function baseOptions(): BaseLayoutProps {
   return {
     nav: {
       title: (
         <>
           {logo}
-          <span className="font-medium in-[.uwu]:hidden">Fumadocs</span>
+          <span className="font-medium">Hanzo Docs</span>
         </>
       ),
     },
+    githubUrl: 'https://github.com/hanzoai',
   };
 }
