@@ -216,6 +216,9 @@ importers:
       '@fumadocs/cli':
         specifier: workspace:*
         version: link:../../packages/cli
+      '@hanzo/docs-brand':
+        specifier: workspace:*
+        version: link:../../packages/brand
       '@next/bundle-analyzer':
         specifier: 16.0.10
         version: 16.0.10

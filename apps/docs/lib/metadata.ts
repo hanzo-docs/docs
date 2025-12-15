@@ -1,20 +1,46 @@
 import type { Metadata } from 'next/types';
 import { Page } from './source';
 
+// Brand configuration
+const brandId = (process.env.NEXT_PUBLIC_BRAND ?? 'hanzo') as 'hanzo' | 'lux' | 'zoo';
+
+const brandConfig = {
+  hanzo: {
+    name: 'Hanzo Docs',
+    url: 'https://docs.hanzo.ai',
+    twitter: '@hanzoai',
+    description: 'Documentation for Hanzo AI infrastructure, agents, MCP tools, and SDKs.',
+  },
+  lux: {
+    name: 'Lux Docs',
+    url: 'https://docs.lux.network',
+    twitter: '@luxnetwork',
+    description: 'Documentation for Lux Network - Post-quantum secure blockchain infrastructure.',
+  },
+  zoo: {
+    name: 'Zoo Docs',
+    url: 'https://docs.zoo.ngo',
+    twitter: '@zoolabs',
+    description: 'Documentation for Zoo Labs Foundation - Democratizing AI through decentralization.',
+  },
+};
+
+const brand = brandConfig[brandId];
+
 export function createMetadata(override: Metadata): Metadata {
   return {
     ...override,
     openGraph: {
       title: override.title ?? undefined,
       description: override.description ?? undefined,
-      url: 'https://fumadocs.dev',
+      url: brand.url,
       images: '/banner.png',
-      siteName: 'Fumadocs',
+      siteName: brand.name,
       ...override.openGraph,
     },
     twitter: {
       card: 'summary_large_image',
-      creator: '@fuma_nama',
+      creator: brand.twitter,
       title: override.title ?? undefined,
       description: override.description ?? undefined,
       images: '/banner.png',
@@ -24,8 +50,8 @@ export function createMetadata(override: Metadata): Metadata {
       types: {
         'application/rss+xml': [
           {
-            title: 'Fumadocs Blog',
-            url: 'https://fumadocs.dev/blog/rss.xml',
+            title: `${brand.name} Blog`,
+            url: `${brand.url}/blog/rss.xml`,
           },
         ],
       },
