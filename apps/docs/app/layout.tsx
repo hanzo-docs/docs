@@ -9,32 +9,12 @@ import { TreeContextProvider } from 'fumadocs-ui/contexts/tree';
 import { source } from '@/lib/source';
 import { NextProvider } from 'fumadocs-core/framework/next';
 
-// Brand configuration
-const brandId = (process.env.NEXT_PUBLIC_BRAND ?? 'hanzo') as 'hanzo' | 'lux' | 'zoo';
-
-const brandMeta = {
-  hanzo: {
-    title: 'Hanzo Docs',
-    description: 'Documentation for Hanzo AI infrastructure, agents, MCP tools, and SDKs.',
-  },
-  lux: {
-    title: 'Lux Docs',
-    description: 'Documentation for Lux Network - Post-quantum secure blockchain infrastructure.',
-  },
-  zoo: {
-    title: 'Zoo Docs',
-    description: 'Documentation for Zoo Labs Foundation - Democratizing AI through decentralization.',
-  },
-};
-
-const meta = brandMeta[brandId];
-
 export const metadata = createMetadata({
   title: {
-    template: `%s | ${meta.title}`,
-    default: meta.title,
+    template: '%s | Fumadocs',
+    default: 'Fumadocs',
   },
-  description: meta.description,
+  description: 'The React.js documentation framework.',
   metadataBase: baseUrl,
 });
 
@@ -59,7 +39,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
       lang="en"
-      className={`${geist.variable} ${mono.variable} brand-${brandId}`}
+      className={`${geist.variable} ${mono.variable}`}
       suppressHydrationWarning
     >
       <Body>
