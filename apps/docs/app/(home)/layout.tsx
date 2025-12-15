@@ -1,5 +1,5 @@
 import { HomeLayout } from 'fumadocs-ui/layouts/home';
-import { baseOptions, linkItems, HanzoIcon } from '@/lib/layout.shared';
+import { baseOptions, linkItems } from '@/lib/layout.shared';
 import {
   NavbarMenu,
   NavbarMenuContent,
@@ -46,7 +46,7 @@ export default function Layout({ children }: LayoutProps<'/'>) {
                   <div className="-mx-3 -mt-3">
                     <Image
                       src={Preview}
-                      alt="Preview"
+                      alt="Perview"
                       className="rounded-t-lg object-cover"
                       style={{
                         maskImage:
@@ -56,7 +56,7 @@ export default function Layout({ children }: LayoutProps<'/'>) {
                   </div>
                   <p className="font-medium">Getting Started</p>
                   <p className="text-fd-muted-foreground text-sm">
-                    Learn to build documentation with Hanzo Docs.
+                    Learn to use Fumadocs on your docs site.
                   </p>
                 </NavbarMenuLink>
 
@@ -90,7 +90,7 @@ export default function Layout({ children }: LayoutProps<'/'>) {
                   <Pencil className="bg-fd-primary text-fd-primary-foreground p-1 mb-2 rounded-md" />
                   <p className="font-medium">Markdown</p>
                   <p className="text-fd-muted-foreground text-sm">
-                    Learn the writing format/syntax of Hanzo Docs.
+                    Learn the writing format/syntax of Fumadocs.
                   </p>
                 </NavbarMenuLink>
 
@@ -101,7 +101,7 @@ export default function Layout({ children }: LayoutProps<'/'>) {
                   <PlusIcon className="bg-fd-primary text-fd-primary-foreground p-1 mb-2 rounded-md" />
                   <p className="font-medium">Manual Installation</p>
                   <p className="text-fd-muted-foreground text-sm">
-                    Setup Hanzo Docs for your existing Next.js app.
+                    Setup Fumadocs for your existing Next.js app.
                   </p>
                 </NavbarMenuLink>
               </NavbarMenuContent>
