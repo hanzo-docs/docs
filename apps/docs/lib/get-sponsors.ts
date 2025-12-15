@@ -79,9 +79,9 @@ export async function getSponsors(owner: string): Promise<Sponsor[]> {
       }),
     );
 
-    // Sort sponsors by tier price in descending order
+    // Sort sponsors by tier price in descending order (handle null tiers)
     return sponsors.sort(
-      (a, b) => b.tier.monthlyPriceInDollars - a.tier.monthlyPriceInDollars,
+      (a, b) => (b.tier?.monthlyPriceInDollars ?? 0) - (a.tier?.monthlyPriceInDollars ?? 0),
     );
   } catch (error) {
     console.error('Error fetching sponsors:', error);
