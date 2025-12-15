@@ -67,6 +67,7 @@
   },
   "devDependencies": {
     "@fumadocs/cli": "workspace:*",
+    "@hanzo/docs-brand": "workspace:*",
     "@next/bundle-analyzer": "16.0.10",
     "@next/env": "16.0.10",
     "@next/eslint-plugin-next": "16.0.10",
