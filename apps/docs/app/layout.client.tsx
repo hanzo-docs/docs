@@ -23,10 +23,7 @@ export function useMode(): string | undefined {
   return Array.isArray(slug) && slug.length > 0 ? slug[0] : undefined;
 }
 
-/**
- * Brand icon with gradient
- */
-export function BrandIcon(props: React.SVGProps<SVGSVGElement>) {
+export function FumadocsIcon(props: React.SVGProps<SVGSVGElement>) {
   const id = useId();
   return (
     <svg width="80" height="80" viewBox="0 0 180 180" {...props}>
@@ -50,6 +47,3 @@ export function BrandIcon(props: React.SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
-
-// Keep legacy export for compatibility
-export { BrandIcon as FumadocsIcon };
