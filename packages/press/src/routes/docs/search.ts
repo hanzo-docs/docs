@@ -1,4 +1,4 @@
-import { createFromSource } from 'fumadocs-core/search/server';
+import { createFromSource } from '@hanzo/docs-core/search/server';
 import type { LoaderFunctionArgs } from 'react-router';
 import { source } from '../../lib/source.js';
 

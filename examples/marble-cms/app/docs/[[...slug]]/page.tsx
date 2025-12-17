@@ -5,7 +5,7 @@ import {
   DocsPage,
   DocsTitle,
   PageLastUpdate,
-} from 'fumadocs-ui/layouts/docs/page';
+} from '@hanzo/docs/ui/layouts/docs/page';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { renderFromHtml } from '@/lib/render-html';

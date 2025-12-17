@@ -44,7 +44,7 @@ Fumadocs 16 removed substantial amount of deprecated APIs accumulated since v15.
 - **Migration to Orama Cloud's New SDK**: The `@orama/core` package replaces the prior client. Update your synchronization code as follows:
 
   ```ts
-  import { sync } from 'fumadocs-core/search/orama-cloud';
+  import { sync } from '@hanzo/docs/core/search/orama-cloud';
   import { OramaCloud } from '@orama/core';
 
   // [!code highlight:4]
@@ -85,8 +85,8 @@ We introduced Plugins API, enabling extensible modifications to MDX configuratio
 There's a `json-schema` plugin natively provided by Fumadocs MDX.
 
 ```ts title="source.config.ts"
-import jsonSchema from 'fumadocs-mdx/plugins/json-schema';
-import { defineConfig, defineDocs } from 'fumadocs-mdx/config';
+import jsonSchema from '@hanzo/docs/mdx/plugins/json-schema';
+import { defineConfig, defineDocs } from '@hanzo/docs/mdx/config';
 
 export const docs = defineDocs({
   dir: 'content/docs',
@@ -137,7 +137,7 @@ We also supported index file generation targeting other runtimes like Bun/Node.j
 
 ```ts title="vite.config.ts"
 import { defineConfig } from 'vite';
-import mdx from 'fumadocs-mdx/vite';
+import mdx from '@hanzo/docs/mdx/vite';
 import * as MdxConfig from './source.config';
 
 export default defineConfig({

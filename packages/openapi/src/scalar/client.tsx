@@ -1,6 +1,6 @@
 'use client';
-import { cn } from 'fumadocs-ui/utils/cn';
-import { buttonVariants } from 'fumadocs-ui/components/ui/button';
+import { cn } from '@hanzo/docs-ui/utils/cn';
+import { buttonVariants } from '@hanzo/docs-ui/components/ui/button';
 import {
   ApiClientModalProvider,
   useApiClientModal,

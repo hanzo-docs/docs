@@ -13,7 +13,7 @@ import {
   SelectContent,
   SelectItem,
 } from '@/ui/components/select';
-import { DynamicCodeBlock } from 'fumadocs-ui/components/dynamic-codeblock';
+import { DynamicCodeBlock } from '@hanzo/docs-ui/components/dynamic-codeblock';
 import {
   useState,
   useEffect,

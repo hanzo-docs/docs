@@ -1,5 +1,5 @@
 'use client';
-import { DynamicCodeBlock } from 'fumadocs-ui/components/dynamic-codeblock';
+import { DynamicCodeBlock } from '@hanzo/docs/ui/components/dynamic-codeblock';
 import { useState } from 'react';
 import { bundledLanguages } from 'shiki';
 

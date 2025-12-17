@@ -18,7 +18,7 @@ The OpenAPI schemas to read from.
 - A function (see below)
 
 ```ts tab="Basic"
-import { createOpenAPI } from 'fumadocs-openapi/server';
+import { createOpenAPI } from '@hanzo/docs/openapi/server';
 
 export const openapi = createOpenAPI({
   input: ['./unkey.json'],
@@ -26,7 +26,7 @@ export const openapi = createOpenAPI({
 ```
 
 ```ts tab="Function"
-import { createOpenAPI } from 'fumadocs-openapi/server';
+import { createOpenAPI } from '@hanzo/docs/openapi/server';
 
 export const openapi = createOpenAPI({
   async input() {
@@ -69,7 +69,7 @@ export const { GET, HEAD, PUT, POST, PATCH, DELETE } = openapi.createProxy({
 And set the proxy URL in `createOpenAPI`.
 
 ```ts title="lib/openapi.ts"
-import { createOpenAPI } from 'fumadocs-openapi/server';
+import { createOpenAPI } from '@hanzo/docs/openapi/server';
 
 export const openapi = createOpenAPI({
   proxyUrl: '/api/proxy', // [!code ++]

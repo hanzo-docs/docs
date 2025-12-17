@@ -1,7 +1,7 @@
-import type { TOCItemType } from 'fumadocs-core/toc';
+import type { TOCItemType } from '@hanzo/docs/core/toc';
 import Slugger from 'github-slugger';
 import parse, { type DOMNode, domToReact } from 'html-react-parser';
-import { Heading } from 'fumadocs-ui/components/heading';
+import { Heading } from '@hanzo/docs/ui/components/heading';
 import { CodeBlock } from '@/components/code-block';
 
 export function renderFromHtml(content: string) {

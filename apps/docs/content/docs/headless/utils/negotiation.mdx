@@ -15,7 +15,7 @@ Serve markdown or HTML depending on the `Accept` header, this can improve the ex
 
 ```ts title="proxy.ts (Next.js)"
 import { NextRequest, NextResponse } from 'next/server';
-import { isMarkdownPreferred, rewritePath } from 'fumadocs-core/negotiation';
+import { isMarkdownPreferred, rewritePath } from '@hanzo/docs/core/negotiation';
 
 const { rewrite: rewriteLLM } = rewritePath('/docs/*path', '/llms.mdx/*path');
 

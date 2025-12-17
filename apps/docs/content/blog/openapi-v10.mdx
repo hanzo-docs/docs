@@ -21,7 +21,7 @@ This redesign separates API page and server concerns, removes `disablePlayground
    Previously, all options are located in `createOpenAPI()`.
 
    ```ts title="lib/openapi.ts"
-   import { createOpenAPI } from 'fumadocs-openapi/server';
+   import { createOpenAPI } from '@hanzo/docs/openapi/server';
    import path from 'node:path';
 
    export const openapi = createOpenAPI({
@@ -39,7 +39,7 @@ This redesign separates API page and server concerns, removes `disablePlayground
    Now, you need to separate API page components and the server declaration.
 
    ```ts tab="lib/openapi.ts"
-   import { createOpenAPI } from 'fumadocs-openapi/server';
+   import { createOpenAPI } from '@hanzo/docs/openapi/server';
    import path from 'node:path';
 
    export const openapi = createOpenAPI({
@@ -50,7 +50,7 @@ This redesign separates API page and server concerns, removes `disablePlayground
 
    ```ts tab="components/api-page.tsx"
    import { openapi } from '@/lib/openapi';
-   import { createAPIPage } from 'fumadocs-openapi/ui';
+   import { createAPIPage } from '@hanzo/docs/openapi/ui';
 
    export const APIPage = createAPIPage(openapi, {
      mediaAdapters: {
@@ -87,7 +87,7 @@ This redesign separates API page and server concerns, removes `disablePlayground
 
    ```typescript tab="components/api-page.client.tsx"
    'use client';
-   import { defineClientConfig } from 'fumadocs-openapi/ui/client';
+   import { defineClientConfig } from '@hanzo/docs/openapi/ui/client';
 
    export default defineClientConfig({
      playground: {
@@ -103,7 +103,7 @@ This redesign separates API page and server concerns, removes `disablePlayground
 
    ```typescript title="components/api-page.client.tsx"
    'use client';
-   import { defineClientConfig } from 'fumadocs-openapi/ui/client';
+   import { defineClientConfig } from '@hanzo/docs/openapi/ui/client';
    import { adapters } from './my-media-adapters';
 
    export default defineClientConfig({
@@ -121,7 +121,7 @@ Fumadocs OpenAPI now prefers per-feature customizations, eliminating the central
 
 ```tsx title="components/api-page.tsx"
 import { openapi } from '@/lib/openapi';
-import { createAPIPage } from 'fumadocs-openapi/ui';
+import { createAPIPage } from '@hanzo/docs/openapi/ui';
 
 export const APIPage = createAPIPage(openapi, {
   content: {
@@ -136,7 +136,7 @@ For migrating Playground `fields` options, utilize client-side render APIs:
 
 ```tsx title="components/api-page.client.tsx"
 'use client';
-import { defineClientConfig } from 'fumadocs-openapi/ui/client';
+import { defineClientConfig } from '@hanzo/docs/openapi/ui/client';
 
 export default defineClientConfig({
   playground: {
@@ -151,7 +151,7 @@ Additional layout customizations are available:
 
 ```tsx title="components/api-page.tsx"
 import { openapi } from '@/lib/openapi';
-import { createAPIPage } from 'fumadocs-openapi/ui';
+import { createAPIPage } from '@hanzo/docs/openapi/ui';
 
 export const APIPage = createAPIPage(openapi, {
   content: {
@@ -189,7 +189,7 @@ void generateFiles({
 ```
 
 ```ts tab="After"
-import { generateFiles } from 'fumadocs-openapi';
+import { generateFiles } from '@hanzo/docs/openapi';
 import { openapi } from '@/lib/openapi';
 
 void generateFiles({
@@ -206,7 +206,7 @@ v10 introduced the `storageKeyPrefix` option to prevent state bleed across multi
 
 ```tsx title="components/api-page.client.tsx"
 'use client';
-import { defineClientConfig } from 'fumadocs-openapi/ui/client';
+import { defineClientConfig } from '@hanzo/docs/openapi/ui/client';
 
 export default defineClientConfig({
   storageKeyPrefix: 'fumadocs-openapi-custom-',

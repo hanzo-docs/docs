@@ -51,10 +51,10 @@ npm i fumadocs-typescript
 Initialize the TypeScript compiler and add it as a MDX component.
 
 ```tsx title="mdx-components.tsx"
-import defaultComponents from 'fumadocs-ui/mdx';
+import defaultComponents from '@hanzo/docs/ui/mdx';
 import type { MDXComponents } from 'mdx/types';
-import { createGenerator } from 'fumadocs-typescript';
-import { AutoTypeTable } from 'fumadocs-typescript/ui';
+import { createGenerator } from '@hanzo/docs/typescript';
+import { AutoTypeTable } from '@hanzo/docs/typescript/ui';
 
 const generator = createGenerator();
 
@@ -139,7 +139,7 @@ Your `tsconfig.json` file in the current working directory will be loaded.
 You can change the compiler settings from [`createGenerator()`](/docs/ui/typescript).
 
 ```ts
-import { createGenerator } from 'fumadocs-typescript';
+import { createGenerator } from '@hanzo/docs/typescript';
 
 const generator = createGenerator({
   tsconfigPath: './tsconfig.json',

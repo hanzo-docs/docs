@@ -1,0 +1,144 @@
+{
+  "name": "@hanzo/docs",
+  "version": "16.2.5",
+  "description": "The documentation framework for Hanzo - React.js library for building beautiful documentation websites",
+  "keywords": [
+    "Hanzo",
+    "Docs",
+    "Documentation",
+    "React",
+    "Next.js",
+    "MDX"
+  ],
+  "homepage": "https://hanzo.ai/docs",
+  "repository": "github:hanzoai/docs",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    "./core/breadcrumb": "./dist/core/breadcrumb.js",
+    "./core/toc": "./dist/core/toc.js",
+    "./core/link": "./dist/core/link.js",
+    "./core/dynamic-link": "./dist/core/dynamic-link.js",
+    "./core/negotiation": "./dist/core/negotiation.js",
+    "./core/page-tree": "./dist/core/page-tree.js",
+    "./core/content": "./dist/core/content/index.js",
+    "./core/content/*": "./dist/core/content/*.js",
+    "./core/search": "./dist/core/search/index.js",
+    "./core/search/*": "./dist/core/search/*.js",
+    "./core/source": "./dist/core/source/index.js",
+    "./core/source/client": "./dist/core/source/client.js",
+    "./core/source/schema": "./dist/core/source/schema.js",
+    "./core/source/*": "./dist/core/source/*.js",
+    "./core/mdx-plugins": "./dist/core/mdx-plugins/index.js",
+    "./core/mdx-plugins/*": "./dist/core/mdx-plugins/*.js",
+    "./core/i18n": "./dist/core/i18n/index.js",
+    "./core/i18n/middleware": "./dist/core/i18n/middleware.js",
+    "./core/highlight": "./dist/core/highlight/index.js",
+    "./core/highlight/client": "./dist/core/highlight/client.js",
+    "./core/framework": "./dist/core/framework/index.js",
+    "./core/framework/*": "./dist/core/framework/*.js",
+    "./ui/style.css": {
+      "style": "./dist/ui/style.css",
+      "default": "./dist/ui/style.css"
+    },
+    "./ui/image-zoom.css": {
+      "style": "./dist/ui/image-zoom.css",
+      "default": "./dist/ui/image-zoom.css"
+    },
+    "./ui/css/*": {
+      "style": "./dist/ui/css/*",
+      "default": "./dist/ui/css/*"
+    },
+    "./ui/i18n": "./dist/ui/i18n.js",
+    "./ui/mdx": "./dist/ui/mdx.js",
+    "./ui/og": "./dist/ui/og.js",
+    "./ui/page": "./dist/ui/page.js",
+    "./ui/layouts/home": "./dist/ui/layouts/home.js",
+    "./ui/layouts/home/navbar": "./dist/ui/layouts/home/navbar.js",
+    "./ui/layouts/docs": "./dist/ui/layouts/docs.js",
+    "./ui/layouts/docs/page": "./dist/ui/layouts/docs/page.js",
+    "./ui/layouts/notebook": "./dist/ui/layouts/notebook.js",
+    "./ui/layouts/notebook/page": "./dist/ui/layouts/notebook/page.js",
+    "./ui/layouts/shared": "./dist/ui/layouts/shared.js",
+    "./ui/provider/next": "./dist/ui/provider/next.js",
+    "./ui/provider/react-router": "./dist/ui/provider/react-router.js",
+    "./ui/provider/tanstack": "./dist/ui/provider/tanstack.js",
+    "./ui/provider/waku": "./dist/ui/provider/waku.js",
+    "./ui/provider/base": "./dist/ui/provider/base.js",
+    "./ui/provider/*": "./dist/ui/provider/*.js",
+    "./ui/contexts/*": "./dist/ui/contexts/*.js",
+    "./ui/utils/*": "./dist/ui/utils/*.js",
+    "./ui/components/tabs.unstyled": "./dist/ui/components/tabs.unstyled.js",
+    "./ui/components/*": "./dist/ui/components/*.js",
+    "./ui/components/dialog/*": "./dist/ui/components/dialog/*.js",
+    "./ui/components/sidebar/*": "./dist/ui/components/sidebar/*.js",
+    "./ui/components/toc/*": "./dist/ui/components/toc/*.js",
+    "./ui/components/ui/*": "./dist/ui/components/ui/*.js",
+    "./mdx": "./dist/mdx/index.js",
+    "./mdx/*": "./dist/mdx/*.js",
+    "./mdx/runtime/*": "./dist/mdx/runtime/*.js",
+    "./mdx/plugins/*": "./dist/mdx/plugins/*.js",
+    "./mdx:collections/*": "@hanzo/docs-mdx:collections/*",
+    "./cli/build": "./dist/cli/build.js",
+    "./mdx-remote": "./dist/mdx-remote/index.js",
+    "./mdx-remote/*": "./dist/mdx-remote/*.js",
+    "./openapi": "./dist/openapi/index.js",
+    "./openapi/*": "./dist/openapi/*.js",
+    "./openapi/css/*": {
+      "style": "./dist/openapi/css/*",
+      "default": "./dist/openapi/css/*"
+    },
+    "./typescript": "./dist/typescript/index.js",
+    "./typescript/*": "./dist/typescript/*.js",
+    "./twoslash": "./dist/twoslash/index.js",
+    "./twoslash/*": "./dist/twoslash/*.js",
+    "./twoslash/twoslash.css": {
+      "style": "./dist/twoslash/twoslash.css",
+      "default": "./dist/twoslash/twoslash.css"
+    },
+    "./docgen": "./dist/docgen/index.js",
+    "./docgen/*": "./dist/docgen/*.js",
+    "./python": "./dist/python/index.js",
+    "./python/*": "./dist/python/*.js",
+    "./obsidian": "./dist/obsidian/index.js",
+    "./obsidian/*": "./dist/obsidian/*.js",
+    "./content-collections": "./dist/content-collections/index.js",
+    "./content-collections/*": "./dist/content-collections/*.js",
+    "./press": "./dist/press/index.js",
+    "./press/*": "./dist/press/*.js"
+  },
+  "scripts": {
+    "build": "tsup && node scripts/copy-css.js",
+    "dev": "tsup --watch"
+  },
+  "dependencies": {
+    "@hanzo/docs-core": "workspace:*",
+    "@hanzo/docs-ui": "workspace:*",
+    "@hanzo/docs-mdx": "workspace:*",
+    "@hanzo/docs-cli": "workspace:*",
+    "@hanzo/docs-mdx-remote": "workspace:*",
+    "@hanzo/docs-openapi": "workspace:*",
+    "@hanzo/docs-typescript": "workspace:*",
+    "@hanzo/docs-twoslash": "workspace:*",
+    "@hanzo/docs-docgen": "workspace:*",
+    "@hanzo/docs-python": "workspace:*",
+    "@hanzo/docs-obsidian": "workspace:*",
+    "@hanzo/docs-content-collections": "workspace:*",
+    "@hanzo/docs-press": "workspace:*"
+  },
+  "devDependencies": {
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
+  },
+  "peerDependencies": {
+    "next": "^15.0.0 || ^16.0.0",
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "next": { "optional": true }
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

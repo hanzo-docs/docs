@@ -14,7 +14,7 @@ This may result in longer dev server start times for large docs sites. You can e
 Async mode will generate collection outputs using async imports.
 
 ```ts tab="Docs Collection"
-import { defineDocs } from 'fumadocs-mdx/config';
+import { defineDocs } from '@hanzo/docs/mdx/config';
 
 export const docs = defineDocs({
   dir: 'content/docs',
@@ -26,7 +26,7 @@ export const docs = defineDocs({
 ```
 
 ```ts tab="Doc Collection"
-import { defineCollections } from 'fumadocs-mdx/config';
+import { defineCollections } from '@hanzo/docs/mdx/config';
 
 export const doc = defineCollections({
   type: 'doc',
@@ -54,7 +54,7 @@ npm i @fumadocs/mdx-remote shiki
 ```
 
 ```ts tab="Docs Collection"
-import { defineDocs } from 'fumadocs-mdx/config';
+import { defineDocs } from '@hanzo/docs/mdx/config';
 
 export const docs = defineDocs({
   dir: 'content/docs',
@@ -66,7 +66,7 @@ export const docs = defineDocs({
 ```
 
 ```ts tab="Doc Collection"
-import { defineCollections } from 'fumadocs-mdx/config';
+import { defineCollections } from '@hanzo/docs/mdx/config';
 
 export const doc = defineCollections({
   type: 'doc',

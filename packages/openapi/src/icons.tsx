@@ -1,1 +1,1 @@
-export * from 'fumadocs-ui/internal/icons';
+export * from '@hanzo/docs-ui/internal/icons';

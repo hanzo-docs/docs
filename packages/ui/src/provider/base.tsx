@@ -17,7 +17,7 @@ import {
   type LocaleItem,
   type Translations,
 } from '@/contexts/i18n';
-import { usePathname, useRouter } from 'fumadocs-core/framework';
+import { usePathname, useRouter } from '@hanzo/docs-core/framework';
 
 interface SearchOptions extends Omit<
   SearchProviderProps,

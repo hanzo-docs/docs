@@ -1,13 +1,13 @@
 {
-  "name": "fumadocs-ui",
+  "name": "@hanzo/docs-ui",
   "version": "16.2.5",
   "description": "The React.js documentation framework",
   "keywords": [
-    "NextJs",
+    "Hanzo",
     "Docs"
   ],
-  "homepage": "https://fumadocs.dev",
-  "repository": "github:fuma-nama/fumadocs",
+  "homepage": "https://hanzo.ai/docs",
+  "repository": "github:hanzoai/docs",
   "license": "MIT",
   "author": "Fuma Nama",
   "type": "module",
@@ -120,7 +120,7 @@
     "@radix-ui/react-slot": "^1.2.4",
     "@radix-ui/react-tabs": "^1.1.13",
     "class-variance-authority": "^0.7.1",
-    "fumadocs-core": "workspace:*",
+    "@hanzo/docs-core": "workspace:*",
     "lodash.merge": "^4.6.2",
     "next-themes": "^0.4.6",
     "postcss-selector-parser": "^7.1.1",
@@ -129,7 +129,7 @@
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {
-    "@fumadocs/cli": "workspace:*",
+    "@hanzo/docs-cli": "workspace:*",
     "@next/eslint-plugin-next": "16.0.10",
     "@tailwindcss/cli": "^4.1.18",
     "@types/lodash.merge": "^4.6.9",
@@ -137,7 +137,7 @@
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "eslint-config-custom": "workspace:*",
-    "fumadocs-core": "workspace:*",
+    "@hanzo/docs-core": "workspace:*",
     "next": "16.0.10",
     "tailwindcss": "^4.1.18",
     "tsc-alias": "^1.8.16",

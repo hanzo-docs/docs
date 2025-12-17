@@ -1,10 +1,10 @@
-import { DocsLayout } from 'fumadocs-ui/layouts/docs';
-import { DocsPage, type DocsPageProps } from 'fumadocs-ui/layouts/docs/page';
-import type { Root } from 'fumadocs-core/page-tree';
+import { DocsLayout } from '@hanzo/docs/ui/layouts/docs';
+import { DocsPage, type DocsPageProps } from '@hanzo/docs/ui/layouts/docs/page';
+import type { Root } from '@hanzo/docs/core/page-tree';
 import type { ReactNode } from 'react';
-import { FrameworkProvider } from 'fumadocs-core/framework';
+import { FrameworkProvider } from '@hanzo/docs/core/framework';
 import { navigate } from 'astro:transitions/client';
-import { RootProvider } from 'fumadocs-ui/provider/base';
+import { RootProvider } from '@hanzo/docs/ui/provider/base';
 import SearchDialog from './search';
 
 export function Docs({

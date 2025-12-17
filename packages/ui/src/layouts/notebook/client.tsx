@@ -14,8 +14,8 @@ import {
 } from 'react';
 import { useSidebar } from '@/components/sidebar/base';
 import { ChevronDown } from '@icons';
-import Link from 'fumadocs-core/link';
-import { usePathname } from 'fumadocs-core/framework';
+import Link from '@hanzo/docs-core/link';
+import { usePathname } from '@hanzo/docs-core/framework';
 import { isTabActive } from '@/utils/is-active';
 import { useIsScrollTop } from '@/utils/use-is-scroll-top';
 import {

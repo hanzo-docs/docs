@@ -20,6 +20,6 @@ export function useStorageKey() {
   );
 }
 
-export function getStorageKey(prefix = 'fumadocs-openapi-', name: KeyName) {
+export function getStorageKey(prefix = 'hanzo-docs-openapi-', name: KeyName) {
   return prefix + name;
 }

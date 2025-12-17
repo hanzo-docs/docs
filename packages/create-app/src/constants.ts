@@ -73,7 +73,7 @@ export const templates: TemplateInfo[] = [
 
 export const depVersions = {
   ...versionPkg.dependencies,
-  'fumadocs-core': coreVersion,
-  'fumadocs-ui': uiVersion,
-  'fumadocs-mdx': mdxVersion,
+  '@hanzo/docs/core': coreVersion,
+  '@hanzo/docs/ui': uiVersion,
+  '@hanzo/docs/mdx': mdxVersion,
 };
