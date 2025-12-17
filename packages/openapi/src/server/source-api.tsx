@@ -6,15 +6,15 @@ import type {
   PageTreeTransformer,
   Source,
   VirtualFile,
-} from 'fumadocs-core/source';
+} from '@hanzo/docs-core/source';
 import type { OpenAPIServer } from '@/server/create';
 import type { SchemaToPagesOptions } from '@/utils/pages/preset-auto';
 import type { ApiPageProps } from '@/ui/api-page';
 
-declare module 'fumadocs-core/source' {
+declare module '@hanzo/docs-core/source' {
   export interface PageData {
     /**
-     * Added by Fumadocs OpenAPI
+     * Added by Hanzo Docs OpenAPI
      */
     _openapi?: InternalOpenAPIMeta;
   }
@@ -26,11 +26,11 @@ export interface InternalOpenAPIMeta {
 }
 
 /**
- * Fumadocs Source API integration, pass this to `plugins` array in `loader()`.
+ * Hanzo Docs Source API integration, pass this to `plugins` array in `loader()`.
  */
 export function openapiPlugin(): LoaderPlugin {
   return {
-    name: 'fumadocs:openapi',
+    name: 'hanzo-docs:openapi',
     enforce: 'pre',
     transformPageTree: {
       file(node, filePath) {
@@ -72,7 +72,7 @@ interface OpenAPIPageData extends PageData {
 }
 
 /**
- * Generate virtual pages for Fumadocs Source API
+ * Generate virtual pages for Hanzo Docs Source API
  */
 export async function openapiSource(
   from: OpenAPIServer,

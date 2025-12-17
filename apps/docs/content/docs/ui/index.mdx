@@ -60,11 +60,11 @@ npm create fumadocs-app
 ```
 
 ```bash tab="pnpm"
-pnpm create fumadocs-app
+pnpm create hanzo-app
 ```
 
 ```bash tab="yarn"
-yarn create fumadocs-app
+yarn create hanzo-app
 ```
 
 ```bash tab="bun"
@@ -142,7 +142,7 @@ Some common questions you may encounter.
     Finally, update the base URL of pages in `source.ts`:
 
 ```ts title="lib/source.ts"
-import { loader } from 'fumadocs-core/source';
+import { loader } from '@hanzo/docs/core/source';
 
 export const source = loader({
   baseUrl: '/info', // to the new value [!code highlight]

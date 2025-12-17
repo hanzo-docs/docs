@@ -1,4 +1,4 @@
-import { generateOGImage } from 'fumadocs-ui/og';
+import { generateOGImage } from '@hanzo/docs/ui/og';
 import { source } from '@/lib/source';
 import { notFound } from 'next/navigation';
 

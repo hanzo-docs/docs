@@ -11,7 +11,7 @@ preview: 'files'
 Wrap file components in `Files`, you can use it in your MDX content, or as a normal React.js component.
 
 ```mdx title="content.mdx"
-import { File, Folder, Files } from 'fumadocs-ui/components/files';
+import { File, Folder, Files } from '@hanzo/docs/ui/components/files';
 
 <Files>
   <Folder name="app" defaultOpen>
@@ -33,8 +33,8 @@ import { File, Folder, Files } from 'fumadocs-ui/components/files';
 You can enable [`remark-mdx-files`](/docs/headless/mdx/remark-mdx-files) to define file structure with codeblocks.
 
 ```tsx title="source.config.ts (Fumadocs MDX)"
-import { remarkMdxFiles } from 'fumadocs-core/mdx-plugins';
-import { defineConfig } from 'fumadocs-mdx/config';
+import { remarkMdxFiles } from '@hanzo/docs/core/mdx-plugins';
+import { defineConfig } from '@hanzo/docs/mdx/config';
 
 export default defineConfig({
   mdxOptions: {

@@ -1,15 +1,14 @@
 {
-  "name": "fumadocs-obsidian",
+  "name": "@hanzo/docs-obsidian",
   "version": "0.0.6",
-  "description": "Obsidian Integration for Fumadocs",
+  "description": "Obsidian Integration for Hanzo Docs",
   "keywords": [
-    "NextJs",
-    "fumadocs",
+    "Hanzo",
     "Docs",
     "Obsidian"
   ],
-  "homepage": "https://fumadocs.dev",
-  "repository": "github:fuma-nama/fumadocs",
+  "homepage": "https://hanzo.ai/docs",
+  "repository": "github:hanzoai/docs",
   "license": "MIT",
   "author": "Fuma Nama",
   "type": "module",
@@ -59,8 +58,8 @@
     "@types/node": "24.10.2",
     "@types/react": "^19.2.7",
     "eslint-config-custom": "workspace:*",
-    "fumadocs-core": "workspace:*",
-    "fumadocs-ui": "workspace:*",
+    "@hanzo/docs-core": "workspace:*",
+    "@hanzo/docs-ui": "workspace:*",
     "mdast-util-mdx-jsx": "^3.2.0",
     "tsconfig": "workspace:*",
     "typescript": "^5.9.3",
@@ -73,8 +72,8 @@
   },
   "peerDependencies": {
     "@types/react": "*",
-    "fumadocs-core": "^15.0.0 || ^16.0.0",
-    "fumadocs-ui": "^15.0.0 || ^16.0.0"
+    "@hanzo/docs-core": "^15.0.0 || ^16.0.0",
+    "@hanzo/docs-ui": "^15.0.0 || ^16.0.0"
   },
   "publishConfig": {
     "access": "public"

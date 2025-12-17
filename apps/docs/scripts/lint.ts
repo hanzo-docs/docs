@@ -4,7 +4,7 @@ import {
   scanURLs,
   validateFiles,
 } from 'next-validate-link';
-import { InferPageType } from 'fumadocs-core/source';
+import { InferPageType } from '@hanzo/docs/core/source';
 import { blog, source } from '@/lib/source';
 
 type AnySource = typeof blog | typeof source;
@@ -59,7 +59,7 @@ async function getHeadings({
 }: InferPageType<AnySource>): Promise<string[]> {
   if ('type' in data && data.type === 'openapi') return [];
   const { _exports, toc } = await data.load();
-  const headings = toc.map((item) => item.url.slice(1));
+  const headings = toc.map((item: { url: string }) => item.url.slice(1));
   const elementIds = _exports?.elementIds;
   if (Array.isArray(elementIds)) {
     headings.push(...elementIds);

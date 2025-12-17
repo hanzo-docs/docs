@@ -7,7 +7,7 @@ import { ComponentInstaller } from '@/registry/installer';
 
 export async function customise(resolver: Resolver, config: LoadedConfig) {
   const client = new RegistryClient(config, resolver);
-  intro(picocolors.bgBlack(picocolors.whiteBright('Customise Fumadocs UI')));
+  intro(picocolors.bgBlack(picocolors.whiteBright('Customise Hanzo Docs UI')));
   const installer = new ComponentInstaller(client);
 
   const result = await group(
@@ -75,15 +75,15 @@ export async function customise(resolver: Resolver, config: LoadedConfig) {
     const maps: [string, string][] =
       result.mode === 'full-notebook'
         ? [
-            ['fumadocs-ui/layouts/notebook', '@/components/layout/notebook'],
+            ['@hanzo/docs-ui/layouts/notebook', '@/components/layout/notebook'],
             [
-              'fumadocs-ui/layouts/notebook/page',
+              '@hanzo/docs-ui/layouts/notebook/page',
               '@/components/layout/notebook/page',
             ],
           ]
         : [
-            ['fumadocs-ui/layouts/docs', '@/components/layout/docs'],
-            ['fumadocs-ui/layouts/docs/page', '@/components/layout/docs/page'],
+            ['@hanzo/docs-ui/layouts/docs', '@/components/layout/docs'],
+            ['@hanzo/docs-ui/layouts/docs/page', '@/components/layout/docs/page'],
           ];
 
     printNext(...maps);
@@ -91,7 +91,7 @@ export async function customise(resolver: Resolver, config: LoadedConfig) {
 
   if (result.target === 'home') {
     await install(['layouts/home'], installer);
-    printNext(['fumadocs-ui/layouts/home', `@/components/layout/home`]);
+    printNext(['@hanzo/docs-ui/layouts/home', `@/components/layout/home`]);
   }
 
   outro(picocolors.bold('Have fun!'));

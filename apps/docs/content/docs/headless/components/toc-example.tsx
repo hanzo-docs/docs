@@ -3,7 +3,7 @@ import {
   ScrollProvider,
   TOCItem,
   type TOCItemType,
-} from 'fumadocs-core/toc';
+} from '@hanzo/docs/core/toc';
 import { type ReactNode, useRef } from 'react';
 
 export function Page({

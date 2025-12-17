@@ -1,14 +1,14 @@
 {
-  "name": "fumadocs-typescript",
+  "name": "@hanzo/docs-typescript",
   "version": "4.0.14",
-  "description": "Typescript Integration for Fumadocs",
+  "description": "Typescript Integration for Hanzo Docs",
   "keywords": [
-    "NextJs",
-    "fumadocs",
-    "Docs"
+    "Hanzo",
+    "Docs",
+    "TypeScript"
   ],
-  "homepage": "https://fumadocs.dev",
-  "repository": "github:fuma-nama/fumadocs",
+  "homepage": "https://hanzo.ai/docs",
+  "repository": "github:hanzoai/docs",
   "license": "MIT",
   "author": "Fuma Nama",
   "type": "module",
@@ -53,20 +53,20 @@
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "eslint-config-custom": "workspace:*",
-    "fumadocs-core": "workspace:*",
-    "fumadocs-ui": "workspace:*",
+    "@hanzo/docs-core": "workspace:*",
+    "@hanzo/docs-ui": "workspace:*",
     "tsconfig": "workspace:*",
     "typescript": "^5.9.3",
     "unified": "^11.0.5"
   },
   "peerDependencies": {
     "@types/react": "*",
-    "fumadocs-core": "^15.7.0 || ^16.0.0",
-    "fumadocs-ui": "^15.7.0 || ^16.0.0",
+    "@hanzo/docs-core": "^15.7.0 || ^16.0.0",
+    "@hanzo/docs-ui": "^15.7.0 || ^16.0.0",
     "typescript": "*"
   },
   "peerDependenciesMeta": {
-    "fumadocs-ui": {
+    "@hanzo/docs-ui": {
       "optional": true
     },
     "@types/react": {

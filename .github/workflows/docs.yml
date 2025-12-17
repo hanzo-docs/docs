@@ -1,0 +1,90 @@
+name: Deploy Docs to GitHub Pages
+
+# BLOCKING ISSUE: Build fails due to incomplete package migration.
+#
+# The source files in apps/docs/ still import from:
+#   - fumadocs-ui (should be @hanzo/docs-ui)
+#   - fumadocs-core (should be @hanzo/docs-core)
+#
+# Files needing updates:
+#   - apps/docs/app/global.css (CSS imports)
+#   - apps/docs/app/provider.tsx
+#   - apps/docs/app/layout.tsx
+#   - apps/docs/app/docs/layout.tsx
+#   - apps/docs/mdx-components.tsx
+#   - apps/docs/components/*.tsx
+#   - apps/docs/scripts/*.ts
+#   - And ~40+ more files
+#
+# Additionally, GitHub Pages requires static export which disables:
+#   - API routes (/api/*)
+#   - Server-side rendering
+#   - Dynamic routes without generateStaticParams
+#
+# For full Next.js functionality, use Vercel or Cloudflare Pages instead.
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'apps/docs/**'
+      - 'packages/**'
+      - 'pnpm-lock.yaml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm build --filter=!docs
+
+      - name: Build docs with static export
+        working-directory: apps/docs
+        env:
+          NEXT_OUTPUT: export
+        run: pnpm build
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/docs/out
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

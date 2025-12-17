@@ -4,11 +4,11 @@ import {
   DocsDescription,
   DocsPage,
   DocsTitle,
-} from 'fumadocs-ui/layouts/docs/page';
+} from '@hanzo/docs/ui/layouts/docs/page';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import defaultMdxComponents, { createRelativeLink } from 'fumadocs-ui/mdx';
-import * as ObsidianComponents from 'fumadocs-obsidian/ui';
+import defaultMdxComponents, { createRelativeLink } from '@hanzo/docs/ui/mdx';
+import * as ObsidianComponents from '@hanzo/docs/obsidian/ui';
 
 export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   const params = await props.params;

@@ -29,7 +29,7 @@ Add the rehype plugin.
 
 ```ts tab="MDX Compiler"
 import { compile } from '@mdx-js/mdx';
-import { rehypeCode, type RehypeCodeOptions } from 'fumadocs-core/mdx-plugins';
+import { rehypeCode, type RehypeCodeOptions } from '@hanzo/docs/core/mdx-plugins';
 
 const rehypeCodeOptions: RehypeCodeOptions = {
   themes: {
@@ -49,7 +49,7 @@ await compile('...', {
 ```
 
 ```ts tab="Fumadocs MDX"
-import { defineConfig } from 'fumadocs-mdx/config';
+import { defineConfig } from '@hanzo/docs/mdx/config';
 
 export default defineConfig({
   mdxOptions: {
@@ -82,7 +82,7 @@ You may filter the meta string before processing it with the `filterMetaString` 
 You can enable it with `inline` option:
 
 ```ts
-import { type RehypeCodeOptions } from 'fumadocs-core/mdx-plugins';
+import { type RehypeCodeOptions } from '@hanzo/docs/core/mdx-plugins';
 
 const rehypeCodeOptions: RehypeCodeOptions = {
   // [!code ++]

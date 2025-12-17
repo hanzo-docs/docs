@@ -1,6 +1,6 @@
-import { loader } from 'fumadocs-core/source';
-import { docs } from 'fumadocs-mdx:collections/server';
-import { lucideIconsPlugin } from 'fumadocs-core/source/lucide-icons';
+import { loader } from '@hanzo/docs/core/source';
+import { docs } from '@hanzo/docs/mdx:collections/server';
+import { lucideIconsPlugin } from '@hanzo/docs/core/source/lucide-icons';
 
 export const source = loader({
   source: docs.toFumadocsSource(),
