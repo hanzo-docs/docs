@@ -1,5 +1,13 @@
 # next-docs-mdx
 
+## 14.1.1
+
+### Patch Changes
+
+- a8456cc: Initial npm publish of @hanzo/docs packages
+- Updated dependencies [a8456cc]
+  - @hanzo/docs-core@16.2.6
+
 ## 14.1.0
 
 ### Minor Changes

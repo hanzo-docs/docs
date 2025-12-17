@@ -1,6 +1,6 @@
 {
   "name": "@hanzo/docs",
-  "version": "16.2.5",
+  "version": "16.2.6",
   "description": "The documentation framework for Hanzo - React.js library for building beautiful documentation websites",
   "keywords": [
     "Hanzo",
@@ -136,7 +136,9 @@
     "react-dom": "^18.0.0 || ^19.0.0"
   },
   "peerDependenciesMeta": {
-    "next": { "optional": true }
+    "next": {
+      "optional": true
+    }
   },
   "publishConfig": {
     "access": "public"
