@@ -1,5 +1,11 @@
 # next-docs-zeta
 
+## 16.2.6
+
+### Patch Changes
+
+- a8456cc: Initial npm publish of @hanzo/docs packages
+
 ## 16.2.5
 
 ### Patch Changes
