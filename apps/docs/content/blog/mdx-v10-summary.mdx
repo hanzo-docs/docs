@@ -21,7 +21,7 @@ Refactor the import in `next.config`.
 **From:**
 
 ```ts
-import createMDX from 'fumadocs-mdx/config';
+import createMDX from '@hanzo/docs/mdx/config';
 
 const withMDX = createMDX();
 
@@ -36,7 +36,7 @@ export default withMDX(config);
 **To:**
 
 ```ts
-import { createMDX } from 'fumadocs-mdx/next';
+import { createMDX } from '@hanzo/docs/mdx/next';
 
 const withMDX = createMDX();
 
@@ -53,7 +53,7 @@ export default withMDX(config);
 `mdx-components.tsx` is no longer used. It now allows only MDX components passed from `MDX` body's `components` prop.
 
 ```tsx
-import defaultMdxComponents from 'fumadocs-ui/mdx';
+import defaultMdxComponents from '@hanzo/docs/ui/mdx';
 
 const MDX = page.data.body;
 
@@ -76,7 +76,7 @@ Every collection has its own config, you can have customised Zod schema to valid
 You can create a source config file, and add the following:
 
 ```ts
-import { defineDocs } from 'fumadocs-mdx/config';
+import { defineDocs } from '@hanzo/docs/mdx/config';
 
 export const { docs, meta } = defineDocs({
   dir: 'content/docs',
@@ -108,8 +108,8 @@ Now to integrate it with Fumadocs framework, change your `source.ts` from:
 
 ```ts
 import { map } from '@/.map';
-import { createMDXSource } from 'fumadocs-mdx/runtime/next';
-import { loader } from 'fumadocs-core/source';
+import { createMDXSource } from '@hanzo/docs/mdx/runtime/next';
+import { loader } from '@hanzo/docs/core/source';
 
 export const { getPage, getPages, pageTree } = loader({
   baseUrl: '/docs',
@@ -122,8 +122,8 @@ to:
 
 ```ts
 import { docs, meta } from '@/.source';
-import { createMDXSource } from 'fumadocs-mdx/runtime/next';
-import { loader } from 'fumadocs-core/source';
+import { createMDXSource } from '@hanzo/docs/mdx/runtime/next';
+import { loader } from '@hanzo/docs/core/source';
 
 export const source = loader({
   baseUrl: '/docs',
@@ -151,7 +151,7 @@ page.data.title; // [!code ++]
 Instead of passing them to `next.config` file, define a global config in `source.config.ts`:
 
 ```ts
-import { defineConfig } from 'fumadocs-mdx/config';
+import { defineConfig } from '@hanzo/docs/mdx/config';
 
 export default defineConfig({
   mdxOptions: {
@@ -171,9 +171,9 @@ For `defineDocs`, see [`schema`](/docs/mdx/collections#schema-1).
 Same as before, you can call `loader` multiple times for different types (e.g. for docs and blog).
 
 ```ts
-import { createMDXSource } from 'fumadocs-mdx/runtime/next';
-import type { InferMetaType, InferPageType } from 'fumadocs-core/source';
-import { loader } from 'fumadocs-core/source';
+import { createMDXSource } from '@hanzo/docs/mdx/runtime/next';
+import type { InferMetaType, InferPageType } from '@hanzo/docs/core/source';
+import { loader } from '@hanzo/docs/core/source';
 import { meta, docs, blog as blogPosts } from '@/.source';
 
 export const source = loader({
@@ -198,7 +198,7 @@ import {
   defineDocs,
   defineCollections,
   frontmatterSchema,
-} from 'fumadocs-mdx/config';
+} from '@hanzo/docs/mdx/config';
 import { z } from 'zod';
 
 export const { docs, meta } = defineDocs({

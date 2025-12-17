@@ -10,13 +10,13 @@ description: Use Fumadocs MDX with Vite
 ### Installation
 
 ```npm
-npm i fumadocs-mdx fumadocs-core @types/mdx
+npm i @hanzo/docs @types/mdx
 ```
 
 Create the configuration file:
 
 ```ts title="source.config.ts"
-import { defineDocs } from 'fumadocs-mdx/config';
+import { defineDocs } from '@hanzo/docs/mdx/config';
 
 export const docs = defineDocs({
   dir: 'content/docs',
@@ -27,7 +27,7 @@ Add the Vite plugin:
 
 ```ts tab="Vite" title="vite.config.ts"
 import { defineConfig } from 'vite';
-import mdx from 'fumadocs-mdx/vite';
+import mdx from '@hanzo/docs/mdx/vite';
 import * as MdxConfig from './source.config';
 
 export default defineConfig({
@@ -41,7 +41,7 @@ export default defineConfig({
 
 ```ts tab="Waku" title="waku.config.ts"
 import { type Config, defineConfig } from 'waku/config';
-import mdx from 'fumadocs-mdx/vite';
+import mdx from '@hanzo/docs/mdx/vite';
 import * as MdxConfig from './source.config.js';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import type { UserConfig } from 'vite';
@@ -66,8 +66,8 @@ export default defineConfig({
 To integrate with Fumadocs, make a `lib/source.ts` file:
 
 ```ts title="app/lib/source.ts"
-import { docs } from 'fumadocs-mdx:collections/server';
-import { loader } from 'fumadocs-core/source';
+import { docs } from '@hanzo/docs-mdx:collections/server';
+import { loader } from '@hanzo/docs/core/source';
 
 export const source = loader({
   baseUrl: '/docs',

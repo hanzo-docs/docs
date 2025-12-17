@@ -15,7 +15,7 @@ It exports a `useBreadcrumb` hook:
 declare const tree: any;
 import { usePathname } from 'next/navigation';
 // ---cut---
-import { useBreadcrumb } from 'fumadocs-core/breadcrumb';
+import { useBreadcrumb } from '@hanzo/docs/core/breadcrumb';
 
 // obtain `pathname` using the hook provided by your React framework.
 const pathname = usePathname();
@@ -30,8 +30,8 @@ A styled example for Next.js.
 ```tsx
 'use client';
 import { usePathname } from 'next/navigation';
-import { useBreadcrumb } from 'fumadocs-core/breadcrumb';
-import type { PageTree } from 'fumadocs-core/page-tree';
+import { useBreadcrumb } from '@hanzo/docs/core/breadcrumb';
+import type { PageTree } from '@hanzo/docs/core/page-tree';
 import { Fragment } from 'react';
 import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';

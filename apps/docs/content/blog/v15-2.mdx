@@ -23,7 +23,7 @@ This is a minor release, it shouldn't break any previous usages unless you're re
 Fumadocs Core now requires a `FrameworkProvider`. It's as simple as wrapping it with appropriate provider:
 
 ```tsx
-import { NextProvider } from 'fumadocs-core/framework/next';
+import { NextProvider } from '@hanzo/docs/core/framework/next';
 
 export function Provider({ children }) {
   return <NextProvider>{children}</NextProvider>;
@@ -33,7 +33,7 @@ export function Provider({ children }) {
 If you're using Fumadocs UI, there's no need to change. `RootProvider` included it by default, and allows you to provide your own framework with:
 
 ```tsx
-import { RootProvider } from 'fumadocs-ui/provider/base';
+import { RootProvider } from '@hanzo/docs/ui/provider/base';
 
 export function Provider({ children }) {
   // now it doesn't add the Next.js provider
@@ -60,7 +60,7 @@ pnpm update -i -r
 If you want to try the React Router example:
 
 ```bash
-pnpm create fumadocs-app
+pnpm create hanzo-app
 ```
 
 ### Future Plans

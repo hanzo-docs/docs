@@ -4,7 +4,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"],
-      "fumadocs-mdx:collections/*": [".source/*"]
+      "@hanzo/docs-mdx:collections/*": [".source/*"]
     }
   },
   "include": [

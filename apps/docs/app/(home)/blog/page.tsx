@@ -1,8 +1,16 @@
 import Link from 'next/link';
 import { blog } from '@/lib/source';
-import { PathUtils } from 'fumadocs-core/source';
+import { PathUtils } from '@hanzo/docs/core/source';
 import BannerImage from './banner.png';
 import Image from 'next/image';
+
+// Blog frontmatter type (matches source.config.ts schema)
+interface BlogData {
+  title: string;
+  description?: string;
+  author: string;
+  date: string | Date;
+}
 
 function getName(path: string) {
   return PathUtils.basename(path, PathUtils.extname(path));
@@ -11,8 +19,8 @@ function getName(path: string) {
 export default function Page() {
   const posts = [...blog.getPages()].sort(
     (a, b) =>
-      new Date(b.data.date ?? getName(b.path)).getTime() -
-      new Date(a.data.date ?? getName(a.path)).getTime(),
+      new Date((b.data as unknown as BlogData).date ?? getName(b.path)).getTime() -
+      new Date((a.data as unknown as BlogData).date ?? getName(a.path)).getTime(),
   );
 
   return (
@@ -25,29 +33,32 @@ export default function Page() {
           className="absolute inset-0 size-full -z-1 object-cover"
         />
         <h1 className="mb-4 text-3xl text-landing-foreground font-mono font-medium">
-          Fumadocs Blog
+          Hanzo Docs Blog
         </h1>
         <p className="text-sm font-mono text-landing-foreground-200">
-          Latest announcements of Fumadocs.
+          Latest announcements and updates.
         </p>
       </div>
       <div className="grid grid-cols-1 gap-2 md:grid-cols-3 xl:grid-cols-4">
-        {posts.map((post) => (
-          <Link
-            key={post.url}
-            href={post.url}
-            className="flex flex-col bg-fd-card rounded-2xl border shadow-sm p-4 transition-colors hover:bg-fd-accent hover:text-fd-accent-foreground"
-          >
-            <p className="font-medium">{post.data.title}</p>
-            <p className="text-sm text-fd-muted-foreground">
-              {post.data.description}
-            </p>
+        {posts.map((post) => {
+          const data = post.data as unknown as BlogData;
+          return (
+            <Link
+              key={post.url}
+              href={post.url}
+              className="flex flex-col bg-fd-card rounded-2xl border shadow-sm p-4 transition-colors hover:bg-fd-accent hover:text-fd-accent-foreground"
+            >
+              <p className="font-medium">{data.title}</p>
+              <p className="text-sm text-fd-muted-foreground">
+                {data.description}
+              </p>
 
-            <p className="mt-auto pt-4 text-xs text-brand">
-              {new Date(post.data.date ?? getName(post.path)).toDateString()}
-            </p>
-          </Link>
-        ))}
+              <p className="mt-auto pt-4 text-xs text-brand">
+                {new Date(data.date ?? getName(post.path)).toDateString()}
+              </p>
+            </Link>
+          );
+        })}
       </div>
     </main>
   );

@@ -1,5 +1,5 @@
 import { defineConfig, type Config } from 'waku/config';
-import mdx from 'fumadocs-mdx/vite';
+import mdx from '@hanzo/docs/mdx/vite';
 import * as MdxConfig from './source.config.js';
 import tailwindcss from '@tailwindcss/vite';
 import tsconfigPaths from 'vite-tsconfig-paths';

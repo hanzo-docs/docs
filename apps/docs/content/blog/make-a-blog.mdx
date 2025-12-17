@@ -18,7 +18,7 @@ We will use Fumadocs MDX to manage the content, and implement our own UI with Ta
 Define a `blogPosts` collection.
 
 ```ts title="source.config.ts"
-import { defineCollections, frontmatterSchema } from 'fumadocs-mdx/config';
+import { defineCollections, frontmatterSchema } from '@hanzo/docs/mdx/config';
 import { z } from 'zod';
 
 export const blogPosts = defineCollections({
@@ -35,9 +35,9 @@ export const blogPosts = defineCollections({
 Parse the output collection in `source.ts`:
 
 ```ts title="lib/source.ts"
-import { loader } from 'fumadocs-core/source';
-import { toFumadocsSource } from 'fumadocs-mdx/runtime/server';
-import { blogPosts } from 'fumadocs-mdx:collections/server';
+import { loader } from '@hanzo/docs/core/source';
+import { toFumadocsSource } from '@hanzo/docs/mdx/runtime/server';
+import { blogPosts } from '@hanzo/docs-mdx:collections/server';
 
 export const blog = loader({
   baseUrl: '/blog',
@@ -94,8 +94,8 @@ Note that blog posts won't have nested slugs like `/slug1/slug2`. We don't need 
 ```tsx title="app/(home)/blog/[slug]/page.tsx"
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { InlineTOC } from 'fumadocs-ui/components/inline-toc';
-import defaultMdxComponents from 'fumadocs-ui/mdx';
+import { InlineTOC } from '@hanzo/docs/ui/components/inline-toc';
+import defaultMdxComponents from '@hanzo/docs/ui/mdx';
 import { blog } from '@/lib/source';
 
 export default async function Page(props: {

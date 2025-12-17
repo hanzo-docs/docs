@@ -14,7 +14,7 @@ import {
   useState,
   useEffectEvent,
 } from 'react';
-import { cn } from 'fumadocs-ui/utils/cn';
+import { cn } from '@hanzo/docs-ui/utils/cn';
 import {
   Dialog,
   DialogContent,

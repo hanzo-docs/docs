@@ -3,9 +3,9 @@ import {
   CircleX,
   Info,
   TriangleAlert,
-} from 'fumadocs-ui/internal/icons';
+} from '@hanzo/docs-ui/internal/icons';
 import { ComponentProps } from 'react';
-import { cn } from 'fumadocs-ui/utils/cn';
+import { cn } from '@hanzo/docs-ui/utils/cn';
 
 interface CalloutProps extends ComponentProps<'div'> {
   /**

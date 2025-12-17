@@ -1,7 +1,7 @@
 'use client';
 
 import { ChevronDown } from '@icons';
-import Link from 'fumadocs-core/link';
+import Link from '@hanzo/docs-core/link';
 import { cva } from 'class-variance-authority';
 import { cn } from '@/utils/cn';
 import { type ReactNode, useState } from 'react';

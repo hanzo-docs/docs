@@ -5,4 +5,5 @@ export default defineConfig({
   target: 'esnext',
   format: 'esm',
   entry: ['src/{index,configuration}.ts'],
+  external: [/^@hanzo\/docs\//],
 });

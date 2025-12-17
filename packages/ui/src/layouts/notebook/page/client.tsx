@@ -12,16 +12,16 @@ import {
   useState,
 } from 'react';
 import { ChevronDown, ChevronLeft, ChevronRight } from '@icons';
-import Link from 'fumadocs-core/link';
+import Link from '@hanzo/docs-core/link';
 import { cn } from '@/utils/cn';
 import { useI18n } from '@/contexts/i18n';
 import { useTreeContext, useTreePath } from '@/contexts/tree';
-import type * as PageTree from 'fumadocs-core/page-tree';
-import { usePathname } from 'fumadocs-core/framework';
+import type * as PageTree from '@hanzo/docs-core/page-tree';
+import { usePathname } from '@hanzo/docs-core/framework';
 import {
   type BreadcrumbOptions,
   getBreadcrumbItemsFromPath,
-} from 'fumadocs-core/breadcrumb';
+} from '@hanzo/docs-core/breadcrumb';
 import { isActive } from '@/utils/is-active';
 import {
   Collapsible,
@@ -29,7 +29,7 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import { useTOCItems } from '@/components/toc';
-import { useActiveAnchor } from 'fumadocs-core/toc';
+import { useActiveAnchor } from '@hanzo/docs-core/toc';
 import { LayoutContext } from '../client';
 import { useFooterItems } from '@/utils/use-footer-items';
 
