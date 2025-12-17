@@ -13,7 +13,7 @@ In **Fumadocs MDX**, you can do:
 
 ```ts title="lib/get-llm-text.ts"
 import { source } from '@/lib/source';
-import type { InferPageType } from 'fumadocs-core/source';
+import type { InferPageType } from '@hanzo/docs/core/source';
 
 export async function getLLMText(page: InferPageType<typeof source>) {
   const processed = await page.data.getText('processed');
@@ -27,7 +27,7 @@ ${processed}`;
 It requires `includeProcessedMarkdown` to be enabled:
 
 ```ts title="source.config.ts"
-import { defineDocs } from 'fumadocs-mdx/config';
+import { defineDocs } from '@hanzo/docs/mdx/config';
 
 export const docs = defineDocs({
   docs: {
@@ -176,7 +176,7 @@ export async function loader({ params }: Route.LoaderArgs) {
 ```
 
 ```ts tab="React Router" title="app/root.tsx"
-import { rewritePath } from 'fumadocs-core/negotiation';
+import { rewritePath } from '@hanzo/docs/core/negotiation';
 import type { Route } from './+types/root';
 
 // [!code ++:20]
@@ -223,7 +223,7 @@ export const Route = createFileRoute('/llms.mdx/$')({
 
 ```ts tab="Tanstack Start" title="src/start.ts"
 import { createMiddleware, createStart } from '@tanstack/react-start';
-import { rewritePath } from 'fumadocs-core/negotiation';
+import { rewritePath } from '@hanzo/docs/core/negotiation';
 import { redirect } from '@tanstack/react-router';
 
 const { rewrite: rewriteLLM } = rewritePath(
@@ -255,7 +255,7 @@ To serve the Markdown content instead for AI agents, you can leverage the `Accep
 
 ```ts title="proxy.ts (Next.js)"
 import { NextRequest, NextResponse } from 'next/server';
-import { isMarkdownPreferred, rewritePath } from 'fumadocs-core/negotiation';
+import { isMarkdownPreferred, rewritePath } from '@hanzo/docs/core/negotiation';
 
 const { rewrite: rewriteLLM } = rewritePath('/docs/*path', '/llms.mdx/*path');
 

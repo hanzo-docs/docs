@@ -1,7 +1,7 @@
-import 'fumadocs-ui/style.css';
-import { RootProvider } from 'fumadocs-ui/provider/next';
+import '@hanzo/docs/ui/style.css';
+import { RootProvider } from '@hanzo/docs/ui/provider/next';
 import { Inter } from 'next/font/google';
-import { defineI18nUI } from 'fumadocs-ui/i18n';
+import { defineI18nUI } from '@hanzo/docs/ui/i18n';
 import { i18n } from '@/lib/i18n';
 
 const inter = Inter({

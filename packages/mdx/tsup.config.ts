@@ -1,10 +1,10 @@
 import { defineConfig } from 'tsup';
 
-const external = ['next', 'typescript', 'bun'];
+const external = ['next', 'typescript', 'bun', /^@hanzo\/docs\//];
 
 const noExternal = [
-  // TODO: remove this when the min `fumadocs-core` version is above 16.2.3
-  'fumadocs-core/source/schema',
+  // TODO: remove this when the min `@hanzo/docs-core` version is above 16.2.3
+  '@hanzo/docs-core/source/schema',
 ];
 
 export default defineConfig([

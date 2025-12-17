@@ -12,7 +12,7 @@ The layout of documentation pages, it includes a sidebar and mobile-only navbar.
 Pass your page tree to the component.
 
 ```tsx title="layout.tsx"
-import { DocsLayout } from 'fumadocs-ui/layouts/docs';
+import { DocsLayout } from '@hanzo/docs/ui/layouts/docs';
 import { baseOptions } from '@/lib/layout.shared';
 import type { ReactNode } from 'react';
 
@@ -33,7 +33,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 ## Sidebar
 
 ```tsx title="layout.tsx"
-import { DocsLayout } from 'fumadocs-ui/layouts/docs';
+import { DocsLayout } from '@hanzo/docs/ui/layouts/docs';
 
 <DocsLayout
   sidebar={{
@@ -59,7 +59,7 @@ A mobile-only navbar, the `nav` prop is also reusable on other Fumadocs layouts.
 </div>
 
 ```tsx
-import { DocsLayout } from 'fumadocs-ui/layouts/docs';
+import { DocsLayout } from '@hanzo/docs/ui/layouts/docs';
 import { baseOptions } from '@/lib/layout.shared';
 import type { ReactNode } from 'react';
 
@@ -90,7 +90,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 To make the navbar background transparent, you can configure transparent mode.
 
 ```tsx
-import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
+import type { BaseLayoutProps } from '@hanzo/docs/ui/layouts/shared';
 
 export const baseOptions: BaseLayoutProps = {
   nav: {
@@ -111,7 +111,7 @@ To replace the navbar in Docs Layout, set `nav.component` to your own component.
 
 ```tsx title="layout.tsx"
 import { baseOptions } from '@/lib/layout.shared';
-import { DocsLayout } from 'fumadocs-ui/layouts/notebook';
+import { DocsLayout } from '@hanzo/docs/ui/layouts/notebook';
 import type { ReactNode } from 'react';
 
 export default function Layout({ children }: { children: ReactNode }) {
@@ -150,7 +150,7 @@ It can also hit the limits of some other hosting platforms.
 You can disable prefetching to reduce the amount of prefetch requests.
 
 ```tsx
-import { DocsLayout } from 'fumadocs-ui/layouts/docs';
+import { DocsLayout } from '@hanzo/docs/ui/layouts/docs';
 
 <DocsLayout sidebar={{ prefetch: false }} />;
 ```

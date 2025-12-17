@@ -21,8 +21,8 @@ Add `@import` to the presets exported by Fumadocs UI, and include the `fumadocs-
 
 ```css title="Tailwind CSS"
 @import 'tailwindcss';
-@import 'fumadocs-ui/css/neutral.css';
-@import 'fumadocs-ui/css/preset.css';
+@import '@hanzo/docs/ui/css/neutral.css';
+@import '@hanzo/docs/ui/css/preset.css';
 
 /* relative to the CSS file, make sure it's correct for your app */
 @source '../node_modules/fumadocs-ui/dist/**/*.js';
@@ -114,8 +114,8 @@ v15 improves the playground UI (inspired by the minimalism of Scalar), and broug
 You can enable the Scalar API Client using `useScalar` option in `createOpenAPI()`:
 
 ```ts
-import { createOpenAPI } from 'fumadocs-openapi/server';
-import { APIPlayground } from 'fumadocs-openapi/scalar';
+import { createOpenAPI } from '@hanzo/docs/openapi/server';
+import { APIPlayground } from '@hanzo/docs/openapi/scalar';
 
 export const openapi = createOpenAPI({
   renderer: {

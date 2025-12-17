@@ -15,22 +15,22 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from 'fumadocs-ui/components/tabs';
+} from '@hanzo/docs-ui/components/tabs';
 import type { SchemaData, SchemaUIGeneratedData } from '@/ui/schema';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from 'fumadocs-ui/components/ui/collapsible';
-import { buttonVariants } from 'fumadocs-ui/components/ui/button';
+} from '@hanzo/docs-ui/components/ui/collapsible';
+import { buttonVariants } from '@hanzo/docs-ui/components/ui/button';
 import { ChevronDown } from 'lucide-react';
 import { Badge } from '@/ui/components/method-label';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from 'fumadocs-ui/components/ui/popover';
-import { cn } from 'fumadocs-ui/utils/cn';
+} from '@hanzo/docs-ui/components/ui/popover';
+import { cn } from '@hanzo/docs-ui/utils/cn';
 import { cva } from 'class-variance-authority';
 
 type DataContextType = SchemaUIGeneratedData;

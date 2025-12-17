@@ -161,7 +161,7 @@ async function initPackageJson(
     name: projectName,
     scripts: {
       ...packageJson.scripts,
-      postinstall: 'fumadocs-mdx',
+      postinstall: '@hanzo/docs/mdx',
     },
     dependencies: replaceWorkspaceDeps(packageJson.dependencies),
     devDependencies: replaceWorkspaceDeps(packageJson.devDependencies),
