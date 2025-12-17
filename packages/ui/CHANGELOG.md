@@ -1,5 +1,13 @@
 # next-docs-ui
 
+## 16.2.6
+
+### Patch Changes
+
+- a8456cc: Initial npm publish of @hanzo/docs packages
+- Updated dependencies [a8456cc]
+  - @hanzo/docs-core@16.2.6
+
 ## 16.2.5
 
 ### Patch Changes
