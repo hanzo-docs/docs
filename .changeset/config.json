@@ -2,12 +2,8 @@
   "$schema": "https://unpkg.com/@changesets/config@3.1.1/schema.json",
   "changelog": "@changesets/cli/changelog",
   "commit": false,
-  "fixed": [
-    ["@hanzo/docs-core", "@hanzo/docs-ui"],
-    ["create-hanzo-docs", "create-hanzo-docs-versions"]
-  ],
   "access": "public",
-  "baseBranch": "main",
+  "baseBranch": "dev",
   "updateInternalDependencies": "patch",
   "bumpVersionsWithWorkspaceProtocolOnly": true,
   "privatePackages": {
