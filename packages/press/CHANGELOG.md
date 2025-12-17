@@ -1,5 +1,14 @@
 # fumapress
 
+## 0.0.9
+
+### Patch Changes
+
+- Updated dependencies [a8456cc]
+  - @hanzo/docs-core@16.2.6
+  - @hanzo/docs-ui@16.2.6
+  - @hanzo/docs-mdx@14.1.1
+
 ## 0.0.8
 
 ### Patch Changes
