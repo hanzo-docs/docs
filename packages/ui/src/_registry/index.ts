@@ -1,12 +1,12 @@
 import { fileURLToPath } from 'node:url';
-import type { Registry } from '@fumadocs/cli/build';
+import type { Registry } from '@hanzo/docs-cli/build';
 import * as path from 'node:path';
 
 const srcDir = path.join(path.dirname(fileURLToPath(import.meta.url)), '../');
 
 // in shadcn cli, the order of files matters when writing import paths on consumer's codebase
 export const registry: Registry = {
-  name: 'fumadocs-ui',
+  name: '@hanzo/docs-ui',
   dir: srcDir,
   tsconfigPath: '../tsconfig.json',
   packageJson: '../package.json',
@@ -27,8 +27,8 @@ export const registry: Registry = {
     ) {
       return {
         type: 'dependency',
-        dep: 'fumadocs-ui',
-        specifier: `fumadocs-ui/${filePath.slice(0, -path.extname(filePath).length)}`,
+        dep: '@hanzo/docs-ui',
+        specifier: `@hanzo/docs/ui/${filePath.slice(0, -path.extname(filePath).length)}`,
       };
     }
 
@@ -418,8 +418,8 @@ export const registry: Registry = {
     },
   ],
   dependencies: {
-    'fumadocs-core': null,
-    'fumadocs-ui': null,
+    '@hanzo/docs-core': null,
+    '@hanzo/docs-ui': null,
     '@icons': null,
     react: null,
   },

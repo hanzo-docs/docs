@@ -7,10 +7,10 @@ import {
   ScrollRestoration,
   useParams,
 } from 'react-router';
-import { RootProvider } from 'fumadocs-ui/provider/react-router';
+import { RootProvider } from '@hanzo/docs/ui/provider/react-router';
 import type { Route } from './+types/root';
 import './app.css';
-import type { Translations } from 'fumadocs-ui/i18n';
+import type { Translations } from '@hanzo/docs/ui/i18n';
 import { i18n } from '@/lib/i18n';
 
 export const links: Route.LinksFunction = () => [

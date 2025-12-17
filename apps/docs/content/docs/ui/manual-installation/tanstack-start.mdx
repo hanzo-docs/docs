@@ -13,7 +13,7 @@ Before continuing, make sure to configure:
 ### Installation
 
 ```npm
-npm i fumadocs-core fumadocs-ui
+npm i @hanzo/docs
 ```
 
 ### Styles
@@ -23,8 +23,8 @@ Add the following to your Tailwind CSS file:
 ```css title="styles/app.css"
 @import 'tailwindcss';
 /* [!code ++:2] */
-@import 'fumadocs-ui/css/neutral.css';
-@import 'fumadocs-ui/css/preset.css';
+@import '@hanzo/docs/ui/css/neutral.css';
+@import '@hanzo/docs/ui/css/preset.css';
 ```
 
 ### Create Pages
@@ -51,7 +51,7 @@ import {
   Scripts,
 } from '@tanstack/react-router';
 import * as React from 'react';
-import { RootProvider } from 'fumadocs-ui/provider/tanstack';
+import { RootProvider } from '@hanzo/docs/ui/provider/tanstack';
 
 export const Route = createRootRoute({
   component: RootComponent,

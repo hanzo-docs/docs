@@ -4,8 +4,8 @@ import type {
   HighlightOptions,
   HighlightOptionsCommon,
   HighlightOptionsThemes,
-} from 'fumadocs-core/highlight';
-import { useShiki } from 'fumadocs-core/highlight/client';
+} from '@hanzo/docs-core/highlight';
+import { useShiki } from '@hanzo/docs-core/highlight/client';
 import { cn } from '@/utils/cn';
 import {
   type ComponentProps,

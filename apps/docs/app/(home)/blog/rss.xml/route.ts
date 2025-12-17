@@ -4,33 +4,44 @@ import { NextResponse } from 'next/server';
 
 export const revalidate = false;
 
-const baseUrl = 'https://fumadocs.dev';
+// Blog frontmatter type (matches source.config.ts schema)
+interface BlogData {
+  title: string;
+  description?: string;
+  author: string;
+  date: string | Date;
+}
+
+const baseUrl = 'https://docs.hanzo.ai';
 
 export function GET() {
   const feed = new Feed({
-    title: 'Fumadocs Blog',
+    title: 'Hanzo Docs Blog',
     id: `${baseUrl}/blog`,
     link: `${baseUrl}/blog`,
     language: 'en',
 
     image: `${baseUrl}/banner.png`,
     favicon: `${baseUrl}/icon.png`,
-    copyright: 'All rights reserved 2025, Fuma Nama',
+    copyright: 'All rights reserved 2025, Hanzo AI',
   });
 
   for (const page of blog.getPages().sort((a, b) => {
-    return new Date(b.data.date).getTime() - new Date(a.data.date).getTime();
+    const aData = a.data as unknown as BlogData;
+    const bData = b.data as unknown as BlogData;
+    return new Date(bData.date).getTime() - new Date(aData.date).getTime();
   })) {
+    const data = page.data as unknown as BlogData;
     feed.addItem({
       id: page.url,
-      title: page.data.title,
-      description: page.data.description,
+      title: data.title,
+      description: data.description,
       link: `${baseUrl}${page.url}`,
-      date: new Date(page.data.date),
+      date: new Date(data.date),
 
       author: [
         {
-          name: page.data.author,
+          name: data.author,
         },
       ],
     });

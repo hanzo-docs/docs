@@ -3,8 +3,8 @@
 import * as React from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
-import { cn } from 'fumadocs-ui/utils/cn';
-import { buttonVariants } from 'fumadocs-ui/components/ui/button';
+import { cn } from '@hanzo/docs-ui/utils/cn';
+import { buttonVariants } from '@hanzo/docs-ui/components/ui/button';
 
 const Dialog = DialogPrimitive.Root;
 

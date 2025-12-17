@@ -8,7 +8,7 @@ description: Collection of content data for your app
 Define a collection to parse a certain set of files.
 
 ```ts
-import { defineCollections } from 'fumadocs-mdx/config';
+import { defineCollections } from '@hanzo/docs/mdx/config';
 import { z } from 'zod';
 
 export const blog = defineCollections({
@@ -26,7 +26,7 @@ export const blog = defineCollections({
 The accepted type of collection.
 
 ```ts
-import { defineCollections } from 'fumadocs-mdx/config';
+import { defineCollections } from '@hanzo/docs/mdx/config';
 
 // only scan for json/yaml files
 export const metaFiles = defineCollections({
@@ -52,7 +52,7 @@ export const metaFiles = defineCollections({
 The schema to validate file data (frontmatter on `doc` type, content on `meta` type).
 
 ```ts
-import { defineCollections } from 'fumadocs-mdx/config';
+import { defineCollections } from '@hanzo/docs/mdx/config';
 import { z } from 'zod';
 
 export const blog = defineCollections({
@@ -70,7 +70,7 @@ Note that the validation is done at build time, hence the output must be seriali
 You can also pass a function that receives the transform context.
 
 ```ts
-import { defineCollections } from 'fumadocs-mdx/config';
+import { defineCollections } from '@hanzo/docs/mdx/config';
 import { z } from 'zod';
 
 export const blog = defineCollections({
@@ -95,7 +95,7 @@ Customise MDX options at the collection level.
 > This API is only available on `doc` type.
 
 ```ts title="source.config.ts"
-import { defineCollections } from 'fumadocs-mdx/config';
+import { defineCollections } from '@hanzo/docs/mdx/config';
 
 export const blog = defineCollections({
   type: 'doc',
@@ -111,7 +111,7 @@ You have full control over MDX options.
 You can use [`applyMdxPreset`](/docs/mdx/mdx) to apply the default MDX preset.
 
 ```ts title="source.config.ts"
-import { defineCollections } from 'fumadocs-mdx/config';
+import { defineCollections } from '@hanzo/docs/mdx/config';
 
 export const blog = defineCollections({
   type: 'doc',
@@ -132,7 +132,7 @@ You can pass build-time information to runtime using the `postprocess` API.
   Include the processed Markdown content (before being converted into HTML).
 
   ```ts tab="docs"
-  import { defineDocs } from 'fumadocs-mdx/config';
+  import { defineDocs } from '@hanzo/docs/mdx/config';
 
   export default defineDocs({
     docs: {
@@ -145,7 +145,7 @@ You can pass build-time information to runtime using the `postprocess` API.
   ```
 
   ```ts tab="doc"
-  import { defineCollections } from 'fumadocs-mdx/config';
+  import { defineCollections } from '@hanzo/docs/mdx/config';
 
   export const blog = defineCollections({
     type: 'doc',
@@ -172,7 +172,7 @@ You can pass build-time information to runtime using the `postprocess` API.
   You can specify the name of properties to include, they will get converted into ESM exports that you can access when importing the MDX file.
 
   ```ts tab="docs"
-  import { defineDocs } from 'fumadocs-mdx/config';
+  import { defineDocs } from '@hanzo/docs/mdx/config';
 
   export default defineDocs({
     docs: {
@@ -185,7 +185,7 @@ You can pass build-time information to runtime using the `postprocess` API.
   ```
 
   ```ts tab="doc"
-  import { defineCollections } from 'fumadocs-mdx/config';
+  import { defineCollections } from '@hanzo/docs/mdx/config';
 
   export const blog = defineCollections({
     type: 'doc',
@@ -201,7 +201,7 @@ You can pass build-time information to runtime using the `postprocess` API.
 Define a collection for Fumadocs.
 
 ```ts
-import { defineDocs } from 'fumadocs-mdx/config';
+import { defineDocs } from '@hanzo/docs/mdx/config';
 
 export const docs = defineDocs({
   dir: '/my/content/dir',
@@ -219,7 +219,7 @@ export const docs = defineDocs({
 Instead of per collection, you should customise content directory from `defineDocs`:
 
 ```ts
-import { defineDocs } from 'fumadocs-mdx/config';
+import { defineDocs } from '@hanzo/docs/mdx/config';
 
 export const docs = defineDocs({
   dir: 'content/guides',
@@ -231,7 +231,7 @@ export const docs = defineDocs({
 You can extend the default Zod 4 schema of `docs` and `meta`.
 
 ```ts
-import { frontmatterSchema, metaSchema, defineDocs } from 'fumadocs-mdx/config';
+import { frontmatterSchema, metaSchema, defineDocs } from '@hanzo/docs/mdx/config';
 import { z } from 'zod';
 
 export const docs = defineDocs({

@@ -1,4 +1,4 @@
-import { type Registry } from '@fumadocs/cli/build';
+import { type Registry } from '@hanzo/docs/cli/build';
 import * as ui from '../../../packages/ui/src/_registry';
 import { fileURLToPath } from 'node:url';
 import * as path from 'node:path';
@@ -16,7 +16,7 @@ function selectFrom(r: Registry, component: string, filename: string) {
 
 export const registry: Registry = {
   dir: baseDir,
-  name: 'fumadocs',
+  name: 'hanzo-docs',
   packageJson: './package.json',
   tsconfigPath: './tsconfig.json',
   onUnknownFile(absolutePath) {
@@ -43,7 +43,7 @@ export const registry: Registry = {
 
     if (
       ref.type === 'dependency' &&
-      ref.specifier === 'fumadocs-ui/components/ui/button'
+      ref.specifier === '@hanzo/docs/ui/components/ui/button'
     ) {
       return {
         type: 'sub-component',
@@ -140,8 +140,7 @@ export const registry: Registry = {
     },
   ],
   dependencies: {
-    'fumadocs-core': null,
-    'fumadocs-ui': null,
+    '@hanzo/docs': null,
     next: null,
     react: null,
   },

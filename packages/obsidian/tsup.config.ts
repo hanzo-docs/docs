@@ -1,7 +1,7 @@
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
-  external: ['react'],
+  external: ['react', /^@hanzo\/docs\//],
   dts: true,
   target: 'es6',
   format: 'esm',

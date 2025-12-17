@@ -1,7 +1,7 @@
 'use client';
 import type { ReactNode } from 'react';
-import { RootProvider } from 'fumadocs-ui/provider/waku';
-import { defineI18nUI } from 'fumadocs-ui/i18n';
+import { RootProvider } from '@hanzo/docs/ui/provider/waku';
+import { defineI18nUI } from '@hanzo/docs/ui/i18n';
 import { i18n } from '@/lib/i18n';
 import { useRouter } from 'waku/router/client';
 

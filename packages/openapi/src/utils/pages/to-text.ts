@@ -1,8 +1,8 @@
 import { idToTitle } from '@/utils/id-to-title';
 import type { ApiPageProps, OperationItem, WebhookItem } from '@/ui/api-page';
 import type { ProcessedDocument } from '@/utils/process-document';
-import type { TableOfContents } from 'fumadocs-core/toc';
-import type { StructuredData } from 'fumadocs-core/mdx-plugins';
+import type { TableOfContents } from '@hanzo/docs-core/toc';
+import type { StructuredData } from '@hanzo/docs-core/mdx-plugins';
 import type { Document, TagObject } from '@/types';
 import { dump } from 'js-yaml';
 import type { NoReference } from '@/utils/schema';

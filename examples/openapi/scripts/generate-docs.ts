@@ -1,4 +1,4 @@
-import * as OpenAPI from 'fumadocs-openapi';
+import * as OpenAPI from '@hanzo/docs/openapi';
 import { rimraf } from 'rimraf';
 import { openapi } from '@/lib/openapi';
 

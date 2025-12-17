@@ -117,7 +117,7 @@ import { HomeIcon } from 'lucide-react';
 You can do something like:
 
 ```tsx title="page.tsx"
-import { getPageTreePeers } from 'fumadocs-core/page-tree';
+import { getPageTreePeers } from '@hanzo/docs/core/page-tree';
 import { source } from '@/lib/source';
 
 <Cards>
@@ -325,7 +325,7 @@ console.log('B');
 While disabled by default, you use MDX in tab values by configuring the remark plugin:
 
 ```ts tab="Fumadocs MDX" title="source.config.ts"
-import { defineConfig } from 'fumadocs-mdx/config';
+import { defineConfig } from '@hanzo/docs/mdx/config';
 
 export default defineConfig({
   mdxOptions: {
@@ -338,7 +338,7 @@ export default defineConfig({
 
 ```ts tab="MDX Compiler"
 import { compile } from '@mdx-js/mdx';
-import { remarkCodeTab } from 'fumadocs-core/mdx-plugins';
+import { remarkCodeTab } from '@hanzo/docs/core/mdx-plugins';
 
 await compile('...', {
   remarkPlugins: [

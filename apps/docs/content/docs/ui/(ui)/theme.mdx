@@ -15,16 +15,16 @@ Only Tailwind CSS v4 is supported, the preset will also include source to Fumado
 
 ```css title="Tailwind CSS"
 @import 'tailwindcss';
-@import 'fumadocs-ui/css/neutral.css';
-@import 'fumadocs-ui/css/preset.css';
+@import '@hanzo/docs/ui/css/neutral.css';
+@import '@hanzo/docs/ui/css/preset.css';
 ```
 
 For **Shadcn UI**, you can use the `shadcn` preset instead. Fumadocs UI will adopt colors from your Shadcn UI theme.
 
 ```css
 @import 'tailwindcss';
-@import 'fumadocs-ui/css/shadcn.css';
-@import 'fumadocs-ui/css/preset.css';
+@import '@hanzo/docs/ui/css/shadcn.css';
+@import '@hanzo/docs/ui/css/preset.css';
 ```
 
 See [Colors](#colors) for details.
@@ -47,7 +47,7 @@ RTL (Right-to-left) layout is supported.
 To enable RTL, set the `dir` prop to `rtl` in body and root provider (required for Radix UI).
 
 ```tsx
-import { RootProvider } from 'fumadocs-ui/provider/<framework>';
+import { RootProvider } from '@hanzo/docs/ui/provider/<framework>';
 import type { ReactNode } from 'react';
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -78,8 +78,8 @@ Customise the max width of docs layout with CSS Variables.
 It comes with many presets out-of-the-box, you can pick one you prefer.
 
 ```css
-@import 'fumadocs-ui/css/<theme>.css';
-@import 'fumadocs-ui/css/preset.css';
+@import '@hanzo/docs/ui/css/<theme>.css';
+@import '@hanzo/docs/ui/css/preset.css';
 ```
 
 <Tabs items={['neutral', 'black', 'vitepress', 'dusk', 'catppuccin', 'ocean', 'purple', 'solar']}>

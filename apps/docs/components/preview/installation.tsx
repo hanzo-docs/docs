@@ -3,7 +3,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from 'fumadocs-ui/components/tabs.unstyled';
+} from '@hanzo/docs/ui/components/tabs.unstyled';
 import { CodeBlock } from '@/components/code-block';
 
 export function Installation({ name }: { name: string }) {

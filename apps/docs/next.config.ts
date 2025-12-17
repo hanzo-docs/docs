@@ -1,5 +1,5 @@
 import createBundleAnalyzer from '@next/bundle-analyzer';
-import { createMDX } from 'fumadocs-mdx/next';
+import { createMDX } from '@hanzo/docs/mdx/next';
 import type { NextConfig } from 'next';
 
 const withAnalyzer = createBundleAnalyzer({
@@ -8,6 +8,13 @@ const withAnalyzer = createBundleAnalyzer({
 
 const config: NextConfig = {
   reactStrictMode: true,
+  turbopack: {
+    resolveAlias: {
+      '@hanzo/docs-mdx:collections/server': './.source/server.ts',
+      '@hanzo/docs-mdx:collections/browser': './.source/browser.ts',
+      '@hanzo/docs-mdx:collections/dynamic': './.source/dynamic.ts',
+    },
+  },
   logging: {
     fetches: {
       fullUrl: true,
