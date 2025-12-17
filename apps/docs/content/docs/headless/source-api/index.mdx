@@ -18,8 +18,8 @@ It is a server-side API, but doesn't rely on the real file system (zero `node:fs
 You can use it with built-in content sources like Fumadocs MDX.
 
 ```ts
-import { loader } from 'fumadocs-core/source';
-import { docs } from 'fumadocs-mdx:collections/server';
+import { loader } from '@hanzo/docs/core/source';
+import { docs } from '@hanzo/docs-mdx:collections/server';
 
 export const source = loader({
   source: docs.toFumadocsSource(),
@@ -32,7 +32,7 @@ export const source = loader({
 You can override the base URL, or specify a function to generate URL for each page.
 
 ```ts
-import { loader } from 'fumadocs-core/source';
+import { loader } from '@hanzo/docs/core/source';
 
 loader({
   baseUrl: '/docs',
@@ -49,7 +49,7 @@ loader({
 Load the [icon](/docs/headless/page-conventions#icons) property specified by pages and meta files.
 
 ```ts
-import { loader } from 'fumadocs-core/source';
+import { loader } from '@hanzo/docs/core/source';
 import { icons } from 'lucide-react';
 import { createElement } from 'react';
 
@@ -71,7 +71,7 @@ Pass the `i18n` config to loader.
 
 ```ts title="lib/source.ts"
 import { i18n } from '@/lib/i18n';
-import { loader } from 'fumadocs-core/source';
+import { loader } from '@hanzo/docs/core/source';
 
 export const source = loader({
   i18n, // [!code highlight]
@@ -181,7 +181,7 @@ async function loader() {
 ```
 
 ```tsx tab="Client"
-import { useFumadocsLoader } from 'fumadocs-core/source/client';
+import { useFumadocsLoader } from '@hanzo/docs/core/source/client';
 
 function MyComponent() {
   // receives loader data

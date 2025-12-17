@@ -1,13 +1,13 @@
-import type { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
-import type { Callout } from 'fumadocs-ui/components/callout';
-import type { File, Folder } from 'fumadocs-ui/components/files';
-import type { InlineTOC } from 'fumadocs-ui/components/inline-toc';
-import type { TypeTable } from 'fumadocs-ui/components/type-table';
-import type { Card } from 'fumadocs-ui/components/card';
-import type { DocsLayoutProps } from 'fumadocs-ui/layouts/docs';
+import type { Accordion, Accordions } from '@hanzo/docs/ui/components/accordion';
+import type { Callout } from '@hanzo/docs/ui/components/callout';
+import type { File, Folder } from '@hanzo/docs/ui/components/files';
+import type { InlineTOC } from '@hanzo/docs/ui/components/inline-toc';
+import type { TypeTable } from '@hanzo/docs/ui/components/type-table';
+import type { Card } from '@hanzo/docs/ui/components/card';
+import type { DocsLayoutProps } from '@hanzo/docs/ui/layouts/docs';
 import type { ComponentProps, ComponentPropsWithoutRef } from 'react';
-import type { DocsPageProps } from 'fumadocs-ui/layouts/docs/page';
-import type { AutoTypeTable } from 'fumadocs-typescript/ui';
+import type { DocsPageProps } from '@hanzo/docs/ui/layouts/docs/page';
+import type { AutoTypeTable } from '@hanzo/docs/typescript/ui';
 
 export type AccordionsProps = Omit<
   ComponentPropsWithoutRef<typeof Accordions>,

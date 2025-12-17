@@ -2,4 +2,4 @@ export type {
   GlobalConfig,
   DocCollection,
   MetaCollection,
-} from 'fumadocs-mdx/config';
+} from '@hanzo/docs/mdx/config';

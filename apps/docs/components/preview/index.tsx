@@ -1,14 +1,14 @@
 import { Home } from 'lucide-react';
-import { Heading } from 'fumadocs-ui/components/heading';
-import { Card } from 'fumadocs-ui/components/card';
-import { Callout } from 'fumadocs-ui/components/callout';
-import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
-import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
-import { Step, Steps } from 'fumadocs-ui/components/steps';
-import { TypeTable } from 'fumadocs-ui/components/type-table';
+import { Heading } from '@hanzo/docs/ui/components/heading';
+import { Card } from '@hanzo/docs/ui/components/card';
+import { Callout } from '@hanzo/docs/ui/components/callout';
+import { Accordion, Accordions } from '@hanzo/docs/ui/components/accordion';
+import { Tab, Tabs } from '@hanzo/docs/ui/components/tabs';
+import { Step, Steps } from '@hanzo/docs/ui/components/steps';
+import { TypeTable } from '@hanzo/docs/ui/components/type-table';
 import { type ReactNode } from 'react';
 import { Wrapper } from './wrapper';
-import { GithubInfo } from 'fumadocs-ui/components/github-info';
+import { GithubInfo } from '@hanzo/docs/ui/components/github-info';
 import { owner, repo } from '@/lib/github';
 import {
   Banner,

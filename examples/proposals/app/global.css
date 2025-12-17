@@ -1,0 +1,134 @@
+/**
+ * Proposals Documentation Theme
+ * Base styles for improvement proposals sites (LPs, HIPs, ZIPs)
+ */
+
+@import "tailwindcss";
+
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-mono: ui-monospace, monospace;
+  --radius: 0.5rem;
+}
+
+/* Search dialog animations */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes zoom-in-95 {
+  from { transform: translate(-50%, 0) scale(0.95); }
+  to { transform: translate(-50%, 0) scale(1); }
+}
+
+.animate-in {
+  animation: fade-in 0.15s ease-out, zoom-in-95 0.15s ease-out;
+}
+
+.fade-in-0 {
+  animation: fade-in 0.15s ease-out;
+}
+
+.zoom-in-95 {
+  animation: zoom-in-95 0.15s ease-out;
+}
+
+/* Typography improvements */
+main article h1 {
+  font-size: 2.25rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.03em !important;
+  line-height: 1.15 !important;
+  margin-bottom: 1.25rem !important;
+}
+
+main article h2 {
+  font-size: 1.625rem !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.025em !important;
+  line-height: 1.25 !important;
+  margin-top: 3rem !important;
+  margin-bottom: 1rem !important;
+  padding-bottom: 0.75rem !important;
+  border-bottom: 1px solid hsl(var(--fd-border) / 0.4) !important;
+}
+
+main article h3 {
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.02em !important;
+  margin-top: 2.25rem !important;
+  margin-bottom: 0.75rem !important;
+}
+
+main article p {
+  line-height: 1.8 !important;
+  margin-bottom: 1.5rem !important;
+}
+
+main article ul,
+main article ol {
+  margin-bottom: 1.5rem !important;
+  padding-left: 1.75rem !important;
+}
+
+main article li {
+  line-height: 1.75 !important;
+  margin-bottom: 0.625rem !important;
+}
+
+/* Code blocks */
+main article pre {
+  border-radius: 0.75rem !important;
+  padding: 1.25rem 1.5rem !important;
+  margin: 1.75rem 0 !important;
+  font-size: 0.875rem !important;
+  line-height: 1.65 !important;
+  overflow-x: auto !important;
+}
+
+main article :not(pre) > code {
+  font-size: 0.875em !important;
+  padding: 0.2em 0.45em !important;
+  border-radius: 0.375rem !important;
+  background: hsl(var(--fd-muted)) !important;
+  font-weight: 500 !important;
+}
+
+/* Tables */
+main article table {
+  width: 100% !important;
+  margin: 2rem 0 !important;
+  border-collapse: collapse !important;
+  font-size: 0.9rem !important;
+}
+
+main article th,
+main article td {
+  padding: 0.875rem 1.125rem !important;
+  border: 1px solid hsl(var(--fd-border) / 0.6) !important;
+  text-align: left !important;
+}
+
+main article th {
+  background: hsl(var(--fd-muted) / 0.4) !important;
+  font-weight: 600 !important;
+}
+
+/* Blockquotes */
+main article blockquote {
+  border-left: 3px solid hsl(var(--fd-primary) / 0.3) !important;
+  padding: 0.75rem 1.5rem !important;
+  margin: 1.75rem 0 !important;
+  background: hsl(var(--fd-muted) / 0.3) !important;
+  border-radius: 0 0.5rem 0.5rem 0 !important;
+}
+
+main article blockquote p {
+  margin-bottom: 0 !important;
+}

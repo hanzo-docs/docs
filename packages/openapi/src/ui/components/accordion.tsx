@@ -3,7 +3,7 @@
 import * as Primitive from '@radix-ui/react-accordion';
 import { ChevronRight } from 'lucide-react';
 import type { ComponentProps } from 'react';
-import { cn } from 'fumadocs-ui/utils/cn';
+import { cn } from '@hanzo/docs-ui/utils/cn';
 
 export function Accordions(props: ComponentProps<typeof Primitive.Root>) {
   return (

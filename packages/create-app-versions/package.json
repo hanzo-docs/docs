@@ -1,14 +1,14 @@
 {
-  "name": "create-fumadocs-versions",
+  "name": "create-hanzo-docs-versions",
   "version": "16.0.25",
   "private": true,
-  "description": "Used to track dependency versions in create-fumadocs-app",
+  "description": "Used to track dependency versions in create-hanzo-docs",
   "dependencies": {
     "@biomejs/biome": "^2.3.8",
     "@orama/core": "^1.2.14",
     "eslint": "^9.39.2",
-    "fumadocs-core": "workspace:*",
-    "fumadocs-mdx": "workspace:*",
-    "fumadocs-ui": "workspace:*"
+    "@hanzo/docs-core": "workspace:*",
+    "@hanzo/docs-mdx": "workspace:*",
+    "@hanzo/docs-ui": "workspace:*"
   }
 }
