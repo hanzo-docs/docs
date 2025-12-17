@@ -30,7 +30,7 @@ import {
   AccordionTrigger,
 } from '@/ui/components/accordion';
 import { isMediaTypeSupported } from '@/requests/media/adapter';
-import { cn } from 'fumadocs-ui/utils/cn';
+import { cn } from '@hanzo/docs-ui/utils/cn';
 import { APIPlayground } from '@/playground';
 import { getExampleRequests, RequestTabs } from './request-tabs';
 import { UsageTabsProviderLazy } from './usage-tabs/lazy';

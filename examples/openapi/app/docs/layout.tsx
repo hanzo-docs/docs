@@ -1,5 +1,5 @@
 import { source } from '@/lib/source';
-import { DocsLayout } from 'fumadocs-ui/layouts/notebook';
+import { DocsLayout } from '@hanzo/docs/ui/layouts/notebook';
 import type { ReactNode } from 'react';
 import { baseOptions } from '@/lib/layout.shared';
 

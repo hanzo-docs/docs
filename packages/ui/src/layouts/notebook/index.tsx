@@ -22,7 +22,7 @@ import { buttonVariants } from '@/components/ui/button';
 import { Languages, Sidebar as SidebarIcon, X } from '@icons';
 import { LanguageToggle } from '@/layouts/shared/language-toggle';
 import { ThemeToggle } from '@/layouts/shared/theme-toggle';
-import type * as PageTree from 'fumadocs-core/page-tree';
+import type * as PageTree from '@hanzo/docs-core/page-tree';
 import {
   LayoutBody,
   LayoutContextProvider,
@@ -30,7 +30,7 @@ import {
   LayoutHeaderTabs,
   NavbarLinkItem,
 } from '@/layouts/notebook/client';
-import Link from 'fumadocs-core/link';
+import Link from '@hanzo/docs-core/link';
 import {
   LargeSearchToggle,
   SearchToggle,

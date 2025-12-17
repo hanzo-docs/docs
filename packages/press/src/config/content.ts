@@ -1,10 +1,10 @@
-import type { DefaultMDXOptions } from 'fumadocs-mdx/config';
+import type { DefaultMDXOptions } from '@hanzo/docs-mdx/config';
 import {
   defineConfig,
   defineDocs,
   frontmatterSchema,
   metaSchema,
-} from 'fumadocs-mdx/config';
+} from '@hanzo/docs-mdx/config';
 import { z } from 'zod';
 import type { FumapressConfig } from './global';
 import type { ProcessorOptions } from '@mdx-js/mdx';

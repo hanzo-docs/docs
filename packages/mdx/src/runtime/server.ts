@@ -3,7 +3,7 @@ import type {
   PageData,
   Source,
   VirtualFile,
-} from 'fumadocs-core/source';
+} from '@hanzo/docs-core/source';
 import * as path from 'node:path';
 import type { DocCollection, DocsCollection, MetaCollection } from '@/config';
 import type { StandardSchemaV1 } from '@standard-schema/spec';
@@ -41,7 +41,7 @@ export interface DocsCollectionEntry<
 > {
   docs: DocCollectionEntry<Name, Frontmatter, TC>[];
   meta: MetaCollectionEntry<Meta>[];
-  toFumadocsSource: () => Source<{
+  toDocsSource: () => Source<{
     pageData: DocCollectionEntry<Name, Frontmatter, TC>;
     metaData: MetaCollectionEntry<Meta>;
   }>;
@@ -55,7 +55,7 @@ export interface AsyncDocsCollectionEntry<
 > {
   docs: AsyncDocCollectionEntry<Name, Frontmatter, TC>[];
   meta: MetaCollectionEntry<Meta>[];
-  toFumadocsSource: () => Source<{
+  toDocsSource: () => Source<{
     pageData: AsyncDocCollectionEntry<Name, Frontmatter, TC>;
     metaData: MetaCollectionEntry<Meta>;
   }>;
@@ -194,8 +194,8 @@ export function server<Config, TC extends InternalTypeConfig>(
       const entry = {
         docs: await this.doc(name, base, docGlob),
         meta: await this.meta(name, base, metaGlob),
-        toFumadocsSource() {
-          return toFumadocsSource(this.docs, this.meta);
+        toDocsSource() {
+          return toDocsSource(this.docs, this.meta);
         },
       } satisfies DocsCollectionEntry;
 
@@ -225,8 +225,8 @@ export function server<Config, TC extends InternalTypeConfig>(
       const entry = {
         docs: await this.docLazy(name, base, docHeadGlob, docBodyGlob),
         meta: await this.meta(name, base, metaGlob),
-        toFumadocsSource() {
-          return toFumadocsSource(this.docs, this.meta);
+        toDocsSource() {
+          return toDocsSource(this.docs, this.meta);
         },
       } satisfies AsyncDocsCollectionEntry;
 
@@ -249,7 +249,7 @@ export function server<Config, TC extends InternalTypeConfig>(
   };
 }
 
-export function toFumadocsSource<
+export function toDocsSource<
   Page extends DocMethods & PageData,
   Meta extends MetaMethods & MetaData,
 >(

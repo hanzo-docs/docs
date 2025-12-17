@@ -6,4 +6,4 @@ export type { PostprocessOptions } from '@/loaders/mdx/remark-postprocess';
 export {
   metaSchema,
   pageSchema as frontmatterSchema,
-} from 'fumadocs-core/source/schema';
+} from '@hanzo/docs-core/source/schema';

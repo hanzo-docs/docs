@@ -1,13 +1,14 @@
 {
-  "name": "fumadocs-mdx",
+  "name": "@hanzo/docs-mdx",
   "version": "14.1.0",
-  "description": "The built-in source for Fumadocs",
+  "description": "The built-in MDX source for Hanzo Docs",
   "keywords": [
-    "NextJs",
-    "Docs"
+    "Hanzo",
+    "Docs",
+    "MDX"
   ],
-  "homepage": "https://fumadocs.dev",
-  "repository": "github:fuma-nama/fumadocs",
+  "homepage": "https://hanzo.ai/docs",
+  "repository": "github:hanzoai/docs",
   "license": "MIT",
   "author": "Fuma Nama",
   "type": "module",
@@ -50,7 +51,10 @@
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "bin": "./dist/bin.js",
+  "bin": {
+    "hanzo-docs": "./dist/bin.js",
+    "fumadocs-mdx": "./dist/bin.js"
+  },
   "files": [
     "dist/*",
     "loader-mdx.cjs",
@@ -83,7 +87,7 @@
     "zod": "^4.1.13"
   },
   "devDependencies": {
-    "@fumadocs/mdx-remote": "workspace:*",
+    "@hanzo/docs-mdx-remote": "workspace:*",
     "@types/bun": "^1.3.4",
     "@types/js-yaml": "^4.0.9",
     "@types/mdast": "^4.0.4",
@@ -93,7 +97,7 @@
     "@types/react": "^19.2.7",
     "astro": "^5.16.5",
     "eslint-config-custom": "workspace:*",
-    "fumadocs-core": "workspace:*",
+    "@hanzo/docs-core": "workspace:*",
     "mdast-util-directive": "^3.1.0",
     "mdast-util-mdx-jsx": "^3.2.0",
     "next": "16.0.10",
@@ -107,8 +111,8 @@
     "webpack": "^5.103.0"
   },
   "peerDependencies": {
-    "@fumadocs/mdx-remote": "^1.4.0",
-    "fumadocs-core": "^15.0.0 || ^16.0.0",
+    "@hanzo/docs-mdx-remote": "^1.4.0",
+    "@hanzo/docs-core": "^15.0.0 || ^16.0.0",
     "next": "^15.3.0 || ^16.0.0",
     "react": "*",
     "vite": "6.x.x || 7.x.x"
@@ -123,7 +127,7 @@
     "vite": {
       "optional": true
     },
-    "@fumadocs/mdx-remote": {
+    "@hanzo/docs-mdx-remote": {
       "optional": true
     }
   },

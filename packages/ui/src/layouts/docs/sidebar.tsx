@@ -30,13 +30,12 @@ function getItemOffset(depth: number) {
   return `calc(${2 + 3 * depth} * var(--spacing))`;
 }
 
-export const {
-  SidebarProvider: Sidebar,
-  SidebarFolder,
-  SidebarCollapseTrigger,
-  SidebarViewport,
-  SidebarTrigger,
-} = Base;
+// Explicit exports instead of destructured re-exports for webpack compatibility
+export const Sidebar = Base.SidebarProvider;
+export const SidebarFolder = Base.SidebarFolder;
+export const SidebarCollapseTrigger = Base.SidebarCollapseTrigger;
+export const SidebarViewport = Base.SidebarViewport;
+export const SidebarTrigger = Base.SidebarTrigger;
 
 export function SidebarContent({
   ref: refProp,

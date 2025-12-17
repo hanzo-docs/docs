@@ -1,6 +1,6 @@
-import { loader } from 'fumadocs-core/source';
+import { loader } from '@hanzo/docs/core/source';
 import { i18n } from '@/lib/i18n';
-import { docs } from 'fumadocs-mdx:collections/server';
+import { docs } from '@hanzo/docs/mdx:collections/server';
 
 export const source = loader({
   baseUrl: '/docs',

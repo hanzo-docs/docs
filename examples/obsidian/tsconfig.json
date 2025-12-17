@@ -17,7 +17,7 @@
     "incremental": true,
     "paths": {
       "@/*": ["./*"],
-      "fumadocs-mdx:collections/*": [".source/*"]
+      "@hanzo/docs/mdx:collections/*": [".source/*"]
     },
     "plugins": [
       {

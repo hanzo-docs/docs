@@ -4,16 +4,16 @@ import {
   type LoaderPlugin,
   loader,
   multiple,
-} from 'fumadocs-core/source';
-import { openapiPlugin, openapiSource } from 'fumadocs-openapi/server';
-import { blog as blogPosts, docs } from 'fumadocs-mdx:collections/server';
-import { toFumadocsSource } from 'fumadocs-mdx/runtime/server';
-import { lucideIconsPlugin } from 'fumadocs-core/source/lucide-icons';
+} from '@hanzo/docs/core/source';
+import { openapiPlugin, openapiSource } from '@hanzo/docs/openapi/server';
+import { blog as blogPosts, docs } from '@hanzo/docs-mdx:collections/server';
+import { toDocsSource } from '@hanzo/docs/mdx/runtime/server';
+import { lucideIconsPlugin } from '@hanzo/docs/core/source/lucide-icons';
 import { openapi } from '@/lib/openapi';
 
 export const source = loader(
   multiple({
-    docs: docs.toFumadocsSource(),
+    docs: docs.toDocsSource(),
     openapi: await openapiSource(openapi, {
       baseDir: 'openapi/(generated)',
     }),
@@ -43,7 +43,7 @@ function pageTreeCodeTitles(): LoaderPlugin {
   };
 }
 
-export const blog = loader(toFumadocsSource(blogPosts, []), {
+export const blog = loader(toDocsSource(blogPosts, []), {
   baseUrl: '/blog',
 });
 

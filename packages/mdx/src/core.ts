@@ -142,7 +142,7 @@ export interface EmitOutput {
 
 export const _Defaults = {
   configPath: 'source.config.ts',
-  outDir: '.source',
+  outDir: '.docs',
 };
 
 async function getPlugins(pluginOptions: PluginOption[]): Promise<Plugin[]> {
@@ -367,7 +367,7 @@ function postprocessPlugin(): Plugin {
   /**
    * extracted references (e.g. hrefs, paths), useful for analyzing relationships between pages.
    */
-  extractedReferences: import("fumadocs-mdx").ExtractedReference[];
+  extractedReferences: import("@hanzo/docs-mdx").ExtractedReference[];
 }`;
 
   return {

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { InlineTOC } from 'fumadocs-ui/components/inline-toc';
+import { InlineTOC } from '@hanzo/docs/ui/components/inline-toc';
 import { blog } from '@/lib/source';
 import { createMetadata } from '@/lib/metadata';
 import { buttonVariants } from '@/components/ui/button';
@@ -10,36 +10,47 @@ import { getMDXComponents } from '@/mdx-components';
 import path from 'node:path';
 import { cn } from '@/lib/cn';
 
+// Force dynamic rendering to avoid Turbopack proxy trap issues during SSG
+export const dynamic = 'force-dynamic';
+
 export default async function Page(props: PageProps<'/blog/[slug]'>) {
   const params = await props.params;
   const page = blog.getPage([params.slug]);
 
   if (!page) notFound();
-  const { body: Mdx, toc } = await page.data.load();
+
+  // Create a clean copy of data to avoid proxy trap issues during static generation
+  // The proxy wrapping by Next.js can cause ownKeys invariant violations
+  const rawData = page.data as any;
+  const author = rawData.author;
+  const date = rawData.date;
+  const title = rawData.title;
+  const description = rawData.description;
+  const loadFn = rawData.load;
+  const { body: Mdx, toc } = await loadFn();
 
   return (
     <article className="flex flex-col mx-auto w-full max-w-[800px] px-4 py-8">
       <div className="flex flex-row gap-4 text-sm mb-8">
         <div>
           <p className="mb-1 text-fd-muted-foreground">Written by</p>
-          <p className="font-medium">{page.data.author}</p>
+          <p className="font-medium">{author}</p>
         </div>
         <div>
           <p className="mb-1 text-sm text-fd-muted-foreground">At</p>
           <p className="font-medium">
             {new Date(
-              page.data.date ??
-                path.basename(page.path, path.extname(page.path)),
+              date ?? path.basename(page.path, path.extname(page.path)),
             ).toDateString()}
           </p>
         </div>
       </div>
 
-      <h1 className="text-3xl font-semibold mb-4">{page.data.title}</h1>
-      <p className="text-fd-muted-foreground mb-8">{page.data.description}</p>
+      <h1 className="text-3xl font-semibold mb-4">{title}</h1>
+      <p className="text-fd-muted-foreground mb-8">{description}</p>
 
       <div className="prose min-w-0 flex-1">
-        <div className="flex flex-row gap-2 mb-8 not-prose">
+        <div className="flex flex-row items-center gap-2 mb-8 not-prose">
           <ShareButton url={page.url} />
           <Link
             href="/blog"
@@ -69,10 +80,13 @@ export async function generateMetadata(
 
   if (!page) notFound();
 
+  // Extract data properties to avoid proxy trap issues
+  const data = page.data as any;
+  const { title, description } = data;
+
   return createMetadata({
-    title: page.data.title,
-    description:
-      page.data.description ?? 'The library for building documentation sites',
+    title,
+    description: description ?? 'The library for building documentation sites',
   });
 }
 

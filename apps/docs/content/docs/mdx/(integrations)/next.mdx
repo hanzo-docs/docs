@@ -13,13 +13,13 @@ Set up Fumadocs MDX for your Next.js application.
 ### Installation
 
 ```npm
-npm i fumadocs-mdx fumadocs-core @types/mdx
+npm i @hanzo/docs @types/mdx
 ```
 
 Create the configuration file:
 
 ```ts title="source.config.ts"
-import { defineDocs, defineConfig } from 'fumadocs-mdx/config';
+import { defineDocs, defineConfig } from '@hanzo/docs/mdx/config';
 
 export const docs = defineDocs({
   dir: 'content/docs',
@@ -31,7 +31,7 @@ export default defineConfig();
 Add the plugin to Next.js config:
 
 ```js title="next.config.mjs"
-import { createMDX } from 'fumadocs-mdx/next';
+import { createMDX } from '@hanzo/docs/mdx/next';
 
 /** @type {import('next').NextConfig} */
 const config = {
@@ -61,8 +61,8 @@ export default withMDX(config);
 You can create a `lib/source.ts` file and obtain Fumadocs source from the `docs` collection output.
 
 ```ts title="lib/source.ts"
-import { docs } from 'fumadocs-mdx:collections/server';
-import { loader } from 'fumadocs-core/source';
+import { docs } from '@hanzo/docs-mdx:collections/server';
+import { loader } from '@hanzo/docs/core/source';
 
 export const source = loader({
   baseUrl: '/docs',

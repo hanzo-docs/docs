@@ -3,7 +3,7 @@ import {
   RegistryCompiler,
   writeFumadocsRegistry,
   writeShadcnRegistry,
-} from '@fumadocs/cli/build';
+} from '@hanzo/docs/cli/build';
 import { registry } from '@/components/registry.js';
 import * as ui from '../../../packages/ui/src/_registry';
 
