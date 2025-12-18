@@ -8,12 +8,15 @@ const withAnalyzer = createBundleAnalyzer({
 
 const config: NextConfig = {
   reactStrictMode: true,
-  turbopack: {
-    resolveAlias: {
+  // Use webpack resolve aliases instead of turbopack to avoid .json resolution issues
+  webpack: (config) => {
+    config.resolve.alias = {
+      ...config.resolve.alias,
       '@hanzo/mdx:collections/server': './.source/server.ts',
       '@hanzo/mdx:collections/browser': './.source/browser.ts',
       '@hanzo/mdx:collections/dynamic': './.source/dynamic.ts',
-    },
+    };
+    return config;
   },
   logging: {
     fetches: {
@@ -27,12 +30,13 @@ const config: NextConfig = {
     'twoslash',
     'shiki',
     '@takumi-rs/image-response',
-    // MCP handler and dependencies (Turbopack JSON file issues)
+    // Turbopack JSON file issues with these packages
     'mcp-handler',
     '@modelcontextprotocol/sdk',
     'raw-body',
     'iconv-lite',
     'statuses',
+    'ajv',
   ],
   images: {
     remotePatterns: [
