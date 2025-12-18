@@ -8,7 +8,7 @@
     "@orama/core": "^1.2.14",
     "eslint": "^9.39.2",
     "@hanzo/docs-core": "workspace:*",
-    "@hanzo/docs-mdx": "workspace:*",
+    "@hanzo/mdx": "^14.1.1",
     "@hanzo/docs-ui": "workspace:*"
   }
 }

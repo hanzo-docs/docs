@@ -570,7 +570,7 @@ function ForEngineers() {
           }}
           code={`
 import { loader } from '@hanzo/docs/core/source';
-import { docs } from '@hanzo/docs-mdx:collections/server';
+import { docs } from '@hanzo/mdx:collections/server';
 
 export const source = loader({
   source: docs.toFumadocsSource(),

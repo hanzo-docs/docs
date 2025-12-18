@@ -6,7 +6,7 @@ import {
   multiple,
 } from '@hanzo/docs/core/source';
 import { openapiPlugin, openapiSource } from '@hanzo/docs/openapi/server';
-import { blog as blogPosts, docs } from '@hanzo/docs-mdx:collections/server';
+import { blog as blogPosts, docs } from '@hanzo/mdx:collections/server';
 import { toDocsSource } from '@hanzo/docs/mdx/runtime/server';
 import { lucideIconsPlugin } from '@hanzo/docs/core/source/lucide-icons';
 import { openapi } from '@/lib/openapi';
