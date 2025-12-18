@@ -1,12 +1,12 @@
 {
-  "name": "@hanzo/mdx-remote",
-  "version": "1.4.4",
-  "description": "The remote MDX files adapter for Hanzo Docs",
+  "name": "@hanzo/mdx-runtime",
+  "version": "1.5.1",
+  "description": "Runtime MDX compilation and execution for Hanzo Docs",
   "keywords": [
     "Hanzo",
     "Docs",
     "MDX",
-    "Remote"
+    "Runtime"
   ],
   "homepage": "https://hanzo.ai/docs",
   "repository": "github:hanzoai/docs",
