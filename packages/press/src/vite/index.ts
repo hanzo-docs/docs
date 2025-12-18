@@ -1,7 +1,7 @@
 import { type Plugin, type PluginOption } from 'vite';
 import react from '@vitejs/plugin-react';
 import rsc from '@vitejs/plugin-rsc';
-import mdx from '@hanzo/docs-mdx/vite';
+import mdx from '@hanzo/mdx/vite';
 import path from 'node:path';
 import { createContentConfig } from '../config/content.js';
 import { baseDir } from '../constants.js';

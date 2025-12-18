@@ -10,9 +10,9 @@ const config: NextConfig = {
   reactStrictMode: true,
   turbopack: {
     resolveAlias: {
-      '@hanzo/docs-mdx:collections/server': './.source/server.ts',
-      '@hanzo/docs-mdx:collections/browser': './.source/browser.ts',
-      '@hanzo/docs-mdx:collections/dynamic': './.source/dynamic.ts',
+      '@hanzo/mdx:collections/server': './.source/server.ts',
+      '@hanzo/mdx:collections/browser': './.source/browser.ts',
+      '@hanzo/mdx:collections/dynamic': './.source/dynamic.ts',
     },
   },
   logging: {

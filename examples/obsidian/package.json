@@ -6,12 +6,12 @@
     "build": "next build",
     "dev": "next dev",
     "start": "next start",
-    "types:check": "@hanzo/docs-mdx && next typegen && tsc --noEmit"
+    "types:check": "@hanzo/mdx && next typegen && tsc --noEmit"
   },
   "dependencies": {
     "@hanzo/docs": "workspace:*",
     "@hanzo/docs-core": "workspace:*",
-    "@hanzo/docs-mdx": "workspace:*",
+    "@hanzo/mdx": "^14.1.1",
     "@hanzo/docs-obsidian": "workspace:*",
     "@hanzo/docs-ui": "workspace:*",
     "next": "16.0.10",
