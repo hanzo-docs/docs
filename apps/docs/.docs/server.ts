@@ -153,13 +153,13 @@ import { frontmatter as __fd_glob_0 } from "../content/blog/2024-5-15.mdx?collec
 import { server } from '@hanzo/docs/mdx/runtime/server';
 import type * as Config from '../source.config';
 
-const create = server<typeof Config, import("@hanzo/docs-mdx/runtime/types").InternalTypeConfig & {
+const create = server<typeof Config, import("@hanzo/mdx/runtime/types").InternalTypeConfig & {
   DocData: {
     docs: {
       /**
        * extracted references (e.g. hrefs, paths), useful for analyzing relationships between pages.
        */
-      extractedReferences: import("@hanzo/docs-mdx").ExtractedReference[];
+      extractedReferences: import("@hanzo/mdx").ExtractedReference[];
     },
   }
 } & {

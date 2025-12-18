@@ -1,1 +1,1 @@
-export * from '@hanzo/docs-mdx/plugins/index-file';
+export * from '@hanzo/mdx/plugins/index-file';
