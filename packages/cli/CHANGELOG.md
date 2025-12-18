@@ -1,5 +1,11 @@
 # fumadocs
 
+## 1.1.1
+
+### Patch Changes
+
+- Consolidate to @hanzo/mdx package and complete rebrand from Fumadocs to Hanzo Docs
+
 ## 1.1.0
 
 ### Minor Changes
