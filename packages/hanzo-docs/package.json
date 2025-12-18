@@ -112,19 +112,19 @@
     "dev": "tsup --watch"
   },
   "dependencies": {
-    "@hanzo/docs-core": "workspace:*",
-    "@hanzo/docs-ui": "workspace:*",
-    "@hanzo/mdx": "^14.1.1",
     "@hanzo/docs-cli": "workspace:*",
-    "@hanzo/mdx-remote": "workspace:*",
-    "@hanzo/docs-openapi": "workspace:*",
-    "@hanzo/docs-typescript": "workspace:*",
-    "@hanzo/docs-twoslash": "workspace:*",
-    "@hanzo/docs-docgen": "workspace:*",
-    "@hanzo/docs-python": "workspace:*",
-    "@hanzo/docs-obsidian": "workspace:*",
     "@hanzo/docs-content-collections": "workspace:*",
-    "@hanzo/docs-press": "workspace:*"
+    "@hanzo/docs-core": "workspace:*",
+    "@hanzo/docs-docgen": "workspace:*",
+    "@hanzo/docs-obsidian": "workspace:*",
+    "@hanzo/docs-openapi": "workspace:*",
+    "@hanzo/docs-press": "workspace:*",
+    "@hanzo/docs-python": "workspace:*",
+    "@hanzo/docs-twoslash": "workspace:*",
+    "@hanzo/docs-typescript": "workspace:*",
+    "@hanzo/docs-ui": "workspace:*",
+    "@hanzo/mdx": "^14.2.4",
+    "@hanzo/mdx-remote": "workspace:*"
   },
   "devDependencies": {
     "tsup": "^8.5.1",
