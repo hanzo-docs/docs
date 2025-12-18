@@ -6,10 +6,10 @@
     "build": "pnpm build:pre && next build --webpack && pnpm build:post",
     "build:pre": "bun ./scripts/pre-build.ts",
     "build:post": "bun ./scripts/post-build.ts",
-    "types:check": "docs-mdx && next typegen && tsc --noEmit",
+    "types:check": "hanzo-docs && next typegen && tsc --noEmit",
     "clean": "rimraf .next",
     "dev": "next dev",
-    "lint": "docs-mdx && bun ./scripts/lint.ts && eslint .",
+    "lint": "hanzo-docs && bun ./scripts/lint.ts && eslint .",
     "start": "next start"
   },
   "dependencies": {
