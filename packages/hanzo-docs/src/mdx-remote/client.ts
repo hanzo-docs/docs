@@ -1,1 +1,1 @@
-export * from '@hanzo/docs-mdx-remote/client';
+export * from '@hanzo/mdx-remote/client';

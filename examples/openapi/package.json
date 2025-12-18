@@ -7,12 +7,12 @@
     "build:docs": "bun ./scripts/generate-docs.ts",
     "dev": "next dev",
     "start": "next start",
-    "types:check": "@hanzo/docs-mdx && tsc --noEmit"
+    "types:check": "@hanzo/mdx && tsc --noEmit"
   },
   "dependencies": {
     "@hanzo/docs": "workspace:*",
     "@hanzo/docs-core": "workspace:*",
-    "@hanzo/docs-mdx": "workspace:*",
+    "@hanzo/mdx": "^14.1.1",
     "@hanzo/docs-openapi": "workspace:*",
     "@hanzo/docs-ui": "workspace:*",
     "next": "16.0.10",

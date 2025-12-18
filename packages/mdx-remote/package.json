@@ -1,5 +1,5 @@
 {
-  "name": "@hanzo/docs-mdx-remote",
+  "name": "@hanzo/mdx-remote",
   "version": "1.4.3",
   "description": "The remote MDX files adapter for Hanzo Docs",
   "keywords": [
