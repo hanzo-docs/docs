@@ -27,6 +27,12 @@ const config: NextConfig = {
     'twoslash',
     'shiki',
     '@takumi-rs/image-response',
+    // MCP handler and dependencies (Turbopack JSON file issues)
+    'mcp-handler',
+    '@modelcontextprotocol/sdk',
+    'raw-body',
+    'iconv-lite',
+    'statuses',
   ],
   images: {
     remotePatterns: [
