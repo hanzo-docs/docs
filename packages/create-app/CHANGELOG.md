@@ -1,5 +1,11 @@
 # create-next-docs-app
 
+## 16.0.26
+
+### Patch Changes
+
+- Consolidate to @hanzo/mdx package and complete rebrand from Fumadocs to Hanzo Docs
+
 ## 16.0.25
 
 ### Patch Changes
