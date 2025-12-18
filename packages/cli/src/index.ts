@@ -18,8 +18,8 @@ import { localResolver, remoteResolver } from '@/registry/client';
 const program = new Command().option('--config <string>');
 
 program
-  .name('fumadocs')
-  .description('CLI to setup Fumadocs, init a config')
+  .name('hanzo-docs')
+  .description('CLI to setup Hanzo Docs, init a config')
   .version(packageJson.version)
   .action(async () => {
     if (await initConfig()) {
@@ -32,7 +32,7 @@ program
 program
   .command('customise')
   .alias('customize')
-  .description('simple way to customise layouts with Fumadocs UI')
+  .description('simple way to customise layouts with Hanzo Docs UI')
   .option('--dir <string>', 'the root url or directory to resolve registry')
   .action(async (options: { config?: string; dir?: string }) => {
     const resolver = getResolverFromDir(options.dir);
@@ -40,7 +40,7 @@ program
   });
 
 const dirShortcuts: Record<string, string> = {
-  ':dev': 'https://preview.fumadocs.dev/registry',
+  ':dev': 'https://preview.hanzo.ai/registry',
   ':localhost': 'http://localhost:3000/registry',
 };
 
@@ -100,7 +100,7 @@ program
     },
   );
 
-function getResolverFromDir(dir: string = 'https://fumadocs.dev/registry') {
+function getResolverFromDir(dir: string = 'https://hanzo.ai/registry') {
   if (dir in dirShortcuts) dir = dirShortcuts[dir];
 
   return dir.startsWith('http://') || dir.startsWith('https://')
