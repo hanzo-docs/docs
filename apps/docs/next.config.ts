@@ -1,5 +1,5 @@
 import createBundleAnalyzer from '@next/bundle-analyzer';
-import { createMDX } from 'fumadocs-mdx/next';
+import { createMDX } from '@hanzo/docs-mdx/next';
 import type { NextConfig } from 'next';
 
 const withAnalyzer = createBundleAnalyzer({

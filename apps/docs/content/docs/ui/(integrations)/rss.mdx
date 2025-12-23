@@ -11,7 +11,7 @@ You can create the feed object:
 import { Feed } from 'feed';
 import { source } from '@/lib/source';
 
-const baseUrl = 'https://fumadocs.dev';
+const baseUrl = 'https://docs.hanzo.ai';
 
 export function getRSS() {
   const feed = new Feed({
@@ -100,7 +100,7 @@ export const metadata: Metadata = {
       'application/rss+xml': [
         {
           title: 'Fumadocs Blog',
-          url: 'https://fumadocs.dev/blog/index.xml',
+          url: 'https://docs.hanzo.ai/blog/index.xml',
         },
       ],
     },

@@ -1,13 +1,13 @@
 import { source } from '@/lib/source';
 import { PageProps } from 'waku/router';
-import defaultMdxComponents from 'fumadocs-ui/mdx';
+import defaultMdxComponents from '@hanzo/radix/mdx';
 import {
   DocsBody,
   DocsDescription,
   DocsPage,
   DocsTitle,
-} from 'fumadocs-ui/layouts/docs/page';
-import { DocsLayout } from 'fumadocs-ui/layouts/docs';
+} from '@hanzo/radix/layouts/docs/page';
+import { DocsLayout } from '@hanzo/radix/layouts/docs';
 import { baseOptions } from '@/lib/layout.shared';
 
 export default function DocPage({

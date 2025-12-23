@@ -3,8 +3,8 @@
   "changelog": "@changesets/cli/changelog",
   "commit": false,
   "fixed": [
-    ["fumadocs-core", "fumadocs-ui", "@fumadocs/base-ui", "@fumadocs/ui"],
-    ["create-fumadocs-app", "create-fumadocs-versions"]
+    ["@hanzo/docs-core", "@hanzo/radix", "@hanzo/ui-base", "@hanzo/ui"],
+    ["create-hanzo-docs-app", "@hanzo/create-app-versions"]
   ],
   "access": "restricted",
   "baseBranch": "dev",
@@ -14,5 +14,5 @@
     "version": true,
     "tag": false
   },
-  "ignore": ["docs", "fumapress", "example-fumapress", "example-*"]
+  "ignore": ["docs", "@hanzo/docs-press", "example-hanzo-docs-press", "example-*"]
 }

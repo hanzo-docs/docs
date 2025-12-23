@@ -8,8 +8,8 @@ description: Accessing collection outputs from server.
 While you can access the collections directly from entry file, we suggest using it with [`loader()`](/docs/headless/source-api#output).
 
 ```ts tab="Docs (Meta + Doc)"
-import { docs } from 'fumadocs-mdx:collections/server';
-import { loader } from 'fumadocs-core/source';
+import { docs } from '@hanzo/docs-mdx:collections/server';
+import { loader } from '@hanzo/docs-core/source';
 
 // raw collection
 console.log(docs);
@@ -21,9 +21,9 @@ export const source = loader({
 ```
 
 ```ts tab="Doc"
-import { blogPosts } from 'fumadocs-mdx:collections/server';
-import { toFumadocsSource } from 'fumadocs-mdx/runtime/server';
-import { loader } from 'fumadocs-core/source';
+import { blogPosts } from '@hanzo/docs-mdx:collections/server';
+import { toFumadocsSource } from '@hanzo/docs-mdx/runtime/server';
+import { loader } from '@hanzo/docs-core/source';
 
 // raw collection
 console.log(blogPosts);

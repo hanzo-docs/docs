@@ -17,7 +17,7 @@ import {
 import { Input, labelVariants } from '@/ui/components/input';
 import { getDefaultValue } from '../get-default-values';
 import { cn } from '@/utils/cn';
-import { buttonVariants } from 'fumadocs-ui/components/ui/button';
+import { buttonVariants } from '@hanzo/radix/components/ui/button';
 import { FormatFlags, schemaToString } from '@/utils/schema-to-string';
 import {
   anyFields,

@@ -7,14 +7,15 @@
     "dev": "next dev",
     "start": "next start",
     "build:docs": "node ./scripts/generate-docs.mjs",
-    "python:generate": "pip3 install ./node_modules/fumadocs-python && fumapy-generate httpx",
-    "types:check": "fumadocs-mdx && tsc --noEmit"
+    "python:generate": "pip3 install ./node_modules/hanzo-docs-python && fumapy-generate httpx",
+    "types:check": "@hanzo/docs-mdx && tsc --noEmit"
   },
   "dependencies": {
-    "fumadocs-core": "workspace:*",
-    "fumadocs-mdx": "workspace:*",
-    "fumadocs-python": "workspace:*",
-    "fumadocs-ui": "workspace:*",
+    "@hanzo/docs-core": "workspace:*",
+    "@hanzo/docs-mdx": "workspace:*",
+    "hanzo-docs-python": "workspace:*",
+    "@hanzo/ui": "workspace:*",
+    "@hanzo/radix": "workspace:*",
     "next": "16.1.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3"

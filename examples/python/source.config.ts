@@ -1,4 +1,4 @@
-import { defineConfig, defineDocs } from 'fumadocs-mdx/config';
+import { defineConfig, defineDocs } from '@hanzo/docs-mdx/config';
 
 // Options: https://fumadocs.dev/docs/mdx/collections#define-docs
 export const docs = defineDocs({

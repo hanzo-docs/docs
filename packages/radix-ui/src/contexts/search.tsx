@@ -1,2 +1,2 @@
 'use client';
-export * from '@fumadocs/ui/contexts/search';
+export * from '@hanzo/ui/contexts/search';

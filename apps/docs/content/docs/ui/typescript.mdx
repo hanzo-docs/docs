@@ -6,7 +6,7 @@ description: Generate docs from Typescript definitions
 ## Usage
 
 ```package-install
-fumadocs-typescript
+@hanzo/docs-typescript
 ```
 
 ### UI Integration
@@ -18,8 +18,8 @@ It comes with the `AutoTypeTable` component. Learn more about [Auto Type Table](
 You can use it as a remark plugin:
 
 ```ts title="source.config.ts" tab="Fumadocs MDX"
-import { remarkAutoTypeTable, createGenerator } from 'fumadocs-typescript';
-import { defineConfig } from 'fumadocs-mdx/config';
+import { remarkAutoTypeTable, createGenerator } from '@hanzo/docs-typescript';
+import { defineConfig } from '@hanzo/docs-mdx/config';
 
 const generator = createGenerator();
 
@@ -31,7 +31,7 @@ export default defineConfig({
 ```
 
 ```ts tab="MDX Compiler"
-import { remarkAutoTypeTable, createGenerator } from 'fumadocs-typescript';
+import { remarkAutoTypeTable, createGenerator } from '@hanzo/docs-typescript';
 import { compile } from '@mdx-js/mdx';
 
 const generator = createGenerator();

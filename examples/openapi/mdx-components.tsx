@@ -1,4 +1,4 @@
-import defaultMdxComponents from 'fumadocs-ui/mdx';
+import defaultMdxComponents from '@hanzo/radix/mdx';
 import type { MDXComponents } from 'mdx/types';
 import { APIPage } from '@/components/api-page';
 

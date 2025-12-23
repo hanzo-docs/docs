@@ -1,5 +1,5 @@
 import { rimraf } from 'rimraf';
-import * as Python from 'fumadocs-python';
+import * as Python from 'hanzo-docs-python';
 import * as fs from 'node:fs/promises';
 
 async function generate() {

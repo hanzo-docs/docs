@@ -1,14 +1,14 @@
-# fumadocs-docgen
+# @hanzo/docs-docgen
 
 ## 3.0.4
 
 ### Patch Changes
 
-- ca09b6a: Core: Support accessing MDX plugins separately at `fumadocs-core/mdx-plugins/*`
+- ca09b6a: Core: Support accessing MDX plugins separately at `@hanzo/docs-core/mdx-plugins/*`
 - Updated dependencies [bc97236]
 - Updated dependencies [ca09b6a]
 - Updated dependencies [117ad86]
-  - fumadocs-core@16.0.8
+  - @hanzo/docs-core@16.0.8
 
 ## 3.0.3
 
@@ -23,7 +23,7 @@
 - Updated dependencies [cbc93e9]
 - Updated dependencies [42f09c3]
 - Updated dependencies [55afd8a]
-  - fumadocs-core@16.0.0
+  - @hanzo/docs-core@16.0.0
 
 ## 3.0.2
 
@@ -31,7 +31,7 @@
 
 - a3a14e7: Bump deps
 - Updated dependencies [a3a14e7]
-  - fumadocs-core@15.8.3
+  - @hanzo/docs-core@15.8.3
 
 ## 3.0.1
 
@@ -43,14 +43,14 @@
 - Updated dependencies [6548a59]
 - Updated dependencies [51268ec]
 - Updated dependencies [51268ec]
-  - fumadocs-core@15.8.0
+  - @hanzo/docs-core@15.8.0
 
 ## 3.0.0
 
 ### Major Changes
 
 - b4474cf: `remarkTypeScriptToJavaScript` now output new `<CodeBlockTabs />` syntax, drop `Tab` and `Tabs` options
-- b4474cf: Make `fumadocs-core` a required peer dep (and must be `^15.7.2`)
+- b4474cf: Make `@hanzo/docs-core` a required peer dep (and must be `^15.7.2`)
 
 ### Minor Changes
 
@@ -61,7 +61,7 @@
 - Updated dependencies [88b5a4e]
 - Updated dependencies [039b24b]
 - Updated dependencies [08eee2b]
-  - fumadocs-core@15.7.2
+  - @hanzo/docs-core@15.7.2
 
 ## 2.1.0
 
@@ -95,11 +95,11 @@
 
 ### Major Changes
 
-- 4642a86: **Remove `typescriptGenerator` from `fumadocs-docgen`**
+- 4642a86: **Remove `typescriptGenerator` from `@hanzo/docs-docgen`**
 
-  **why:** Move dedicated parts to `fumadocs-typescript`, so all docs generation features for TypeScript can be put together in a single module.
+  **why:** Move dedicated parts to `@hanzo/docs-typescript`, so all docs generation features for TypeScript can be put together in a single module.
 
-  **migrate:** Use `fumadocs-typescript` We made a new `remarkAutoTypeTable` remark plugin generating the type table but with a different syntax:
+  **migrate:** Use `@hanzo/docs-typescript` We made a new `remarkAutoTypeTable` remark plugin generating the type table but with a different syntax:
 
   ```mdx
   <auto-type-table path="./my-file.ts" name="MyInterface" />
@@ -116,7 +116,7 @@
   ```
   ````
 
-- 4642a86: **Move `remarkTypeScriptToJavaScript` plugin to `fumadocs-docgen/remark-ts2js`.**
+- 4642a86: **Move `remarkTypeScriptToJavaScript` plugin to `@hanzo/docs-docgen/remark-ts2js`.**
 
   **why:** Fix existing problems with `oxc-transform`.
 
@@ -125,31 +125,31 @@
   Import it like:
 
   ```ts
-  import { remarkTypeScriptToJavaScript } from 'fumadocs-docgen/remark-ts2js';
+  import { remarkTypeScriptToJavaScript } from '@hanzo/docs-docgen/remark-ts2js';
   ```
 
-  instead of importing from `fumadocs-docgen`.
+  instead of importing from `@hanzo/docs-docgen`.
 
 ## 1.3.8
 
 ### Patch Changes
 
 - Updated dependencies [7608f4e]
-  - fumadocs-typescript@3.0.4
+  - @hanzo/docs-typescript@3.0.4
 
 ## 1.3.7
 
 ### Patch Changes
 
 - 260128f: Add `remarkShow` plugin
-  - fumadocs-typescript@3.0.3
+  - @hanzo/docs-typescript@3.0.3
 
 ## 1.3.6
 
 ### Patch Changes
 
 - a8e9e1f: Bump deps
-  - fumadocs-typescript@3.0.3
+  - @hanzo/docs-typescript@3.0.3
 
 ## 1.3.5
 
@@ -157,35 +157,35 @@
 
 - b9601fb: Update Shiki
 - Updated dependencies [b9601fb]
-  - fumadocs-typescript@3.0.3
+  - @hanzo/docs-typescript@3.0.3
 
 ## 1.3.4
 
 ### Patch Changes
 
 - 6d3c7d2: Use `oxc` for `ts2js` remark plugins
-  - fumadocs-typescript@3.0.2
+  - @hanzo/docs-typescript@3.0.2
 
 ## 1.3.3
 
 ### Patch Changes
 
 - 4ab0de6: Support TS2JS remark plugin [experimental]
-  - fumadocs-typescript@3.0.2
+  - @hanzo/docs-typescript@3.0.2
 
 ## 1.3.2
 
 ### Patch Changes
 
 - Updated dependencies [c042eb7]
-  - fumadocs-typescript@3.0.2
+  - @hanzo/docs-typescript@3.0.2
 
 ## 1.3.1
 
 ### Patch Changes
 
 - Updated dependencies [d6d290c]
-  - fumadocs-typescript@3.0.1
+  - @hanzo/docs-typescript@3.0.1
 
 ## 1.3.0
 
@@ -200,7 +200,7 @@
 - Updated dependencies [f9adba6]
 - Updated dependencies [f9adba6]
 - Updated dependencies [be820c4]
-  - fumadocs-typescript@3.0.0
+  - @hanzo/docs-typescript@3.0.0
 
 ## 1.2.0
 
@@ -213,7 +213,7 @@
 - 0c251e5: Bump deps
 - Updated dependencies [0c251e5]
 - Updated dependencies [3a2c837]
-  - fumadocs-typescript@2.1.0
+  - @hanzo/docs-typescript@2.1.0
 
 ## 1.1.0
 
@@ -223,7 +223,7 @@
 
 ### Patch Changes
 
-- fumadocs-typescript@2.0.1
+- @hanzo/docs-typescript@2.0.1
 
 ## 1.0.2
 
@@ -231,11 +231,11 @@
 
 - 8ef2b68: Bump deps
 - Updated dependencies [8ef2b68]
-  - fumadocs-typescript@2.0.1
+  - @hanzo/docs-typescript@2.0.1
 
 ## 1.0.1
 
 ### Patch Changes
 
 - Updated dependencies [f75287d]
-  - fumadocs-typescript@2.0.0
+  - @hanzo/docs-typescript@2.0.0

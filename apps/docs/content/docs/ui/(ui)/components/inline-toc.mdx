@@ -11,7 +11,7 @@ preview: inlineTOC
 You can use it in your MDX content:
 
 ```mdx title="content.mdx"
-import { InlineTOC } from 'fumadocs-ui/components/inline-toc';
+import { InlineTOC } from '@hanzo/docs-ui/components/inline-toc';
 
 <InlineTOC items={toc}>Table of Contents</InlineTOC>
 ```
@@ -19,8 +19,8 @@ import { InlineTOC } from 'fumadocs-ui/components/inline-toc';
 Or adding it to every page.
 
 ```tsx title="page.tsx"
-import { DocsPage } from 'fumadocs-ui/layouts/docs/page';
-import { InlineTOC } from 'fumadocs-ui/components/inline-toc';
+import { DocsPage } from '@hanzo/docs-ui/layouts/docs/page';
+import { InlineTOC } from '@hanzo/docs-ui/components/inline-toc';
 
 export default function Page() {
   // ...

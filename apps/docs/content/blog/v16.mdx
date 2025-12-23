@@ -13,30 +13,30 @@ We are pleased to announce the release of Fumadocs v16, a significant update tha
 
 Fumadocs 16 removed substantial amount of deprecated APIs accumulated since v15.2 Vite support.
 
-- **Removal of the Sidebar API**: The `fumadocs-core/sidebar` module has been deprecated and removed. For sidebar implementations, we recommend adopting pre-built solutions from Shadcn UI.
+- **Removal of the Sidebar API**: The `@hanzo/docs-core/sidebar` module has been deprecated and removed. For sidebar implementations, we recommend adopting pre-built solutions from Shadcn UI.
 
-- **Restructuring of Server-Side Exports**: Exports from `fumadocs-core/server` have been redistributed to more specialized modules:
-  - `getGithubLastEdit` -> `fumadocs-core/content/github`.
-  - `getTableOfContents` -> `fumadocs-core/content/toc`.
-  - `PageTree` and related utilities -> `fumadocs-core/page-tree`.
-  - `TOCItemType` and `TableOfContents` -> `fumadocs-core/toc`.
+- **Restructuring of Server-Side Exports**: Exports from `@hanzo/docs-core/server` have been redistributed to more specialized modules:
+  - `getGithubLastEdit` -> `@hanzo/docs-core/content/github`.
+  - `getTableOfContents` -> `@hanzo/docs-core/content/toc`.
+  - `PageTree` and related utilities -> `@hanzo/docs-core/page-tree`.
+  - `TOCItemType` and `TableOfContents` -> `@hanzo/docs-core/toc`.
   - removed `createMetadataImage` API, use Next.js Metadata API instead.
 
-- **Default Switch to Shiki's JavaScript Regex Engine**: To ensure seamless compatibility with environments like Cloudflare Workers, the JavaScript engine is now the default over the WASM-based Oniguruma. This change affects `rehype-code` (via the `engine` option) and `fumadocs-core/highlight`.
+- **Default Switch to Shiki's JavaScript Regex Engine**: To ensure seamless compatibility with environments like Cloudflare Workers, the JavaScript engine is now the default over the WASM-based Oniguruma. This change affects `rehype-code` (via the `engine` option) and `@hanzo/docs-core/highlight`.
 
 - **Minimum React.js Version Raised to 19.2.0**: React 19.2 brings crucial performance improvements to Fumadocs UI.
   - **Next.js Projects**: Next.js projects using Fumadocs UI must use Next.js 16 or later, as Next.js uses its own canary channel for React.js.
-- **`fumadocs-ui/provider` is removed**:
-  - Use `fumadocs-ui/provider/next` for root provider.
-  - Use individual exports for contexts from `fumadocs-ui/contexts/*`.
-- `fumadocs-ui/page`:
+- **`@hanzo/docs-ui/provider` is removed**:
+  - Use `@hanzo/docs-ui/provider/next` for root provider.
+  - Use individual exports for contexts from `@hanzo/docs-ui/contexts/*`.
+- `@hanzo/docs-ui/page`:
   - Removed `<DocsCategory />`.
   - Removed the `breadcrumbs.full` option in `<DocsPage />`.
-- `fumadocs-core/search/algolia`: The `document` option is renamed to `indexName`.
-- `fumadocs-core/search`: Removed the deprecated `createFromSource()` signature in `useSearch()`.
-- `fumadocs-core/highlight`: Removed `withPrerenderScript` and `loading` options from `useShiki()`.
-- `fumadocs-core/i18n`: Removed `createI18nMiddleware` (import from `fumadocs-core/i18n/middleware` instead).
-- `fumadocs-core/source`:
+- `@hanzo/docs-core/search/algolia`: The `document` option is renamed to `indexName`.
+- `@hanzo/docs-core/search`: Removed the deprecated `createFromSource()` signature in `useSearch()`.
+- `@hanzo/docs-core/highlight`: Removed `withPrerenderScript` and `loading` options from `useShiki()`.
+- `@hanzo/docs-core/i18n`: Removed `createI18nMiddleware` (import from `@hanzo/docs-core/i18n/middleware` instead).
+- `@hanzo/docs-core/source`:
   - Removed `transformers`, `pageTree.attach*` options in `loader()`.
   - Removed the `page.file` property.
   - Removed internal utilities `FileInfo` and `parseFilePath`.
@@ -44,7 +44,7 @@ Fumadocs 16 removed substantial amount of deprecated APIs accumulated since v15.
 - **Migration to Orama Cloud's New SDK**: The `@orama/core` package replaces the prior client. Update your synchronization code as follows:
 
   ```ts
-  import { sync } from 'fumadocs-core/search/orama-cloud';
+  import { sync } from '@hanzo/docs-core/search/orama-cloud';
   import { OramaCloud } from '@orama/core';
 
   // [!code highlight:4]
@@ -85,8 +85,8 @@ We introduced Plugins API, enabling extensible modifications to MDX configuratio
 There's a `json-schema` plugin natively provided by Fumadocs MDX.
 
 ```ts title="source.config.ts"
-import jsonSchema from 'fumadocs-mdx/plugins/json-schema';
-import { defineConfig, defineDocs } from 'fumadocs-mdx/config';
+import jsonSchema from '@hanzo/docs-mdx/plugins/json-schema';
+import { defineConfig, defineDocs } from '@hanzo/docs-mdx/config';
 
 export const docs = defineDocs({
   dir: 'content/docs',
@@ -105,7 +105,7 @@ export default defineConfig({
 
 ### Next.js
 
-`createMDXSource` and `resolveFiles` are now relocated to `fumadocs-mdx/runtime/next`.
+`createMDXSource` and `resolveFiles` are now relocated to `@hanzo/docs-mdx/runtime/next`.
 
 This should not affect majority of projects, as `docs.toFumadocsSource()` is now the preferred way.
 
@@ -131,13 +131,13 @@ The `source.generated.ts` file is now moved to `.source/index.ts`, you are recom
 
   .
 
-- note that both docs and `create-fumadocs-app` are updated to `.source` folder.
+- note that both docs and `create-hanzo-docs-app` are updated to `.source` folder.
 
 We also supported index file generation targeting other runtimes like Bun/Node.js.
 
 ```ts title="vite.config.ts"
 import { defineConfig } from 'vite';
-import mdx from 'fumadocs-mdx/vite';
+import mdx from '@hanzo/docs-mdx/vite';
 import * as MdxConfig from './source.config';
 
 export default defineConfig({

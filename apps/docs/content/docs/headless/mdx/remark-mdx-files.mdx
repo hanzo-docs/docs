@@ -39,8 +39,8 @@ and convert into:
 Add the remark plugin:
 
 ```tsx tab="Fumadocs MDX" title="source.config.ts"
-import { remarkMdxFiles } from 'fumadocs-core/mdx-plugins';
-import { defineConfig } from 'fumadocs-mdx/config';
+import { remarkMdxFiles } from '@hanzo/docs-core/mdx-plugins';
+import { defineConfig } from '@hanzo/docs-mdx/config';
 
 export default defineConfig({
   mdxOptions: {
@@ -51,7 +51,7 @@ export default defineConfig({
 
 ```ts tab="MDX Compiler"
 import { compile } from '@mdx-js/mdx';
-import { remarkMdxFiles } from 'fumadocs-core/mdx-plugins';
+import { remarkMdxFiles } from '@hanzo/docs-core/mdx-plugins';
 
 await compile('...', {
   remarkPlugins: [remarkMdxFiles],

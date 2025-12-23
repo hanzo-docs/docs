@@ -1,4 +1,4 @@
-import type { Root } from 'fumadocs-core/page-tree';
+import type { Root } from '@hanzo/docs-core/page-tree';
 
 export default {
   name: 'Docs',

@@ -11,9 +11,9 @@ import {
   SearchDialogList,
   SearchDialogOverlay,
   type SharedProps,
-} from 'fumadocs-ui/components/dialog/search';
-import { useDocsSearch } from 'fumadocs-core/search/client';
-import { useI18n } from 'fumadocs-ui/contexts/i18n';
+} from '@hanzo/docs-ui/components/dialog/search';
+import { useDocsSearch } from '@hanzo/docs-core/search/client';
+import { useI18n } from '@hanzo/docs-ui/contexts/i18n';
 
 const appId = 'replace me';
 const apiKey = 'replace me';

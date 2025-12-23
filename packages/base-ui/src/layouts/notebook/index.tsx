@@ -17,12 +17,12 @@ import {
   SidebarViewport,
 } from './sidebar';
 import { TreeContextProvider } from '@/contexts/tree';
-import { cn } from '@fumadocs/ui/cn';
+import { cn } from '@hanzo/ui/cn';
 import { buttonVariants } from '@/components/ui/button';
-import { Languages, Sidebar as SidebarIcon, X } from '@fumadocs/ui/icons';
+import { Languages, Sidebar as SidebarIcon, X } from '@hanzo/ui/icons';
 import { LanguageToggle } from '@/layouts/shared/language-toggle';
 import { ThemeToggle } from '@/layouts/shared/theme-toggle';
-import type * as PageTree from 'fumadocs-core/page-tree';
+import type * as PageTree from '@hanzo/docs-core/page-tree';
 import {
   LayoutBody,
   LayoutContextProvider,
@@ -30,12 +30,12 @@ import {
   LayoutHeaderTabs,
   NavbarLinkItem,
 } from '@/layouts/notebook/client';
-import Link from 'fumadocs-core/link';
+import Link from '@hanzo/docs-core/link';
 import {
   LargeSearchToggle,
   SearchToggle,
 } from '@/layouts/shared/search-toggle';
-import { LinkItem, type LinkItemType } from '@fumadocs/ui/link-item';
+import { LinkItem, type LinkItemType } from '@hanzo/ui/link-item';
 import type { SidebarPageTreeComponents } from '@/components/sidebar/page-tree';
 import {
   getSidebarTabs,

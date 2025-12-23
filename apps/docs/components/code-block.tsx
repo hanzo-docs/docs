@@ -1,5 +1,5 @@
-import * as Base from 'fumadocs-ui/components/codeblock';
-import { getHighlighter, hastToJsx } from 'fumadocs-core/highlight';
+import * as Base from '@hanzo/docs-ui/components/codeblock';
+import { getHighlighter, hastToJsx } from '@hanzo/docs-core/highlight';
 import { cn } from '@/lib/cn';
 import type { BundledLanguage } from 'shiki';
 

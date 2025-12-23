@@ -6,12 +6,12 @@ import type {
   PageTreeTransformer,
   Source,
   VirtualFile,
-} from 'fumadocs-core/source';
+} from '@hanzo/docs-core/source';
 import type { OpenAPIServer } from '@/server/create';
 import type { SchemaToPagesOptions } from '@/utils/pages/preset-auto';
 import type { ApiPageProps } from '@/ui/api-page';
 
-declare module 'fumadocs-core/source' {
+declare module '@hanzo/docs-core/source' {
   export interface PageData {
     /**
      * Added by Fumadocs OpenAPI

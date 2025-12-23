@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronRight, Hash, Search as SearchIcon } from '@fumadocs/ui/icons';
+import { ChevronRight, Hash, Search as SearchIcon } from '@hanzo/ui/icons';
 import {
   type ComponentProps,
   createContext,
@@ -15,7 +15,7 @@ import {
   useState,
 } from 'react';
 import { I18nLabel, useI18n } from '@/contexts/i18n';
-import { cn } from '@fumadocs/ui/cn';
+import { cn } from '@hanzo/ui/cn';
 import {
   Dialog,
   DialogContent,
@@ -25,11 +25,11 @@ import {
 import type {
   HighlightedText,
   ReactSortedResult as BaseResultType,
-} from 'fumadocs-core/search';
+} from '@hanzo/docs-core/search';
 import { cva } from 'class-variance-authority';
-import { useRouter } from 'fumadocs-core/framework';
+import { useRouter } from '@hanzo/docs-core/framework';
 import type { SharedProps } from '@/contexts/search';
-import { useOnChange } from 'fumadocs-core/utils/use-on-change';
+import { useOnChange } from '@hanzo/docs-core/utils/use-on-change';
 import scrollIntoView from 'scroll-into-view-if-needed';
 import { buttonVariants } from '@/components/ui/button';
 

@@ -18,7 +18,7 @@ This is a large update.
 Clone Fumadocs UI components to your workspace and modify them.
 
 ```package-install
-npm install @fumadocs/cli --save-dev
+npm install @hanzo/docs-cli --save-dev
 ```
 
 ```bash
@@ -53,7 +53,7 @@ You can use our new `createFromSource` API to create the route handler, which of
 
 ```ts
 import { source } from '@/lib/source';
-import { createFromSource } from 'fumadocs-core/search/server';
+import { createFromSource } from '@hanzo/docs-core/search/server';
 
 export const { GET } = createFromSource(source);
 ```
@@ -62,7 +62,7 @@ In favour of this, the new search client of Fumadocs is introduced with support 
 This includes Algolia, Orama (static and dynamic with route handlers).
 
 ```ts
-import { useDocsSearch } from 'fumadocs-core/search/client';
+import { useDocsSearch } from '@hanzo/docs-core/search/client';
 
 const client = useDocsSearch({
   type: 'static',
@@ -92,7 +92,7 @@ To improve code organization, we made a Metadata Image API on Fumadocs Core.
 It is a tiny wrapper over Next.js Metadata API, composes seamlessly with Source API.
 
 ```ts title="lib/metadata.ts"
-import { createMetadataImage } from 'fumadocs-core/server';
+import { createMetadataImage } from '@hanzo/docs-core/server';
 import { source } from '@/lib/source';
 
 export const metadataImage = createMetadataImage({
@@ -102,7 +102,7 @@ export const metadataImage = createMetadataImage({
 ```
 
 ```ts title="route.ts"
-import { generateOGImage } from 'fumadocs-ui/og';
+import { generateOGImage } from '@hanzo/docs-ui/og';
 import { metadataImage } from '@/lib/metadata';
 
 export const GET = metadataImage.createAPI((page) => {
@@ -134,7 +134,7 @@ export function generateMetadata({ params }: { params: { slug?: string[] } }) {
 }
 ```
 
-In favour of this, the `getImageMeta` function from `fumadocs-ui/og` has been removed.
+In favour of this, the `getImageMeta` function from `@hanzo/docs-ui/og` has been removed.
 
 ### Shorthands
 
@@ -172,7 +172,7 @@ Now it accepts the source object via `from` prop.
 
 ```tsx title="page.tsx"
 import { source } from '@/lib/source';
-import { DocsCategory } from 'fumadocs-ui/page';
+import { DocsCategory } from '@hanzo/docs-ui/page';
 
 const page = source.getPage(params.slug);
 
@@ -184,7 +184,7 @@ You can also force a page tree.
 
 ```tsx title="page.tsx (i18n enabled)"
 import { source } from '@/lib/source';
-import { DocsCategory } from 'fumadocs-ui/page';
+import { DocsCategory } from '@hanzo/docs-ui/page';
 
 const page = source.getPage(params.slug, params.lang);
 
@@ -260,7 +260,7 @@ You can disable the default theme switcher with `disableThemeSwitch` on layouts.
 ### Move `dir` option from `defineDocs`
 
 ```ts
-import { defineDocs } from 'fumadocs-mdx/config';
+import { defineDocs } from '@hanzo/docs-mdx/config';
 
 export const { docs, meta } = defineDocs({
   dir: 'my/content/dir', // define once
@@ -272,30 +272,30 @@ export const { docs, meta } = defineDocs({
 **Previous**
 
 ```ts
-import { DocsLayout } from 'fumadocs-ui/layout';
-import { HomeLayout } from 'fumadocs-ui/home-layout';
-import { HomeLayoutProps } from 'fumadocs-ui/home-layout';
+import { DocsLayout } from '@hanzo/docs-ui/layout';
+import { HomeLayout } from '@hanzo/docs-ui/home-layout';
+import { HomeLayoutProps } from '@hanzo/docs-ui/home-layout';
 ```
 
 **New Import Path**
 
 ```ts
-import { DocsLayout } from 'fumadocs-ui/layouts/docs';
-import { HomeLayout } from 'fumadocs-ui/layouts/home';
-import { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
+import { DocsLayout } from '@hanzo/docs-ui/layouts/docs';
+import { HomeLayout } from '@hanzo/docs-ui/layouts/home';
+import { BaseLayoutProps } from '@hanzo/docs-ui/layouts/shared';
 ```
 
 ### Twoslash UI
 
-We moved Twoslash UI components to `fumadocs-twoslash`.
+We moved Twoslash UI components to `@hanzo/docs-twoslash`.
 This isolates some logic from Fumadocs UI, allowing a better code organization.
 
 Import the CSS styles and `Popup` component differently.
 
 ```ts
-import 'fumadocs-twoslash/twoslash.css';
+import '@hanzo/docs-twoslash/twoslash.css';
 
-import { Popup } from 'fumadocs-twoslash/ui';
+import { Popup } from '@hanzo/docs-twoslash/ui';
 ```
 
 <Callout>It requires Tailwind CSS.</Callout>
@@ -305,4 +305,4 @@ import { Popup } from 'fumadocs-twoslash/ui';
 The previous `createI18nSearchAPIExperimental` is now renamed to `createI18nSearchAPI`.
 It takes the i18n config instead of scattering the options everywhere.
 
-The types from `fumadocs-core/search/shared` is moved to `fumadocs-core/server`.
+The types from `@hanzo/docs-core/search/shared` is moved to `@hanzo/docs-core/server`.

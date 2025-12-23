@@ -37,7 +37,7 @@ Usually, it is provided by your content source (e.g. Fumadocs MDX). You can also
 
 ```ts tab="Next.js" title="app/api/search/route.ts"
 import { source } from '@/lib/source';
-import { createSearchAPI } from 'fumadocs-core/search/server';
+import { createSearchAPI } from '@hanzo/docs-core/search/server';
 
 export const { GET } = createSearchAPI('advanced', {
   language: 'english',
@@ -53,7 +53,7 @@ export const { GET } = createSearchAPI('advanced', {
 
 ```ts tab="React Router" title="app/docs/search.ts"
 import type { Route } from './+types/search';
-import { createSearchAPI } from 'fumadocs-core/search/server';
+import { createSearchAPI } from '@hanzo/docs-core/search/server';
 import { source } from '@/lib/source';
 
 const server = createSearchAPI('advanced', {
@@ -75,7 +75,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 ```ts tab="Tanstack Start" title="src/routes/api/search.ts"
 import { createFileRoute } from '@tanstack/react-router';
 import { source } from '@/lib/source';
-import { createSearchAPI } from 'fumadocs-core/search/server';
+import { createSearchAPI } from '@hanzo/docs-core/search/server';
 
 const server = createSearchAPI('advanced', {
   language: 'english',
@@ -99,7 +99,7 @@ export const Route = createFileRoute('/api/search')({
 
 ```ts tab="Waku" title="src/pages/api/search.ts"
 import { source } from '@/lib/source';
-import { createSearchAPI } from 'fumadocs-core/search/server';
+import { createSearchAPI } from '@hanzo/docs-core/search/server';
 
 export const { GET } = createSearchAPI('advanced', {
   language: 'english',
@@ -121,14 +121,14 @@ You can search documents using:
 - **Search Client**:
 
 ```ts twoslash
-import { useDocsSearch } from 'fumadocs-core/search/client';
+import { useDocsSearch } from '@hanzo/docs-core/search/client';
 
 const client = useDocsSearch({
   type: 'fetch',
 });
 ```
 
-<auto-type-table type='Extract<import("fumadocs-core/search/client").Client, { type: "fetch" }>' />
+<auto-type-table type='Extract<import("@hanzo/docs-core/search/client").Client, { type: "fetch" }>' />
 
 ## Configurations
 
@@ -138,7 +138,7 @@ Support filtering results by tag, it's useful for implementing multi-docs simila
 
 ```ts
 import { source } from '@/lib/source';
-import { createFromSource } from 'fumadocs-core/search/server';
+import { createFromSource } from '@hanzo/docs-core/search/server';
 
 const server = createFromSource(source, {
   buildIndex(page) {
@@ -161,7 +161,7 @@ and update your search client:
 - **Search Client**: pass a tag to the hook.
 
 ```ts
-import { useDocsSearch } from 'fumadocs-core/search/client';
+import { useDocsSearch } from '@hanzo/docs-core/search/client';
 
 const client = useDocsSearch({
   type: 'fetch',
@@ -175,7 +175,7 @@ To support usage with static site, use `staticGET` from search server and make t
 
 ```ts tab="Next.js" title="app/api/search/route.ts"
 import { source } from '@/lib/source';
-import { createFromSource } from 'fumadocs-core/search/server';
+import { createFromSource } from '@hanzo/docs-core/search/server';
 
 // statically cached [!code highlight:2]
 export const revalidate = false;
@@ -222,7 +222,7 @@ export default defineConfig({
 
 ```ts tab="Waku" title="src/pages/api/search.ts"
 import { source } from '@/lib/source';
-import { createFromSource } from 'fumadocs-core/search/server';
+import { createFromSource } from '@hanzo/docs-core/search/server';
 
 // [!code highlight]
 export const { staticGET: GET } = createFromSource(source);
@@ -242,14 +242,14 @@ and update your search clients:
 - **Search Client**: use `static` instead of `fetch`.
 
   ```ts
-  import { useDocsSearch } from 'fumadocs-core/search/client';
+  import { useDocsSearch } from '@hanzo/docs-core/search/client';
 
   const client = useDocsSearch({
     type: 'static',
   });
   ```
 
-  <auto-type-table type='Extract<import("fumadocs-core/search/client").Client, { type: "static" }>' />
+  <auto-type-table type='Extract<import("@hanzo/docs-core/search/client").Client, { type: "static" }>' />
 
 <Callout type='warn' title="Be Careful">
 
@@ -266,7 +266,7 @@ Make sure your language is on the Orama [Supported Languages](https://docs.orama
 
 ```ts title="app/api/search/route.ts" tab="From Source"
 import { source } from '@/lib/source';
-import { createFromSource } from 'fumadocs-core/search/server';
+import { createFromSource } from '@hanzo/docs-core/search/server';
 
 const server = createFromSource(source, {
   localeMap: {
@@ -279,7 +279,7 @@ const server = createFromSource(source, {
 
 ```ts tab="From Search Indexes"
 import { source } from '@/lib/source';
-import { createI18nSearchAPI } from 'fumadocs-core/search/server';
+import { createI18nSearchAPI } from '@hanzo/docs-core/search/server';
 import { i18n } from '@/lib/i18n';
 
 const server = createI18nSearchAPI('advanced', {
@@ -300,7 +300,7 @@ const server = createI18nSearchAPI('advanced', {
 For **Static Mode**, you should configure from client-side instead:
 
 ```tsx title="components/search.tsx"
-import { useDocsSearch } from 'fumadocs-core/search/client';
+import { useDocsSearch } from '@hanzo/docs-core/search/client';
 import { create } from '@orama/orama';
 
 function initOrama(locale?: string) {
@@ -334,7 +334,7 @@ npm i @orama/tokenizers
 </include>
 
 ```tsx tab="Static mode" title="components/search.tsx"
-import { useDocsSearch } from 'fumadocs-core/search/client';
+import { useDocsSearch } from '@hanzo/docs-core/search/client';
 import { createTokenizer } from '@orama/tokenizers/mandarin';
 import { create } from '@orama/orama';
 
@@ -364,7 +364,7 @@ and update your search clients:
   Add `locale` to the search client, this will only allow pages with specified locale to be searchable by the user.
 
 ```ts
-import { useDocsSearch } from 'fumadocs-core/search/client';
+import { useDocsSearch } from '@hanzo/docs-core/search/client';
 
 const { search, setSearch, query } = useDocsSearch({
   type: 'fetch',
@@ -377,7 +377,7 @@ const { search, setSearch, query } = useDocsSearch({
 You can host the search server on other backend such as Express and Elysia.
 
 ```ts
-import { initAdvancedSearch } from 'fumadocs-core/search/server';
+import { initAdvancedSearch } from '@hanzo/docs-core/search/server';
 
 const server = initAdvancedSearch({
   // you still have to pass indexes

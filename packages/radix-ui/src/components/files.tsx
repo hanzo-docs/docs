@@ -5,9 +5,9 @@ import {
   File as FileIcon,
   Folder as FolderIcon,
   FolderOpen,
-} from '@fumadocs/ui/icons';
+} from '@hanzo/ui/icons';
 import { type HTMLAttributes, type ReactNode, useState } from 'react';
-import { cn } from '@fumadocs/ui/cn';
+import { cn } from '@hanzo/ui/cn';
 import {
   Collapsible,
   CollapsibleContent,

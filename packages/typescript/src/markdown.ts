@@ -1,12 +1,12 @@
 import type { ElementContent, Nodes } from 'hast';
 import { remark } from 'remark';
-import { remarkGfm } from 'fumadocs-core/mdx-plugins/remark-gfm';
+import { remarkGfm } from '@hanzo/docs-core/mdx-plugins/remark-gfm';
 import {
   rehypeCode,
   type RehypeCodeOptions,
-} from 'fumadocs-core/mdx-plugins/rehype-code';
+} from '@hanzo/docs-core/mdx-plugins/rehype-code';
 import remarkRehype from 'remark-rehype';
-import { highlightHast } from 'fumadocs-core/highlight';
+import { highlightHast } from '@hanzo/docs-core/highlight';
 
 const shikiOptions = {
   lazy: true,

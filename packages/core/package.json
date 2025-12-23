@@ -1,13 +1,13 @@
 {
-  "name": "fumadocs-core",
+  "name": "@hanzo/docs-core",
   "version": "16.3.1",
   "description": "The React.js library for building a documentation website",
   "keywords": [
-    "Fumadocs",
+    "Hanzo Docs",
     "Docs"
   ],
-  "homepage": "https://fumadocs.dev",
-  "repository": "github:fuma-nama/fumadocs",
+  "homepage": "https://docs.hanzo.ai",
+  "repository": "github:hanzoai/docs",
   "license": "MIT",
   "author": "Fuma Nama",
   "type": "module",

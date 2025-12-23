@@ -1,13 +1,13 @@
 import type { Route } from './+types/page';
-import { DocsLayout } from 'fumadocs-ui/layouts/docs';
+import { DocsLayout } from '@hanzo/radix/layouts/docs';
 import {
   DocsBody,
   DocsDescription,
   DocsPage,
   DocsTitle,
-} from 'fumadocs-ui/layouts/docs/page';
+} from '@hanzo/radix/layouts/docs/page';
 import { source } from '@/lib/source';
-import defaultMdxComponents from 'fumadocs-ui/mdx';
+import defaultMdxComponents from '@hanzo/radix/mdx';
 import { baseOptions } from '@/lib/layout.shared';
 
 export function ServerComponent({ params }: Route.ComponentProps) {

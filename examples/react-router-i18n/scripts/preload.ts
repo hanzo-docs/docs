@@ -1,5 +1,5 @@
-import { createMdxPlugin } from 'fumadocs-mdx/bun';
-import { postInstall } from 'fumadocs-mdx/vite';
+import { createMdxPlugin } from '@hanzo/docs-mdx/bun';
+import { postInstall } from '@hanzo/docs-mdx/vite';
 
 Bun.plugin(createMdxPlugin());
 

@@ -1,6 +1,6 @@
 import { buildConfig, type DocCollectionItem } from '@/config/build';
 import { buildMDX, type CompiledMDXProperties } from '@/loaders/mdx/build-mdx';
-import { executeMdx } from '@fumadocs/mdx-remote/client';
+import { executeMdx } from '@hanzo/docs-mdx-remote/client';
 import { pathToFileURL } from 'node:url';
 import { fumaMatter } from '@/utils/fuma-matter';
 import fs from 'node:fs/promises';

@@ -15,21 +15,21 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from 'fumadocs-ui/components/tabs';
+} from '@hanzo/radix/components/tabs';
 import type { SchemaData, SchemaUIGeneratedData } from '@/ui/schema';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from 'fumadocs-ui/components/ui/collapsible';
-import { buttonVariants } from 'fumadocs-ui/components/ui/button';
+} from '@hanzo/radix/components/ui/collapsible';
+import { buttonVariants } from '@hanzo/radix/components/ui/button';
 import { ChevronDown } from '@/ui/icons';
 import { Badge } from '@/ui/components/method-label';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from 'fumadocs-ui/components/ui/popover';
+} from '@hanzo/radix/components/ui/popover';
 import { cn } from '@/utils/cn';
 import { cva } from 'class-variance-authority';
 

@@ -4,18 +4,18 @@ import { NextResponse } from 'next/server';
 
 export const revalidate = false;
 
-const baseUrl = 'https://fumadocs.dev';
+const baseUrl = 'https://docs.hanzo.ai';
 
 export function GET() {
   const feed = new Feed({
-    title: 'Fumadocs Blog',
+    title: 'Hanzo Docs Blog',
     id: `${baseUrl}/blog`,
     link: `${baseUrl}/blog`,
     language: 'en',
 
     image: `${baseUrl}/banner.png`,
     favicon: `${baseUrl}/icon.png`,
-    copyright: 'All rights reserved 2025, Fuma Nama',
+    copyright: 'All rights reserved 2025, Hanzo AI',
   });
 
   for (const page of blog.getPages().sort((a, b) => {

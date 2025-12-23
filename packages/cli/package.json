@@ -1,14 +1,14 @@
 {
-  "name": "@fumadocs/cli",
+  "name": "@hanzo/docs-cli",
   "version": "1.1.0",
-  "description": "The CLI tool for Fumadocs",
+  "description": "The CLI tool for Hanzo Docs",
   "keywords": [
     "NextJs",
     "Docs",
-    "Fumadocs"
+    "Hanzo Docs"
   ],
-  "homepage": "https://fumadocs.dev",
-  "repository": "github:fuma-nama/fumadocs",
+  "homepage": "https://docs.hanzo.ai",
+  "repository": "github:hanzoai/docs",
   "license": "MIT",
   "author": "Fuma Nama",
   "type": "module",
@@ -20,7 +20,7 @@
   },
   "main": "./dist/index.js",
   "bin": {
-    "fumadocs": "./dist/index.js"
+    "hanzo-docs": "./dist/index.js"
   },
   "files": [
     "dist/*"

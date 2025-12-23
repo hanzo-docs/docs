@@ -39,17 +39,17 @@ import {
   resolveServerUrl,
   withBase,
 } from '@/utils/url';
-import { DynamicCodeBlock } from 'fumadocs-ui/components/dynamic-codeblock';
+import { DynamicCodeBlock } from '@hanzo/radix/components/dynamic-codeblock';
 import { MethodLabel } from '@/ui/components/method-label';
 import { useQuery } from '@/utils/use-query';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from 'fumadocs-ui/components/ui/collapsible';
+} from '@hanzo/radix/components/ui/collapsible';
 import { X, ChevronDown, LoaderCircle } from '@/ui/icons';
 import { encodeRequestData } from '@/requests/media/encode';
-import { buttonVariants } from 'fumadocs-ui/components/ui/button';
+import { buttonVariants } from '@hanzo/radix/components/ui/button';
 import { cn } from '@/utils/cn';
 import {
   type FieldInfo,
@@ -120,8 +120,8 @@ export interface PlaygroundClientOptions {
    * render the paremeter inputs of API endpoint.
    *
    * It uses `react-hook-form`, you can use either:
-   * - the library itself, with types from `fumadocs-openapi/playground/client`.
-   * - the `Custom.useController()` from `fumadocs-openapi/playground/client`.
+   * - the library itself, with types from `@hanzo/docs-openapi/playground/client`.
+   * - the `Custom.useController()` from `@hanzo/docs-openapi/playground/client`.
    *
    * Recommended types packages: `json-schema-typed`, `openapi-types`.
    */

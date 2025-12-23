@@ -31,7 +31,7 @@ export function UwuHero() {
           Getting Started
         </Link>
         <a
-          href="https://stackblitz.com/~/github.com/fuma-nama/fumadocs-ui-template"
+          href="https://stackblitz.com/~/github.com/fuma-nama/@hanzo/docs-ui-template"
           className={cn(
             buttonVariants({
               size: 'lg',

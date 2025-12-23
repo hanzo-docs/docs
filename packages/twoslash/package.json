@@ -1,14 +1,14 @@
 {
-  "name": "fumadocs-twoslash",
+  "name": "@hanzo/docs-twoslash",
   "version": "3.1.10",
-  "description": "Typescript Twoslash Integration for Fumadocs",
+  "description": "Typescript Twoslash Integration for Hanzo Docs",
   "keywords": [
     "NextJs",
-    "fumadocs",
+    "hanzo-docs",
     "Docs"
   ],
-  "homepage": "https://fumadocs.dev",
-  "repository": "github:fuma-nama/fumadocs",
+  "homepage": "https://docs.hanzo.ai",
+  "repository": "github:hanzoai/docs",
   "license": "MIT",
   "author": "Fuma Nama",
   "type": "module",
@@ -56,12 +56,12 @@
     "@types/node": "24.10.2",
     "@types/react": "^19.2.7",
     "eslint-config-custom": "workspace:*",
-    "fumadocs-ui": "workspace:*",
+    "@hanzo/ui": "workspace:*",
     "tsconfig": "workspace:*"
   },
   "peerDependencies": {
     "@types/react": "*",
-    "fumadocs-ui": "^15.0.0 || ^16.0.0",
+    "@hanzo/ui": "^15.0.0 || ^16.0.0",
     "react": "18.x.x || 19.x.x"
   },
   "peerDependenciesMeta": {

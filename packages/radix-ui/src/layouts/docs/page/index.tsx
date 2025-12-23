@@ -1,7 +1,7 @@
 import type { ComponentProps, ReactNode } from 'react';
-import { cn } from '@fumadocs/ui/cn';
+import { cn } from '@hanzo/ui/cn';
 import { buttonVariants } from '@/components/ui/button';
-import { Edit, Text } from '@fumadocs/ui/icons';
+import { Edit, Text } from '@hanzo/ui/icons';
 import { I18nLabel } from '@/contexts/i18n';
 import {
   type BreadcrumbProps,
@@ -12,7 +12,7 @@ import {
   PageTOCPopoverContent,
   PageTOCPopoverTrigger,
 } from './client';
-import type { AnchorProviderProps, TOCItemType } from 'fumadocs-core/toc';
+import type { AnchorProviderProps, TOCItemType } from '@hanzo/docs-core/toc';
 import * as TocDefault from '@/components/toc/default';
 import * as TocClerk from '@/components/toc/clerk';
 import { TOCProvider, TOCScrollArea } from '@/components/toc';

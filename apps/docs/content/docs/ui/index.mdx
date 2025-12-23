@@ -142,7 +142,7 @@ Some common questions you may encounter.
     Finally, update the base URL of pages in `source.ts`:
 
 ```ts title="lib/source.ts"
-import { loader } from 'fumadocs-core/source';
+import { loader } from '@hanzo/docs-core/source';
 
 export const source = loader({
   baseUrl: '/info', // to the new value [!code highlight]
@@ -169,7 +169,7 @@ Make sure to exclude Fumadocs from pre-bundling and add it to `noExternal`:
 import { defineConfig } from 'vite';
 
 // add other Fumadocs deps as needed
-const FumadocsDeps = ['fumadocs-core', 'fumadocs-ui'];
+const FumadocsDeps = ['@hanzo/docs-core', '@hanzo/docs-ui'];
 
 export default defineConfig({
   resolve: {

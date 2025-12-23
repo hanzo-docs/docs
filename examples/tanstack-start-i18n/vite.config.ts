@@ -3,7 +3,7 @@ import { tanstackStart } from '@tanstack/react-start/plugin/vite';
 import { defineConfig } from 'vite';
 import tsConfigPaths from 'vite-tsconfig-paths';
 import tailwindcss from '@tailwindcss/vite';
-import mdx from 'fumadocs-mdx/vite';
+import mdx from '@hanzo/docs-mdx/vite';
 import { i18n } from './src/lib/i18n';
 
 export default defineConfig({

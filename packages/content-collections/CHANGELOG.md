@@ -13,7 +13,7 @@
 - Updated dependencies [cbc93e9]
 - Updated dependencies [42f09c3]
 - Updated dependencies [55afd8a]
-  - fumadocs-core@16.0.0
+  - @hanzo/docs-core@16.0.0
 
 ## 1.2.3
 
@@ -21,7 +21,7 @@
 
 - a3a14e7: Bump deps
 - Updated dependencies [a3a14e7]
-  - fumadocs-core@15.8.3
+  - @hanzo/docs-core@15.8.3
 
 ## 1.2.2
 
@@ -30,7 +30,7 @@
 - 68c92f9: Fix type issues on v1.2
 - Updated dependencies [0b53056]
 - Updated dependencies [3490285]
-  - fumadocs-core@15.7.7
+  - @hanzo/docs-core@15.7.7
 
 ## 1.2.1
 
@@ -39,7 +39,7 @@
 - 1b7bc4b: Add `@types/react` to optional peer dependency to avoid version conflict in monorepos
 - Updated dependencies [7a45921]
 - Updated dependencies [1b7bc4b]
-  - fumadocs-core@15.5.2
+  - @hanzo/docs-core@15.5.2
 
 ## 1.2.0
 
@@ -50,7 +50,7 @@
 ### Patch Changes
 
 - df244e8: Prepare for Content Collections v1
-  - fumadocs-core@15.3.4
+  - @hanzo/docs-core@15.3.4
 
 ## 1.1.8
 
@@ -59,7 +59,7 @@
 - a06af26: Support pages without `title`
 - Updated dependencies [08236e1]
 - Updated dependencies [a06af26]
-  - fumadocs-core@15.0.6
+  - @hanzo/docs-core@15.0.6
 
 ## 1.1.7
 
@@ -69,14 +69,14 @@
 - Updated dependencies [5b8cca8]
 - Updated dependencies [a763058]
 - Updated dependencies [581f4a5]
-  - fumadocs-core@15.0.0
+  - @hanzo/docs-core@15.0.0
 
 ## 1.1.6
 
 ### Patch Changes
 
 - 3550efc: Fix remark image default config
-  - fumadocs-core@14.6.3
+  - @hanzo/docs-core@14.6.3
 
 ## 1.1.5
 
@@ -102,7 +102,7 @@
 - Updated dependencies [15781f0]
 - Updated dependencies [be820c4]
 - Updated dependencies [d9e908e]
-  - fumadocs-core@14.0.0
+  - @hanzo/docs-core@14.0.0
 
 ## 1.1.4
 
@@ -112,7 +112,7 @@
 - Updated dependencies [7dabbc1]
 - Updated dependencies [0c251e5]
 - Updated dependencies [3b56170]
-  - fumadocs-core@13.4.2
+  - @hanzo/docs-core@13.4.2
 
 ## 1.1.3
 
@@ -127,7 +127,7 @@
 - 758013f: Use Fumadocs Remark Image instead of `rehype-img-size`
 - Updated dependencies [36b771b]
 - Updated dependencies [61b91fa]
-  - fumadocs-core@13.2.2
+  - @hanzo/docs-core@13.2.2
 
 ## 1.1.1
 
@@ -135,7 +135,7 @@
 
 - c7aa090: Improve Fumadocs OpenAPI support
 - Updated dependencies [17fa173]
-  - fumadocs-core@13.2.1
+  - @hanzo/docs-core@13.2.1
 
 ## 1.1.0
 
@@ -147,7 +147,7 @@
 
 - Updated dependencies [fccdfdb]
 - Updated dependencies [2ffd5ea]
-  - fumadocs-core@12.5.4
+  - @hanzo/docs-core@12.5.4
 
 ## 1.0.3
 
@@ -161,14 +161,14 @@
 ### Patch Changes
 
 - dd1e4f3: Change type definitions of built-in schemas
-  - fumadocs-core@12.4.1
+  - @hanzo/docs-core@12.4.1
 
 ## 1.0.1
 
 ### Patch Changes
 
 - 8efc775: Fix Content Collections compatibility
-  - fumadocs-core@12.4.0
+  - @hanzo/docs-core@12.4.0
 
 ## 1.0.0
 

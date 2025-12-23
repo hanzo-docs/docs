@@ -8,7 +8,7 @@ description: The CLI tool that automates setups and installs components.
 Initialize a config for CLI:
 
 ```package-install
-npx @fumadocs/cli
+npx @hanzo/docs-cli
 ```
 
 You can change the output paths of components in the config.
@@ -18,13 +18,13 @@ You can change the output paths of components in the config.
 Select and install components.
 
 ```package-install
-npx @fumadocs/cli add
+npx @hanzo/docs-cli add
 ```
 
 You can pass component names directly.
 
 ```package-install
-npx @fumadocs/cli add banner files
+npx @hanzo/docs-cli add banner files
 ```
 
 #### How the magic works?
@@ -42,7 +42,7 @@ Make sure to use the latest version of CLI
 A simple way to customise Fumadocs layouts.
 
 ```package-install
-npx @fumadocs/cli customise
+npx @hanzo/docs-cli customise
 ```
 
 ### Tree
@@ -50,25 +50,25 @@ npx @fumadocs/cli customise
 Generate files tree for Fumadocs UI `Files` component, using the `tree` command from your terminal.
 
 ```package-install
-npx @fumadocs/cli tree ./my-dir ./output.tsx
+npx @hanzo/docs-cli tree ./my-dir ./output.tsx
 ```
 
 You can output MDX files too:
 
 ```package-install
-npx @fumadocs/cli tree ./my-dir ./output.mdx
+npx @hanzo/docs-cli tree ./my-dir ./output.mdx
 ```
 
 See help for further details:
 
 ```package-install
-npx @fumadocs/cli tree -h
+npx @hanzo/docs-cli tree -h
 ```
 
 #### Example Output
 
 ```tsx title="output.tsx"
-import { File, Folder, Files } from 'fumadocs-ui/components/files';
+import { File, Folder, Files } from '@hanzo/docs-ui/components/files';
 
 export default (
   <Files>

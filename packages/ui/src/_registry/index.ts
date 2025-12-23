@@ -5,7 +5,7 @@ import type {
   SourceReference,
   Component,
   ComponentFile,
-} from '@fumadocs/cli/build';
+} from '@hanzo/docs-cli/build';
 import * as path from 'node:path';
 import { Glob } from 'bun';
 
@@ -35,10 +35,10 @@ export function resolveForwardedAPIs(
   upstreamPackage: string,
   upstreamRegistry: Registry,
 ): Reference | undefined {
-  if (ref.type === 'dependency' && ref.dep === '@fumadocs/ui') {
+  if (ref.type === 'dependency' && ref.dep === '@hanzo/ui') {
     const specifier = ref.specifier;
 
-    if (specifier === '@fumadocs/ui/icons') {
+    if (specifier === '@hanzo/ui/icons') {
       return {
         type: 'dependency',
         dep: 'lucide-react',
@@ -63,8 +63,8 @@ export function resolveForwardedAPIs(
       type: 'dependency',
       dep: upstreamPackage,
       specifier: specifier
-        .replace('@fumadocs/ui/hooks', `${upstreamPackage}/utils`)
-        .replace('@fumadocs/ui', upstreamPackage),
+        .replace('@hanzo/ui/hooks', `${upstreamPackage}/utils`)
+        .replace('@hanzo/ui', upstreamPackage),
     };
   }
 
@@ -93,8 +93,8 @@ export function resolveForwardedAPIs(
       return resolveForwardedAPIs(
         {
           type: 'dependency',
-          dep: '@fumadocs/ui',
-          specifier: `@fumadocs/ui/${filePath.slice(0, -path.extname(filePath).length)}`,
+          dep: '@hanzo/ui',
+          specifier: `@hanzo/ui/${filePath.slice(0, -path.extname(filePath).length)}`,
         },
         upstreamPackage,
         upstreamRegistry,
@@ -103,14 +103,14 @@ export function resolveForwardedAPIs(
 }
 
 export const registry: Registry = {
-  name: 'fumadocs/ui',
+  name: 'hanzo/ui',
   dir: srcDir,
   tsconfigPath: '../tsconfig.json',
   packageJson: '../package.json',
   variables: {
     ui: {
       description: 'the main UI package',
-      default: 'fumadocs-ui',
+      default: '@hanzo/ui',
     },
   },
   onResolve(ref) {
@@ -219,7 +219,7 @@ export const registry: Registry = {
     },
   ],
   dependencies: {
-    'fumadocs-core': null,
+    '@hanzo/docs-core': null,
     react: null,
   },
 };
@@ -236,7 +236,7 @@ function splitDir(filePath: string): [dir: string, rest: string] {
 for (const comp of registry.components) {
   for (const file of comp.files) {
     const importPath = file.path.slice(0, -path.extname(file.path).length);
-    installables[`@fumadocs/ui/${importPath}`] = {
+    installables[`@hanzo/ui/${importPath}`] = {
       comp,
       file,
     };

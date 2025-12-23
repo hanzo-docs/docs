@@ -16,7 +16,7 @@ description: Generating docs for OpenAPI schema
 Install the required packages.
 
 ```npm
-npm i fumadocs-openapi shiki
+npm i @hanzo/docs-openapi shiki
 ```
 
 <Callout title="For Bun PM" type="warning">
@@ -30,10 +30,10 @@ Add the following line:
 
 ```css title="Tailwind CSS"
 @import 'tailwindcss';
-@import 'fumadocs-ui/css/neutral.css';
-@import 'fumadocs-ui/css/preset.css';
+@import '@hanzo/docs-ui/css/neutral.css';
+@import '@hanzo/docs-ui/css/preset.css';
 /* [!code ++] */
-@import 'fumadocs-openapi/css/preset.css';
+@import '@hanzo/docs-openapi/css/preset.css';
 ```
 
 ### Configure Plugin
@@ -41,7 +41,7 @@ Add the following line:
 Create an OpenAPI instance on the server.
 
 ```ts tab="lib/openapi.ts"
-import { createOpenAPI } from 'fumadocs-openapi/server';
+import { createOpenAPI } from '@hanzo/docs-openapi/server';
 
 export const openapi = createOpenAPI({
   // the OpenAPI schema, you can also give it an external URL.
@@ -50,8 +50,8 @@ export const openapi = createOpenAPI({
 ```
 
 ```ts tab="lib/source.ts"
-import { openapiPlugin } from 'fumadocs-openapi/server';
-import { loader } from 'fumadocs-core/source';
+import { openapiPlugin } from '@hanzo/docs-openapi/server';
+import { loader } from '@hanzo/docs-core/source';
 
 export const source = loader({
   // [!code ++] optional: adds a badge to each page item in page tree
@@ -63,7 +63,7 @@ Create a `APIPage` component:
 
 ```tsx tab="components/api-page.tsx"
 import { openapi } from '@/lib/openapi';
-import { createAPIPage } from 'fumadocs-openapi/ui';
+import { createAPIPage } from '@hanzo/docs-openapi/ui';
 import client from './api-page.client';
 
 export const APIPage = createAPIPage(openapi, {
@@ -73,7 +73,7 @@ export const APIPage = createAPIPage(openapi, {
 
 ```tsx tab="components/api-page.client.tsx"
 'use client';
-import { defineClientConfig } from 'fumadocs-openapi/ui/client';
+import { defineClientConfig } from '@hanzo/docs-openapi/ui/client';
 
 export default defineClientConfig({
   // client-side config
@@ -90,7 +90,7 @@ You can generate MDX files directly from your OpenAPI schema.
 Create a script:
 
 ```js title="scripts/generate-docs.ts"
-import { generateFiles } from 'fumadocs-openapi';
+import { generateFiles } from '@hanzo/docs-openapi';
 import { openapi } from '@/lib/openapi';
 
 void generateFiles({
@@ -111,7 +111,7 @@ bun ./scripts/generate-docs.ts
 Add the `APIPage` component to your MDX Components.
 
 ```tsx title="mdx-components.tsx"
-import defaultComponents from 'fumadocs-ui/mdx';
+import defaultComponents from '@hanzo/docs-ui/mdx';
 import { APIPage } from '@/components/api-page';
 import type { MDXComponents } from 'mdx/types';
 
@@ -131,9 +131,9 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
 You can also use it without generating real files by integrating into [Loader API](/docs/headless/source-api/source).
 
 ```ts title="lib/source.ts"
-import { loader, multiple } from 'fumadocs-core/source';
-import { openapiPlugin, openapiSource } from 'fumadocs-openapi/server';
-import { docs } from 'fumadocs-mdx:collections/server';
+import { loader, multiple } from '@hanzo/docs-core/source';
+import { openapiPlugin, openapiSource } from '@hanzo/docs-openapi/server';
+import { docs } from '@hanzo/docs-mdx:collections/server';
 import { openapi } from '@/lib/openapi';
 
 export const source = loader(

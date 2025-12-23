@@ -83,7 +83,7 @@ console.log(await page.data.getText('processed'));
 To access processed Markdown content, you need to enable `includeProcessedMarkdown` in collection config.
 
 ```ts title="source.config.ts"
-import { defineDocs } from 'fumadocs-mdx/config';
+import { defineDocs } from '@hanzo/docs-mdx/config';
 
 export default defineDocs({
   docs: {

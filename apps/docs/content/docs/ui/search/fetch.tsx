@@ -1,5 +1,5 @@
 'use client';
-import { useDocsSearch } from 'fumadocs-core/search/client';
+import { useDocsSearch } from '@hanzo/docs-core/search/client';
 import {
   SearchDialog,
   SearchDialogClose,
@@ -10,8 +10,8 @@ import {
   SearchDialogList,
   SearchDialogOverlay,
   type SharedProps,
-} from 'fumadocs-ui/components/dialog/search';
-import { useI18n } from 'fumadocs-ui/contexts/i18n';
+} from '@hanzo/docs-ui/components/dialog/search';
+import { useI18n } from '@hanzo/docs-ui/contexts/i18n';
 
 export default function DefaultSearchDialog(props: SharedProps) {
   const { locale } = useI18n(); // (optional) for i18n

@@ -4,10 +4,10 @@ import {
   DocsDescription,
   DocsPage,
   DocsTitle,
-} from 'fumadocs-ui/layouts/docs/page';
+} from '@hanzo/radix/layouts/docs/page';
 import { notFound } from 'next/navigation';
-import defaultComponents from 'fumadocs-ui/mdx';
-import { createCompiler, parseFrontmatter } from '@fumadocs/mdx-remote';
+import defaultComponents from '@hanzo/radix/mdx';
+import { createCompiler, parseFrontmatter } from '@hanzo/docs-mdx-remote';
 import { type Frontmatter, getPage, getPages } from '@/app/docs/utils';
 
 const compiler = createCompiler();

@@ -5,7 +5,7 @@
 ### Patch Changes
 
 - Updated dependencies [ee4ad3d]
-  - fumadocs-mdx@13.0.2
+  - @hanzo/docs-mdx@13.0.2
 
 ## 0.0.7
 
@@ -14,25 +14,25 @@
 - Updated dependencies [56332df]
 - Updated dependencies [91add4f]
 - Updated dependencies [cffd4c2]
-  - fumadocs-mdx@13.0.1
-  - fumadocs-core@16.0.3
-  - fumadocs-ui@16.0.3
+  - @hanzo/docs-mdx@13.0.1
+  - @hanzo/docs-core@16.0.3
+  - @hanzo/docs-ui@16.0.3
 
 ## 0.0.6
 
 ### Patch Changes
 
 - Updated dependencies [d511232]
-  - fumadocs-core@16.0.2
-  - fumadocs-ui@16.0.2
+  - @hanzo/docs-core@16.0.2
+  - @hanzo/docs-ui@16.0.2
 
 ## 0.0.5
 
 ### Patch Changes
 
 - Updated dependencies [45f0c1f]
-  - fumadocs-core@16.0.1
-  - fumadocs-ui@16.0.1
+  - @hanzo/docs-core@16.0.1
+  - @hanzo/docs-ui@16.0.1
 
 ## 0.0.4
 
@@ -61,9 +61,9 @@
 - Updated dependencies [55afd8a]
 - Updated dependencies [5210f18]
 - Updated dependencies [5966e23]
-  - fumadocs-mdx@13.0.0
-  - fumadocs-ui@16.0.0
-  - fumadocs-core@16.0.0
+  - @hanzo/docs-mdx@13.0.0
+  - @hanzo/docs-ui@16.0.0
+  - @hanzo/docs-core@16.0.0
 
 ## 0.0.3
 
@@ -72,9 +72,9 @@
 - Updated dependencies [a55177c]
 - Updated dependencies [ce2be59]
 - Updated dependencies [31b9494]
-  - fumadocs-mdx@12.0.3
-  - fumadocs-core@15.8.4
-  - fumadocs-ui@15.8.4
+  - @hanzo/docs-mdx@12.0.3
+  - @hanzo/docs-core@15.8.4
+  - @hanzo/docs-ui@15.8.4
 
 ## 0.0.2
 
@@ -82,9 +82,9 @@
 
 - Updated dependencies [a3a14e7]
 - Updated dependencies [7b0d839]
-  - fumadocs-core@15.8.3
-  - fumadocs-mdx@12.0.2
-  - fumadocs-ui@15.8.3
+  - @hanzo/docs-core@15.8.3
+  - @hanzo/docs-mdx@12.0.2
+  - @hanzo/docs-ui@15.8.3
 
 ## 0.0.1
 
@@ -95,5 +95,5 @@
 - Updated dependencies [90cf1fe]
 - Updated dependencies [6c3bde5]
 - Updated dependencies [747bdbc]
-  - fumadocs-ui@15.8.2
-  - fumadocs-core@15.8.2
+  - @hanzo/docs-ui@15.8.2
+  - @hanzo/docs-core@15.8.2

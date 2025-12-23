@@ -16,7 +16,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./app/*"],
-      "fumadocs-mdx:collections/*": [".source/*"]
+      "@hanzo/docs-mdx:collections/*": [".source/*"]
     },
     "esModuleInterop": true,
     "verbatimModuleSyntax": true,

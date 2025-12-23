@@ -6,14 +6,15 @@
     "build": "react-router build",
     "dev": "react-router dev",
     "start": "serve ./build/client",
-    "types:check": "react-router typegen && fumadocs-mdx && tsc --noEmit"
+    "types:check": "react-router typegen && @hanzo/docs-mdx && tsc --noEmit"
   },
   "dependencies": {
     "@orama/orama": "^3.1.17",
     "@react-router/node": "^7.11.0",
-    "fumadocs-core": "workspace:*",
-    "fumadocs-mdx": "workspace:*",
-    "fumadocs-ui": "workspace:*",
+    "@hanzo/docs-core": "workspace:*",
+    "@hanzo/docs-mdx": "workspace:*",
+    "@hanzo/ui": "workspace:*",
+    "@hanzo/radix": "workspace:*",
     "isbot": "^5.1.32",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",

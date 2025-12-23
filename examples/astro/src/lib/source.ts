@@ -1,8 +1,8 @@
-import type { Source } from 'fumadocs-core/source';
-import { loader } from 'fumadocs-core/source';
+import type { Source } from '@hanzo/docs-core/source';
+import { loader } from '@hanzo/docs-core/source';
 import { type CollectionEntry, getCollection } from 'astro:content';
 import * as path from 'node:path';
-import type { StructuredData } from 'fumadocs-core/mdx-plugins';
+import type { StructuredData } from '@hanzo/docs-core/mdx-plugins';
 
 export const source = loader({
   source: await createMySource(),

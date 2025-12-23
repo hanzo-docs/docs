@@ -11,10 +11,10 @@ import {
   SearchDialogList,
   SearchDialogOverlay,
   type SharedProps,
-} from 'fumadocs-ui/components/dialog/search';
-import { useDocsSearch } from 'fumadocs-core/search/client';
+} from '@hanzo/ui/components/dialog/search';
+import { useDocsSearch } from '@hanzo/docs-core/search/client';
 import { OramaCloud } from '@orama/core';
-import { useI18n } from 'fumadocs-ui/contexts/i18n';
+import { useI18n } from '@hanzo/radix/contexts/i18n';
 
 const client = new OramaCloud({
   projectId: process.env.NEXT_PUBLIC_ORAMA_PROJECT_ID,

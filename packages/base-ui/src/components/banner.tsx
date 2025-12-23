@@ -1,8 +1,8 @@
 'use client';
 
 import { type HTMLAttributes, useEffect, useState } from 'react';
-import { X } from '@fumadocs/ui/icons';
-import { cn } from '@fumadocs/ui/cn';
+import { X } from '@hanzo/ui/icons';
+import { cn } from '@hanzo/ui/cn';
 import { buttonVariants } from '@/components/ui/button';
 
 type BannerVariant = 'rainbow' | 'normal';

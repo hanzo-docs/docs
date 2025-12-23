@@ -1,9 +1,9 @@
 'use client';
 import type { ComponentProps } from 'react';
-import { Search } from '@fumadocs/ui/icons';
+import { Search } from '@hanzo/ui/icons';
 import { useSearchContext } from '@/contexts/search';
 import { useI18n } from '@/contexts/i18n';
-import { cn } from '@fumadocs/ui/cn';
+import { cn } from '@hanzo/ui/cn';
 import { type ButtonProps, buttonVariants } from '@/components/ui/button';
 
 interface SearchToggleProps

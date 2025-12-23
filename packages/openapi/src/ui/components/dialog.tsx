@@ -4,7 +4,7 @@ import * as React from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { X } from '@/ui/icons';
 import { cn } from '@/utils/cn';
-import { buttonVariants } from 'fumadocs-ui/components/ui/button';
+import { buttonVariants } from '@hanzo/radix/components/ui/button';
 
 const Dialog = DialogPrimitive.Root;
 

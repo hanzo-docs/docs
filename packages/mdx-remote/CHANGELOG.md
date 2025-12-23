@@ -13,7 +13,7 @@
 - Updated dependencies [cbc93e9]
 - Updated dependencies [42f09c3]
 - Updated dependencies [55afd8a]
-  - fumadocs-core@16.0.0
+  - @hanzo/docs-core@16.0.0
 
 ## 1.4.2
 
@@ -27,7 +27,7 @@
 
 - a3a14e7: Bump deps
 - Updated dependencies [a3a14e7]
-  - fumadocs-core@15.8.3
+  - @hanzo/docs-core@15.8.3
 
 ## 1.4.0
 
@@ -38,7 +38,7 @@
 ### Patch Changes
 
 - Updated dependencies [658fa96]
-  - fumadocs-core@15.6.5
+  - @hanzo/docs-core@15.6.5
 
 ## 1.3.4
 
@@ -48,7 +48,7 @@
 - Updated dependencies [d0f8a15]
 - Updated dependencies [84918b8]
 - Updated dependencies [f8d1709]
-  - fumadocs-core@15.6.0
+  - @hanzo/docs-core@15.6.0
 
 ## 1.3.3
 
@@ -57,14 +57,14 @@
 - 1b7bc4b: Add `@types/react` to optional peer dependency to avoid version conflict in monorepos
 - Updated dependencies [7a45921]
 - Updated dependencies [1b7bc4b]
-  - fumadocs-core@15.5.2
+  - @hanzo/docs-core@15.5.2
 
 ## 1.3.2
 
 ### Patch Changes
 
 - a6c909b: Removed unused devDependencies and migrated from `fast-glob` to `tinyglobby`
-  - fumadocs-core@15.3.4
+  - @hanzo/docs-core@15.3.4
 
 ## 1.3.1
 
@@ -72,7 +72,7 @@
 
 - 4ae7b4a: Support MDX in codeblock tab value
 - Updated dependencies [4ae7b4a]
-  - fumadocs-core@15.3.3
+  - @hanzo/docs-core@15.3.3
 
 ## 1.3.0
 
@@ -86,7 +86,7 @@
 
 - Updated dependencies [2fd325c]
 - Updated dependencies [a7cf4fa]
-  - fumadocs-core@15.2.0
+  - @hanzo/docs-core@15.2.0
 
 ## 1.2.1
 
@@ -97,7 +97,7 @@
 - Updated dependencies [f3cde4f]
 - Updated dependencies [7c8a690]
 - Updated dependencies [b812457]
-  - fumadocs-core@15.1.1
+  - @hanzo/docs-core@15.1.1
 
 ## 1.2.0
 
@@ -107,7 +107,7 @@
 
 ### Patch Changes
 
-- fumadocs-core@15.0.3
+- @hanzo/docs-core@15.0.3
 
 ## 1.1.3
 
@@ -117,14 +117,14 @@
 - Updated dependencies [5b8cca8]
 - Updated dependencies [a763058]
 - Updated dependencies [581f4a5]
-  - fumadocs-core@15.0.0
+  - @hanzo/docs-core@15.0.0
 
 ## 1.1.2
 
 ### Patch Changes
 
 - 3bde5cc: Support JSX nodes in TOC
-  - fumadocs-core@14.7.7
+  - @hanzo/docs-core@14.7.7
 
 ## 1.1.1
 
@@ -133,7 +133,7 @@
 - b9601fb: Update Shiki
 - 1142b8c: Support `createCompiler` API
 - Updated dependencies [b9601fb]
-  - fumadocs-core@14.7.6
+  - @hanzo/docs-core@14.7.6
 
 ## 1.1.0
 
@@ -145,7 +145,7 @@
 
 - f2e880f: Support more options for `compile()`
 - Updated dependencies [777188b]
-  - fumadocs-core@14.7.5
+  - @hanzo/docs-core@14.7.5
 
 ## 1.0.0
 
@@ -166,7 +166,7 @@
 - Updated dependencies [bebb16b]
 - Updated dependencies [4766292]
 - Updated dependencies [050b326]
-  - fumadocs-core@14.6.0
+  - @hanzo/docs-core@14.6.0
 
 ## 0.2.3
 
@@ -192,7 +192,7 @@
 - Updated dependencies [15781f0]
 - Updated dependencies [be820c4]
 - Updated dependencies [d9e908e]
-  - fumadocs-core@14.0.0
+  - @hanzo/docs-core@14.0.0
 
 ## 0.2.2
 
@@ -202,7 +202,7 @@
 - Updated dependencies [7dabbc1]
 - Updated dependencies [0c251e5]
 - Updated dependencies [3b56170]
-  - fumadocs-core@13.4.2
+  - @hanzo/docs-core@13.4.2
 
 ## 0.2.1
 
@@ -211,7 +211,7 @@
 - 758013f: Use Fumadocs Remark Image instead of `rehype-img-size`
 - Updated dependencies [36b771b]
 - Updated dependencies [61b91fa]
-  - fumadocs-core@13.2.2
+  - @hanzo/docs-core@13.2.2
 
 ## 0.2.0
 
@@ -221,7 +221,7 @@
 
 ### Patch Changes
 
-- fumadocs-core@12.4.1
+- @hanzo/docs-core@12.4.1
 
 ## 0.1.0
 
@@ -232,7 +232,7 @@
 ### Patch Changes
 
 - Updated dependencies [ca7d0f4]
-  - fumadocs-core@12.3.2
+  - @hanzo/docs-core@12.3.2
 
 ## 0.0.2
 
@@ -240,11 +240,11 @@
 
 - a39dbcb: Support Github Integration
 - Updated dependencies [a39dbcb]
-  - fumadocs-core@12.1.1
+  - @hanzo/docs-core@12.1.1
 
 ## 0.0.1
 
 ### Patch Changes
 
 - e7f4edf: Support remote MDX files with `@fumadocs/remote-mdx`
-  - fumadocs-core@12.0.7
+  - @hanzo/docs-core@12.0.7

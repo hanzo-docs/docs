@@ -1,14 +1,14 @@
 {
-  "name": "fumadocs-python",
+  "name": "hanzo-docs-python",
   "version": "0.0.6",
-  "description": "The built-in Python docgen for Fumadocs",
+  "description": "The built-in Python docgen for Hanzo Docs",
   "keywords": [
     "NextJs",
     "Docs",
     "Python"
   ],
-  "homepage": "https://fumadocs.dev",
-  "repository": "github:fuma-nama/fumadocs",
+  "homepage": "https://docs.hanzo.ai",
+  "repository": "github:hanzoai/docs",
   "license": "MIT",
   "author": "Fuma Nama",
   "type": "module",
@@ -43,15 +43,17 @@
     "@types/node": "^24.10.2",
     "@types/react": "^19.2.7",
     "eslint-config-custom": "workspace:*",
-    "fumadocs-core": "workspace:*",
-    "fumadocs-ui": "workspace:*",
+    "@hanzo/docs-core": "workspace:*",
+    "@hanzo/ui": "workspace:*",
+    "@hanzo/radix": "workspace:*",
     "lucide-react": "^0.562.0",
     "tsconfig": "workspace:*"
   },
   "peerDependencies": {
     "@types/react": "*",
-    "fumadocs-core": "15.x.x || 16.x.x",
-    "fumadocs-ui": "15.x.x || 16.x.x"
+    "@hanzo/docs-core": "15.x.x || 16.x.x",
+    "@hanzo/ui": "15.x.x || 16.x.x",
+    "@hanzo/radix": "15.x.x || 16.x.x"
   },
   "peerDependenciesMeta": {
     "@types/react": {

@@ -7,11 +7,11 @@ import { ThemeProvider } from 'next-themes';
 import {
   I18nProvider,
   type I18nProviderProps,
-} from '@fumadocs/ui/contexts/i18n';
+} from '@hanzo/ui/contexts/i18n';
 import {
   SearchProvider,
   type SearchProviderProps,
-} from '@fumadocs/ui/contexts/search';
+} from '@hanzo/ui/contexts/search';
 
 interface SearchOptions extends Omit<
   SearchProviderProps,

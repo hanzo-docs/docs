@@ -6,7 +6,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { cn } from '@fumadocs/ui/cn';
+import { cn } from '@hanzo/ui/cn';
 import { buttonVariants } from '@/components/ui/button';
 
 export type LanguageSelectProps = ComponentProps<'button'>;

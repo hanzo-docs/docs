@@ -20,7 +20,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from 'fumadocs-ui/components/tabs';
+} from '@hanzo/radix/components/tabs';
 import { resolveRequestData } from '@/utils/url';
 import { MethodLabel } from '../components/method-label';
 

@@ -22,7 +22,7 @@ These plugins are applied by default:
 Add other remark plugins with:
 
 ```ts tab="Global Config"
-import { defineConfig } from 'fumadocs-mdx/config';
+import { defineConfig } from '@hanzo/docs-mdx/config';
 import { myPlugin } from './remark-plugin';
 
 export default defineConfig({
@@ -35,7 +35,7 @@ export default defineConfig({
 ```
 
 ```ts tab="Collection Config"
-import { defineCollections, applyMdxPreset } from 'fumadocs-mdx/config';
+import { defineCollections, applyMdxPreset } from '@hanzo/docs-mdx/config';
 import { myPlugin } from './remark-plugin';
 
 export const blog = defineCollections({
@@ -58,7 +58,7 @@ These plugins are applied by default:
 Same as remark plugins, you can pass an array or a function to add other rehype plugins.
 
 ```ts tab="Global Config"
-import { defineConfig } from 'fumadocs-mdx/config';
+import { defineConfig } from '@hanzo/docs-mdx/config';
 import { myPlugin } from './rehype-plugin';
 
 export default defineConfig({
@@ -69,7 +69,7 @@ export default defineConfig({
 ```
 
 ```ts tab="Collection Config"
-import { defineCollections, applyMdxPreset } from 'fumadocs-mdx/config';
+import { defineCollections, applyMdxPreset } from '@hanzo/docs-mdx/config';
 import { myPlugin } from './rehype-plugin';
 
 export const blog = defineCollections({
@@ -85,7 +85,7 @@ export const blog = defineCollections({
 Customise the options of built-in plugins like:
 
 ```ts tab="Global Config"
-import { defineConfig } from 'fumadocs-mdx/config';
+import { defineConfig } from '@hanzo/docs-mdx/config';
 
 export default defineConfig({
   mdxOptions: {
@@ -103,7 +103,7 @@ export default defineConfig({
 ```
 
 ```ts tab="Collection Config"
-import { defineCollections, applyMdxPreset } from 'fumadocs-mdx/config';
+import { defineCollections, applyMdxPreset } from '@hanzo/docs-mdx/config';
 
 export const blog = defineCollections({
   type: 'doc',

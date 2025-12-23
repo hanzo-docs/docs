@@ -12,7 +12,7 @@ You can generate metadata images dynamically using `next/og`.
 Add the following under your loader, and define image metadata for pages:
 
 ```ts tab="lib/source.ts"
-import { type InferPageType } from 'fumadocs-core/source';
+import { type InferPageType } from '@hanzo/docs-core/source';
 
 // [!code ++:8]
 export function getPageImage(page: InferPageType<typeof source>) {
@@ -63,7 +63,7 @@ You can specify options for Satori (used by `next/og`), see https://github.com/v
 There's other available styles on Fumadocs CLI, such as `mono`:
 
 ```npm
-npx @fumadocs/cli@latest add og/mono
+npx @hanzo/docs-cli@latest add og/mono
 ```
 
 Replaced your old `generate` with the installed one.

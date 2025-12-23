@@ -18,7 +18,7 @@ import {
   DocsDescription,
   DocsTitle,
   DocsBody,
-} from 'fumadocs-ui/layouts/docs/page';
+} from '@hanzo/docs-ui/layouts/docs/page';
 
 <DocsPage>
   <DocsTitle>title</DocsTitle>
@@ -36,7 +36,7 @@ import {
   DocsDescription,
   DocsTitle,
   DocsBody,
-} from 'fumadocs-ui/layouts/notebook/page';
+} from '@hanzo/docs-ui/layouts/notebook/page';
 
 <DocsPage>
   <DocsTitle>title</DocsTitle>
@@ -61,9 +61,9 @@ Link to the original GitHub file with your component.
 
 ```tsx
 // docs layout:
-import { DocsPage } from 'fumadocs-ui/layouts/docs/page';
+import { DocsPage } from '@hanzo/docs-ui/layouts/docs/page';
 // notebook layout:
-import { DocsPage } from 'fumadocs-ui/layouts/notebook/page';
+import { DocsPage } from '@hanzo/docs-ui/layouts/notebook/page';
 
 <DocsPage>
   <a
@@ -83,9 +83,9 @@ Display last updated time of the page.
 
 ```tsx
 // docs layout:
-import { DocsPage, PageLastUpdate } from 'fumadocs-ui/layouts/docs/page';
+import { DocsPage, PageLastUpdate } from '@hanzo/docs-ui/layouts/docs/page';
 // notebook layout:
-import { DocsPage, PageLastUpdate } from 'fumadocs-ui/layouts/notebook/page';
+import { DocsPage, PageLastUpdate } from '@hanzo/docs-ui/layouts/notebook/page';
 
 const lastModifiedTime: Date | undefined;
 
@@ -118,7 +118,7 @@ For Github hosted documents, you can use
 the [`getGithubLastEdit`](/docs/headless/utils/git-last-edit) utility.
 
 ```tsx
-import { getGithubLastEdit } from 'fumadocs-core/content/github';
+import { getGithubLastEdit } from '@hanzo/docs-core/content/github';
 
 const lastModifiedTime = await getGithubLastEdit({
   owner: 'fuma-nama',
@@ -141,9 +141,9 @@ This will force TOC to be shown as a popover.
 
 ```tsx
 // docs layout:
-import { DocsPage } from 'fumadocs-ui/layouts/docs/page';
+import { DocsPage } from '@hanzo/docs-ui/layouts/docs/page';
 // notebook layout:
-import { DocsPage } from 'fumadocs-ui/layouts/notebook/page';
+import { DocsPage } from '@hanzo/docs-ui/layouts/notebook/page';
 
 <DocsPage full>...</DocsPage>;
 ```
@@ -157,9 +157,9 @@ For Markdown and MDX documents, You can obtain it using the
 
 ```tsx
 // docs layout:
-import { DocsPage } from 'fumadocs-ui/layouts/docs/page';
+import { DocsPage } from '@hanzo/docs-ui/layouts/docs/page';
 // notebook layout:
-import { DocsPage } from 'fumadocs-ui/layouts/notebook/page';
+import { DocsPage } from '@hanzo/docs-ui/layouts/notebook/page';
 
 <DocsPage toc={headings}>...</DocsPage>;
 ```
@@ -168,9 +168,9 @@ You can customise or disable it with the `tableOfContent` option, or with `table
 
 ```tsx
 // docs layout:
-import { DocsPage } from 'fumadocs-ui/layouts/docs/page';
+import { DocsPage } from '@hanzo/docs-ui/layouts/docs/page';
 // notebook layout:
-import { DocsPage } from 'fumadocs-ui/layouts/notebook/page';
+import { DocsPage } from '@hanzo/docs-ui/layouts/notebook/page';
 
 <DocsPage tableOfContent={options} tableOfContentPopover={options}>
   ...
@@ -185,9 +185,9 @@ You can choose another style for TOC, like `clerk` inspired by https://clerk.com
 
 ```tsx
 // docs layout:
-import { DocsPage } from 'fumadocs-ui/layouts/docs/page';
+import { DocsPage } from '@hanzo/docs-ui/layouts/docs/page';
 // notebook layout:
-import { DocsPage } from 'fumadocs-ui/layouts/notebook/page';
+import { DocsPage } from '@hanzo/docs-ui/layouts/notebook/page';
 
 <DocsPage
   tableOfContent={{
@@ -208,9 +208,9 @@ Customise the footer with the `footer` option.
 
 ```tsx
 // docs layout:
-import { DocsPage } from 'fumadocs-ui/layouts/docs/page';
+import { DocsPage } from '@hanzo/docs-ui/layouts/docs/page';
 // notebook layout:
-import { DocsPage } from 'fumadocs-ui/layouts/notebook/page';
+import { DocsPage } from '@hanzo/docs-ui/layouts/notebook/page';
 
 <DocsPage footer={options}>...</DocsPage>;
 ```

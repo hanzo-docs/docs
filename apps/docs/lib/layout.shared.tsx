@@ -1,6 +1,6 @@
 import { AlbumIcon, Heart, LayoutTemplate } from 'lucide-react';
 import Image from 'next/image';
-import type { BaseLayoutProps, LinkItemType } from 'fumadocs-ui/layouts/shared';
+import type { BaseLayoutProps, LinkItemType } from '@hanzo/docs-ui/layouts/shared';
 import { FumadocsIcon } from '@/app/layout.client';
 import Logo from '@/public/logo.png';
 
@@ -24,7 +24,7 @@ export const linkItems: LinkItemType[] = [
   },
   {
     type: 'icon',
-    url: 'https://github.com/fuma-nama/fumadocs',
+    url: 'https://github.com/hanzoai/docs',
     label: 'github',
     text: 'Github',
     icon: (
@@ -39,11 +39,11 @@ export const linkItems: LinkItemType[] = [
 export const logo = (
   <>
     <Image
-      alt="Fumadocs"
+      alt="Hanzo Docs"
       src={Logo}
       sizes="100px"
       className="hidden w-22 in-[.uwu]:block"
-      aria-label="Fumadocs"
+      aria-label="Hanzo Docs"
     />
 
     <FumadocsIcon className="size-5 in-[.uwu]:hidden" />

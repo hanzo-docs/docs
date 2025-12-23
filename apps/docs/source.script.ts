@@ -1,4 +1,4 @@
-import { defineConfig } from 'fumadocs-mdx/config';
+import { defineConfig } from '@hanzo/docs-mdx/config';
 import { visit } from 'unist-util-visit';
 import type { Root } from 'mdast';
 

@@ -5,7 +5,7 @@
 ### Patch Changes
 
 - f398e36: Improve sidebar dropdown
-  - fumadocs-core@16.3.1
+  - @hanzo/docs-core@16.3.1
   - @fumadocs/ui@16.3.1
 
 ## 16.3.0
@@ -17,5 +17,5 @@
 ### Patch Changes
 
 - Updated dependencies [a69b060]
-  - fumadocs-core@16.3.0
+  - @hanzo/docs-core@16.3.0
   - @fumadocs/ui@16.3.0

@@ -5,5 +5,5 @@ export default defineConfig({
   format: 'esm',
   dts: true,
   target: 'es2022',
-  external: ['react'],
+  external: ['react', '@hanzo/radix'],
 });

@@ -11,23 +11,23 @@ import {
   highlight,
   type HighlightOptionsCommon,
   type HighlightOptionsThemes,
-} from 'fumadocs-core/highlight';
+} from '@hanzo/docs-core/highlight';
 import type { OpenAPIServer } from '@/server';
 import type { APIPageClientOptions } from './client';
 import type { CodeUsageGenerator } from './operation/usage-tabs';
 import { ApiProviderLazy } from './contexts/api.lazy';
-import { Heading } from 'fumadocs-ui/components/heading';
+import { Heading } from '@hanzo/radix/components/heading';
 import {
   rehypeCode,
   type RehypeCodeOptions,
-} from 'fumadocs-core/mdx-plugins/rehype-code';
-import { remarkGfm } from 'fumadocs-core/mdx-plugins/remark-gfm';
-import defaultMdxComponents from 'fumadocs-ui/mdx';
+} from '@hanzo/docs-core/mdx-plugins/rehype-code';
+import { remarkGfm } from '@hanzo/docs-core/mdx-plugins/remark-gfm';
+import defaultMdxComponents from '@hanzo/radix/mdx';
 import { remark } from 'remark';
 import remarkRehype from 'remark-rehype';
 import { toJsxRuntime } from 'hast-util-to-jsx-runtime';
 import * as JsxRuntime from 'react/jsx-runtime';
-import { CodeBlock, Pre } from 'fumadocs-ui/components/codeblock';
+import { CodeBlock, Pre } from '@hanzo/radix/components/codeblock';
 import type { SchemaUIOptions } from './schema';
 import type { ResponseTab } from './operation/response-tabs';
 import type { ExampleRequestItem } from './operation/request-tabs';

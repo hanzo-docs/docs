@@ -18,7 +18,7 @@ import { HttpRegistryClient, LocalRegistryClient } from '@/registry/client';
 const program = new Command().option('--config <string>');
 
 program
-  .name('fumadocs')
+  .name('hanzo-docs')
   .description('CLI to setup Fumadocs, init a config')
   .version(packageJson.version)
   .action(async () => {
@@ -44,7 +44,7 @@ program
   });
 
 const dirShortcuts: Record<string, string> = {
-  ':preview': 'https://preview.fumadocs.dev/registry',
+  ':preview': 'https://preview.hanzo-docs.dev/registry',
   ':dev': 'http://localhost:3000/registry',
 };
 
@@ -108,7 +108,7 @@ program
   );
 
 function createClientFromDir(
-  dir = 'https://fumadocs.dev/registry',
+  dir = 'https://hanzo-docs.dev/registry',
   config: LoadedConfig,
 ) {
   if (dir in dirShortcuts) dir = dirShortcuts[dir];

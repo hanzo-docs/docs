@@ -9,7 +9,7 @@ Add it as a remark plugin.
 
 ```ts title="MDX Compiler"
 import { compile } from '@mdx-js/mdx';
-import { remarkStructure } from 'fumadocs-core/mdx-plugins';
+import { remarkStructure } from '@hanzo/docs-core/mdx-plugins';
 
 const vfile = await compile('...', {
   remarkPlugins: [remarkStructure],
@@ -54,7 +54,7 @@ array, each item contains a `heading` prop indicating the heading of paragraph.
 Accepts MDX/markdown content and return structurized data.
 
 ```ts
-import { structure } from 'fumadocs-core/mdx-plugins';
+import { structure } from '@hanzo/docs-core/mdx-plugins';
 
 structure(page.body.raw);
 ```
@@ -64,7 +64,7 @@ If you have custom remark plugins enabled, such as
 `remark-math`, you have to pass these plugins to the function. This avoids unreadable content on paragraphs.
 
 ```ts
-import { structure } from 'fumadocs-core/mdx-plugins';
+import { structure } from '@hanzo/docs-core/mdx-plugins';
 import remarkMath from 'remark-math';
 
 structure(page.body.raw, [remarkMath]);

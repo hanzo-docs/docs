@@ -6,7 +6,7 @@ import {
   CodeBlockTabs,
   CodeBlockTabsList,
   CodeBlockTabsTrigger,
-} from 'fumadocs-ui/components/codeblock';
+} from '@hanzo/radix/components/codeblock';
 import { UsageTabsSelectorLazy, UsageTabLazy } from './lazy';
 import { ResponseTabs } from '../response-tabs';
 

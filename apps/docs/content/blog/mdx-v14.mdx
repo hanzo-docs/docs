@@ -24,7 +24,7 @@ You can add/update the path aliases in `tsconfig.json` for new entry files.
   "compilerOptions": {
     "paths": {
       // [!code ++]
-      "fumadocs-mdx:collections/*": [".source/*"]
+      "@hanzo/docs-mdx:collections/*": [".source/*"]
     }
   }
 }
@@ -34,19 +34,19 @@ Import your collections from the entry files instead of `@/.source`:
 
 ```ts
 // ordinary collections
-import { docs } from 'fumadocs-mdx:collections/server';
+import { docs } from '@hanzo/docs-mdx:collections/server';
 // collections in dynamic mode
-import { docs } from 'fumadocs-mdx:collections/dynamic';
+import { docs } from '@hanzo/docs-mdx:collections/dynamic';
 // non-RSC environment
-import browserCollections from 'fumadocs-mdx:collections/browser';
+import browserCollections from '@hanzo/docs-mdx:collections/browser';
 ```
 
 To use `loader()` with doc collections, use the new `toFumadocsSource()` utility instead.
 
 ```ts
-import { blogPosts } from 'fumadocs-mdx:collections/server';
-import { toFumadocsSource } from 'fumadocs-mdx/runtime/server';
-import { loader } from 'fumadocs-core/source';
+import { blogPosts } from '@hanzo/docs-mdx:collections/server';
+import { toFumadocsSource } from '@hanzo/docs-mdx/runtime/server';
+import { loader } from '@hanzo/docs-core/source';
 
 export const blog = loader({
   baseUrl: '/blog',
@@ -59,7 +59,7 @@ export const blog = loader({
 On Next.js, **Async Mode** now aligns with the behaviour on Vite to generate async imports. This enables server-side chunking to improve memory usage.
 
 ```ts title="source.config.ts"
-import { defineDocs } from 'fumadocs-mdx/config';
+import { defineDocs } from '@hanzo/docs-mdx/config';
 
 export const docs = defineDocs({
   dir: 'content/docs',
@@ -73,7 +73,7 @@ export const docs = defineDocs({
 Instead, we introduced a `dynamic` option to enable dynamic compilation. This is available for both Vite and Next.js.
 
 ```ts title="source.config.ts"
-import { defineDocs } from 'fumadocs-mdx/config';
+import { defineDocs } from '@hanzo/docs-mdx/config';
 
 export const docs = defineDocs({
   dir: 'content/docs',
@@ -91,17 +91,17 @@ By enabling Async or Dynamic modes, the relevant collections are considered lazy
 It now accepts the framework plugin options, you can customise more properties:
 
 ```ts tab="Before"
-import { postInstall } from 'fumadocs-mdx/next';
+import { postInstall } from '@hanzo/docs-mdx/next';
 // or
-import { postInstall } from 'fumadocs-mdx/vite';
+import { postInstall } from '@hanzo/docs-mdx/vite';
 
 postInstall('source.config.ts');
 ```
 
 ```ts tab="After"
-import { postInstall } from 'fumadocs-mdx/next';
+import { postInstall } from '@hanzo/docs-mdx/next';
 // or
-import { postInstall } from 'fumadocs-mdx/vite';
+import { postInstall } from '@hanzo/docs-mdx/vite';
 
 postInstall({ configPath: 'source.config.ts' });
 ```
@@ -111,7 +111,7 @@ postInstall({ configPath: 'source.config.ts' });
 To support a broader range of presets and accommodate dynamic modes, `getDefaultMDXOptions()` has been renamed to `applyMdxPreset()`.
 
 ```ts title="source.config.ts" tab="Before"
-import { defineCollections, getDefaultMDXOptions } from 'fumadocs-mdx/config';
+import { defineCollections, getDefaultMDXOptions } from '@hanzo/docs-mdx/config';
 import { myPlugin } from './remark-plugin';
 
 export const blog = defineCollections({
@@ -125,7 +125,7 @@ export const blog = defineCollections({
 ```
 
 ```ts title="source.config.ts" tab="After"
-import { defineCollections, applyMdxPreset } from 'fumadocs-mdx/config';
+import { defineCollections, applyMdxPreset } from '@hanzo/docs-mdx/config';
 import { myPlugin } from './remark-plugin';
 
 export const blog = defineCollections({
@@ -143,8 +143,8 @@ export const blog = defineCollections({
 The `lastModifiedTime` option has been replaced by a dedicated `lastModified` plugin. This shift promotes a plugin-based architecture for better extensibility.
 
 ```ts title="source.config.ts"
-import { defineConfig } from 'fumadocs-mdx/config';
-import lastModified from 'fumadocs-mdx/plugins/last-modified';
+import { defineConfig } from '@hanzo/docs-mdx/config';
+import lastModified from '@hanzo/docs-mdx/plugins/last-modified';
 
 export default defineConfig({
   // [!code ++]
@@ -157,7 +157,7 @@ export default defineConfig({
 Support for specifying multiple directories in a single collection has been discontinued. Instead, utilize the `files` property to filter and include specific files.
 
 ```ts title="source.config.ts"
-import { defineDocs } from 'fumadocs-mdx/config';
+import { defineDocs } from '@hanzo/docs-mdx/config';
 
 export const docs = defineDocs({
   dir: 'content/guides',
@@ -172,7 +172,7 @@ export const docs = defineDocs({
 The automatic generation of `extractedReferences` is no longer enabled by default. To retain this functionality, explicitly activate it via the `postprocess` option.
 
 ```ts title="source.config.ts"
-import { defineDocs } from 'fumadocs-mdx/config';
+import { defineDocs } from '@hanzo/docs-mdx/config';
 
 export const docs = defineDocs({
   dir: 'content/docs',
@@ -191,7 +191,7 @@ The `generateIndexFile` option of our Vite plugin has been renamed to `index`.
 
 ```ts title="vite.config.ts"
 import { defineConfig } from 'vite';
-import mdx from 'fumadocs-mdx/vite';
+import mdx from '@hanzo/docs-mdx/vite';
 import * as MdxConfig from './source.config';
 
 export default defineConfig({

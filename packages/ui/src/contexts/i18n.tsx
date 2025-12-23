@@ -6,7 +6,7 @@ import {
   useMemo,
   useRef,
 } from 'react';
-import { usePathname, useRouter } from 'fumadocs-core/framework';
+import { usePathname, useRouter } from '@hanzo/docs-core/framework';
 
 export interface Translations {
   search: string;

@@ -1,5 +1,5 @@
 'use client';
-import { RootProvider } from 'fumadocs-ui/provider/react-router';
+import { RootProvider } from '@hanzo/radix/provider/react-router';
 import type { ReactNode } from 'react';
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router';
 

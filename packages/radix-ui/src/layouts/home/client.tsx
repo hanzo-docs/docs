@@ -1,14 +1,14 @@
 'use client';
 import { type ComponentProps, Fragment, useMemo, useState } from 'react';
 import { cva } from 'class-variance-authority';
-import Link from 'fumadocs-core/link';
-import { cn } from '@fumadocs/ui/cn';
+import Link from '@hanzo/docs-core/link';
+import { cn } from '@hanzo/ui/cn';
 import {
   type LinkItemType,
   type NavOptions,
   resolveLinkItems,
 } from '@/layouts/shared';
-import { LinkItem } from '@fumadocs/ui/link-item';
+import { LinkItem } from '@hanzo/ui/link-item';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -29,8 +29,8 @@ import {
   LanguageToggle,
   LanguageToggleText,
 } from '@/layouts/shared/language-toggle';
-import { ChevronDown, Languages } from '@fumadocs/ui/icons';
-import { useIsScrollTop } from '@fumadocs/ui/hooks/use-is-scroll-top';
+import { ChevronDown, Languages } from '@hanzo/ui/icons';
+import { useIsScrollTop } from '@hanzo/ui/hooks/use-is-scroll-top';
 
 export const navItemVariants = cva('[&_svg]:size-4', {
   variants: {

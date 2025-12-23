@@ -92,12 +92,12 @@ Make sure to import the appropriate page layout based on your docs layout:
 
 ```ts
 // For docs layout
-import { DocsPage } from 'fumadocs-ui/layouts/docs/page';
+import { DocsPage } from '@hanzo/docs-ui/layouts/docs/page';
 // For notebook layout
-import { DocsPage } from 'fumadocs-ui/layouts/notebook/page';
+import { DocsPage } from '@hanzo/docs-ui/layouts/notebook/page';
 ```
 
-**Migration Steps:** Update your imports accordingly. Although the default `fumadocs-ui/page` will redirect to the correct layout, we strongly advise explicit imports for clarity and future-proofing.
+**Migration Steps:** Update your imports accordingly. Although the default `@hanzo/docs-ui/page` will redirect to the correct layout, we strongly advise explicit imports for clarity and future-proofing.
 
 ### Removal of Unused Styles
 
@@ -107,10 +107,10 @@ Styles related to the abandoned `container` utility, and `--spacing-fd-container
 
 ### Relocation of Sidebar Context
 
-The `fumadocs-ui/contexts/sidebar` module has been removed. Access the context via:
+The `@hanzo/docs-ui/contexts/sidebar` module has been removed. Access the context via:
 
 ```ts
-import { useSidebar } from 'fumadocs-ui/components/sidebar/base';
+import { useSidebar } from '@hanzo/docs-ui/components/sidebar/base';
 ```
 
 **Migration Steps:** Update import paths, ensure the context is only accessed within `<DocsLayout />`.

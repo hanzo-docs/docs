@@ -680,13 +680,13 @@
 
 - 2b11c20: **Rename to Fumadocs**
 
-  `next-docs-zeta` -> `fumadocs-core`
+  `next-docs-zeta` -> `@hanzo/docs-core`
 
-  `next-docs-ui` -> `fumadocs-ui`
+  `next-docs-ui` -> `@hanzo/docs-ui`
 
-  `next-docs-mdx` -> `fumadocs-mdx`
+  `next-docs-mdx` -> `@hanzo/docs-mdx`
 
-  `@fuma-docs/openapi` -> `fumadocs-openapi`
+  `@fuma-docs/openapi` -> `@hanzo/docs-openapi`
 
   `create-next-docs-app` -> `create-fumadocs-app`
 

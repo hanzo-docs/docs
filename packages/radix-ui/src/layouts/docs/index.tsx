@@ -1,12 +1,12 @@
-import type * as PageTree from 'fumadocs-core/page-tree';
+import type * as PageTree from '@hanzo/docs-core/page-tree';
 import {
   type ComponentProps,
   type HTMLAttributes,
   type ReactNode,
   useMemo,
 } from 'react';
-import { Languages, Sidebar as SidebarIcon } from '@fumadocs/ui/icons';
-import { cn } from '@fumadocs/ui/cn';
+import { Languages, Sidebar as SidebarIcon } from '@hanzo/ui/icons';
+import { cn } from '@hanzo/ui/cn';
 import { buttonVariants } from '@/components/ui/button';
 import {
   Sidebar,
@@ -19,7 +19,7 @@ import {
   SidebarViewport,
 } from './sidebar';
 import { type BaseLayoutProps, resolveLinkItems } from '@/layouts/shared';
-import { LinkItem } from '@fumadocs/ui/link-item';
+import { LinkItem } from '@hanzo/ui/link-item';
 import {
   LanguageToggle,
   LanguageToggleText,
@@ -32,7 +32,7 @@ import {
 } from './client';
 import { TreeContextProvider } from '@/contexts/tree';
 import { ThemeToggle } from '../shared/theme-toggle';
-import Link from 'fumadocs-core/link';
+import Link from '@hanzo/docs-core/link';
 import {
   LargeSearchToggle,
   SearchToggle,

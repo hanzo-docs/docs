@@ -1,1 +1,1 @@
-export * from '@fumadocs/ui/contexts/tree';
+export * from '@hanzo/ui/contexts/tree';

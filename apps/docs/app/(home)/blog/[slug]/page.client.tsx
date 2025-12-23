@@ -2,7 +2,7 @@
 import { Check, Share } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { buttonVariants } from '@/components/ui/button';
-import { useCopyButton } from 'fumadocs-ui/utils/use-copy-button';
+import { useCopyButton } from '@hanzo/docs-ui/utils/use-copy-button';
 
 export function ShareButton({ url }: { url: string }) {
   const [isChecked, onCopy] = useCopyButton(() => {

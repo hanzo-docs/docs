@@ -10,7 +10,7 @@ author: Fuma Nama
 Sometimes there are questions raised by beginners confused about where to add MDX components.
 Although it's simply located in `page.tsx`, which shouldn't be difficult to find, I think some kind of conventions may help, so I decided to add back `mdx-components.tsx`.
 
-I love to have fewer files, but considering `create-fumadocs-app` should also act as a starting point for beginners who may not be familiar with MDX, it's much more helpful to provide it by default.
+I love to have fewer files, but considering `create-hanzo-docs-app` should also act as a starting point for beginners who may not be familiar with MDX, it's much more helpful to provide it by default.
 
 ### Existing Projects
 
@@ -20,7 +20,7 @@ For existing users, you probably knew how to pass MDX components, and no further
 But you can still make one:
 
 ```tsx title="mdx-components.tsx"
-import defaultMdxComponents from 'fumadocs-ui/mdx';
+import defaultMdxComponents from '@hanzo/docs-ui/mdx';
 import type { MDXComponents } from 'mdx/types';
 
 export function getMDXComponents(components?: MDXComponents): MDXComponents {

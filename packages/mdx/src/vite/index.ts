@@ -9,7 +9,7 @@ import { createIntegratedConfigLoader } from '@/loaders/config';
 import { createMetaLoader } from '@/loaders/meta';
 import indexFile, { IndexFilePluginOptions } from '@/plugins/index-file';
 
-const FumadocsDeps = ['fumadocs-core', 'fumadocs-ui', 'fumadocs-openapi'];
+const FumadocsDeps = ['@hanzo/docs-core', '@hanzo/ui', '@hanzo/docs-openapi'];
 
 export interface PluginOptions {
   /**
@@ -59,7 +59,7 @@ export default async function mdx(
   );
 
   return {
-    name: 'fumadocs-mdx',
+    name: '@hanzo/docs-mdx',
     // needed, otherwise other plugins will be executed before our `transform`.
     enforce: 'pre',
     config(config) {

@@ -5,7 +5,7 @@
 ### Patch Changes
 
 - f398e36: Improve sidebar dropdown
-  - fumadocs-core@16.3.1
+  - @hanzo/docs-core@16.3.1
   - @fumadocs/ui@16.3.1
 
 ## 16.3.0
@@ -17,7 +17,7 @@
 ### Patch Changes
 
 - Updated dependencies [a69b060]
-  - fumadocs-core@16.3.0
+  - @hanzo/docs-core@16.3.0
   - @fumadocs/ui@16.3.0
 
 ## 16.2.5
@@ -26,7 +26,7 @@
 
 - 8469c6d: fix shadcn ui preset
 - Updated dependencies [7292424]
-  - fumadocs-core@16.2.5
+  - @hanzo/docs-core@16.2.5
 
 ## 16.2.4
 
@@ -34,7 +34,7 @@
 
 - Updated dependencies [da87713]
 - Updated dependencies [d17499b]
-  - fumadocs-core@16.2.4
+  - @hanzo/docs-core@16.2.4
 
 ## 16.2.3
 
@@ -44,7 +44,7 @@
 - Updated dependencies [ef8eb6c]
 - Updated dependencies [e0c4c3a]
 - Updated dependencies [4e2bca7]
-  - fumadocs-core@16.2.3
+  - @hanzo/docs-core@16.2.3
 
 ## 16.2.2
 
@@ -53,7 +53,7 @@
 - 19db270: Align menu behaviour on notebook layout with home layout
 - Updated dependencies [464442b]
 - Updated dependencies [6c668e1]
-  - fumadocs-core@16.2.2
+  - @hanzo/docs-core@16.2.2
 
 ## 16.2.1
 
@@ -61,7 +61,7 @@
 
 - 556cb6b: Fix missing default colors
 - c6120ff: Add sidebar animation back
-  - fumadocs-core@16.2.1
+  - @hanzo/docs-core@16.2.1
 
 ## 16.2.0
 
@@ -79,21 +79,21 @@
 
   ```ts
   // for docs layout
-  import { DocsPage } from 'fumadocs-ui/layouts/docs/page';
+  import { DocsPage } from '@hanzo/docs-ui/layouts/docs/page';
 
   // for notebook layout
-  import { DocsPage } from 'fumadocs-ui/layouts/notebook/page';
+  import { DocsPage } from '@hanzo/docs-ui/layouts/notebook/page';
   ```
 
-  While the default `fumadocs-ui/page` will redirect to the correct layout, we highly recommend you to update the import.
+  While the default `@hanzo/docs-ui/page` will redirect to the correct layout, we highly recommend you to update the import.
 
 - 5d65002: Remove `container` styles, this includes `--spacing-fd-container` as they are no longer used.
 - 9a39883: **Move Sidebar context into docs layouts**
 
-  `fumadocs-ui/contexts/sidebar` is removed, you can still reference the context with:
+  `@hanzo/docs-ui/contexts/sidebar` is removed, you can still reference the context with:
 
   ```ts
-  import { useSidebar } from 'fumadocs-ui/components/sidebar/base';
+  import { useSidebar } from '@hanzo/docs-ui/components/sidebar/base';
   ```
 
   Make sure you're only accessing it in `<DocsLayout />`.
@@ -102,7 +102,7 @@
 
 - 36eb90a: Fix sidebar items not automatically scrolled
 - 12d3f78: Tabs: always prefer session storage
-  - fumadocs-core@16.2.0
+  - @hanzo/docs-core@16.2.0
 
 ## 16.1.0
 
@@ -111,7 +111,7 @@
 - Updated dependencies [2e01720]
 - Updated dependencies [15bd183]
 - Updated dependencies [42ad84c]
-  - fumadocs-core@16.1.0
+  - @hanzo/docs-core@16.1.0
 
 ## 16.0.15
 
@@ -121,28 +121,28 @@
 - ade44d0: feat: enhance framework providers to accept custom Link components
 - Updated dependencies [fe380da]
 - Updated dependencies [ade44d0]
-  - fumadocs-core@16.0.15
+  - @hanzo/docs-core@16.0.15
 
 ## 16.0.14
 
 ### Patch Changes
 
 - Updated dependencies [c3b8474]
-  - fumadocs-core@16.0.14
+  - @hanzo/docs-core@16.0.14
 
 ## 16.0.13
 
 ### Patch Changes
 
 - 88dae4d: Reduce `px` usage
-  - fumadocs-core@16.0.13
+  - @hanzo/docs-core@16.0.13
 
 ## 16.0.12
 
 ### Patch Changes
 
 - Updated dependencies [c5c00e9]
-  - fumadocs-core@16.0.12
+  - @hanzo/docs-core@16.0.12
 
 ## 16.0.11
 
@@ -151,7 +151,7 @@
 - 00058c8: Drop framework-side `createContext`
 - Updated dependencies [ff68f69]
 - Updated dependencies [00058c8]
-  - fumadocs-core@16.0.11
+  - @hanzo/docs-core@16.0.11
 
 ## 16.0.10
 
@@ -162,14 +162,14 @@
   They're now MDX components included by default.
 
 - Updated dependencies [733b01e]
-  - fumadocs-core@16.0.10
+  - @hanzo/docs-core@16.0.10
 
 ## 16.0.9
 
 ### Patch Changes
 
 - 2eef888: Remove unnecessary `aria-label` from the link icon in headings
-  - fumadocs-core@16.0.9
+  - @hanzo/docs-core@16.0.9
 
 ## 16.0.8
 
@@ -180,7 +180,7 @@
 - Updated dependencies [bc97236]
 - Updated dependencies [ca09b6a]
 - Updated dependencies [117ad86]
-  - fumadocs-core@16.0.8
+  - @hanzo/docs-core@16.0.8
 
 ## 16.0.7
 
@@ -188,41 +188,41 @@
 
 - Updated dependencies [f97cd1e]
 - Updated dependencies [f7e15e2]
-  - fumadocs-core@16.0.7
+  - @hanzo/docs-core@16.0.7
 
 ## 16.0.6
 
 ### Patch Changes
 
 - Updated dependencies [b95b0cf]
-  - fumadocs-core@16.0.6
+  - @hanzo/docs-core@16.0.6
 
 ## 16.0.5
 
 ### Patch Changes
 
 - Updated dependencies [8221785]
-  - fumadocs-core@16.0.5
+  - @hanzo/docs-core@16.0.5
 
 ## 16.0.4
 
 ### Patch Changes
 
 - Updated dependencies [99971c7]
-  - fumadocs-core@16.0.4
+  - @hanzo/docs-core@16.0.4
 
 ## 16.0.3
 
 ### Patch Changes
 
-- fumadocs-core@16.0.3
+- @hanzo/docs-core@16.0.3
 
 ## 16.0.2
 
 ### Patch Changes
 
 - Updated dependencies [d511232]
-  - fumadocs-core@16.0.2
+  - @hanzo/docs-core@16.0.2
 
 ## 16.0.1
 
@@ -230,7 +230,7 @@
 
 - 45f0c1f: hotfix `<DynamicCodeBlock />` Vite + React 19.2 compat issues
 - Updated dependencies [45f0c1f]
-  - fumadocs-core@16.0.1
+  - @hanzo/docs-core@16.0.1
 
 ## 16.0.0
 
@@ -253,11 +253,11 @@
   As a consequence, Next.js 16 is now the minimal version when using Fumadocs UI because Next.js always uses the internal canary version of React.js.
 
 - 42f09c3: **Remove deprecated APIs**
-  - `fumadocs-ui/page`:
+  - `@hanzo/docs-ui/page`:
     - removed `<DocsCategory />`.
     - removed `breadcrumbs.full` option from `<DocsPage />`.
-  - `fumadocs-core/search/algolia`: renamed option `document` to `indexName`.
-  - `fumadocs-core/search`:
+  - `@hanzo/docs-core/search/algolia`: renamed option `document` to `indexName`.
+  - `@hanzo/docs-core/search`:
     - remove deprecated signature of `createFromSource()`: migrate to newer usage instead.
       ```ts
       export function createFromSource<S extends LoaderOutput<LoaderConfig>>(
@@ -267,16 +267,16 @@
       ): SearchAPI;
       ```
     - remove deprecated parameters in `useSearch()`, pass them in the client object instead.
-  - `fumadocs-core/highlight`: remove deprecated `withPrerenderScript` and `loading` options from `useShiki()`.
-  - `fumadocs-core/i18n`: removed `createI18nMiddleware`, import from `fumadocs-core/i18n/middleware` instead.
-  - `fumadocs-core/source`:
+  - `@hanzo/docs-core/highlight`: remove deprecated `withPrerenderScript` and `loading` options from `useShiki()`.
+  - `@hanzo/docs-core/i18n`: removed `createI18nMiddleware`, import from `@hanzo/docs-core/i18n/middleware` instead.
+  - `@hanzo/docs-core/source`:
     - removed deprecated `transformers`, `pageTree.attach*` options from `loader()`.
     - removed deprecated `page.file` property.
     - removed `FileInfo` & `parseFilePath` utilities.
 
 ### Patch Changes
 
-- 1494340: Drop `fumadocs-core/hide-if-empty` usage, prefer user-side component overrides for precise control
+- 1494340: Drop `@hanzo/docs-core/hide-if-empty` usage, prefer user-side component overrides for precise control
 - de0ce6d: Add a `toc-title` ID to the table of contents heading for styling purposes
 - 5966e23: Fix root toggle overflow
 - Updated dependencies [230c6bf]
@@ -287,7 +287,7 @@
 - Updated dependencies [cbc93e9]
 - Updated dependencies [42f09c3]
 - Updated dependencies [55afd8a]
-  - fumadocs-core@16.0.0
+  - @hanzo/docs-core@16.0.0
 
 ## 15.8.4
 
@@ -295,30 +295,30 @@
 
 - Updated dependencies [ce2be59]
 - Updated dependencies [31b9494]
-  - fumadocs-core@15.8.4
+  - @hanzo/docs-core@15.8.4
 
 ## 15.8.3
 
 ### Patch Changes
 
 - a3a14e7: Bump deps
-- 7b0d839: Hotfix `fumadocs-ui/provider`
+- 7b0d839: Hotfix `@hanzo/docs-ui/provider`
 - Updated dependencies [a3a14e7]
-  - fumadocs-core@15.8.3
+  - @hanzo/docs-core@15.8.3
 
 ## 15.8.2
 
 ### Patch Changes
 
 - 90cf1fe: Support `tabMode` on `<DocsLayout />`
-- 6c3bde5: **Prefer importing `<RootProvider />` from `fumadocs-ui/provider/<framework>`**
-  - Old `fumadocs-ui/provider` will be kept, as it's used by majority of previous projects.
+- 6c3bde5: **Prefer importing `<RootProvider />` from `@hanzo/docs-ui/provider/<framework>`**
+  - Old `@hanzo/docs-ui/provider` will be kept, as it's used by majority of previous projects.
   - New guides & templates will follow the new recommendation.
 
 - Updated dependencies [ad9a004]
 - Updated dependencies [90cf1fe]
 - Updated dependencies [747bdbc]
-  - fumadocs-core@15.8.2
+  - @hanzo/docs-core@15.8.2
 
 ## 15.8.1
 
@@ -326,7 +326,7 @@
 
 - Updated dependencies [71bce86]
 - Updated dependencies [f04547f]
-  - fumadocs-core@15.8.1
+  - @hanzo/docs-core@15.8.1
 
 ## 15.8.0
 
@@ -339,14 +339,14 @@
 - Updated dependencies [6548a59]
 - Updated dependencies [51268ec]
 - Updated dependencies [51268ec]
-  - fumadocs-core@15.8.0
+  - @hanzo/docs-core@15.8.0
 
 ## 15.7.13
 
 ### Patch Changes
 
 - Updated dependencies [982aed6]
-  - fumadocs-core@15.7.13
+  - @hanzo/docs-core@15.7.13
 
 ## 15.7.12
 
@@ -355,7 +355,7 @@
 - 846b28a: Support multiple codeblocks in same tab
 - Updated dependencies [846b28a]
 - Updated dependencies [2b30315]
-  - fumadocs-core@15.7.12
+  - @hanzo/docs-core@15.7.12
 
 ## 15.7.11
 
@@ -363,14 +363,14 @@
 
 - 9304db9: Improve type table spacing
 - dd7338b: Fix inline code styles
-  - fumadocs-core@15.7.11
+  - @hanzo/docs-core@15.7.11
 
 ## 15.7.10
 
 ### Patch Changes
 
 - Updated dependencies [c948f59]
-  - fumadocs-core@15.7.10
+  - @hanzo/docs-core@15.7.10
 
 ## 15.7.9
 
@@ -380,7 +380,7 @@
 - 4082acc: Redesign Type Table
 - Updated dependencies [d135efd]
 - Updated dependencies [4082acc]
-  - fumadocs-core@15.7.9
+  - @hanzo/docs-core@15.7.9
 
 ## 15.7.8
 
@@ -391,7 +391,7 @@
 - bec3b36: Use `on-root:` to apply CSS variables from child layout components
 - Updated dependencies [f65778d]
 - Updated dependencies [e4c12a3]
-  - fumadocs-core@15.7.8
+  - @hanzo/docs-core@15.7.8
 
 ## 15.7.7
 
@@ -399,14 +399,14 @@
 
 - Updated dependencies [0b53056]
 - Updated dependencies [3490285]
-  - fumadocs-core@15.7.7
+  - @hanzo/docs-core@15.7.7
 
 ## 15.7.6
 
 ### Patch Changes
 
 - dc6d8a0: unify sidebar tabs matching
-  - fumadocs-core@15.7.6
+  - @hanzo/docs-core@15.7.6
 
 ## 15.7.5
 
@@ -414,7 +414,7 @@
 
 - cedc494: Hotfix URL normalization logic
 - Updated dependencies [cedc494]
-  - fumadocs-core@15.7.5
+  - @hanzo/docs-core@15.7.5
 
 ## 15.7.4
 
@@ -422,7 +422,7 @@
 
 - 302cdc2: Use `position: fixed` for TOC
 - 02d3453: Make codeblocks flat & improve paddings
-  - fumadocs-core@15.7.4
+  - @hanzo/docs-core@15.7.4
 
 ## 15.7.3
 
@@ -431,7 +431,7 @@
 - f6de900: Add `overscroll` to sidebar viewports
 - Updated dependencies [6d97379]
 - Updated dependencies [e776ee5]
-  - fumadocs-core@15.7.3
+  - @hanzo/docs-core@15.7.3
 
 ## 15.7.2
 
@@ -440,7 +440,7 @@
 - Updated dependencies [88b5a4e]
 - Updated dependencies [039b24b]
 - Updated dependencies [08eee2b]
-  - fumadocs-core@15.7.2
+  - @hanzo/docs-core@15.7.2
 
 ## 15.7.1
 
@@ -449,7 +449,7 @@
 - b4e6147: Fix sidebar & animation bugs
 - Updated dependencies [195b090]
 - Updated dependencies [e1c84a2]
-  - fumadocs-core@15.7.1
+  - @hanzo/docs-core@15.7.1
 
 ## 15.7.0
 
@@ -488,7 +488,7 @@
 
   ```ts
   // lib/source.ts
-  import { defineI18n } from 'fumadocs-core/i18n';
+  import { defineI18n } from '@hanzo/docs-core/i18n';
 
   export const i18n = defineI18n({
     defaultLanguage: 'en',
@@ -498,7 +498,7 @@
 
   ```tsx
   // root layout
-  import { defineI18nUI } from 'fumadocs-ui/i18n';
+  import { defineI18nUI } from '@hanzo/docs-ui/i18n';
   import { i18n } from '@/lib/i18n';
 
   const { provider } = defineI18nUI(i18n, {
@@ -522,7 +522,7 @@
 
   ```ts
   // here!
-  import { createI18nMiddleware } from 'fumadocs-core/i18n/middleware';
+  import { createI18nMiddleware } from '@hanzo/docs-core/i18n/middleware';
   import { i18n } from '@/lib/i18n';
 
   export default createI18nMiddleware(i18n);
@@ -540,14 +540,14 @@
 - Updated dependencies [50eb07f]
 - Updated dependencies [67df155]
 - Updated dependencies [b109d06]
-  - fumadocs-core@15.7.0
+  - @hanzo/docs-core@15.7.0
 
 ## 15.6.12
 
 ### Patch Changes
 
 - fe31a72: Fix custom components auto RWD handling for home layout
-  - fumadocs-core@15.6.12
+  - @hanzo/docs-core@15.6.12
 
 ## 15.6.11
 
@@ -555,7 +555,7 @@
 
 - 6de6ff3: Restrict exports of `layouts` to avoid projects importing internal/unstable APIs
 - f0b1fee: Improve layout component customisation experience by handling RWD automatically
-  - fumadocs-core@15.6.11
+  - @hanzo/docs-core@15.6.11
 
 ## 15.6.10
 
@@ -567,7 +567,7 @@
 
 - Updated dependencies [569bc26]
 - Updated dependencies [817c237]
-  - fumadocs-core@15.6.10
+  - @hanzo/docs-core@15.6.10
 
 ## 15.6.9
 
@@ -575,13 +575,13 @@
 
 - f2b22ca: simplify layout offset logic
 - Updated dependencies [0ab2cdd]
-  - fumadocs-core@15.6.9
+  - @hanzo/docs-core@15.6.9
 
 ## 15.6.8
 
 ### Patch Changes
 
-- fumadocs-core@15.6.8
+- @hanzo/docs-core@15.6.8
 
 ## 15.6.7
 
@@ -590,7 +590,7 @@
 - e9fef34: Move sidebar toolbar to top on mobile view
 - d4a9037: improve codeblock diff styles
 - Updated dependencies [6fa1442]
-  - fumadocs-core@15.6.7
+  - @hanzo/docs-core@15.6.7
 
 ## 15.6.6
 
@@ -600,28 +600,28 @@
 - 5913cc4: Ignore IME composition to avoid accidental selection
 - 79248f6: Improve type table link icon
 - Updated dependencies [1b0e9d5]
-  - fumadocs-core@15.6.6
+  - @hanzo/docs-core@15.6.6
 
 ## 15.6.5
 
 ### Patch Changes
 
 - Updated dependencies [658fa96]
-  - fumadocs-core@15.6.5
+  - @hanzo/docs-core@15.6.5
 
 ## 15.6.4
 
 ### Patch Changes
 
 - dca17d7: Improve search dialog consistency
-  - fumadocs-core@15.6.4
+  - @hanzo/docs-core@15.6.4
 
 ## 15.6.3
 
 ### Patch Changes
 
 - a2d7940: Fix layout: remove reserved sidebar space when sidebar is disabled in DocsLayout
-  - fumadocs-core@15.6.3
+  - @hanzo/docs-core@15.6.3
 
 ## 15.6.2
 
@@ -630,14 +630,14 @@
 - 1e50889: Fix mobile sidebar trigger visibility when sidebar is disabled
 - 353c139: Callout add fallback icons
 - 5844c6f: no longer sort type table properties by default
-  - fumadocs-core@15.6.2
+  - @hanzo/docs-core@15.6.2
 
 ## 15.6.1
 
 ### Patch Changes
 
 - Updated dependencies [1a902ff]
-  - fumadocs-core@15.6.1
+  - @hanzo/docs-core@15.6.1
 
 ## 15.6.0
 
@@ -666,7 +666,7 @@
 - Updated dependencies [d0f8a15]
 - Updated dependencies [84918b8]
 - Updated dependencies [f8d1709]
-  - fumadocs-core@15.6.0
+  - @hanzo/docs-core@15.6.0
 
 ## 15.5.5
 
@@ -675,7 +675,7 @@
 - e9b1c9c: Support `rainbowColors` API in `<Banner />` component
 - d5c9b11: Fix Notebook Layout tab mode `navbar` cannot handle nested tabs
 - Updated dependencies [0d3f76b]
-  - fumadocs-core@15.5.5
+  - @hanzo/docs-core@15.5.5
 
 ## 15.5.4
 
@@ -684,14 +684,14 @@
 - 4a1d3cf: Reduce sidebar intensity
 - 58b7596: Fix copying line breaks with Twoslash codeblocks
 - Updated dependencies [35c3c0b]
-  - fumadocs-core@15.5.4
+  - @hanzo/docs-core@15.5.4
 
 ## 15.5.3
 
 ### Patch Changes
 
 - Updated dependencies [7d1ac21]
-  - fumadocs-core@15.5.3
+  - @hanzo/docs-core@15.5.3
 
 ## 15.5.2
 
@@ -702,18 +702,18 @@
 - 82fc4c8: Avoid direct update to passed props.
 - Updated dependencies [7a45921]
 - Updated dependencies [1b7bc4b]
-  - fumadocs-core@15.5.2
+  - @hanzo/docs-core@15.5.2
 
 ## 15.5.1
 
 ### Patch Changes
 
 - b4916d2: Move `hide-if-empty` component to Fumadocs Core
-- 68526ea: Redesign `fumadocs-ui/components/dialog/search` usage to make it composable, and mark it as stable API.
+- 68526ea: Redesign `@hanzo/docs-ui/components/dialog/search` usage to make it composable, and mark it as stable API.
 - Updated dependencies [b4916d2]
 - Updated dependencies [8738b9c]
 - Updated dependencies [a66886b]
-  - fumadocs-core@15.5.1
+  - @hanzo/docs-core@15.5.1
 
 ## 15.5.0
 
@@ -740,21 +740,21 @@
 
 - 50f8f7f: Update Home Layout navbar design
 - 697d5b4: Support specifying a custom `value` for `Accordion`
-  - fumadocs-core@15.5.0
+  - @hanzo/docs-core@15.5.0
 
 ## 15.4.2
 
 ### Patch Changes
 
 - Updated dependencies [0ab6c7f]
-  - fumadocs-core@15.4.2
+  - @hanzo/docs-core@15.4.2
 
 ## 15.4.1
 
 ### Patch Changes
 
 - e72b7b4: hotfix: production source map being ignored
-  - fumadocs-core@15.4.1
+  - @hanzo/docs-core@15.4.1
 
 ## 15.4.0
 
@@ -768,7 +768,7 @@
 
   ```ts
   import { algoliasearch } from 'algoliasearch';
-  import { sync } from 'fumadocs-core/search/algolia';
+  import { sync } from '@hanzo/docs-core/search/algolia';
   const client = algoliasearch('id', 'key');
 
   void sync(client, {
@@ -783,8 +783,8 @@
   'use client';
 
   import { liteClient } from 'algoliasearch/lite';
-  import type { SharedProps } from 'fumadocs-ui/components/dialog/search';
-  import SearchDialog from 'fumadocs-ui/components/dialog/search-algolia';
+  import type { SharedProps } from '@hanzo/docs-ui/components/dialog/search';
+  import SearchDialog from '@hanzo/docs-ui/components/dialog/search-algolia';
 
   const client = liteClient(appId, apiKey);
 
@@ -809,7 +809,7 @@
 - Updated dependencies [1b999eb]
 - Updated dependencies [961b67e]
 - Updated dependencies [7d78bc5]
-  - fumadocs-core@15.4.0
+  - @hanzo/docs-core@15.4.0
 
 ## 15.3.4
 
@@ -817,7 +817,7 @@
 
 - e0c2a92: Improve UI consistency
 - 71fc1a5: Mount all children of tabs by default
-  - fumadocs-core@15.3.4
+  - @hanzo/docs-core@15.3.4
 
 ## 15.3.3
 
@@ -827,7 +827,7 @@
 - 39bf088: Support usage with `Tabs` in primitive way
 - e955a98: Hotfix problems with `HideIfEmpty`
 - Updated dependencies [4ae7b4a]
-  - fumadocs-core@15.3.3
+  - @hanzo/docs-core@15.3.3
 
 ## 15.3.2
 
@@ -839,7 +839,7 @@
 - ac0ab12: Improve performance by reducing usage of `@radix-ui/react-scroll-area`
 - c25d678: Support Shiki focus notation transformer by default
 - Updated dependencies [c25d678]
-  - fumadocs-core@15.3.2
+  - @hanzo/docs-core@15.3.2
 
 ## 15.3.1
 
@@ -847,7 +847,7 @@
 
 - 3372792: Support line numbers in codeblock
 - Updated dependencies [3372792]
-  - fumadocs-core@15.3.1
+  - @hanzo/docs-core@15.3.1
 
 ## 15.3.0
 
@@ -857,13 +857,13 @@
 
   Mobile sidebar is now a separate component from the desktop one, with its own id `nd-sidebar-mobile`.
 
-  note to advanced use cases: Fumadocs UI now stopped using `fumadocs-core/sidebar`, avoid using the primitive directly as provider is not used.
+  note to advanced use cases: Fumadocs UI now stopped using `@hanzo/docs-core/sidebar`, avoid using the primitive directly as provider is not used.
 
 ### Patch Changes
 
 - abce713: Adjust design (Accordion, Tabs, border color of themes)
 - Updated dependencies [c05dc03]
-  - fumadocs-core@15.3.0
+  - @hanzo/docs-core@15.3.0
 
 ## 15.2.15
 
@@ -872,14 +872,14 @@
 - 50db874: Remove placeholder space for codeblocks
 - Updated dependencies [50db874]
 - Updated dependencies [79e75c3]
-  - fumadocs-core@15.2.15
+  - @hanzo/docs-core@15.2.15
 
 ## 15.2.14
 
 ### Patch Changes
 
 - Updated dependencies [6ea1718]
-  - fumadocs-core@15.2.14
+  - @hanzo/docs-core@15.2.14
 
 ## 15.2.13
 
@@ -887,7 +887,7 @@
 
 - b433d93: Recommend using custom button/link instead for edit on GitHub button
 - 1e07ed8: Support disabling codeblock styles with `.not-fumadocs-codeblock`
-  - fumadocs-core@15.2.13
+  - @hanzo/docs-core@15.2.13
 
 ## 15.2.12
 
@@ -896,7 +896,7 @@
 - b68bb51: Fix sidebar legacy behaviours
 - 127e681: Fix Notebook layout ignores `themeSwitch` and `sidebar.collapsible` on nav mode
 - Updated dependencies [acff667]
-  - fumadocs-core@15.2.12
+  - @hanzo/docs-core@15.2.12
 
 ## 15.2.11
 
@@ -906,7 +906,7 @@
 - 4e62b41: Bundle `lucide-react` as part of library
 - 07cd690: Support separators without name
 - Updated dependencies [07cd690]
-  - fumadocs-core@15.2.11
+  - @hanzo/docs-core@15.2.11
 
 ## 15.2.10
 
@@ -914,7 +914,7 @@
 
 - 3a5595a: Support deprecated properties in Type Table
 - 8c9fc1f: Fix callout margin
-  - fumadocs-core@15.2.10
+  - @hanzo/docs-core@15.2.10
 
 ## 15.2.9
 
@@ -923,7 +923,7 @@
 - e72af4b: Improve layout
 - ea0f468: Fix relative file href with hash
 - 7f3c30e: Add `shadcn.css` preset
-  - fumadocs-core@15.2.9
+  - @hanzo/docs-core@15.2.9
 
 ## 15.2.8
 
@@ -931,7 +931,7 @@
 
 - 4fad539: fix TOC relative position
 - a673ef4: Make `@source` in `global.css` optional
-  - fumadocs-core@15.2.8
+  - @hanzo/docs-core@15.2.8
 
 ## 15.2.7
 
@@ -942,7 +942,7 @@
 - 4d50bcf: fix banner overlapping with collapsible control
 - Updated dependencies [ec85a6c]
 - Updated dependencies [e1a61bf]
-  - fumadocs-core@15.2.7
+  - @hanzo/docs-core@15.2.7
 
 ## 15.2.6
 
@@ -952,14 +952,14 @@
 - Updated dependencies [d49f9ae]
 - Updated dependencies [b07e98c]
 - Updated dependencies [3a4bd88]
-  - fumadocs-core@15.2.6
+  - @hanzo/docs-core@15.2.6
 
 ## 15.2.5
 
 ### Patch Changes
 
 - Updated dependencies [c66ed79]
-  - fumadocs-core@15.2.5
+  - @hanzo/docs-core@15.2.5
 
 ## 15.2.4
 
@@ -967,7 +967,7 @@
 
 - 1057957: Fix type problems on dynamic codeblock
 - Updated dependencies [1057957]
-  - fumadocs-core@15.2.4
+  - @hanzo/docs-core@15.2.4
 
 ## 15.2.3
 
@@ -975,7 +975,7 @@
 
 - 5e4e9ec: Deprecate I18nProvider in favour of `<RootProvider />` `i18n` prop
 - 293178f: revert framework migration on i18n provider
-  - fumadocs-core@15.2.3
+  - @hanzo/docs-core@15.2.3
 
 ## 15.2.2
 
@@ -983,14 +983,14 @@
 
 - 0829544: Remove unused registry files from dist
 - Updated dependencies [0829544]
-  - fumadocs-core@15.2.2
+  - @hanzo/docs-core@15.2.2
 
 ## 15.2.1
 
 ### Patch Changes
 
 - 22aeafb: Improve Tree context performance
-  - fumadocs-core@15.2.1
+  - @hanzo/docs-core@15.2.1
 
 ## 15.2.0
 
@@ -999,14 +999,14 @@
 - c5af09f: UI: Use `text.previousPage` for previous page navigation
 - Updated dependencies [2fd325c]
 - Updated dependencies [a7cf4fa]
-  - fumadocs-core@15.2.0
+  - @hanzo/docs-core@15.2.0
 
 ## 15.1.3
 
 ### Patch Changes
 
 - Updated dependencies [b734f92]
-  - fumadocs-core@15.1.3
+  - @hanzo/docs-core@15.1.3
 
 ## 15.1.2
 
@@ -1014,7 +1014,7 @@
 
 - 44d5acf: Improve sidebar UI
 - Updated dependencies [3f580c4]
-  - fumadocs-core@15.1.2
+  - @hanzo/docs-core@15.1.2
 
 ## 15.1.1
 
@@ -1024,7 +1024,7 @@
 - Updated dependencies [f3cde4f]
 - Updated dependencies [7c8a690]
 - Updated dependencies [b812457]
-  - fumadocs-core@15.1.1
+  - @hanzo/docs-core@15.1.1
 
 ## 15.1.0
 
@@ -1033,14 +1033,14 @@
 - Updated dependencies [f491f6f]
 - Updated dependencies [f491f6f]
 - Updated dependencies [f491f6f]
-  - fumadocs-core@15.1.0
+  - @hanzo/docs-core@15.1.0
 
 ## 15.0.18
 
 ### Patch Changes
 
 - e7e2a2a: Support `createRelativeLink` component factory for using relative file paths in `href`
-  - fumadocs-core@15.0.18
+  - @hanzo/docs-core@15.0.18
 
 ## 15.0.17
 
@@ -1048,13 +1048,13 @@
 
 - b790699: Support `themeSwitch` option in layouts to customise theme switch
 - Updated dependencies [72f79cf]
-  - fumadocs-core@15.0.17
+  - @hanzo/docs-core@15.0.17
 
 ## 15.0.16
 
 ### Patch Changes
 
-- fumadocs-core@15.0.16
+- @hanzo/docs-core@15.0.16
 
 ## 15.0.15
 
@@ -1063,7 +1063,7 @@
 - 0e5e14d: Use container media queries on Cards
 - Updated dependencies [9f6d39a]
 - Updated dependencies [2035cb1]
-  - fumadocs-core@15.0.15
+  - @hanzo/docs-core@15.0.15
 
 ## 15.0.14
 
@@ -1073,7 +1073,7 @@
 - Updated dependencies [37dc0a6]
 - Updated dependencies [796cc5e]
 - Updated dependencies [2cc0be5]
-  - fumadocs-core@15.0.14
+  - @hanzo/docs-core@15.0.14
 
 ## 15.0.13
 
@@ -1082,17 +1082,17 @@
 - 7608f4e: Support showing optional properties on TypeTable
 - 89ff3ae: Support GithubInfo component
 - 16c8944: Fix Tailwind CSS utilities
-  - fumadocs-core@15.0.13
+  - @hanzo/docs-core@15.0.13
 
 ## 15.0.12
 
 ### Patch Changes
 
-- 3534a10: Move `fumadocs-core` highlighting utils to `fumadocs-core/highlight` and `fumadocs-core/highlight/client`
+- 3534a10: Move `@hanzo/docs-core` highlighting utils to `@hanzo/docs-core/highlight` and `@hanzo/docs-core/highlight/client`
 - ecacb53: Improve performance
 - Updated dependencies [3534a10]
 - Updated dependencies [93952db]
-  - fumadocs-core@15.0.12
+  - @hanzo/docs-core@15.0.12
 
 ## 15.0.11
 
@@ -1100,7 +1100,7 @@
 
 - 886da49: Fix sidebar layout shifts with `defaultOpen` option
 - 04e6c6e: Fix Notebook layout paddings
-  - fumadocs-core@15.0.11
+  - @hanzo/docs-core@15.0.11
 
 ## 15.0.10
 
@@ -1108,21 +1108,21 @@
 
 - e8a3ab7: Add collapse button back to sidebar on Notebook layout
 - Updated dependencies [d95c21f]
-  - fumadocs-core@15.0.10
+  - @hanzo/docs-core@15.0.10
 
 ## 15.0.9
 
 ### Patch Changes
 
 - fa5b908: Fix React 18 compatibility
-  - fumadocs-core@15.0.9
+  - @hanzo/docs-core@15.0.9
 
 ## 15.0.8
 
 ### Patch Changes
 
 - 8f5993b: Support custom nav mode and tabs mode on Notebook layout
-  - fumadocs-core@15.0.8
+  - @hanzo/docs-core@15.0.8
 
 ## 15.0.7
 
@@ -1131,7 +1131,7 @@
 - 5deaf40: Support icons in separators of `meta.json`
 - f782c2c: Improve sidebar design
 - Updated dependencies [5deaf40]
-  - fumadocs-core@15.0.7
+  - @hanzo/docs-core@15.0.7
 
 ## 15.0.6
 
@@ -1139,14 +1139,14 @@
 
 - Updated dependencies [08236e1]
 - Updated dependencies [a06af26]
-  - fumadocs-core@15.0.6
+  - @hanzo/docs-core@15.0.6
 
 ## 15.0.5
 
 ### Patch Changes
 
 - 14b2f95: Improve accessibility
-  - fumadocs-core@15.0.5
+  - @hanzo/docs-core@15.0.5
 
 ## 15.0.4
 
@@ -1154,28 +1154,28 @@
 
 - c892bd9: Improve `DocsCategory` cards
 - c892bd9: Always show copy button on codeblocks on touch devices
-  - fumadocs-core@15.0.4
+  - @hanzo/docs-core@15.0.4
 
 ## 15.0.3
 
 ### Patch Changes
 
 - 47171db: UI: fix ocean theme
-  - fumadocs-core@15.0.3
+  - @hanzo/docs-core@15.0.3
 
 ## 15.0.2
 
 ### Patch Changes
 
 - a8e9e1f: Bump deps
-  - fumadocs-core@15.0.2
+  - @hanzo/docs-core@15.0.2
 
 ## 15.0.1
 
 ### Patch Changes
 
 - 421166a: Fix border styles
-  - fumadocs-core@15.0.1
+  - @hanzo/docs-core@15.0.1
 
 ## 15.0.0
 
@@ -1192,21 +1192,21 @@
 
   ```css
   @import 'tailwindcss';
-  @import 'fumadocs-ui/css/neutral.css';
-  @import 'fumadocs-ui/css/preset.css';
+  @import '@hanzo/docs-ui/css/neutral.css';
+  @import '@hanzo/docs-ui/css/preset.css';
   /* if you have Twoslash enabled */
-  @import 'fumadocs-twoslash/twoslash.css';
+  @import '@hanzo/docs-twoslash/twoslash.css';
 
-  @source '../node_modules/fumadocs-ui/dist/**/*.js';
+  @source '../node_modules/@hanzo/docs-ui/dist/**/*.js';
   /* if you have OpenAPI enabled */
-  @source '../node_modules/fumadocs-openapi/dist/**/*.js';
+  @source '../node_modules/@hanzo/docs-openapi/dist/**/*.js';
   ```
 
-  The `fumadocs-ui/css/preset.css` import is required, it declares necessary plugins & styles for Fumadocs UI, and `fumadocs-ui/css/neutral.css` defines the color palette of UI.
+  The `@hanzo/docs-ui/css/preset.css` import is required, it declares necessary plugins & styles for Fumadocs UI, and `@hanzo/docs-ui/css/neutral.css` defines the color palette of UI.
 
-  Like the previous `preset` option in Tailwind CSS plugin, you can import other color presets like `fumadocs-ui/css/vitepress.css`.
+  Like the previous `preset` option in Tailwind CSS plugin, you can import other color presets like `@hanzo/docs-ui/css/vitepress.css`.
 
-  You should also pay attention to `@source`, the file paths are relative to the CSS file itself. For your project, it might not be `../node_modules/fumadocs-ui/dist/**/*.js`.
+  You should also pay attention to `@source`, the file paths are relative to the CSS file itself. For your project, it might not be `../node_modules/@hanzo/docs-ui/dist/**/*.js`.
 
 ### Patch Changes
 
@@ -1215,7 +1215,7 @@
 - Updated dependencies [5b8cca8]
 - Updated dependencies [a763058]
 - Updated dependencies [581f4a5]
-  - fumadocs-core@15.0.0
+  - @hanzo/docs-core@15.0.0
 
 ## 14.7.7
 
@@ -1224,14 +1224,14 @@
 - 4f2538a: Support `children` prop in custom `Folder` component
 - 191012a: `DocsCategory` search based on file path when item isn't present in the tree
 - fb6b168: No longer rely on search context on search dialog
-  - fumadocs-core@14.7.7
+  - @hanzo/docs-core@14.7.7
 
 ## 14.7.6
 
 ### Patch Changes
 
 - Updated dependencies [b9601fb]
-  - fumadocs-core@14.7.6
+  - @hanzo/docs-core@14.7.6
 
 ## 14.7.5
 
@@ -1241,7 +1241,7 @@
 - 900eb6c: Prevent shrink on sidebar icons by default
 - a959374: Support `fd-*` prefixes to Tailwind CSS utils
 - Updated dependencies [777188b]
-  - fumadocs-core@14.7.5
+  - @hanzo/docs-core@14.7.5
 
 ## 14.7.4
 
@@ -1251,7 +1251,7 @@
 - 036f8e1: Disable hover to open navbar menu by default, can be enabled via `nav.enableHoverToOpen`
 - Updated dependencies [bb73a72]
 - Updated dependencies [69bd4fe]
-  - fumadocs-core@14.7.4
+  - @hanzo/docs-core@14.7.4
 
 ## 14.7.3
 
@@ -1260,14 +1260,14 @@
 - 041f230: Support trailing slash
 - ca1cf19: Support custom `<Banner />` height
 - Updated dependencies [041f230]
-  - fumadocs-core@14.7.3
+  - @hanzo/docs-core@14.7.3
 
 ## 14.7.2
 
 ### Patch Changes
 
 - Updated dependencies [14b280c]
-  - fumadocs-core@14.7.2
+  - @hanzo/docs-core@14.7.2
 
 ## 14.7.1
 
@@ -1275,7 +1275,7 @@
 
 - 18b00c1: Fix `hideSearch` option
 - Updated dependencies [72dc093]
-  - fumadocs-core@14.7.1
+  - @hanzo/docs-core@14.7.1
 
 ## 14.7.0
 
@@ -1283,7 +1283,7 @@
 
 - a557bb4: revert `contain`
 - Updated dependencies [97ed36c]
-  - fumadocs-core@14.7.0
+  - @hanzo/docs-core@14.7.0
 
 ## 14.6.8
 
@@ -1291,21 +1291,21 @@
 
 - e95be52: Fix i18n toggle
 - f3298ea: Add css prefix by default
-  - fumadocs-core@14.6.8
+  - @hanzo/docs-core@14.6.8
 
 ## 14.6.7
 
 ### Patch Changes
 
 - Updated dependencies [5474343]
-  - fumadocs-core@14.6.7
+  - @hanzo/docs-core@14.6.7
 
 ## 14.6.6
 
 ### Patch Changes
 
 - 9c930ea: fix runtime error
-  - fumadocs-core@14.6.6
+  - @hanzo/docs-core@14.6.6
 
 ## 14.6.5
 
@@ -1313,7 +1313,7 @@
 
 - 969da26: Improve i18n api
 - Updated dependencies [969da26]
-  - fumadocs-core@14.6.5
+  - @hanzo/docs-core@14.6.5
 
 ## 14.6.4
 
@@ -1322,14 +1322,14 @@
 - 67124b1: Improve theme toggle on Notebook layout
 - 1810868: Enable `content-visibility` CSS features
 - Updated dependencies [b71064a]
-  - fumadocs-core@14.6.4
+  - @hanzo/docs-core@14.6.4
 
 ## 14.6.3
 
 ### Patch Changes
 
 - abc3677: Allow `className` to be used with `SidebarItem`
-  - fumadocs-core@14.6.3
+  - @hanzo/docs-core@14.6.3
 
 ## 14.6.2
 
@@ -1339,14 +1339,14 @@
 - ece734f: Support custom children of trigger on `InlineTOC` component
 - 1a2597a: Expose `--fd-tocnav-height` CSS variable
 - Updated dependencies [2357d40]
-  - fumadocs-core@14.6.2
+  - @hanzo/docs-core@14.6.2
 
 ## 14.6.1
 
 ### Patch Changes
 
 - 9532855: Hide toc popover when no items
-  - fumadocs-core@14.6.1
+  - @hanzo/docs-core@14.6.1
 
 ## 14.6.0
 
@@ -1363,7 +1363,7 @@
 - Updated dependencies [bebb16b]
 - Updated dependencies [4766292]
 - Updated dependencies [050b326]
-  - fumadocs-core@14.6.0
+  - @hanzo/docs-core@14.6.0
 
 ## 14.5.6
 
@@ -1371,7 +1371,7 @@
 
 - b7745f4: Fix references problem of sidebar tabs
 - Updated dependencies [9a18c14]
-  - fumadocs-core@14.5.6
+  - @hanzo/docs-core@14.5.6
 
 ## 14.5.5
 
@@ -1379,14 +1379,14 @@
 
 - 06f66d8: improve notebook layout for transparent sidebar
 - 2d0501f: Fi sidebar icon trigger
-  - fumadocs-core@14.5.5
+  - @hanzo/docs-core@14.5.5
 
 ## 14.5.4
 
 ### Patch Changes
 
 - 8e2cb31: fix trivial bugs
-  - fumadocs-core@14.5.4
+  - @hanzo/docs-core@14.5.4
 
 ## 14.5.3
 
@@ -1397,21 +1397,21 @@
 - 4c82a3d: Hide toc when it has no items and custom banner & footer
 - f8e5157: Fix custom `theme` with Typography plugin
 - ad00dd3: Support folder groups on sidebar tabs
-  - fumadocs-core@14.5.3
+  - @hanzo/docs-core@14.5.3
 
 ## 14.5.2
 
 ### Patch Changes
 
 - 072e349: fix initial sidebar level to 0
-  - fumadocs-core@14.5.2
+  - @hanzo/docs-core@14.5.2
 
 ## 14.5.1
 
 ### Patch Changes
 
 - 6fd480f: Fix old browser compatibility
-  - fumadocs-core@14.5.1
+  - @hanzo/docs-core@14.5.1
 
 ## 14.5.0
 
@@ -1424,14 +1424,14 @@
 
 ### Patch Changes
 
-- fumadocs-core@14.5.0
+- @hanzo/docs-core@14.5.0
 
 ## 14.4.2
 
 ### Patch Changes
 
 - 0f1603a: Fix bugs
-  - fumadocs-core@14.4.2
+  - @hanzo/docs-core@14.4.2
 
 ## 14.4.1
 
@@ -1439,7 +1439,7 @@
 
 - 07474cb: fix codeblock paddings
 - 48a2c15: Control page styles from layouts
-  - fumadocs-core@14.4.1
+  - @hanzo/docs-core@14.4.1
 
 ## 14.4.0
 
@@ -1452,15 +1452,15 @@
 ### Patch Changes
 
 - 5145123: Fix sidebar footer issues
-- 64defe0: Support `fumadocs-ui/layouts/notebook` layout
-  - fumadocs-core@14.4.0
+- 64defe0: Support `@hanzo/docs-ui/layouts/notebook` layout
+  - @hanzo/docs-core@14.4.0
 
 ## 14.3.1
 
 ### Patch Changes
 
 - e7443d7: Fix development errors
-  - fumadocs-core@14.3.1
+  - @hanzo/docs-core@14.3.1
 
 ## 14.3.0
 
@@ -1471,7 +1471,7 @@
 ### Patch Changes
 
 - 80655b3: Improve padding of sidebar tabs and expose it to sidebar
-  - fumadocs-core@14.3.0
+  - @hanzo/docs-core@14.3.0
 
 ## 14.2.1
 
@@ -1479,7 +1479,7 @@
 
 - 2949da3: Show 'ctrl' for windows in search toggle
 - Updated dependencies [ca94bfd]
-  - fumadocs-core@14.2.1
+  - @hanzo/docs-core@14.2.1
 
 ## 14.2.0
 
@@ -1491,14 +1491,14 @@
 ### Patch Changes
 
 - Updated dependencies [e248a0f]
-  - fumadocs-core@14.2.0
+  - @hanzo/docs-core@14.2.0
 
 ## 14.1.1
 
 ### Patch Changes
 
 - Updated dependencies [1573d63]
-  - fumadocs-core@14.1.1
+  - @hanzo/docs-core@14.1.1
 
 ## 14.1.0
 
@@ -1509,21 +1509,21 @@
 - Updated dependencies [4a643ff]
 - Updated dependencies [b262d99]
 - Updated dependencies [90725c1]
-  - fumadocs-core@14.1.0
+  - @hanzo/docs-core@14.1.0
 
 ## 14.0.2
 
 ### Patch Changes
 
 - bfc2bf2: Fix navbar issues
-  - fumadocs-core@14.0.2
+  - @hanzo/docs-core@14.0.2
 
 ## 14.0.1
 
 ### Patch Changes
 
 - 1a7d78a: Pass props to replaced layout components via Radix UI `<Slot />`
-  - fumadocs-core@14.0.1
+  - @hanzo/docs-core@14.0.1
 
 ## 14.0.0
 
@@ -1534,24 +1534,24 @@
   **migrate:** Use
 
   ```ts
-  import { DocsLayout } from 'fumadocs-ui/layouts/docs';
+  import { DocsLayout } from '@hanzo/docs-ui/layouts/docs';
 
-  import { HomeLayout } from 'fumadocs-ui/layouts/home';
+  import { HomeLayout } from '@hanzo/docs-ui/layouts/home';
 
-  import { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
+  import { BaseLayoutProps } from '@hanzo/docs-ui/layouts/shared';
   ```
 
   Instead of
 
   ```ts
-  import { DocsLayout } from 'fumadocs-ui/layout';
+  import { DocsLayout } from '@hanzo/docs-ui/layout';
 
-  import { HomeLayout } from 'fumadocs-ui/home-layout';
+  import { HomeLayout } from '@hanzo/docs-ui/home-layout';
 
-  import { HomeLayoutProps } from 'fumadocs-ui/home-layout';
+  import { HomeLayoutProps } from '@hanzo/docs-ui/home-layout';
   ```
 
-- 9a10262: **Move Twoslash UI components to `fumadocs-twoslash`**
+- 9a10262: **Move Twoslash UI components to `@hanzo/docs-twoslash`**
 
   **why:** Isolate logic from Fumadocs UI
 
@@ -1560,26 +1560,26 @@
   Before:
 
   ```ts
-  import 'fumadocs-ui/twoslash.css';
+  import '@hanzo/docs-ui/twoslash.css';
 
-  import { Popup } from 'fumadocs-ui/twoslash/popup';
+  import { Popup } from '@hanzo/docs-ui/twoslash/popup';
   ```
 
   After:
 
   ```ts
-  import 'fumadocs-twoslash/twoslash.css';
+  import '@hanzo/docs-twoslash/twoslash.css';
 
-  import { Popup } from 'fumadocs-twoslash/ui';
+  import { Popup } from '@hanzo/docs-twoslash/ui';
   ```
 
   **Tailwind CSS is now required for Twoslash integration.**
 
-- d9e908e: **Remove `getImageMeta` from `fumadocs-ui/og`**
+- d9e908e: **Remove `getImageMeta` from `@hanzo/docs-ui/og`**
 
-  **migrate:** Use Metadata API from `fumadocs-core/server`
+  **migrate:** Use Metadata API from `@hanzo/docs-core/server`
 
-- d9e908e: Replace `fumadocs-core/search/shared` with `fumadocs-core/server`
+- d9e908e: Replace `@hanzo/docs-core/search/shared` with `@hanzo/docs-core/server`
 - be53a0e: **`DocsCategory` now accept `from` prop instead of `pages` prop.**
 
   **why:** This allows sharing the order of items with page tree.
@@ -1589,7 +1589,7 @@
 
   ```tsx
   import { source } from '@/lib/source';
-  import { DocsCategory } from 'fumadocs-ui/page';
+  import { DocsCategory } from '@hanzo/docs-ui/page';
 
   const page = source.getPage(params.slug);
 
@@ -1633,7 +1633,7 @@
 - Updated dependencies [15781f0]
 - Updated dependencies [be820c4]
 - Updated dependencies [d9e908e]
-  - fumadocs-core@14.0.0
+  - @hanzo/docs-core@14.0.0
 
 ## 13.4.10
 
@@ -1641,7 +1641,7 @@
 
 - 4cb74d5: Expose more props to Image Zoom
 - Updated dependencies [6231ad3]
-  - fumadocs-core@13.4.10
+  - @hanzo/docs-core@13.4.10
 
 ## 13.4.9
 
@@ -1649,7 +1649,7 @@
 
 - bcf51a6: Improve banner rainbow variant
 - Updated dependencies [083f04a]
-  - fumadocs-core@13.4.9
+  - @hanzo/docs-core@13.4.9
 
 ## 13.4.8
 
@@ -1658,7 +1658,7 @@
 - 5581733: Add center to root toggle
 - 1a327cc: Fix props types of Root Toggle
 - Updated dependencies [78e59e7]
-  - fumadocs-core@13.4.8
+  - @hanzo/docs-core@13.4.8
 
 ## 13.4.7
 
@@ -1667,7 +1667,7 @@
 - 6e1923e: Fix ocean present background repeat
 - 6e1923e: Introduce `rainbow` variant on Banner component
 - Updated dependencies [6e1923e]
-  - fumadocs-core@13.4.7
+  - @hanzo/docs-core@13.4.7
 
 ## 13.4.6
 
@@ -1678,27 +1678,27 @@
 - 6bcd263: Fix Banner component z-index
 - Updated dependencies [afb697e]
 - Updated dependencies [daa66d2]
-  - fumadocs-core@13.4.6
+  - @hanzo/docs-core@13.4.6
 
 ## 13.4.5
 
 ### Patch Changes
 
 - d46a3f1: Improve search dialog
-  - fumadocs-core@13.4.5
+  - @hanzo/docs-core@13.4.5
 
 ## 13.4.4
 
 ### Patch Changes
 
 - Updated dependencies [729928e]
-  - fumadocs-core@13.4.4
+  - @hanzo/docs-core@13.4.4
 
 ## 13.4.3
 
 ### Patch Changes
 
-- fumadocs-core@13.4.3
+- @hanzo/docs-core@13.4.3
 
 ## 13.4.2
 
@@ -1710,14 +1710,14 @@
 - Updated dependencies [7dabbc1]
 - Updated dependencies [0c251e5]
 - Updated dependencies [3b56170]
-  - fumadocs-core@13.4.2
+  - @hanzo/docs-core@13.4.2
 
 ## 13.4.1
 
 ### Patch Changes
 
 - Updated dependencies [95dbba1]
-  - fumadocs-core@13.4.1
+  - @hanzo/docs-core@13.4.1
 
 ## 13.4.0
 
@@ -1727,14 +1727,14 @@
 
 ### Patch Changes
 
-- fumadocs-core@13.4.0
+- @hanzo/docs-core@13.4.0
 
 ## 13.3.3
 
 ### Patch Changes
 
 - Updated dependencies [f8cc167]
-  - fumadocs-core@13.3.3
+  - @hanzo/docs-core@13.3.3
 
 ## 13.3.2
 
@@ -1742,14 +1742,14 @@
 
 - 17746a6: Support built-in edit on github button
 - Updated dependencies [0e0ef8c]
-  - fumadocs-core@13.3.2
+  - @hanzo/docs-core@13.3.2
 
 ## 13.3.1
 
 ### Patch Changes
 
 - 7258c4b: Fix thumb not rendered on initial render
-  - fumadocs-core@13.3.1
+  - @hanzo/docs-core@13.3.1
 
 ## 13.3.0
 
@@ -1769,7 +1769,7 @@
 - Updated dependencies [fd46eb6]
 - Updated dependencies [9aae448]
 - Updated dependencies [c542561]
-  - fumadocs-core@13.3.0
+  - @hanzo/docs-core@13.3.0
 
 ## 13.2.2
 
@@ -1777,14 +1777,14 @@
 
 - Updated dependencies [36b771b]
 - Updated dependencies [61b91fa]
-  - fumadocs-core@13.2.2
+  - @hanzo/docs-core@13.2.2
 
 ## 13.2.1
 
 ### Patch Changes
 
 - Updated dependencies [17fa173]
-  - fumadocs-core@13.2.1
+  - @hanzo/docs-core@13.2.1
 
 ## 13.2.0
 
@@ -1798,7 +1798,7 @@
 - 96c9dda: Change Heading scroll margins
 - 96c9dda: Hide TOC Popover on full mode
 - Updated dependencies [96c9dda]
-  - fumadocs-core@13.2.0
+  - @hanzo/docs-core@13.2.0
 
 ## 13.1.0
 
@@ -1813,7 +1813,7 @@
 - c8910c4: Fix empty space on search dialog
 - 6c42960: Improve TOC design
 - Updated dependencies [f280191]
-  - fumadocs-core@13.1.0
+  - @hanzo/docs-core@13.1.0
 
 ## 13.0.7
 
@@ -1821,48 +1821,48 @@
 
 - e7c52f2: Fix code styles in headings
 - Updated dependencies [37bbfff]
-  - fumadocs-core@13.0.7
+  - @hanzo/docs-core@13.0.7
 
 ## 13.0.6
 
 ### Patch Changes
 
 - 1622e36: Fix bug breaking Tailwind CSS IntelliSense VSCode Extension
-  - fumadocs-core@13.0.6
+  - @hanzo/docs-core@13.0.6
 
 ## 13.0.5
 
 ### Patch Changes
 
 - Updated dependencies [2cf65f6]
-  - fumadocs-core@13.0.5
+  - @hanzo/docs-core@13.0.5
 
 ## 13.0.4
 
 ### Patch Changes
 
 - Updated dependencies [5355391]
-  - fumadocs-core@13.0.4
+  - @hanzo/docs-core@13.0.4
 
 ## 13.0.3
 
 ### Patch Changes
 
 - Updated dependencies [978342f]
-  - fumadocs-core@13.0.3
+  - @hanzo/docs-core@13.0.3
 
 ## 13.0.2
 
 ### Patch Changes
 
 - Updated dependencies [4819820]
-  - fumadocs-core@13.0.2
+  - @hanzo/docs-core@13.0.2
 
 ## 13.0.1
 
 ### Patch Changes
 
-- fumadocs-core@13.0.1
+- @hanzo/docs-core@13.0.1
 
 ## 13.0.0
 
@@ -1875,7 +1875,7 @@
   **migrate:** Rename the option.
 
   ```js
-  import { createPreset } from 'fumadocs-ui/tailwind-plugin';
+  import { createPreset } from '@hanzo/docs-ui/tailwind-plugin';
 
   /** @type {import('tailwindcss').Config} */
   export default {
@@ -1896,7 +1896,7 @@
   Enable `keepBackground` on `<CodeBlock />`, and remove deprecated usage.
 
   ```tsx
-  import { Pre, CodeBlock } from 'fumadocs-ui/components/codeblock';
+  import { Pre, CodeBlock } from '@hanzo/docs-ui/components/codeblock';
 
   <MDX
     components={{
@@ -1922,9 +1922,9 @@
   **migrate:**
 
   ```tsx
-  import { RootProvider } from 'fumadocs-ui/provider';
+  import { RootProvider } from '@hanzo/docs-ui/provider';
   import type { ReactNode } from 'react';
-  import { I18nProvider } from 'fumadocs-ui/i18n';
+  import { I18nProvider } from '@hanzo/docs-ui/i18n';
 
   export default function Layout({
     params: { lang },
@@ -1989,7 +1989,7 @@
 
   **migrate:** Use ESM syntax in your Tailwind CSS config.
 
-- c901e6b: **Remove deprecated `fumadocs-ui/components/api` components**
+- c901e6b: **Remove deprecated `@hanzo/docs-ui/components/api` components**
 
   **why:** The new OpenAPI integration has its own UI implementation.
 
@@ -2002,7 +2002,7 @@
   **migrate:** Enable `addGlobalColors` on Tailwind CSS Plugin or add the `fd-` prefix to class names.
 
   ```js
-  import { createPreset } from 'fumadocs-ui/tailwind-plugin';
+  import { createPreset } from '@hanzo/docs-ui/tailwind-plugin';
 
   /** @type {import('tailwindcss').Config} */
   export default {
@@ -2024,7 +2024,7 @@
   This also includes class names, change your custom styles if necessary.
 
   ```tsx
-  import { Pre, CodeBlock } from 'fumadocs-ui/components/codeblock';
+  import { Pre, CodeBlock } from '@hanzo/docs-ui/components/codeblock';
 
   <MDX
     components={{
@@ -2044,7 +2044,7 @@
 
   **why:** `RollButton` was created because there were no "Table Of Contents" on mobile viewports. Now users can use the TOC Popover to switch between headings, `RollButton` is no longer a suitable design for Fumadocs UI.
 
-  **migrate:** Remove usages, you may copy the [last implementation of `RollButton`](https://github.com/fuma-nama/fumadocs/blob/fumadocs-ui%4012.5.6/packages/ui/src/components/roll-button.tsx).
+  **migrate:** Remove usages, you may copy the [last implementation of `RollButton`](https://github.com/fuma-nama/fumadocs/blob/@hanzo/docs-ui%4012.5.6/packages/ui/src/components/roll-button.tsx).
 
 ### Minor Changes
 
@@ -2057,21 +2057,21 @@
 - Updated dependencies [09c3103]
 - Updated dependencies [c714eaa]
 - Updated dependencies [b02eebf]
-  - fumadocs-core@13.0.0
+  - @hanzo/docs-core@13.0.0
 
 ## 12.5.6
 
 ### Patch Changes
 
 - a332bee: Support `undefined` state of `defaultOpen` in folder nodes
-  - fumadocs-core@12.5.6
+  - @hanzo/docs-core@12.5.6
 
 ## 12.5.5
 
 ### Patch Changes
 
 - 3519e6c: Fix TOC overflow problems
-  - fumadocs-core@12.5.5
+  - @hanzo/docs-core@12.5.5
 
 ## 12.5.4
 
@@ -2080,14 +2080,14 @@
 - fccdfdb: Improve TOC Popover design
 - Updated dependencies [fccdfdb]
 - Updated dependencies [2ffd5ea]
-  - fumadocs-core@12.5.4
+  - @hanzo/docs-core@12.5.4
 
 ## 12.5.3
 
 ### Patch Changes
 
 - 5d963f4: Support to disable prefetching links on sidebar
-  - fumadocs-core@12.5.3
+  - @hanzo/docs-core@12.5.3
 
 ## 12.5.2
 
@@ -2095,7 +2095,7 @@
 
 - a5c34f0: Support specifying the url of root node when breadcrumbs have `includeRoot` enabled
 - Updated dependencies [a5c34f0]
-  - fumadocs-core@12.5.2
+  - @hanzo/docs-core@12.5.2
 
 ## 12.5.1
 
@@ -2103,21 +2103,21 @@
 
 - c5d20d0: Fix wrong padding
 - 3d8f6cf: Add data attributes to certain components to improve CSS targeting
-  - fumadocs-core@12.5.1
+  - @hanzo/docs-core@12.5.1
 
 ## 12.5.0
 
 ### Minor Changes
 
 - b9fa99d: Support tag filters in search dialog
-- a4bcaa7: Rename `Layout` in `fumadocs-ui/layout` to `HomeLayout` in `fumadocs-ui/home-layout`
+- a4bcaa7: Rename `Layout` in `@hanzo/docs-ui/layout` to `HomeLayout` in `@hanzo/docs-ui/home-layout`
 
 ### Patch Changes
 
 - d1c7405: Optimize performance
 - Updated dependencies [b9fa99d]
 - Updated dependencies [525925b]
-  - fumadocs-core@12.5.0
+  - @hanzo/docs-core@12.5.0
 
 ## 12.4.2
 
@@ -2125,13 +2125,13 @@
 
 - 503e8e9: Improve Object Collaspible
 - Updated dependencies [503e8e9]
-  - fumadocs-core@12.4.2
+  - @hanzo/docs-core@12.4.2
 
 ## 12.4.1
 
 ### Patch Changes
 
-- fumadocs-core@12.4.1
+- @hanzo/docs-core@12.4.1
 
 ## 12.4.0
 
@@ -2145,20 +2145,20 @@
 ### Patch Changes
 
 - 33ffa99: Improve design details
-  - fumadocs-core@12.4.0
+  - @hanzo/docs-core@12.4.0
 
 ## 12.3.6
 
 ### Patch Changes
 
 - 4cc5782: Adding secondary custom links
-  - fumadocs-core@12.3.6
+  - @hanzo/docs-core@12.3.6
 
 ## 12.3.5
 
 ### Patch Changes
 
-- fumadocs-core@12.3.5
+- @hanzo/docs-core@12.3.5
 
 ## 12.3.4
 
@@ -2166,7 +2166,7 @@
 
 - fbfd050: Improve the default theme
 - eefa75d: Reduce the navbar height
-  - fumadocs-core@12.3.4
+  - @hanzo/docs-core@12.3.4
 
 ## 12.3.3
 
@@ -2174,21 +2174,21 @@
 
 - 90d51cb: Fix problem with I18n middleware & language toggle
 - Updated dependencies [90d51cb]
-  - fumadocs-core@12.3.3
+  - @hanzo/docs-core@12.3.3
 
 ## 12.3.2
 
 ### Patch Changes
 
 - Updated dependencies [ca7d0f4]
-  - fumadocs-core@12.3.2
+  - @hanzo/docs-core@12.3.2
 
 ## 12.3.1
 
 ### Patch Changes
 
 - Updated dependencies [cf852f6]
-  - fumadocs-core@12.3.1
+  - @hanzo/docs-core@12.3.1
 
 ## 12.3.0
 
@@ -2196,21 +2196,21 @@
 
 - Updated dependencies [ce3c8ad]
 - Updated dependencies [ce3c8ad]
-  - fumadocs-core@12.3.0
+  - @hanzo/docs-core@12.3.0
 
 ## 12.2.5
 
 ### Patch Changes
 
 - 7c23f7e: No longer set a default size for SVG elements in title
-  - fumadocs-core@12.2.5
+  - @hanzo/docs-core@12.2.5
 
 ## 12.2.4
 
 ### Patch Changes
 
 - ffb9026: Fix `cmdk` upstream dependency problems
-  - fumadocs-core@12.2.4
+  - @hanzo/docs-core@12.2.4
 
 ## 12.2.3
 
@@ -2219,14 +2219,14 @@
 - b4824fa: Updated `<APIInfo />` component, so method name appears vertically centered.
 - e120e0f: Improve `<Banner/>` component
 - 3970b55: Support custom type link items
-  - fumadocs-core@12.2.3
+  - @hanzo/docs-core@12.2.3
 
 ## 12.2.2
 
 ### Patch Changes
 
 - 72c7991: Improve sidebar
-  - fumadocs-core@12.2.2
+  - @hanzo/docs-core@12.2.2
 
 ## 12.2.1
 
@@ -2234,7 +2234,7 @@
 
 - c428a60: Revert the height of docs navbar to 64px
 - 018dbd9: Support `Banner` component
-  - fumadocs-core@12.2.1
+  - @hanzo/docs-core@12.2.1
 
 ## 12.2.0
 
@@ -2249,7 +2249,7 @@
 - bcc9f91: Added a new colors for API info badge, so POST, PATCH requests are different from PUT.
 - 2f2d9cf: Improve OpenAPI styles
 - Updated dependencies [b70ff06]
-  - fumadocs-core@12.2.0
+  - @hanzo/docs-core@12.2.0
 
 ## 12.1.3
 
@@ -2260,7 +2260,7 @@
 - d06c92a: Support `transparentMode` on secondary (docs) navbar
 - 3bdc786: Support Fumadocs OpenAPI 3.1.0
 - d06c92a: Fix hot keys order
-  - fumadocs-core@12.1.3
+  - @hanzo/docs-core@12.1.3
 
 ## 12.1.2
 
@@ -2268,7 +2268,7 @@
 
 - 284a571: Support Fumadocs OpenAPI v3
 - Updated dependencies [b4856d1]
-  - fumadocs-core@12.1.2
+  - @hanzo/docs-core@12.1.2
 
 ## 12.1.1
 
@@ -2276,7 +2276,7 @@
 
 - 1c3a127: Redesign Tabs component
 - Updated dependencies [a39dbcb]
-  - fumadocs-core@12.1.1
+  - @hanzo/docs-core@12.1.1
 
 ## 12.1.0
 
@@ -2306,14 +2306,14 @@
 - 5f86faa: Improve multi-line code blocks
 - Updated dependencies [0a377a9]
 - Updated dependencies [0a377a9]
-  - fumadocs-core@12.1.0
+  - @hanzo/docs-core@12.1.0
 
 ## 12.0.7
 
 ### Patch Changes
 
 - 51441d3: Fix `RollButton` component problems on Safari
-  - fumadocs-core@12.0.7
+  - @hanzo/docs-core@12.0.7
 
 ## 12.0.6
 
@@ -2322,14 +2322,14 @@
 - 056bad5: Improve default values
 - Updated dependencies [7a29b79]
 - Updated dependencies [b0c1242]
-  - fumadocs-core@12.0.6
+  - @hanzo/docs-core@12.0.6
 
 ## 12.0.5
 
 ### Patch Changes
 
 - 4455d58: Fix `bannerProps` being ignored
-  - fumadocs-core@12.0.5
+  - @hanzo/docs-core@12.0.5
 
 ## 12.0.4
 
@@ -2340,7 +2340,7 @@
 - 51ca944: Support including separators in breadcrumbs
 - Updated dependencies [72dbaf1]
 - Updated dependencies [51ca944]
-  - fumadocs-core@12.0.4
+  - @hanzo/docs-core@12.0.4
 
 ## 12.0.3
 
@@ -2348,14 +2348,14 @@
 
 - 18928af: Improve mobile experience on Safari
 - Updated dependencies [053609d]
-  - fumadocs-core@12.0.3
+  - @hanzo/docs-core@12.0.3
 
 ## 12.0.2
 
 ### Patch Changes
 
 - Show TOC on mobile devices
-  - fumadocs-core@12.0.2
+  - @hanzo/docs-core@12.0.2
 
 ## 12.0.1
 
@@ -2363,7 +2363,7 @@
 
 - 21fe244: Redesign roll button
 - 547a61a: Use Menu for link items
-  - fumadocs-core@12.0.1
+  - @hanzo/docs-core@12.0.1
 
 ## 12.0.0
 
@@ -2388,7 +2388,7 @@
   Remove your `<LanguageSelect />` component from the layout. Enable the new language toggle with:
 
   ```tsx
-  import { DocsLayout } from 'fumadocs-ui/layout';
+  import { DocsLayout } from '@hanzo/docs-ui/layout';
 
   export default function Layout({ children }: { children: React.ReactNode }) {
     return <DocsLayout i18n>{children}</DocsLayout>;
@@ -2408,7 +2408,7 @@
 - Updated dependencies [d88dfa6]
 - Updated dependencies [ba20694]
 - Updated dependencies [57eb762]
-  - fumadocs-core@12.0.0
+  - @hanzo/docs-core@12.0.0
 
 ## 11.3.2
 
@@ -2416,14 +2416,14 @@
 
 - 1b8e12b: Use `display: grid` for codeblocks
 - Updated dependencies [1b8e12b]
-  - fumadocs-core@11.3.2
+  - @hanzo/docs-core@11.3.2
 
 ## 11.3.1
 
 ### Patch Changes
 
 - 10ab3e9: Fix sidebar opened by default
-  - fumadocs-core@11.3.1
+  - @hanzo/docs-core@11.3.1
 
 ## 11.3.0
 
@@ -2436,7 +2436,7 @@
 - 2a1211e: Support customising search dialog hotkeys
 - 9de31e6: Support `withArticle` for MDX Pages
 - Updated dependencies [917d87f]
-  - fumadocs-core@11.3.0
+  - @hanzo/docs-core@11.3.0
 
 ## 11.2.2
 
@@ -2444,14 +2444,14 @@
 
 - dd0feb2: Support customising sidebar background with opacity
 - 72096c3: Support customising theme options from root provider
-  - fumadocs-core@11.2.2
+  - @hanzo/docs-core@11.2.2
 
 ## 11.2.1
 
 ### Patch Changes
 
 - 8074920: Fix sidebar background width on dynamic sidebar
-  - fumadocs-core@11.2.1
+  - @hanzo/docs-core@11.2.1
 
 ## 11.2.0
 
@@ -2461,7 +2461,7 @@
 
 ### Patch Changes
 
-- fumadocs-core@11.2.0
+- @hanzo/docs-core@11.2.0
 
 ## 11.1.3
 
@@ -2472,7 +2472,7 @@
 - Updated dependencies [88008b1]
 - Updated dependencies [944541a]
 - Updated dependencies [07a9312]
-  - fumadocs-core@11.1.3
+  - @hanzo/docs-core@11.1.3
 
 ## 11.1.2
 
@@ -2480,7 +2480,7 @@
 
 - 58adab1: Improve theme & styles
 - ae88793: Improve page footer design
-  - fumadocs-core@11.1.2
+  - @hanzo/docs-core@11.1.2
 
 ## 11.1.1
 
@@ -2492,7 +2492,7 @@
 - Updated dependencies [8ef2b68]
 - Updated dependencies [26f464d]
 - Updated dependencies [26f464d]
-  - fumadocs-core@11.1.1
+  - @hanzo/docs-core@11.1.1
 
 ## 11.1.0
 
@@ -2502,21 +2502,21 @@
 
 ### Patch Changes
 
-- fumadocs-core@11.1.0
+- @hanzo/docs-core@11.1.0
 
 ## 11.0.8
 
 ### Patch Changes
 
 - Updated dependencies [98258b5]
-  - fumadocs-core@11.0.8
+  - @hanzo/docs-core@11.0.8
 
 ## 11.0.7
 
 ### Patch Changes
 
 - Updated dependencies [f7c2c5c]
-  - fumadocs-core@11.0.7
+  - @hanzo/docs-core@11.0.7
 
 ## 11.0.6
 
@@ -2525,36 +2525,36 @@
 - 8e0ef4b: Support disable search functionality including shortcuts
 - Updated dependencies [5653d5d]
 - Updated dependencies [5653d5d]
-  - fumadocs-core@11.0.6
+  - @hanzo/docs-core@11.0.6
 
 ## 11.0.5
 
 ### Patch Changes
 
 - c8ea344: Support disabling search bar
-  - fumadocs-core@11.0.5
+  - @hanzo/docs-core@11.0.5
 
 ## 11.0.4
 
 ### Patch Changes
 
-- 7b61b2f: Migrate `fumadocs-ui` to fully ESM, adding support for ESM `tailwind.config` file
+- 7b61b2f: Migrate `@hanzo/docs-ui` to fully ESM, adding support for ESM `tailwind.config` file
 - Updated dependencies [7b61b2f]
-  - fumadocs-core@11.0.4
+  - @hanzo/docs-core@11.0.4
 
 ## 11.0.3
 
 ### Patch Changes
 
 - c11e6ce: New color preset: `catppuccin`
-  - fumadocs-core@11.0.3
+  - @hanzo/docs-core@11.0.3
 
 ## 11.0.2
 
 ### Patch Changes
 
 - 6470d6d: Fix collapse button on smaller viewports
-  - fumadocs-core@11.0.2
+  - @hanzo/docs-core@11.0.2
 
 ## 11.0.1
 
@@ -2563,7 +2563,7 @@
 - 1136e02: Support modifying css with color presets
 - 1136e02: New color preset `neutral`
 - f6b4797: Improve Sidebar footer
-  - fumadocs-core@11.0.1
+  - @hanzo/docs-core@11.0.1
 
 ## 11.0.0
 
@@ -2607,7 +2607,7 @@
 - Updated dependencies [92cb12f]
 - Updated dependencies [f75287d]
 - Updated dependencies [2d8df75]
-  - fumadocs-core@11.0.0
+  - @hanzo/docs-core@11.0.0
 
 ## 10.1.3
 
@@ -2616,7 +2616,7 @@
 - 6ace206: Support opening Twoslash popup on mobile
 - d0288d1: New theme dusk
 - Updated dependencies [bbad52f]
-  - fumadocs-core@10.1.3
+  - @hanzo/docs-core@10.1.3
 
 ## 10.1.2
 
@@ -2624,7 +2624,7 @@
 
 - 0facc07: Replace navbar links with secondary links
 - fd38022: Improve sidebar collapse
-  - fumadocs-core@10.1.2
+  - @hanzo/docs-core@10.1.2
 
 ## 10.1.1
 
@@ -2634,7 +2634,7 @@
 - Updated dependencies [779c599]
 - Updated dependencies [0c01300]
 - Updated dependencies [779c599]
-  - fumadocs-core@10.1.1
+  - @hanzo/docs-core@10.1.1
 
 ## 10.1.0
 
@@ -2644,20 +2644,20 @@
 
 ### Patch Changes
 
-- fumadocs-core@10.1.0
+- @hanzo/docs-core@10.1.0
 
 ## 10.0.5
 
 ### Patch Changes
 
 - Updated dependencies [e47c62f]
-  - fumadocs-core@10.0.5
+  - @hanzo/docs-core@10.0.5
 
 ## 10.0.4
 
 ### Patch Changes
 
-- fumadocs-core@10.0.4
+- @hanzo/docs-core@10.0.4
 
 ## 10.0.3
 
@@ -2665,7 +2665,7 @@
 
 - b27091f: Support passing search dialog `options` from root provider
 - Updated dependencies [6f321e5]
-  - fumadocs-core@10.0.3
+  - @hanzo/docs-core@10.0.3
 
 ## 10.0.2
 
@@ -2673,7 +2673,7 @@
 
 - 10e099a: Add scrollbar to TOC
 - Updated dependencies [10e099a]
-  - fumadocs-core@10.0.2
+  - @hanzo/docs-core@10.0.2
 
 ## 10.0.1
 
@@ -2683,21 +2683,21 @@
 - Updated dependencies [c9b7763]
 - Updated dependencies [0e78dc8]
 - Updated dependencies [d8483a8]
-  - fumadocs-core@10.0.1
+  - @hanzo/docs-core@10.0.1
 
 ## 10.0.0
 
 ### Major Changes
 
-- 321d1e1f: **Move Typescript integrations to `fumadocs-typescript`**
+- 321d1e1f: **Move Typescript integrations to `@hanzo/docs-typescript`**
 
   why: It is now a stable feature
 
-  migrate: Use `fumadocs-typescript` instead.
+  migrate: Use `@hanzo/docs-typescript` instead.
 
   ```diff
-  - import { AutoTypeTable } from "fumadocs-ui/components/auto-type-table"
-  + import { AutoTypeTable } from "fumadocs-typescript/ui"
+  - import { AutoTypeTable } from "@hanzo/docs-ui/components/auto-type-table"
+  + import { AutoTypeTable } from "@hanzo/docs-typescript/ui"
   ```
 
 ### Patch Changes
@@ -2705,7 +2705,7 @@
 - de7ed150: Hide external items from navigation footer
 - Updated dependencies [b5d16938]
 - Updated dependencies [321d1e1f]
-  - fumadocs-core@10.0.0
+  - @hanzo/docs-core@10.0.0
 
 ## 9.1.0
 
@@ -2719,7 +2719,7 @@
 - Updated dependencies [909b0e35]
 - Updated dependencies [691f12aa]
 - Updated dependencies [1c388ca5]
-  - fumadocs-core@9.1.0
+  - @hanzo/docs-core@9.1.0
 
 ## 9.0.0
 
@@ -2753,14 +2753,14 @@
 
 ### Patch Changes
 
-- fumadocs-core@9.0.0
+- @hanzo/docs-core@9.0.0
 
 ## 8.3.0
 
 ### Minor Changes
 
 - b0003d44: Add `purple` theme
-- 9bdb49dd: Add `Folder` export to `fumadocs-ui/components/files`
+- 9bdb49dd: Add `Folder` export to `@hanzo/docs-ui/components/files`
 - 99d66d2d: Rename `title` prop to `name` in `File` and `Folder` component
 
 ### Patch Changes
@@ -2768,7 +2768,7 @@
 - 5e314eee: Deprecate `input` color and `medium` font size from Tailwind CSS preset
 - 52d578d0: Set `darkMode` to `class` by default
 - 84667d2f: Improve Accordions
-  - fumadocs-core@8.3.0
+  - @hanzo/docs-core@8.3.0
 
 ## 8.2.0
 
@@ -2780,14 +2780,14 @@
 
 - 09bdf63: Separate stylesheet with Image Zoom component
 - Updated dependencies [5c24659]
-  - fumadocs-core@8.2.0
+  - @hanzo/docs-core@8.2.0
 
 ## 8.1.1
 
 ### Patch Changes
 
 - 153ceaf: Fix typo
-  - fumadocs-core@8.1.1
+  - @hanzo/docs-core@8.1.1
 
 ## 8.1.0
 
@@ -2802,7 +2802,7 @@
 - Updated dependencies [6c5a39a]
 - Updated dependencies [eb028b4]
 - Updated dependencies [054ec60]
-  - fumadocs-core@8.1.0
+  - @hanzo/docs-core@8.1.0
 
 ## 8.0.0
 
@@ -2831,7 +2831,7 @@
   migrate: Use `createPreset` instead
 
   ```js
-  const { createPreset } = require('fumadocs-ui/tailwind-plugin');
+  const { createPreset } = require('@hanzo/docs-ui/tailwind-plugin');
 
   /** @type {import('tailwindcss').Config} */
   module.exports = {
@@ -2839,7 +2839,7 @@
       './components/**/*.{ts,tsx}',
       './app/**/*.{ts,tsx}',
       './content/**/*.mdx',
-      './node_modules/fumadocs-ui/dist/**/*.js',
+      './node_modules/@hanzo/docs-ui/dist/**/*.js',
     ],
     presets: [createPreset()],
   };
@@ -2852,7 +2852,7 @@
   Before:
 
   ```tsx
-  import { CodeBlock, Pre } from 'fumadocs-ui/mdx/pre';
+  import { CodeBlock, Pre } from '@hanzo/docs-ui/mdx/pre';
 
   <Pre title={title} allowCopy {...props} />;
   ```
@@ -2860,7 +2860,7 @@
   After:
 
   ```tsx
-  import { CodeBlock, Pre } from 'fumadocs-ui/components/codeblock';
+  import { CodeBlock, Pre } from '@hanzo/docs-ui/components/codeblock';
 
   <CodeBlock title={title} allowCopy>
     <Pre {...props} />
@@ -2874,25 +2874,25 @@
   migrate:
 
   ```diff
-  - import { Card, Cards } from "fumadocs-ui/mdx/card"
-  + import { Card, Cards } from "fumadocs-ui/components/card"
+  - import { Card, Cards } from "@hanzo/docs-ui/mdx/card"
+  + import { Card, Cards } from "@hanzo/docs-ui/components/card"
 
-  - import { Heading } from "fumadocs-ui/mdx/heading"
-  + import { Heading } from "fumadocs-ui/components/heading"
+  - import { Heading } from "@hanzo/docs-ui/mdx/heading"
+  + import { Heading } from "@hanzo/docs-ui/components/heading"
 
-  - import { Codeblock, Pre } from "fumadocs-ui/mdx/pre"
-  + import { Codeblock, Pre } from "fumadocs-ui/components/codeblock"
+  - import { Codeblock, Pre } from "@hanzo/docs-ui/mdx/pre"
+  + import { Codeblock, Pre } from "@hanzo/docs-ui/components/codeblock"
   ```
 
 - 2b11c20: **Rename to Fumadocs**
 
-  `next-docs-zeta` -> `fumadocs-core`
+  `next-docs-zeta` -> `@hanzo/docs-core`
 
-  `next-docs-ui` -> `fumadocs-ui`
+  `next-docs-ui` -> `@hanzo/docs-ui`
 
-  `next-docs-mdx` -> `fumadocs-mdx`
+  `next-docs-mdx` -> `@hanzo/docs-mdx`
 
-  `@fuma-docs/openapi` -> `fumadocs-openapi`
+  `@fuma-docs/openapi` -> `@hanzo/docs-openapi`
 
   `create-next-docs-app` -> `create-fumadocs-app`
 
@@ -2903,8 +2903,8 @@
   migration: Use the Layout component for sharing the navbar across pages
 
   ```diff
-  - import { Nav } from "fumadocs-ui/nav"
-  + import { Layout } from "fumadocs-ui/layout"
+  - import { Nav } from "@hanzo/docs-ui/nav"
+  + import { Layout } from "@hanzo/docs-ui/layout"
   ```
 
 ### Minor Changes
@@ -2918,7 +2918,7 @@
 - Updated dependencies [cdff313]
 - Updated dependencies [1a346a1]
 - Updated dependencies [2b11c20]
-  - fumadocs-core@8.0.0
+  - @hanzo/docs-core@8.0.0
 
 ## 7.1.2
 

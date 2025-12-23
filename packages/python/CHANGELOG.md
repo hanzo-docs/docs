@@ -17,8 +17,8 @@
 - Updated dependencies [42f09c3]
 - Updated dependencies [55afd8a]
 - Updated dependencies [5966e23]
-  - fumadocs-ui@16.0.0
-  - fumadocs-core@16.0.0
+  - @hanzo/docs-ui@16.0.0
+  - @hanzo/docs-core@16.0.0
 
 ## 0.0.5
 
@@ -27,8 +27,8 @@
 - a3a14e7: Bump deps
 - Updated dependencies [a3a14e7]
 - Updated dependencies [7b0d839]
-  - fumadocs-core@15.8.3
-  - fumadocs-ui@15.8.3
+  - @hanzo/docs-core@15.8.3
+  - @hanzo/docs-ui@15.8.3
 
 ## 0.0.4
 
@@ -36,8 +36,8 @@
 
 - 73681e1: Force dependency versions
 - Updated dependencies [dc6d8a0]
-  - fumadocs-ui@15.7.6
-  - fumadocs-core@15.7.6
+  - @hanzo/docs-ui@15.7.6
+  - @hanzo/docs-core@15.7.6
 
 ## 0.0.3
 
@@ -48,8 +48,8 @@
 - Updated dependencies [7a45921]
 - Updated dependencies [1b7bc4b]
 - Updated dependencies [82fc4c8]
-  - fumadocs-ui@15.5.2
-  - fumadocs-core@15.5.2
+  - @hanzo/docs-ui@15.5.2
+  - @hanzo/docs-core@15.5.2
 
 ## 0.0.2
 
@@ -57,8 +57,8 @@
 
 - b0fa6ac: Fix: Add missing dependency for `griffe_typingdoc`
 - Updated dependencies [3372792]
-  - fumadocs-core@15.3.1
-  - fumadocs-ui@15.3.1
+  - @hanzo/docs-core@15.3.1
+  - @hanzo/docs-ui@15.3.1
 
 ## 0.0.1
 
@@ -68,5 +68,5 @@
 - Updated dependencies [d4d1ba7]
 - Updated dependencies [4e62b41]
 - Updated dependencies [07cd690]
-  - fumadocs-ui@15.2.11
-  - fumadocs-core@15.2.11
+  - @hanzo/docs-ui@15.2.11
+  - @hanzo/docs-core@15.2.11

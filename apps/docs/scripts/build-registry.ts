@@ -2,7 +2,7 @@ import {
   combineRegistry,
   RegistryCompiler,
   writeFumadocsRegistry,
-} from '@fumadocs/cli/build';
+} from '@hanzo/docs-cli/build';
 import { registry } from '@/components/registry.js';
 import * as ui from '../../../packages/ui/src/_registry';
 import * as radixUi from '../../../packages/radix-ui/src/_registry';

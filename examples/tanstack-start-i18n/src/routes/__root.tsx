@@ -7,8 +7,8 @@ import {
 } from '@tanstack/react-router';
 import * as React from 'react';
 import appCss from '@/styles/app.css?url';
-import { RootProvider } from 'fumadocs-ui/provider/tanstack';
-import { defineI18nUI } from 'fumadocs-ui/i18n';
+import { RootProvider } from '@hanzo/radix/provider/tanstack';
+import { defineI18nUI } from '@hanzo/radix/i18n';
 import { i18n } from '@/lib/i18n';
 
 export const Route = createRootRoute({

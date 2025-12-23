@@ -9,10 +9,10 @@ description: A more compact version of Docs Layout
 
 ## Usage
 
-Enable the notebook layout with `fumadocs-ui/layouts/notebook`, it's a more compact layout than the default one.
+Enable the notebook layout with `@hanzo/docs-ui/layouts/notebook`, it's a more compact layout than the default one.
 
 ```tsx title="layout.tsx"
-import { DocsLayout } from 'fumadocs-ui/layouts/notebook'; // [!code highlight]
+import { DocsLayout } from '@hanzo/docs-ui/layouts/notebook'; // [!code highlight]
 import { baseOptions } from '@/lib/layout.shared';
 import { source } from '@/lib/source';
 import type { ReactNode } from 'react';
@@ -40,7 +40,7 @@ Configure the style of sidebar tabs.
 ![Notebook](/docs/notebook-tab-mode.png)
 
 ```tsx title="layout.tsx"
-import { DocsLayout } from 'fumadocs-ui/layouts/notebook';
+import { DocsLayout } from '@hanzo/docs-ui/layouts/notebook';
 import { baseOptions } from '@/lib/layout.shared';
 import { source } from '@/lib/source';
 import type { ReactNode } from 'react';
@@ -65,7 +65,7 @@ Configure the style of navbar.
 ![Notebook](/docs/notebook-nav-mode.png)
 
 ```tsx title="layout.tsx"
-import { DocsLayout } from 'fumadocs-ui/layouts/notebook';
+import { DocsLayout } from '@hanzo/docs-ui/layouts/notebook';
 import { baseOptions } from '@/lib/layout.shared';
 import { source } from '@/lib/source';
 import type { ReactNode } from 'react';

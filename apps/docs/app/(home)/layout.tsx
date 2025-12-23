@@ -1,12 +1,12 @@
-import { HomeLayout } from 'fumadocs-ui/layouts/home';
+import { HomeLayout } from '@hanzo/docs-ui/layouts/home';
 import { baseOptions, linkItems } from '@/lib/layout.shared';
 import {
   NavbarMenu,
   NavbarMenuContent,
   NavbarMenuLink,
   NavbarMenuTrigger,
-} from 'fumadocs-ui/layouts/home/navbar';
-import Link from 'fumadocs-core/link';
+} from '@hanzo/docs-ui/layouts/home/navbar';
+import Link from '@hanzo/docs-core/link';
 import Image from 'next/image';
 import Preview from '@/public/banner.png';
 import { Book, ComponentIcon, Pencil, PlusIcon, Server } from 'lucide-react';

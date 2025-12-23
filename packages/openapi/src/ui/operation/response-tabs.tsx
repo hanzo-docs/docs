@@ -7,7 +7,7 @@ import {
   Accordions,
   AccordionTrigger,
 } from '@/ui/components/accordion';
-import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Tab, Tabs } from '@hanzo/radix/components/tabs';
 import { sample } from 'openapi-sampler';
 import type { ReactNode } from 'react';
 

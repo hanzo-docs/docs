@@ -84,7 +84,7 @@ export default function Page() {
               Getting Started
             </Link>
             <a
-              href="https://codesandbox.io/p/sandbox/github/fuma-nama/fumadocs-ui-template"
+              href="https://codesandbox.io/p/sandbox/github/fuma-nama/@hanzo/docs-ui-template"
               target="_blank"
               rel="noreferrer noopener"
               className={cn(
@@ -99,7 +99,7 @@ export default function Page() {
       </div>
       <div className="grid grid-cols-1 gap-10 mt-12 px-6 mx-auto w-full max-w-[1400px] md:px-12 lg:grid-cols-2">
         <p className="text-2xl tracking-tight leading-snug font-light col-span-full md:text-3xl xl:text-4xl">
-          Fumadocs is a <span className="text-brand font-medium">React.js</span>{' '}
+          Hanzo Docs is a <span className="text-brand font-medium">React.js</span>{' '}
           documentation framework for{' '}
           <span className="text-brand font-medium">Developers</span>,
           beautifully designed by{' '}
@@ -113,7 +113,7 @@ export default function Page() {
             Try it out.
           </h2>
           <CodeBlock
-            code="pnpm create fumadocs-app"
+            code="pnpm create hanzo-docs-app"
             lang="bash"
             wrapper={{
               className: 'mx-auto w-full max-w-[800px]',
@@ -151,14 +151,14 @@ function Aesthetics() {
           Minimal aesthetics, Maximum customizability.
         </h3>
         <p className="mb-4">
-          Fumadocs offer well-designed themes, with a headless mode to plug your
+          Hanzo Docs offer well-designed themes, with a headless mode to plug your
           own UI.
         </p>
         <p className="mb-4">
-          Pro designer? Customise the theme using Fumadocs CLI.
+          Pro designer? Customise the theme using Hanzo Docs CLI.
         </p>
         <CodeBlock
-          code={`pnpm dlx @fumadocs/cli customise\n\n> Choose a layout to customise...`}
+          code={`pnpm dlx @hanzo/docs-cli customise\n\n> Choose a layout to customise...`}
           lang="bash"
         />
       </div>
@@ -179,7 +179,7 @@ title: Hello World
 
 ## Overview
 
-I love **Fumadocs**!
+I love **Hanzo Docs**!
 
 \`\`\`ts tab="Tab 1"
 console.log("Hello World")
@@ -233,7 +233,7 @@ This codeblock shows TypeScript information!
 console.log("Hello World");
 
 // give your code decorations [!code ++]
-const name = "fumadocs";
+const name = "hanzo-docs";
 \`\`\`
 
 And re-use content:
@@ -322,7 +322,7 @@ const feedback = [
     role: 'Creator of Shadcn UI',
     message: `You know how you end up rebuilding a full docs site every time you start a new project? 
 
-Fumadocs fixes this by giving you all the right blocks that you compose together.
+Hanzo Docs fixes this by giving you all the right blocks that you compose together.
 
 Like headless docs to build exactly what you need.`,
   },
@@ -490,31 +490,31 @@ function ForEngineers() {
           Separated as <span className="text-brand">Content</span> →{' '}
           <span className="text-brand">Core</span> →{' '}
           <span className="text-brand">UI</span>, offering the high
-          composability that engineers love — you can use Fumadocs as a library,
+          composability that engineers love — you can use Hanzo Docs as a library,
           without adapting the entire framework.
         </p>
         <div className="mt-auto flex flex-col gap-2 @container mask-[linear-gradient(to_bottom,white,transparent)]">
           {[
             {
-              name: 'fumadocs-mdx',
+              name: '@hanzo/docs-mdx',
               description: 'Use MDX in your React framework elegantly.',
             },
             {
-              name: 'fumadocs-core',
+              name: '@hanzo/docs-core',
               description:
                 'Headless library for building docs + handling content.',
             },
             {
-              name: 'fumadocs-ui',
+              name: '@hanzo/docs-ui',
               description: 'UI library for building docs.',
             },
             {
-              name: 'fumadocs-openapi',
-              description: 'Extend Fumadocs to render OpenAPI docs.',
+              name: '@hanzo/docs-openapi',
+              description: 'Extend Hanzo Docs to render OpenAPI docs.',
             },
             {
-              name: 'fumadocs-obsidian',
-              description: 'Extend Fumadocs to handle Obsidian-style Markdown.',
+              name: 'hanzo-docs-obsidian',
+              description: 'Extend Hanzo Docs to handle Obsidian-style Markdown.',
             },
           ].map((item) => (
             <div
@@ -535,17 +535,17 @@ function ForEngineers() {
         </h3>
         <p className="mb-4">
           Designed to integrate with any{' '}
-          <span className="text-brand">content source</span>, Fumadocs works on
+          <span className="text-brand">content source</span>, Hanzo Docs works on
           MDX, Content Collections, and even your own CMS.
         </p>
         <div className="flex flex-row w-fit items-center gap-4 mb-6">
           {[
             {
-              href: 'https://github.com/fuma-nama/fumadocs-basehub',
+              href: 'https://github.com/hanzoai/docs-basehub',
               text: 'BaseHub CMS',
             },
             {
-              href: 'https://github.com/fuma-nama/fumadocs-sanity',
+              href: 'https://github.com/hanzoai/docs-sanity',
               text: 'Sanity',
             },
             {
@@ -566,14 +566,14 @@ function ForEngineers() {
         </div>
         <CodeBlock
           wrapper={{
-            title: 'Fumadocs MDX',
+            title: 'Hanzo Docs MDX',
           }}
           code={`
-import { loader } from 'fumadocs-core/source';
-import { docs } from 'fumadocs-mdx:collections/server';
+import { loader } from '@hanzo/docs-core/source';
+import { docs } from '@hanzo/docs-mdx:collections/server';
 
 export const source = loader({
-  source: docs.toFumadocsSource(),
+  source: docs.toHanzo DocsSource(),
   baseUrl: '/docs',
 });`.trim()}
           lang="ts"
@@ -647,7 +647,7 @@ This is my first document.`}
             The shadcn/ui for docs
           </h3>
           <p className="mb-6">
-            Fumadocs CLI creates interactive components for your docs, offering
+            Hanzo Docs CLI creates interactive components for your docs, offering
             a rich experience to your users.
           </p>
           <Link
@@ -680,10 +680,10 @@ function Search() {
       </div>
       <div className="border-t p-2">
         {[
-          ['Getting Started', 'Use Fumadocs in your project.'],
+          ['Getting Started', 'Use Hanzo Docs in your project.'],
           ['Components', 'The UI Components for your docs.'],
           ['MDX Content', 'Using MDX for content.'],
-          ['User Guide', 'How to use Fumadocs.'],
+          ['User Guide', 'How to use Hanzo Docs.'],
         ].map(([title, description], i) => (
           <div
             key={i}
@@ -733,7 +733,7 @@ function OpenSource() {
           Made Possible by You.
         </h3>
         <p className="mb-8">
-          Fumadocs is 100% powered by passion and open source community.
+          Hanzo Docs is 100% powered by passion and open source community.
         </p>
         <div className="mb-8 flex flex-row items-center gap-2">
           <Link
@@ -743,7 +743,7 @@ function OpenSource() {
             Sponsors
           </Link>
           <a
-            href="https://github.com/fuma-nama/fumadocs/graphs/contributors"
+            href="https://github.com/hanzoai/docs/graphs/contributors"
             rel="noreferrer noopener"
             className={cn(buttonVariants({ variant: 'secondary' }))}
           >
@@ -811,7 +811,7 @@ function OpenSource() {
             Read docs
           </Link>
           <a
-            href="https://github.com/fuma-nama/fumadocs"
+            href="https://github.com/hanzoai/docs"
             rel="noreferrer noopener"
             className={cn(
               buttonVariants({

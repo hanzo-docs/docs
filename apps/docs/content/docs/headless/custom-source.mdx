@@ -38,7 +38,7 @@ See [Definitions of Page Tree](/docs/headless/page-tree).
 Pass your page tree to `DocsLayout` (usually in a `layout.tsx`):
 
 ```tsx title="layout.tsx"
-import { DocsLayout } from 'fumadocs-ui/layouts/docs';
+import { DocsLayout } from '@hanzo/docs-ui/layouts/docs';
 import type { ReactNode } from 'react';
 
 export default function Layout({ children }: { children: ReactNode }) {
@@ -70,7 +70,7 @@ For docs page, it's the same logic:
 You may need table of contents, which can be generated on your own, or using the [`getTableOfContents`](/docs/headless/utils/get-toc) utility (Markdown/MDX only).
 
 ```tsx
-import { DocsPage, DocsBody } from 'fumadocs-ui/layouts/docs/page';
+import { DocsPage, DocsBody } from '@hanzo/docs-ui/layouts/docs/page';
 import { getPage } from './my-content-source';
 import { notFound } from 'next/navigation';
 
@@ -132,7 +132,7 @@ You can think it as a `next-mdx-remote` with built-in plugins for Fumadocs.
 ### Setup
 
 ```package-install
-@fumadocs/mdx-remote
+@hanzo/docs-mdx-remote
 ```
 
 The main feature it offers is the MDX Compiler, it can compile MDX content to JSX nodes.
@@ -143,9 +143,9 @@ Since it doesn't use a bundler, there's some limitations:
 It's compatible with Server Components. For example:
 
 ```tsx
-import { createCompiler } from '@fumadocs/mdx-remote';
+import { createCompiler } from '@hanzo/docs-mdx-remote';
 import { getPage } from './my-content-source';
-import { DocsBody, DocsPage } from 'fumadocs-ui/layouts/docs/page';
+import { DocsBody, DocsPage } from '@hanzo/docs-ui/layouts/docs/page';
 import { getMDXComponents } from '@/mdx-components';
 
 const compiler = createCompiler({

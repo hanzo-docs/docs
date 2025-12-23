@@ -8,7 +8,7 @@ description: Support i18n routing on your React Router + Fumadocs app.
 Define the i18n configurations in a file, we will import it with `@/lib/i18n` in this guide.
 
 ```ts title="app/lib/i18n.ts"
-import { defineI18n } from 'fumadocs-core/i18n';
+import { defineI18n } from '@hanzo/docs-core/i18n';
 
 export const i18n = defineI18n({
   defaultLanguage: 'en',
@@ -38,7 +38,7 @@ export default [
 You can also use `:lang?` prefix, and update the i18n config:
 
 ```ts tab="app/lib/i18n.ts"
-import { defineI18n } from 'fumadocs-core/i18n';
+import { defineI18n } from '@hanzo/docs-core/i18n';
 
 export const i18n = defineI18n({
   defaultLanguage: 'en',
@@ -71,9 +71,9 @@ import {
   ScrollRestoration,
   useParams,
 } from 'react-router';
-import { RootProvider } from 'fumadocs-ui/provider/base';
-import { ReactRouterProvider } from 'fumadocs-core/framework/react-router';
-import { defineI18nUI } from 'fumadocs-ui/i18n';
+import { RootProvider } from '@hanzo/docs-ui/provider/base';
+import { ReactRouterProvider } from '@hanzo/docs-core/framework/react-router';
+import { defineI18nUI } from '@hanzo/docs-ui/i18n';
 import { i18n } from '@/lib/i18n';
 import './app.css';
 
@@ -124,7 +124,7 @@ Add `locale` parameter to `baseOptions()` and include `i18n` in props:
 
 ```tsx title="app/lib/layout.shared.tsx"
 import { i18n } from '@/lib/i18n';
-import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
+import type { BaseLayoutProps } from '@hanzo/docs-ui/layouts/shared';
 
 export function baseOptions(locale: string): BaseLayoutProps {
   return {
@@ -138,7 +138,7 @@ Pass the locale to Fumadocs in your pages and layouts.
 
 ```ts tab="app/lib/source.ts"
 import { i18n } from '@/lib/i18n';
-import { loader } from 'fumadocs-core/source';
+import { loader } from '@hanzo/docs-core/source';
 
 export const source = loader({
   i18n, // [!code ++]
@@ -148,7 +148,7 @@ export const source = loader({
 
 ```tsx tab="Home Layout" title="app/routes/home.tsx"
 import type { Route } from './+types/home';
-import { HomeLayout } from 'fumadocs-ui/layouts/home';
+import { HomeLayout } from '@hanzo/docs-ui/layouts/home';
 import { baseOptions } from '@/lib/layout.shared';
 
 export default function Home({ params }: Route.ComponentProps) {
@@ -161,9 +161,9 @@ export default function Home({ params }: Route.ComponentProps) {
 
 ```tsx tab="Docs Page" title="app/docs/page.tsx"
 import type { Route } from './+types/page';
-import { DocsLayout } from 'fumadocs-ui/layouts/docs';
+import { DocsLayout } from '@hanzo/docs-ui/layouts/docs';
 import { source } from '@/lib/source';
-import type * as PageTree from 'fumadocs-core/page-tree';
+import type * as PageTree from '@hanzo/docs-core/page-tree';
 import { baseOptions } from '@/lib/layout.shared';
 
 export async function loader({ params }: Route.LoaderArgs) {
@@ -220,11 +220,11 @@ const { lang } = useParams();
 <Link to={`/${lang}/about`}>About Us</Link>;
 ```
 
-In addition, the [`fumadocs-core/dynamic-link`](/docs/headless/components/link#dynamic-hrefs) component supports dynamic hrefs, you can use it to attend the locale prefix.
+In addition, the [`@hanzo/docs-core/dynamic-link`](/docs/headless/components/link#dynamic-hrefs) component supports dynamic hrefs, you can use it to attend the locale prefix.
 It is useful for Markdown/MDX content.
 
 ```mdx title="content.mdx"
-import { DynamicLink } from 'fumadocs-core/dynamic-link';
+import { DynamicLink } from '@hanzo/docs-core/dynamic-link';
 
 <DynamicLink href="/[lang]/another-page">This is a link</DynamicLink>
 ```

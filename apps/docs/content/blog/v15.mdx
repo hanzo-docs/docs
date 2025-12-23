@@ -17,15 +17,15 @@ Fumadocs v15 has no other significant changes other than migrating the config to
 Before making the switch, upgrade your site to Tailwind CSS v4 following their [upgrade guide](https://tailwindcss.com/docs/upgrade-guide).
 You can remove the unused `tailwind.config.js` file and fully rely on the new CSS-first config.
 
-Add `@import` to the presets exported by Fumadocs UI, and include the `fumadocs-ui` package in the source.
+Add `@import` to the presets exported by Fumadocs UI, and include the `@hanzo/docs-ui` package in the source.
 
 ```css title="Tailwind CSS"
 @import 'tailwindcss';
-@import 'fumadocs-ui/css/neutral.css';
-@import 'fumadocs-ui/css/preset.css';
+@import '@hanzo/docs-ui/css/neutral.css';
+@import '@hanzo/docs-ui/css/preset.css';
 
 /* relative to the CSS file, make sure it's correct for your app */
-@source '../node_modules/fumadocs-ui/dist/**/*.js';
+@source '../node_modules/@hanzo/docs-ui/dist/**/*.js';
 ```
 
 Since v15, you will no longer pass options in JavaScript to customise plugins.
@@ -114,8 +114,8 @@ v15 improves the playground UI (inspired by the minimalism of Scalar), and broug
 You can enable the Scalar API Client using `useScalar` option in `createOpenAPI()`:
 
 ```ts
-import { createOpenAPI } from 'fumadocs-openapi/server';
-import { APIPlayground } from 'fumadocs-openapi/scalar';
+import { createOpenAPI } from '@hanzo/docs-openapi/server';
+import { APIPlayground } from '@hanzo/docs-openapi/scalar';
 
 export const openapi = createOpenAPI({
   renderer: {

@@ -2,10 +2,10 @@
 // @ts-nocheck
 import * as __fd_glob_1 from "./generate-index/folder/test.mdx?collection=docs"
 import * as __fd_glob_0 from "./generate-index/index.mdx?collection=docs"
-import { server } from 'fumadocs-mdx/runtime/server';
+import { server } from '@hanzo/docs-mdx/runtime/server';
 import type * as Config from './config';
 
-const create = server<typeof Config, import("fumadocs-mdx/runtime/types").InternalTypeConfig & {
+const create = server<typeof Config, import("@hanzo/docs-mdx/runtime/types").InternalTypeConfig & {
   DocData: {
   }
 }>({"doc":{"passthroughs":["extractedReferences"]}});
@@ -15,10 +15,10 @@ export const docs = await create.doc("docs", "packages/mdx/test/fixtures/generat
 
 ```ts title="dynamic.ts"
 // @ts-nocheck
-import { dynamic } from 'fumadocs-mdx/runtime/dynamic';
+import { dynamic } from '@hanzo/docs-mdx/runtime/dynamic';
 import * as Config from './config';
 
-const create = await dynamic<typeof Config, import("fumadocs-mdx/runtime/types").InternalTypeConfig & {
+const create = await dynamic<typeof Config, import("@hanzo/docs-mdx/runtime/types").InternalTypeConfig & {
   DocData: {
   }
 }>(Config, {"configPath":"packages/mdx/test/fixtures/config.ts","environment":"test","outDir":"packages/mdx/test/fixtures"}, {"doc":{"passthroughs":["extractedReferences"]}});
@@ -26,10 +26,10 @@ const create = await dynamic<typeof Config, import("fumadocs-mdx/runtime/types")
 
 ```ts title="browser.ts"
 // @ts-nocheck
-import { browser } from 'fumadocs-mdx/runtime/browser';
+import { browser } from '@hanzo/docs-mdx/runtime/browser';
 import type * as Config from './config';
 
-const create = browser<typeof Config, import("fumadocs-mdx/runtime/types").InternalTypeConfig & {
+const create = browser<typeof Config, import("@hanzo/docs-mdx/runtime/types").InternalTypeConfig & {
   DocData: {
   }
 }>();
@@ -43,10 +43,10 @@ export default browserCollections;
 // @ts-nocheck
 import { frontmatter as __fd_glob_1 } from "../generate-index-2/test/test.mdx?collection=docs&only=frontmatter&workspace=test"
 import { frontmatter as __fd_glob_0 } from "../generate-index-2/index.mdx?collection=docs&only=frontmatter&workspace=test"
-import { server } from 'fumadocs-mdx/runtime/server';
+import { server } from '@hanzo/docs-mdx/runtime/server';
 import type * as Config from '../config';
 
-const create = server<typeof Config, import("fumadocs-mdx/runtime/types").InternalTypeConfig & {
+const create = server<typeof Config, import("@hanzo/docs-mdx/runtime/types").InternalTypeConfig & {
   DocData: {
   }
 }>({"doc":{"passthroughs":["extractedReferences"]}});
@@ -56,10 +56,10 @@ export const docs = await create.docLazy("docs", "packages/mdx/test/fixtures/gen
 
 ```ts title="test/dynamic.ts"
 // @ts-nocheck
-import { dynamic } from 'fumadocs-mdx/runtime/dynamic';
+import { dynamic } from '@hanzo/docs-mdx/runtime/dynamic';
 import * as Config from '../config';
 
-const create = await dynamic<typeof Config, import("fumadocs-mdx/runtime/types").InternalTypeConfig & {
+const create = await dynamic<typeof Config, import("@hanzo/docs-mdx/runtime/types").InternalTypeConfig & {
   DocData: {
   }
 }>(Config, {"configPath":"packages/mdx/test/fixtures/config.ts","environment":"test","outDir":"packages/mdx/test/fixtures/test"}, {"doc":{"passthroughs":["extractedReferences"]}});
@@ -67,10 +67,10 @@ const create = await dynamic<typeof Config, import("fumadocs-mdx/runtime/types")
 
 ```ts title="test/browser.ts"
 // @ts-nocheck
-import { browser } from 'fumadocs-mdx/runtime/browser';
+import { browser } from '@hanzo/docs-mdx/runtime/browser';
 import type * as Config from '../config';
 
-const create = browser<typeof Config, import("fumadocs-mdx/runtime/types").InternalTypeConfig & {
+const create = browser<typeof Config, import("@hanzo/docs-mdx/runtime/types").InternalTypeConfig & {
   DocData: {
   }
 }>();

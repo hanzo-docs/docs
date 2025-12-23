@@ -1,7 +1,7 @@
 'use client';
 
-import { useCopyButton } from 'fumadocs-ui/utils/use-copy-button';
-import { buttonVariants } from 'fumadocs-ui/components/ui/button';
+import { useCopyButton } from '@hanzo/radix/utils/use-copy-button';
+import { buttonVariants } from '@hanzo/radix/components/ui/button';
 import { cn } from '@/utils/cn';
 import { Check, Copy } from '@/ui/icons';
 import {

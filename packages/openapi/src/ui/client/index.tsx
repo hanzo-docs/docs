@@ -13,7 +13,7 @@ export interface APIPageClientOptions {
    *
    * Useful when using multiple OpenAPI instances to prevent state conflicts.
    *
-   * @defaultValue `fumadocs-openapi-`
+   * @defaultValue `@hanzo/docs-openapi-`
    */
   storageKeyPrefix?: string;
 

@@ -1,15 +1,15 @@
-import { DocsLayout } from 'fumadocs-ui/layouts/docs';
+import { DocsLayout } from '@hanzo/radix/layouts/docs';
 import {
   DocsBody,
   DocsDescription,
   DocsPage,
   DocsTitle,
-} from 'fumadocs-ui/layouts/docs/page';
+} from '@hanzo/radix/layouts/docs/page';
 import { type Page, source } from '../../lib/source';
 import { baseOptions } from '../../lib/layout.shared';
-import defaultMdxComponents from 'fumadocs-ui/mdx';
+import defaultMdxComponents from '@hanzo/radix/mdx';
 import { type ReactNode } from 'react';
-import { HomeLayout } from 'fumadocs-ui/layouts/home';
+import { HomeLayout } from '@hanzo/radix/layouts/home';
 
 export default async function ServerComponent({
   params,

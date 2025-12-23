@@ -1,6 +1,6 @@
 'use client';
 import { cn } from '@/utils/cn';
-import { buttonVariants } from 'fumadocs-ui/components/ui/button';
+import { buttonVariants } from '@hanzo/radix/components/ui/button';
 import {
   ApiClientModalProvider,
   useApiClientModal,

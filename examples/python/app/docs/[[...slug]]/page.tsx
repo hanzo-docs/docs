@@ -4,9 +4,9 @@ import {
   DocsBody,
   DocsDescription,
   DocsTitle,
-} from 'fumadocs-ui/layouts/docs/page';
+} from '@hanzo/radix/layouts/docs/page';
 import { notFound } from 'next/navigation';
-import { createRelativeLink } from 'fumadocs-ui/mdx';
+import { createRelativeLink } from '@hanzo/radix/mdx';
 import { getMDXComponents } from '@/mdx-components';
 
 export default async function Page(props: {

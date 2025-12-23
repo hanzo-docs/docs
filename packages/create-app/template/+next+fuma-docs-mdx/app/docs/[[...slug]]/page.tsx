@@ -4,11 +4,11 @@ import {
   DocsDescription,
   DocsPage,
   DocsTitle,
-} from 'fumadocs-ui/layouts/docs/page';
+} from '@hanzo/docs-ui/layouts/docs/page';
 import { notFound } from 'next/navigation';
 import { getMDXComponents } from '@/mdx-components';
 import type { Metadata } from 'next';
-import { createRelativeLink } from 'fumadocs-ui/mdx';
+import { createRelativeLink } from '@hanzo/docs-ui/mdx';
 
 export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   const params = await props.params;

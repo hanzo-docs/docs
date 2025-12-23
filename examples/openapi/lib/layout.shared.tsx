@@ -1,4 +1,4 @@
-import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
+import type { BaseLayoutProps } from '@hanzo/radix/layouts/shared';
 import { Logo } from '@/app/logo';
 
 export function baseOptions(): BaseLayoutProps {

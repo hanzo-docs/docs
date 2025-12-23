@@ -1,4 +1,4 @@
 @import 'tailwindcss';
-@import 'fumadocs-ui/css/neutral.css';
-@import 'fumadocs-ui/css/preset.css';
+@import '@hanzo/radix/css/neutral.css';
+@import '@hanzo/radix/css/preset.css';
 @source '../node_modules/fumapress/src/**/*';

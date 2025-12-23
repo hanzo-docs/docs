@@ -8,7 +8,7 @@ description: Use Typescript Twoslash in your docs
 Thanks to the Twoslash integration of [Shiki](https://github.com/shikijs/shiki), the default code syntax highlighter, it is as simple as adding a transformer.
 
 ```package-install
-fumadocs-twoslash twoslash
+@hanzo/docs-twoslash twoslash
 ```
 
 For Next.js, you need to externalize the following deps:
@@ -24,9 +24,9 @@ const config = {
 Add to your Shiki transformers.
 
 ```ts title="source.config.ts (Fumadocs MDX)"
-import { defineConfig } from 'fumadocs-mdx/config';
-import { transformerTwoslash } from 'fumadocs-twoslash';
-import { rehypeCodeDefaultOptions } from 'fumadocs-core/mdx-plugins';
+import { defineConfig } from '@hanzo/docs-mdx/config';
+import { transformerTwoslash } from '@hanzo/docs-twoslash';
+import { rehypeCodeDefaultOptions } from '@hanzo/docs-core/mdx-plugins';
 
 export default defineConfig({
   mdxOptions: {
@@ -47,14 +47,14 @@ export default defineConfig({
 Add styles, Tailwind CSS v4 is required.
 
 ```css title="Tailwind CSS"
-@import 'fumadocs-twoslash/twoslash.css';
+@import '@hanzo/docs-twoslash/twoslash.css';
 ```
 
 Add MDX components.
 
 ```tsx title="mdx-components.tsx"
-import * as Twoslash from 'fumadocs-twoslash/ui';
-import defaultComponents from 'fumadocs-ui/mdx';
+import * as Twoslash from '@hanzo/docs-twoslash/ui';
+import defaultComponents from '@hanzo/docs-ui/mdx';
 import type { MDXComponents } from 'mdx/types';
 
 export function getMDXComponents(components?: MDXComponents): MDXComponents {
@@ -115,8 +115,8 @@ a = 132;
 You can enable filesystem cache with `typesCache` option:
 
 ```ts twoslash title="source.config.ts"
-import { transformerTwoslash } from 'fumadocs-twoslash';
-import { createFileSystemTypesCache } from 'fumadocs-twoslash/cache-fs';
+import { transformerTwoslash } from '@hanzo/docs-twoslash';
+import { createFileSystemTypesCache } from '@hanzo/docs-twoslash/cache-fs';
 
 transformerTwoslash({
   typesCache: createFileSystemTypesCache(),

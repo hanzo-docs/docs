@@ -1,14 +1,14 @@
 'use client';
 
-import { ChevronDown } from '@fumadocs/ui/icons';
-import type { TOCItemType } from 'fumadocs-core/toc';
+import { ChevronDown } from '@hanzo/ui/icons';
+import type { TOCItemType } from '@hanzo/docs-core/toc';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from './ui/collapsible';
 import type { ComponentProps } from 'react';
-import { cn } from '@fumadocs/ui/cn';
+import { cn } from '@hanzo/ui/cn';
 
 export interface InlineTocProps extends ComponentProps<typeof Collapsible> {
   items: TOCItemType[];

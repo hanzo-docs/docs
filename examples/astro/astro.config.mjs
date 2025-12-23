@@ -9,7 +9,7 @@ import {
   remarkHeading,
   remarkNpm,
   remarkStructure,
-} from 'fumadocs-core/mdx-plugins';
+} from '@hanzo/docs-core/mdx-plugins';
 
 export default defineConfig({
   integrations: [

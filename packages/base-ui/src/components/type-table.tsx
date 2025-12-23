@@ -1,9 +1,9 @@
 'use client';
 
-import { ChevronDown } from '@fumadocs/ui/icons';
-import Link from 'fumadocs-core/link';
+import { ChevronDown } from '@hanzo/ui/icons';
+import Link from '@hanzo/docs-core/link';
 import { cva } from 'class-variance-authority';
-import { cn } from '@fumadocs/ui/cn';
+import { cn } from '@hanzo/ui/cn';
 import { type ReactNode, useState } from 'react';
 import {
   Collapsible,

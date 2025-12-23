@@ -1,5 +1,5 @@
 'use client';
-import { ChevronDown, ExternalLink } from '@fumadocs/ui/icons';
+import { ChevronDown, ExternalLink } from '@hanzo/ui/icons';
 import {
   type ComponentProps,
   createContext,
@@ -12,15 +12,15 @@ import {
   useRef,
   useState,
 } from 'react';
-import Link, { type LinkProps } from 'fumadocs-core/link';
-import { useOnChange } from 'fumadocs-core/utils/use-on-change';
-import { cn } from '@fumadocs/ui/cn';
+import Link, { type LinkProps } from '@hanzo/docs-core/link';
+import { useOnChange } from '@hanzo/docs-core/utils/use-on-change';
+import { cn } from '@hanzo/ui/cn';
 import {
   ScrollArea,
   type ScrollAreaProps,
   ScrollViewport,
 } from '@/components/ui/scroll-area';
-import { isActive } from '@fumadocs/ui/urls';
+import { isActive } from '@hanzo/ui/urls';
 import {
   Collapsible,
   CollapsibleContent,
@@ -28,9 +28,9 @@ import {
   CollapsibleTrigger,
   type CollapsibleTriggerProps,
 } from '@/components/ui/collapsible';
-import { useMediaQuery } from 'fumadocs-core/utils/use-media-query';
+import { useMediaQuery } from '@hanzo/docs-core/utils/use-media-query';
 import scrollIntoView from 'scroll-into-view-if-needed';
-import { usePathname } from 'fumadocs-core/framework';
+import { usePathname } from '@hanzo/docs-core/framework';
 import ReactDOM from 'react-dom';
 
 interface SidebarContext {

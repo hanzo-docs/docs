@@ -13,7 +13,7 @@ Before continuing, make sure to configure:
 ### Installation
 
 ```npm
-npm i fumadocs-core fumadocs-ui
+npm i @hanzo/docs-core @hanzo/docs-ui
 ```
 
 ### Styles
@@ -23,8 +23,8 @@ Add the following to your Tailwind CSS file:
 ```css title="app/app.css"
 @import 'tailwindcss';
 /* [!code ++:2] */
-@import 'fumadocs-ui/css/neutral.css';
-@import 'fumadocs-ui/css/preset.css';
+@import '@hanzo/docs-ui/css/neutral.css';
+@import '@hanzo/docs-ui/css/preset.css';
 ```
 
 ### Create Pages
@@ -58,7 +58,7 @@ Wrap your entire app under Fumadocs providers:
 
 ```tsx title="root.tsx"
 import { Links, Meta, Scripts, ScrollRestoration } from 'react-router';
-import { RootProvider } from 'fumadocs-ui/provider/react-router';
+import { RootProvider } from '@hanzo/docs-ui/provider/react-router';
 import './app.css';
 
 export function Layout({ children }: { children: React.ReactNode }) {

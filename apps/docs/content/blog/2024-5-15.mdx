@@ -17,7 +17,7 @@ With a few months of development, it soon became powerful and stable.
 It was originally named `next-docs`, I renamed it to Fumadocs as it conflicts with Next.js Docs.
 
 Thanks to the support from **Next.js** community, I've received a lot of suggestions along the way.
-[Fumadocs](https://fumadocs.dev) is now a framework used by my libraries and some other amazing projects.
+[Fumadocs](https://docs.hanzo.ai) is now a framework used by my libraries and some other amazing projects.
 
 ## My Opinion
 
@@ -79,11 +79,11 @@ Although the structure of Fumadocs UI is even simpler than core, I've used some 
 The bundler I am using, [TSX](https://github.com/privatenumber/tsx), can't handle nested structures like client components imported from a server component.
 Therefore, I made a little hack to build server components and client components as an individual entry, then inject import statements after the process.
 
-Also it took me some time to come up with the [preset approach](https://fumadocs.dev/docs/ui/theme#docsui-plugin) for integrating Fumadocs UI with Tailwind CSS projects.
+Also it took me some time to come up with the [preset approach](https://docs.hanzo.ai/docs/ui/theme#docsui-plugin) for integrating Fumadocs UI with Tailwind CSS projects.
 
 ## Docs Generators
 
-We have a few built-in integrations, like `fumadocs-openapi` which takes an OpenAPI schema and output MDX files.
+We have a few built-in integrations, like `@hanzo/docs-openapi` which takes an OpenAPI schema and output MDX files.
 
 For the OpenAPI one, it simply parses the schema and convert it to MDX file through string templates.
 
@@ -93,7 +93,7 @@ You can use it inside a server component, which is how `<AutoTypeTable />` works
 ## CI/CD
 
 As a project with very few contributors, I built the CI/CD process as convenient as possible for a better efficiency.
-The entire release process is handled by [Changesets](https://github.com/changesets/changesets), and I wrote the scripts to update [the template repository](https://github.com/fuma-nama/fumadocs-ui-template) automatically.
+The entire release process is handled by [Changesets](https://github.com/changesets/changesets), and I wrote the scripts to update [the template repository](https://github.com/fuma-nama/@hanzo/docs-ui-template) automatically.
 It worked great so far.
 
 ## Thanks

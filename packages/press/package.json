@@ -1,13 +1,13 @@
 {
-  "name": "fumapress",
+  "name": "@hanzo/docs-press",
   "version": "0.0.8",
-  "description": "The minimal setup for Fumadocs",
+  "description": "The minimal setup for Hanzo Docs",
   "keywords": [
-    "Fumadocs",
+    "Hanzo Docs",
     "Docs"
   ],
-  "homepage": "https://fumadocs.dev",
-  "repository": "github:fuma-nama/fumadocs",
+  "homepage": "https://docs.hanzo.ai",
+  "repository": "github:hanzoai/docs",
   "license": "MIT",
   "author": "Fuma Nama",
   "type": "module",
@@ -23,9 +23,9 @@
     "@vitejs/plugin-react": "^5.1.2",
     "@vitejs/plugin-rsc": "^0.5.7",
     "commander": "^14.0.2",
-    "fumadocs-core": "workspace:*",
-    "fumadocs-mdx": "workspace:*",
-    "fumadocs-ui": "workspace:*",
+    "@hanzo/docs-core": "workspace:*",
+    "@hanzo/docs-mdx": "workspace:*",
+    "@hanzo/ui": "workspace:*",
     "picocolors": "^1.1.1",
     "react-router": "^7.11.0",
     "tinyglobby": "^0.2.15",
@@ -49,7 +49,7 @@
     "cjs": false,
     "module": "./src/index.ts",
     "bin": {
-      "fumapress": "./src/cli/index.ts"
+      "hanzo-docs-press": "./src/cli/index.ts"
     },
     "exports": {
       ".": "./src/index.ts",
@@ -84,7 +84,7 @@
     }
   },
   "bin": {
-    "fumapress": "./dist/cli/index.js"
+    "hanzo-docs-press": "./dist/cli/index.js"
   },
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts"

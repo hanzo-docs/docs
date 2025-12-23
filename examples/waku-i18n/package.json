@@ -7,13 +7,14 @@
     "dev": "waku dev",
     "build": "waku build",
     "start": "waku start",
-    "types:check": "fumadocs-mdx && tsc --noEmit"
+    "types:check": "@hanzo/docs-mdx && tsc --noEmit"
   },
   "dependencies": {
     "@orama/tokenizers": "^3.1.17",
-    "fumadocs-core": "workspace:*",
-    "fumadocs-mdx": "workspace:*",
-    "fumadocs-ui": "workspace:*",
+    "@hanzo/docs-core": "workspace:*",
+    "@hanzo/docs-mdx": "workspace:*",
+    "@hanzo/ui": "workspace:*",
+    "@hanzo/radix": "workspace:*",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-server-dom-webpack": "^19.2.3",

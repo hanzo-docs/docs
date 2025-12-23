@@ -4,13 +4,13 @@
 
 ### Patch Changes
 
-- ca09b6a: Core: Support accessing MDX plugins separately at `fumadocs-core/mdx-plugins/*`
+- ca09b6a: Core: Support accessing MDX plugins separately at `@hanzo/docs-core/mdx-plugins/*`
 - Updated dependencies [bc97236]
 - Updated dependencies [ca09b6a]
 - Updated dependencies [c0df2c4]
 - Updated dependencies [117ad86]
-  - fumadocs-core@16.0.8
-  - fumadocs-ui@16.0.8
+  - @hanzo/docs-core@16.0.8
+  - @hanzo/docs-ui@16.0.8
 
 ## 0.0.5
 
@@ -18,8 +18,8 @@
 
 - 845075f: Enable `remark-gfm` by default
 - Updated dependencies [d511232]
-  - fumadocs-core@16.0.2
-  - fumadocs-ui@16.0.2
+  - @hanzo/docs-core@16.0.2
+  - @hanzo/docs-ui@16.0.2
 
 ## 0.0.4
 
@@ -41,8 +41,8 @@
 - Updated dependencies [42f09c3]
 - Updated dependencies [55afd8a]
 - Updated dependencies [5966e23]
-  - fumadocs-ui@16.0.0
-  - fumadocs-core@16.0.0
+  - @hanzo/docs-ui@16.0.0
+  - @hanzo/docs-core@16.0.0
 
 ## 0.0.3
 
@@ -51,8 +51,8 @@
 - a3a14e7: Bump deps
 - Updated dependencies [a3a14e7]
 - Updated dependencies [7b0d839]
-  - fumadocs-core@15.8.3
-  - fumadocs-ui@15.8.3
+  - @hanzo/docs-core@15.8.3
+  - @hanzo/docs-ui@15.8.3
 
 ## 0.0.2
 
@@ -67,5 +67,5 @@
 
 - d2b5ebe: Initial release
 - Updated dependencies [dc6d8a0]
-  - fumadocs-ui@15.7.6
-  - fumadocs-core@15.7.6
+  - @hanzo/docs-ui@15.7.6
+  - @hanzo/docs-core@15.7.6

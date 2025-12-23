@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import { type ComponentProps, type FC, type ReactNode } from 'react';
-import * as Twoslash from 'fumadocs-twoslash/ui';
-import { Callout } from 'fumadocs-ui/components/callout';
-import { TypeTable } from 'fumadocs-ui/components/type-table';
+import * as Twoslash from '@hanzo/docs-twoslash/ui';
+import { Callout } from '@hanzo/docs-ui/components/callout';
+import { TypeTable } from '@hanzo/docs-ui/components/type-table';
 import * as Preview from '@/components/preview';
 import { createMetadata, getPageImage } from '@/lib/metadata';
 import { source } from '@/lib/source';
@@ -15,22 +15,22 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from '@/components/ui/hover-card';
-import Link from 'fumadocs-core/link';
-import { getPageTreePeers } from 'fumadocs-core/page-tree';
-import { Card, Cards } from 'fumadocs-ui/components/card';
+import Link from '@hanzo/docs-core/link';
+import { getPageTreePeers } from '@hanzo/docs-core/page-tree';
+import { Card, Cards } from '@hanzo/docs-ui/components/card';
 import { getMDXComponents } from '@/mdx-components';
 import { LLMCopyButton, ViewOptions } from '@/components/ai/page-actions';
-import { Banner } from 'fumadocs-ui/components/banner';
+import { Banner } from '@hanzo/docs-ui/components/banner';
 import { Installation } from '@/components/preview/installation';
 import { Customisation } from '@/components/preview/customisation';
 import {
   DocsBody,
   DocsPage,
   PageLastUpdate,
-} from 'fumadocs-ui/layouts/docs/page';
+} from '@hanzo/docs-ui/layouts/docs/page';
 import { NotFound } from '@/components/not-found';
 import { getSuggestions } from '@/app/docs/[...slug]/suggestions';
-import { PathUtils } from 'fumadocs-core/source';
+import { PathUtils } from '@hanzo/docs-core/source';
 
 function PreviewRenderer({ preview }: { preview: string }): ReactNode {
   if (preview && preview in Preview) {

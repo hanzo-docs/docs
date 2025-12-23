@@ -39,13 +39,13 @@ Fumadocs MDX is closely associated with Fumadocs, yet the content processing lay
 
 <Callout title="Note">
   At present, Fumadocs MDX depends solely on the remark and rehype plugins from
-  `fumadocs-core`.
+  `@hanzo/docs-core`.
 </Callout>
 
 In the near future, certain components will transition to `fuma-content`, improving extensibility and introducing more APIs. Such as:
 
 - **Framework Agnostic:** Fuma Content should work anywhere, including Vite, Turbopack/Webpack, and even JS runtimes.
-- **No Framework Defaults:** the MDX preset of Fumadocs will be offered by `fumadocs-core`, likely as a Fuma Content plugin.
+- **No Framework Defaults:** the MDX preset of Fumadocs will be offered by `@hanzo/docs-core`, likely as a Fuma Content plugin.
 - **Content Adapters:** Expanding support beyond MDX and JSON files to include custom collection types, as well as an Obsidian plugin for handling editor-specific syntax.
 - **Zero breaking changes to Fumadocs MDX:** we adopt Fuma Content under the hood, but surface APIs will not be changed. Ideally, it will be similar to how Vite leverages Rolldown.
 
