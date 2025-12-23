@@ -1,12 +1,13 @@
-import type { ReactNode } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 import type { I18nConfig } from '@hanzo/docs-core/i18n';
 import type { LinkItemType } from '@hanzo/ui/link-item';
+import Link from '@hanzo/docs-core/link';
 
 export interface NavOptions {
   enabled: boolean;
   component: ReactNode;
 
-  title?: ReactNode;
+  title?: ReactNode | ((props: ComponentProps<'a'>) => ReactNode);
 
   /**
    * Redirect url of title
@@ -84,6 +85,18 @@ export function resolveLinkItems({
     });
 
   return result;
+}
+
+export function renderTitleNav(
+  { title, url = '/' }: Partial<NavOptions>,
+  props: ComponentProps<'a'>,
+) {
+  if (typeof title === 'function') return title({ href: url, ...props });
+  return (
+    <Link href={url} {...props}>
+      {title}
+    </Link>
+  );
 }
 
 export type * from '@hanzo/ui/link-item';

@@ -9,8 +9,6 @@ import { createIntegratedConfigLoader } from '@/loaders/config';
 import { createMetaLoader } from '@/loaders/meta';
 import indexFile, { IndexFilePluginOptions } from '@/plugins/index-file';
 
-const FumadocsDeps = ['@hanzo/docs-core', '@hanzo/ui', '@hanzo/docs-openapi'];
-
 export interface PluginOptions {
   /**
    * Generate index files for accessing content.
@@ -66,12 +64,21 @@ export default async function mdx(
       if (!options.updateViteConfig) return config;
 
       return mergeConfig(config, {
-        optimizeDeps: {
-          exclude: FumadocsDeps,
-        },
         resolve: {
-          noExternal: FumadocsDeps,
-          dedupe: FumadocsDeps,
+          noExternal: [
+            '@hanzo/docs-core',
+            '@hanzo/radix',
+            '@hanzo/docs-openapi',
+            '@hanzo/ui-base',
+            '@hanzo/radix',
+          ],
+          // only dedupe for public, non-transitive libs
+          dedupe: [
+            '@hanzo/docs-core',
+            '@hanzo/radix',
+            '@hanzo/docs-openapi',
+            '@hanzo/ui-base',
+          ],
         },
       } satisfies UserConfig);
     },

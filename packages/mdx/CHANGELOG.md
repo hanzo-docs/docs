@@ -1,5 +1,24 @@
 # next-docs-mdx
 
+## 14.2.2
+
+### Patch Changes
+
+- 2de6151: add `@types/react` to peer dep
+  - fumadocs-core@16.3.2
+
+## 14.2.1
+
+### Patch Changes
+
+- 3a5b077: hotfix Vite bundling
+
+## 14.2.0
+
+### Minor Changes
+
+- 8ce2c70: Add VS Code-style #region / #endregion support to <include /> for code files
+
 ## 14.1.1
 
 ### Patch Changes

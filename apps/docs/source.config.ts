@@ -83,10 +83,17 @@ export default defineConfig({
       await import('@hanzo/docs-twoslash/cache-fs');
     const { default: remarkMath } = await import('remark-math');
     const { remarkTypeScriptToJavaScript } =
-      await import('@hanzo/docs-docgen/remark-ts2js');
+      await import('fumadocs-docgen/remark-ts2js');
     const { default: rehypeKatex } = await import('rehype-katex');
-    const { remarkAutoTypeTable } = await import('@hanzo/docs-typescript');
+    const {
+      remarkAutoTypeTable,
+      createGenerator,
+      createFileSystemGeneratorCache,
+    } = await import('@hanzo/docs-typescript');
 
+    const generator = createGenerator({
+      cache: createFileSystemGeneratorCache('.next/@hanzo/docs-typescript'),
+    });
     return {
       remarkStructureOptions: {
         types: [...remarkStructureDefaultOptions.types, 'code'],
@@ -117,7 +124,12 @@ export default defineConfig({
       remarkPlugins: [
         remarkSteps,
         remarkMath,
-        remarkAutoTypeTable,
+        [
+          remarkAutoTypeTable,
+          {
+            generator,
+          },
+        ],
         remarkTypeScriptToJavaScript,
       ],
       rehypePlugins: (v) => [rehypeKatex, ...v],

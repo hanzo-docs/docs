@@ -9,7 +9,7 @@ description: Auto-generated type table
 
     /**
     * Markdown syntax like links, `code` are supported.
-    * See https://docs.hanzo.ai/docs/ui/components/type-table
+    * See https://fumadocs.dev/docs/ui/components/type-table
     **/
     name: boolean | null;
 
@@ -36,7 +36,7 @@ description: Auto-generated type table
 
 <Callout title="Server Component only" type="warn">
 
-You cannot use this in a client component.
+You cannot use this in a client component, instead, try the [build-time MDX integration](/docs/ui/typescript#mdx-integration) instead.
 
 </Callout>
 
@@ -51,12 +51,18 @@ npm i @hanzo/docs-typescript
 Initialize the TypeScript compiler and add it as a MDX component.
 
 ```tsx title="mdx-components.tsx"
-import defaultComponents from '@hanzo/docs-ui/mdx';
+import defaultComponents from '@hanzo/radix/mdx';
 import type { MDXComponents } from 'mdx/types';
-import { createGenerator } from '@hanzo/docs-typescript';
+import {
+  createGenerator,
+  createFileSystemGeneratorCache,
+} from '@hanzo/docs-typescript';
 import { AutoTypeTable } from '@hanzo/docs-typescript/ui';
 
-const generator = createGenerator();
+const generator = createGenerator({
+  // set a cache, necessary for serverless platform like Vercel
+  cache: createFileSystemGeneratorCache('.next/@hanzo/docs-typescript'),
+});
 
 export function getMDXComponents(components?: MDXComponents): MDXComponents {
   return {
@@ -139,14 +145,16 @@ Your `tsconfig.json` file in the current working directory will be loaded.
 You can change the compiler settings from [`createGenerator()`](/docs/ui/typescript).
 
 ```ts
-import { createGenerator } from '@hanzo/docs-typescript';
+import {
+  createGenerator,
+  createFileSystemGeneratorCache,
+} from '@hanzo/docs-typescript';
 
 const generator = createGenerator({
   tsconfigPath: './tsconfig.json',
   // where to resolve relative paths (normally cwd)
   basePath: './',
-  // disable file system cache
-  cache: false,
+  // other options...
 });
 ```
 
