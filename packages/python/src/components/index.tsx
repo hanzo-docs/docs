@@ -8,7 +8,7 @@ import {
 } from '@hanzo/radix/components/ui/collapsible';
 import { buttonVariants } from '@hanzo/radix/components/ui/button';
 import { ChevronRight } from 'lucide-react';
-import { highlight } from '@hanzo/docs-core/highlight';
+import { highlight } from '@hanzo/docs/highlight';
 
 const cardVariants = cva('bg-fd-card rounded-lg text-sm my-6 p-3 border');
 const badgeVariants = cva(

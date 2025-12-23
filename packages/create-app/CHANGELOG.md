@@ -686,7 +686,7 @@
 
 - 2b11c20: **Rename to Fumadocs**
 
-  `next-docs-zeta` -> `@hanzo/docs-core`
+  `next-docs-zeta` -> `@hanzo/docs`
 
   `next-docs-ui` -> `@hanzo/docs-ui`
 

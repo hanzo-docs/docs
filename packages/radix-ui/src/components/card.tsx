@@ -1,4 +1,4 @@
-import Link from '@hanzo/docs-core/link';
+import Link from '@hanzo/docs/link';
 import type { HTMLAttributes, ReactNode } from 'react';
 import { cn } from '@hanzo/ui/cn';
 

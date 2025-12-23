@@ -3,7 +3,7 @@
   "changelog": "@changesets/cli/changelog",
   "commit": false,
   "fixed": [
-    ["@hanzo/docs-core", "@hanzo/radix", "@hanzo/ui-base", "@hanzo/ui"],
+    ["@hanzo/docs", "@hanzo/radix", "@hanzo/ui", "@hanzo/ui"],
     ["create-hanzo-docs-app", "@hanzo/create-app-versions"]
   ],
   "access": "restricted",

@@ -51,7 +51,7 @@ export const openapi = createOpenAPI({
 
 ```ts tab="lib/source.ts"
 import { openapiPlugin } from '@hanzo/docs-openapi/server';
-import { loader } from '@hanzo/docs-core/source';
+import { loader } from '@hanzo/docs/source';
 
 export const source = loader({
   // [!code ++] optional: adds a badge to each page item in page tree
@@ -131,7 +131,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
 You can also use it without generating real files by integrating into [Loader API](/docs/headless/source-api/source).
 
 ```ts title="lib/source.ts"
-import { loader, multiple } from '@hanzo/docs-core/source';
+import { loader, multiple } from '@hanzo/docs/source';
 import { openapiPlugin, openapiSource } from '@hanzo/docs-openapi/server';
 import { docs } from '@hanzo/docs-mdx:collections/server';
 import { openapi } from '@/lib/openapi';

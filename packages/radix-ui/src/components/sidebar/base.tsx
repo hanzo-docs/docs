@@ -12,8 +12,8 @@ import {
   useRef,
   useState,
 } from 'react';
-import Link, { type LinkProps } from '@hanzo/docs-core/link';
-import { useOnChange } from '@hanzo/docs-core/utils/use-on-change';
+import Link, { type LinkProps } from '@hanzo/docs/link';
+import { useOnChange } from '@hanzo/docs/utils/use-on-change';
 import { cn } from '@hanzo/ui/cn';
 import {
   ScrollArea,
@@ -28,10 +28,10 @@ import {
   CollapsibleTrigger,
   type CollapsibleTriggerProps,
 } from '@/components/ui/collapsible';
-import { useMediaQuery } from '@hanzo/docs-core/utils/use-media-query';
+import { useMediaQuery } from '@hanzo/docs/utils/use-media-query';
 import { Presence } from '@radix-ui/react-presence';
 import scrollIntoView from 'scroll-into-view-if-needed';
-import { usePathname } from '@hanzo/docs-core/framework';
+import { usePathname } from '@hanzo/docs/framework';
 
 interface SidebarContext {
   open: boolean;

@@ -3,7 +3,7 @@ import type {
   PageData,
   Source,
   VirtualFile,
-} from '@hanzo/docs-core/source';
+} from '@hanzo/docs/source';
 import * as path from 'node:path';
 import type { DocCollection, DocsCollection, MetaCollection } from '@/config';
 import type { StandardSchemaV1 } from '@standard-schema/spec';

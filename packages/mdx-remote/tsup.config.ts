@@ -1,7 +1,7 @@
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
-  external: ['@hanzo/docs-core', 'next', 'react'],
+  external: ['@hanzo/docs', 'next', 'react'],
   dts: true,
   target: 'es2021',
   entry: ['./src/index.ts', './src/client/index.ts'],

@@ -53,7 +53,7 @@ You can use our new `createFromSource` API to create the route handler, which of
 
 ```ts
 import { source } from '@/lib/source';
-import { createFromSource } from '@hanzo/docs-core/search/server';
+import { createFromSource } from '@hanzo/docs/search/server';
 
 export const { GET } = createFromSource(source);
 ```
@@ -62,7 +62,7 @@ In favour of this, the new search client of Fumadocs is introduced with support 
 This includes Algolia, Orama (static and dynamic with route handlers).
 
 ```ts
-import { useDocsSearch } from '@hanzo/docs-core/search/client';
+import { useDocsSearch } from '@hanzo/docs/search/client';
 
 const client = useDocsSearch({
   type: 'static',
@@ -92,7 +92,7 @@ To improve code organization, we made a Metadata Image API on Fumadocs Core.
 It is a tiny wrapper over Next.js Metadata API, composes seamlessly with Source API.
 
 ```ts title="lib/metadata.ts"
-import { createMetadataImage } from '@hanzo/docs-core/server';
+import { createMetadataImage } from '@hanzo/docs/server';
 import { source } from '@/lib/source';
 
 export const metadataImage = createMetadataImage({
@@ -305,4 +305,4 @@ import { Popup } from '@hanzo/docs-twoslash/ui';
 The previous `createI18nSearchAPIExperimental` is now renamed to `createI18nSearchAPI`.
 It takes the i18n config instead of scattering the options everywhere.
 
-The types from `@hanzo/docs-core/search/shared` is moved to `@hanzo/docs-core/server`.
+The types from `@hanzo/docs/search/shared` is moved to `@hanzo/docs/server`.

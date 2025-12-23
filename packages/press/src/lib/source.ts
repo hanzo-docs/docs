@@ -1,5 +1,5 @@
 /// <reference types="@hanzo/docs-mdx" />
-import { type InferPageType, loader } from '@hanzo/docs-core/source';
+import { type InferPageType, loader } from '@hanzo/docs/source';
 import { server } from '@hanzo/docs-mdx/runtime/server';
 import type { FumadocsMDXConfig } from '../config/content.js';
 import type { InternalTypeConfig } from '@hanzo/docs-mdx/runtime/types';

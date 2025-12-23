@@ -53,9 +53,9 @@
   For creating fully typed plugins (with custom properties), use the following pattern:
 
   ```ts
-  import { loader } from '@hanzo/docs-core/source';
+  import { loader } from '@hanzo/docs/source';
   import { docs } from '@hanzo/docs-mdx:collections/server';
-  import { lucideIconsPlugin } from '@hanzo/docs-core/source/lucide-icons';
+  import { lucideIconsPlugin } from '@hanzo/docs/source/lucide-icons';
 
   export const source = loader(docs.toFumadocsSource(), {
     baseUrl: '/docs',
@@ -119,7 +119,7 @@
 ### Patch Changes
 
 - bc97236: Fix `rehypeCode()` tsdoc for `lazy` option
-- ca09b6a: Core: Support accessing MDX plugins separately at `@hanzo/docs-core/mdx-plugins/*`
+- ca09b6a: Core: Support accessing MDX plugins separately at `@hanzo/docs/mdx-plugins/*`
 - 117ad86: Add support for using a custom GitHub API base URL
 
 ## 16.0.7
@@ -165,24 +165,24 @@
 
 ### Major Changes
 
-- 851897c: **Remove `@hanzo/docs-core/sidebar` API**
+- 851897c: **Remove `@hanzo/docs/sidebar` API**
 
   why: no longer used by Fumadocs UI, and the abstraction isn't good enough.
 
   migrate: The original component is mostly a wrapper of `react-remove-scroll`, you can use Shadcn UI for pre-built sidebars.
 
-- 4049ccc: **Remove `@hanzo/docs-core/server` export**
-  - **`getGithubLastEdit`:** Moved to `@hanzo/docs-core/content/github`.
-  - **`getTableOfContents`:** Moved to `@hanzo/docs-core/content/toc`.
-  - **`PageTree` and page tree utilities:** Moved to `@hanzo/docs-core/page-tree`.
-  - **`TOCItemType`, `TableOfContents`:** Moved to `@hanzo/docs-core/toc`.
+- 4049ccc: **Remove `@hanzo/docs/server` export**
+  - **`getGithubLastEdit`:** Moved to `@hanzo/docs/content/github`.
+  - **`getTableOfContents`:** Moved to `@hanzo/docs/content/toc`.
+  - **`PageTree` and page tree utilities:** Moved to `@hanzo/docs/page-tree`.
+  - **`TOCItemType`, `TableOfContents`:** Moved to `@hanzo/docs/toc`.
   - **`createMetadataImage`:** Use the Next.js Metadata API instead.
 
 - 429c41a: **Switch to Shiki JavaScript Regex engine by default**
 
   This is important for Cloudflare Worker compatibility, JavaScript engine is the new default over Oniguruma (WASM).
   - `rehype-code`: replaced the `experimentalJSEngine` option with `engine: js | oniguruma`.
-  - `@hanzo/docs-core/highlight`: use JS engine by default, drop custom engine support, use Shiki directly instead.
+  - `@hanzo/docs/highlight`: use JS engine by default, drop custom engine support, use Shiki directly instead.
 
 - 5210f18: **Set minimal React.js version to 19.2.0**
 
@@ -194,8 +194,8 @@
   - `@hanzo/docs-ui/page`:
     - removed `<DocsCategory />`.
     - removed `breadcrumbs.full` option from `<DocsPage />`.
-  - `@hanzo/docs-core/search/algolia`: renamed option `document` to `indexName`.
-  - `@hanzo/docs-core/search`:
+  - `@hanzo/docs/search/algolia`: renamed option `document` to `indexName`.
+  - `@hanzo/docs/search`:
     - remove deprecated signature of `createFromSource()`: migrate to newer usage instead.
       ```ts
       export function createFromSource<S extends LoaderOutput<LoaderConfig>>(
@@ -205,9 +205,9 @@
       ): SearchAPI;
       ```
     - remove deprecated parameters in `useSearch()`, pass them in the client object instead.
-  - `@hanzo/docs-core/highlight`: remove deprecated `withPrerenderScript` and `loading` options from `useShiki()`.
-  - `@hanzo/docs-core/i18n`: removed `createI18nMiddleware`, import from `@hanzo/docs-core/i18n/middleware` instead.
-  - `@hanzo/docs-core/source`:
+  - `@hanzo/docs/highlight`: remove deprecated `withPrerenderScript` and `loading` options from `useShiki()`.
+  - `@hanzo/docs/i18n`: removed `createI18nMiddleware`, import from `@hanzo/docs/i18n/middleware` instead.
+  - `@hanzo/docs/source`:
     - removed deprecated `transformers`, `pageTree.attach*` options from `loader()`.
     - removed deprecated `page.file` property.
     - removed `FileInfo` & `parseFilePath` utilities.
@@ -219,7 +219,7 @@
   When using Fumadocs' Orama Cloud integration, you need to use the new client instead:
 
   ```ts
-  import { sync } from '@hanzo/docs-core/search/orama-cloud';
+  import { sync } from '@hanzo/docs/search/orama-cloud';
   import { OramaCloud } from '@orama/core';
 
   // update this
@@ -236,7 +236,7 @@
 
 ### Minor Changes
 
-- cbc93e9: Disable `single` by default on `@hanzo/docs-core/toc` API
+- cbc93e9: Disable `single` by default on `@hanzo/docs/toc` API
 
 ### Patch Changes
 
@@ -259,15 +259,15 @@
 
 ### Patch Changes
 
-- ad9a004: **Deprecate `@hanzo/docs-core/server` export**
+- ad9a004: **Deprecate `@hanzo/docs/server` export**
 
   It will be removed on Fumadocs 16, as some APIs under the `/server` export are actually available (and even used) under browser environment.
 
   A more modularized design will be introduced over the original naming.
-  - **`getGithubLastEdit`:** Moved to `@hanzo/docs-core/content/github`.
-  - **`getTableOfContents`:** Moved to `@hanzo/docs-core/content/toc`.
-  - **`PageTree` and page tree utilities:** Moved to `@hanzo/docs-core/page-tree`.
-  - **`TOCItemType`, `TableOfContents`:** Moved to `@hanzo/docs-core/toc`.
+  - **`getGithubLastEdit`:** Moved to `@hanzo/docs/content/github`.
+  - **`getTableOfContents`:** Moved to `@hanzo/docs/content/toc`.
+  - **`PageTree` and page tree utilities:** Moved to `@hanzo/docs/page-tree`.
+  - **`TOCItemType`, `TableOfContents`:** Moved to `@hanzo/docs/toc`.
   - **`createMetadataImage`:** Deprecated, use the Next.js Metadata API instead.
 
 - 90cf1fe: Support Negotiation API
@@ -284,7 +284,7 @@
 
 ### Minor Changes
 
-- d1ae3e8: **Move `SortedResult` and other search-related types to `@hanzo/docs-core/search`**
+- d1ae3e8: **Move `SortedResult` and other search-related types to `@hanzo/docs/search`**
 
   This also exposed the search result highlighter API, you may now use it for highlighting results of your own search integration
 
@@ -479,7 +479,7 @@
 
   ```ts
   // lib/source.ts
-  import { defineI18n } from '@hanzo/docs-core/i18n';
+  import { defineI18n } from '@hanzo/docs/i18n';
 
   export const i18n = defineI18n({
     defaultLanguage: 'en',
@@ -513,7 +513,7 @@
 
   ```ts
   // here!
-  import { createI18nMiddleware } from '@hanzo/docs-core/i18n/middleware';
+  import { createI18nMiddleware } from '@hanzo/docs/i18n/middleware';
   import { i18n } from '@/lib/i18n';
 
   export default createI18nMiddleware(i18n);
@@ -639,7 +639,7 @@
   The new usage passes options to a single object, improving the readability:
 
   ```ts
-  import { useDocsSearch } from '@hanzo/docs-core/search/client';
+  import { useDocsSearch } from '@hanzo/docs/search/client';
 
   const { search, setSearch, query } = useDocsSearch({
     type: 'fetch',
@@ -672,7 +672,7 @@
 
   ```ts
   import { algoliasearch } from 'algoliasearch';
-  import { sync } from '@hanzo/docs-core/search/algolia';
+  import { sync } from '@hanzo/docs/search/algolia';
   const client = algoliasearch('id', 'key');
 
   void sync(client, {
@@ -762,7 +762,7 @@
 
   ```ts
   import { source } from '@/lib/source';
-  import { createFromSource } from '@hanzo/docs-core/search/server';
+  import { createFromSource } from '@hanzo/docs/search/server';
 
   // from
   export const { GET } = createFromSource(
@@ -917,7 +917,7 @@
 
 ### Patch Changes
 
-- 3534a10: Move `@hanzo/docs-core` highlighting utils to `@hanzo/docs-core/highlight` and `@hanzo/docs-core/highlight/client`
+- 3534a10: Move `@hanzo/docs` highlighting utils to `@hanzo/docs/highlight` and `@hanzo/docs/highlight/client`
 - 93952db: Generate a `$id` attribute to page tree nodes
 
 ## 15.0.11
@@ -1156,9 +1156,9 @@
 
 ### Major Changes
 
-- e45bc67: **Remove deprecated `@hanzo/docs-core/middleware` export**
+- e45bc67: **Remove deprecated `@hanzo/docs/middleware` export**
 
-  **migrate:** Use `@hanzo/docs-core/i18n`.
+  **migrate:** Use `@hanzo/docs/i18n`.
 
 - d9e908e: **Remove deprecated `languages` and `defaultLanguage` option from loader**
 
@@ -1173,7 +1173,7 @@
   Pass client option, it can be algolia, static, or fetch (default).
 
   ```ts
-  import { useDocsSearch } from '@hanzo/docs-core/search/client';
+  import { useDocsSearch } from '@hanzo/docs/search/client';
 
   const { search, setSearch, query } = useDocsSearch({
     type: 'fetch',
@@ -1188,7 +1188,7 @@
   **migrate:**
 
   ```ts
-  import { useDocsSearch } from '@hanzo/docs-core/search/client';
+  import { useDocsSearch } from '@hanzo/docs/search/client';
 
   const { search, setSearch, query } = useDocsSearch({
     type: 'algolia',
@@ -1197,9 +1197,9 @@
   });
   ```
 
-- 9a0b09f: **Refactor import path of `@hanzo/docs-core/search-algolia/server` to `@hanzo/docs-core/search/algolia`**
+- 9a0b09f: **Refactor import path of `@hanzo/docs/search-algolia/server` to `@hanzo/docs/search/algolia`**
 - d9e908e: Improved usage for `createI18nSearchAPI` (replaced `createI18nSearchAPIExperimental`)
-- d9e908e: Replace `@hanzo/docs-core/search/shared` with `@hanzo/docs-core/server`
+- d9e908e: Replace `@hanzo/docs/search/shared` with `@hanzo/docs/server`
 
 ### Minor Changes
 
@@ -1296,7 +1296,7 @@
 - fd46eb6: Export new `createI18nSearchAPIExperimental` API for i18n config
 - fd46eb6: Introduce `i18n` config for Core APIs
 - fd46eb6: Deprecated `languages` and `defaultLanguage` option on Source API, replaced with `i18n` config
-- fd46eb6: Move I18n middleware to `@hanzo/docs-core/i18n`
+- fd46eb6: Move I18n middleware to `@hanzo/docs/i18n`
 - 9aae448: Support multiple toc active items
 - c542561: Use cookie to store active locale on `always` mode
 
@@ -1376,7 +1376,7 @@
   Instead of
 
   ```tsx
-  import * as Base from '@hanzo/docs-core/toc';
+  import * as Base from '@hanzo/docs/toc';
 
   return (
     <Base.TOCProvider>
@@ -1388,7 +1388,7 @@
   Use
 
   ```tsx
-  import * as Base from '@hanzo/docs-core/toc';
+  import * as Base from '@hanzo/docs/toc';
 
   return (
     <Base.AnchorProvider>
@@ -1794,7 +1794,7 @@
 
 ### Patch Changes
 
-- 10e099a: Remove deprecated options from `@hanzo/docs-core/toc`
+- 10e099a: Remove deprecated options from `@hanzo/docs/toc`
 
 ## 10.0.1
 
@@ -1897,16 +1897,16 @@
   Install `fumadocs-contentlayer`.
 
   ```diff
-  - import { createContentlayerSource } from "@hanzo/docs-core/contentlayer"
+  - import { createContentlayerSource } from "@hanzo/docs/contentlayer"
   + import { createContentlayerSource } from "fumadocs-contentlayer"
 
-  - import { createConfig } from "@hanzo/docs-core/contentlayer/configuration"
+  - import { createConfig } from "@hanzo/docs/contentlayer/configuration"
   + import { createConfig } from "fumadocs-contentlayer/configuration"
   ```
 
 - 2b11c20: **Rename to Fumadocs**
 
-  `next-docs-zeta` -> `@hanzo/docs-core`
+  `next-docs-zeta` -> `@hanzo/docs`
 
   `next-docs-ui` -> `@hanzo/docs-ui`
 

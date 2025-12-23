@@ -13,7 +13,7 @@ Set up Fumadocs MDX for your Next.js application.
 ### Installation
 
 ```npm
-npm i @hanzo/docs-mdx @hanzo/docs-core @types/mdx
+npm i @hanzo/docs-mdx @hanzo/docs @types/mdx
 ```
 
 Create the configuration file:
@@ -62,7 +62,7 @@ You can create a `lib/source.ts` file and obtain Fumadocs source from the `docs`
 
 ```ts title="lib/source.ts"
 import { docs } from '@hanzo/docs-mdx:collections/server';
-import { loader } from '@hanzo/docs-core/source';
+import { loader } from '@hanzo/docs/source';
 
 export const source = loader({
   baseUrl: '/docs',

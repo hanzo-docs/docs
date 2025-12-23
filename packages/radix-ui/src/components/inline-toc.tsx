@@ -1,7 +1,7 @@
 'use client';
 
 import { ChevronDown } from '@hanzo/ui/icons';
-import type { TOCItemType } from '@hanzo/docs-core/toc';
+import type { TOCItemType } from '@hanzo/docs/toc';
 import {
   Collapsible,
   CollapsibleContent,

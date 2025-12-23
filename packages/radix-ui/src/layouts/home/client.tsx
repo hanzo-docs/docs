@@ -1,7 +1,7 @@
 'use client';
 import { type ComponentProps, Fragment, useMemo, useState } from 'react';
 import { cva } from 'class-variance-authority';
-import Link from '@hanzo/docs-core/link';
+import Link from '@hanzo/docs/link';
 import { cn } from '@hanzo/ui/cn';
 import {
   type LinkItemType,

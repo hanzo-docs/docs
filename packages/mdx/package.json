@@ -93,7 +93,7 @@
     "@types/react": "^19.2.7",
     "astro": "^5.16.6",
     "eslint-config-custom": "workspace:*",
-    "@hanzo/docs-core": "workspace:*",
+    "@hanzo/docs": "workspace:*",
     "mdast-util-directive": "^3.1.0",
     "mdast-util-mdx-jsx": "^3.2.0",
     "next": "16.1.0",
@@ -108,7 +108,7 @@
   },
   "peerDependencies": {
     "@hanzo/docs-mdx-remote": "^1.4.0",
-    "@hanzo/docs-core": "^15.0.0 || ^16.0.0",
+    "@hanzo/docs": "^15.0.0 || ^16.0.0",
     "next": "^15.3.0 || ^16.0.0",
     "react": "*",
     "vite": "6.x.x || 7.x.x"

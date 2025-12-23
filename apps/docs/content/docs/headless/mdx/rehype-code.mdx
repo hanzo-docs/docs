@@ -29,7 +29,7 @@ Add the rehype plugin.
 
 ```ts tab="MDX Compiler"
 import { compile } from '@mdx-js/mdx';
-import { rehypeCode, type RehypeCodeOptions } from '@hanzo/docs-core/mdx-plugins';
+import { rehypeCode, type RehypeCodeOptions } from '@hanzo/docs/mdx-plugins';
 
 const rehypeCodeOptions: RehypeCodeOptions = {
   themes: {
@@ -82,7 +82,7 @@ You may filter the meta string before processing it with the `filterMetaString` 
 You can enable it with `inline` option:
 
 ```ts
-import { type RehypeCodeOptions } from '@hanzo/docs-core/mdx-plugins';
+import { type RehypeCodeOptions } from '@hanzo/docs/mdx-plugins';
 
 const rehypeCodeOptions: RehypeCodeOptions = {
   // [!code ++]

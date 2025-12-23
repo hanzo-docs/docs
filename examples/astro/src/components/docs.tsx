@@ -1,8 +1,8 @@
 import { DocsLayout } from '@hanzo/radix/layouts/docs';
 import { DocsPage, type DocsPageProps } from '@hanzo/radix/layouts/docs/page';
-import type { Root } from '@hanzo/docs-core/page-tree';
+import type { Root } from '@hanzo/docs/page-tree';
 import type { ReactNode } from 'react';
-import { FrameworkProvider } from '@hanzo/docs-core/framework';
+import { FrameworkProvider } from '@hanzo/docs/framework';
 import { navigate } from 'astro:transitions/client';
 import { RootProvider } from '@hanzo/radix/provider/base';
 import SearchDialog from './search';

@@ -12,7 +12,7 @@ You can generate metadata images dynamically using `next/og`.
 Add the following under your loader, and define image metadata for pages:
 
 ```ts tab="lib/source.ts"
-import { type InferPageType } from '@hanzo/docs-core/source';
+import { type InferPageType } from '@hanzo/docs/source';
 
 // [!code ++:8]
 export function getPageImage(page: InferPageType<typeof source>) {

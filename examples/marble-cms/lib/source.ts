@@ -3,10 +3,10 @@ import {
   type MetaData,
   type Source,
   type VirtualFile,
-} from '@hanzo/docs-core/source';
+} from '@hanzo/docs/source';
 import { getPosts } from '@/lib/query';
 import type { Post } from '@/lib/types';
-import type { StructuredData } from '@hanzo/docs-core/mdx-plugins';
+import type { StructuredData } from '@hanzo/docs/mdx-plugins';
 
 const PageTag = 'page';
 const RootCategory = 'docs';

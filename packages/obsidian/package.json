@@ -60,7 +60,7 @@
     "@types/node": "24.10.2",
     "@types/react": "^19.2.7",
     "eslint-config-custom": "workspace:*",
-    "@hanzo/docs-core": "workspace:*",
+    "@hanzo/docs": "workspace:*",
     "mdast-util-mdx-jsx": "^3.2.0",
     "tsconfig": "workspace:*",
     "typescript": "^5.9.3",
@@ -73,7 +73,7 @@
   },
   "peerDependencies": {
     "@types/react": "*",
-    "@hanzo/docs-core": "^15.0.0 || ^16.0.0"
+    "@hanzo/docs": "^15.0.0 || ^16.0.0"
   },
   "publishConfig": {
     "access": "public"

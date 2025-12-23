@@ -45,7 +45,7 @@
     "zod": "^4.2.1"
   },
   "peerDependencies": {
-    "@hanzo/docs-core": "^15.7.2 || ^16.0.0"
+    "@hanzo/docs": "^15.7.2 || ^16.0.0"
   },
   "devDependencies": {
     "@mdx-js/mdx": "^3.1.1",
@@ -54,7 +54,7 @@
     "@types/mdast": "^4.0.4",
     "@types/node": "24.10.2",
     "eslint-config-custom": "workspace:*",
-    "@hanzo/docs-core": "workspace:*",
+    "@hanzo/docs": "workspace:*",
     "mdast-util-mdx-jsx": "^3.2.0",
     "remark": "^15.0.1",
     "tsconfig": "workspace:*",

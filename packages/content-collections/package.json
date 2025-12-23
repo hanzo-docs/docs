@@ -39,7 +39,7 @@
     "@content-collections/mdx": "^0.2.2",
     "@types/node": "24.10.2",
     "eslint-config-custom": "workspace:*",
-    "@hanzo/docs-core": "workspace:*",
+    "@hanzo/docs": "workspace:*",
     "tsconfig": "workspace:*",
     "unified": "^11.0.5",
     "zod": "^4.2.1"
@@ -47,7 +47,7 @@
   "peerDependencies": {
     "@content-collections/core": "0.x.x",
     "@content-collections/mdx": "0.x.x",
-    "@hanzo/docs-core": "15.x.x || 16.x.x"
+    "@hanzo/docs": "15.x.x || 16.x.x"
   },
   "publishConfig": {
     "access": "public"

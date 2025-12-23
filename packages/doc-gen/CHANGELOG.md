@@ -4,11 +4,11 @@
 
 ### Patch Changes
 
-- ca09b6a: Core: Support accessing MDX plugins separately at `@hanzo/docs-core/mdx-plugins/*`
+- ca09b6a: Core: Support accessing MDX plugins separately at `@hanzo/docs/mdx-plugins/*`
 - Updated dependencies [bc97236]
 - Updated dependencies [ca09b6a]
 - Updated dependencies [117ad86]
-  - @hanzo/docs-core@16.0.8
+  - @hanzo/docs@16.0.8
 
 ## 3.0.3
 
@@ -23,7 +23,7 @@
 - Updated dependencies [cbc93e9]
 - Updated dependencies [42f09c3]
 - Updated dependencies [55afd8a]
-  - @hanzo/docs-core@16.0.0
+  - @hanzo/docs@16.0.0
 
 ## 3.0.2
 
@@ -31,7 +31,7 @@
 
 - a3a14e7: Bump deps
 - Updated dependencies [a3a14e7]
-  - @hanzo/docs-core@15.8.3
+  - @hanzo/docs@15.8.3
 
 ## 3.0.1
 
@@ -43,14 +43,14 @@
 - Updated dependencies [6548a59]
 - Updated dependencies [51268ec]
 - Updated dependencies [51268ec]
-  - @hanzo/docs-core@15.8.0
+  - @hanzo/docs@15.8.0
 
 ## 3.0.0
 
 ### Major Changes
 
 - b4474cf: `remarkTypeScriptToJavaScript` now output new `<CodeBlockTabs />` syntax, drop `Tab` and `Tabs` options
-- b4474cf: Make `@hanzo/docs-core` a required peer dep (and must be `^15.7.2`)
+- b4474cf: Make `@hanzo/docs` a required peer dep (and must be `^15.7.2`)
 
 ### Minor Changes
 
@@ -61,7 +61,7 @@
 - Updated dependencies [88b5a4e]
 - Updated dependencies [039b24b]
 - Updated dependencies [08eee2b]
-  - @hanzo/docs-core@15.7.2
+  - @hanzo/docs@15.7.2
 
 ## 2.1.0
 

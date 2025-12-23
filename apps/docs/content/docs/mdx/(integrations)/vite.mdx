@@ -10,7 +10,7 @@ description: Use Fumadocs MDX with Vite
 ### Installation
 
 ```npm
-npm i @hanzo/docs-mdx @hanzo/docs-core @types/mdx
+npm i @hanzo/docs-mdx @hanzo/docs @types/mdx
 ```
 
 Create the configuration file:
@@ -67,7 +67,7 @@ To integrate with Fumadocs, make a `lib/source.ts` file:
 
 ```ts title="app/lib/source.ts"
 import { docs } from '@hanzo/docs-mdx:collections/server';
-import { loader } from '@hanzo/docs-core/source';
+import { loader } from '@hanzo/docs/source';
 
 export const source = loader({
   baseUrl: '/docs',

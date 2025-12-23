@@ -1,6 +1,6 @@
 import { useTreeContext, useTreePath } from '@/contexts/tree';
 import { type FC, type ReactNode, useMemo, Fragment } from 'react';
-import type * as PageTree from '@hanzo/docs-core/page-tree';
+import type * as PageTree from '@hanzo/docs/page-tree';
 import type * as Base from './base';
 
 export interface SidebarPageTreeComponents {

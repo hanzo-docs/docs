@@ -1,5 +1,5 @@
 'use client';
-import { useDocsSearch } from '@hanzo/docs-core/search/client';
+import { useDocsSearch } from '@hanzo/docs/search/client';
 import {
   SearchDialog,
   SearchDialogClose,

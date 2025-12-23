@@ -8,7 +8,7 @@ description: Support i18n routing on your Tanstack Start + Fumadocs app.
 Define the i18n configurations in a file, we will import it with `@/lib/i18n` in this guide.
 
 ```ts title="src/lib/i18n.ts"
-import { defineI18n } from '@hanzo/docs-core/i18n';
+import { defineI18n } from '@hanzo/docs/i18n';
 
 export const i18n = defineI18n({
   defaultLanguage: 'en',
@@ -40,7 +40,7 @@ Provide UI translations and other config to `<RootProvider />`, the English tran
 import { HeadContent, Scripts, useParams } from '@tanstack/react-router';
 import * as React from 'react';
 import { RootProvider } from '@hanzo/docs-ui/provider/base';
-import { TanstackProvider } from '@hanzo/docs-core/framework/tanstack';
+import { TanstackProvider } from '@hanzo/docs/framework/tanstack';
 import { defineI18nUI } from '@hanzo/docs-ui/i18n';
 import { i18n } from '@/lib/i18n';
 
@@ -101,7 +101,7 @@ Pass the locale to Fumadocs in your pages and layouts.
 
 ```ts tab="src/lib/source.ts"
 import { i18n } from '@/lib/i18n';
-import { loader } from '@hanzo/docs-core/source';
+import { loader } from '@hanzo/docs/source';
 
 export const source = loader({
   i18n, // [!code ++]
@@ -209,11 +209,11 @@ const { lang } = useParams({ from: '/$lang/' });
 </Link>;
 ```
 
-In addition, the [`@hanzo/docs-core/dynamic-link`](/docs/headless/components/link#dynamic-hrefs) component supports dynamic hrefs, you can use it to attend the locale prefix.
+In addition, the [`@hanzo/docs/dynamic-link`](/docs/headless/components/link#dynamic-hrefs) component supports dynamic hrefs, you can use it to attend the locale prefix.
 It is useful for Markdown/MDX content.
 
 ```mdx title="content.mdx"
-import { DynamicLink } from '@hanzo/docs-core/dynamic-link';
+import { DynamicLink } from '@hanzo/docs/dynamic-link';
 
 <DynamicLink href="/[lang]/another-page">This is a link</DynamicLink>
 ```

@@ -36,14 +36,14 @@
 - Updated dependencies [ef8eb6c]
 - Updated dependencies [e0c4c3a]
 - Updated dependencies [4e2bca7]
-  - @hanzo/docs-core@16.2.3
+  - @hanzo/docs@16.2.3
 
 ## 14.0.4
 
 ### Patch Changes
 
 - f59339b: Fix `last-modified` plugin date checking
-  - @hanzo/docs-core@16.2.0
+  - @hanzo/docs@16.2.0
 
 ## 14.0.3
 
@@ -52,7 +52,7 @@
 - f362ea1: Fix Webpack warnings (they require absolute paths for dependencies)
 - Updated dependencies [fe380da]
 - Updated dependencies [ade44d0]
-  - @hanzo/docs-core@16.0.15
+  - @hanzo/docs@16.0.15
 
 ## 14.0.2
 
@@ -61,14 +61,14 @@
 - 59743c0: Use `remarkStructure().exportAs` option to export `structuredData`
 - 59743c0: only provide CJS fallback for Next.js
 - Updated dependencies [c3b8474]
-  - @hanzo/docs-core@16.0.14
+  - @hanzo/docs@16.0.14
 
 ## 14.0.1
 
 ### Patch Changes
 
 - 52dabc3: Support type-safe collection generation
-  - @hanzo/docs-core@16.0.13
+  - @hanzo/docs@16.0.13
 
 ## 14.0.0
 
@@ -151,7 +151,7 @@
 - 97722c6: Fix meta file validation on Bun.
 - b963021: [Internal] Make `index-file` a plugin and optimize re-generations.
 - Updated dependencies [c5c00e9]
-  - @hanzo/docs-core@16.0.12
+  - @hanzo/docs@16.0.12
 
 ## 13.0.8
 
@@ -160,7 +160,7 @@
 - 58bf979: [Bun Loader] Support dynamic require of meta files
 - Updated dependencies [ff68f69]
 - Updated dependencies [00058c8]
-  - @hanzo/docs-core@16.0.11
+  - @hanzo/docs@16.0.11
 
 ## 13.0.7
 
@@ -168,14 +168,14 @@
 
 - 30b1b11: Temporary workaround for `vite:json` plugin conflicts
 - Updated dependencies [733b01e]
-  - @hanzo/docs-core@16.0.10
+  - @hanzo/docs@16.0.10
 
 ## 13.0.6
 
 ### Patch Changes
 
 - 40176ce: Support `disableMetaFile` option in Bun plugin
-  - @hanzo/docs-core@16.0.9
+  - @hanzo/docs@16.0.9
 
 ## 13.0.5
 
@@ -193,7 +193,7 @@
 - d1e43f4: Support re-generating index file when using runtime: bun | node
 - Updated dependencies [f97cd1e]
 - Updated dependencies [f7e15e2]
-  - @hanzo/docs-core@16.0.7
+  - @hanzo/docs@16.0.7
 
 ## 13.0.3
 
@@ -202,7 +202,7 @@
 - cd087d2: fix hot reload
 - 94d1ad5: Support generating extra index file for browser (workaround for Cloudflare Vite issues)
 - Updated dependencies [b95b0cf]
-  - @hanzo/docs-core@16.0.6
+  - @hanzo/docs@16.0.6
 
 ## 13.0.2
 
@@ -217,7 +217,7 @@
 - 56332df: Support plugins in Webpack loader environment: now plugins can apply changes on MDX options too.
 - 91add4f: Plugin `json-schema`: support inserting `$schema` to JSON files
 - cffd4c2: Lazy update index files on Next.js
-  - @hanzo/docs-core@16.0.3
+  - @hanzo/docs@16.0.3
 
 ## 13.0.0
 
@@ -264,7 +264,7 @@
 - Updated dependencies [42f09c3]
 - Updated dependencies [55afd8a]
 - Updated dependencies [5210f18]
-  - @hanzo/docs-core@16.0.0
+  - @hanzo/docs@16.0.0
   - @fumadocs/mdx-remote@1.4.3
 
 ## 12.0.3
@@ -274,7 +274,7 @@
 - a55177c: Remove `Override` type utility on output collection types
 - Updated dependencies [ce2be59]
 - Updated dependencies [31b9494]
-  - @hanzo/docs-core@15.8.4
+  - @hanzo/docs@15.8.4
 
 ## 12.0.2
 
@@ -283,7 +283,7 @@
 - a3a14e7: Bump deps
 - Updated dependencies [a3a14e7]
   - @fumadocs/mdx-remote@1.4.1
-  - @hanzo/docs-core@15.8.3
+  - @hanzo/docs@15.8.3
 
 ## 12.0.1
 
@@ -297,7 +297,7 @@
 - Updated dependencies [6548a59]
 - Updated dependencies [51268ec]
 - Updated dependencies [51268ec]
-  - @hanzo/docs-core@15.8.0
+  - @hanzo/docs@15.8.0
 
 ## 12.0.0
 
@@ -327,7 +327,7 @@
 - da095ac: Refactor internal export paths
 - 854d4ef: Export `postInstall()` function from `@hanzo/docs-mdx/vite`
 - Updated dependencies [982aed6]
-  - @hanzo/docs-core@15.7.13
+  - @hanzo/docs@15.7.13
 
 ## 11.10.0
 
@@ -339,7 +339,7 @@
 
 - Updated dependencies [846b28a]
 - Updated dependencies [2b30315]
-  - @hanzo/docs-core@15.7.12
+  - @hanzo/docs@15.7.12
 
 ## 11.9.1
 
@@ -357,7 +357,7 @@
 
 - 2566eef: Support postinstall script on Vite
 - Updated dependencies [c948f59]
-  - @hanzo/docs-core@15.7.10
+  - @hanzo/docs@15.7.10
 
 ## 11.8.3
 
@@ -367,7 +367,7 @@
 - e4c12a3: Add Vite config for Fumadocs Core & UI automatically
 - Updated dependencies [f65778d]
 - Updated dependencies [e4c12a3]
-  - @hanzo/docs-core@15.7.8
+  - @hanzo/docs@15.7.8
 
 ## 11.8.2
 
@@ -383,7 +383,7 @@
 - 5f2ec6e: Fix `remark-mdx-exports` plugin fallback
 - Updated dependencies [6d97379]
 - Updated dependencies [e776ee5]
-  - @hanzo/docs-core@15.7.3
+  - @hanzo/docs@15.7.3
 
 ## 11.8.0
 
@@ -402,7 +402,7 @@
 - Updated dependencies [50eb07f]
 - Updated dependencies [67df155]
 - Updated dependencies [b109d06]
-  - @hanzo/docs-core@15.7.0
+  - @hanzo/docs@15.7.0
 
 ## 11.7.5
 
@@ -412,7 +412,7 @@
 - f43f714: Automatic fallback to Zod v3 when app has explicit v3 dependency
 - Updated dependencies [569bc26]
 - Updated dependencies [817c237]
-  - @hanzo/docs-core@15.6.10
+  - @hanzo/docs@15.6.10
 
 ## 11.7.4
 
@@ -440,7 +440,7 @@
 - f8000f4: Generate config based on Next.js version
 - f45a1b6: Support Tanstack Router/Start via `createClientLoader`
 - Updated dependencies [1b0e9d5]
-  - @hanzo/docs-core@15.6.6
+  - @hanzo/docs@15.6.6
 
 ## 11.7.0
 
@@ -453,7 +453,7 @@
 
 - Updated dependencies [658fa96]
 - Updated dependencies [f8a58c6]
-  - @hanzo/docs-core@15.6.5
+  - @hanzo/docs@15.6.5
   - @fumadocs/mdx-remote@1.4.0
 
 ## 11.6.11
@@ -470,7 +470,7 @@
 - Updated dependencies [d0f8a15]
 - Updated dependencies [84918b8]
 - Updated dependencies [f8d1709]
-  - @hanzo/docs-core@15.6.0
+  - @hanzo/docs@15.6.0
   - @fumadocs/mdx-remote@1.3.4
 
 ## 11.6.9
@@ -479,7 +479,7 @@
 
 - cd86f58: Hotfix Windows EOL being ignored
 - Updated dependencies [7d1ac21]
-  - @hanzo/docs-core@15.5.3
+  - @hanzo/docs@15.5.3
 
 ## 11.6.8
 
@@ -490,7 +490,7 @@
 - 14e267b: Use custom util to parse frontmatter
 - Updated dependencies [7a45921]
 - Updated dependencies [1b7bc4b]
-  - @hanzo/docs-core@15.5.2
+  - @hanzo/docs@15.5.2
   - @fumadocs/mdx-remote@1.3.3
 
 ## 11.6.7
@@ -501,7 +501,7 @@
 - Updated dependencies [b4916d2]
 - Updated dependencies [8738b9c]
 - Updated dependencies [a66886b]
-  - @hanzo/docs-core@15.5.1
+  - @hanzo/docs@15.5.1
 
 ## 11.6.6
 
@@ -511,7 +511,7 @@
 - Updated dependencies [1b999eb]
 - Updated dependencies [961b67e]
 - Updated dependencies [7d78bc5]
-  - @hanzo/docs-core@15.4.0
+  - @hanzo/docs@15.4.0
 
 ## 11.6.5
 
@@ -520,7 +520,7 @@
 - a6c909b: Removed unused devDependencies and migrated from `fast-glob` to `tinyglobby`
 - Updated dependencies [a6c909b]
   - @fumadocs/mdx-remote@1.3.2
-  - @hanzo/docs-core@15.3.4
+  - @hanzo/docs@15.3.4
 
 ## 11.6.4
 
@@ -529,7 +529,7 @@
 - 4ae7b4a: Support MDX in codeblock tab value
 - Updated dependencies [4ae7b4a]
   - @fumadocs/mdx-remote@1.3.1
-  - @hanzo/docs-core@15.3.3
+  - @hanzo/docs@15.3.3
 
 ## 11.6.3
 
@@ -537,7 +537,7 @@
 
 - 4de7fe7: Fix `meta.{locale}` file being excluded from `defineDocs`
 - Updated dependencies [c05dc03]
-  - @hanzo/docs-core@15.3.0
+  - @hanzo/docs@15.3.0
 
 ## 11.6.2
 
@@ -545,14 +545,14 @@
 
 - 16c7566: Improve error handling logic on parsing meta entries
 - 7b89faa: Add `page.data.content` to sync mode
-  - @hanzo/docs-core@15.2.13
+  - @hanzo/docs@15.2.13
 
 ## 11.6.1
 
 ### Patch Changes
 
 - 434ccb2: Improve performance
-  - @hanzo/docs-core@15.2.9
+  - @hanzo/docs@15.2.9
 
 ## 11.6.0
 
@@ -564,7 +564,7 @@
 
 - Updated dependencies [ec85a6c]
 - Updated dependencies [e1a61bf]
-  - @hanzo/docs-core@15.2.7
+  - @hanzo/docs@15.2.7
 
 ## 11.5.8
 
@@ -572,7 +572,7 @@
 
 - 6c5e47a: add default types for collection without schema
 - Updated dependencies [1057957]
-  - @hanzo/docs-core@15.2.4
+  - @hanzo/docs@15.2.4
 
 ## 11.5.7
 
@@ -584,7 +584,7 @@
 - Updated dependencies [f3cde4f]
 - Updated dependencies [7c8a690]
 - Updated dependencies [b812457]
-  - @hanzo/docs-core@15.1.1
+  - @hanzo/docs@15.1.1
   - @fumadocs/mdx-remote@1.2.1
 
 ## 11.5.6
@@ -592,14 +592,14 @@
 ### Patch Changes
 
 - 927ee8b: Fix hot reload
-  - @hanzo/docs-core@15.0.9
+  - @hanzo/docs@15.0.9
 
 ## 11.5.5
 
 ### Patch Changes
 
 - e6df8aa: Improve performance
-  - @hanzo/docs-core@15.0.8
+  - @hanzo/docs@15.0.8
 
 ## 11.5.4
 
@@ -607,7 +607,7 @@
 
 - fc5d7c0: Compile Meta files into inline JSON objects
 - Updated dependencies [5deaf40]
-  - @hanzo/docs-core@15.0.7
+  - @hanzo/docs@15.0.7
 
 ## 11.5.3
 
@@ -621,7 +621,7 @@
 
 - c571417: Improve performance
 - be3acf4: Improve types
-  - @hanzo/docs-core@15.0.5
+  - @hanzo/docs@15.0.5
 
 ## 11.5.1
 
@@ -640,14 +640,14 @@
 
 - Updated dependencies [69f20cb]
   - @fumadocs/mdx-remote@1.2.0
-  - @hanzo/docs-core@15.0.3
+  - @hanzo/docs@15.0.3
 
 ## 11.4.1
 
 ### Patch Changes
 
 - a8e9e1f: Bump deps
-  - @hanzo/docs-core@15.0.2
+  - @hanzo/docs@15.0.2
 
 ## 11.4.0
 
@@ -658,7 +658,7 @@
 ### Patch Changes
 
 - 421166a: Fix Fumadocs 14 compatibility issues
-  - @hanzo/docs-core@15.0.1
+  - @hanzo/docs@15.0.1
 
 ## 11.3.2
 
@@ -669,7 +669,7 @@
 - Updated dependencies [5b8cca8]
 - Updated dependencies [a763058]
 - Updated dependencies [581f4a5]
-  - @hanzo/docs-core@15.0.0
+  - @hanzo/docs@15.0.0
 
 ## 11.3.1
 
@@ -678,7 +678,7 @@
 - 69bd4fe: Fix nested references for `<include />`
 - Updated dependencies [bb73a72]
 - Updated dependencies [69bd4fe]
-  - @hanzo/docs-core@14.7.4
+  - @hanzo/docs@14.7.4
 
 ## 11.3.0
 
@@ -696,7 +696,7 @@
 
 - 0a5b08c: Fix alias imports
 - Updated dependencies [72dc093]
-  - @hanzo/docs-core@14.7.1
+  - @hanzo/docs@14.7.1
 
 ## 11.2.2
 
@@ -704,7 +704,7 @@
 
 - 97ed36c: Improve default settings
 - Updated dependencies [97ed36c]
-  - @hanzo/docs-core@14.7.0
+  - @hanzo/docs@14.7.0
 
 ## 11.2.1
 
@@ -712,7 +712,7 @@
 
 - 3445182: Fix `include` hot-reload issues
 - Updated dependencies [b71064a]
-  - @hanzo/docs-core@14.6.4
+  - @hanzo/docs@14.6.4
 
 ## 11.2.0
 
@@ -722,7 +722,7 @@
 
 ### Patch Changes
 
-- @hanzo/docs-core@14.6.3
+- @hanzo/docs@14.6.3
 
 ## 11.1.2
 
@@ -736,7 +736,7 @@
 
 - 164b9e6: Fix non-absolute `dir` option
 - Updated dependencies [1573d63]
-  - @hanzo/docs-core@14.1.1
+  - @hanzo/docs@14.1.1
 
 ## 11.1.0
 
@@ -752,7 +752,7 @@
 
 ### Patch Changes
 
-- @hanzo/docs-core@14.0.1
+- @hanzo/docs@14.0.1
 
 ## 10.1.0
 
@@ -785,7 +785,7 @@
 - Updated dependencies [15781f0]
 - Updated dependencies [be820c4]
 - Updated dependencies [d9e908e]
-  - @hanzo/docs-core@14.0.0
+  - @hanzo/docs@14.0.0
 
 ## 10.0.2
 
@@ -793,14 +793,14 @@
 
 - f21c871: Change cache path of manifest files
 - Updated dependencies [78e59e7]
-  - @hanzo/docs-core@13.4.8
+  - @hanzo/docs@13.4.8
 
 ## 10.0.1
 
 ### Patch Changes
 
 - 7e23388: Fix windows compatibility
-  - @hanzo/docs-core@13.4.5
+  - @hanzo/docs@13.4.5
 
 ## 10.0.0
 
@@ -844,7 +844,7 @@
 - Updated dependencies [7dabbc1]
 - Updated dependencies [0c251e5]
 - Updated dependencies [3b56170]
-  - @hanzo/docs-core@13.4.2
+  - @hanzo/docs@13.4.2
 
 ## 9.0.4
 
@@ -852,14 +852,14 @@
 
 - 95dbba1: Support passing remark structure options
 - Updated dependencies [95dbba1]
-  - @hanzo/docs-core@13.4.1
+  - @hanzo/docs@13.4.1
 
 ## 9.0.3
 
 ### Patch Changes
 
 - c0d1faf: Store additional `_data` to search indexes
-  - @hanzo/docs-core@13.4.0
+  - @hanzo/docs@13.4.0
 
 ## 9.0.2
 
@@ -868,7 +868,7 @@
 - 61b91fa: Improve Fumadocs OpenAPI support
 - Updated dependencies [36b771b]
 - Updated dependencies [61b91fa]
-  - @hanzo/docs-core@13.2.2
+  - @hanzo/docs@13.2.2
 
 ## 9.0.1
 
@@ -876,7 +876,7 @@
 
 - c7aa090: Improve Fumadocs OpenAPI support
 - Updated dependencies [17fa173]
-  - @hanzo/docs-core@13.2.1
+  - @hanzo/docs@13.2.1
 
 ## 9.0.0
 
@@ -886,48 +886,48 @@
 
 ### Patch Changes
 
-- @hanzo/docs-core@13.0.1
+- @hanzo/docs@13.0.1
 
 ## 8.2.34
 
 ### Patch Changes
 
 - c2d956b: Support mirror pages for symlinks of MDX file
-  - @hanzo/docs-core@12.5.3
+  - @hanzo/docs@12.5.3
 
 ## 8.2.33
 
 ### Patch Changes
 
 - 78acd55: Use full mode on docs pages by default on OpenAPI generated pages
-  - @hanzo/docs-core@12.2.1
+  - @hanzo/docs@12.2.1
 
 ## 8.2.32
 
 ### Patch Changes
 
 - 2eb68c8: Force a release of content sources
-  - @hanzo/docs-core@12.0.7
+  - @hanzo/docs@12.0.7
 
 ## 8.2.31
 
 ### Patch Changes
 
-- 310e0ab: Move `@hanzo/docs-core` to peer dependency
+- 310e0ab: Move `@hanzo/docs` to peer dependency
 - Updated dependencies [053609d]
-  - @hanzo/docs-core@12.0.3
+  - @hanzo/docs@12.0.3
 
 ## 8.2.30
 
 ### Patch Changes
 
-- @hanzo/docs-core@12.0.2
+- @hanzo/docs@12.0.2
 
 ## 8.2.29
 
 ### Patch Changes
 
-- @hanzo/docs-core@12.0.1
+- @hanzo/docs@12.0.1
 
 ## 8.2.28
 
@@ -937,20 +937,20 @@
 - Updated dependencies [d88dfa6]
 - Updated dependencies [ba20694]
 - Updated dependencies [57eb762]
-  - @hanzo/docs-core@12.0.0
+  - @hanzo/docs@12.0.0
 
 ## 8.2.27
 
 ### Patch Changes
 
 - Updated dependencies [1b8e12b]
-  - @hanzo/docs-core@11.3.2
+  - @hanzo/docs@11.3.2
 
 ## 8.2.26
 
 ### Patch Changes
 
-- @hanzo/docs-core@11.3.1
+- @hanzo/docs@11.3.1
 
 ## 8.2.25
 
@@ -958,25 +958,25 @@
 
 - 17e162e: Add `mdx` to page extensions by default
 - Updated dependencies [917d87f]
-  - @hanzo/docs-core@11.3.0
+  - @hanzo/docs@11.3.0
 
 ## 8.2.24
 
 ### Patch Changes
 
-- @hanzo/docs-core@11.2.2
+- @hanzo/docs@11.2.2
 
 ## 8.2.23
 
 ### Patch Changes
 
-- @hanzo/docs-core@11.2.1
+- @hanzo/docs@11.2.1
 
 ## 8.2.22
 
 ### Patch Changes
 
-- @hanzo/docs-core@11.2.0
+- @hanzo/docs@11.2.0
 
 ## 8.2.21
 
@@ -986,13 +986,13 @@
 - Updated dependencies [88008b1]
 - Updated dependencies [944541a]
 - Updated dependencies [07a9312]
-  - @hanzo/docs-core@11.1.3
+  - @hanzo/docs@11.1.3
 
 ## 8.2.20
 
 ### Patch Changes
 
-- @hanzo/docs-core@11.1.2
+- @hanzo/docs@11.1.2
 
 ## 8.2.19
 
@@ -1002,27 +1002,27 @@
 - Updated dependencies [8ef2b68]
 - Updated dependencies [26f464d]
 - Updated dependencies [26f464d]
-  - @hanzo/docs-core@11.1.1
+  - @hanzo/docs@11.1.1
 
 ## 8.2.18
 
 ### Patch Changes
 
-- @hanzo/docs-core@11.1.0
+- @hanzo/docs@11.1.0
 
 ## 8.2.17
 
 ### Patch Changes
 
 - Updated dependencies [98258b5]
-  - @hanzo/docs-core@11.0.8
+  - @hanzo/docs@11.0.8
 
 ## 8.2.16
 
 ### Patch Changes
 
 - Updated dependencies [f7c2c5c]
-  - @hanzo/docs-core@11.0.7
+  - @hanzo/docs@11.0.7
 
 ## 8.2.15
 
@@ -1032,13 +1032,13 @@
 - 5653d5d: Support custom heading slugger
 - Updated dependencies [5653d5d]
 - Updated dependencies [5653d5d]
-  - @hanzo/docs-core@11.0.6
+  - @hanzo/docs@11.0.6
 
 ## 8.2.14
 
 ### Patch Changes
 
-- @hanzo/docs-core@11.0.5
+- @hanzo/docs@11.0.5
 
 ## 8.2.13
 
@@ -1046,25 +1046,25 @@
 
 - 7b61b2f: Migrate `@hanzo/docs-ui` to fully ESM, adding support for ESM `tailwind.config` file
 - Updated dependencies [7b61b2f]
-  - @hanzo/docs-core@11.0.4
+  - @hanzo/docs@11.0.4
 
 ## 8.2.12
 
 ### Patch Changes
 
-- @hanzo/docs-core@11.0.3
+- @hanzo/docs@11.0.3
 
 ## 8.2.11
 
 ### Patch Changes
 
-- @hanzo/docs-core@11.0.2
+- @hanzo/docs@11.0.2
 
 ## 8.2.10
 
 ### Patch Changes
 
-- @hanzo/docs-core@11.0.1
+- @hanzo/docs@11.0.1
 
 ## 8.2.9
 
@@ -1074,20 +1074,20 @@
 - Updated dependencies [92cb12f]
 - Updated dependencies [f75287d]
 - Updated dependencies [2d8df75]
-  - @hanzo/docs-core@11.0.0
+  - @hanzo/docs@11.0.0
 
 ## 8.2.8
 
 ### Patch Changes
 
 - Updated dependencies [bbad52f]
-  - @hanzo/docs-core@10.1.3
+  - @hanzo/docs@10.1.3
 
 ## 8.2.7
 
 ### Patch Changes
 
-- @hanzo/docs-core@10.1.2
+- @hanzo/docs@10.1.2
 
 ## 8.2.6
 
@@ -1096,13 +1096,13 @@
 - Updated dependencies [779c599]
 - Updated dependencies [0c01300]
 - Updated dependencies [779c599]
-  - @hanzo/docs-core@10.1.1
+  - @hanzo/docs@10.1.1
 
 ## 8.2.5
 
 ### Patch Changes
 
-- @hanzo/docs-core@10.1.0
+- @hanzo/docs@10.1.0
 
 ## 8.2.4
 
@@ -1110,27 +1110,27 @@
 
 - e47c62f: Support customising included files in the map file
 - Updated dependencies [e47c62f]
-  - @hanzo/docs-core@10.0.5
+  - @hanzo/docs@10.0.5
 
 ## 8.2.3
 
 ### Patch Changes
 
-- @hanzo/docs-core@10.0.4
+- @hanzo/docs@10.0.4
 
 ## 8.2.2
 
 ### Patch Changes
 
 - Updated dependencies [6f321e5]
-  - @hanzo/docs-core@10.0.3
+  - @hanzo/docs@10.0.3
 
 ## 8.2.1
 
 ### Patch Changes
 
 - Updated dependencies [10e099a]
-  - @hanzo/docs-core@10.0.2
+  - @hanzo/docs@10.0.2
 
 ## 8.2.0
 
@@ -1143,7 +1143,7 @@
 - Updated dependencies [c9b7763]
 - Updated dependencies [0e78dc8]
 - Updated dependencies [d8483a8]
-  - @hanzo/docs-core@10.0.1
+  - @hanzo/docs@10.0.1
 
 ## 8.1.1
 
@@ -1151,7 +1151,7 @@
 
 - Updated dependencies [b5d16938]
 - Updated dependencies [321d1e1f]
-  - @hanzo/docs-core@10.0.0
+  - @hanzo/docs@10.0.0
 
 ## 8.1.0
 
@@ -1164,19 +1164,19 @@
 - Updated dependencies [909b0e35]
 - Updated dependencies [691f12aa]
 - Updated dependencies [1c388ca5]
-  - @hanzo/docs-core@9.1.0
+  - @hanzo/docs@9.1.0
 
 ## 8.0.5
 
 ### Patch Changes
 
-- @hanzo/docs-core@9.0.0
+- @hanzo/docs@9.0.0
 
 ## 8.0.4
 
 ### Patch Changes
 
-- @hanzo/docs-core@8.3.0
+- @hanzo/docs@8.3.0
 
 ## 8.0.3
 
@@ -1184,13 +1184,13 @@
 
 - 9bf5adb: Replace await imports with normal imports
 - Updated dependencies [5c24659]
-  - @hanzo/docs-core@8.2.0
+  - @hanzo/docs@8.2.0
 
 ## 8.0.2
 
 ### Patch Changes
 
-- @hanzo/docs-core@8.1.1
+- @hanzo/docs@8.1.1
 
 ## 8.0.1
 
@@ -1200,7 +1200,7 @@
 - Updated dependencies [6c5a39a]
 - Updated dependencies [eb028b4]
 - Updated dependencies [054ec60]
-  - @hanzo/docs-core@8.1.0
+  - @hanzo/docs@8.1.0
 
 ## 8.0.0
 
@@ -1224,7 +1224,7 @@
 
 - 2b11c20: **Rename to Fumadocs**
 
-  `next-docs-zeta` -> `@hanzo/docs-core`
+  `next-docs-zeta` -> `@hanzo/docs`
 
   `next-docs-ui` -> `@hanzo/docs-ui`
 
@@ -1240,7 +1240,7 @@
 - Updated dependencies [cdff313]
 - Updated dependencies [1a346a1]
 - Updated dependencies [2b11c20]
-  - @hanzo/docs-core@8.0.0
+  - @hanzo/docs@8.0.0
 
 ## 7.1.2
 

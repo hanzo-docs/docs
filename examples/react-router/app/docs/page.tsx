@@ -10,7 +10,7 @@ import { source } from '@/lib/source';
 import defaultMdxComponents from '@hanzo/radix/mdx';
 import browserCollections from '@hanzo/docs-mdx:collections/browser';
 import { baseOptions } from '@/lib/layout.shared';
-import { useDocsLoader } from '@hanzo/docs-core/source/client';
+import { useDocsLoader } from '@hanzo/docs/source/client';
 
 export async function loader({ params }: Route.LoaderArgs) {
   const slugs = params['*'].split('/').filter((v) => v.length > 0);

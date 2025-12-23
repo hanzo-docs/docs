@@ -45,19 +45,19 @@
 - f728e67: Support customising full type with `@fumadocsType` tag
 - Updated dependencies [da87713]
 - Updated dependencies [d17499b]
-  - @hanzo/docs-core@16.2.4
+  - @hanzo/docs@16.2.4
   - @hanzo/docs-ui@16.2.4
 
 ## 4.0.13
 
 ### Patch Changes
 
-- ca09b6a: Core: Support accessing MDX plugins separately at `@hanzo/docs-core/mdx-plugins/*`
+- ca09b6a: Core: Support accessing MDX plugins separately at `@hanzo/docs/mdx-plugins/*`
 - Updated dependencies [bc97236]
 - Updated dependencies [ca09b6a]
 - Updated dependencies [c0df2c4]
 - Updated dependencies [117ad86]
-  - @hanzo/docs-core@16.0.8
+  - @hanzo/docs@16.0.8
   - @hanzo/docs-ui@16.0.8
 
 ## 4.0.12
@@ -78,7 +78,7 @@
 - Updated dependencies [55afd8a]
 - Updated dependencies [5966e23]
   - @hanzo/docs-ui@16.0.0
-  - @hanzo/docs-core@16.0.0
+  - @hanzo/docs@16.0.0
 
 ## 4.0.11
 
@@ -87,7 +87,7 @@
 - a3a14e7: Bump deps
 - Updated dependencies [a3a14e7]
 - Updated dependencies [7b0d839]
-  - @hanzo/docs-core@15.8.3
+  - @hanzo/docs@15.8.3
   - @hanzo/docs-ui@15.8.3
 
 ## 4.0.10
@@ -101,7 +101,7 @@
 - Updated dependencies [6c3bde5]
 - Updated dependencies [747bdbc]
   - @hanzo/docs-ui@15.8.2
-  - @hanzo/docs-core@15.8.2
+  - @hanzo/docs@15.8.2
 
 ## 4.0.9
 
@@ -114,7 +114,7 @@
 - Updated dependencies [6548a59]
 - Updated dependencies [51268ec]
 - Updated dependencies [51268ec]
-  - @hanzo/docs-core@15.8.0
+  - @hanzo/docs@15.8.0
   - @hanzo/docs-ui@15.8.0
 
 ## 4.0.8
@@ -123,7 +123,7 @@
 
 - 0d55667: Enforce `peerDeps` on Fumadocs deps
 - Updated dependencies [c948f59]
-  - @hanzo/docs-core@15.7.10
+  - @hanzo/docs@15.7.10
   - @hanzo/docs-ui@15.7.10
 
 ## 4.0.7

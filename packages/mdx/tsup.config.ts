@@ -3,8 +3,8 @@ import { defineConfig } from 'tsup';
 const external = ['next', 'typescript', 'bun'];
 
 const noExternal = [
-  // TODO: remove this when the min `@hanzo/docs-core` version is above 16.2.3
-  '@hanzo/docs-core/source/schema',
+  // TODO: remove this when the min `@hanzo/docs` version is above 16.2.3
+  '@hanzo/docs/source/schema',
 ];
 
 export default defineConfig([

@@ -1,8 +1,8 @@
-import type * as Breadcrumb from '@hanzo/docs-core/breadcrumb';
-import type * as TOC from '@hanzo/docs-core/toc';
-import type * as Search from '@hanzo/docs-core/search';
-import type * as PageTree from '@hanzo/docs-core/page-tree';
-import type * as MDX from '@hanzo/docs-core/mdx-plugins';
+import type * as Breadcrumb from '@hanzo/docs/breadcrumb';
+import type * as TOC from '@hanzo/docs/toc';
+import type * as Search from '@hanzo/docs/search';
+import type * as PageTree from '@hanzo/docs/page-tree';
+import type * as MDX from '@hanzo/docs/mdx-plugins';
 
 export type SortedResult = Search.SortedResult;
 

@@ -1,4 +1,4 @@
-import type { I18nConfig } from '@hanzo/docs-core/i18n';
+import type { I18nConfig } from '@hanzo/docs/i18n';
 
 export const i18n: I18nConfig = {
   defaultLanguage: 'en',

@@ -142,7 +142,7 @@ Some common questions you may encounter.
     Finally, update the base URL of pages in `source.ts`:
 
 ```ts title="lib/source.ts"
-import { loader } from '@hanzo/docs-core/source';
+import { loader } from '@hanzo/docs/source';
 
 export const source = loader({
   baseUrl: '/info', // to the new value [!code highlight]
@@ -172,10 +172,10 @@ export default defineConfig({
   resolve: {
     // add other Fumadocs deps as needed
     noExternal: [
-      '@hanzo/docs-core',
+      '@hanzo/docs',
       '@hanzo/radix',
       '@hanzo/docs-openapi',
-      '@hanzo/ui-base',
+      '@hanzo/ui/base',
       '@hanzo/radix',
     ],
   },

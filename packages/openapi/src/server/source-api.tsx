@@ -6,15 +6,15 @@ import type {
   PageTreeTransformer,
   Source,
   VirtualFile,
-} from '@hanzo/docs-core/source';
+} from '@hanzo/docs/source';
 import type { OpenAPIServer } from '@/server/create';
 import type { SchemaToPagesOptions } from '@/utils/pages/preset-auto';
 import type { ApiPageProps } from '@/ui/api-page';
 import { toStaticData } from '@/utils/pages/to-static-data';
-import type { StructuredData } from '@hanzo/docs-core/mdx-plugins';
-import type { TOCItemType } from '@hanzo/docs-core/toc';
+import type { StructuredData } from '@hanzo/docs/mdx-plugins';
+import type { TOCItemType } from '@hanzo/docs/toc';
 
-declare module '@hanzo/docs-core/source' {
+declare module '@hanzo/docs/source' {
   export interface PageData {
     /**
      * Added by Fumadocs OpenAPI

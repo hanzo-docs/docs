@@ -8,8 +8,8 @@ import {
   compileMDX as baseCompileMDX,
   type Options as MDXOptions,
 } from '@content-collections/mdx';
-import type { StructuredData } from '@hanzo/docs-core/mdx-plugins';
-import * as Plugins from '@hanzo/docs-core/mdx-plugins';
+import type { StructuredData } from '@hanzo/docs/mdx-plugins';
+import * as Plugins from '@hanzo/docs/mdx-plugins';
 import { z, z as Zod } from 'zod';
 import {
   resolvePlugin,

@@ -9,7 +9,7 @@ While you can access the collections directly from entry file, we suggest using 
 
 ```ts tab="Docs (Meta + Doc)"
 import { docs } from '@hanzo/docs-mdx:collections/server';
-import { loader } from '@hanzo/docs-core/source';
+import { loader } from '@hanzo/docs/source';
 
 // raw collection
 console.log(docs);
@@ -23,7 +23,7 @@ export const source = loader({
 ```ts tab="Doc"
 import { blogPosts } from '@hanzo/docs-mdx:collections/server';
 import { toFumadocsSource } from '@hanzo/docs-mdx/runtime/server';
-import { loader } from '@hanzo/docs-core/source';
+import { loader } from '@hanzo/docs/source';
 
 // raw collection
 console.log(blogPosts);

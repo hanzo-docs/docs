@@ -12,7 +12,7 @@ import {
 import defaultMdxComponents from '@hanzo/radix/mdx';
 import { baseOptions } from '@/lib/layout.shared';
 import { staticFunctionMiddleware } from '@tanstack/start-static-server-functions';
-import { useDocsLoader } from '@hanzo/docs-core/source/client';
+import { useDocsLoader } from '@hanzo/docs/source/client';
 
 export const Route = createFileRoute('/docs/$')({
   component: Page,

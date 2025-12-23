@@ -1,4 +1,4 @@
 import { source } from '@/lib/source';
-import { createFromSource } from '@hanzo/docs-core/search/server';
+import { createFromSource } from '@hanzo/docs/search/server';
 
 export const { GET } = createFromSource(source);

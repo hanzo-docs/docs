@@ -1,8 +1,8 @@
-import type { Source } from '@hanzo/docs-core/source';
-import { loader } from '@hanzo/docs-core/source';
+import type { Source } from '@hanzo/docs/source';
+import { loader } from '@hanzo/docs/source';
 import { type CollectionEntry, getCollection } from 'astro:content';
 import * as path from 'node:path';
-import type { StructuredData } from '@hanzo/docs-core/mdx-plugins';
+import type { StructuredData } from '@hanzo/docs/mdx-plugins';
 
 export const source = loader({
   source: await createMySource(),

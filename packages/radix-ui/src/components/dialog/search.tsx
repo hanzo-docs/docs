@@ -25,11 +25,11 @@ import {
 import type {
   HighlightedText,
   ReactSortedResult as BaseResultType,
-} from '@hanzo/docs-core/search';
+} from '@hanzo/docs/search';
 import { cva } from 'class-variance-authority';
-import { useRouter } from '@hanzo/docs-core/framework';
+import { useRouter } from '@hanzo/docs/framework';
 import type { SharedProps } from '@/contexts/search';
-import { useOnChange } from '@hanzo/docs-core/utils/use-on-change';
+import { useOnChange } from '@hanzo/docs/utils/use-on-change';
 import scrollIntoView from 'scroll-into-view-if-needed';
 import { buttonVariants } from '@/components/ui/button';
 

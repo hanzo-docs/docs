@@ -13,7 +13,7 @@ import {
   type SearchItemType,
   type SharedProps,
 } from '@hanzo/docs-ui/components/dialog/search';
-import { useDocsSearch } from '@hanzo/docs-core/search/client';
+import { useDocsSearch } from '@hanzo/docs/search/client';
 import { useMemo, useState } from 'react';
 import {
   Popover,
@@ -24,7 +24,7 @@ import { ArrowRight, ChevronDown } from 'lucide-react';
 import { buttonVariants } from '@hanzo/docs-ui/components/ui/button';
 import { cn } from '@/lib/cn';
 import { useTreeContext } from '@hanzo/docs-ui/contexts/tree';
-import type { Item, Node } from '@hanzo/docs-core/page-tree';
+import type { Item, Node } from '@hanzo/docs/page-tree';
 import { useRouter } from 'next/navigation';
 import { orama } from '@/lib/orama/client';
 

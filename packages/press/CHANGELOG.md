@@ -15,7 +15,7 @@
 - Updated dependencies [91add4f]
 - Updated dependencies [cffd4c2]
   - @hanzo/docs-mdx@13.0.1
-  - @hanzo/docs-core@16.0.3
+  - @hanzo/docs@16.0.3
   - @hanzo/docs-ui@16.0.3
 
 ## 0.0.6
@@ -23,7 +23,7 @@
 ### Patch Changes
 
 - Updated dependencies [d511232]
-  - @hanzo/docs-core@16.0.2
+  - @hanzo/docs@16.0.2
   - @hanzo/docs-ui@16.0.2
 
 ## 0.0.5
@@ -31,7 +31,7 @@
 ### Patch Changes
 
 - Updated dependencies [45f0c1f]
-  - @hanzo/docs-core@16.0.1
+  - @hanzo/docs@16.0.1
   - @hanzo/docs-ui@16.0.1
 
 ## 0.0.4
@@ -63,7 +63,7 @@
 - Updated dependencies [5966e23]
   - @hanzo/docs-mdx@13.0.0
   - @hanzo/docs-ui@16.0.0
-  - @hanzo/docs-core@16.0.0
+  - @hanzo/docs@16.0.0
 
 ## 0.0.3
 
@@ -73,7 +73,7 @@
 - Updated dependencies [ce2be59]
 - Updated dependencies [31b9494]
   - @hanzo/docs-mdx@12.0.3
-  - @hanzo/docs-core@15.8.4
+  - @hanzo/docs@15.8.4
   - @hanzo/docs-ui@15.8.4
 
 ## 0.0.2
@@ -82,7 +82,7 @@
 
 - Updated dependencies [a3a14e7]
 - Updated dependencies [7b0d839]
-  - @hanzo/docs-core@15.8.3
+  - @hanzo/docs@15.8.3
   - @hanzo/docs-mdx@12.0.2
   - @hanzo/docs-ui@15.8.3
 
@@ -96,4 +96,4 @@
 - Updated dependencies [6c3bde5]
 - Updated dependencies [747bdbc]
   - @hanzo/docs-ui@15.8.2
-  - @hanzo/docs-core@15.8.2
+  - @hanzo/docs@15.8.2

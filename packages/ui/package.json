@@ -1,7 +1,7 @@
 {
   "name": "@hanzo/ui",
   "version": "16.3.1",
-  "description": "The low-level primitives for Hanzo Docs UI.",
+  "description": "The UI primitives and base components for Hanzo Docs.",
   "keywords": [
     "Hanzo",
     "Docs"
@@ -16,6 +16,73 @@
     "./*": {
       "import": "./dist/*.js",
       "types": "./dist/*.d.ts"
+    },
+    "./base/style.css": "./dist/base/style.css",
+    "./base/image-zoom.css": "./dist/base/image-zoom.css",
+    "./base/components/*": {
+      "import": "./dist/base/components/*.js",
+      "types": "./dist/base/components/*.d.ts"
+    },
+    "./base/components/ui/*": {
+      "import": "./dist/base/components/ui/*.js",
+      "types": "./dist/base/components/ui/*.d.ts"
+    },
+    "./base/i18n": {
+      "import": "./dist/base/i18n.js",
+      "types": "./dist/base/i18n.d.ts"
+    },
+    "./base/layouts/home": {
+      "import": "./dist/base/layouts/home/index.js",
+      "types": "./dist/base/layouts/home/index.d.ts"
+    },
+    "./base/layouts/home/navbar": {
+      "import": "./dist/base/layouts/home/navbar.js",
+      "types": "./dist/base/layouts/home/navbar.d.ts"
+    },
+    "./base/layouts/docs": {
+      "import": "./dist/base/layouts/docs/index.js",
+      "types": "./dist/base/layouts/docs/index.d.ts"
+    },
+    "./base/layouts/docs/page": {
+      "import": "./dist/base/layouts/docs/page/index.js",
+      "types": "./dist/base/layouts/docs/page/index.d.ts"
+    },
+    "./base/layouts/notebook": {
+      "import": "./dist/base/layouts/notebook/index.js",
+      "types": "./dist/base/layouts/notebook/index.d.ts"
+    },
+    "./base/layouts/notebook/page": {
+      "import": "./dist/base/layouts/notebook/page/index.js",
+      "types": "./dist/base/layouts/notebook/page/index.d.ts"
+    },
+    "./base/layouts/shared": {
+      "import": "./dist/base/layouts/shared/index.js",
+      "types": "./dist/base/layouts/shared/index.d.ts"
+    },
+    "./base/page": {
+      "import": "./dist/base/page.js",
+      "types": "./dist/base/page.d.ts"
+    },
+    "./base/provider/*": {
+      "import": "./dist/base/provider/*.js",
+      "types": "./dist/base/provider/*.d.ts"
+    },
+    "./base/contexts/*": {
+      "import": "./dist/base/contexts/*.js",
+      "types": "./dist/base/contexts/*.d.ts"
+    },
+    "./base/mdx": {
+      "node": "./dist/base/mdx.server.js",
+      "import": "./dist/base/mdx.js",
+      "types": "./dist/base/mdx.d.ts"
+    },
+    "./base/og": {
+      "import": "./dist/base/og.js",
+      "types": "./dist/base/og.d.ts"
+    },
+    "./base/utils/*": {
+      "import": "./dist/base/utils/*.js",
+      "types": "./dist/base/utils/*.d.ts"
     }
   },
   "files": [
@@ -30,22 +97,25 @@
     "types:check": "tsc --noEmit"
   },
   "dependencies": {
-    "@hanzo/docs-core": "workspace:*",
+    "@base-ui/react": "^1.0.0",
+    "@hanzo/docs": "workspace:*",
+    "class-variance-authority": "^0.7.1",
     "lodash.merge": "^4.6.2",
     "next-themes": "^0.4.6",
     "postcss-selector-parser": "^7.1.1",
+    "react-medium-image-zoom": "^5.4.0",
+    "scroll-into-view-if-needed": "^3.1.0",
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {
     "@hanzo/docs-cli": "workspace:*",
+    "@tailwindcss/cli": "^4.1.18",
     "@types/bun": "^1.3.5",
     "@types/lodash.merge": "^4.6.9",
     "@types/node": "^24.10.2",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
-    "class-variance-authority": "^0.7.1",
     "eslint-config-custom": "workspace:*",
-    "@hanzo/docs-core": "workspace:*",
     "next": "16.1.0",
     "tailwindcss": "^4.1.18",
     "tsc-alias": "^1.8.16",

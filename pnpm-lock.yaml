@@ -65,7 +65,7 @@ importers:
       '@ai-sdk/react':
         specifier: ^2.0.117
         version: 2.0.117(react@19.2.3)(zod@4.2.1)
-      '@hanzo/docs-core':
+      '@hanzo/docs':
         specifier: workspace:*
         version: link:../../packages/core
       '@hanzo/docs-docgen':
@@ -309,7 +309,7 @@ importers:
       '@astrojs/react':
         specifier: ^4.4.2
         version: 4.4.2(@types/node@25.0.3)(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(jiti@2.6.1)(lightningcss@1.30.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2)
-      '@hanzo/docs-core':
+      '@hanzo/docs':
         specifier: workspace:*
         version: link:../../packages/core
       '@hanzo/radix':
@@ -349,12 +349,12 @@ importers:
 
   examples/content-collections:
     dependencies:
+      '@hanzo/docs':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@hanzo/docs-content-collections':
         specifier: workspace:*
         version: link:../../packages/content-collections
-      '@hanzo/docs-core':
-        specifier: workspace:*
-        version: link:../../packages/core
       '@hanzo/radix':
         specifier: workspace:*
         version: link:../../packages/radix-ui
@@ -395,7 +395,7 @@ importers:
 
   examples/fp:
     dependencies:
-      '@hanzo/docs-core':
+      '@hanzo/docs':
         specifier: workspace:*
         version: link:../../packages/core
       '@hanzo/docs-mdx':
@@ -456,7 +456,7 @@ importers:
 
   examples/i18n:
     dependencies:
-      '@hanzo/docs-core':
+      '@hanzo/docs':
         specifier: workspace:*
         version: link:../../packages/core
       '@hanzo/docs-mdx':
@@ -496,7 +496,7 @@ importers:
 
   examples/marble-cms:
     dependencies:
-      '@hanzo/docs-core':
+      '@hanzo/docs':
         specifier: workspace:*
         version: link:../../packages/core
       '@hanzo/radix':
@@ -548,7 +548,7 @@ importers:
 
   examples/next-mdx:
     dependencies:
-      '@hanzo/docs-core':
+      '@hanzo/docs':
         specifier: workspace:*
         version: link:../../packages/core
       '@hanzo/docs-mdx':
@@ -600,7 +600,7 @@ importers:
 
   examples/next-min:
     dependencies:
-      '@hanzo/docs-core':
+      '@hanzo/docs':
         specifier: workspace:*
         version: link:../../packages/core
       '@hanzo/docs-mdx':
@@ -646,7 +646,7 @@ importers:
 
   examples/obsidian:
     dependencies:
-      '@hanzo/docs-core':
+      '@hanzo/docs':
         specifier: workspace:*
         version: link:../../packages/core
       '@hanzo/docs-mdx':
@@ -695,7 +695,7 @@ importers:
 
   examples/openapi:
     dependencies:
-      '@hanzo/docs-core':
+      '@hanzo/docs':
         specifier: workspace:*
         version: link:../../packages/core
       '@hanzo/docs-mdx':
@@ -750,7 +750,7 @@ importers:
 
   examples/python:
     dependencies:
-      '@hanzo/docs-core':
+      '@hanzo/docs':
         specifier: workspace:*
         version: link:../../packages/core
       '@hanzo/docs-mdx':
@@ -802,7 +802,7 @@ importers:
 
   examples/react-router:
     dependencies:
-      '@hanzo/docs-core':
+      '@hanzo/docs':
         specifier: workspace:*
         version: link:../../packages/core
       '@hanzo/docs-mdx':
@@ -869,7 +869,7 @@ importers:
 
   examples/react-router-i18n:
     dependencies:
-      '@hanzo/docs-core':
+      '@hanzo/docs':
         specifier: workspace:*
         version: link:../../packages/core
       '@hanzo/docs-mdx':
@@ -939,7 +939,7 @@ importers:
 
   examples/react-router-rsc:
     dependencies:
-      '@hanzo/docs-core':
+      '@hanzo/docs':
         specifier: workspace:*
         version: link:../../packages/core
       '@hanzo/docs-mdx':
@@ -1009,7 +1009,7 @@ importers:
 
   examples/react-router-spa:
     dependencies:
-      '@hanzo/docs-core':
+      '@hanzo/docs':
         specifier: workspace:*
         version: link:../../packages/core
       '@hanzo/docs-mdx':
@@ -1079,7 +1079,7 @@ importers:
 
   examples/remote-mdx:
     dependencies:
-      '@hanzo/docs-core':
+      '@hanzo/docs':
         specifier: workspace:*
         version: link:../../packages/core
       '@hanzo/docs-mdx-remote':
@@ -1119,7 +1119,7 @@ importers:
 
   examples/tanstack-start:
     dependencies:
-      '@hanzo/docs-core':
+      '@hanzo/docs':
         specifier: workspace:*
         version: link:../../packages/core
       '@hanzo/docs-mdx':
@@ -1189,7 +1189,7 @@ importers:
 
   examples/tanstack-start-i18n:
     dependencies:
-      '@hanzo/docs-core':
+      '@hanzo/docs':
         specifier: workspace:*
         version: link:../../packages/core
       '@hanzo/docs-mdx':
@@ -1259,7 +1259,7 @@ importers:
 
   examples/tanstack-start-spa:
     dependencies:
-      '@hanzo/docs-core':
+      '@hanzo/docs':
         specifier: workspace:*
         version: link:../../packages/core
       '@hanzo/docs-mdx':
@@ -1335,7 +1335,7 @@ importers:
 
   examples/waku:
     dependencies:
-      '@hanzo/docs-core':
+      '@hanzo/docs':
         specifier: workspace:*
         version: link:../../packages/core
       '@hanzo/docs-mdx':
@@ -1390,7 +1390,7 @@ importers:
 
   examples/waku-i18n:
     dependencies:
-      '@hanzo/docs-core':
+      '@hanzo/docs':
         specifier: workspace:*
         version: link:../../packages/core
       '@hanzo/docs-mdx':
@@ -1446,64 +1446,6 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3(typescript@5.9.3)(vite@7.3.0(@types/node@24.10.2)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))
 
-  packages/base-ui:
-    dependencies:
-      '@base-ui/react':
-        specifier: ^1.0.0
-        version: 1.0.0(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@hanzo/docs-core':
-        specifier: workspace:*
-        version: link:../core
-      '@hanzo/ui':
-        specifier: workspace:*
-        version: link:../ui
-      class-variance-authority:
-        specifier: ^0.7.1
-        version: 0.7.1
-      next-themes:
-        specifier: ^0.4.6
-        version: 0.4.6(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      react:
-        specifier: ^19.2.0
-        version: 19.2.3
-      react-dom:
-        specifier: ^19.2.0
-        version: 19.2.3(react@19.2.3)
-      react-medium-image-zoom:
-        specifier: ^5.4.0
-        version: 5.4.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      scroll-into-view-if-needed:
-        specifier: ^3.1.0
-        version: 3.1.0
-    devDependencies:
-      '@hanzo/docs-cli':
-        specifier: workspace:*
-        version: link:../cli
-      '@tailwindcss/cli':
-        specifier: ^4.1.18
-        version: 4.1.18
-      '@types/node':
-        specifier: ^24.10.2
-        version: 24.10.2
-      '@types/react':
-        specifier: ^19.2.7
-        version: 19.2.7
-      '@types/react-dom':
-        specifier: ^19.2.3
-        version: 19.2.3(@types/react@19.2.7)
-      eslint-config-custom:
-        specifier: workspace:*
-        version: link:../eslint-config-custom
-      tailwindcss:
-        specifier: ^4.1.18
-        version: 4.1.18
-      tsc-alias:
-        specifier: ^1.8.16
-        version: 1.8.16
-      tsconfig:
-        specifier: workspace:*
-        version: link:../tsconfig
-
   packages/cli:
     dependencies:
       '@clack/prompts':
@@ -1549,7 +1491,7 @@ importers:
       '@content-collections/mdx':
         specifier: ^0.2.2
         version: 0.2.2(@content-collections/core@0.13.0(typescript@5.9.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@hanzo/docs-core':
+      '@hanzo/docs':
         specifier: workspace:*
         version: link:../core
       '@types/node':
@@ -1758,7 +1700,7 @@ importers:
       '@biomejs/biome':
         specifier: ^2.3.10
         version: 2.3.10
-      '@hanzo/docs-core':
+      '@hanzo/docs':
         specifier: workspace:*
         version: link:../core
       '@hanzo/docs-mdx':
@@ -1795,7 +1737,7 @@ importers:
         specifier: ^4.2.1
         version: 4.2.1
     devDependencies:
-      '@hanzo/docs-core':
+      '@hanzo/docs':
         specifier: workspace:*
         version: link:../core
       '@mdx-js/mdx':
@@ -1891,7 +1833,7 @@ importers:
         specifier: ^4.2.1
         version: 4.2.1
     devDependencies:
-      '@hanzo/docs-core':
+      '@hanzo/docs':
         specifier: workspace:*
         version: link:../core
       '@hanzo/docs-mdx-remote':
@@ -1970,7 +1912,7 @@ importers:
         specifier: ^4.2.1
         version: 4.2.1
     devDependencies:
-      '@hanzo/docs-core':
+      '@hanzo/docs':
         specifier: workspace:*
         version: link:../core
       '@types/mdx':
@@ -2040,7 +1982,7 @@ importers:
         specifier: ^4.2.1
         version: 4.2.1
     devDependencies:
-      '@hanzo/docs-core':
+      '@hanzo/docs':
         specifier: workspace:*
         version: link:../core
       '@types/estree':
@@ -2140,7 +2082,7 @@ importers:
         specifier: ^1.6.11
         version: 1.6.11
     devDependencies:
-      '@hanzo/docs-core':
+      '@hanzo/docs':
         specifier: workspace:*
         version: link:../core
       '@hanzo/radix':
@@ -2185,7 +2127,7 @@ importers:
 
   packages/press:
     dependencies:
-      '@hanzo/docs-core':
+      '@hanzo/docs':
         specifier: workspace:*
         version: link:../core
       '@hanzo/docs-mdx':
@@ -2265,7 +2207,7 @@ importers:
         specifier: ^3.4.0
         version: 3.4.0
     devDependencies:
-      '@hanzo/docs-core':
+      '@hanzo/docs':
         specifier: workspace:*
         version: link:../core
       '@hanzo/radix':
@@ -2295,7 +2237,7 @@ importers:
 
   packages/radix-ui:
     dependencies:
-      '@hanzo/docs-core':
+      '@hanzo/docs':
         specifier: workspace:*
         version: link:../core
       '@hanzo/ui':
@@ -2459,7 +2401,7 @@ importers:
         specifier: ^5.0.0
         version: 5.0.0
     devDependencies:
-      '@hanzo/docs-core':
+      '@hanzo/docs':
         specifier: workspace:*
         version: link:../core
       '@hanzo/radix':
@@ -2504,9 +2446,15 @@ importers:
 
   packages/ui:
     dependencies:
-      '@hanzo/docs-core':
+      '@base-ui/react':
+        specifier: ^1.0.0
+        version: 1.0.0(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      '@hanzo/docs':
         specifier: workspace:*
         version: link:../core
+      class-variance-authority:
+        specifier: ^0.7.1
+        version: 0.7.1
       lodash.merge:
         specifier: ^4.6.2
         version: 4.6.2
@@ -2522,6 +2470,12 @@ importers:
       react-dom:
         specifier: ^19.2.0
         version: 19.2.3(react@19.2.3)
+      react-medium-image-zoom:
+        specifier: ^5.4.0
+        version: 5.4.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      scroll-into-view-if-needed:
+        specifier: ^3.1.0
+        version: 3.1.0
       tailwind-merge:
         specifier: ^3.4.0
         version: 3.4.0
@@ -2529,6 +2483,9 @@ importers:
       '@hanzo/docs-cli':
         specifier: workspace:*
         version: link:../cli
+      '@tailwindcss/cli':
+        specifier: ^4.1.18
+        version: 4.1.18
       '@types/bun':
         specifier: ^1.3.5
         version: 1.3.5
@@ -2544,9 +2501,6 @@ importers:
       '@types/react-dom':
         specifier: ^19.2.3
         version: 19.2.3(@types/react@19.2.7)
-      class-variance-authority:
-        specifier: ^0.7.1
-        version: 0.7.1
       eslint-config-custom:
         specifier: workspace:*
         version: link:../eslint-config-custom

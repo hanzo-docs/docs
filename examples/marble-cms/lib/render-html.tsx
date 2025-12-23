@@ -1,4 +1,4 @@
-import type { TOCItemType } from '@hanzo/docs-core/toc';
+import type { TOCItemType } from '@hanzo/docs/toc';
 import Slugger from 'github-slugger';
 import parse, { type DOMNode, domToReact } from 'html-react-parser';
 import { Heading } from '@hanzo/radix/components/heading';

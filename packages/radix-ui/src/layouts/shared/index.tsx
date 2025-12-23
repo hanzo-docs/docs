@@ -1,7 +1,7 @@
 import type { ComponentProps, ReactNode } from 'react';
-import type { I18nConfig } from '@hanzo/docs-core/i18n';
+import type { I18nConfig } from '@hanzo/docs/i18n';
 import type { LinkItemType } from '@hanzo/ui/link-item';
-import Link from '@hanzo/docs-core/link';
+import Link from '@hanzo/docs/link';
 
 export interface NavOptions {
   enabled: boolean;

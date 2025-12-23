@@ -9,7 +9,7 @@
     "types:check": "@hanzo/docs-mdx && next typegen && tsc --noEmit"
   },
   "dependencies": {
-    "@hanzo/docs-core": "workspace:*",
+    "@hanzo/docs": "workspace:*",
     "@hanzo/docs-mdx": "workspace:*",
     "hanzo-docs-obsidian": "workspace:*",
     "@hanzo/ui": "workspace:*",

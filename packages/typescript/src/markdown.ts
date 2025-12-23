@@ -1,12 +1,12 @@
 import type { ElementContent, Nodes } from 'hast';
 import { remark } from 'remark';
-import { remarkGfm } from '@hanzo/docs-core/mdx-plugins/remark-gfm';
+import { remarkGfm } from '@hanzo/docs/mdx-plugins/remark-gfm';
 import {
   rehypeCode,
   type RehypeCodeOptions,
-} from '@hanzo/docs-core/mdx-plugins/rehype-code';
+} from '@hanzo/docs/mdx-plugins/rehype-code';
 import remarkRehype from 'remark-rehype';
-import { getHighlighter } from '@hanzo/docs-core/highlight';
+import { getHighlighter } from '@hanzo/docs/highlight';
 
 const shikiOptions = {
   lazy: true,

@@ -1,4 +1,4 @@
-import { DynamicLink } from '@hanzo/docs-core/dynamic-link';
+import { DynamicLink } from '@hanzo/docs/dynamic-link';
 
 export default function HomePage() {
   return (

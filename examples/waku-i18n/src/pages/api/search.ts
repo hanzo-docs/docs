@@ -1,4 +1,4 @@
-import { createFromSource } from '@hanzo/docs-core/search/server';
+import { createFromSource } from '@hanzo/docs/search/server';
 import { source } from '@/lib/source';
 import { createTokenizer } from '@orama/tokenizers/mandarin';
 

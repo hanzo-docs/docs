@@ -10,7 +10,7 @@
 
 ### Patch Changes
 
-- @hanzo/docs-core@16.3.1
+- @hanzo/docs@16.3.1
 
 ## 16.3.0
 
@@ -21,4 +21,4 @@
 ### Patch Changes
 
 - Updated dependencies [a69b060]
-  - @hanzo/docs-core@16.3.0
+  - @hanzo/docs@16.3.0

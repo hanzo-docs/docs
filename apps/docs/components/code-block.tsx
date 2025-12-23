@@ -1,5 +1,5 @@
 import * as Base from '@hanzo/docs-ui/components/codeblock';
-import { getHighlighter, hastToJsx } from '@hanzo/docs-core/highlight';
+import { getHighlighter, hastToJsx } from '@hanzo/docs/highlight';
 import { cn } from '@/lib/cn';
 import type { BundledLanguage } from 'shiki';
 

@@ -1,4 +1,4 @@
-import type { MetaData, PageData } from '@hanzo/docs-core/source';
+import type { MetaData, PageData } from '@hanzo/docs/source';
 import type { Meta } from '@content-collections/core';
 
 export interface BaseMetaData extends MetaData {

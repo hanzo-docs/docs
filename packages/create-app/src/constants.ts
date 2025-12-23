@@ -73,7 +73,7 @@ export const templates: TemplateInfo[] = [
 
 export const depVersions = {
   ...versionPkg.dependencies,
-  '@hanzo/docs-core': coreVersion,
+  '@hanzo/docs': coreVersion,
   '@hanzo/ui': uiVersion,
   '@hanzo/docs-mdx': mdxVersion,
 };

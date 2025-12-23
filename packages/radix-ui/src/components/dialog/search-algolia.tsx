@@ -3,9 +3,9 @@
 import {
   type AlgoliaOptions,
   useDocsSearch,
-} from '@hanzo/docs-core/search/client';
+} from '@hanzo/docs/search/client';
 import { type ReactNode, useMemo, useState } from 'react';
-import { useOnChange } from '@hanzo/docs-core/utils/use-on-change';
+import { useOnChange } from '@hanzo/docs/utils/use-on-change';
 import {
   SearchDialog,
   SearchDialogClose,
@@ -20,7 +20,7 @@ import {
   TagsList,
   TagsListItem,
 } from './search';
-import type { SortedResult } from '@hanzo/docs-core/search';
+import type { SortedResult } from '@hanzo/docs/search';
 import type { SearchLink, TagItem } from '@/contexts/search';
 import { useI18n } from '@/contexts/i18n';
 

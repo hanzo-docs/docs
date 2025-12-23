@@ -1,4 +1,4 @@
-import Link from '@hanzo/docs-core/link';
+import Link from '@hanzo/docs/link';
 import type {
   AnchorHTMLAttributes,
   FC,
@@ -6,7 +6,7 @@ import type {
   ImgHTMLAttributes,
   TableHTMLAttributes,
 } from 'react';
-import { Image as FrameworkImage } from '@hanzo/docs-core/framework';
+import { Image as FrameworkImage } from '@hanzo/docs/framework';
 import { Card, Cards } from '@/components/card';
 import {
   Callout,

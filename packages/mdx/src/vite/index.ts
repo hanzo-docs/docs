@@ -66,18 +66,18 @@ export default async function mdx(
       return mergeConfig(config, {
         resolve: {
           noExternal: [
-            '@hanzo/docs-core',
+            '@hanzo/docs',
             '@hanzo/radix',
             '@hanzo/docs-openapi',
-            '@hanzo/ui-base',
+            '@hanzo/ui/base',
             '@hanzo/radix',
           ],
           // only dedupe for public, non-transitive libs
           dedupe: [
-            '@hanzo/docs-core',
+            '@hanzo/docs',
             '@hanzo/radix',
             '@hanzo/docs-openapi',
-            '@hanzo/ui-base',
+            '@hanzo/ui/base',
           ],
         },
       } satisfies UserConfig);

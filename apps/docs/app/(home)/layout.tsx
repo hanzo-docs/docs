@@ -6,7 +6,7 @@ import {
   NavbarMenuLink,
   NavbarMenuTrigger,
 } from '@hanzo/docs-ui/layouts/home/navbar';
-import Link from '@hanzo/docs-core/link';
+import Link from '@hanzo/docs/link';
 import Image from 'next/image';
 import Preview from '@/public/banner.png';
 import { Book, ComponentIcon, Pencil, PlusIcon, Server } from 'lucide-react';

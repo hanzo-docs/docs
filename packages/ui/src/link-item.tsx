@@ -1,8 +1,8 @@
 'use client';
 import type { ComponentProps, ReactNode } from 'react';
-import { usePathname } from '@hanzo/docs-core/framework';
+import { usePathname } from '@hanzo/docs/framework';
 import { isActive } from '@/urls';
-import Link from '@hanzo/docs-core/link';
+import Link from '@hanzo/docs/link';
 
 interface Filterable {
   /**

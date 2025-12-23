@@ -5,11 +5,11 @@ import {
   AnchorProvider,
   type TOCItemType,
   useActiveAnchors,
-} from '@hanzo/docs-core/toc';
+} from '@hanzo/docs/toc';
 import { cn } from '@/cn';
 import { useTreeContext } from '@/contexts/tree';
-import { Link, usePathname } from '@hanzo/docs-core/framework';
-import type * as PageTree from '@hanzo/docs-core/page-tree';
+import { Link, usePathname } from '@hanzo/docs/framework';
+import type * as PageTree from '@hanzo/docs/page-tree';
 
 export interface DocsPageProps {
   toc?: TOCItemType[];

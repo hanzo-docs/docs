@@ -15,8 +15,8 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from '@/components/ui/hover-card';
-import Link from '@hanzo/docs-core/link';
-import { getPageTreePeers } from '@hanzo/docs-core/page-tree';
+import Link from '@hanzo/docs/link';
+import { getPageTreePeers } from '@hanzo/docs/page-tree';
 import { Card, Cards } from '@hanzo/docs-ui/components/card';
 import { getMDXComponents } from '@/mdx-components';
 import { LLMCopyButton, ViewOptions } from '@/components/ai/page-actions';
@@ -30,7 +30,7 @@ import {
 } from '@hanzo/docs-ui/layouts/docs/page';
 import { NotFound } from '@/components/not-found';
 import { getSuggestions } from '@/app/docs/[...slug]/suggestions';
-import { PathUtils } from '@hanzo/docs-core/source';
+import { PathUtils } from '@hanzo/docs/source';
 
 function PreviewRenderer({ preview }: { preview: string }): ReactNode {
   if (preview && preview in Preview) {

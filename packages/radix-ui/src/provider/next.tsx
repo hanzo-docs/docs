@@ -1,8 +1,8 @@
 'use client';
 import type { ComponentProps } from 'react';
 import { RootProvider as BaseProvider } from '@/provider/base';
-import { NextProvider } from '@hanzo/docs-core/framework/next';
-import type { Framework } from '@hanzo/docs-core/framework';
+import { NextProvider } from '@hanzo/docs/framework/next';
+import type { Framework } from '@hanzo/docs/framework';
 
 export interface RootProviderProps extends ComponentProps<typeof BaseProvider> {
   /**

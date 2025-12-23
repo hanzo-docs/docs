@@ -1,6 +1,6 @@
 import { docs } from '@hanzo/docs-mdx:collections/server';
-import { type InferPageType, loader } from '@hanzo/docs-core/source';
-import { lucideIconsPlugin } from '@hanzo/docs-core/source/lucide-icons';
+import { type InferPageType, loader } from '@hanzo/docs/source';
+import { lucideIconsPlugin } from '@hanzo/docs/source/lucide-icons';
 
 // See https://fumadocs.dev/docs/headless/source-api for more info
 export const source = loader({

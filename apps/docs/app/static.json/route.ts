@@ -1,6 +1,6 @@
 import { source } from '@/lib/source';
-import type { OramaDocument } from '@hanzo/docs-core/search/orama-cloud';
-import { getBreadcrumbItems } from '@hanzo/docs-core/breadcrumb';
+import type { OramaDocument } from '@hanzo/docs/search/orama-cloud';
+import { getBreadcrumbItems } from '@hanzo/docs/breadcrumb';
 
 export const revalidate = false;
 

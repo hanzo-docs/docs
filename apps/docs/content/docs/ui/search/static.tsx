@@ -10,7 +10,7 @@ import {
   SearchDialogOverlay,
   type SharedProps,
 } from '@hanzo/docs-ui/components/dialog/search';
-import { useDocsSearch } from '@hanzo/docs-core/search/client';
+import { useDocsSearch } from '@hanzo/docs/search/client';
 import { create } from '@orama/orama';
 import { useI18n } from '@hanzo/docs-ui/contexts/i18n';
 

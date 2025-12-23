@@ -109,7 +109,7 @@ Now to integrate it with Fumadocs framework, change your `source.ts` from:
 ```ts
 import { map } from '@/.map';
 import { createMDXSource } from '@hanzo/docs-mdx/runtime/next';
-import { loader } from '@hanzo/docs-core/source';
+import { loader } from '@hanzo/docs/source';
 
 export const { getPage, getPages, pageTree } = loader({
   baseUrl: '/docs',
@@ -123,7 +123,7 @@ to:
 ```ts
 import { docs, meta } from '@/.source';
 import { createMDXSource } from '@hanzo/docs-mdx/runtime/next';
-import { loader } from '@hanzo/docs-core/source';
+import { loader } from '@hanzo/docs/source';
 
 export const source = loader({
   baseUrl: '/docs',
@@ -172,8 +172,8 @@ Same as before, you can call `loader` multiple times for different types (e.g. f
 
 ```ts
 import { createMDXSource } from '@hanzo/docs-mdx/runtime/next';
-import type { InferMetaType, InferPageType } from '@hanzo/docs-core/source';
-import { loader } from '@hanzo/docs-core/source';
+import type { InferMetaType, InferPageType } from '@hanzo/docs/source';
+import { loader } from '@hanzo/docs/source';
 import { meta, docs, blog as blogPosts } from '@/.source';
 
 export const source = loader({

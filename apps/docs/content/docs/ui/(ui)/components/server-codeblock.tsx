@@ -1,5 +1,5 @@
 import * as Base from '@hanzo/docs-ui/components/codeblock';
-import { highlight } from '@hanzo/docs-core/highlight';
+import { highlight } from '@hanzo/docs/highlight';
 import { type HTMLAttributes } from 'react';
 
 export async function CodeBlock({

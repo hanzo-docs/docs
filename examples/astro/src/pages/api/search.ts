@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
-import { createFromSource } from '@hanzo/docs-core/search/server';
+import { createFromSource } from '@hanzo/docs/search/server';
 import { getFullExport, source } from '@/lib/source';
-import { getBreadcrumbItems } from '@hanzo/docs-core/breadcrumb';
+import { getBreadcrumbItems } from '@hanzo/docs/breadcrumb';
 
 const server = createFromSource(source, {
   async buildIndex(page) {

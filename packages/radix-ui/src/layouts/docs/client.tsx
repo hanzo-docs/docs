@@ -9,8 +9,8 @@ import {
 } from 'react';
 import { cn } from '@hanzo/ui/cn';
 import { useSidebar } from '@/components/sidebar/base';
-import { usePathname } from '@hanzo/docs-core/framework';
-import Link from '@hanzo/docs-core/link';
+import { usePathname } from '@hanzo/docs/framework';
+import Link from '@hanzo/docs/link';
 import type { SidebarTab } from '@/components/sidebar/tabs';
 import { isTabActive } from '@/components/sidebar/tabs/dropdown';
 import { useIsScrollTop } from '@hanzo/ui/hooks/use-is-scroll-top';

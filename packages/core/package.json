@@ -1,5 +1,5 @@
 {
-  "name": "@hanzo/docs-core",
+  "name": "@hanzo/docs",
   "version": "16.3.1",
   "description": "The React.js library for building a documentation website",
   "keywords": [

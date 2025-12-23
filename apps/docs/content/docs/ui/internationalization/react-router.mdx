@@ -8,7 +8,7 @@ description: Support i18n routing on your React Router + Fumadocs app.
 Define the i18n configurations in a file, we will import it with `@/lib/i18n` in this guide.
 
 ```ts title="app/lib/i18n.ts"
-import { defineI18n } from '@hanzo/docs-core/i18n';
+import { defineI18n } from '@hanzo/docs/i18n';
 
 export const i18n = defineI18n({
   defaultLanguage: 'en',
@@ -38,7 +38,7 @@ export default [
 You can also use `:lang?` prefix, and update the i18n config:
 
 ```ts tab="app/lib/i18n.ts"
-import { defineI18n } from '@hanzo/docs-core/i18n';
+import { defineI18n } from '@hanzo/docs/i18n';
 
 export const i18n = defineI18n({
   defaultLanguage: 'en',
@@ -72,7 +72,7 @@ import {
   useParams,
 } from 'react-router';
 import { RootProvider } from '@hanzo/docs-ui/provider/base';
-import { ReactRouterProvider } from '@hanzo/docs-core/framework/react-router';
+import { ReactRouterProvider } from '@hanzo/docs/framework/react-router';
 import { defineI18nUI } from '@hanzo/docs-ui/i18n';
 import { i18n } from '@/lib/i18n';
 import './app.css';
@@ -138,7 +138,7 @@ Pass the locale to Fumadocs in your pages and layouts.
 
 ```ts tab="app/lib/source.ts"
 import { i18n } from '@/lib/i18n';
-import { loader } from '@hanzo/docs-core/source';
+import { loader } from '@hanzo/docs/source';
 
 export const source = loader({
   i18n, // [!code ++]
@@ -163,7 +163,7 @@ export default function Home({ params }: Route.ComponentProps) {
 import type { Route } from './+types/page';
 import { DocsLayout } from '@hanzo/docs-ui/layouts/docs';
 import { source } from '@/lib/source';
-import type * as PageTree from '@hanzo/docs-core/page-tree';
+import type * as PageTree from '@hanzo/docs/page-tree';
 import { baseOptions } from '@/lib/layout.shared';
 
 export async function loader({ params }: Route.LoaderArgs) {
@@ -220,11 +220,11 @@ const { lang } = useParams();
 <Link to={`/${lang}/about`}>About Us</Link>;
 ```
 
-In addition, the [`@hanzo/docs-core/dynamic-link`](/docs/headless/components/link#dynamic-hrefs) component supports dynamic hrefs, you can use it to attend the locale prefix.
+In addition, the [`@hanzo/docs/dynamic-link`](/docs/headless/components/link#dynamic-hrefs) component supports dynamic hrefs, you can use it to attend the locale prefix.
 It is useful for Markdown/MDX content.
 
 ```mdx title="content.mdx"
-import { DynamicLink } from '@hanzo/docs-core/dynamic-link';
+import { DynamicLink } from '@hanzo/docs/dynamic-link';
 
 <DynamicLink href="/[lang]/another-page">This is a link</DynamicLink>
 ```

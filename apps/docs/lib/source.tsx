@@ -4,11 +4,11 @@ import {
   type LoaderPlugin,
   loader,
   multiple,
-} from '@hanzo/docs-core/source';
+} from '@hanzo/docs/source';
 import { openapiPlugin, openapiSource } from '@hanzo/docs-openapi/server';
 import { blog as blogPosts, docs } from '@hanzo/docs-mdx:collections/server';
 import { toFumadocsSource } from '@hanzo/docs-mdx/runtime/server';
-import { lucideIconsPlugin } from '@hanzo/docs-core/source/lucide-icons';
+import { lucideIconsPlugin } from '@hanzo/docs/source/lucide-icons';
 import { openapi } from '@/lib/openapi';
 
 export const source = loader(

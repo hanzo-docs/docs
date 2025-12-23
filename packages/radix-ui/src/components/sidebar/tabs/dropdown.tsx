@@ -1,8 +1,8 @@
 'use client';
 import { Check, ChevronsUpDown } from '@hanzo/ui/icons';
 import { type ComponentProps, type ReactNode, useMemo, useState } from 'react';
-import Link from '@hanzo/docs-core/link';
-import { usePathname } from '@hanzo/docs-core/framework';
+import Link from '@hanzo/docs/link';
+import { usePathname } from '@hanzo/docs/framework';
 import { cn } from '@hanzo/ui/cn';
 import { isActive, normalize } from '@hanzo/ui/urls';
 import { useSidebar } from '@/components/sidebar/base';

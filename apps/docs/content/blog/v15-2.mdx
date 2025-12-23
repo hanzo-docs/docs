@@ -7,7 +7,7 @@ author: Fuma Nama
 
 ## Overview
 
-Fumadocs 15.2 introduces a layer over `@hanzo/docs-core` to extend support to other React frameworks, including React Router and Tanstack Start. Other frameworks can also be supported using the `FrameworkProvider` from `@hanzo/docs-core/framework/base`.
+Fumadocs 15.2 introduces a layer over `@hanzo/docs` to extend support to other React frameworks, including React Router and Tanstack Start. Other frameworks can also be supported using the `FrameworkProvider` from `@hanzo/docs/framework/base`.
 
 ### Why?
 
@@ -18,12 +18,12 @@ It's also my goal to make it work not only for Next.js devs, but also everyone i
 
 ### Breaking Changes
 
-This is a minor release, it shouldn't break any previous usages unless you're relying on the lower level APIs from `@hanzo/docs-core` without `@hanzo/docs-ui`.
+This is a minor release, it shouldn't break any previous usages unless you're relying on the lower level APIs from `@hanzo/docs` without `@hanzo/docs-ui`.
 
 Fumadocs Core now requires a `FrameworkProvider`. It's as simple as wrapping it with appropriate provider:
 
 ```tsx
-import { NextProvider } from '@hanzo/docs-core/framework/next';
+import { NextProvider } from '@hanzo/docs/framework/next';
 
 export function Provider({ children }) {
   return <NextProvider>{children}</NextProvider>;

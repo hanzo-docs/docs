@@ -1,4 +1,4 @@
-import type { Root } from '@hanzo/docs-core/page-tree';
+import type { Root } from '@hanzo/docs/page-tree';
 
 export default {
   name: 'Docs',

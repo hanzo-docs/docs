@@ -1,8 +1,8 @@
 import { createProcessor } from '@mdx-js/mdx';
 import { VFile } from 'vfile';
 import { remarkInclude } from '@/loaders/mdx/remark-include';
-import type { StructuredData } from '@hanzo/docs-core/mdx-plugins';
-import type { TOCItemType } from '@hanzo/docs-core/toc';
+import type { StructuredData } from '@hanzo/docs/mdx-plugins';
+import type { TOCItemType } from '@hanzo/docs/toc';
 import type { FC } from 'react';
 import type { MDXProps } from 'mdx/types';
 import {

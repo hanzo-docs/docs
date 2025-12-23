@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { blog } from '@/lib/source';
-import { PathUtils } from '@hanzo/docs-core/source';
+import { PathUtils } from '@hanzo/docs/source';
 import BannerImage from './banner.png';
 import Image from 'next/image';
 

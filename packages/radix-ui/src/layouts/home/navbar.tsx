@@ -1,5 +1,5 @@
 'use client';
-import Link, { type LinkProps } from '@hanzo/docs-core/link';
+import Link, { type LinkProps } from '@hanzo/docs/link';
 import { cn } from '@hanzo/ui/cn';
 import {
   NavigationMenuContent,

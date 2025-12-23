@@ -7,7 +7,7 @@ import {
 } from './utils/pages/to-text';
 import type { ProcessedDocument } from '@/utils/process-document';
 import type { OpenAPIServer } from '@/server';
-import { createGetUrl, getSlugs } from '@hanzo/docs-core/source';
+import { createGetUrl, getSlugs } from '@hanzo/docs/source';
 import {
   createAutoPreset,
   type SchemaToPagesOptions,

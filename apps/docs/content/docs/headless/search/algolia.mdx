@@ -27,7 +27,7 @@ Pre-render a static route `/static.json` to export search indexes into productio
 
 ```ts title="lib/export-search-indexes.ts"
 import { source } from '@/lib/source';
-import type { DocumentRecord } from '@hanzo/docs-core/search/algolia';
+import type { DocumentRecord } from '@hanzo/docs/search/algolia';
 
 export async function exportSearchIndexes() {
   const results: DocumentRecord[] = [];
@@ -52,7 +52,7 @@ Make a script to sync search indexes:
 
 ```ts title="scripts/sync-content.ts" twoslash
 import { algoliasearch } from 'algoliasearch';
-import { sync, DocumentRecord } from '@hanzo/docs-core/search/algolia';
+import { sync, DocumentRecord } from '@hanzo/docs/search/algolia';
 import * as fs from 'node:fs';
 
 // the path of pre-rendered `static.json`, choose one according to your React framework
@@ -99,7 +99,7 @@ You can consider different options for implementing the UI:
 
   ```ts twoslash
   import { liteClient } from 'algoliasearch/lite';
-  import { useDocsSearch } from '@hanzo/docs-core/search/client';
+  import { useDocsSearch } from '@hanzo/docs/search/client';
 
   const client = liteClient('id', 'key');
 
@@ -120,7 +120,7 @@ To configure tag filtering, add a `tag` value to indexes.
 
 ```ts title="lib/export-search-indexes.ts"
 import { source } from '@/lib/source';
-import type { DocumentRecord } from '@hanzo/docs-core/search/algolia';
+import type { DocumentRecord } from '@hanzo/docs/search/algolia';
 
 export async function exportSearchIndexes() {
   const results: DocumentRecord[] = [];
@@ -147,7 +147,7 @@ And update your search client:
 - **Search Client**: You can add the tag filter like:
 
   ```ts
-  import { useDocsSearch } from '@hanzo/docs-core/search/client';
+  import { useDocsSearch } from '@hanzo/docs/search/client';
 
   const { search, setSearch, query } = useDocsSearch({
     tag: '<your tag value>',

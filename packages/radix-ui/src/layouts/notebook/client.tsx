@@ -14,8 +14,8 @@ import {
 } from 'react';
 import { useSidebar } from '@/components/sidebar/base';
 import { ChevronDown } from '@hanzo/ui/icons';
-import Link from '@hanzo/docs-core/link';
-import { usePathname } from '@hanzo/docs-core/framework';
+import Link from '@hanzo/docs/link';
+import { usePathname } from '@hanzo/docs/framework';
 import { useIsScrollTop } from '@hanzo/ui/hooks/use-is-scroll-top';
 import {
   LinkItem,

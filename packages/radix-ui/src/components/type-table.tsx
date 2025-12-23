@@ -1,7 +1,7 @@
 'use client';
 
 import { ChevronDown } from '@hanzo/ui/icons';
-import Link from '@hanzo/docs-core/link';
+import Link from '@hanzo/docs/link';
 import { cva } from 'class-variance-authority';
 import { cn } from '@hanzo/ui/cn';
 import { type ReactNode, useState } from 'react';

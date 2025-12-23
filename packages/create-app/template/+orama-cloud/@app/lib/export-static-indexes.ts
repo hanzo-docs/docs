@@ -1,5 +1,5 @@
 import { source } from '@/lib/source';
-import type { OramaDocument } from '@hanzo/docs-core/search/orama-cloud';
+import type { OramaDocument } from '@hanzo/docs/search/orama-cloud';
 
 export async function exportSearchIndexes() {
   return source.getPages().map((page) => {

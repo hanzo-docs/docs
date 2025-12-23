@@ -13,16 +13,16 @@ We are pleased to announce the release of Fumadocs v16, a significant update tha
 
 Fumadocs 16 removed substantial amount of deprecated APIs accumulated since v15.2 Vite support.
 
-- **Removal of the Sidebar API**: The `@hanzo/docs-core/sidebar` module has been deprecated and removed. For sidebar implementations, we recommend adopting pre-built solutions from Shadcn UI.
+- **Removal of the Sidebar API**: The `@hanzo/docs/sidebar` module has been deprecated and removed. For sidebar implementations, we recommend adopting pre-built solutions from Shadcn UI.
 
-- **Restructuring of Server-Side Exports**: Exports from `@hanzo/docs-core/server` have been redistributed to more specialized modules:
-  - `getGithubLastEdit` -> `@hanzo/docs-core/content/github`.
-  - `getTableOfContents` -> `@hanzo/docs-core/content/toc`.
-  - `PageTree` and related utilities -> `@hanzo/docs-core/page-tree`.
-  - `TOCItemType` and `TableOfContents` -> `@hanzo/docs-core/toc`.
+- **Restructuring of Server-Side Exports**: Exports from `@hanzo/docs/server` have been redistributed to more specialized modules:
+  - `getGithubLastEdit` -> `@hanzo/docs/content/github`.
+  - `getTableOfContents` -> `@hanzo/docs/content/toc`.
+  - `PageTree` and related utilities -> `@hanzo/docs/page-tree`.
+  - `TOCItemType` and `TableOfContents` -> `@hanzo/docs/toc`.
   - removed `createMetadataImage` API, use Next.js Metadata API instead.
 
-- **Default Switch to Shiki's JavaScript Regex Engine**: To ensure seamless compatibility with environments like Cloudflare Workers, the JavaScript engine is now the default over the WASM-based Oniguruma. This change affects `rehype-code` (via the `engine` option) and `@hanzo/docs-core/highlight`.
+- **Default Switch to Shiki's JavaScript Regex Engine**: To ensure seamless compatibility with environments like Cloudflare Workers, the JavaScript engine is now the default over the WASM-based Oniguruma. This change affects `rehype-code` (via the `engine` option) and `@hanzo/docs/highlight`.
 
 - **Minimum React.js Version Raised to 19.2.0**: React 19.2 brings crucial performance improvements to Fumadocs UI.
   - **Next.js Projects**: Next.js projects using Fumadocs UI must use Next.js 16 or later, as Next.js uses its own canary channel for React.js.
@@ -32,11 +32,11 @@ Fumadocs 16 removed substantial amount of deprecated APIs accumulated since v15.
 - `@hanzo/docs-ui/page`:
   - Removed `<DocsCategory />`.
   - Removed the `breadcrumbs.full` option in `<DocsPage />`.
-- `@hanzo/docs-core/search/algolia`: The `document` option is renamed to `indexName`.
-- `@hanzo/docs-core/search`: Removed the deprecated `createFromSource()` signature in `useSearch()`.
-- `@hanzo/docs-core/highlight`: Removed `withPrerenderScript` and `loading` options from `useShiki()`.
-- `@hanzo/docs-core/i18n`: Removed `createI18nMiddleware` (import from `@hanzo/docs-core/i18n/middleware` instead).
-- `@hanzo/docs-core/source`:
+- `@hanzo/docs/search/algolia`: The `document` option is renamed to `indexName`.
+- `@hanzo/docs/search`: Removed the deprecated `createFromSource()` signature in `useSearch()`.
+- `@hanzo/docs/highlight`: Removed `withPrerenderScript` and `loading` options from `useShiki()`.
+- `@hanzo/docs/i18n`: Removed `createI18nMiddleware` (import from `@hanzo/docs/i18n/middleware` instead).
+- `@hanzo/docs/source`:
   - Removed `transformers`, `pageTree.attach*` options in `loader()`.
   - Removed the `page.file` property.
   - Removed internal utilities `FileInfo` and `parseFilePath`.
@@ -44,7 +44,7 @@ Fumadocs 16 removed substantial amount of deprecated APIs accumulated since v15.
 - **Migration to Orama Cloud's New SDK**: The `@orama/core` package replaces the prior client. Update your synchronization code as follows:
 
   ```ts
-  import { sync } from '@hanzo/docs-core/search/orama-cloud';
+  import { sync } from '@hanzo/docs/search/orama-cloud';
   import { OramaCloud } from '@orama/core';
 
   // [!code highlight:4]

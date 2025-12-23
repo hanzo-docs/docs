@@ -19,7 +19,7 @@ Configure both plugins in your config.
 
 ```ts title="source.config.ts" tab="Fumadocs MDX"
 import remarkDirective from 'remark-directive';
-import { remarkDirectiveAdmonition } from '@hanzo/docs-core/mdx-plugins';
+import { remarkDirectiveAdmonition } from '@hanzo/docs/mdx-plugins';
 import { defineConfig } from '@hanzo/docs-mdx/config';
 
 export default defineConfig({
@@ -31,7 +31,7 @@ export default defineConfig({
 
 ```ts tab="MDX Compiler"
 import remarkDirective from 'remark-directive';
-import { remarkDirectiveAdmonition } from '@hanzo/docs-core/mdx-plugins';
+import { remarkDirectiveAdmonition } from '@hanzo/docs/mdx-plugins';
 import { compile } from '@mdx-js/mdx';
 
 await compile('...', {

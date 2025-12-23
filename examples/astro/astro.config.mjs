@@ -9,7 +9,7 @@ import {
   remarkHeading,
   remarkNpm,
   remarkStructure,
-} from '@hanzo/docs-core/mdx-plugins';
+} from '@hanzo/docs/mdx-plugins';
 
 export default defineConfig({
   integrations: [

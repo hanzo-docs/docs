@@ -4,8 +4,8 @@ import type {
   HighlightOptions,
   HighlightOptionsCommon,
   HighlightOptionsThemes,
-} from '@hanzo/docs-core/highlight';
-import { useShiki } from '@hanzo/docs-core/highlight/client';
+} from '@hanzo/docs/highlight';
+import { useShiki } from '@hanzo/docs/highlight/client';
 import { cn } from '@hanzo/ui/cn';
 import {
   type ComponentProps,

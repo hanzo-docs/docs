@@ -1,4 +1,4 @@
-import Link from '@hanzo/docs-core/link';
+import Link from '@hanzo/docs/link';
 import { type ReactNode, Suspense } from 'react';
 import { cn } from '@/lib/cn';
 import { buttonVariants } from '@hanzo/docs-ui/components/ui/button';

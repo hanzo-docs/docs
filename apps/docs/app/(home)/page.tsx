@@ -500,7 +500,7 @@ function ForEngineers() {
               description: 'Use MDX in your React framework elegantly.',
             },
             {
-              name: '@hanzo/docs-core',
+              name: '@hanzo/docs',
               description:
                 'Headless library for building docs + handling content.',
             },
@@ -569,7 +569,7 @@ function ForEngineers() {
             title: 'Hanzo Docs MDX',
           }}
           code={`
-import { loader } from '@hanzo/docs-core/source';
+import { loader } from '@hanzo/docs/source';
 import { docs } from '@hanzo/docs-mdx:collections/server';
 
 export const source = loader({

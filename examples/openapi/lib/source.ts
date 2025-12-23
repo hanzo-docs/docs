@@ -1,4 +1,4 @@
-import { loader } from '@hanzo/docs-core/source';
+import { loader } from '@hanzo/docs/source';
 import { openapiPlugin } from '@hanzo/docs-openapi/server';
 import { docs } from '@hanzo/docs-mdx:collections/server';
 

@@ -127,7 +127,7 @@ export const registry: Registry = {
     },
   ],
   dependencies: {
-    '@hanzo/docs-core': null,
+    '@hanzo/docs': null,
     '@hanzo/docs-ui': null,
     'lucide-react': null,
     next: null,

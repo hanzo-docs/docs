@@ -60,7 +60,7 @@ This model works, but we started to see some problems:
   Furthermore, the Zod schema is passed to the source adapter in `source.ts` rather than the loader:
 
   ```ts
-  import { loader } from '@hanzo/docs-core/source';
+  import { loader } from '@hanzo/docs/source';
   import { createMDXSource } from '@hanzo/docs-mdx/runtime/next';
 
   export const source = loader({

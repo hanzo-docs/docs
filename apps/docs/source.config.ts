@@ -73,11 +73,11 @@ export default defineConfig({
   ],
   mdxOptions: async () => {
     const { rehypeCodeDefaultOptions } =
-      await import('@hanzo/docs-core/mdx-plugins/rehype-code');
+      await import('@hanzo/docs/mdx-plugins/rehype-code');
     const { remarkStructureDefaultOptions } =
-      await import('@hanzo/docs-core/mdx-plugins/remark-structure');
+      await import('@hanzo/docs/mdx-plugins/remark-structure');
     const { remarkSteps } =
-      await import('@hanzo/docs-core/mdx-plugins/remark-steps');
+      await import('@hanzo/docs/mdx-plugins/remark-steps');
     const { transformerTwoslash } = await import('@hanzo/docs-twoslash');
     const { createFileSystemTypesCache } =
       await import('@hanzo/docs-twoslash/cache-fs');

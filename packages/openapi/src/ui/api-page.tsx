@@ -11,7 +11,7 @@ import {
   highlight,
   type HighlightOptionsCommon,
   type HighlightOptionsThemes,
-} from '@hanzo/docs-core/highlight';
+} from '@hanzo/docs/highlight';
 import type { OpenAPIServer } from '@/server';
 import type { APIPageClientOptions } from './client';
 import type { CodeUsageGenerator } from './operation/usage-tabs';
@@ -20,8 +20,8 @@ import { Heading } from '@hanzo/radix/components/heading';
 import {
   rehypeCode,
   type RehypeCodeOptions,
-} from '@hanzo/docs-core/mdx-plugins/rehype-code';
-import { remarkGfm } from '@hanzo/docs-core/mdx-plugins/remark-gfm';
+} from '@hanzo/docs/mdx-plugins/rehype-code';
+import { remarkGfm } from '@hanzo/docs/mdx-plugins/remark-gfm';
 import defaultMdxComponents from '@hanzo/radix/mdx';
 import { remark } from 'remark';
 import remarkRehype from 'remark-rehype';

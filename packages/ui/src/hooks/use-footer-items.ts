@@ -1,5 +1,5 @@
 import { useTreeContext } from '@/contexts/tree';
-import type * as PageTree from '@hanzo/docs-core/page-tree';
+import type * as PageTree from '@hanzo/docs/page-tree';
 
 const footerCache = new Map<string, PageTree.Item[]>();
 

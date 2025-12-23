@@ -7,7 +7,7 @@ import type { ReactNode } from 'react';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { TreeContextProvider } from '@hanzo/docs-ui/contexts/tree';
 import { source } from '@/lib/source';
-import { NextProvider } from '@hanzo/docs-core/framework/next';
+import { NextProvider } from '@hanzo/docs/framework/next';
 
 export const metadata = createMetadata({
   title: {

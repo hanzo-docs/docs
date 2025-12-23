@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { source } from '@/lib/source';
-import { createFromSource } from '@hanzo/docs-core/search/server';
+import { createFromSource } from '@hanzo/docs/search/server';
 import { createTokenizer } from '@orama/tokenizers/mandarin';
 
 const server = createFromSource(source, {

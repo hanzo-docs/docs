@@ -9,7 +9,7 @@ Add the remark plugin.
 
 ```ts tab="MDX Compiler"
 import { compile } from '@mdx-js/mdx';
-import { remarkNpm } from '@hanzo/docs-core/mdx-plugins';
+import { remarkNpm } from '@hanzo/docs/mdx-plugins';
 
 await compile('...', {
   remarkPlugins: [remarkNpm],
@@ -128,7 +128,7 @@ export default defineConfig({
 
 ```ts tab="MDX Compiler"
 import { compile } from '@mdx-js/mdx';
-import { remarkNpm, type RemarkNpmOptions } from '@hanzo/docs-core/mdx-plugins';
+import { remarkNpm, type RemarkNpmOptions } from '@hanzo/docs/mdx-plugins';
 
 const remarkNpmOptions: RemarkNpmOptions = {
   persist: {
