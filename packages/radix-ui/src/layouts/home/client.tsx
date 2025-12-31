@@ -2,14 +2,14 @@
 import { type ComponentProps, Fragment, useMemo, useState } from 'react';
 import { cva } from 'class-variance-authority';
 import Link from '@hanzo/docs-core/link';
-import { cn } from '@fumadocs/ui/cn';
+import { cn } from '@hanzo/docs-ui/cn';
 import {
   type LinkItemType,
   type NavOptions,
   renderTitleNav,
   resolveLinkItems,
 } from '@/layouts/shared';
-import { LinkItem } from '@fumadocs/ui/link-item';
+import { LinkItem } from '@hanzo/docs-ui/link-item';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -25,7 +25,7 @@ import { LargeSearchToggle, SearchToggle } from '@/layouts/shared/search-toggle'
 import { ThemeToggle } from '@/layouts/shared/theme-toggle';
 import { LanguageToggle, LanguageToggleText } from '@/layouts/shared/language-toggle';
 import { ChevronDown, Languages } from 'lucide-react';
-import { useIsScrollTop } from '@fumadocs/ui/hooks/use-is-scroll-top';
+import { useIsScrollTop } from '@hanzo/docs-ui/hooks/use-is-scroll-top';
 
 export const navItemVariants = cva('[&_svg]:size-4', {
   variants: {

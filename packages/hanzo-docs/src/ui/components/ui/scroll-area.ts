@@ -1,1 +1,1 @@
-export * from '@hanzo/docs-ui/components/ui/scroll-area';
+export * from '@hanzo/docs-base-ui/components/ui/scroll-area';

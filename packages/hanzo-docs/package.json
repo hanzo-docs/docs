@@ -112,6 +112,7 @@
     "dev": "tsup --watch"
   },
   "dependencies": {
+    "@hanzo/docs-base-ui": "workspace:*",
     "@hanzo/docs-cli": "workspace:*",
     "@hanzo/docs-content-collections": "workspace:*",
     "@hanzo/docs-core": "workspace:*",

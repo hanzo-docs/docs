@@ -1,1 +1,1 @@
-export * from '@hanzo/docs-ui/layouts/notebook/page';
+export * from '@hanzo/docs-base-ui/layouts/notebook/page';
