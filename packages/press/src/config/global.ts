@@ -1,6 +1,6 @@
 import type { ContentConfig } from './content';
 
-export interface FumapressConfig {
+export interface PressConfig {
   /**
    * the directory for app files (relative to project root)
    *
@@ -11,7 +11,7 @@ export interface FumapressConfig {
   content?: ContentConfig;
 }
 
-export function defineConfig(config: Partial<FumapressConfig>): FumapressConfig {
+export function defineConfig(config: Partial<PressConfig>): PressConfig {
   return {
     ...config,
     appDir: config.appDir ?? './app',

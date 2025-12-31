@@ -44,31 +44,31 @@ export interface CompiledMDXProperties<Frontmatter = Record<string, unknown>> {
   _mdast?: string;
 }
 
-export interface FumadocsDataMap {
+export interface DocsDataMap {
   /**
-   * [Fumadocs MDX] raw frontmatter, you can modify it
+   * [Hanzo Docs MDX] raw frontmatter, you can modify it
    */
   frontmatter?: Record<string, unknown>;
 
   /**
-   * [Fumadocs MDX] additional ESM exports to write
+   * [Hanzo Docs MDX] additional ESM exports to write
    */
   'mdx-export'?: { name: string; value: unknown }[];
 
   /**
-   * [Fumadocs MDX] The compiler object from loader
+   * [Hanzo Docs MDX] The compiler object from loader
    */
   _compiler?: CompilerOptions;
 
   /**
-   * [Fumadocs MDX] get internal processor, do not use this on user land.
+   * [Hanzo Docs MDX] get internal processor, do not use this on user land.
    */
   _getProcessor?: (format: 'md' | 'mdx') => Processor;
 }
 
 declare module 'vfile' {
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type -- extend data map
-  interface DataMap extends FumadocsDataMap {}
+  interface DataMap extends DocsDataMap {}
 }
 
 export async function buildMDX(

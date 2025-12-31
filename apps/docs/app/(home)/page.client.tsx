@@ -102,7 +102,7 @@ export function Hero() {
 }
 
 export function CreateAppAnimation() {
-  const installCmd = 'pnpm create fumadocs-app';
+  const installCmd = 'pnpm create hanzo-docs-app';
   const tickTime = 100;
   const timeCommandEnter = installCmd.length;
   const timeCommandRun = timeCommandEnter + 3;

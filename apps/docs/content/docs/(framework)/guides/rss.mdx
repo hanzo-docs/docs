@@ -11,11 +11,11 @@ You can create the feed object:
 import { Feed } from 'feed';
 import { source } from '@/lib/source';
 
-const baseUrl = 'https://fumadocs.dev';
+const baseUrl = 'https://hanzo-docs.dev';
 
 export function getRSS() {
   const feed = new Feed({
-    title: 'Fumadocs Blog',
+    title: 'Hanzo Docs Blog',
     id: `${baseUrl}/blog`,
     link: `${baseUrl}/blog`,
     language: 'en',
@@ -99,8 +99,8 @@ export const metadata: Metadata = {
     types: {
       'application/rss+xml': [
         {
-          title: 'Fumadocs Blog',
-          url: 'https://fumadocs.dev/blog/index.xml',
+          title: 'Hanzo Docs Blog',
+          url: 'https://hanzo-docs.dev/blog/index.xml',
         },
       ],
     },

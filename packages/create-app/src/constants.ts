@@ -12,7 +12,7 @@ export const isCI = Boolean(process.env.CI);
 
 export interface TemplateInfo {
   value:
-    | '+next+fuma-docs-mdx'
+    | '+next+hanzo-docs-mdx'
     | 'waku'
     | 'react-router'
     | 'react-router-spa'
@@ -33,7 +33,7 @@ export interface TemplateInfo {
 
 export const templates: TemplateInfo[] = [
   {
-    value: '+next+fuma-docs-mdx',
+    value: '+next+hanzo-docs-mdx',
     label: 'Next.js: Hanzo MDX',
     hint: 'recommended',
     appDir: '',

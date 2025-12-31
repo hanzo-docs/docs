@@ -1,7 +1,7 @@
 import { type AdvancedIndex, createSearchAPI } from '@hanzo/docs-core/search/server';
 import * as fs from 'node:fs/promises';
 import { getPages } from '@/app/docs/utils';
-import { parseFrontmatter } from '@fumadocs/mdx-remote';
+import { parseFrontmatter } from '@hanzo-docs/mdx-remote';
 import { structure } from '@hanzo/docs/core/mdx-plugins/remark-structure';
 
 export const { GET } = createSearchAPI('advanced', {

@@ -1,10 +1,10 @@
 /// <reference types="@hanzo/mdx" />
 import { type InferPageType, loader } from '@hanzo/docs-core/source';
 import { server } from '@hanzo/mdx/runtime/server';
-import type { FumadocsMDXConfig } from '../config/content.js';
+import type { DocsMDXConfig } from '../config/content.js';
 import type { InternalTypeConfig } from '@hanzo/mdx/runtime/types';
 
-const create = server<FumadocsMDXConfig, InternalTypeConfig>();
+const create = server<DocsMDXConfig, InternalTypeConfig>();
 
 export const docs = await create.docsLazy(
   'docs',
@@ -35,7 +35,7 @@ export const docs = await create.docsLazy(
 );
 
 export const source = loader({
-  source: docs.toFumadocsSource(),
+  source: docs.toSource(),
   baseUrl: '/',
 });
 
