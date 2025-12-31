@@ -39,7 +39,7 @@ function pluginOption(
 }
 
 export type MDXPresetOptions =
-  | ({ preset?: 'fumadocs' } & DefaultMDXOptions)
+  | ({ preset?: 'hanzo-docs' } & DefaultMDXOptions)
   | ({
       preset: 'minimal';
     } & ProcessorOptions);
@@ -53,7 +53,7 @@ export function applyMdxPreset(
   return async (environment = 'bundler') => {
     if (options.preset === 'minimal') return options;
 
-    const plugins = await import('fumadocs-core/mdx-plugins');
+    const plugins = await import('@hanzo/docs-core/mdx-plugins');
     const {
       valueToExport = [],
       rehypeCodeOptions,

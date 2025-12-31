@@ -1,1 +1,1 @@
-export * from '@hanzo/docs-ui/components/ui/tabs';
+export * from '@hanzo/docs-base-ui/components/ui/tabs';

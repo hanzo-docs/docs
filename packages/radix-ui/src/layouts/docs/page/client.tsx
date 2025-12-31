@@ -13,18 +13,18 @@ import {
 } from 'react';
 import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from '@hanzo/docs-core/link';
-import { cn } from '@fumadocs/ui/cn';
+import { cn } from '@hanzo/docs-ui/cn';
 import { useI18n } from '@/contexts/i18n';
 import { useTreeContext, useTreePath } from '@/contexts/tree';
 import type * as PageTree from '@hanzo/docs-core/page-tree';
 import { usePathname } from '@hanzo/docs-core/framework';
 import { type BreadcrumbOptions, getBreadcrumbItemsFromPath } from '@hanzo/docs-core/breadcrumb';
-import { isActive } from '@fumadocs/ui/urls';
+import { isActive } from '@hanzo/docs-ui/urls';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { useTOCItems } from '@/components/toc';
 import { useActiveAnchor } from '@hanzo/docs-core/toc';
 import { LayoutContext } from '../client';
-import { useFooterItems } from '@fumadocs/ui/hooks/use-footer-items';
+import { useFooterItems } from '@hanzo/docs-ui/hooks/use-footer-items';
 
 const TocPopoverContext = createContext<{
   open: boolean;
