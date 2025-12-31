@@ -1,6 +1,6 @@
 ---
 title: Vite
-description: Use Fumadocs MDX with Vite
+description: Use Hanzo Docs MDX with Vite
 ---
 
 ## Setup
@@ -61,9 +61,9 @@ export default defineConfig({
 
 > You might need to configure [`vite-tsconfig-paths`](https://github.com/aleclarson/vite-tsconfig-paths) plugin for path alias.
 
-### Integrate with Fumadocs
+### Integrate with Hanzo Docs
 
-To integrate with Fumadocs, make a `lib/source.ts` file:
+To integrate with Hanzo Docs, make a `lib/source.ts` file:
 
 ```ts title="app/lib/source.ts"
 import { docs } from '@hanzo/docs-mdx:collections/server';
@@ -71,7 +71,7 @@ import { loader } from '@hanzo/docs/core/source';
 
 export const source = loader({
   baseUrl: '/docs',
-  source: docs.toFumadocsSource(),
+  source: docs.toHanzo DocsSource(),
 });
 ```
 

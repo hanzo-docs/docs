@@ -6,7 +6,7 @@ description: Generate docs from Typescript definitions
 ## Usage
 
 ```package-install
-fumadocs-typescript
+hanzo-docs-typescript
 ```
 
 ### UI Integration
@@ -17,17 +17,17 @@ It comes with the `AutoTypeTable` component. Learn more about [Auto Type Table](
 
 You can use it as a remark plugin:
 
-```ts title="source.config.ts" tab="Fumadocs MDX"
+```ts title="source.config.ts" tab="Hanzo Docs MDX"
 import {
   remarkAutoTypeTable,
   createGenerator,
   createFileSystemGeneratorCache,
-} from 'fumadocs-typescript';
-import { defineConfig } from 'fumadocs-mdx/config';
+} from 'hanzo-docs-typescript';
+import { defineConfig } from 'hanzo-docs-mdx/config';
 
 const generator = createGenerator({
   // recommended: choose a directory for cache
-  cache: createFileSystemGeneratorCache('.next/fumadocs-typescript'),
+  cache: createFileSystemGeneratorCache('.next/hanzo-docs-typescript'),
 });
 
 export default defineConfig({
@@ -42,12 +42,12 @@ import {
   remarkAutoTypeTable,
   createGenerator,
   createFileSystemGeneratorCache,
-} from 'fumadocs-typescript';
+} from 'hanzo-docs-typescript';
 import { compile } from '@mdx-js/mdx';
 
 const generator = createGenerator({
   // recommended: choose a directory for cache
-  cache: createFileSystemGeneratorCache('.next/fumadocs-typescript'),
+  cache: createFileSystemGeneratorCache('.next/hanzo-docs-typescript'),
 });
 
 await compile('...', {
@@ -105,12 +105,12 @@ This will make the type of `time` property to be shown as `timestamp`.
 
 ### Full type
 
-You can specify the full name of a type with the `@fumadocsType` tsdoc tag.
+You can specify the full name of a type with the `@hanzo-docsType` tsdoc tag.
 
 ```ts
 interface MyInterface {
   /**
-   * @fumadocsType `MyBeautifulClient` // [!code highlight]
+   * @hanzo-docsType `MyBeautifulClient` // [!code highlight]
    */
   client: MyClient;
 }

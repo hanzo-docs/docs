@@ -15,7 +15,7 @@ export function MyComp() {
   return (
     <GithubInfo
       owner="fuma-nama"
-      repo="fumadocs"
+      repo="hanzo-docs"
       // your own GitHub access token (optional)
       token={process.env.GITHUB_TOKEN}
     />
@@ -38,7 +38,7 @@ function docsOptions(): DocsLayoutProps {
     links: [
       {
         type: 'custom',
-        children: <GithubInfo owner="fuma-nama" repo="fumadocs" className="lg:-mx-2" />,
+        children: <GithubInfo owner="fuma-nama" repo="hanzo-docs" className="lg:-mx-2" />,
       },
     ],
   };

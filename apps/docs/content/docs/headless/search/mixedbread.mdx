@@ -1,6 +1,6 @@
 ---
 title: Mixedbread
-description: Integrate Mixedbread Search with Fumadocs
+description: Integrate Mixedbread Search with Hanzo Docs
 ---
 
 ## Introduction
@@ -59,11 +59,11 @@ You can automatically sync your documentation by adding a sync script to your `p
 
 ### Search Client
 
-- **Fumadocs UI**: see [Search UI](/docs/search/mixedbread) for details.
+- **Hanzo Docs UI**: see [Search UI](/docs/search/mixedbread) for details.
 - **Search Client**:
 
   ```ts
-  import { useDocsSearch } from 'fumadocs-core/search/client';
+  import { useDocsSearch } from 'hanzo-docs-core/search/client';
 
   const mxbai = new Mixedbread({
     apiKey: 'YOUR_API_KEY',
@@ -84,7 +84,7 @@ To filter search results by tags, add a tag field to your document metadata:
 ```md
 ---
 title: Mixedbread
-description: Integrate Mixedbread Search with Fumadocs
+description: Integrate Mixedbread Search with Hanzo Docs
 url: /docs/headless/search/mixedbread
 // [!code ++]
 tag: docs
@@ -93,7 +93,7 @@ tag: docs
 
 And update your search client:
 
-- **Fumadocs UI**: Enable [Tag Filter](/docs/search/orama#tag-filter) on Search UI.
+- **Hanzo Docs UI**: Enable [Tag Filter](/docs/search/orama#tag-filter) on Search UI.
 - **Search Client**: You can add the tag filter like:
 
   ```ts

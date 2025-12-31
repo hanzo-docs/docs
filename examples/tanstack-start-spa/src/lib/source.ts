@@ -3,7 +3,7 @@ import * as icons from 'lucide-static';
 import { docs } from '@hanzo/docs/mdx:collections/server';
 
 export const source = loader({
-  source: docs.toFumadocsSource(),
+  source: docs.toHanzo DocsSource(),
   baseUrl: '/docs',
   icon(icon) {
     if (!icon) {

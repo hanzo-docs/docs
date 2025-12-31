@@ -4,7 +4,7 @@ This document provides detailed technical guidance for AI assistants working wit
 
 ## Overview
 
-The Hanzo Docs system is a multi-brand documentation framework based on [Fumadocs](https://fumadocs.dev). It supports three organizations:
+The Hanzo Docs system is a multi-brand documentation framework based on [Hanzo Docs](https://hanzo-docs.dev). It supports three organizations:
 
 | Brand | Organization | Repository | Domain |
 |-------|-------------|------------|--------|
@@ -24,10 +24,10 @@ The main documentation framework at `~/work/hanzo/docs` is a pnpm workspace mono
 │   └── docs/              # Main docs application
 ├── packages/
 │   ├── brand/             # Brand configuration (colors, themes)
-│   ├── core/              # fumadocs-core (source loading, search)
-│   ├── ui/                # fumadocs-ui (components, layouts)
-│   ├── mdx/               # fumadocs-mdx (MDX processing)
-│   ├── openapi/           # fumadocs-openapi (API docs)
+│   ├── core/              # hanzo-docs-core (source loading, search)
+│   ├── ui/                # hanzo-docs-ui (components, layouts)
+│   ├── mdx/               # hanzo-docs-mdx (MDX processing)
+│   ├── openapi/           # hanzo-docs-openapi (API docs)
 │   └── ...                # Other packages
 ├── examples/              # Example implementations
 └── scripts/
@@ -37,7 +37,7 @@ The main documentation framework at `~/work/hanzo/docs` is a pnpm workspace mono
 
 ### Standalone Sites (Lux & Zoo)
 
-Each standalone site uses the Fumadocs packages but has its own Next.js application:
+Each standalone site uses the Hanzo Docs packages but has its own Next.js application:
 
 ```
 ~/work/lux/docs/           # Lux Network documentation
@@ -51,7 +51,7 @@ Each standalone site uses the Fumadocs packages but has its own Next.js applicat
 **CRITICAL**: Must include `async: true` to enable `page.data.load()` method.
 
 ```typescript
-import { defineConfig, defineDocs, frontmatterSchema, metaSchema } from 'fumadocs-mdx/config';
+import { defineConfig, defineDocs, frontmatterSchema, metaSchema } from 'hanzo-docs-mdx/config';
 import { z } from 'zod';
 
 export const docs = defineDocs({
@@ -76,15 +76,15 @@ export default defineConfig({
 
 ### 2. Source Loader (`lib/source.ts`)
 
-**CRITICAL**: Must use `docs.toFumadocsSource()` for async loading.
+**CRITICAL**: Must use `docs.toHanzo DocsSource()` for async loading.
 
 ```typescript
 import { docs } from '@/.source';
-import { loader } from 'fumadocs-core/source';
+import { loader } from 'hanzo-docs-core/source';
 
 export const source = loader({
   baseUrl: '/docs',
-  source: docs.toFumadocsSource(),  // Converts async docs to proper source
+  source: docs.toHanzo DocsSource(),  // Converts async docs to proper source
 });
 ```
 
@@ -94,9 +94,9 @@ export const source = loader({
 
 ```tsx
 import { source } from '@/lib/source';
-import { DocsPage, DocsBody } from 'fumadocs-ui/page';
+import { DocsPage, DocsBody } from 'hanzo-docs-ui/page';
 import { notFound } from 'next/navigation';
-import defaultMdxComponents from 'fumadocs-ui/mdx';
+import defaultMdxComponents from 'hanzo-docs-ui/mdx';
 
 export default async function Page(props: { params: Promise<{ slug?: string[] }>; }) {
   const params = await props.params;
@@ -122,12 +122,12 @@ export default async function Page(props: { params: Promise<{ slug?: string[] }>
 
 ### 4. Root Layout (`app/layout.tsx`)
 
-**CRITICAL**: Use `RootProvider` from `fumadocs-ui/provider/next`, NOT from `/base`.
+**CRITICAL**: Use `RootProvider` from `hanzo-docs-ui/provider/next`, NOT from `/base`.
 
 ```tsx
 import './global.css';
 import type { ReactNode } from 'react';
-import { RootProvider } from 'fumadocs-ui/provider/next';  // CORRECT import
+import { RootProvider } from 'hanzo-docs-ui/provider/next';  // CORRECT import
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
@@ -145,7 +145,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 **CRITICAL**: Use `Record<string, any>` type to avoid import issues.
 
 ```typescript
-import defaultMdxComponents from 'fumadocs-ui/mdx';
+import defaultMdxComponents from 'hanzo-docs-ui/mdx';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function useMDXComponents(components: Record<string, any>): Record<string, any> {
@@ -225,12 +225,12 @@ Each brand has its own icon component in the docs layout:
 **Fix**: Use `const { body: Mdx, toc } = await page.data.load()` pattern.
 
 ### Issue: "Property 'load' does not exist on type 'PageData'"
-**Cause**: Missing `async: true` in source.config.ts or not using `toFumadocsSource()`.
-**Fix**: Add `async: true` to docs config and use `docs.toFumadocsSource()` in source loader.
+**Cause**: Missing `async: true` in source.config.ts or not using `toHanzo DocsSource()`.
+**Fix**: Add `async: true` to docs config and use `docs.toHanzo DocsSource()` in source loader.
 
 ### Issue: "FrameworkProvider errors"
 **Cause**: Using wrong provider import.
-**Fix**: Use `RootProvider` from `fumadocs-ui/provider/next` only.
+**Fix**: Use `RootProvider` from `hanzo-docs-ui/provider/next` only.
 
 ### Issue: "Cannot find module 'mdx/types'"
 **Cause**: Type import path changed.
@@ -276,9 +276,9 @@ docs/
 ```json
 {
   "dependencies": {
-    "fumadocs-core": "^16.4.0",
-    "fumadocs-mdx": "^12.5.2",
-    "fumadocs-ui": "^16.4.0",
+    "hanzo-docs-core": "^16.4.0",
+    "hanzo-docs-mdx": "^12.5.2",
+    "hanzo-docs-ui": "^16.4.0",
     "next": "^15.3.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
@@ -294,9 +294,9 @@ docs/
 
 ## Integration Notes
 
-### Fumadocs Version Compatibility
+### Hanzo Docs Version Compatibility
 
-This system uses Fumadocs v16+ which requires:
+This system uses Hanzo Docs v16+ which requires:
 - Next.js 15+ with App Router
 - React 19+
 - Tailwind CSS 4+
@@ -318,7 +318,7 @@ Each site uses `@/` prefix for imports:
 
 ## Related Documentation
 
-- [Fumadocs Documentation](https://fumadocs.dev)
+- [Hanzo Docs Documentation](https://hanzo-docs.dev)
 - [Hanzo AI Infrastructure](https://hanzo.ai)
 - [Lux Network](https://lux.network)
 - [Zoo Labs Foundation](https://zoo.ngo)

@@ -107,7 +107,7 @@ export function accordion(): ReactNode {
   return (
     <Wrapper>
       <Accordions type="single" collapsible>
-        <Accordion id="what-is-fumadocs" title="What is Fumadocs?">
+        <Accordion id="what-is-hanzo-docs" title="What is Hanzo Docs?">
           A framework for building documentations
         </Accordion>
         <Accordion id="ux" title="What do we love?">
@@ -205,7 +205,7 @@ export function banner(): ReactNode {
     <Wrapper>
       <div className="flex flex-col gap-4">
         <Banner className="z-0" changeLayout={false}>
-          Be careful, Fumadocs v99 has released
+          Be careful, Hanzo Docs v99 has released
         </Banner>
 
         <Banner id="test-rainbow" className="z-0" variant="rainbow" changeLayout={false}>

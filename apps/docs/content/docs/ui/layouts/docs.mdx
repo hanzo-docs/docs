@@ -57,7 +57,7 @@ import { DocsLayout } from '@hanzo/docs/ui/layouts/docs';
 You can replace certain components for rendering page tree.
 
 ```tsx tab="layout.tsx"
-import { DocsLayout } from 'fumadocs-ui/layouts/docs';
+import { DocsLayout } from 'hanzo-docs-ui/layouts/docs';
 import { SidebarSeparator } from './layout.client';
 
 <DocsLayout
@@ -72,7 +72,7 @@ import { SidebarSeparator } from './layout.client';
 
 ```tsx tab="layout.client.tsx"
 'use client';
-import * as Base from 'fumadocs-ui/components/sidebar/base';
+import * as Base from 'hanzo-docs-ui/components/sidebar/base';
 
 export function SidebarSeparator({ className, style, children, ...props }: ComponentProps<'p'>) {
   const depth = Base.useFolderDepth();
@@ -111,7 +111,7 @@ import { DocsLayout } from '@hanzo/docs/ui/layouts/docs';
 
 ### The Layout System
 
-Handling layout is challenging, Fumadocs UI needed an approach that is:
+Handling layout is challenging, Hanzo Docs UI needed an approach that is:
 
 - **Composable:** Layout components should manage their position and size effortlessly, ideally in place.
 - **Flexible:** The system should avoid reliance on fixed values or heights, enabling seamless integration of external components, such as AI chat interfaces.
@@ -119,7 +119,7 @@ Handling layout is challenging, Fumadocs UI needed an approach that is:
 - **Predictable:** Layout properties should remain centralized, allowing the final result to be readily anticipated from the source code.
 - **Compatible:** The solution should work on older browsers by leveraging only Baseline Widly Available CSS features.
 
-Fumadocs UI does this with a grid system:
+Hanzo Docs UI does this with a grid system:
 
 ```css
 #nd-docs-layout {

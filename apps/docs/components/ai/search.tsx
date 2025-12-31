@@ -236,7 +236,7 @@ function Input(props: ComponentProps<'textarea'>) {
 
 const roleName: Record<string, string> = {
   user: 'you',
-  assistant: 'fumadocs',
+  assistant: 'hanzo-docs',
 };
 
 function Message({ message, ...props }: { message: UIMessage } & ComponentProps<'div'>) {

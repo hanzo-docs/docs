@@ -55,7 +55,7 @@ export function createBrowserFetcher(
           return {
             status: 400,
             type: 'text',
-            data: `[Fumadocs] No adapter for ${options.bodyMediaType}, you need to specify one from 'createOpenAPI()'.`,
+            data: `[Hanzo Docs] No adapter for ${options.bodyMediaType}, you need to specify one from 'createOpenAPI()'.`,
           };
 
         body = adapter.encode(options as { body: unknown });

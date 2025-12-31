@@ -22,6 +22,6 @@ export const pageSchema = z.object({
   icon: z.string().optional(),
   full: z.boolean().optional(),
 
-  // Fumadocs OpenAPI generated
+  // Hanzo Docs OpenAPI generated
   _openapi: z.looseObject({}).optional(),
 });

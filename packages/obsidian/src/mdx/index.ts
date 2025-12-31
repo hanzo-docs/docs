@@ -11,7 +11,7 @@ export interface RemarkObsidianOptions {
 }
 
 /**
- * [Experimental] One remark plugin to use Obsidian-style Markdown with Fumadocs
+ * [Experimental] One remark plugin to use Obsidian-style Markdown with Hanzo Docs
  */
 export function remarkObsidian(this: Processor, options: RemarkObsidianOptions) {
   const { files } = options;

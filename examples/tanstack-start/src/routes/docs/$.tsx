@@ -6,7 +6,7 @@ import browserCollections from '@hanzo/docs-mdx:collections/browser';
 import { DocsBody, DocsDescription, DocsPage, DocsTitle } from '@hanzo/docs-ui/layouts/docs/page';
 import defaultMdxComponents from '@hanzo/docs-ui/mdx';
 import { baseOptions } from '@/lib/layout.shared';
-import { useFumadocsLoader } from '@hanzo/docs/core/source/client';
+import { useHanzo DocsLoader } from '@hanzo/docs/core/source/client';
 
 export const Route = createFileRoute('/docs/$')({
   component: Page,
@@ -52,7 +52,7 @@ const clientLoader = browserCollections.docs.createClientLoader({
 
 function Page() {
   const data = Route.useLoaderData();
-  const { pageTree } = useFumadocsLoader(data);
+  const { pageTree } = useHanzo DocsLoader(data);
   const Content = clientLoader.getComponent(data.path);
 
   return (

@@ -88,7 +88,7 @@ export function hastToJsx(hast: Root, options?: Partial<ToJsxOptions>) {
 }
 
 /**
- * Get Shiki highlighter instance of Fumadocs (mostly for internal use, you should use Shiki directly over this).
+ * Get Shiki highlighter instance of Hanzo Docs (mostly for internal use, you should use Shiki directly over this).
  *
  * @param engineType - Shiki Regex engine to use.
  * @param options - Shiki options.

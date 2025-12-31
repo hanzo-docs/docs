@@ -1,3 +1,3 @@
-# Fumadocs Content Collections
+# @hanzo/docs-content-collections
 
-The Content Collections adapter for Fumadocs.
+The Content Collections adapter for Hanzo Docs.
