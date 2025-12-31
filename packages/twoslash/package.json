@@ -1,16 +1,16 @@
 {
   "name": "@hanzo/docs-twoslash",
-  "version": "3.1.10",
+  "version": "3.1.11",
   "description": "Typescript Twoslash Integration for Hanzo Docs",
   "keywords": [
     "Docs",
     "NextJs",
-    "fumadocs"
+    "hanzo-docs"
   ],
-  "homepage": "https://fumadocs.dev",
+  "homepage": "https://hanzo.ai/docs",
   "license": "MIT",
   "author": "Fuma Nama",
-  "repository": "github:fuma-nama/fumadocs",
+  "repository": "github:hanzoai/docs",
   "files": [
     "dist/*",
     "styles/*"

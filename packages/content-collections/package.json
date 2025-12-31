@@ -1,16 +1,16 @@
 {
   "name": "@hanzo/docs-content-collections",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "The Content Collections adapter for Hanzo Docs",
   "keywords": [
     "Content Collections",
     "Docs",
     "NextJs"
   ],
-  "homepage": "https://fumadocs.dev",
+  "homepage": "https://hanzo.ai/docs",
   "license": "MIT",
   "author": "Fuma Nama",
-  "repository": "github:fuma-nama/fumadocs",
+  "repository": "github:hanzoai/docs",
   "files": [
     "dist/*"
   ],

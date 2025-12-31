@@ -7,7 +7,7 @@
     "dev": "vite dev",
     "build": "vite build",
     "start": "serve dist/client",
-    "types:check": "fumadocs-mdx && tsc --noEmit"
+    "types:check": "hanzo-docs-mdx && tsc --noEmit"
   },
   "dependencies": {
     "@orama/orama": "^3.1.18",

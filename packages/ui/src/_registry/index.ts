@@ -95,7 +95,7 @@ export function resolveForwardedAPIs(
 }
 
 export const registry: Registry = {
-  name: 'fumadocs/ui',
+  name: 'hanzo-docs/ui',
   dir: srcDir,
   tsconfigPath: '../tsconfig.json',
   packageJson: '../package.json',

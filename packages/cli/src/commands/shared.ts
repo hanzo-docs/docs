@@ -1,4 +1,4 @@
 export const UIRegistries = {
-  'base-ui': 'fumadocs/base-ui',
-  'radix-ui': 'fumadocs/radix-ui',
+  'base-ui': 'hanzo-docs/base-ui',
+  'radix-ui': 'hanzo-docs/radix-ui',
 };
