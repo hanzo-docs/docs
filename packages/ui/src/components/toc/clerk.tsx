@@ -1,9 +1,9 @@
 'use client';
 import * as Primitive from '@hanzo/docs-core/toc';
 import { type ComponentProps, useEffect, useRef, useState } from 'react';
-import { cn } from '@/utils/cn';
-import { useTOCItems, TocThumb } from '.';
-import { mergeRefs } from '@/utils/merge-refs';
+import { cn } from '@/cn';
+import { TocThumb, useTOCItems } from '.';
+import { mergeRefs } from '@/merge-refs';
 import { useI18n } from '@/contexts/i18n';
 
 export function TOCItems({ ref, className, ...props }: ComponentProps<'div'>) {
@@ -35,10 +35,7 @@ export function TOCItems({ ref, className, ...props }: ComponentProps<'div'>) {
         const styles = getComputedStyle(element);
         const offset = getLineOffset(items[i].depth) + 1,
           top = element.offsetTop + parseFloat(styles.paddingTop),
-          bottom =
-            element.offsetTop +
-            element.clientHeight -
-            parseFloat(styles.paddingBottom);
+          bottom = element.offsetTop + element.clientHeight - parseFloat(styles.paddingBottom);
 
         w = Math.max(offset, w);
         h = Math.max(h, bottom);
@@ -88,15 +85,11 @@ export function TOCItems({ ref, className, ...props }: ComponentProps<'div'>) {
         >
           <TocThumb
             containerRef={containerRef}
-            className="mt-(--fd-top) h-(--fd-height) bg-fd-primary transition-all"
+            className="absolute w-full top-(--fd-top) h-(--fd-height) bg-fd-primary transition-[top,height] duration-250"
           />
         </div>
       )}
-      <div
-        ref={mergeRefs(containerRef, ref)}
-        className={cn('flex flex-col', className)}
-        {...props}
-      >
+      <div ref={mergeRefs(containerRef, ref)} className={cn('flex flex-col', className)} {...props}>
         {items.map((item, i) => (
           <TOCItem
             key={item.url}

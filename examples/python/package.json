@@ -11,12 +11,11 @@
     "types:check": "hanzo-docs && tsc --noEmit"
   },
   "dependencies": {
-    "@hanzo/docs": "workspace:*",
-    "@hanzo/docs-core": "workspace:*",
-    "@hanzo/docs-python": "workspace:*",
-    "@hanzo/docs-ui": "workspace:*",
-    "@hanzo/mdx": "^14.2.4",
-    "next": "16.0.10",
+    "fumadocs-core": "workspace:*",
+    "fumadocs-mdx": "workspace:*",
+    "fumadocs-python": "workspace:*",
+    "fumadocs-ui": "workspace:*",
+    "next": "16.1.1",
     "react": "^19.2.3",
     "react-dom": "^19.2.3"
   },

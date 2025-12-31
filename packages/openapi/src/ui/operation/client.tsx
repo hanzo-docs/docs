@@ -1,17 +1,10 @@
 'use client';
 
-import { useCopyButton } from '@hanzo/docs-ui/utils/use-copy-button';
-import { buttonVariants } from '@hanzo/docs-ui/components/ui/button';
-import { cn } from '@hanzo/docs-ui/utils/cn';
+import { useCopyButton } from 'fumadocs-ui/utils/use-copy-button';
+import { buttonVariants } from 'fumadocs-ui/components/ui/button';
+import { cn } from '@/utils/cn';
 import { Check, Copy } from 'lucide-react';
-import {
-  type ComponentProps,
-  createContext,
-  type ReactNode,
-  use,
-  useMemo,
-  useState,
-} from 'react';
+import { type ComponentProps, createContext, type ReactNode, use, useMemo, useState } from 'react';
 import {
   Select,
   SelectContent,
@@ -43,11 +36,7 @@ export function CopyResponseTypeScript({ code }: { code: string }) {
           }),
         )}
       >
-        {isChecked ? (
-          <Check className="size-3.5" />
-        ) : (
-          <Copy className="size-3.5" />
-        )}
+        {isChecked ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
         Copy
       </button>
     </div>
@@ -68,11 +57,7 @@ export function SelectTabs({
 }) {
   const [type, setType] = useState<string | null>(defaultValue ?? null);
 
-  return (
-    <Context value={useMemo(() => ({ type, setType }), [type])}>
-      {children}
-    </Context>
-  );
+  return <Context value={useMemo(() => ({ type, setType }), [type])}>{children}</Context>;
 }
 
 export function SelectTab({
@@ -101,10 +86,7 @@ export function SelectTabTrigger({
 
   return (
     <Select value={type ?? ''} onValueChange={setType}>
-      <SelectTrigger
-        className={cn('not-prose w-fit min-w-0 *:min-w-0', className)}
-        {...props}
-      >
+      <SelectTrigger className={cn('not-prose w-fit min-w-0 *:min-w-0', className)} {...props}>
         <SelectValue />
       </SelectTrigger>
       <SelectContent>

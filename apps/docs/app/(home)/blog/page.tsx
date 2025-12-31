@@ -40,18 +40,14 @@ export default function Page() {
         </p>
       </div>
       <div className="grid grid-cols-1 gap-2 md:grid-cols-3 xl:grid-cols-4">
-        {posts.map((post) => {
-          const data = post.data as unknown as BlogData;
-          return (
-            <Link
-              key={post.url}
-              href={post.url}
-              className="flex flex-col bg-fd-card rounded-2xl border shadow-sm p-4 transition-colors hover:bg-fd-accent hover:text-fd-accent-foreground"
-            >
-              <p className="font-medium">{data.title}</p>
-              <p className="text-sm text-fd-muted-foreground">
-                {data.description}
-              </p>
+        {posts.map((post) => (
+          <Link
+            key={post.url}
+            href={post.url}
+            className="flex flex-col bg-fd-card rounded-2xl border shadow-sm p-4 transition-colors hover:bg-fd-accent hover:text-fd-accent-foreground"
+          >
+            <p className="font-medium">{post.data.title}</p>
+            <p className="text-sm text-fd-muted-foreground">{post.data.description}</p>
 
               <p className="mt-auto pt-4 text-xs text-brand">
                 {new Date(data.date ?? getName(post.path)).toDateString()}
