@@ -1,4 +1,4 @@
-import { defineConfig, defineDocs, frontmatterSchema } from 'fumadocs-mdx/config';
+import { defineConfig, defineDocs, frontmatterSchema } from '@hanzo/docs-mdx/config';
 import { remarkObsidian, RemarkObsidianOptions } from 'fumadocs-obsidian/mdx';
 import { readVaultFiles } from 'fumadocs-obsidian';
 

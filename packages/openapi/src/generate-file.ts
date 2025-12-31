@@ -3,7 +3,7 @@ import * as path from 'node:path';
 import { generateDocument, type PagesToTextOptions, toText } from './utils/pages/to-text';
 import type { ProcessedDocument } from '@/utils/process-document';
 import type { OpenAPIServer } from '@/server';
-import { createGetUrl, getSlugs } from 'fumadocs-core/source';
+import { createGetUrl, getSlugs } from '@hanzo/docs-core/source';
 import { createAutoPreset, type SchemaToPagesOptions } from '@/utils/pages/preset-auto';
 import { fromSchema, type OutputEntry } from '@/utils/pages/builder';
 
