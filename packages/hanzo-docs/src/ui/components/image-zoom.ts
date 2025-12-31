@@ -1,1 +1,1 @@
-export * from '@hanzo/docs-ui/components/image-zoom';
+export * from '@hanzo/docs-base-ui/components/image-zoom';

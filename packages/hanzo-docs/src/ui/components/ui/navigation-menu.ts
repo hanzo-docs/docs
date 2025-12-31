@@ -1,1 +1,1 @@
-export * from '@hanzo/docs-ui/components/ui/navigation-menu';
+export * from '@hanzo/docs-base-ui/components/ui/navigation-menu';
