@@ -12,8 +12,8 @@ import {
   useRef,
   useState,
 } from 'react';
-import Link, { type LinkProps } from 'fumadocs-core/link';
-import { useOnChange } from 'fumadocs-core/utils/use-on-change';
+import Link, { type LinkProps } from '@hanzo/docs-core/link';
+import { useOnChange } from '@hanzo/docs-core/utils/use-on-change';
 import { cn } from '@fumadocs/ui/cn';
 import { ScrollArea, type ScrollAreaProps, ScrollViewport } from '@/components/ui/scroll-area';
 import { isActive } from '@fumadocs/ui/urls';
