@@ -1125,9 +1125,9 @@ importers:
       '@hanzo/docs-ui':
         specifier: workspace:*
         version: link:../../packages/ui
-      '@hanzo/mdx-remote':
+      '@hanzo/mdx-runtime':
         specifier: workspace:*
-        version: link:../../packages/mdx-remote
+        version: link:../../packages/mdx-runtime
       next:
         specifier: 16.0.10
         version: 16.0.10(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -1854,9 +1854,9 @@ importers:
       '@hanzo/mdx':
         specifier: ^14.2.4
         version: 14.2.4(next@16.0.10(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))
-      '@hanzo/mdx-remote':
+      '@hanzo/mdx-runtime':
         specifier: workspace:*
-        version: link:../mdx-remote
+        version: link:../mdx-runtime
       next:
         specifier: ^15.0.0 || ^16.0.0
         version: 16.0.10(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -1874,7 +1874,7 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
 
-  packages/mdx-remote:
+  packages/mdx-runtime:
     dependencies:
       '@mdx-js/mdx':
         specifier: ^3.1.1
@@ -14920,6 +14920,7 @@ snapshots:
   '@types/node@24.10.4':
     dependencies:
       undici-types: 7.16.0
+    optional: true
 
   '@types/openapi-sampler@1.0.3': {}
 
@@ -17870,7 +17871,7 @@ snapshots:
 
   jest-worker@27.5.1:
     dependencies:
-      '@types/node': 24.10.4
+      '@types/node': 24.10.2
       merge-stream: 2.0.0
       supports-color: 8.1.1
 

@@ -124,7 +124,7 @@
     "@hanzo/docs-typescript": "workspace:*",
     "@hanzo/docs-ui": "workspace:*",
     "@hanzo/mdx": "^14.2.4",
-    "@hanzo/mdx-remote": "workspace:*"
+    "@hanzo/mdx-runtime": "workspace:*"
   },
   "devDependencies": {
     "tsup": "^8.5.1",
