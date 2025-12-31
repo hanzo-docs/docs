@@ -1,1 +1,1 @@
-export * from '@hanzo/docs-ui/provider/react-router';
+export * from '@hanzo/docs-base-ui/provider/react-router';

@@ -1,6 +1,6 @@
 'use client';
 import Link, { type LinkProps } from '@hanzo/docs-core/link';
-import { cn } from '@fumadocs/ui/cn';
+import { cn } from '@hanzo/docs-ui/cn';
 import {
   NavigationMenuContent,
   type NavigationMenuContentProps,

@@ -32,6 +32,7 @@ export default defineConfig({
   external: [
     '@hanzo/docs-core',
     '@hanzo/docs-ui',
+    '@hanzo/docs-base-ui',
     '@hanzo/docs-mdx',
     '@hanzo/docs-openapi',
     '@hanzo/docs-twoslash',

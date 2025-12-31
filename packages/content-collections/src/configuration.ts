@@ -81,7 +81,7 @@ export async function transformMDX<D extends BaseDoc>(
 
   return context.cache(
     {
-      type: 'fumadocs',
+      type: 'hanzo-docs',
       document,
     },
     async () => {

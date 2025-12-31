@@ -1,13 +1,13 @@
 'use client';
 
 import { type ComponentProps, createContext, type ReactNode, use, useMemo } from 'react';
-import { cn } from '@fumadocs/ui/cn';
+import { cn } from '@hanzo/docs-ui/cn';
 import { useSidebar } from '@/components/sidebar/base';
 import { usePathname } from '@hanzo/docs-core/framework';
 import { isTabActive } from '@/components/sidebar/tabs/dropdown';
 import Link from '@hanzo/docs-core/link';
 import type { SidebarTab } from '@/components/sidebar/tabs';
-import { useIsScrollTop } from '@fumadocs/ui/hooks/use-is-scroll-top';
+import { useIsScrollTop } from '@hanzo/docs-ui/hooks/use-is-scroll-top';
 
 export const LayoutContext = createContext<{
   isNavTransparent: boolean;

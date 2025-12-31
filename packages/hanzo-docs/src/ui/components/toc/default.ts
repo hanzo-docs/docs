@@ -1,1 +1,1 @@
-export * from '@hanzo/docs-ui/components/toc/default';
+export * from '@hanzo/docs-base-ui/components/toc/default';
