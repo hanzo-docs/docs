@@ -78,7 +78,7 @@
     "./mdx/*": "./dist/mdx/*.js",
     "./mdx/runtime/*": "./dist/mdx/runtime/*.js",
     "./mdx/plugins/*": "./dist/mdx/plugins/*.js",
-    "./mdx:collections/*": "@hanzo/mdx:collections/*",
+    "./mdx:collections/*": "@hanzo/docs-mdx:collections/*",
     "./cli/build": "./dist/cli/build.js",
     "./mdx-remote": "./dist/mdx-remote/index.js",
     "./mdx-remote/*": "./dist/mdx-remote/*.js",
@@ -123,7 +123,7 @@
     "@hanzo/docs-twoslash": "workspace:*",
     "@hanzo/docs-typescript": "workspace:*",
     "@hanzo/docs-ui": "workspace:*",
-    "@hanzo/mdx": "^14.2.4",
+    "@hanzo/docs-mdx": "workspace:*",
     "@hanzo/mdx-runtime": "workspace:*"
   },
   "devDependencies": {

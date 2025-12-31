@@ -6,9 +6,9 @@ import type { TypeTable } from '@hanzo/docs/ui/components/type-table';
 import type { Card } from '@hanzo/docs/ui/components/card';
 import type { DocsLayoutProps } from '@hanzo/docs/ui/layouts/docs';
 import type { ComponentProps, ComponentPropsWithoutRef } from 'react';
-import type { DocsPageProps } from 'fumadocs-ui/layouts/docs/page';
-import type { AutoTypeTable } from 'fumadocs-typescript/ui';
-import type { RootProviderProps } from 'fumadocs-ui/provider/base';
+import type { DocsPageProps } from '@hanzo/docs-ui/layouts/docs/page';
+import type { AutoTypeTable } from '@hanzo/docs-typescript/ui';
+import type { RootProviderProps } from '@hanzo/docs-ui/provider/base';
 
 export type AccordionsProps = Omit<
   ComponentPropsWithoutRef<typeof Accordions>,

@@ -63,7 +63,7 @@
     "@types/node": "24.10.2",
     "@types/react": "^19.2.7",
     "eslint-config-custom": "workspace:*",
-    "fumadocs-core": "workspace:*",
+    "@hanzo/docs-core": "workspace:*",
     "mdast-util-mdx-jsx": "^3.2.0",
     "tsconfig": "workspace:*",
     "tsdown": "^0.18.3",
@@ -72,7 +72,7 @@
   },
   "peerDependencies": {
     "@types/react": "*",
-    "fumadocs-core": "^15.0.0 || ^16.0.0"
+    "@hanzo/docs-core": "^15.0.0 || ^16.0.0"
   },
   "peerDependenciesMeta": {
     "@types/react": {

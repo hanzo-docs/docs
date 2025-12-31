@@ -15,7 +15,7 @@
   "dependencies": {
     "@ai-sdk/openai-compatible": "^2.0.0",
     "@ai-sdk/react": "^3.0.1",
-    "@fumadocs/mdx-remote": "workspace:*",
+    "@hanzo/mdx-runtime": "workspace:*",
     "@mixedbread/sdk": "^0.46.0",
     "@orama/core": "^1.2.15",
     "@orama/orama": "^3.1.18",
@@ -59,7 +59,7 @@
     "zod": "^4.2.1"
   },
   "devDependencies": {
-    "@fumadocs/cli": "workspace:*",
+    "@hanzo/docs-cli": "workspace:*",
     "@next/bundle-analyzer": "16.1.1",
     "@next/env": "16.1.1",
     "@next/eslint-plugin-next": "16.1.1",

@@ -16,7 +16,7 @@ import { buttonVariants } from '@/components/ui/button';
 import { Languages, Sidebar as SidebarIcon, X } from 'lucide-react';
 import { LanguageToggle } from '@/layouts/shared/language-toggle';
 import { ThemeToggle } from '@/layouts/shared/theme-toggle';
-import type * as PageTree from 'fumadocs-core/page-tree';
+import type * as PageTree from '@hanzo/docs-core/page-tree';
 import {
   LayoutBody,
   LayoutContextProvider,

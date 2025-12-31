@@ -17,7 +17,7 @@ import {
 import { I18nLabel, useI18n } from '@/contexts/i18n';
 import { cn } from '@fumadocs/ui/cn';
 import { Dialog, DialogContent, DialogOverlay, DialogTitle } from '@radix-ui/react-dialog';
-import type { HighlightedText, ReactSortedResult as BaseResultType } from 'fumadocs-core/search';
+import type { HighlightedText, ReactSortedResult as BaseResultType } from '@hanzo/docs-core/search';
 import { cva } from 'class-variance-authority';
 import { useRouter } from '@hanzo/docs-core/framework';
 import type { SharedProps } from '@/contexts/search';

@@ -10,7 +10,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from 'fumadocs-ui/components/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@hanzo/docs-ui/components/tabs';
 import type { SchemaData, SchemaUIGeneratedData } from '@/ui/schema';
 import {
   Collapsible,
@@ -20,7 +20,7 @@ import {
 import { buttonVariants } from '@hanzo/docs-ui/components/ui/button';
 import { ChevronDown } from 'lucide-react';
 import { Badge } from '@/ui/components/method-label';
-import { Popover, PopoverContent, PopoverTrigger } from 'fumadocs-ui/components/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@hanzo/docs-ui/components/ui/popover';
 import { cn } from '@/utils/cn';
 import { cva } from 'class-variance-authority';
 

@@ -14,8 +14,8 @@ import {
 } from 'react';
 import { useSidebar } from '@/components/sidebar/base';
 import { ChevronDown } from 'lucide-react';
-import Link from 'fumadocs-core/link';
-import { usePathname } from 'fumadocs-core/framework';
+import Link from '@hanzo/docs-core/link';
+import { usePathname } from '@hanzo/docs-core/framework';
 import { isTabActive, type SidebarTabWithProps } from '@/components/sidebar/tabs/dropdown';
 import { useIsScrollTop } from '@fumadocs/ui/hooks/use-is-scroll-top';
 import { LinkItem, type LinkItemType, type MenuItemType } from '@fumadocs/ui/link-item';

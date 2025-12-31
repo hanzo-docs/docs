@@ -8,9 +8,9 @@
     "start": "next start"
   },
   "dependencies": {
-    "@fumadocs/mdx-remote": "workspace:*",
-    "fumadocs-core": "workspace:*",
-    "fumadocs-ui": "workspace:*",
+    "@hanzo/mdx-runtime": "workspace:*",
+    "@hanzo/docs-core": "workspace:*",
+    "@hanzo/docs-ui": "workspace:*",
     "next": "16.1.1",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",

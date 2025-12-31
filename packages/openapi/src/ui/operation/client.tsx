@@ -1,7 +1,7 @@
 'use client';
 
-import { useCopyButton } from 'fumadocs-ui/utils/use-copy-button';
-import { buttonVariants } from 'fumadocs-ui/components/ui/button';
+import { useCopyButton } from '@hanzo/docs-ui/utils/use-copy-button';
+import { buttonVariants } from '@hanzo/docs-ui/components/ui/button';
 import { cn } from '@/utils/cn';
 import { Check, Copy } from 'lucide-react';
 import { type ComponentProps, createContext, type ReactNode, use, useMemo, useState } from 'react';

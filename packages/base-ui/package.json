@@ -1,5 +1,5 @@
 {
-  "name": "@fumadocs/base-ui",
+  "name": "@hanzo/docs-base-ui",
   "version": "16.4.1",
   "description": "The Base UI version of Fumadocs UI",
   "keywords": [
@@ -96,16 +96,16 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.0.0",
-    "@fumadocs/ui": "workspace:*",
+    "@hanzo/docs-ui": "workspace:*",
     "class-variance-authority": "^0.7.1",
-    "fumadocs-core": "workspace:*",
+    "@hanzo/docs-core": "workspace:*",
     "lucide-react": "^0.562.0",
     "next-themes": "^0.4.6",
     "react-medium-image-zoom": "^5.4.0",
     "scroll-into-view-if-needed": "^3.1.0"
   },
   "devDependencies": {
-    "@fumadocs/cli": "workspace:*",
+    "@hanzo/docs-cli": "workspace:*",
     "@tailwindcss/cli": "^4.1.18",
     "@types/node": "^24.10.2",
     "@types/react": "^19.2.7",

@@ -1,9 +1,9 @@
 'use client';
-import type * as PageTree from 'fumadocs-core/page-tree';
+import type * as PageTree from '@hanzo/docs-core/page-tree';
 import { type ComponentProps, createContext, type ReactNode, use, useMemo, useState } from 'react';
 import { cn } from '@/cn';
 import { TreeContextProvider, useTreeContext } from '@/contexts/tree';
-import Link from 'fumadocs-core/link';
+import Link from '@hanzo/docs-core/link';
 import { useSearchContext } from '@/contexts/search';
 import { cva } from 'class-variance-authority';
 import { usePathname } from '@hanzo/docs-core/framework';

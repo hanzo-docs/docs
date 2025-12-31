@@ -1,1 +1,1 @@
-export * from '@hanzo/mdx';
+export * from '@hanzo/docs-mdx';
