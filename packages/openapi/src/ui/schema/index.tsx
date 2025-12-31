@@ -80,12 +80,7 @@ export function Schema({
     return ctx.schemaUI.render(options, ctx);
   }
 
-  return (
-    <SchemaUILazy
-      {...options.client}
-      generated={generateSchemaUI(options, ctx)}
-    />
-  );
+  return <SchemaUILazy {...options.client} generated={generateSchemaUI(options, ctx)} />;
 }
 
 export function generateSchemaUI(
@@ -132,13 +127,7 @@ export function generateSchemaUI(
     );
     if (range) fields.push(field('Range', range));
 
-    range = formatRange(
-      'length',
-      schema.minLength,
-      undefined,
-      schema.maxLength,
-      undefined,
-    );
+    range = formatRange('length', schema.minLength, undefined, schema.maxLength, undefined);
     if (range) fields.push(field('Length', range));
 
     range = formatRange(
@@ -150,22 +139,11 @@ export function generateSchemaUI(
     );
     if (range) fields.push(field('Properties', range));
 
-    range = formatRange(
-      'items',
-      schema.minItems,
-      undefined,
-      schema.maxItems,
-      undefined,
-    );
+    range = formatRange('items', schema.minItems, undefined, schema.maxItems, undefined);
     if (range) fields.push(field('Items', range));
 
     if (schema.enum) {
-      fields.push(
-        field(
-          'Value in',
-          schema.enum.map((value) => JSON.stringify(value)).join(' | '),
-        ),
-      );
+      fields.push(field('Value in', schema.enum.map((value) => JSON.stringify(value)).join(' | ')));
     }
 
     if (showExample && schema.examples) {
@@ -256,27 +234,15 @@ export function generateSchemaUI(
         ...base(schema),
       };
       refs[id] = out;
+      for (const omit of ['anyOf', 'oneOf'] as const) {
+        const $type = `${id}_omit:${omit}`;
+        scanRefs($type, { ...schema, [omit]: undefined });
 
-      const $oneOf = `${id}_oneOf`;
-      const $anyOf = `${id}_anyOf`;
-      scanRefs($oneOf, {
-        ...schema,
-        anyOf: undefined,
-      });
-      scanRefs($anyOf, {
-        ...schema,
-        oneOf: undefined,
-      });
-      out.items.push(
-        {
-          name: refs[$oneOf].aliasName,
-          $type: $oneOf,
-        },
-        {
-          name: refs[$anyOf].aliasName,
-          $type: $anyOf,
-        },
-      );
+        out.items.push({
+          name: refs[$type].aliasName,
+          $type,
+        });
+      }
       return;
     }
 
@@ -292,7 +258,9 @@ export function generateSchemaUI(
 
       for (const item of union) {
         if (typeof item !== 'object' || !isVisible(item)) continue;
-        const key = `${id}_extends:${getSchemaId(item)}`;
+        const itemId = getSchemaId(item);
+        const key = `${id}_extends:${itemId}`;
+
         scanRefs(key, {
           ...schema,
           oneOf: undefined,
@@ -305,7 +273,7 @@ export function generateSchemaUI(
         });
         out.items.push({
           $type: key,
-          name: refs[key].aliasName,
+          name: refs[itemId]?.aliasName ?? schemaToString(item, ctx.schema, FormatFlags.UseAlias),
         });
       }
       return;
@@ -324,11 +292,7 @@ export function generateSchemaUI(
       };
       refs[id] = out;
 
-      const {
-        properties = {},
-        patternProperties,
-        additionalProperties,
-      } = schema;
+      const { properties = {}, patternProperties, additionalProperties } = schema;
       const props = Object.entries(properties);
       if (patternProperties) props.push(...Object.entries(patternProperties));
 
@@ -343,10 +307,7 @@ export function generateSchemaUI(
         });
       }
 
-      if (
-        additionalProperties !== undefined &&
-        isVisible(additionalProperties)
-      ) {
+      if (additionalProperties !== undefined && isVisible(additionalProperties)) {
         const $type = getSchemaId(additionalProperties);
         scanRefs($type, additionalProperties);
 

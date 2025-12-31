@@ -9,12 +9,8 @@ export const InlineTOC = dynamic(() =>
   import('@hanzo/docs/ui/components/inline-toc').then((res) => res.InlineTOC),
 );
 
-export const File = dynamic(() =>
-  import('@hanzo/docs/ui/components/files').then((res) => res.File),
-);
-export const Files = dynamic(() =>
-  import('@hanzo/docs/ui/components/files').then((res) => res.Files),
-);
+export const File = dynamic(() => import('fumadocs-ui/components/files').then((res) => res.File));
+export const Files = dynamic(() => import('fumadocs-ui/components/files').then((res) => res.Files));
 export const Folder = dynamic(() =>
   import('@hanzo/docs/ui/components/files').then((res) => res.Folder),
 );
