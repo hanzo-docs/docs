@@ -1,16 +1,16 @@
 {
-  "name": "create-fumadocs-app",
+  "name": "create-hanzo-docs-app",
   "version": "16.0.34",
-  "description": "Create a new documentation site with Fumadocs",
+  "description": "Create a new documentation site with Hanzo Docs",
   "keywords": [
     "Docs",
-    "Fumadocs",
+    "Hanzo",
     "react"
   ],
-  "homepage": "https://fumadocs.dev",
+  "homepage": "https://hanzo.ai/docs",
   "license": "MIT",
   "author": "Fuma Nama",
-  "repository": "github:fuma-nama/fumadocs",
+  "repository": "github:hanzoai/docs",
   "bin": "./dist/bin.js",
   "files": [
     "dist/*",

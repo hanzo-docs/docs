@@ -7,7 +7,7 @@
     "dev": "vite dev",
     "build": "vite build",
     "start": "node .output/server/index.mjs",
-    "types:check": "fumadocs-mdx && tsc --noEmit"
+    "types:check": "hanzo-docs-mdx && tsc --noEmit"
   },
   "dependencies": {
     "@tanstack/react-router": "1.136.18",
