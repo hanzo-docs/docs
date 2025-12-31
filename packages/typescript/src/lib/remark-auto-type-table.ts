@@ -1,22 +1,13 @@
 import type { Root } from 'mdast';
 import type { Nodes } from 'hast';
 import type { Transformer } from 'unified';
-import type {
-  Expression,
-  ExpressionStatement,
-  ObjectExpression,
-  Program,
-} from 'estree';
+import type { Expression, ExpressionStatement, ObjectExpression, Program } from 'estree';
 import { createGenerator, type DocEntry, type Generator } from '@/lib/base';
 import { renderMarkdownToHast, renderTypeToHast } from '@/markdown';
 import { valueToEstree } from 'estree-util-value-to-estree';
 import { visit } from 'unist-util-visit';
-import {
-  type BaseTypeTableProps,
-  type GenerateTypeTableOptions,
-} from '@/lib/type-table';
+import { type BaseTypeTableProps, type GenerateTypeTableOptions } from '@/lib/type-table';
 import { toEstree } from 'hast-util-to-estree';
-import { dirname } from 'node:path';
 import { type ParameterTag, parseTags } from '@/lib/parse-tags';
 
 function objectBuilder() {
@@ -62,16 +53,14 @@ async function buildTypeProp(
 ): Promise<ObjectExpression> {
   async function onItem(entry: DocEntry) {
     const node = objectBuilder();
+    const tags = parseTags(entry.tags);
     node.addJsxProperty('type', await renderType(entry.simplifiedType));
     node.addJsxProperty('typeDescription', await renderType(entry.type));
     node.addExpressionNode('required', valueToEstree(entry.required));
 
-    const tags = parseTags(entry.tags);
-    if (tags.default)
-      node.addJsxProperty('default', await renderType(tags.default));
+    if (tags.default) node.addJsxProperty('default', await renderType(tags.default));
 
-    if (tags.returns)
-      node.addJsxProperty('returns', await renderMarkdown(tags.returns));
+    if (tags.returns) node.addJsxProperty('returns', await renderMarkdown(tags.returns));
 
     if (tags.params) {
       node.addExpressionNode('parameters', {
@@ -81,10 +70,7 @@ async function buildTypeProp(
     }
 
     if (entry.description) {
-      node.addJsxProperty(
-        'description',
-        await renderMarkdown(entry.description),
-      );
+      node.addJsxProperty('description', await renderMarkdown(entry.description));
     }
 
     return node.build();
@@ -94,10 +80,7 @@ async function buildTypeProp(
     const node = objectBuilder();
     node.addExpressionNode('name', valueToEstree(param.name));
     if (param.description)
-      node.addJsxProperty(
-        'description',
-        await renderMarkdown(param.description),
-      );
+      node.addJsxProperty('description', await renderMarkdown(param.description));
 
     return node.build();
   }
@@ -144,6 +127,10 @@ export interface RemarkAutoTypeTableOptions {
   generator?: Generator;
 }
 
+export interface TypeTableProps extends BaseTypeTableProps {
+  cwd?: true;
+}
+
 /**
  * Compile `auto-type-table` into Fumadocs UI compatible TypeTable
  *
@@ -162,68 +149,83 @@ export function remarkAutoTypeTable(
 
   return async (tree, file) => {
     const queue: Promise<void>[] = [];
-    const defaultBasePath = file.path ? dirname(file.path) : undefined;
+    async function run(node: object, props: TypeTableProps) {
+      let basePath = props.cwd ? file.cwd : generateOptions.basePath;
+      if (file.dirname) {
+        basePath ??= file.dirname;
+      }
+
+      const output = await generator.generateTypeTable(props, {
+        ...generateOptions,
+        basePath,
+      });
+
+      const rendered = output.map(async (doc) => {
+        return {
+          type: 'mdxJsxFlowElement',
+          name: outputName,
+          attributes: [
+            {
+              type: 'mdxJsxAttribute',
+              name: 'type',
+              value: {
+                type: 'mdxJsxAttributeValueExpression',
+                value: remarkStringify ? JSON.stringify(doc, null, 2) : '',
+                data: {
+                  estree: {
+                    type: 'Program',
+                    sourceType: 'module',
+                    body: [
+                      {
+                        type: 'ExpressionStatement',
+                        expression: await buildTypeProp(doc.entries, config),
+                      },
+                    ],
+                  } satisfies Program,
+                },
+              },
+            },
+          ],
+          children: [],
+        };
+      });
+
+      Object.assign(node, {
+        type: 'root',
+        attributes: [],
+        children: await Promise.all(rendered),
+      } as Root);
+    }
 
     visit(tree, 'mdxJsxFlowElement', (node) => {
       if (node.name !== name) return;
-      const props: Record<string, string> = {};
+      const props: Record<string, string | true> = {};
+      const onError = (message: string, cause?: Error) => {
+        const location = node.position
+          ? `${file.path}:${node.position.start.line}:${node.position.start.column}`
+          : file.path;
+        throw new Error(`${location} from <auto-type-table>: ${message}`, {
+          cause,
+        });
+      };
 
       for (const attr of node.attributes) {
-        if (attr.type !== 'mdxJsxAttribute' || typeof attr.value !== 'string')
-          throw new Error(
-            '`auto-type-table` does not support non-string attributes',
-          );
-
-        props[attr.name] = attr.value;
+        if (attr.type !== 'mdxJsxAttribute') {
+          onError('only named attributes are allowed.');
+        } else if (typeof attr.value === 'string') {
+          props[attr.name] = attr.value;
+        } else if (attr.value === null) {
+          props[attr.name] = true;
+        } else {
+          onError('only string & boolean attributes are allowed.');
+        }
       }
 
-      async function run() {
-        const output = await generator.generateTypeTable(
-          props as BaseTypeTableProps,
-          {
-            ...generateOptions,
-            basePath: generateOptions.basePath ?? defaultBasePath,
-          },
-        );
-
-        const rendered = output.map(async (doc) => {
-          return {
-            type: 'mdxJsxFlowElement',
-            name: outputName,
-            attributes: [
-              {
-                type: 'mdxJsxAttribute',
-                name: 'type',
-                value: {
-                  type: 'mdxJsxAttributeValueExpression',
-                  value: remarkStringify ? JSON.stringify(doc, null, 2) : '',
-                  data: {
-                    estree: {
-                      type: 'Program',
-                      sourceType: 'module',
-                      body: [
-                        {
-                          type: 'ExpressionStatement',
-                          expression: await buildTypeProp(doc.entries, config),
-                        },
-                      ],
-                    } satisfies Program,
-                  },
-                },
-              },
-            ],
-            children: [],
-          };
-        });
-
-        Object.assign(node, {
-          type: 'root',
-          attributes: [],
-          children: await Promise.all(rendered),
-        } as Root);
-      }
-
-      queue.push(run());
+      queue.push(
+        run(node, props).catch((err) => {
+          onError('failed to generate type table', err);
+        }),
+      );
       return 'skip';
     });
 

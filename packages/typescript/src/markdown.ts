@@ -1,15 +1,17 @@
 import type { ElementContent, Nodes } from 'hast';
 import { remark } from 'remark';
-import { remarkGfm } from '@hanzo/docs-core/mdx-plugins/remark-gfm';
-import {
-  rehypeCode,
-  type RehypeCodeOptions,
-} from '@hanzo/docs-core/mdx-plugins/rehype-code';
+import { remarkGfm } from 'fumadocs-core/mdx-plugins/remark-gfm';
+import { rehypeCode, type RehypeCodeOptions } from 'fumadocs-core/mdx-plugins/rehype-code';
 import remarkRehype from 'remark-rehype';
-import { highlightHast } from '@hanzo/docs-core/highlight';
+import { getHighlighter } from 'fumadocs-core/highlight';
 
 const shikiOptions = {
   lazy: true,
+  langs: ['ts', 'tsx'],
+
+  // disable default transformers & meta parser
+  transformers: [],
+  parseMetaString: undefined,
 
   themes: {
     light: 'github-light',
@@ -17,16 +19,19 @@ const shikiOptions = {
   },
 } satisfies RehypeCodeOptions;
 
-const processor = remark()
-  .use(remarkGfm)
-  .use(remarkRehype)
-  .use(rehypeCode, shikiOptions);
+const processor = remark().use(remarkGfm).use(remarkRehype).use(rehypeCode, shikiOptions);
 
 export async function renderTypeToHast(type: string): Promise<Nodes> {
-  const nodes = await highlightHast(type, {
-    ...shikiOptions,
+  const highlighter = await getHighlighter('js', {
+    langs: ['ts'],
+    themes: Object.values(shikiOptions.themes),
+  });
+
+  const nodes = highlighter.codeToHast(type, {
     lang: 'ts',
     structure: 'inline',
+    themes: shikiOptions.themes,
+    defaultColor: false,
   });
 
   return {

@@ -3,50 +3,59 @@
   "version": "0.0.6",
   "description": "The built-in Python docgen for Hanzo Docs",
   "keywords": [
-    "Hanzo",
     "Docs",
+    "NextJs",
     "Python"
   ],
-  "homepage": "https://hanzo.ai/docs",
-  "repository": "github:hanzoai/docs",
+  "homepage": "https://fumadocs.dev",
   "license": "MIT",
   "author": "Fuma Nama",
+  "repository": "github:fuma-nama/fumadocs",
+  "files": [
+    "fumapy",
+    "pyproject.toml",
+    "styles",
+    "dist/*"
+  ],
   "type": "module",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": [
-    "dist/*",
-    "fumapy",
-    "styles",
-    "pyproject.toml"
-  ],
   "exports": {
     "./preset.css": "./styles/preset.css",
     ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     },
     "./components": {
-      "import": "./dist/components/index.js",
-      "types": "./dist/components/index.d.ts"
+      "types": "./dist/components/index.d.ts",
+      "import": "./dist/components/index.js"
     }
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
-    "build": "tsup",
+    "build": "tsdown",
     "clean": "rimraf dist",
-    "dev": "tsup --watch",
+    "dev": "tsdown --watch",
     "lint": "eslint .",
     "types:check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "class-variance-authority": "^0.7.1",
+    "js-yaml": "^4.1.1",
+    "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^24.10.2",
     "@types/react": "^19.2.7",
     "eslint-config-custom": "workspace:*",
-    "@hanzo/docs-core": "workspace:*",
-    "@hanzo/docs-ui": "workspace:*",
-    "lucide-react": "^0.561.0",
-    "tsconfig": "workspace:*"
+    "fumadocs-core": "workspace:*",
+    "fumadocs-ui": "workspace:*",
+    "lucide-react": "^0.562.0",
+    "tsconfig": "workspace:*",
+    "tsdown": "^0.18.3"
   },
   "peerDependencies": {
     "@types/react": "*",
@@ -57,12 +66,5 @@
     "@types/react": {
       "optional": true
     }
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "dependencies": {
-    "class-variance-authority": "^0.7.1",
-    "js-yaml": "^4.1.1"
   }
 }

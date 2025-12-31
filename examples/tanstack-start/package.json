@@ -1,8 +1,8 @@
 {
   "name": "example-tanstack-start",
   "private": true,
-  "sideEffects": false,
   "type": "module",
+  "sideEffects": false,
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
@@ -17,11 +17,14 @@
     "@tanstack/react-router": "1.136.18",
     "@tanstack/react-router-devtools": "1.136.18",
     "@tanstack/react-start": "1.136.18",
-    "lucide-react": "^0.561.0",
+    "fumadocs-core": "workspace:*",
+    "fumadocs-mdx": "workspace:*",
+    "fumadocs-ui": "workspace:*",
+    "lucide-react": "^0.562.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "tailwind-merge": "^3.4.0",
-    "vite": "^7.2.7"
+    "vite": "^7.3.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.18",
@@ -33,6 +36,6 @@
     "nitro": "3.0.1-alpha.1",
     "tailwindcss": "^4.1.18",
     "typescript": "^5.9.3",
-    "vite-tsconfig-paths": "^5.1.4"
+    "vite-tsconfig-paths": "^6.0.3"
   }
 }

@@ -49,10 +49,7 @@ export async function getTypeTableOutput(
   { name, type, ...props }: BaseTypeTableProps,
   options?: GenerateTypeTableOptions,
 ) {
-  const file =
-    props.path && options?.basePath
-      ? join(options.basePath, props.path)
-      : props.path;
+  const file = props.path && options?.basePath ? join(options.basePath, props.path) : props.path;
   let typeName = name;
   let content = '';
 
@@ -67,7 +64,7 @@ export async function getTypeTableOutput(
     content += `\nexport type ${typeName} = ${type}`;
   }
 
-  const output = gen.generateDocumentation(
+  const output = await gen.generateDocumentation(
     { path: file ?? 'temp.ts', content },
     typeName,
     options,

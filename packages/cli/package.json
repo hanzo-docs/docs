@@ -1,34 +1,36 @@
 {
-  "name": "@hanzo/docs-cli",
-  "version": "1.1.1",
-  "description": "The CLI tool for Hanzo Docs",
+  "name": "@fumadocs/cli",
+  "version": "1.2.0",
+  "description": "The CLI tool for Fumadocs",
   "keywords": [
-    "Hanzo",
     "Docs",
     "CLI"
   ],
-  "homepage": "https://hanzo.ai/docs",
-  "repository": "github:hanzoai/docs",
+  "homepage": "https://fumadocs.dev",
   "license": "MIT",
   "author": "Fuma Nama",
-  "type": "module",
-  "exports": {
-    "./build": {
-      "import": "./dist/build/index.js",
-      "types": "./dist/build/index.d.ts"
-    }
-  },
-  "main": "./dist/index.js",
+  "repository": "github:fuma-nama/fumadocs",
   "bin": {
     "hanzo-docs": "./dist/index.js"
   },
   "files": [
     "dist/*"
   ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "exports": {
+    "./build": {
+      "types": "./dist/build/index.d.ts",
+      "import": "./dist/build/index.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
-    "build": "tsup",
+    "build": "tsdown --config-loader unrun",
     "clean": "rimraf dist",
-    "dev": "tsup --watch",
+    "dev": "tsdown --watch --config-loader unrun",
     "lint": "eslint .",
     "types:check": "tsc --noEmit"
   },
@@ -39,15 +41,13 @@
     "picocolors": "^1.1.1",
     "tinyexec": "^1.0.2",
     "ts-morph": "^27.0.2",
-    "zod": "^4.1.13"
+    "zod": "^4.2.1"
   },
   "devDependencies": {
     "@types/node": "24.10.2",
     "eslint-config-custom": "workspace:*",
-    "shadcn": "3.6.0",
-    "tsconfig": "workspace:*"
-  },
-  "publishConfig": {
-    "access": "public"
+    "shadcn": "3.6.2",
+    "tsconfig": "workspace:*",
+    "tsdown": "^0.18.3"
   }
 }
