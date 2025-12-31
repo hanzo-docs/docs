@@ -5,12 +5,12 @@ import { fileURLToPath } from 'url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, '..');
 
-// Copy CSS files from @hanzo/docs-ui
-const uiCssSource = join(root, 'node_modules/@hanzo/docs-ui/css');
+// Copy CSS files from @hanzo/docs-base-ui
+const uiCssSource = join(root, 'node_modules/@hanzo/docs-base-ui/css');
 const uiCssDest = join(root, 'dist/ui/css');
 
 // Copy style.css from dist
-const uiDistSource = join(root, 'node_modules/@hanzo/docs-ui/dist');
+const uiDistSource = join(root, 'node_modules/@hanzo/docs-base-ui/dist');
 const uiDistDest = join(root, 'dist/ui');
 
 // Copy twoslash.css from @hanzo/docs-twoslash (styles folder)

@@ -1844,6 +1844,9 @@ importers:
 
   packages/hanzo-docs:
     dependencies:
+      '@hanzo/docs-base-ui':
+        specifier: workspace:*
+        version: link:../base-ui
       '@hanzo/docs-cli':
         specifier: workspace:*
         version: link:../cli

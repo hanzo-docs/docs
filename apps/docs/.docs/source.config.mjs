@@ -66,15 +66,18 @@ var source_config_default = defineConfig({
     lastModified()
   ],
   mdxOptions: async () => {
-    const { rehypeCodeDefaultOptions } = await import("@hanzo/docs/core/mdx-plugins/rehype-code");
-    const { remarkStructureDefaultOptions } = await import("@hanzo/docs/core/mdx-plugins/remark-structure");
-    const { remarkSteps } = await import("@hanzo/docs/core/mdx-plugins/remark-steps");
-    const { transformerTwoslash } = await import("@hanzo/docs/twoslash");
-    const { createFileSystemTypesCache } = await import("@hanzo/docs/twoslash/cache-fs");
+    const { rehypeCodeDefaultOptions } = await import("fumadocs-core/mdx-plugins/rehype-code");
+    const { remarkStructureDefaultOptions } = await import("fumadocs-core/mdx-plugins/remark-structure");
+    const { remarkSteps } = await import("fumadocs-core/mdx-plugins/remark-steps");
+    const { transformerTwoslash } = await import("fumadocs-twoslash");
+    const { createFileSystemTypesCache } = await import("fumadocs-twoslash/cache-fs");
     const { default: remarkMath } = await import("remark-math");
-    const { remarkTypeScriptToJavaScript } = await import("@hanzo/docs/docgen/remark-ts2js");
+    const { remarkTypeScriptToJavaScript } = await import("fumadocs-docgen/remark-ts2js");
     const { default: rehypeKatex } = await import("rehype-katex");
-    const { remarkAutoTypeTable } = await import("@hanzo/docs/typescript");
+    const { remarkAutoTypeTable, createGenerator, createFileSystemGeneratorCache } = await import("fumadocs-typescript");
+    const generator = createGenerator({
+      cache: createFileSystemGeneratorCache(".next/fumadocs-typescript")
+    });
     return {
       remarkStructureOptions: {
         types: [...remarkStructureDefaultOptions.types, "code"]
@@ -105,7 +108,12 @@ var source_config_default = defineConfig({
       remarkPlugins: [
         remarkSteps,
         remarkMath,
-        remarkAutoTypeTable,
+        [
+          remarkAutoTypeTable,
+          {
+            generator
+          }
+        ],
         remarkTypeScriptToJavaScript
       ],
       rehypePlugins: (v) => [rehypeKatex, ...v]

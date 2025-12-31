@@ -14,9 +14,9 @@ import {
 } from 'react';
 import Link, { type LinkProps } from '@hanzo/docs-core/link';
 import { useOnChange } from '@hanzo/docs-core/utils/use-on-change';
-import { cn } from '@fumadocs/ui/cn';
+import { cn } from '@hanzo/docs-ui/cn';
 import { ScrollArea, type ScrollAreaProps, ScrollViewport } from '@/components/ui/scroll-area';
-import { isActive } from '@fumadocs/ui/urls';
+import { isActive } from '@hanzo/docs-ui/urls';
 import {
   Collapsible,
   CollapsibleContent,
