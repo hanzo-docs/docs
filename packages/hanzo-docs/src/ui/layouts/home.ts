@@ -1,1 +1,1 @@
-export * from '@hanzo/docs-ui/layouts/home';
+export * from '@hanzo/docs-base-ui/layouts/home';

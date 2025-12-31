@@ -1,5 +1,5 @@
 import { fileURLToPath } from 'node:url';
-import type { Registry } from '@fumadocs/cli/build';
+import type { Registry } from '@hanzo/docs-cli/build';
 import * as path from 'node:path';
 import { resolveForwardedAPIs } from '../../../ui/src/_registry';
 
@@ -10,10 +10,10 @@ export const registry: Registry = {
   tsconfigPath: '../tsconfig.json',
   packageJson: '../package.json',
   onResolve(ref) {
-    return resolveForwardedAPIs(ref, 'fumadocs-ui', registry) ?? ref;
+    return resolveForwardedAPIs(ref, '@hanzo/docs-ui', registry) ?? ref;
   },
   env: {
-    ui: 'fumadocs-ui',
+    ui: '@hanzo/docs-ui',
   },
   components: [
     {
@@ -322,8 +322,8 @@ export const registry: Registry = {
     },
   ],
   dependencies: {
-    'fumadocs-core': null,
-    'fumadocs-ui': null,
+    '@hanzo/docs-core': null,
+    '@hanzo/docs-ui': null,
     react: null,
   },
 };

@@ -78,8 +78,8 @@ export async function customise(client: RegistryClient) {
     const maps: [string, string][] =
       result.mode === 'full-notebook'
         ? [
-            ['fumadocs-ui/layouts/notebook', '@/components/layout/notebook'],
-            ['fumadocs-ui/layouts/notebook/page', '@/components/layout/notebook/page'],
+            ['@hanzo/docs-ui/layouts/notebook', '@/components/layout/notebook'],
+            ['@hanzo/docs-ui/layouts/notebook/page', '@/components/layout/notebook/page'],
           ]
         : [
             ['@hanzo/docs-ui/layouts/docs', '@/components/layout/docs'],
@@ -91,7 +91,7 @@ export async function customise(client: RegistryClient) {
 
   if (result.target === 'home') {
     await install([`${registry}/layouts/home`], installer);
-    printNext(['fumadocs-ui/layouts/home', `@/components/layout/home`]);
+    printNext(['@hanzo/docs-ui/layouts/home', `@/components/layout/home`]);
   }
 
   outro(picocolors.bold('Have fun!'));

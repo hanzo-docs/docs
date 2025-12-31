@@ -16,8 +16,8 @@ export function createConfigSchema(isSrc: boolean) {
       .string()
       .default(
         isSrc
-          ? 'node_modules/@fumadocs/cli/dist/schema/src.json'
-          : 'node_modules/@fumadocs/cli/dist/schema/default.json',
+          ? 'node_modules/@hanzo/docs-cli/dist/schema/src.json'
+          : 'node_modules/@hanzo/docs-cli/dist/schema/default.json',
       )
       .optional(),
     aliases: z

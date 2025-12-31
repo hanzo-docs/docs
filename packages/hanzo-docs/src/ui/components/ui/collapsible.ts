@@ -1,1 +1,1 @@
-export * from '@hanzo/docs-ui/components/ui/collapsible';
+export * from '@hanzo/docs-base-ui/components/ui/collapsible';
