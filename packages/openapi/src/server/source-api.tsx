@@ -9,8 +9,8 @@ import type {
 import type { OpenAPIServer } from '@/server/create';
 import type { SchemaToPagesOptions } from '@/utils/pages/preset-auto';
 import type { ApiPageProps } from '@/ui/api-page';
-import type { StructuredData } from 'fumadocs-core/mdx-plugins';
-import type { TOCItemType } from 'fumadocs-core/toc';
+import type { StructuredData } from '@hanzo/docs-core/mdx-plugins';
+import type { TOCItemType } from '@hanzo/docs-core/toc';
 import type { ProcessedDocument } from '@/utils/process-document';
 
 declare module '@hanzo/docs-core/source' {

@@ -1,4 +1,4 @@
-import { type ParameterNode, type TypeNode, TypeTable } from 'fumadocs-ui/components/type-table';
+import { type ParameterNode, type TypeNode, TypeTable } from '@hanzo/docs-ui/components/type-table';
 import { type Jsx, toJsxRuntime } from 'hast-util-to-jsx-runtime';
 import * as runtime from 'react/jsx-runtime';
 import defaultMdxComponents from '@hanzo/docs-ui/mdx';

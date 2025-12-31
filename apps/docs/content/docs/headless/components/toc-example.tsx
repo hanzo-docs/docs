@@ -1,4 +1,4 @@
-import { AnchorProvider, ScrollProvider, TOCItem, type TOCItemType } from 'fumadocs-core/toc';
+import { AnchorProvider, ScrollProvider, TOCItem, type TOCItemType } from '@hanzo/docs-core/toc';
 import { type ReactNode, useRef } from 'react';
 
 export function Page({ items, children }: { items: TOCItemType[]; children: ReactNode }) {

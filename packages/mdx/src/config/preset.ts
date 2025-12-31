@@ -1,6 +1,6 @@
 import type { ProcessorOptions } from '@mdx-js/mdx';
 import type { Pluggable } from 'unified';
-import type * as Plugins from 'fumadocs-core/mdx-plugins';
+import type * as Plugins from '@hanzo/docs-core/mdx-plugins';
 import type { BuildEnvironment } from './build';
 
 type ResolvePlugins = Pluggable[] | ((v: Pluggable[]) => Pluggable[]);
