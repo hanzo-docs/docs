@@ -1,5 +1,13 @@
 # @fumadocs/ui
 
+## 16.4.2
+
+### Patch Changes
+
+- Rebrand fumadocs to @hanzo/docs namespace. Change default output directory from .source to .docs.
+- Updated dependencies
+  - @hanzo/docs-core@16.4.2
+
 ## 16.4.1
 
 ### Patch Changes
