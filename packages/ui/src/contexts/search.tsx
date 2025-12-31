@@ -1,13 +1,13 @@
 'use client';
 import {
   type ComponentType,
+  createContext,
   type ReactNode,
+  use,
   useEffect,
+  useEffectEvent,
   useMemo,
   useState,
-  createContext,
-  use,
-  useEffectEvent,
 } from 'react';
 
 interface HotKey {
@@ -113,11 +113,7 @@ export function SearchProvider({
 }: SearchProviderProps) {
   const [isOpen, setIsOpen] = useState(preload ? false : undefined);
   const onKeyDown = useEffectEvent((e: KeyboardEvent) => {
-    if (
-      hotKey.every((v) =>
-        typeof v.key === 'string' ? e.key === v.key : v.key(e),
-      )
-    ) {
+    if (hotKey.every((v) => (typeof v.key === 'string' ? e.key === v.key : v.key(e)))) {
       setIsOpen((open) => !open);
       e.preventDefault();
     }

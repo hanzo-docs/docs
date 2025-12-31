@@ -1,5 +1,35 @@
 # @fuma-docs/openapi
 
+## 10.2.2
+
+### Patch Changes
+
+- b752aff: Add `getSchema()` to virtual pages
+- Updated dependencies [da98fe2]
+- Updated dependencies [a3b7919]
+  - fumadocs-ui@16.4.0
+  - fumadocs-core@16.4.0
+
+## 10.2.1
+
+### Patch Changes
+
+- 058a46b: Support `structuredData` in virtual file source
+- 52e84ad: improve schema UI for large unions
+
+## 10.2.0
+
+### Minor Changes
+
+- a69b060: Support both Base UI and Radix UI as base component libraries
+
+### Patch Changes
+
+- Updated dependencies [a69b060]
+  - fumadocs-ui@16.3.0
+  - fumadocs-core@16.3.0
+  - @fumadocs/ui@16.3.0
+
 ## 10.1.4
 
 ### Patch Changes
