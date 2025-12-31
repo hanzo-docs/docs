@@ -1,5 +1,11 @@
 # fumadocs
 
+## 1.2.1
+
+### Patch Changes
+
+- Rebrand fumadocs to @hanzo/docs namespace. Change default output directory from .source to .docs.
+
 ## 1.2.0
 
 ### Minor Changes
