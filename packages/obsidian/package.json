@@ -3,38 +3,42 @@
   "version": "0.0.6",
   "description": "Obsidian Integration for Hanzo Docs",
   "keywords": [
-    "Hanzo",
     "Docs",
-    "Obsidian"
+    "NextJs",
+    "Obsidian",
+    "fumadocs"
   ],
-  "homepage": "https://hanzo.ai/docs",
-  "repository": "github:hanzoai/docs",
+  "homepage": "https://fumadocs.dev",
   "license": "MIT",
   "author": "Fuma Nama",
-  "type": "module",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "repository": "github:fuma-nama/fumadocs",
   "files": [
     "dist/*"
   ],
+  "type": "module",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     },
     "./ui": {
-      "import": "./dist/ui/index.js",
-      "types": "./dist/ui/index.d.ts"
+      "types": "./dist/ui/index.d.ts",
+      "import": "./dist/ui/index.js"
     },
     "./mdx": {
-      "import": "./dist/mdx/index.js",
-      "types": "./dist/mdx/index.d.ts"
+      "types": "./dist/mdx/index.d.ts",
+      "import": "./dist/mdx/index.js"
     }
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
-    "build": "tsup",
+    "build": "tsdown",
     "clean": "rimraf dist",
-    "dev": "tsup --watch",
+    "dev": "tsdown --watch",
     "lint": "eslint .",
     "types:check": "tsc --noEmit"
   },
@@ -46,10 +50,11 @@
     "remark-mdx": "^3.1.1",
     "remark-parse": "^11.0.0",
     "remark-stringify": "^11.0.0",
+    "tailwind-merge": "^3.4.0",
     "tinyglobby": "^0.2.15",
     "unified": "^11.0.5",
     "unist-util-visit": "^5.0.0",
-    "zod": "^4.1.13"
+    "zod": "^4.2.1"
   },
   "devDependencies": {
     "@types/estree": "^1.0.8",
@@ -58,24 +63,20 @@
     "@types/node": "24.10.2",
     "@types/react": "^19.2.7",
     "eslint-config-custom": "workspace:*",
-    "@hanzo/docs-core": "workspace:*",
-    "@hanzo/docs-ui": "workspace:*",
+    "fumadocs-core": "workspace:*",
     "mdast-util-mdx-jsx": "^3.2.0",
     "tsconfig": "workspace:*",
+    "tsdown": "^0.18.3",
     "typescript": "^5.9.3",
     "vfile": "^6.0.3"
+  },
+  "peerDependencies": {
+    "@types/react": "*",
+    "fumadocs-core": "^15.0.0 || ^16.0.0"
   },
   "peerDependenciesMeta": {
     "@types/react": {
       "optional": true
     }
-  },
-  "peerDependencies": {
-    "@types/react": "*",
-    "@hanzo/docs-core": "^15.0.0 || ^16.0.0",
-    "@hanzo/docs-ui": "^15.0.0 || ^16.0.0"
-  },
-  "publishConfig": {
-    "access": "public"
   }
 }

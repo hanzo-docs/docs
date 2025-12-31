@@ -11,5 +11,7 @@
   "files.associations": {
     "**/packages/create-app/template/**/*": "plaintext"
   },
-  "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "prettier.enable": false,
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "oxc.oxc-vscode"
 }

@@ -6,8 +6,9 @@ import type { TypeTable } from '@hanzo/docs/ui/components/type-table';
 import type { Card } from '@hanzo/docs/ui/components/card';
 import type { DocsLayoutProps } from '@hanzo/docs/ui/layouts/docs';
 import type { ComponentProps, ComponentPropsWithoutRef } from 'react';
-import type { DocsPageProps } from '@hanzo/docs/ui/layouts/docs/page';
-import type { AutoTypeTable } from '@hanzo/docs/typescript/ui';
+import type { DocsPageProps } from 'fumadocs-ui/layouts/docs/page';
+import type { AutoTypeTable } from 'fumadocs-typescript/ui';
+import type { RootProviderProps } from 'fumadocs-ui/provider/base';
 
 export type AccordionsProps = Omit<
   ComponentPropsWithoutRef<typeof Accordions>,
@@ -46,9 +47,7 @@ export type CardProps = Omit<
 
 export type TypeTableProps = ComponentPropsWithoutRef<typeof TypeTable>;
 
-export type ObjectTypeProps = ComponentPropsWithoutRef<
-  typeof TypeTable
->['type'][string];
+export type ObjectTypeProps = ComponentPropsWithoutRef<typeof TypeTable>['type'][string];
 
 export type { DocsLayoutProps };
 
@@ -62,18 +61,15 @@ export type SidebarProps = Omit<
 export type PageProps = DocsPageProps;
 
 export type TOCProps = NonNullable<DocsPageProps['tableOfContent']>;
-export type TOCPopoverProps = NonNullable<
-  DocsPageProps['tableOfContentPopover']
->;
+export type TOCPopoverProps = NonNullable<DocsPageProps['tableOfContentPopover']>;
 
 export type BreadcrumbProps = Omit<
   NonNullable<DocsPageProps['breadcrumb']>,
   keyof ComponentProps<'div'>
 >;
 
-export type FooterProps = Omit<
-  NonNullable<DocsPageProps['footer']>,
-  keyof ComponentProps<'div'>
->;
+export type FooterProps = Omit<NonNullable<DocsPageProps['footer']>, keyof ComponentProps<'div'>>;
 
 export type AutoTypeTableProps = ComponentPropsWithoutRef<typeof AutoTypeTable>;
+
+export type SearchProps = Required<RootProviderProps>['search'];

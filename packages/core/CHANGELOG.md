@@ -1,10 +1,22 @@
 # next-docs-zeta
 
-## 16.2.6
+## 16.4.1
 
-### Patch Changes
+## 16.4.0
 
-- a8456cc: Initial npm publish of @hanzo/docs packages
+### Minor Changes
+
+- a3b7919: Update mixedbread integration API and docs
+
+## 16.3.2
+
+## 16.3.1
+
+## 16.3.0
+
+### Minor Changes
+
+- a69b060: Support both Base UI and Radix UI as base component libraries
 
 ## 16.2.5
 
