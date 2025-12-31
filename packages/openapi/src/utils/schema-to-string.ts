@@ -11,11 +11,7 @@ export function schemaToString(
   ctx?: ProcessedDocument,
   flags: FormatFlags = FormatFlags.None,
 ): string {
-  function union(
-    union: readonly ResolvedSchema[],
-    sep: string,
-    flags: FormatFlags,
-  ) {
+  function union(union: readonly ResolvedSchema[], sep: string, flags: FormatFlags) {
     const members = new Set();
     let nullable = false;
 
@@ -40,8 +36,8 @@ export function schemaToString(
     if ((flags & FormatFlags.UseAlias) === FormatFlags.UseAlias) {
       if (schema.title) return schema.title;
 
-      const ref = ctx?.getRawRef(schema);
-      if (ref) return ref.split('/').at(-1)!;
+      const ref = ctx?.getRawRef(schema)?.split('/');
+      if (ref && ref.length > 0) return ref[ref.length - 1];
     }
 
     if (Array.isArray(schema.type)) {

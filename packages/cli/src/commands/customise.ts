@@ -1,13 +1,13 @@
 import { cancel, group, intro, log, outro, select } from '@clack/prompts';
 import picocolors from 'picocolors';
-import type { LoadedConfig } from '@/config';
 import { install } from '@/commands/add';
-import { RegistryClient, Resolver } from '@/registry/client';
+import type { RegistryClient } from '@/registry/client';
 import { ComponentInstaller } from '@/registry/installer';
+import { UIRegistries } from '@/commands/shared';
 
-export async function customise(resolver: Resolver, config: LoadedConfig) {
-  const client = new RegistryClient(config, resolver);
-  intro(picocolors.bgBlack(picocolors.whiteBright('Customise Hanzo Docs UI')));
+export async function customise(client: RegistryClient) {
+  intro(picocolors.bgBlack(picocolors.whiteBright('Customise Fumadocs UI')));
+  const config = client.config;
   const installer = new ComponentInstaller(client);
 
   const result = await group(
@@ -61,13 +61,16 @@ export async function customise(resolver: Resolver, config: LoadedConfig) {
     },
   );
 
+  const registry = UIRegistries[config.uiLibrary];
   if (result.target === 'docs') {
     const targets = [];
     if (result.mode === 'minimal') {
-      targets.push('layouts/docs-min');
+      targets.push('fumadocs/ui/layouts/docs-min');
     } else {
       targets.push(
-        result.mode === 'full-default' ? 'layouts/docs' : 'layouts/notebook',
+        result.mode === 'full-default'
+          ? `${registry}/layouts/docs`
+          : `${registry}/layouts/notebook`,
       );
     }
 
@@ -75,11 +78,8 @@ export async function customise(resolver: Resolver, config: LoadedConfig) {
     const maps: [string, string][] =
       result.mode === 'full-notebook'
         ? [
-            ['@hanzo/docs-ui/layouts/notebook', '@/components/layout/notebook'],
-            [
-              '@hanzo/docs-ui/layouts/notebook/page',
-              '@/components/layout/notebook/page',
-            ],
+            ['fumadocs-ui/layouts/notebook', '@/components/layout/notebook'],
+            ['fumadocs-ui/layouts/notebook/page', '@/components/layout/notebook/page'],
           ]
         : [
             ['@hanzo/docs-ui/layouts/docs', '@/components/layout/docs'],
@@ -90,8 +90,8 @@ export async function customise(resolver: Resolver, config: LoadedConfig) {
   }
 
   if (result.target === 'home') {
-    await install(['layouts/home'], installer);
-    printNext(['@hanzo/docs-ui/layouts/home', `@/components/layout/home`]);
+    await install([`${registry}/layouts/home`], installer);
+    printNext(['fumadocs-ui/layouts/home', `@/components/layout/home`]);
   }
 
   outro(picocolors.bold('Have fun!'));
@@ -105,9 +105,7 @@ function printNext(...maps: [from: string, to: string][]) {
       'You can check the installed components in `components`.',
       picocolors.dim('---'),
       'Open your `layout.tsx` files, replace the imports of components:',
-      ...maps.map(([from, to]) =>
-        picocolors.greenBright(`"${from}" -> "${to}"`),
-      ),
+      ...maps.map(([from, to]) => picocolors.greenBright(`"${from}" -> "${to}"`)),
     ].join('\n'),
   );
 }

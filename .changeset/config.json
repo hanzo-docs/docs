@@ -2,7 +2,11 @@
   "$schema": "https://unpkg.com/@changesets/config@3.1.1/schema.json",
   "changelog": "@changesets/cli/changelog",
   "commit": false,
-  "access": "public",
+  "fixed": [
+    ["fumadocs-core", "fumadocs-ui", "@fumadocs/base-ui", "@fumadocs/ui"],
+    ["create-fumadocs-app", "create-fumadocs-versions"]
+  ],
+  "access": "restricted",
   "baseBranch": "dev",
   "updateInternalDependencies": "patch",
   "bumpVersionsWithWorkspaceProtocolOnly": true,
