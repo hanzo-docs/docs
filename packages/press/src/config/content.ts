@@ -7,7 +7,7 @@ import type { ProcessorOptions } from '@mdx-js/mdx';
 export interface ContentConfig {
   mdx?:
     | ({
-        preset?: 'fumadocs';
+        preset?: 'hanzo-docs';
       } & DefaultMDXOptions)
     | ({
         preset: 'minimal';

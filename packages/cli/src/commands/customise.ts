@@ -65,7 +65,7 @@ export async function customise(client: RegistryClient) {
   if (result.target === 'docs') {
     const targets = [];
     if (result.mode === 'minimal') {
-      targets.push('fumadocs/ui/layouts/docs-min');
+      targets.push('hanzo-docs/ui/layouts/docs-min');
     } else {
       targets.push(
         result.mode === 'full-default'

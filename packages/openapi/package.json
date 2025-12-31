@@ -1,15 +1,15 @@
 {
   "name": "@hanzo/docs-openapi",
-  "version": "10.2.2",
+  "version": "10.2.3",
   "description": "Generate MDX docs for your OpenAPI spec",
   "keywords": [
     "Docs",
     "NextJs"
   ],
-  "homepage": "https://fumadocs.dev",
+  "homepage": "https://hanzo.ai/docs",
   "license": "MIT",
   "author": "Fuma Nama",
-  "repository": "github:fuma-nama/fumadocs",
+  "repository": "github:hanzoai/docs",
   "files": [
     "css",
     "dist"

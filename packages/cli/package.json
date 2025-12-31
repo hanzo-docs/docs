@@ -1,15 +1,15 @@
 {
   "name": "@hanzo/docs-cli",
-  "version": "1.2.1",
-  "description": "The CLI tool for Fumadocs",
+  "version": "1.2.2",
+  "description": "The CLI tool for Hanzo Docs",
   "keywords": [
     "Docs",
     "CLI"
   ],
-  "homepage": "https://fumadocs.dev",
+  "homepage": "https://hanzo.ai/docs",
   "license": "MIT",
   "author": "Fuma Nama",
-  "repository": "github:fuma-nama/fumadocs",
+  "repository": "github:hanzoai/docs",
   "bin": {
     "hanzo-docs": "./dist/index.js"
   },
