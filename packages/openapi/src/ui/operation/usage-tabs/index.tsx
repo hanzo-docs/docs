@@ -54,7 +54,7 @@ export async function UsageTabs({
     if (generators.length === 0) return null;
 
     return (
-      <CodeBlockTabs groupId="fumadocs_openapi_requests" defaultValue={generators[0].id}>
+      <CodeBlockTabs groupId="hanzo_docs_openapi_requests" defaultValue={generators[0].id}>
         <CodeBlockTabsList>
           {generators.map((item) => (
             <CodeBlockTabsTrigger key={item.id} value={item.id}>

@@ -1,5 +1,5 @@
 {
-  "name": "create-fumadocs-versions",
+  "name": "create-hanzo-docs-versions",
   "version": "16.0.34",
   "private": true,
   "description": "Used to track dependency versions in create-hanzo-docs",

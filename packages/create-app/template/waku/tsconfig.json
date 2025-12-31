@@ -18,7 +18,7 @@
     "noEmit": true,
     "paths": {
       "@/*": ["./src/*"],
-      "fumadocs-mdx:collections/*": [".source/*"]
+      "hanzo-docs-mdx:collections/*": [".source/*"]
     }
   },
   "exclude": ["node_modules", "dist"]

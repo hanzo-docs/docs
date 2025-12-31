@@ -5,7 +5,7 @@ import { resolveForwardedAPIs } from '../../../ui/src/_registry';
 
 // in shadcn cli, the order of files matters when writing import paths on consumer's codebase
 export const registry: Registry = {
-  name: 'fumadocs/radix-ui',
+  name: 'hanzo-docs/radix-ui',
   dir: path.join(path.dirname(fileURLToPath(import.meta.url)), '../'),
   tsconfigPath: '../tsconfig.json',
   packageJson: '../package.json',

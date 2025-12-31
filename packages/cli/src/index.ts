@@ -35,7 +35,7 @@ program
   });
 
 const dirShortcuts: Record<string, string> = {
-  ':preview': 'https://preview.fumadocs.dev/registry',
+  ':preview': 'https://preview.hanzo.ai/docs/registry',
   ':dev': 'http://localhost:3000/registry',
 };
 
@@ -86,7 +86,7 @@ program
     },
   );
 
-function createClientFromDir(dir = 'https://fumadocs.dev/registry', config: LoadedConfig) {
+function createClientFromDir(dir = 'https://hanzo.ai/docs/registry', config: LoadedConfig) {
   if (dir in dirShortcuts) dir = dirShortcuts[dir];
 
   return dir.startsWith('http://') || dir.startsWith('https://')

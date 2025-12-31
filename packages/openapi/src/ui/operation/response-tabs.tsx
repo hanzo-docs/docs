@@ -129,7 +129,7 @@ function renderResponseTabsDefault(
   if (tabs.length === 0) return null;
 
   return (
-    <Tabs groupId="fumadocs_openapi_responses" items={tabs.map((tab) => tab.code)}>
+    <Tabs groupId="hanzo_docs_openapi_responses" items={tabs.map((tab) => tab.code)}>
       {tabs.map(renderResponse)}
     </Tabs>
   );
