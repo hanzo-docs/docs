@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { DocsBody, DocsDescription, DocsPage, DocsTitle } from 'fumadocs-ui/layouts/docs/page';
+import { DocsBody, DocsDescription, DocsPage, DocsTitle } from '@hanzo/docs-ui/layouts/docs/page';
 import { notFound } from 'next/navigation';
 import defaultComponents from '@hanzo/docs/ui/mdx';
 import { createCompiler, parseFrontmatter } from '@fumadocs/mdx-remote';

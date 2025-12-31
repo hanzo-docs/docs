@@ -3,8 +3,8 @@
 import { type ComponentProps, createContext, type ReactNode, use, useMemo } from 'react';
 import { cn } from '@fumadocs/ui/cn';
 import { useSidebar } from '@/components/sidebar/base';
-import { usePathname } from 'fumadocs-core/framework';
-import Link from 'fumadocs-core/link';
+import { usePathname } from '@hanzo/docs-core/framework';
+import Link from '@hanzo/docs-core/link';
 import type { SidebarTab } from '@/components/sidebar/tabs';
 import { isTabActive } from '@/components/sidebar/tabs/dropdown';
 import { useIsScrollTop } from '@fumadocs/ui/hooks/use-is-scroll-top';

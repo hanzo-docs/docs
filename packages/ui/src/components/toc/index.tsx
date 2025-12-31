@@ -11,7 +11,7 @@ import {
 } from 'react';
 import { cn } from '@/cn';
 import { mergeRefs } from '@/merge-refs';
-import { useOnChange } from 'fumadocs-core/utils/use-on-change';
+import { useOnChange } from '@hanzo/docs-core/utils/use-on-change';
 
 const TOCContext = createContext<Primitive.TOCItemType[]>([]);
 

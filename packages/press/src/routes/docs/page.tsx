@@ -1,5 +1,5 @@
-import { DocsLayout } from 'fumadocs-ui/layouts/docs';
-import { DocsBody, DocsDescription, DocsPage, DocsTitle } from 'fumadocs-ui/layouts/docs/page';
+import { DocsLayout } from '@hanzo/docs-ui/layouts/docs';
+import { DocsBody, DocsDescription, DocsPage, DocsTitle } from '@hanzo/docs-ui/layouts/docs/page';
 import { type Page, source } from '../../lib/source';
 import { baseOptions } from '../../lib/layout.shared';
 import defaultMdxComponents from '@hanzo/docs-ui/mdx';

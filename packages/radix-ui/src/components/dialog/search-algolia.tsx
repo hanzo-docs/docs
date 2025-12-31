@@ -1,6 +1,6 @@
 'use client';
 
-import { type AlgoliaOptions, useDocsSearch } from 'fumadocs-core/search/client';
+import { type AlgoliaOptions, useDocsSearch } from '@hanzo/docs-core/search/client';
 import { type ReactNode, useMemo, useState } from 'react';
 import { useOnChange } from '@hanzo/docs-core/utils/use-on-change';
 import {

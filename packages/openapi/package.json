@@ -1,5 +1,5 @@
 {
-  "name": "fumadocs-openapi",
+  "name": "@hanzo/docs-openapi",
   "version": "10.2.2",
   "description": "Generate MDX docs for your OpenAPI spec",
   "keywords": [
