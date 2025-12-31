@@ -188,8 +188,8 @@ function getDocEntry(prop: TsSymbol, context: EntryContext): DocEntry | undefine
   );
 
   for (const tag of tags) {
-    // replace full type with @fumadocsType
-    if (tag.name === 'fumadocsType') {
+    // replace full type with @hanzodocsType
+    if (tag.name === 'hanzodocsType') {
       const match = /`(?<name>.+)`$/.exec(tag.text)?.[1];
       if (match) type = match;
       continue;

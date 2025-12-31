@@ -8,7 +8,7 @@ import { executeMdx, type MdxContent } from '@/render';
 import { pathToFileURL } from 'node:url';
 
 export type FumadocsPresetOptions = Omit<CompileOptions, 'remarkPlugins' | 'rehypePlugins'> & {
-  preset?: 'fumadocs';
+  preset?: 'hanzo-docs';
   remarkPlugins?: ResolvePlugins;
   rehypePlugins?: ResolvePlugins;
 
