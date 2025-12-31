@@ -1,5 +1,5 @@
 ---
-title: Fumadocs v16
+title: Hanzo Docs v16
 description: Better framework support, better performance.
 author: Fuma Nama
 date: 2025-10-22
@@ -7,36 +7,36 @@ date: 2025-10-22
 
 ## Overview
 
-We are pleased to announce the release of Fumadocs v16, a significant update that introduces breaking changes designed to refine our API surface, improve compatibility with Vite frameworks, and boost overall performance.
+We are pleased to announce the release of Hanzo Docs v16, a significant update that introduces breaking changes designed to refine our API surface, improve compatibility with Vite frameworks, and boost overall performance.
 
 ## Major Changes
 
-Fumadocs 16 removed substantial amount of deprecated APIs accumulated since v15.2 Vite support.
+Hanzo Docs 16 removed substantial amount of deprecated APIs accumulated since v15.2 Vite support.
 
-- **Removal of the Sidebar API**: The `fumadocs-core/sidebar` module has been deprecated and removed. For sidebar implementations, we recommend adopting pre-built solutions from Shadcn UI.
+- **Removal of the Sidebar API**: The `hanzo-docs-core/sidebar` module has been deprecated and removed. For sidebar implementations, we recommend adopting pre-built solutions from Shadcn UI.
 
-- **Restructuring of Server-Side Exports**: Exports from `fumadocs-core/server` have been redistributed to more specialized modules:
-  - `getGithubLastEdit` -> `fumadocs-core/content/github`.
-  - `getTableOfContents` -> `fumadocs-core/content/toc`.
-  - `PageTree` and related utilities -> `fumadocs-core/page-tree`.
-  - `TOCItemType` and `TableOfContents` -> `fumadocs-core/toc`.
+- **Restructuring of Server-Side Exports**: Exports from `hanzo-docs-core/server` have been redistributed to more specialized modules:
+  - `getGithubLastEdit` -> `hanzo-docs-core/content/github`.
+  - `getTableOfContents` -> `hanzo-docs-core/content/toc`.
+  - `PageTree` and related utilities -> `hanzo-docs-core/page-tree`.
+  - `TOCItemType` and `TableOfContents` -> `hanzo-docs-core/toc`.
   - removed `createMetadataImage` API, use Next.js Metadata API instead.
 
-- **Default Switch to Shiki's JavaScript Regex Engine**: To ensure seamless compatibility with environments like Cloudflare Workers, the JavaScript engine is now the default over the WASM-based Oniguruma. This change affects `rehype-code` (via the `engine` option) and `fumadocs-core/highlight`.
+- **Default Switch to Shiki's JavaScript Regex Engine**: To ensure seamless compatibility with environments like Cloudflare Workers, the JavaScript engine is now the default over the WASM-based Oniguruma. This change affects `rehype-code` (via the `engine` option) and `hanzo-docs-core/highlight`.
 
-- **Minimum React.js Version Raised to 19.2.0**: React 19.2 brings crucial performance improvements to Fumadocs UI.
-  - **Next.js Projects**: Next.js projects using Fumadocs UI must use Next.js 16 or later, as Next.js uses its own canary channel for React.js.
-- **`fumadocs-ui/provider` is removed**:
-  - Use `fumadocs-ui/provider/next` for root provider.
-  - Use individual exports for contexts from `fumadocs-ui/contexts/*`.
-- `fumadocs-ui/page`:
+- **Minimum React.js Version Raised to 19.2.0**: React 19.2 brings crucial performance improvements to Hanzo Docs UI.
+  - **Next.js Projects**: Next.js projects using Hanzo Docs UI must use Next.js 16 or later, as Next.js uses its own canary channel for React.js.
+- **`hanzo-docs-ui/provider` is removed**:
+  - Use `hanzo-docs-ui/provider/next` for root provider.
+  - Use individual exports for contexts from `hanzo-docs-ui/contexts/*`.
+- `hanzo-docs-ui/page`:
   - Removed `<DocsCategory />`.
   - Removed the `breadcrumbs.full` option in `<DocsPage />`.
-- `fumadocs-core/search/algolia`: The `document` option is renamed to `indexName`.
-- `fumadocs-core/search`: Removed the deprecated `createFromSource()` signature in `useSearch()`.
-- `fumadocs-core/highlight`: Removed `withPrerenderScript` and `loading` options from `useShiki()`.
-- `fumadocs-core/i18n`: Removed `createI18nMiddleware` (import from `fumadocs-core/i18n/middleware` instead).
-- `fumadocs-core/source`:
+- `hanzo-docs-core/search/algolia`: The `document` option is renamed to `indexName`.
+- `hanzo-docs-core/search`: Removed the deprecated `createFromSource()` signature in `useSearch()`.
+- `hanzo-docs-core/highlight`: Removed `withPrerenderScript` and `loading` options from `useShiki()`.
+- `hanzo-docs-core/i18n`: Removed `createI18nMiddleware` (import from `hanzo-docs-core/i18n/middleware` instead).
+- `hanzo-docs-core/source`:
   - Removed `transformers`, `pageTree.attach*` options in `loader()`.
   - Removed the `page.file` property.
   - Removed internal utilities `FileInfo` and `parseFilePath`.
@@ -63,7 +63,7 @@ Fumadocs 16 removed substantial amount of deprecated APIs accumulated since v15.
 
 ### Styling Changes
 
-Fumadocs UI has included some aggressive styling changes that you should know about.
+Hanzo Docs UI has included some aggressive styling changes that you should know about.
 
 - The default `--fd-layout-width` CSS variable is set to `1600px` for optimal content scaling.
   You can override it if needed.
@@ -74,15 +74,15 @@ Fumadocs UI has included some aggressive styling changes that you should know ab
   }
   ```
 
-## Fumadocs MDX 13
+## Hanzo Docs MDX 13
 
-Fumadocs MDX refined its API surface for better cross-framework compatibility and flexibility.
+Hanzo Docs MDX refined its API surface for better cross-framework compatibility and flexibility.
 
 ### Plugins API
 
 We introduced Plugins API, enabling extensible modifications to MDX configurations without bundler-specific code—ideal for file generation (e.g., types, indexes) or config alterations.
 
-There's a `json-schema` plugin natively provided by Fumadocs MDX.
+There's a `json-schema` plugin natively provided by Hanzo Docs MDX.
 
 ```ts title="source.config.ts"
 import jsonSchema from '@hanzo/docs/mdx/plugins/json-schema';
@@ -105,9 +105,9 @@ export default defineConfig({
 
 ### Next.js
 
-`createMDXSource` and `resolveFiles` are now relocated to `fumadocs-mdx/runtime/next`.
+`createMDXSource` and `resolveFiles` are now relocated to `hanzo-docs-mdx/runtime/next`.
 
-This should not affect majority of projects, as `docs.toFumadocsSource()` is now the preferred way.
+This should not affect majority of projects, as `docs.toHanzo DocsSource()` is now the preferred way.
 
 ### Vite
 
@@ -131,7 +131,7 @@ The `source.generated.ts` file is now moved to `.source/index.ts`, you are recom
 
   .
 
-- note that both docs and `create-fumadocs-app` are updated to `.source` folder.
+- note that both docs and `create-hanzo-docs-app` are updated to `.source` folder.
 
 We also supported index file generation targeting other runtimes like Bun/Node.js.
 
@@ -152,7 +152,7 @@ export default defineConfig({
 });
 ```
 
-## Fumadocs OpenAPI 9.6
+## Hanzo Docs OpenAPI 9.6
 
 A redesigned schema UI emphasizes client-side rendering (CSR) for recursive components, reducing bundle sizes and enhancing performance in complex JSON schemas.
 
@@ -162,4 +162,4 @@ Non-required fields now include a reset button, with support for `content.showEx
 
 ## What's Next?
 
-Fumadocs v16 is a new start for Fumadocs. We appreciate your feedback and contributions—please share your experiences on GitHub. Thank you for supporting Fumadocs :)
+Hanzo Docs v16 is a new start for Hanzo Docs. We appreciate your feedback and contributions—please share your experiences on GitHub. Thank you for supporting Hanzo Docs :)

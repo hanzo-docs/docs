@@ -9,7 +9,7 @@ description: Auto-generated type table
 
     /**
     * Markdown syntax like links, `code` are supported.
-    * See https://fumadocs.dev/docs/ui/components/type-table
+    * See https://hanzo-docs.dev/docs/ui/components/type-table
     **/
     name: boolean | null;
 
@@ -45,7 +45,7 @@ It generates a table for your docs based on TypeScript definitions.
 ## Usage
 
 ```npm
-npm i fumadocs-typescript
+npm i hanzo-docs-typescript
 ```
 
 Initialize the TypeScript compiler and add it as a MDX component.
@@ -53,12 +53,12 @@ Initialize the TypeScript compiler and add it as a MDX component.
 ```tsx title="mdx-components.tsx"
 import defaultComponents from '@hanzo/docs/ui/mdx';
 import type { MDXComponents } from 'mdx/types';
-import { createGenerator, createFileSystemGeneratorCache } from 'fumadocs-typescript';
-import { AutoTypeTable } from 'fumadocs-typescript/ui';
+import { createGenerator, createFileSystemGeneratorCache } from 'hanzo-docs-typescript';
+import { AutoTypeTable } from 'hanzo-docs-typescript/ui';
 
 const generator = createGenerator({
   // set a cache, necessary for serverless platform like Vercel
-  cache: createFileSystemGeneratorCache('.next/fumadocs-typescript'),
+  cache: createFileSystemGeneratorCache('.next/hanzo-docs-typescript'),
 });
 
 export function getMDXComponents(components?: MDXComponents): MDXComponents {
@@ -140,7 +140,7 @@ Your `tsconfig.json` file in the current working directory will be loaded.
 You can change the compiler settings from [`createGenerator()`](/docs/integrations/typescript).
 
 ```ts
-import { createGenerator, createFileSystemGeneratorCache } from 'fumadocs-typescript';
+import { createGenerator, createFileSystemGeneratorCache } from 'hanzo-docs-typescript';
 
 const generator = createGenerator({
   tsconfigPath: './tsconfig.json',

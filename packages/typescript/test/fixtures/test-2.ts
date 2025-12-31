@@ -5,7 +5,7 @@ export interface Player {
   /**
    * The name of player
    *
-   * @see https://fumadocs.dev
+   * @see https://hanzo-docs.dev
    * @defaultValue Henry
    */
   name: string;

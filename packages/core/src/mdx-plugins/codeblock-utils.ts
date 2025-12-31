@@ -92,7 +92,7 @@ export interface CodeBlockAttributes<Name extends string = string> {
 }
 
 /**
- * Parse Fumadocs-style code block attributes from meta string, like `title="hello world"`
+ * Parse Hanzo Docs-style code block attributes from meta string, like `title="hello world"`
  */
 export function parseCodeBlockAttributes<Name extends string = string>(
   meta: string,

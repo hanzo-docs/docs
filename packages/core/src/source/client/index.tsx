@@ -29,7 +29,7 @@ export function deserializePageTree(root: PageTree.Root): PageTree.Root {
  *
  * It only receives the serialized data from server-side, hence not sharing plugins and some properties.
  */
-export function useFumadocsLoader<
+export function useDocsLoader<
   V extends {
     pageTree?: object;
   },

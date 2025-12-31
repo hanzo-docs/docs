@@ -1,5 +1,5 @@
-# Fumadocs Core
+# @hanzo/docs-core
 
-The core library for Fumadocs.
+The core library for Hanzo Docs.
 
-📘 Learn More: [Documentation](https://fumadocs.dev)
+📘 Learn More: [Documentation](https://hanzo-docs.dev)

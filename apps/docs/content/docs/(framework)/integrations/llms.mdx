@@ -1,6 +1,6 @@
 ---
 title: AI & LLMs
-description: Integrate AI functionality to Fumadocs.
+description: Integrate AI functionality to Hanzo Docs.
 ---
 
 ## Docs for LLM
@@ -9,7 +9,7 @@ You can make your docs site more AI-friendly with dedicated docs content for lar
 
 To begin, make a `getLLMText` function that converts pages into static MDX content.
 
-In **Fumadocs MDX**, you can do:
+In **Hanzo Docs MDX**, you can do:
 
 ```ts title="lib/get-llm-text.ts"
 import { source } from '@/lib/source';
@@ -267,7 +267,7 @@ Common page actions for AI, require [`*.mdx`](#mdx-extension) to be implemented 
 ![AI Page Actions](/docs/ai-page-actions.png)
 
 ```npm
-npx @fumadocs/cli add ai/page-actions
+npx @hanzo-docs/cli add ai/page-actions
 ```
 
 Use it in your docs page like:
@@ -286,10 +286,10 @@ Use it in your docs page like:
 
 ![AI Search](/docs/ai-search.png)
 
-You can install the AI search dialog using Fumadocs CLI:
+You can install the AI search dialog using Hanzo Docs CLI:
 
 ```npm
-npx @fumadocs/cli add ai/search
+npx @hanzo-docs/cli add ai/search
 ```
 
 Then, add the `<AISearchTrigger />` component to your root layout.
@@ -326,5 +326,5 @@ To setup for Inkeep AI:
 
 To use your own AI models, update the configurations in `useChat` and `/api/chat` route.
 
-Note that Fumadocs doesn't provide the AI model, it's up to you.
+Note that Hanzo Docs doesn't provide the AI model, it's up to you.
 Your AI model can use the `llms-full.txt` file generated above, or more diversified sources of information when combined with 3rd party solutions.

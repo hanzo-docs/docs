@@ -20,7 +20,7 @@ traditional Markdown images:
 ## Introduction!!
 
 > [!warning] Hello World [[hello world]] **hello**
-> I love Fumadocs.
+> I love Hanzo Docs.
 
 [[#Introduction!!]]
 

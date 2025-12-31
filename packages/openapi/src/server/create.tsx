@@ -65,7 +65,7 @@ export function createOpenAPI(options: OpenAPIOptions = {}): OpenAPIServer {
       if (document in schemas) return schemas[document];
 
       console.warn(
-        `[Fumadocs OpenAPI] the document "${document}" is not listed in the input array, this may not be expected.`,
+        `[Hanzo Docs OpenAPI] the document "${document}" is not listed in the input array, this may not be expected.`,
       );
       // do not cache unlisted documents
       return processDocument(document);

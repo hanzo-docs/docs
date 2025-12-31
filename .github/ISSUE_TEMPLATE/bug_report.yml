@@ -8,9 +8,9 @@ body:
         Before opening a new issue:
 
         - do a search of existing issues.
-        - upgrade to the latest versions of Fumadocs.
+        - upgrade to the latest versions of Hanzo Docs.
 
-        If you need help with your own project, you can start a discussion in the [Q&A Section](https://github.com/fuma-nama/fumadocs/discussions/categories/q-a).
+        If you need help with your own project, you can start a discussion in the [Q&A Section](https://github.com/fuma-nama/hanzo-docs/discussions/categories/q-a).
   - type: textarea
     attributes:
       label: To Reproduce
@@ -61,8 +61,8 @@ body:
         - 'Not sure'
         - 'Core'
         - 'UI'
-        - 'CLI (create-fumadocs-app)'
-        - 'Content Sources (e.g. Fumadocs MDX, Content Collections)'
+        - 'CLI (create-hanzo-docs-app)'
+        - 'Content Sources (e.g. Hanzo Docs MDX, Content Collections)'
         - 'Integrations (e.g OpenAPI, Typescript DocsGen)'
         - 'TypeScript (built-in types)'
         - 'Examples'

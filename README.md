@@ -2,7 +2,7 @@
 
 The documentation framework for Hanzo AI, Lux Network, and Zoo Labs Foundation.
 
-Based on [Fumadocs](https://fumadocs.dev) - the powerful React.js documentation framework.
+A powerful React.js documentation framework built for the Hanzo ecosystem.
 
 ## Features
 
@@ -135,4 +135,4 @@ MIT © Hanzo AI Inc
 
 ---
 
-Built with [Fumadocs](https://fumadocs.dev)
+Built with Hanzo Docs

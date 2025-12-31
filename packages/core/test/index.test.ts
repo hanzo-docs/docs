@@ -74,7 +74,7 @@ test('Breadcrumbs', () => {
       },
       {
         type: 'page',
-        name: 'Fumadocs',
+        name: 'Hanzo Docs',
         url: '/docs/test2',
       },
       {
@@ -98,12 +98,12 @@ test('Breadcrumbs', () => {
 });
 
 test('I18n: Format URL', () => {
-  expect(DefaultFormatter.get(new NextURL('https://fumadocs.dev/en'))).toBe('en');
-  expect(DefaultFormatter.get(new NextURL('https://fumadocs.dev/en/test'))).toBe('en');
-  expect(DefaultFormatter.get(new NextURL('https://fumadocs.dev'))).toBeUndefined();
+  expect(DefaultFormatter.get(new NextURL('https://hanzo-docs.dev/en'))).toBe('en');
+  expect(DefaultFormatter.get(new NextURL('https://hanzo-docs.dev/en/test'))).toBe('en');
+  expect(DefaultFormatter.get(new NextURL('https://hanzo-docs.dev'))).toBeUndefined();
   expect(
     DefaultFormatter.get(
-      new NextURL('https://fumadocs.dev/docs', {
+      new NextURL('https://hanzo-docs.dev/docs', {
         nextConfig: {
           basePath: '/docs',
         },
@@ -112,7 +112,7 @@ test('I18n: Format URL', () => {
   ).toBeUndefined();
   expect(
     DefaultFormatter.get(
-      new NextURL('https://fumadocs.dev/docs/en/test', {
+      new NextURL('https://hanzo-docs.dev/docs/en/test', {
         nextConfig: {
           basePath: '/docs',
         },
@@ -120,33 +120,33 @@ test('I18n: Format URL', () => {
     ),
   ).toBe('en');
 
-  expect(DefaultFormatter.add(new NextURL('https://fumadocs.dev'), 'cn').href).toBe(
-    'https://fumadocs.dev/cn/',
+  expect(DefaultFormatter.add(new NextURL('https://hanzo-docs.dev'), 'cn').href).toBe(
+    'https://hanzo-docs.dev/cn/',
   );
   expect(
     DefaultFormatter.add(
-      new NextURL('https://fumadocs.dev/docs', {
+      new NextURL('https://hanzo-docs.dev/docs', {
         nextConfig: {
           basePath: '/docs',
         },
       }),
       'cn',
     ).href,
-  ).toBe('https://fumadocs.dev/docs/cn/');
+  ).toBe('https://hanzo-docs.dev/docs/cn/');
 
-  expect(DefaultFormatter.remove(new NextURL('https://fumadocs.dev/en')).href).toBe(
-    'https://fumadocs.dev/',
+  expect(DefaultFormatter.remove(new NextURL('https://hanzo-docs.dev/en')).href).toBe(
+    'https://hanzo-docs.dev/',
   );
-  expect(DefaultFormatter.remove(new NextURL('https://fumadocs.dev/en/test/hello')).href).toBe(
-    'https://fumadocs.dev/test/hello',
+  expect(DefaultFormatter.remove(new NextURL('https://hanzo-docs.dev/en/test/hello')).href).toBe(
+    'https://hanzo-docs.dev/test/hello',
   );
   expect(
     DefaultFormatter.remove(
-      new NextURL('https://fumadocs.dev/docs/en', {
+      new NextURL('https://hanzo-docs.dev/docs/en', {
         nextConfig: {
           basePath: '/docs',
         },
       }),
     ).href,
-  ).toBe('https://fumadocs.dev/docs/');
+  ).toBe('https://hanzo-docs.dev/docs/');
 });
