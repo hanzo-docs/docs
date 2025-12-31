@@ -1,3 +1,3 @@
-# Fumadocs Twoslash
+# Hanzo Docs Twoslash
 
-Use Typescript Twoslash in Fumadocs.
+Use Typescript Twoslash in Hanzo Docs.

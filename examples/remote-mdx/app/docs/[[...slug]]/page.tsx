@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { DocsBody, DocsDescription, DocsPage, DocsTitle } from '@hanzo/docs-ui/layouts/docs/page';
 import { notFound } from 'next/navigation';
 import defaultComponents from '@hanzo/docs/ui/mdx';
-import { createCompiler, parseFrontmatter } from '@fumadocs/mdx-remote';
+import { createCompiler, parseFrontmatter } from '@hanzo-docs/mdx-remote';
 import { type Frontmatter, getPage, getPages } from '@/app/docs/utils';
 
 const compiler = createCompiler();

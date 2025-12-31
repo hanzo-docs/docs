@@ -7,7 +7,7 @@ import { createFSCache } from '@/utils/fs-cache';
 import { createHash } from 'crypto';
 import type { LazyEntry } from '@/runtime/dynamic';
 import type { EmitEntry } from '@/core';
-import { fumaMatter } from '@/utils/fuma-matter';
+import { parseFrontmatter } from '@/utils/frontmatter';
 import type { ServerOptions } from '@/runtime/server';
 
 export interface IndexFilePluginOptions {
@@ -247,7 +247,7 @@ async function generateDynamicIndexFile(ctx: FileGenContext) {
   ) {
     const fullPath = path.relative(process.cwd(), absolutePath);
     const content = await indexFileCache.read(fullPath).catch(() => '');
-    const parsed = fumaMatter(content);
+    const parsed = parseFrontmatter(content);
     const data = await core.transformFrontmatter(
       {
         collection,

@@ -30,11 +30,6 @@ export interface DocsCollectionEntry<
 > {
   docs: DocCollectionEntry<Name, Frontmatter, TC>[];
   meta: MetaCollectionEntry<Meta>[];
-  /** @deprecated Use toSource() instead */
-  toFumadocsSource: () => Source<{
-    pageData: DocCollectionEntry<Name, Frontmatter, TC>;
-    metaData: MetaCollectionEntry<Meta>;
-  }>;
   toSource: () => Source<{
     pageData: DocCollectionEntry<Name, Frontmatter, TC>;
     metaData: MetaCollectionEntry<Meta>;
@@ -49,11 +44,6 @@ export interface AsyncDocsCollectionEntry<
 > {
   docs: AsyncDocCollectionEntry<Name, Frontmatter, TC>[];
   meta: MetaCollectionEntry<Meta>[];
-  /** @deprecated Use toSource() instead */
-  toFumadocsSource: () => Source<{
-    pageData: AsyncDocCollectionEntry<Name, Frontmatter, TC>;
-    metaData: MetaCollectionEntry<Meta>;
-  }>;
   toSource: () => Source<{
     pageData: AsyncDocCollectionEntry<Name, Frontmatter, TC>;
     metaData: MetaCollectionEntry<Meta>;
@@ -185,11 +175,8 @@ export function server<Config, TC extends InternalTypeConfig>(options: ServerOpt
       const entry = {
         docs: await this.doc(name, base, docGlob),
         meta: await this.meta(name, base, metaGlob),
-        toFumadocsSource() {
-          return toFumadocsSource(this.docs, this.meta);
-        },
         toSource() {
-          return toFumadocsSource(this.docs, this.meta);
+          return createSource(this.docs, this.meta);
         },
       } satisfies DocsCollectionEntry;
 
@@ -216,11 +203,8 @@ export function server<Config, TC extends InternalTypeConfig>(options: ServerOpt
       const entry = {
         docs: await this.docLazy(name, base, docHeadGlob, docBodyGlob),
         meta: await this.meta(name, base, metaGlob),
-        toFumadocsSource() {
-          return toFumadocsSource(this.docs, this.meta);
-        },
         toSource() {
-          return toFumadocsSource(this.docs, this.meta);
+          return createSource(this.docs, this.meta);
         },
       } satisfies AsyncDocsCollectionEntry;
 
@@ -240,7 +224,7 @@ export function server<Config, TC extends InternalTypeConfig>(options: ServerOpt
   };
 }
 
-export function toFumadocsSource<
+export function createSource<
   Page extends DocMethods & PageData,
   Meta extends MetaMethods & MetaData,
 >(

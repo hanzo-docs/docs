@@ -1,11 +1,11 @@
 ---
-title: Fumadocs OpenAPI v10
-description: Introducing Fumadocs OpenAPI v10.
+title: Hanzo Docs OpenAPI v10
+description: Introducing Hanzo Docs OpenAPI v10.
 author: Fuma Nama
 date: 2025-11-06
 ---
 
-We are pleased to announce the release of Fumadocs OpenAPI v10.
+We are pleased to announce the release of Hanzo Docs OpenAPI v10.
 This major release focuses on enhancing customization capabilities and simplifying API surfaces, it is also an opportunity to drop older/deprecated APIs.
 
 We have introduced multiple breaking changes that require attention during upgrades.
@@ -117,7 +117,7 @@ The option `content.showExampleInFields` has been renamed to `schemaUI.showExamp
 
 ### Removal of Centralized `renderer` and `fields` APIs
 
-Fumadocs OpenAPI now prefers per-feature customizations, eliminating the centralized `renderer` API. Custom render functions are now specified directly in the `content` option when creating an API page.
+Hanzo Docs OpenAPI now prefers per-feature customizations, eliminating the centralized `renderer` API. Custom render functions are now specified directly in the `content` option when creating an API page.
 
 ```tsx title="components/api-page.tsx"
 import { openapi } from '@/lib/openapi';
@@ -202,7 +202,7 @@ v10 introduced the `storageKeyPrefix` option to prevent state bleed across multi
 import { defineClientConfig } from '@hanzo/docs/openapi/ui/client';
 
 export default defineClientConfig({
-  storageKeyPrefix: 'fumadocs-openapi-custom-',
+  storageKeyPrefix: 'hanzo-docs-openapi-custom-',
 });
 ```
 

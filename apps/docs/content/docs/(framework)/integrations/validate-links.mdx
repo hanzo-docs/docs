@@ -7,13 +7,13 @@ description: Ensure your links are correct.
 
 You can use [`next-validate-link`](https://next-validate-link.vercel.app) to validate your links in content files.
 
-> This guide is mainly for **Fumadocs MDX**, see the docs of `next-validate-link` for other setups.
+> This guide is mainly for **Hanzo Docs MDX**, see the docs of `next-validate-link` for other setups.
 
 Create a script:
 
 ```ts title="scripts/lint.ts"
 import { type FileObject, printErrors, scanURLs, validateFiles } from 'next-validate-link';
-import type { InferPageType } from 'fumadocs-core/source';
+import type { InferPageType } from 'hanzo-docs-core/source';
 import { source } from '@/lib/source';
 
 async function checkLinks() {
@@ -70,7 +70,7 @@ void checkLinks();
 
 ### Running Lint
 
-To access the `source` object outside of app runtime, configure [Fumadocs MDX Loader](/docs/mdx/loader/bun) first.
+To access the `source` object outside of app runtime, configure [Hanzo Docs MDX Loader](/docs/mdx/loader/bun) first.
 
 Then, run the script to validate links:
 
@@ -78,6 +78,6 @@ Then, run the script to validate links:
 bun ./scripts/lint.ts
 ```
 
-> For Node.js, you might need to configure `tsconfig-paths`, TypeScript transpiling, and [Fumadocs MDX Loader](/docs/mdx/loader/node).
+> For Node.js, you might need to configure `tsconfig-paths`, TypeScript transpiling, and [Hanzo Docs MDX Loader](/docs/mdx/loader/node).
 >
 > Without special reasons, using Bun or [`tsx`](https://github.com/privatenumber/tsx) would be simpler.

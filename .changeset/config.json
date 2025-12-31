@@ -4,7 +4,7 @@
   "commit": false,
   "fixed": [
     ["@hanzo/docs-core", "@hanzo/docs-ui", "@hanzo/docs-base-ui"],
-    ["create-fumadocs-app", "create-fumadocs-versions"]
+    ["create-hanzo-docs-app", "create-hanzo-docs-versions"]
   ],
   "access": "public",
   "baseBranch": "dev",

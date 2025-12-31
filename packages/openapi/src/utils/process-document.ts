@@ -37,7 +37,7 @@ export async function processDocumentCached(
 }
 
 /**
- * process & reference input document to a Fumadocs OpenAPI compatible format
+ * process & reference input document to a Hanzo OpenAPI compatible format
  */
 export async function processDocument(
   input: string | OpenAPIV3_1.Document | OpenAPIV3.Document,

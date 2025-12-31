@@ -10,7 +10,7 @@ author: Fuma Nama
 Sometimes there are questions raised by beginners confused about where to add MDX components.
 Although it's simply located in `page.tsx`, which shouldn't be difficult to find, I think some kind of conventions may help, so I decided to add back `mdx-components.tsx`.
 
-I love to have fewer files, but considering `create-fumadocs-app` should also act as a starting point for beginners who may not be familiar with MDX, it's much more helpful to provide it by default.
+I love to have fewer files, but considering `create-hanzo-docs-app` should also act as a starting point for beginners who may not be familiar with MDX, it's much more helpful to provide it by default.
 
 ### Existing Projects
 
@@ -73,4 +73,4 @@ This allows Root Provider to handle the hierarchy correctly without revealing to
 
 Changing the hierarchy of different providers may result in problems since they actually rely on each other, now it is all integrated into `<RootProvider />`, including I18n configuration.
 
-The new [Internationalization](/docs/internationalization) guide requires Fumadocs 15.2.3 or above.
+The new [Internationalization](/docs/internationalization) guide requires Hanzo Docs 15.2.3 or above.

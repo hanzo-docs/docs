@@ -1,6 +1,6 @@
 {
   "title": "OpenAPI Example",
-  "description": "A demo for Fumadocs OpenAPI",
+  "description": "A demo for Hanzo Docs OpenAPI",
   "root": true,
   "icon": "Shapes",
   "pages": ["index", "...(generated)"]

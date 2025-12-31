@@ -42,7 +42,7 @@ export async function viteBuild({
       logLevel,
       plugins: [
         {
-          name: 'fumapress:cli-config',
+          name: 'hanzoPress:cli-config',
           configEnvironment(name) {
             if (sourcemapClient && name === 'client') {
               return {

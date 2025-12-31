@@ -1,3 +1,3 @@
-# Fumadocs Typescript
+# Hanzo Docs Typescript
 
-Typescript Integration for Fumadocs.
+Typescript Integration for Hanzo Docs.

@@ -5,12 +5,12 @@ import mdx from '@hanzo/mdx/vite';
 import path from 'node:path';
 import { createContentConfig } from '../config/content.js';
 import { baseDir } from '../constants.js';
-import { defineConfig, FumapressConfig } from '../config/global.js';
+import { defineConfig, PressConfig } from '../config/global.js';
 import { findFile } from '../lib/find-file.js';
 
 const extnames = ['.js', '.ts', '.jsx', '.tsx'];
 
-export async function fumapress(config: Partial<FumapressConfig> = {}): Promise<PluginOption[]> {
+export async function hanzoPress(config: Partial<PressConfig> = {}): Promise<PluginOption[]> {
   const resolved = defineConfig(config);
 
   return [
@@ -30,17 +30,17 @@ export async function fumapress(config: Partial<FumapressConfig> = {}): Promise<
   ];
 }
 
-function init(configPath: string | null, config: FumapressConfig): Plugin {
+function init(configPath: string | null, config: PressConfig): Plugin {
   let routesPath: string | null;
 
   return {
-    name: 'fumapress:init',
+    name: 'hanzoPress:init',
     enforce: 'pre',
     configEnvironment(_name, config) {
       if (config.optimizeDeps?.include) {
         config.optimizeDeps.include = config.optimizeDeps.include.map((entry) => {
           if (entry.startsWith('@vitejs/plugin-rsc')) {
-            entry = `fumapress > ${entry}`;
+            entry = `hanzoPress > ${entry}`;
           }
           return entry;
         });
