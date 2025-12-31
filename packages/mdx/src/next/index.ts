@@ -18,7 +18,7 @@ export interface CreateMDXOptions {
   /**
    * Directory for output files
    *
-   * @defaultValue '.source'
+   * @defaultValue '.docs'
    */
   outDir?: string;
 
@@ -31,8 +31,8 @@ export function createMDX(createOptions: CreateMDXOptions = {}) {
   const core = createNextCore(applyDefaults(createOptions));
   const isDev = process.env.NODE_ENV === 'development';
 
-  if (process.env._FUMADOCS_MDX !== '1') {
-    process.env._FUMADOCS_MDX = '1';
+  if (process.env._HANZO_DOCS_MDX !== '1') {
+    process.env._HANZO_DOCS_MDX = '1';
 
     void init(isDev, core);
   }
@@ -53,7 +53,7 @@ export function createMDX(createOptions: CreateMDXOptions = {}) {
         '*.{md,mdx}': {
           loaders: [
             {
-              loader: 'fumadocs-mdx/loader-mdx',
+              loader: '@hanzo/docs-mdx/loader-mdx',
               options: loaderOptions as unknown as TurbopackLoaderOptions,
             },
           ],
@@ -62,7 +62,7 @@ export function createMDX(createOptions: CreateMDXOptions = {}) {
         '*.json': {
           loaders: [
             {
-              loader: 'fumadocs-mdx/loader-meta',
+              loader: '@hanzo/docs-mdx/loader-meta',
               options: loaderOptions as unknown as TurbopackLoaderOptions,
             },
           ],
@@ -71,7 +71,7 @@ export function createMDX(createOptions: CreateMDXOptions = {}) {
         '*.yaml': {
           loaders: [
             {
-              loader: 'fumadocs-mdx/loader-meta',
+              loader: '@hanzo/docs-mdx/loader-meta',
               options: loaderOptions as unknown as TurbopackLoaderOptions,
             },
           ],
@@ -96,7 +96,7 @@ export function createMDX(createOptions: CreateMDXOptions = {}) {
             use: [
               options.defaultLoaders.babel,
               {
-                loader: 'fumadocs-mdx/loader-mdx',
+                loader: '@hanzo/docs-mdx/loader-mdx',
                 options: loaderOptions,
               },
             ],
@@ -106,7 +106,7 @@ export function createMDX(createOptions: CreateMDXOptions = {}) {
             enforce: 'pre',
             use: [
               {
-                loader: 'fumadocs-mdx/loader-meta',
+                loader: '@hanzo/docs-mdx/loader-meta',
                 options: loaderOptions,
               },
             ],

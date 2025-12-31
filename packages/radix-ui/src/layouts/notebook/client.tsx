@@ -1,5 +1,5 @@
 'use client';
-import { cn } from '@fumadocs/ui/cn';
+import { cn } from '@hanzo/docs-ui/cn';
 import {
   type ComponentProps,
   createContext,
@@ -16,8 +16,8 @@ import { useSidebar } from '@/components/sidebar/base';
 import { ChevronDown } from 'lucide-react';
 import Link from '@hanzo/docs-core/link';
 import { usePathname } from '@hanzo/docs-core/framework';
-import { useIsScrollTop } from '@fumadocs/ui/hooks/use-is-scroll-top';
-import { LinkItem, type LinkItemType, type MenuItemType } from '@fumadocs/ui/link-item';
+import { useIsScrollTop } from '@hanzo/docs-ui/hooks/use-is-scroll-top';
+import { LinkItem, type LinkItemType, type MenuItemType } from '@hanzo/docs-ui/link-item';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { isTabActive, type SidebarTabWithProps } from '@/components/sidebar/tabs/dropdown';
 

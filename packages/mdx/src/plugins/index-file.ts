@@ -64,7 +64,7 @@ export default function indexFile(options: IndexFilePluginOptions = {}): Plugin 
     tc: string;
   } {
     const serverOptions: ServerOptions = {};
-    const typeConfigs: string[] = ['import("fumadocs-mdx/runtime/types").InternalTypeConfig'];
+    const typeConfigs: string[] = ['import("@hanzo/docs-mdx/runtime/types").InternalTypeConfig'];
     const ctx = core.getPluginContext();
 
     for (const plugin of core.getPlugins()) {

@@ -6,7 +6,7 @@ import type {
   HighlightOptionsThemes,
 } from '@hanzo/docs-core/highlight';
 import { useShiki } from '@hanzo/docs-core/highlight/client';
-import { cn } from '@fumadocs/ui/cn';
+import { cn } from '@hanzo/docs-ui/cn';
 import {
   type ComponentProps,
   createContext,
