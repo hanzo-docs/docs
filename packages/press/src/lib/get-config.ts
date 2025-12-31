@@ -1,4 +1,4 @@
-import { defineConfig, type FumapressConfig } from '../config/global.js';
+import { defineConfig, type PressConfig } from '../config/global.js';
 import { glob } from 'tinyglobby';
 import { pathToFileURL } from 'node:url';
 
@@ -7,7 +7,7 @@ const DefaultConfig = defineConfig({});
 /**
  * Default glob patterns for finding config file
  */
-const DefaultConfigPatterns = ['fumapress.config.{js,jsx,ts,tsx}'];
+const DefaultConfigPatterns = ['hanzoPress.config.{js,jsx,ts,tsx}'];
 
 export async function findConfigPath(): Promise<string | null> {
   const paths = await glob(DefaultConfigPatterns);
@@ -15,7 +15,7 @@ export async function findConfigPath(): Promise<string | null> {
   return paths.length > 0 ? paths[0] : null;
 }
 
-export async function loadConfig(configPath?: string | null): Promise<FumapressConfig> {
+export async function loadConfig(configPath?: string | null): Promise<PressConfig> {
   if (configPath === null) return DefaultConfig;
   if (configPath === undefined) return loadConfig(await findConfigPath());
 
@@ -32,10 +32,10 @@ export async function loadConfig(configPath?: string | null): Promise<FumapressC
   }
 }
 
-function checkConfig(loaded: unknown): FumapressConfig {
+function checkConfig(loaded: unknown): PressConfig {
   if (typeof loaded !== 'object' || loaded === null) {
     throw new Error(`Config file ${loaded} must export an object.`);
   }
 
-  return loaded as FumapressConfig;
+  return loaded as PressConfig;
 }

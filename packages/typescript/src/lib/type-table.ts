@@ -60,7 +60,7 @@ export async function getTypeTableOutput(
   if (type && type.split('\n').length > 1) {
     content += `\n${type}`;
   } else if (type) {
-    typeName ??= '$Fumadocs';
+    typeName ??= '$HanzoDocs';
     content += `\nexport type ${typeName} = ${type}`;
   }
 

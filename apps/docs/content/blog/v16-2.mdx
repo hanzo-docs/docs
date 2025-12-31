@@ -1,17 +1,17 @@
 ---
-title: Fumadocs 16.2
+title: Hanzo Docs 16.2
 description: UI Refactor
 author: Fuma Nama
 date: 2025-11-29
 ---
 
-We are pleased to announce the release of Fumadocs 16.2, introducing a better layout system for Fumadocs UI.
+We are pleased to announce the release of Hanzo Docs 16.2, introducing a better layout system for Hanzo Docs UI.
 
 ## The New Layout System
 
 Handling layouts in documentation frameworks can present significant challenges.
 
-As a solution, Fumadocs UI implemented a [Grid System](/docs/ui/layouts/docs#the-layout-system) that is composable, flexible, cohesive and predictable.
+As a solution, Hanzo Docs UI implemented a [Grid System](/docs/ui/layouts/docs#the-layout-system) that is composable, flexible, cohesive and predictable.
 See the linked docs for more details.
 
 In short, the layout consists of a grid container, and layout componenents using `position: sticky`:
@@ -48,7 +48,7 @@ Layout components are also responsible to declare their heights via CSS variable
 }
 ```
 
-For user-land customizations, we recommend the Fumadocs CLI customize command, or hooking the relevant grid areas like:
+For user-land customizations, we recommend the Hanzo Docs CLI customize command, or hooking the relevant grid areas like:
 
 ```css
 .custom-component {
@@ -59,13 +59,13 @@ For user-land customizations, we recommend the Fumadocs CLI customize command, o
 
 ### Why the Change?
 
-Previously, Fumadocs UI relied on `position: fixed` and mathematical computations (inspired by Vitepress). The older method often lacked composability and difficult for beginners to manage.
+Previously, Hanzo Docs UI relied on `position: fixed` and mathematical computations (inspired by Vitepress). The older method often lacked composability and difficult for beginners to manage.
 
 The new system fixed most of the flaws, allowing easier visualizations, while reducing the complexity of previous solutions.
 
 ## Breaking Changes
 
-While Fumadocs 16.2 preserves compatibility in several areas, notably:
+While Hanzo Docs 16.2 preserves compatibility in several areas, notably:
 
 - The `--fd-layout-width` CSS variable continues to function as expected.
 - All ID and data attributes remain unchanged.
@@ -77,9 +77,9 @@ However, the shift to the new grid system may impact existing customizations, pa
 ### No Longer Exposing Internal Components
 
 Layout components such as Root Toggle, Language Toggle, and Theme Toggle are no longer directly exposed.
-This decision enables Fumadocs UI to iterate these elements without introducing unexpected breaking changes to usage outside of API surfaces.
+This decision enables Hanzo Docs UI to iterate these elements without introducing unexpected breaking changes to usage outside of API surfaces.
 
-**Migration Steps:** Override the relevant layout components with your own implementations, or utilize the Fumadocs CLI commands (`add` or `customize`) to install them locally.
+**Migration Steps:** Override the relevant layout components with your own implementations, or utilize the Hanzo Docs CLI commands (`add` or `customize`) to install them locally.
 
 ### Importing Page Layouts by Type
 
@@ -94,7 +94,7 @@ import { DocsPage } from '@hanzo/docs/ui/layouts/docs/page';
 import { DocsPage } from '@hanzo/docs/ui/layouts/notebook/page';
 ```
 
-**Migration Steps:** Update your imports accordingly. Although the default `fumadocs-ui/page` will redirect to the correct layout, we strongly advise explicit imports for clarity and future-proofing.
+**Migration Steps:** Update your imports accordingly. Although the default `hanzo-docs-ui/page` will redirect to the correct layout, we strongly advise explicit imports for clarity and future-proofing.
 
 ### Removal of Unused Styles
 
@@ -104,7 +104,7 @@ Styles related to the abandoned `container` utility, and `--spacing-fd-container
 
 ### Relocation of Sidebar Context
 
-The `fumadocs-ui/contexts/sidebar` module has been removed. Access the context via:
+The `hanzo-docs-ui/contexts/sidebar` module has been removed. Access the context via:
 
 ```ts
 import { useSidebar } from '@hanzo/docs/ui/components/sidebar/base';
@@ -114,4 +114,4 @@ import { useSidebar } from '@hanzo/docs/ui/components/sidebar/base';
 
 ## Conclusion
 
-Fumadocs 16.2 aims to offer greater flexibility for developers. Welcome to share your thoughts about the new design on GitHub Discussion!
+Hanzo Docs 16.2 aims to offer greater flexibility for developers. Welcome to share your thoughts about the new design on GitHub Discussion!

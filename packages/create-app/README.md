@@ -1,11 +1,11 @@
-# Create Fumadocs App
+# Create Hanzo Docs App
 
-A CLI tool to create new documentation sites with Fumadocs.
+A CLI tool to create new documentation sites with Hanzo Docs.
 
 ```bash
-npx create-fumadocs-app
+npx create-hanzo-docs-app
 #or
-pnpm create fumadocs-app
+pnpm create hanzo-docs-app
 #or
-yarn create fumadocs-app
+yarn create hanzo-docs-app
 ```

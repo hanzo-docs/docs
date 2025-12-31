@@ -13,7 +13,7 @@ Footer, and Breadcrumb.
 Import it according to your layout.
 
 ```tsx title="page.tsx" tab="Docs Layout"
-import { DocsPage, DocsDescription, DocsTitle, DocsBody } from 'fumadocs-ui/layouts/docs/page';
+import { DocsPage, DocsDescription, DocsTitle, DocsBody } from 'hanzo-docs-ui/layouts/docs/page';
 
 <DocsPage>
   <DocsTitle>title</DocsTitle>
@@ -26,7 +26,7 @@ import { DocsPage, DocsDescription, DocsTitle, DocsBody } from 'fumadocs-ui/layo
 ```
 
 ```tsx title="page.tsx" tab="Notebook Layout"
-import { DocsPage, DocsDescription, DocsTitle, DocsBody } from 'fumadocs-ui/layouts/notebook/page';
+import { DocsPage, DocsDescription, DocsTitle, DocsBody } from 'hanzo-docs-ui/layouts/notebook/page';
 
 <DocsPage>
   <DocsTitle>title</DocsTitle>
@@ -57,7 +57,7 @@ import { DocsPage } from '@hanzo/docs/ui/layouts/notebook/page';
 
 <DocsPage>
   <a
-    href={`https://github.com/fuma-nama/fumadocs/blob/main/content/docs/${page.path}`}
+    href={`https://github.com/fuma-nama/hanzo-docs/blob/main/content/docs/${page.path}`}
     rel="noreferrer noopener"
     target="_blank"
     className="w-fit border rounded-xl p-2 font-medium text-sm text-fd-secondary-foreground bg-fd-secondary transition-colors hover:text-fd-accent-foreground hover:bg-fd-accent"
@@ -87,7 +87,7 @@ const lastModifiedTime: Date | undefined;
 
 For `lastModifiedTime`, you can possibly use different version controls like Github or a CMS.
 
-<Tabs items={['Fumadocs MDX', 'GitHub API']}>
+<Tabs items={['Hanzo Docs MDX', 'GitHub API']}>
 
     <Tab>
 
@@ -112,7 +112,7 @@ import { getGithubLastEdit } from '@hanzo/docs/core/content/github';
 
 const lastModifiedTime = await getGithubLastEdit({
   owner: 'fuma-nama',
-  repo: 'fumadocs',
+  repo: 'hanzo-docs',
   // file path in Git
   path: `content/docs/${page.path}`,
 });
@@ -143,7 +143,7 @@ import { DocsPage } from '@hanzo/docs/ui/layouts/notebook/page';
 An overview of all the headings in your article, it requires an array of headings.
 
 For Markdown and MDX documents, You can obtain it using the
-[TOC Utility](/docs/headless/utils/get-toc). Content sources like Fumadocs MDX offer this out-of-the-box.
+[TOC Utility](/docs/headless/utils/get-toc). Content sources like Hanzo Docs MDX offer this out-of-the-box.
 
 ```tsx
 // docs layout:

@@ -1,7 +1,7 @@
 import { App, Octokit } from 'octokit';
 import type { ActionResponse, Feedback } from '@/components/feedback';
 
-export const repo = 'fumadocs';
+export const repo = 'hanzo-docs';
 export const owner = 'fuma-nama';
 export const DocsCategory = 'Docs Feedback';
 

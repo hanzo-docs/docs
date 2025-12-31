@@ -1,4 +1,4 @@
-.shiki:not(.not-fumadocs-codeblock *) {
+.shiki:not(.not-hanzo-docs-codeblock *) {
   --padding-left: calc(var(--spacing) * 4);
   --padding-right: calc(var(--spacing) * 4);
 
@@ -7,13 +7,13 @@
   }
 }
 
-.dark .shiki:not(.not-fumadocs-codeblock *) {
+.dark .shiki:not(.not-hanzo-docs-codeblock *) {
   code span {
     color: var(--shiki-dark);
   }
 }
 
-:is(pre *):is(.shiki *):not(.not-fumadocs-codeblock *) {
+:is(pre *):is(.shiki *):not(.not-hanzo-docs-codeblock *) {
   .line& {
     position: relative;
     min-height: 1lh;

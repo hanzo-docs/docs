@@ -5,7 +5,7 @@ description: A list of layout components.
 
 ## Overview
 
-Fumadocs UI provides essential layouts to display content.
+Hanzo Docs UI provides essential layouts to display content.
 
 <DocsCategory />
 
@@ -16,7 +16,7 @@ Each layout supports a shared set of options.
 It is recommended to store these options into a file, and pass them to the layouts.
 
 ```tsx title="lib/layout.shared.tsx"
-import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
+import type { BaseLayoutProps } from 'hanzo-docs-ui/layouts/shared';
 
 export function baseOptions(): BaseLayoutProps {
   return {
@@ -51,7 +51,7 @@ Options for navbar (header).
 To make the navbar background transparent, you can configure transparent mode.
 
 ```tsx tab="All" title="lib/layout.shared.tsx"
-import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
+import type { BaseLayoutProps } from 'hanzo-docs-ui/layouts/shared';
 
 export function baseOptions(): BaseLayoutProps {
   return {
@@ -66,7 +66,7 @@ export function baseOptions(): BaseLayoutProps {
 
 ```tsx tab="Home Layout"
 import { baseOptions } from '@/lib/layout.shared';
-import { HomeLayout } from 'fumadocs-ui/layouts/home';
+import { HomeLayout } from 'hanzo-docs-ui/layouts/home';
 import type { ReactNode } from 'react';
 
 export default function Layout({ children }: { children: ReactNode }) {
@@ -88,7 +88,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
 ```tsx tab="Docs Layout"
 import { baseOptions } from '@/lib/layout.shared';
-import { DocsLayout } from 'fumadocs-ui/layouts/docs';
+import { DocsLayout } from 'hanzo-docs-ui/layouts/docs';
 import type { ReactNode } from 'react';
 
 export default function Layout({ children }: { children: ReactNode }) {
@@ -119,7 +119,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 To replace the navbar in different layouts, set `nav.component` to your own component.
 
 ```tsx tab="All" title="lib/layout.shared.tsx"
-import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
+import type { BaseLayoutProps } from 'hanzo-docs-ui/layouts/shared';
 
 export function baseOptions(): BaseLayoutProps {
   return {
@@ -133,7 +133,7 @@ export function baseOptions(): BaseLayoutProps {
 
 ```tsx tab="Home Layout"
 import { baseOptions } from '@/lib/layout.shared';
-import { HomeLayout } from 'fumadocs-ui/layouts/home';
+import { HomeLayout } from 'hanzo-docs-ui/layouts/home';
 import type { ReactNode } from 'react';
 
 export default function Layout({ children }: { children: ReactNode }) {
@@ -155,7 +155,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
 ```tsx tab="Docs Layout"
 import { baseOptions } from '@/lib/layout.shared';
-import { DocsLayout } from 'fumadocs-ui/layouts/docs';
+import { DocsLayout } from 'hanzo-docs-ui/layouts/docs';
 import type { ReactNode } from 'react';
 
 export default function Layout({ children }: { children: ReactNode }) {
@@ -175,7 +175,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 }
 ```
 
-Fumadocs uses **CSS Variables** to share the size of layout components, and fit each layout component into appropriate position.
+Hanzo Docs uses **CSS Variables** to share the size of layout components, and fit each layout component into appropriate position.
 
 You need to override `--fd-nav-height` to the exact height of your custom navbar, this can be done with a CSS stylesheet (e.g. in `global.css`):
 
