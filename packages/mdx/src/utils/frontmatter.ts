@@ -1,11 +1,11 @@
 /**
- * Inspired by https://github.com/jonschlinkert/gray-matter
+ * Frontmatter parser - inspired by gray-matter
  */
 import { load } from 'js-yaml';
 
-interface Output {
+interface FrontmatterOutput {
   /**
-   * The matter section, including the delimiter.
+   * The frontmatter section, including the delimiter.
    */
   matter: string;
   content: string;
@@ -15,10 +15,10 @@ interface Output {
 const regex = /^---\r?\n(.+?)\r?\n---\r?\n?/s;
 
 /**
- * parse frontmatter, it supports only yaml format
+ * Parse YAML frontmatter from markdown content
  */
-export function fumaMatter(input: string): Output {
-  const output: Output = { matter: '', data: {}, content: input };
+export function parseFrontmatter(input: string): FrontmatterOutput {
+  const output: FrontmatterOutput = { matter: '', data: {}, content: input };
   const match = regex.exec(input);
   if (!match) {
     return output;

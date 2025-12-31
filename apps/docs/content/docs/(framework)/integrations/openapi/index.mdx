@@ -16,12 +16,12 @@ description: Generating docs for OpenAPI schema
 Install the required packages.
 
 ```npm
-npm i fumadocs-openapi shiki
+npm i hanzo-docs-openapi shiki
 ```
 
 <Callout title="For Bun PM" type="warning">
   If you encountered any issues, please check
-  [#2223](https://github.com/fuma-nama/fumadocs/issues/2223).
+  [#2223](https://github.com/fuma-nama/hanzo-docs/issues/2223).
 </Callout>
 
 ### Generate Styles
@@ -139,7 +139,7 @@ import { openapi } from '@/lib/openapi';
 export const source = loader(
   // [!code ++:6]
   multiple({
-    docs: docs.toFumadocsSource(),
+    docs: docs.toHanzo DocsSource(),
     openapi: await openapiSource(openapi, {
       baseDir: 'openapi',
     }),
@@ -182,7 +182,7 @@ Or where you return text for LLM:
 
 ```ts
 import { source } from '@/lib/source';
-import type { InferPageType } from 'fumadocs-core/source';
+import type { InferPageType } from 'hanzo-docs-core/source';
 
 export async function getLLMText(page: InferPageType<typeof source>) {
   // [!code ++:4]

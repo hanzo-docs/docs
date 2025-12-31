@@ -19,11 +19,11 @@ export function baseOptions(): BaseLayoutProps {
               fill="white"
             />
           </svg>
-          Fumadocs Marble
+          Hanzo Docs Marble
         </>
       ),
     },
-    // see https://fumadocs.dev/docs/ui/navigation/links
+    // see https://hanzo-docs.dev/docs/ui/navigation/links
     links: [],
   };
 }

@@ -1,5 +1,5 @@
-# Fumadocs UI
+# @hanzo/docs-radix-ui
 
-The React.js docs framework.
+Radix UI components for Hanzo Docs.
 
-[Read Documentation](https://fumadocs.dev/docs/ui)
+[Read Documentation](https://hanzo-docs.dev/docs/ui)

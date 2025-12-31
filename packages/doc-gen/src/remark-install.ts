@@ -18,7 +18,7 @@ export type RemarkInstallOptions = {
   Tab?: string;
 
   /**
-   * Persist Tab value (Fumadocs UI only)
+   * Persist Tab value (Hanzo Docs UI only)
    *
    * @defaultValue false
    */

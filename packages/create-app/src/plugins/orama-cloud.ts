@@ -65,7 +65,7 @@ See https://hanzo.ai/docs/headless/search/orama-cloud for integrating Orama Clou
       }
 
       const filePath = {
-        '+next+fuma-docs-mdx': '.next/server/app/static.json.body',
+        '+next+hanzo-docs-mdx': '.next/server/app/static.json.body',
         'tanstack-start': '.output/public/static.json',
         'tanstack-start-spa': 'dist/client/static.json',
         'react-router': 'build/client/static.json',

@@ -3,7 +3,7 @@ title: Rehype Code
 description: Code syntax highlighter
 ---
 
-A wrapper of [`@shikijs/rehype`](https://shiki.style/packages/rehype), the syntax highlighter used by Fumadocs.
+A wrapper of [`@shikijs/rehype`](https://shiki.style/packages/rehype), the syntax highlighter used by Hanzo Docs.
 
 It converts raw `<pre />` codeblocks into highlighted codeblocks:
 
@@ -48,13 +48,13 @@ await compile('...', {
 });
 ```
 
-```ts tab="Fumadocs MDX"
+```ts tab="Hanzo Docs MDX"
 import { defineConfig } from '@hanzo/docs/mdx/config';
 
 export default defineConfig({
   mdxOptions: {
     rehypeCodeOptions: {
-      // enabled by default on Fumadocs MDX
+      // enabled by default on Hanzo Docs MDX
       // configure options here
     },
   },

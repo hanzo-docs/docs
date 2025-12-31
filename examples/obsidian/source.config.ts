@@ -1,6 +1,6 @@
 import { defineConfig, defineDocs, frontmatterSchema } from '@hanzo/docs-mdx/config';
-import { remarkObsidian, RemarkObsidianOptions } from 'fumadocs-obsidian/mdx';
-import { readVaultFiles } from 'fumadocs-obsidian';
+import { remarkObsidian, RemarkObsidianOptions } from 'hanzo-docs-obsidian/mdx';
+import { readVaultFiles } from 'hanzo-docs-obsidian';
 
 export const docs = defineDocs({
   dir: 'content/docs',

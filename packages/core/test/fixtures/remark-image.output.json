@@ -135,7 +135,7 @@
             {
               "name": "src",
               "type": "mdxJsxAttribute",
-              "value": "https://fumadocs.dev/banner.png",
+              "value": "https://hanzo-docs.dev/banner.png",
             },
             {
               "name": "width",
@@ -164,7 +164,7 @@
           },
           "title": null,
           "type": "mdxJsxFlowElement",
-          "url": "https://fumadocs.dev/banner.png",
+          "url": "https://hanzo-docs.dev/banner.png",
         },
       ],
       "position": {

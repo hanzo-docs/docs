@@ -2,7 +2,7 @@ import { buildConfig, type DocCollectionItem } from '@/config/build';
 import { buildMDX, type CompiledMDXProperties } from '@/loaders/mdx/build-mdx';
 import { executeMdx } from '@hanzo/mdx-runtime/client';
 import { pathToFileURL } from 'node:url';
-import { fumaMatter } from '@/utils/fuma-matter';
+import { parseFrontmatter } from '@/utils/frontmatter';
 import fs from 'node:fs/promises';
 import { server, type ServerOptions } from './server';
 import { type CoreOptions, createCore } from '@/core';
@@ -45,7 +45,7 @@ export async function dynamic<Config, TC extends InternalTypeConfig>(
 
     async function compile({ info, data }: LazyEntry<unknown>) {
       let content = (await fs.readFile(info.fullPath)).toString();
-      content = fumaMatter(content).content;
+      content = parseFrontmatter(content).content;
 
       const compiled = await buildMDX(core, collection, {
         filePath: info.fullPath,

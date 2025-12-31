@@ -1,5 +1,5 @@
 ![Test](./test.png)
 
-![External](https://fumadocs.dev/banner.png)
+![External](https://hanzo-docs.dev/banner.png)
 
 ![Inline](./remark-image.svg)

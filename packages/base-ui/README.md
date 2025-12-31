@@ -1,5 +1,5 @@
-# Fumadocs UI
+# @hanzo/docs-base-ui
 
-The React.js docs framework.
+The React.js docs framework base UI components.
 
-[Read Documentation](https://fumadocs.dev/docs/ui)
+[Read Documentation](https://hanzo-docs.dev/docs/ui)

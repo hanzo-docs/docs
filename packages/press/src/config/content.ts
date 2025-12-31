@@ -1,7 +1,7 @@
 import type { DefaultMDXOptions } from '@hanzo/docs-mdx/config';
 import { defineConfig, defineDocs, frontmatterSchema, metaSchema } from '@hanzo/docs-mdx/config';
 import { z } from 'zod';
-import type { FumapressConfig } from './global';
+import type { PressConfig } from './global';
 import type { ProcessorOptions } from '@mdx-js/mdx';
 
 export interface ContentConfig {
@@ -14,7 +14,7 @@ export interface ContentConfig {
       } & ProcessorOptions);
 }
 
-export async function createContentConfig(config: FumapressConfig) {
+export async function createContentConfig(config: PressConfig) {
   return {
     docs: defineDocs({
       dir: 'content',
@@ -35,4 +35,4 @@ export async function createContentConfig(config: FumapressConfig) {
   };
 }
 
-export type FumadocsMDXConfig = Awaited<ReturnType<typeof createContentConfig>>;
+export type DocsMDXConfig = Awaited<ReturnType<typeof createContentConfig>>;

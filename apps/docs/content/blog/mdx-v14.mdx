@@ -1,11 +1,11 @@
 ---
-title: Fumadocs MDX 14
+title: Hanzo Docs MDX 14
 description: Performance Improvements & API redesign.
 author: Fuma Nama
 date: 2025-11-16
 ---
 
-We are pleased to announce Fumadocs MDX 14. This update introduces several major enhancements designed to:
+We are pleased to announce Hanzo Docs MDX 14. This update introduces several major enhancements designed to:
 
 - Improve flexibility, taking the plugin approach further.
 - Improve performance & memory consumption.
@@ -15,7 +15,7 @@ We are pleased to announce Fumadocs MDX 14. This update introduces several major
 
 ### Entry Files
 
-Fumadocs MDX now generates multiple entry files in `.source` folder.
+Hanzo Docs MDX now generates multiple entry files in `.source` folder.
 
 You can add/update the path aliases in `tsconfig.json` for new entry files.
 
@@ -41,16 +41,16 @@ import { docs } from '@hanzo/docs-mdx:collections/dynamic';
 import browserCollections from '@hanzo/docs-mdx:collections/browser';
 ```
 
-To use `loader()` with doc collections, use the new `toFumadocsSource()` utility instead.
+To use `loader()` with doc collections, use the new `toHanzo DocsSource()` utility instead.
 
 ```ts
 import { blogPosts } from '@hanzo/docs-mdx:collections/server';
-import { toFumadocsSource } from '@hanzo/docs/mdx/runtime/server';
+import { toHanzo DocsSource } from '@hanzo/docs/mdx/runtime/server';
 import { loader } from '@hanzo/docs/core/source';
 
 export const blog = loader({
   baseUrl: '/blog',
-  source: toFumadocsSource(blogPosts, []),
+  source: toHanzo DocsSource(blogPosts, []),
 });
 ```
 
@@ -162,7 +162,7 @@ import { defineDocs } from '@hanzo/docs/mdx/config';
 export const docs = defineDocs({
   dir: 'content/guides',
   docs: {
-    files: ['./i-love-fumadocs/**/*.{md,mdx}'],
+    files: ['./i-love-hanzo-docs/**/*.{md,mdx}'],
   },
 });
 ```
@@ -210,4 +210,4 @@ export default defineConfig({
 - Resolved an issue with meta file validation when using Bun.
 - Introduced optimizations to reduce unnecessary entry files re-generations.
 
-Thank you for your continued support of Fumadocs. If you encounter any issues during the update, welcome to reach out through our GitHub Discussions.
+Thank you for your continued support of Hanzo Docs. If you encounter any issues during the update, welcome to reach out through our GitHub Discussions.

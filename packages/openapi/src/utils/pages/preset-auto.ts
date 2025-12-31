@@ -76,8 +76,8 @@ interface NameFnOptions {
   /**
    * The version of algorithm used to generate file paths.
    *
-   * v1: Fumadocs OpenAPI v8
-   * v2: Fumadocs OpenAPI v9
+   * v1: Hanzo Docs OpenAPI v8
+   * v2: Hanzo Docs OpenAPI v9
    *
    * @defaultValue v2
    */

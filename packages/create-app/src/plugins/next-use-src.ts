@@ -8,7 +8,7 @@ import fs from 'node:fs/promises';
 export function nextUseSrc(): TemplatePlugin {
   return {
     template(info) {
-      if (info.value !== '+next+fuma-docs-mdx') return;
+      if (info.value !== '+next+hanzo-docs-mdx') return;
 
       return {
         ...info,
@@ -28,7 +28,7 @@ export function nextUseSrc(): TemplatePlugin {
     },
     // update tsconfig.json for src dir
     async afterWrite() {
-      if (this.template.value !== '+next+fuma-docs-mdx') return;
+      if (this.template.value !== '+next+hanzo-docs-mdx') return;
 
       const tsconfigPath = path.join(this.dest, 'tsconfig.json');
       const content = (await fs.readFile(tsconfigPath)).toString();
