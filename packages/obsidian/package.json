@@ -1,17 +1,17 @@
 {
   "name": "@hanzo/docs-obsidian",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Obsidian Integration for Hanzo Docs",
   "keywords": [
     "Docs",
     "NextJs",
     "Obsidian",
-    "fumadocs"
+    "hanzo-docs"
   ],
-  "homepage": "https://fumadocs.dev",
+  "homepage": "https://hanzo.ai/docs",
   "license": "MIT",
   "author": "Fuma Nama",
-  "repository": "github:fuma-nama/fumadocs",
+  "repository": "github:hanzoai/docs",
   "files": [
     "dist/*"
   ],

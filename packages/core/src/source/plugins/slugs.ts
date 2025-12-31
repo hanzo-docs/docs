@@ -20,7 +20,7 @@ export function slugsPlugin<Config extends LoaderConfig = LoaderConfig>(
   }
 
   return {
-    name: 'fumadocs:slugs',
+    name: 'hanzo-docs:slugs',
     transformStorage({ storage }) {
       const indexFiles: string[] = [];
       const taken = new Set<string>();

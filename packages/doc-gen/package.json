@@ -1,17 +1,17 @@
 {
   "name": "@hanzo/docs-docgen",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "description": "Useful remark utilities and plugins for Hanzo Docs",
   "keywords": [
     "Docs",
-    "fumadocs",
+    "hanzo-docs",
     "mdx",
     "remark"
   ],
-  "homepage": "https://fumadocs.dev",
+  "homepage": "https://hanzo.ai/docs",
   "license": "MIT",
   "author": "Fuma Nama",
-  "repository": "github:fuma-nama/fumadocs",
+  "repository": "github:hanzoai/docs",
   "files": [
     "dist/*"
   ],
