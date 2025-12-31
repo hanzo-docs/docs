@@ -11,18 +11,18 @@ import { Mermaid } from '@/components/mdx/mermaid';
 import { Feedback } from '@/components/feedback';
 import { onRateAction, owner, repo } from '@/lib/github';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
-import Link from 'fumadocs-core/link';
-import { findSiblings } from 'fumadocs-core/page-tree';
-import { Card, Cards } from 'fumadocs-ui/components/card';
+import Link from '@hanzo/docs-core/link';
+import { findSiblings } from '@hanzo/docs-core/page-tree';
+import { Card, Cards } from '@hanzo/docs-ui/components/card';
 import { getMDXComponents } from '@/mdx-components';
 import { LLMCopyButton, ViewOptions } from '@/components/ai/page-actions';
 import { Banner } from '@hanzo/docs/ui/components/banner';
 import { Installation } from '@/components/preview/installation';
 import { Customisation } from '@/components/preview/customisation';
-import { DocsBody, DocsPage, PageLastUpdate } from 'fumadocs-ui/layouts/docs/page';
+import { DocsBody, DocsPage, PageLastUpdate } from '@hanzo/docs-ui/layouts/docs/page';
 import { NotFound } from '@/components/not-found';
 import { getSuggestions } from './suggestions';
-import { PathUtils } from 'fumadocs-core/source';
+import { PathUtils } from '@hanzo/docs-core/source';
 
 function PreviewRenderer({ preview }: { preview: string }): ReactNode {
   if (preview && preview in Preview) {

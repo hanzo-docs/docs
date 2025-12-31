@@ -1,4 +1,4 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from 'fumadocs-ui/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@hanzo/docs-ui/components/ui/tabs';
 import { CodeBlock } from '@/components/code-block';
 
 export function Installation({ name }: { name: string }) {
