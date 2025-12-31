@@ -83,7 +83,7 @@ export async function tryGitInit(cwd: string): Promise<boolean> {
       },
     });
 
-    await x('git', ['commit', '-m', 'Initial commit from Create Fumadocs App'], {
+    await x('git', ['commit', '-m', 'Initial commit from Create Hanzo Docs App'], {
       throwOnError: true,
       nodeOptions: {
         cwd,

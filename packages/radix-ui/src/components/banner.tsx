@@ -36,7 +36,7 @@ export function Banner({
   rainbowColors?: string[];
 
   /**
-   * Change Fumadocs layout styles
+   * Change Hanzo Docs layout styles
    *
    * @defaultValue true
    */

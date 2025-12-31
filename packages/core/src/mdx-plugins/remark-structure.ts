@@ -59,7 +59,7 @@ export interface StructureOptions {
 declare module 'mdast' {
   interface Data {
     /**
-     * [Fumadocs] Get content of unserializable element, `remarkStructure` uses it to generate search index.
+     * [Hanzo Docs] Get content of unserializable element, `remarkStructure` uses it to generate search index.
      */
     _string?: string[];
   }
@@ -68,7 +68,7 @@ declare module 'mdast' {
 declare module 'vfile' {
   interface DataMap {
     /**
-     * [Fumadocs] injected by `remarkStructure`
+     * [Hanzo Docs] injected by `remarkStructure`
      */
     structuredData: StructuredData;
   }
@@ -112,7 +112,7 @@ export function remarkStructure({
     const data: StructuredData = { contents: [], headings: [] };
     let lastHeading: string | undefined;
 
-    // Fumadocs OpenAPI Generated Structured Data
+    // Hanzo Docs OpenAPI Generated Structured Data
     if (file.data.frontmatter) {
       const frontmatter = file.data.frontmatter as {
         _openapi?: {

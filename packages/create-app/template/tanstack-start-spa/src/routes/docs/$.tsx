@@ -7,7 +7,7 @@ import { DocsBody, DocsDescription, DocsPage, DocsTitle } from '@hanzo/docs-ui/l
 import defaultMdxComponents from '@hanzo/docs-ui/mdx';
 import { baseOptions } from '@/lib/layout.shared';
 import { staticFunctionMiddleware } from '@tanstack/start-static-server-functions';
-import { useFumadocsLoader } from '@hanzo/docs/core/source/client';
+import { useHanzo DocsLoader } from '@hanzo/docs/core/source/client';
 
 export const Route = createFileRoute('/docs/$')({
   component: Page,
@@ -55,7 +55,7 @@ const clientLoader = browserCollections.docs.createClientLoader({
 function Page() {
   const data = Route.useLoaderData();
   const Content = clientLoader.getComponent(data.path);
-  const { pageTree } = useFumadocsLoader(data);
+  const { pageTree } = useHanzo DocsLoader(data);
 
   return (
     <DocsLayout {...baseOptions()} tree={pageTree}>

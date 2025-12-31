@@ -4,6 +4,6 @@ import { docs } from '@hanzo/docs/mdx:collections/server';
 
 export const source = loader({
   baseUrl: '/docs',
-  source: docs.toFumadocsSource(),
+  source: docs.toHanzo DocsSource(),
   i18n,
 });

@@ -17,12 +17,12 @@ git config --global user.email "fuma-nama@noreply.com"
 git config --global user.name "Fuma Nama"
 
 # clone the template repo
-rm -rf fumadocs-ui-template
-git clone --depth 1 --single-branch --branch main https://github.com/fuma-nama/fumadocs-ui-template.git
+rm -rf hanzo-docs-ui-template
+git clone --depth 1 --single-branch --branch main https://github.com/fuma-nama/hanzo-docs-ui-template.git
 
 # empty out the repo
-cd fumadocs-ui-template
-node $DIR/update-git-repo.js $TMP/fumadocs-ui-template
+cd hanzo-docs-ui-template
+node $DIR/update-git-repo.js $TMP/hanzo-docs-ui-template
 
 # commit the new files (if necessary)
 if [ -z "$(git status --porcelain)" ]; then
@@ -30,5 +30,5 @@ if [ -z "$(git status --porcelain)" ]; then
 else
   git add -A
   git commit -m "version $npm_package_version"
-  git push https://github.com/fuma-nama/fumadocs-ui-template.git main -f
+  git push https://github.com/fuma-nama/hanzo-docs-ui-template.git main -f
 fi

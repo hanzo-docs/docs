@@ -1,6 +1,6 @@
 ---
 title: Themes
-description: Add Theme to Fumadocs UI
+description: Add Theme to Hanzo Docs UI
 icon: Palette
 ---
 
@@ -8,11 +8,11 @@ import { WidthTrigger } from './theme.client';
 
 ## Overview
 
-Fumadocs UI adds its own colors, animations, and utilities with Tailwind CSS preset.
+Hanzo Docs UI adds its own colors, animations, and utilities with Tailwind CSS preset.
 
 ### Setup
 
-Only Tailwind CSS v4 is supported, the preset will also include source to Fumadocs UI itself:
+Only Tailwind CSS v4 is supported, the preset will also include source to Hanzo Docs UI itself:
 
 ```css title="Tailwind CSS"
 @import 'tailwindcss';
@@ -20,7 +20,7 @@ Only Tailwind CSS v4 is supported, the preset will also include source to Fumado
 @import '@hanzo/docs/ui/css/preset.css';
 ```
 
-For **Shadcn UI**, you can use the `shadcn` preset instead. Fumadocs UI will adopt colors from your Shadcn UI theme.
+For **Shadcn UI**, you can use the `shadcn` preset instead. Hanzo Docs UI will adopt colors from your Shadcn UI theme.
 
 ```css
 @import 'tailwindcss';
@@ -37,7 +37,7 @@ colors will be changed.
 
 ### Light/Dark Modes
 
-Fumadocs supports light/dark modes with [`next-themes`](https://github.com/pacocoursey/next-themes), it is included in Root Provider.
+Hanzo Docs supports light/dark modes with [`next-themes`](https://github.com/pacocoursey/next-themes), it is included in Root Provider.
 
 See [Root Provider](/docs/ui/layouts/root-provider#theme-provider) to learn more.
 
@@ -189,7 +189,7 @@ The plugin adds a `prose` class and variants to customise it.
 </div>
 ```
 
-> The plugin is supposed to work with Fumadocs UI's MDX components, it may conflict with `@tailwindcss/typography`.
+> The plugin is supposed to work with Hanzo Docs UI's MDX components, it may conflict with `@tailwindcss/typography`.
 >
 > If you need to use `@tailwindcss/typography` over the default plugin, [set a `className` option](https://github.com/tailwindlabs/tailwindcss-typography/blob/main/README.md#changing-the-default-class-name) to avoid conflicts.
 >

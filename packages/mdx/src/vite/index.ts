@@ -23,7 +23,7 @@ export interface PluginOptions {
   configPath?: string;
 
   /**
-   * Update Vite config to fix module resolution of Fumadocs
+   * Update Vite config to fix module resolution of Hanzo Docs
    *
    * @defaultValue true
    */

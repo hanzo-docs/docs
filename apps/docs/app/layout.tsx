@@ -11,8 +11,8 @@ import { NextProvider } from '@hanzo/docs/core/framework/next';
 
 export const metadata = createMetadata({
   title: {
-    template: '%s | Fumadocs',
-    default: 'Fumadocs',
+    template: '%s | Hanzo Docs',
+    default: 'Hanzo Docs',
   },
   description: 'The React.js documentation framework.',
   metadataBase: baseUrl,

@@ -1,6 +1,6 @@
-# Fumadocs Obsidian
+# @hanzo/docs-obsidian
 
-Obsidian integration for Fumadocs.
+Obsidian integration for Hanzo Docs.
 
 - Wikilinks, Embeds.
 - Callout.

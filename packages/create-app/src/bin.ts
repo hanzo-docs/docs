@@ -47,7 +47,7 @@ async function main(): Promise<void> {
   command.parse(process.argv);
   const defaultName = command.args[0];
   const config = command.opts();
-  intro(pc.bgCyan(pc.bold('Create Fumadocs App')));
+  intro(pc.bgCyan(pc.bold('Create Hanzo Docs')));
 
   const options = await group(
     {
@@ -63,11 +63,11 @@ async function main(): Promise<void> {
       },
       template: async () => {
         if (config.template) return config.template;
-        if (isCI) return '+next+fuma-docs-mdx';
+        if (isCI) return '+next+hanzo-docs-mdx';
 
         return select<Template>({
           message: 'Choose a template',
-          initialValue: '+next+fuma-docs-mdx',
+          initialValue: '+next+hanzo-docs-mdx',
           options: templates,
         });
       },
@@ -87,7 +87,7 @@ async function main(): Promise<void> {
         return select({
           message: 'Configure linter?',
           options:
-            results.template === '+next+fuma-docs-mdx'
+            results.template === '+next+hanzo-docs-mdx'
               ? [
                   {
                     value: 'disabled',

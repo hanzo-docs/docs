@@ -5,7 +5,7 @@ import { source } from '@/lib/source';
 import defaultMdxComponents from '@hanzo/docs/ui/mdx';
 import browserCollections from '@hanzo/docs/mdx:collections/browser';
 import { baseOptions } from '@/lib/layout.shared';
-import { useFumadocsLoader } from '@hanzo/docs/core/source/client';
+import { useHanzo DocsLoader } from '@hanzo/docs/core/source/client';
 
 export async function loader({ params }: Route.LoaderArgs) {
   const slugs = params['*'].split('/').filter((v) => v.length > 0);
@@ -36,7 +36,7 @@ const clientLoader = browserCollections.docs.createClientLoader({
 
 export default function Page({ loaderData, params }: Route.ComponentProps) {
   const Content = clientLoader.getComponent(loaderData.path);
-  const { pageTree } = useFumadocsLoader(loaderData);
+  const { pageTree } = useHanzo DocsLoader(loaderData);
 
   return (
     <DocsLayout {...baseOptions(params.lang)} tree={pageTree}>

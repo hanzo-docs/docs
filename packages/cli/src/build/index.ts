@@ -23,7 +23,7 @@ export function combineRegistry(
   };
 }
 
-export async function writeFumadocsRegistry(
+export async function writeDocsRegistry(
   out: CompiledRegistry | MonoRegistry,
   options: {
     dir: string;
@@ -66,7 +66,7 @@ export async function writeFumadocsRegistry(
   if ('registries' in out) {
     for (const child of out.registries) {
       write.push(
-        writeFumadocsRegistry(child, {
+        writeDocsRegistry(child, {
           dir: path.join(dir, child.name),
           log: options.log,
         }),

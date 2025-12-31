@@ -36,22 +36,22 @@ const items = [
   },
   {
     name: 'UI',
-    description: 'Only results about Fumadocs UI',
+    description: 'Only results about Hanzo Docs UI',
     value: 'ui',
   },
   {
     name: 'Core',
-    description: 'Only results about Fumadocs Core',
+    description: 'Only results about Hanzo Docs Core',
     value: 'headless',
   },
   {
     name: 'MDX',
-    description: 'Only results about Fumadocs MDX',
+    description: 'Only results about Hanzo Docs MDX',
     value: 'mdx',
   },
   {
     name: 'CLI',
-    description: 'Only results about Fumadocs CLI',
+    description: 'Only results about Hanzo Docs CLI',
     value: 'cli',
   },
 ];

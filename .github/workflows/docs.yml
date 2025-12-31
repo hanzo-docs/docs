@@ -3,8 +3,8 @@ name: Deploy Docs to GitHub Pages
 # BLOCKING ISSUE: Build fails due to incomplete package migration.
 #
 # The source files in apps/docs/ still import from:
-#   - fumadocs-ui (should be @hanzo/docs-ui)
-#   - fumadocs-core (should be @hanzo/docs-core)
+#   - hanzo-docs-ui (should be @hanzo/docs-ui)
+#   - hanzo-docs-core (should be @hanzo/docs-core)
 #
 # Files needing updates:
 #   - apps/docs/app/global.css (CSS imports)

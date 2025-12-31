@@ -2,7 +2,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@hanzo/docs-ui/compone
 import { CodeBlock } from '@/components/code-block';
 
 export function Installation({ name }: { name: string }) {
-  const tabs = [{ name: 'Fumadocs CLI', value: 'fumadocs-cli' }];
+  const tabs = [{ name: 'Hanzo Docs CLI', value: 'hanzo-docs-cli' }];
 
   return (
     <Tabs className="my-6">
@@ -22,8 +22,8 @@ export function Installation({ name }: { name: string }) {
         ))}
       </TabsList>
 
-      <TabsContent value="fumadocs-cli">
-        <CodeBlock code={`npx @fumadocs/cli@latest add ${name}`} lang="bash" />
+      <TabsContent value="hanzo-docs-cli">
+        <CodeBlock code={`npx @hanzo-docs/cli@latest add ${name}`} lang="bash" />
       </TabsContent>
     </Tabs>
   );

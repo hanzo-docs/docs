@@ -1,5 +1,5 @@
 ---
-title: Fumadocs MDX v10 Summary
+title: Hanzo Docs MDX v10 Summary
 description: Migration Guide and Summary
 date: 2024-11-24
 author: Fuma Nama
@@ -85,12 +85,12 @@ export const { docs, meta } = defineDocs({
 
 `defineDocs` declares two collections, one with `doc` type that scans content files (e.g. `md/mdx`), one with `meta` type that scans meta files (e.g. `json`).
 
-Now you can generate types using `fumadocs-mdx` command, it's recommended to set it as a `postinstall` script.
+Now you can generate types using `hanzo-docs-mdx` command, it's recommended to set it as a `postinstall` script.
 
 ```json title="package.json"
 {
   "scripts": {
-    "postinstall": "fumadocs-mdx"
+    "postinstall": "hanzo-docs-mdx"
   }
 }
 ```
@@ -104,7 +104,7 @@ To access the collections, import them from the folder with their original name 
 import { docs, meta } from '@/.source';
 ```
 
-Now to integrate it with Fumadocs framework, change your `source.ts` from:
+Now to integrate it with Hanzo Docs framework, change your `source.ts` from:
 
 ```ts
 import { map } from '@/.map';
@@ -194,7 +194,7 @@ export type DocsMeta = InferMetaType<typeof source>;
 and the corresponding `source.config.ts`:
 
 ```ts
-import { defineDocs, defineCollections, frontmatterSchema } from 'fumadocs-mdx/config';
+import { defineDocs, defineCollections, frontmatterSchema } from 'hanzo-docs-mdx/config';
 import { z } from 'zod';
 
 export const { docs, meta } = defineDocs({
@@ -213,10 +213,10 @@ export const blog = defineCollections({
 
 ### Further Readings
 
-You can read the latest docs of Fumadocs MDX for details.
+You can read the latest docs of Hanzo Docs MDX for details.
 
 <Cards>
-  <Card href="/docs/mdx" title="Fumadocs MDX">
+  <Card href="/docs/mdx" title="Hanzo Docs MDX">
     The built-in content source, build a better content experience on Next.js.
   </Card>
 </Cards>

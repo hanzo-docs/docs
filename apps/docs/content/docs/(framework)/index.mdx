@@ -1,37 +1,37 @@
 ---
 title: Quick Start
-description: Getting Started with Fumadocs
+description: Getting Started with Hanzo Docs
 icon: Rocket
 ---
 
 ## Introduction
 
-Fumadocs <span className='text-fd-muted-foreground text-sm'>(Foo-ma docs)</span> is a **documentation framework**, designed to be fast, flexible,
+Hanzo Docs <span className='text-fd-muted-foreground text-sm'>(Foo-ma docs)</span> is a **documentation framework**, designed to be fast, flexible,
 and composes seamlessly into your React framework.
 
-Fumadocs has different parts:
+Hanzo Docs has different parts:
 
 <Cards>
 
-<Card icon={<CpuIcon className="text-purple-300" />} title='Fumadocs Core' href='/docs/headless'>
+<Card icon={<CpuIcon className="text-purple-300" />} title='Hanzo Docs Core' href='/docs/headless'>
 
 Handles most of the logic, including document search, content source adapters, and Markdown extensions.
 
 </Card>
 
-<Card icon={<PanelsTopLeft className="text-blue-300" />} title='Fumadocs UI'  href='/docs/ui'>
+<Card icon={<PanelsTopLeft className="text-blue-300" />} title='Hanzo Docs UI'  href='/docs/ui'>
 
-The default theme of Fumadocs offers a beautiful look for documentation sites and interactive components.
+The default theme of Hanzo Docs offers a beautiful look for documentation sites and interactive components.
 
 </Card>
 
 <Card icon={<Database />} title='Content Source'>
 
-The source of your content, can be a CMS or local data layers like [Fumadocs MDX](/docs/mdx) (the official content source).
+The source of your content, can be a CMS or local data layers like [Hanzo Docs MDX](/docs/mdx) (the official content source).
 
 </Card>
 
-<Card icon={<Terminal />} title='Fumadocs CLI' href='/docs/cli'>
+<Card icon={<Terminal />} title='Hanzo Docs CLI' href='/docs/cli'>
 
 A command line tool to install UI components and automate things, useful for customizing layouts.
 
@@ -40,12 +40,12 @@ A command line tool to install UI components and automate things, useful for cus
 </Cards>
 
 <Callout title="Want to learn more?">
-  Read our in-depth [What is Fumadocs](/docs/what-is-fumadocs) introduction.
+  Read our in-depth [What is Hanzo Docs](/docs/what-is-hanzo-docs) introduction.
 </Callout>
 
 ### Terminology
 
-**Markdown/MDX:** Markdown is a markup language for creating formatted text. Fumadocs natively supports Markdown and MDX (superset of Markdown).
+**Markdown/MDX:** Markdown is a markup language for creating formatted text. Hanzo Docs natively supports Markdown and MDX (superset of Markdown).
 
 **[Bun](https://bun.sh):** A JavaScript runtime, we use it for running scripts.
 
@@ -56,27 +56,27 @@ Some basic knowledge of React.js would be useful for further customisations.
 A minimum version of Node.js 22 required.
 
 ```bash tab="npm"
-npm create fumadocs-app
+npm create hanzo-docs-app
 ```
 
 ```bash tab="pnpm"
-pnpm create fumadocs-app
+pnpm create hanzo-docs-app
 ```
 
 ```bash tab="yarn"
-yarn create fumadocs-app
+yarn create hanzo-docs-app
 ```
 
 ```bash tab="bun"
-bun create fumadocs-app
+bun create hanzo-docs-app
 ```
 
 It will ask you the built-in template to use:
 
 - **React.js framework**: Next.js, Waku, React Router, Tanstack Start.
-- **Content source**: Fumadocs MDX.
+- **Content source**: Hanzo Docs MDX.
 
-A new fumadocs app should be initialized. Now you can start hacking!
+A new hanzo-docs app should be initialized. Now you can start hacking!
 
 <Callout title='From Existing Codebase?'>
 
@@ -107,8 +107,8 @@ npm run dev
 Some common questions you may encounter.
 
 <Accordions>
-  <Accordion id='upgrade-fumadocs' title="Getting error with missing APIs or bugs?">
-    Make sure to upgrade Fumadocs when you've encountered any problems or trying out new features:
+  <Accordion id='upgrade-hanzo-docs' title="Getting error with missing APIs or bugs?">
+    Make sure to upgrade Hanzo Docs when you've encountered any problems or trying out new features:
 
     ```bash title="pnpm"
     pnpm update -i -r --latest
@@ -142,7 +142,7 @@ Some common questions you may encounter.
     Finally, update the base URL of pages in `source.ts`:
 
 ```ts title="lib/source.ts"
-import { loader } from 'fumadocs-core/source';
+import { loader } from 'hanzo-docs-core/source';
 
 export const source = loader({
   baseUrl: '/info', // to the new value [!code highlight]
@@ -163,20 +163,20 @@ export const source = loader({
   <Accordion id='vite-context-error' title="Getting error with React contexts?">
 
 There's some weird pre-bundling problems with Vite: [#3910](https://github.com/vitejs/vite/issues/3910).
-Make sure to exclude Fumadocs from pre-bundling and add it to `noExternal`:
+Make sure to exclude Hanzo Docs from pre-bundling and add it to `noExternal`:
 
 ```ts title="vite.config.ts"
 import { defineConfig } from 'vite';
 
 export default defineConfig({
   resolve: {
-    // add other Fumadocs deps as needed
+    // add other Hanzo Docs deps as needed
     noExternal: [
-      'fumadocs-core',
-      'fumadocs-ui',
-      'fumadocs-openapi',
-      '@fumadocs/base-ui',
-      '@fumadocs/ui',
+      'hanzo-docs-core',
+      'hanzo-docs-ui',
+      'hanzo-docs-openapi',
+      '@hanzo-docs/base-ui',
+      '@hanzo-docs/ui',
     ],
   },
 });
@@ -190,7 +190,7 @@ export default defineConfig({
 <Accordions>
   <Accordion id='node-23' title="Getting error on production build?">
 
-    Node.js 23.1 might have problems with Next.js, see [#1021](https://github.com/fuma-nama/fumadocs/issues/1021). Make sure to change your Node.js version.
+    Node.js 23.1 might have problems with Next.js, see [#1021](https://github.com/fuma-nama/hanzo-docs/issues/1021). Make sure to change your Node.js version.
 
   </Accordion>
   <Accordion id='dynamic-route' title="It uses Dynamic Route, will it be poor in performance?">
@@ -201,9 +201,9 @@ export default defineConfig({
     You can [enable Static Exports](/docs/deploying/static) on Next.js to get a static build output.
 
   </Accordion>
-  <Accordion id='webpack' title='Reading from "fumadocs-mdx:collections/server" is not handled by plugins'>
+  <Accordion id='webpack' title='Reading from "hanzo-docs-mdx:collections/server" is not handled by plugins'>
 
-Webpack resolves import namespace **before** your import aliases in `tsconfig.json`. When using Fumadocs MDX, you have to rename your import alias to `collections/*` instead.
+Webpack resolves import namespace **before** your import aliases in `tsconfig.json`. When using Hanzo Docs MDX, you have to rename your import alias to `collections/*` instead.
 
 ```json title="tsconfig.json"
 {
@@ -220,7 +220,7 @@ Make sure to update the references as well.
 
 ```ts title="lib/source.ts"
 // [!code --]
-import { docs } from 'fumadocs-mdx:collections/server';
+import { docs } from 'hanzo-docs-mdx:collections/server';
 // [!code ++]
 import { docs } from 'collections/server';
 ```
@@ -261,7 +261,7 @@ import { docs } from 'collections/server';
 
 New to here? Don't worry, we are welcome for your questions.
 
-If you find anything confusing, please give your feedback on [Github Discussion](https://github.com/fuma-nama/fumadocs/discussions)!
+If you find anything confusing, please give your feedback on [Github Discussion](https://github.com/fuma-nama/hanzo-docs/discussions)!
 
 ### Writing Content
 
@@ -269,7 +269,7 @@ For authoring docs, make sure to read:
 
 <Cards>
   <Card href="/docs/markdown" title="Markdown">
-    Fumadocs has some additional features for authoring content.
+    Hanzo Docs has some additional features for authoring content.
   </Card>
   <Card href="/docs/navigation" title="Navigation">
     Learn how to customise navigation links and sidebar items.
@@ -297,10 +297,10 @@ For authoring docs, make sure to read:
     title="Internationalization"
     description="Learn how to enable i18n"
   />
-  <Card href="/docs/ui/theme" title="Color Themes" description="Add themes to Fumadocs UI" />
+  <Card href="/docs/ui/theme" title="Color Themes" description="Add themes to Hanzo Docs UI" />
   <Card
     href="/docs/ui/layouts/docs"
     title="Layouts"
-    description="Customise your Fumadocs UI layouts"
+    description="Customise your Hanzo Docs UI layouts"
   />
 </Cards>

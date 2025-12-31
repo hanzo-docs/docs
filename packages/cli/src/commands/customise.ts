@@ -6,7 +6,7 @@ import { ComponentInstaller } from '@/registry/installer';
 import { UIRegistries } from '@/commands/shared';
 
 export async function customise(client: RegistryClient) {
-  intro(picocolors.bgBlack(picocolors.whiteBright('Customise Fumadocs UI')));
+  intro(picocolors.bgBlack(picocolors.whiteBright('Customise Hanzo Docs UI')));
   const config = client.config;
   const installer = new ComponentInstaller(client);
 

@@ -1,6 +1,6 @@
 {
   "name": "@hanzo/mdx-runtime",
-  "version": "1.5.2",
+  "version": "1.6.0",
   "description": "Runtime MDX compilation and execution for Hanzo Docs",
   "keywords": [
     "Docs",

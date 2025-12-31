@@ -51,7 +51,7 @@ const framework: Framework = {
 };
 
 /**
- * Fumadocs adapter for Tanstack Router/Start
+ * Hanzo Docs adapter for Tanstack Router/Start
  */
 export function TanstackProvider({
   children,

@@ -1,5 +1,5 @@
 /**
- * normalize URL into the Fumadocs standard form (`/slug-1/slug-2`).
+ * normalize URL into the Hanzo Docs standard form (`/slug-1/slug-2`).
  *
  * This includes URLs with trailing slashes.
  */
