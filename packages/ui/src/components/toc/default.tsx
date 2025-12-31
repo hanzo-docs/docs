@@ -4,7 +4,7 @@ import { cn } from '@/cn';
 import { type ComponentProps, useRef } from 'react';
 import { mergeRefs } from '@/merge-refs';
 import { TocThumb, useTOCItems } from '.';
-import * as Primitive from 'fumadocs-core/toc';
+import * as Primitive from '@hanzo/docs-core/toc';
 
 export function TOCItems({ ref, className, ...props }: ComponentProps<'div'>) {
   const containerRef = useRef<HTMLDivElement>(null);

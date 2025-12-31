@@ -1,8 +1,8 @@
 import { source } from '@/lib/source';
 import { PageProps } from 'waku/router';
-import defaultMdxComponents from 'fumadocs-ui/mdx';
-import { DocsBody, DocsDescription, DocsPage, DocsTitle } from 'fumadocs-ui/layouts/docs/page';
-import { DocsLayout } from 'fumadocs-ui/layouts/docs';
+import defaultMdxComponents from '@hanzo/docs-ui/mdx';
+import { DocsBody, DocsDescription, DocsPage, DocsTitle } from '@hanzo/docs-ui/layouts/docs/page';
+import { DocsLayout } from '@hanzo/docs-ui/layouts/docs';
 import { baseOptions } from '@/lib/layout.shared';
 
 export default function DocPage({ slugs, lang }: PageProps<'/[lang]/docs/[...slugs]'>) {

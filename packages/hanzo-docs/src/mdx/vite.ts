@@ -1,2 +1,2 @@
-export * from '@hanzo/mdx/vite';
-export { default } from '@hanzo/mdx/vite';
+export * from '@hanzo/docs-mdx/vite';
+export { default } from '@hanzo/docs-mdx/vite';

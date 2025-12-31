@@ -3,7 +3,7 @@ import {
   frontmatterSchema,
   metaSchema,
   transformMDX,
-} from '@fumadocs/content-collections/configuration';
+} from '@hanzo/docs-content-collections/configuration';
 
 const docs = defineCollection({
   name: 'docs',

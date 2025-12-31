@@ -1,5 +1,5 @@
 {
-  "name": "fumadocs-typescript",
+  "name": "@hanzo/docs-typescript",
   "version": "5.0.0",
   "description": "Typescript Integration for Fumadocs",
   "keywords": [
@@ -65,8 +65,8 @@
   },
   "peerDependencies": {
     "@types/react": "*",
-    "fumadocs-core": "^15.7.0 || ^16.0.0",
-    "fumadocs-ui": "^15.7.0 || ^16.0.0",
+    "@hanzo/docs-core": "^15.7.0 || ^16.0.0",
+    "@hanzo/docs-ui": "^15.7.0 || ^16.0.0",
     "react": "*",
     "typescript": "*"
   },

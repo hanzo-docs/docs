@@ -1,11 +1,11 @@
 'use client';
 
 import { type ComponentProps, type ReactNode, useMemo } from 'react';
-import { AnchorProvider, type TOCItemType, useActiveAnchors } from 'fumadocs-core/toc';
+import { AnchorProvider, type TOCItemType, useActiveAnchors } from '@hanzo/docs-core/toc';
 import { cn } from '@/cn';
 import { useTreeContext } from '@/contexts/tree';
-import { Link, usePathname } from 'fumadocs-core/framework';
-import type * as PageTree from 'fumadocs-core/page-tree';
+import { Link, usePathname } from '@hanzo/docs-core/framework';
+import type * as PageTree from '@hanzo/docs-core/page-tree';
 
 export interface DocsPageProps {
   toc?: TOCItemType[];
