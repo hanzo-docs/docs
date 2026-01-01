@@ -1,10 +1,10 @@
-import { DocsLayout } from '@hanzo/docs-ui/layouts/docs';
-import { DocsBody, DocsDescription, DocsPage, DocsTitle } from '@hanzo/docs-ui/layouts/docs/page';
+import { DocsLayout } from '@hanzo/docs-base-ui/layouts/docs';
+import { DocsBody, DocsDescription, DocsPage, DocsTitle } from '@hanzo/docs-base-ui/layouts/docs/page';
 import { type Page, source } from '../../lib/source';
 import { baseOptions } from '../../lib/layout.shared';
-import defaultMdxComponents from '@hanzo/docs-ui/mdx';
+import defaultMdxComponents from '@hanzo/docs-base-ui/mdx';
 import { type ReactNode } from 'react';
-import { HomeLayout } from '@hanzo/docs-ui/layouts/home';
+import { HomeLayout } from '@hanzo/docs-base-ui/layouts/home';
 
 export default async function ServerComponent({
   params,
