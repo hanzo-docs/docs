@@ -40,7 +40,7 @@ export default async function Page(props: PageProps<'/blog/[slug]'>) {
           <p className="mb-1 text-sm text-fd-muted-foreground">At</p>
           <p className="font-medium">
             {new Date(
-              page.data.date ?? path.basename(page.path, path.extname(page.path)),
+              date ?? path.basename(page.path, path.extname(page.path)),
             ).toDateString()}
           </p>
         </div>

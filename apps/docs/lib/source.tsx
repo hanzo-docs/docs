@@ -7,13 +7,13 @@ import {
 } from '@hanzo/docs/core/source';
 import { openapiPlugin, openapiSource } from '@hanzo/docs/openapi/server';
 import { blog as blogPosts, docs } from '@hanzo/mdx:collections/server';
-import { toDocsSource } from '@hanzo/docs/mdx/runtime/server';
+import { createSource } from '@hanzo/docs/mdx/runtime/server';
 import { lucideIconsPlugin } from '@hanzo/docs/core/source/lucide-icons';
 import { openapi } from '@/lib/openapi';
 
 export const source = loader(
   multiple({
-    docs: docs.toDocsSource(),
+    docs: docs.toSource(),
     openapi: await openapiSource(openapi, {
       baseDir: 'openapi/(generated)',
     }),
@@ -47,7 +47,8 @@ function pageTreeCodeTitles(): LoaderPlugin {
   };
 }
 
-export const blog = loader(toDocsSource(blogPosts, []), {
+export const blog = loader({
+  source: createSource(blogPosts, []),
   baseUrl: '/blog',
 });
 

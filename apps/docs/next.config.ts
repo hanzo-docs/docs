@@ -12,9 +12,9 @@ const config: NextConfig = {
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
-      '@hanzo/mdx:collections/server': './.source/server.ts',
-      '@hanzo/mdx:collections/browser': './.source/browser.ts',
-      '@hanzo/mdx:collections/dynamic': './.source/dynamic.ts',
+      '@hanzo/mdx:collections/server': './.docs/server.ts',
+      '@hanzo/mdx:collections/browser': './.docs/browser.ts',
+      '@hanzo/mdx:collections/dynamic': './.docs/dynamic.ts',
     };
     return config;
   },

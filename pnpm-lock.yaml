@@ -59,6 +59,27 @@ importers:
       '@ai-sdk/react':
         specifier: ^3.0.1
         version: 3.0.5(react@19.2.3)(zod@4.2.1)
+      '@hanzo/docs':
+        specifier: workspace:*
+        version: link:../../packages/hanzo-docs
+      '@hanzo/docs-base-ui':
+        specifier: workspace:*
+        version: link:../../packages/base-ui
+      '@hanzo/docs-core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@hanzo/docs-docgen':
+        specifier: workspace:*
+        version: link:../../packages/doc-gen
+      '@hanzo/docs-twoslash':
+        specifier: workspace:*
+        version: link:../../packages/twoslash
+      '@hanzo/docs-typescript':
+        specifier: workspace:*
+        version: link:../../packages/typescript
+      '@hanzo/docs-ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       '@hanzo/mdx-runtime':
         specifier: workspace:*
         version: link:../../packages/mdx-runtime
@@ -2215,6 +2236,9 @@ importers:
         specifier: ^1.6.11
         version: 1.6.11
     devDependencies:
+      '@hanzo/docs-base-ui':
+        specifier: workspace:*
+        version: link:../base-ui
       '@hanzo/docs-core':
         specifier: workspace:*
         version: link:../core
@@ -2257,6 +2281,9 @@ importers:
 
   packages/press:
     dependencies:
+      '@hanzo/docs-base-ui':
+        specifier: workspace:*
+        version: link:../base-ui
       '@hanzo/docs-core':
         specifier: workspace:*
         version: link:../core
@@ -2337,6 +2364,9 @@ importers:
         specifier: ^3.4.0
         version: 3.4.0
     devDependencies:
+      '@hanzo/docs-base-ui':
+        specifier: workspace:*
+        version: link:../base-ui
       '@hanzo/docs-core':
         specifier: workspace:*
         version: link:../core
@@ -2540,6 +2570,9 @@ importers:
         specifier: ^5.0.0
         version: 5.0.0
     devDependencies:
+      '@hanzo/docs-base-ui':
+        specifier: workspace:*
+        version: link:../base-ui
       '@hanzo/docs-core':
         specifier: workspace:*
         version: link:../core

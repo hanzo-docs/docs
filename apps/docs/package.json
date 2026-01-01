@@ -15,6 +15,13 @@
   "dependencies": {
     "@ai-sdk/openai-compatible": "^2.0.0",
     "@ai-sdk/react": "^3.0.1",
+    "@hanzo/docs": "workspace:*",
+    "@hanzo/docs-base-ui": "workspace:*",
+    "@hanzo/docs-core": "workspace:*",
+    "@hanzo/docs-docgen": "workspace:*",
+    "@hanzo/docs-twoslash": "workspace:*",
+    "@hanzo/docs-typescript": "workspace:*",
+    "@hanzo/docs-ui": "workspace:*",
     "@hanzo/mdx-runtime": "workspace:*",
     "@mixedbread/sdk": "^0.46.0",
     "@orama/core": "^1.2.15",

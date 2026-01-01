@@ -3,7 +3,7 @@ import * as ui from '../../../packages/ui/src/_registry';
 import * as radixUi from '../../../packages/radix-ui/src/_registry';
 import { fileURLToPath } from 'node:url';
 import * as path from 'node:path';
-import { resolveFromRemote } from '@hanzo-docs/cli/build';
+import { resolveFromRemote } from '@hanzo/docs/cli/build';
 
 const baseDir = path.join(path.dirname(fileURLToPath(import.meta.url)), '../');
 
@@ -27,7 +27,7 @@ export const registry: Registry = {
       }
     }
 
-    if (ref.type === 'dependency' && ref.specifier === 'hanzo-docs-ui/components/ui/button') {
+    if (ref.type === 'dependency' && ref.specifier === '@hanzo/docs-ui/components/ui/button') {
       return resolveFromRemote(
         radixUi.registry,
         'button',
@@ -119,8 +119,8 @@ export const registry: Registry = {
     },
   ],
   dependencies: {
-    'hanzo-docs-core': null,
-    'hanzo-docs-ui': null,
+    '@hanzo/docs-core': null,
+    '@hanzo/docs-ui': null,
     'lucide-react': null,
     next: null,
     react: null,
