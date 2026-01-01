@@ -63,7 +63,7 @@ export default async function Page() {
         Your sponsorship means a lot to open-source projects, including Hanzo Docs.
       </p>
       <a
-        href="https://github.com/sponsors/fuma-nama"
+        href="https://github.com/sponsors/hanzoai"
         rel="noreferrer noopener"
         target="_blank"
         className={cn(

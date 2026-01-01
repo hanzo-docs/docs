@@ -42,6 +42,7 @@
     "types:check": "tsc --noEmit"
   },
   "dependencies": {
+    "@hanzo/docs-base-ui": "workspace:*",
     "@hanzo/docs-core": "workspace:*",
     "@hanzo/docs-ui": "workspace:*",
     "@hanzo/mdx": "^14.2.4",

@@ -87,6 +87,7 @@
     "@types/openapi-sampler": "^1.0.3",
     "@types/react": "^19.2.7",
     "eslint-config-custom": "workspace:*",
+    "@hanzo/docs-base-ui": "workspace:*",
     "@hanzo/docs-core": "workspace:*",
     "@hanzo/docs-ui": "workspace:*",
     "json-schema-typed": "^8.0.2",
@@ -98,6 +99,7 @@
   "peerDependencies": {
     "@scalar/api-client-react": "*",
     "@types/react": "*",
+    "@hanzo/docs-base-ui": "^16.2.0",
     "@hanzo/docs-core": "^16.2.0",
     "@hanzo/docs-ui": "^16.2.0",
     "react": "^19.2.0",

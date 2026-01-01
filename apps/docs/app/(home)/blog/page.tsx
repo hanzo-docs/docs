@@ -49,12 +49,11 @@ export default function Page() {
             <p className="font-medium">{post.data.title}</p>
             <p className="text-sm text-fd-muted-foreground">{post.data.description}</p>
 
-              <p className="mt-auto pt-4 text-xs text-brand">
-                {new Date(data.date ?? getName(post.path)).toDateString()}
-              </p>
-            </Link>
-          );
-        })}
+            <p className="mt-auto pt-4 text-xs text-brand">
+              {new Date((post.data as unknown as BlogData).date ?? getName(post.path)).toDateString()}
+            </p>
+          </Link>
+        ))}
       </div>
     </main>
   );
