@@ -10,17 +10,17 @@ import {
   useRef,
   useState,
 } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@hanzo/docs-ui/components/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@hanzo/docs-base-ui/components/ui/tabs';
 import type { SchemaData, SchemaUIGeneratedData } from '@/ui/schema';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from '@hanzo/docs-ui/components/ui/collapsible';
-import { buttonVariants } from '@hanzo/docs-ui/components/ui/button';
+} from '@hanzo/docs-base-ui/components/ui/collapsible';
+import { buttonVariants } from '@hanzo/docs-base-ui/components/ui/button';
 import { ChevronDown } from 'lucide-react';
 import { Badge } from '@/ui/components/method-label';
-import { Popover, PopoverContent, PopoverTrigger } from '@hanzo/docs-ui/components/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@hanzo/docs-base-ui/components/ui/popover';
 import { cn } from '@/utils/cn';
 import { cva } from 'class-variance-authority';
 

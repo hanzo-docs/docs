@@ -142,7 +142,7 @@ Some common questions you may encounter.
     Finally, update the base URL of pages in `source.ts`:
 
 ```ts title="lib/source.ts"
-import { loader } from 'hanzo-docs-core/source';
+import { loader } from '@hanzo/docs-core/source';
 
 export const source = loader({
   baseUrl: '/info', // to the new value [!code highlight]
@@ -172,11 +172,10 @@ export default defineConfig({
   resolve: {
     // add other Hanzo Docs deps as needed
     noExternal: [
-      'hanzo-docs-core',
-      'hanzo-docs-ui',
-      'hanzo-docs-openapi',
-      '@hanzo-docs/base-ui',
-      '@hanzo-docs/ui',
+      '@hanzo/docs-core',
+      '@hanzo/docs-ui',
+      '@hanzo/docs-openapi',
+      '@hanzo/docs-base-ui',
     ],
   },
 });
