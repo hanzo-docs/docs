@@ -132,7 +132,7 @@ You can think it as a `next-mdx-remote` with built-in plugins for Hanzo Docs.
 ### Setup
 
 ```package-install
-@hanzo-docs/mdx-remote
+@hanzo/docs-mdx-remote
 ```
 
 The main feature it offers is the MDX Compiler, it can compile MDX content to JSX nodes.
@@ -143,7 +143,7 @@ Since it doesn't use a bundler, there's some limitations:
 It's compatible with Server Components. For example:
 
 ```tsx
-import { createCompiler } from '@hanzo-docs/mdx-remote';
+import { createCompiler } from '@hanzo/docs-mdx-remote';
 import { getPage } from './my-content-source';
 import { DocsBody, DocsPage } from '@hanzo/docs/ui/layouts/docs/page';
 import { getMDXComponents } from '@/mdx-components';

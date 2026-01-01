@@ -16,7 +16,7 @@ Each layout supports a shared set of options.
 It is recommended to store these options into a file, and pass them to the layouts.
 
 ```tsx title="lib/layout.shared.tsx"
-import type { BaseLayoutProps } from 'hanzo-docs-ui/layouts/shared';
+import type { BaseLayoutProps } from '@hanzo/docs-base-ui/layouts/shared';
 
 export function baseOptions(): BaseLayoutProps {
   return {
@@ -51,7 +51,7 @@ Options for navbar (header).
 To make the navbar background transparent, you can configure transparent mode.
 
 ```tsx tab="All" title="lib/layout.shared.tsx"
-import type { BaseLayoutProps } from 'hanzo-docs-ui/layouts/shared';
+import type { BaseLayoutProps } from '@hanzo/docs-base-ui/layouts/shared';
 
 export function baseOptions(): BaseLayoutProps {
   return {
@@ -66,7 +66,7 @@ export function baseOptions(): BaseLayoutProps {
 
 ```tsx tab="Home Layout"
 import { baseOptions } from '@/lib/layout.shared';
-import { HomeLayout } from 'hanzo-docs-ui/layouts/home';
+import { HomeLayout } from '@hanzo/docs-base-ui/layouts/home';
 import type { ReactNode } from 'react';
 
 export default function Layout({ children }: { children: ReactNode }) {
@@ -88,7 +88,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
 ```tsx tab="Docs Layout"
 import { baseOptions } from '@/lib/layout.shared';
-import { DocsLayout } from 'hanzo-docs-ui/layouts/docs';
+import { DocsLayout } from '@hanzo/docs-base-ui/layouts/docs';
 import type { ReactNode } from 'react';
 
 export default function Layout({ children }: { children: ReactNode }) {
@@ -119,7 +119,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 To replace the navbar in different layouts, set `nav.component` to your own component.
 
 ```tsx tab="All" title="lib/layout.shared.tsx"
-import type { BaseLayoutProps } from 'hanzo-docs-ui/layouts/shared';
+import type { BaseLayoutProps } from '@hanzo/docs-base-ui/layouts/shared';
 
 export function baseOptions(): BaseLayoutProps {
   return {
@@ -133,7 +133,7 @@ export function baseOptions(): BaseLayoutProps {
 
 ```tsx tab="Home Layout"
 import { baseOptions } from '@/lib/layout.shared';
-import { HomeLayout } from 'hanzo-docs-ui/layouts/home';
+import { HomeLayout } from '@hanzo/docs-base-ui/layouts/home';
 import type { ReactNode } from 'react';
 
 export default function Layout({ children }: { children: ReactNode }) {
@@ -155,7 +155,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
 ```tsx tab="Docs Layout"
 import { baseOptions } from '@/lib/layout.shared';
-import { DocsLayout } from 'hanzo-docs-ui/layouts/docs';
+import { DocsLayout } from '@hanzo/docs-base-ui/layouts/docs';
 import type { ReactNode } from 'react';
 
 export default function Layout({ children }: { children: ReactNode }) {

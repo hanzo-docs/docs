@@ -6,7 +6,7 @@ import {
   CodeBlockTabs,
   CodeBlockTabsList,
   CodeBlockTabsTrigger,
-} from '@hanzo/docs-ui/components/codeblock';
+} from '@hanzo/docs-base-ui/components/codeblock';
 import { UsageTabsSelectorLazy, UsageTabLazy } from './lazy';
 import { ResponseTabs } from '../response-tabs';
 

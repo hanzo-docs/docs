@@ -79,6 +79,7 @@ export async function getSponsors(owner: string): Promise<Sponsor[]> {
     return sponsors.sort((a, b) => b.tier.monthlyPriceInDollars - a.tier.monthlyPriceInDollars);
   } catch (error) {
     console.error('Error fetching sponsors:', error);
-    throw error;
+    // Return empty array instead of throwing - sponsors feature may not be available for organizations
+    return [];
   }
 }
