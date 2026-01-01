@@ -51,6 +51,7 @@
     "@types/node": "^24.10.2",
     "@types/react": "^19.2.7",
     "eslint-config-custom": "workspace:*",
+    "@hanzo/docs-base-ui": "workspace:*",
     "@hanzo/docs-core": "workspace:*",
     "@hanzo/docs-ui": "workspace:*",
     "lucide-react": "^0.562.0",
@@ -59,6 +60,7 @@
   },
   "peerDependencies": {
     "@types/react": "*",
+    "@hanzo/docs-base-ui": "^16.0.0",
     "@hanzo/docs-core": "15.x.x || 16.x.x",
     "@hanzo/docs-ui": "15.x.x || 16.x.x"
   },

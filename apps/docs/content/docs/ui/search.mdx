@@ -8,7 +8,7 @@ description: The UI for document search
 You can customise Search UI from [`<RootProvider />`](/docs/ui/layouts/root-provider).
 
 ```tsx title="app/layout.tsx"
-import { RootProvider } from 'hanzo-docs-ui/provider/<framework>';
+import { RootProvider } from '@hanzo/docs-ui/provider/<framework>';
 import type { ReactNode } from 'react';
 import { SearchDialog } from '@/components/my-search-dialog';
 
@@ -36,7 +36,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 Customise the hot keys to trigger search dialog, by default it's <kbd>⌘</kbd> <kbd>K</kbd> or <kbd>Ctrl</kbd> <kbd>K</kbd>.
 
 ```tsx
-import { RootProvider } from 'hanzo-docs-ui/provider/<framework>';
+import { RootProvider } from '@hanzo/docs-ui/provider/<framework>';
 
 <RootProvider
   search={{
@@ -65,7 +65,7 @@ Hanzo Docs UI also exposes a lower level `<SearchDialog />` component for advanc
 ```tsx twoslash
 'use client';
 import React from 'react';
-import { useDocsSearch } from 'hanzo-docs-core/search/client';
+import { useDocsSearch } from '@hanzo/docs-core/search/client';
 import {
   SearchDialog,
   SearchDialogClose,
@@ -77,8 +77,8 @@ import {
   SearchDialogList,
   SearchDialogOverlay,
   type SharedProps,
-} from 'hanzo-docs-ui/components/dialog/search';
-import { useI18n } from 'hanzo-docs-ui/contexts/i18n';
+} from '@hanzo/docs-base-ui/components/dialog/search';
+import { useI18n } from '@hanzo/docs-base-ui/contexts/i18n';
 
 export default function DefaultSearchDialog(props: SharedProps) {
   const { locale } = useI18n(); // (optional) for i18n

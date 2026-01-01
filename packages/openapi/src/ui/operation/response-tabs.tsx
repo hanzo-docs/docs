@@ -7,7 +7,7 @@ import {
   Accordions,
   AccordionTrigger,
 } from '@/ui/components/accordion';
-import { Tab, Tabs } from '@hanzo/docs-ui/components/tabs';
+import { Tab, Tabs } from '@hanzo/docs-base-ui/components/tabs';
 import { sample } from 'openapi-sampler';
 import type { ReactNode } from 'react';
 

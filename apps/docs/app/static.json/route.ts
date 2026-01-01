@@ -2,22 +2,27 @@ import { source } from '@/lib/source';
 import type { OramaDocument } from '@hanzo/docs-core/search/orama-cloud';
 import { getBreadcrumbItems } from '@hanzo/docs-core/breadcrumb';
 import { getSection } from '@/lib/source/navigation';
+import { NextResponse } from 'next/server';
 
 export const revalidate = false;
 
-export async function GET(): Promise<Response> {
+export async function GET() {
   const pages = source.getPages();
-  const promises = pages.map(async (page) => {
-    if (page.data.type === 'openapi') return;
+  const results: OramaDocument[] = [];
+
+  for (const page of pages) {
+    if (page.data.type === 'openapi') continue;
 
     const items = getBreadcrumbItems(page.url, source.pageTree, {
       includePage: false,
       includeRoot: true,
     });
 
-    return {
+    const loaded = await page.data.load();
+    
+    results.push({
       id: page.url,
-      structured: (await page.data.load()).structuredData,
+      structured: loaded.structuredData,
       tag: getSection(page.slugs[0]),
       url: page.url,
       title: page.data.title,
@@ -25,10 +30,8 @@ export async function GET(): Promise<Response> {
       breadcrumbs: items.flatMap<string>((item, i) =>
         i > 0 && typeof item.name === 'string' ? item.name : [],
       ),
-    } as OramaDocument;
-  });
+    });
+  }
 
-  return Response.json(
-    (await Promise.all(promises)).filter((v) => v !== undefined) as OramaDocument[],
-  );
+  return NextResponse.json(results);
 }

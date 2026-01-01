@@ -11,7 +11,7 @@ import { sample } from 'openapi-sampler';
 import type { ReactNode } from 'react';
 import type { RawRequestData, RequestData } from '@/requests/types';
 import { encodeRequestData } from '@/requests/media/encode';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@hanzo/docs-ui/components/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@hanzo/docs-base-ui/components/ui/tabs';
 import { resolveRequestData } from '@/utils/url';
 import { MethodLabel } from '../components/method-label';
 
