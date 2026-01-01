@@ -16,7 +16,7 @@ export function useMode(): string | undefined {
   if (Array.isArray(slug)) return getSection(slug[0]);
 }
 
-export function Hanzo DocsIcon(props: React.SVGProps<SVGSVGElement>) {
+export function HanzoDocsIcon(props: React.SVGProps<SVGSVGElement>) {
   const id = useId();
   return (
     <svg width="80" height="80" viewBox="0 0 180 180" {...props}>

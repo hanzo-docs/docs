@@ -1,4 +1,4 @@
-import { combineRegistry, RegistryCompiler, writeHanzo DocsRegistry } from '@hanzo-docs/cli/build';
+import { combineRegistry, RegistryCompiler, writeDocsRegistry } from '@hanzo/docs/cli/build';
 import { registry } from '@/components/registry.js';
 import * as ui from '../../../packages/ui/src/_registry';
 import * as radixUi from '../../../packages/radix-ui/src/_registry';
@@ -13,7 +13,7 @@ export async function buildRegistry() {
   ]);
   const all = combineRegistry(...results);
 
-  await writeHanzo DocsRegistry(all, {
+  await writeDocsRegistry(all, {
     dir: 'public/registry',
   });
 }

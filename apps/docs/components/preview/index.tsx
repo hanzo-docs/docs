@@ -106,7 +106,7 @@ export function zoomImage(): ReactNode {
 export function accordion(): ReactNode {
   return (
     <Wrapper>
-      <Accordions type="single" collapsible>
+      <Accordions>
         <Accordion id="what-is-hanzo-docs" title="What is Hanzo Docs?">
           A framework for building documentations
         </Accordion>

@@ -1,7 +1,7 @@
 import { AlbumIcon, Heart, LayoutTemplate } from 'lucide-react';
 import Image from 'next/image';
 import type { BaseLayoutProps, LinkItemType } from '@hanzo/docs/ui/layouts/shared';
-import { Hanzo DocsIcon } from '@/app/layout.client';
+import { HanzoDocsIcon } from '@/app/layout.client';
 import Logo from '@/public/logo.png';
 
 export const linkItems: LinkItemType[] = [
@@ -46,7 +46,7 @@ export const logo = (
       aria-label="Hanzo Docs"
     />
 
-    <Hanzo DocsIcon className="size-5 in-[.uwu]:hidden" />
+    <HanzoDocsIcon className="size-5 in-[.uwu]:hidden" />
   </>
 );
 

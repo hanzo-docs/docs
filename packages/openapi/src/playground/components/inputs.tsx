@@ -12,7 +12,7 @@ import {
 import { Input, labelVariants } from '@/ui/components/input';
 import { getDefaultValue } from '../get-default-values';
 import { cn } from '@/utils/cn';
-import { buttonVariants } from '@hanzo/docs-ui/components/ui/button';
+import { buttonVariants } from '@hanzo/docs-base-ui/components/ui/button';
 import { FormatFlags, schemaToString } from '@/utils/schema-to-string';
 import { anyFields, useFieldInfo, useResolvedSchema, useSchemaScope } from '@/playground/schema';
 import type { ParsedSchema } from '@/utils/schema';

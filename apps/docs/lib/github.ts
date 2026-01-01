@@ -1,8 +1,8 @@
 import { App, Octokit } from 'octokit';
 import type { ActionResponse, Feedback } from '@/components/feedback';
 
-export const repo = 'hanzo-docs';
-export const owner = 'fuma-nama';
+export const repo = 'docs';
+export const owner = 'hanzoai';
 export const DocsCategory = 'Docs Feedback';
 
 let instance: Octokit | undefined;
