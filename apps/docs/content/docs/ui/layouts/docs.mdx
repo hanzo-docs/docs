@@ -63,7 +63,7 @@ Sidebar items are rendered from the page tree you passed to `<DocsLayout />`.
 For page tree from [`loader()`](/docs/headless/source-api), it generates the tree from your file structure, see [available patterns](/docs/page-conventions).
 
 ```tsx title="layout.tsx"
-import { DocsLayout } from '@hanzo/docs-ui/layouts/docs';
+import { DocsLayout } from '@hanzo/docs/ui/layouts/docs';
 import { source } from '@/lib/source';
 import type { ReactNode } from 'react';
 
@@ -82,7 +82,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 You may hardcode it too:
 
 ```tsx title="layout.tsx"
-import { DocsLayout } from '@hanzo/docs-ui/layouts/docs';
+import { DocsLayout } from '@hanzo/docs/ui/layouts/docs';
 import type { ReactNode } from 'react';
 
 export default function Layout({ children }: { children: ReactNode }) {
@@ -125,7 +125,7 @@ You can add items by marking folders as [Root Folders](/docs/page-conventions#ro
 Or specify them explicitly:
 
 ```tsx title="/app/docs/layout.tsx"
-import { DocsLayout } from '@hanzo/docs-ui/layouts/docs';
+import { DocsLayout } from '@hanzo/docs/ui/layouts/docs';
 
 <DocsLayout
   sidebar={{
@@ -147,7 +147,7 @@ import { DocsLayout } from '@hanzo/docs-ui/layouts/docs';
 Set it to `false` to disable:
 
 ```tsx
-import { DocsLayout } from '@hanzo/docs-ui/layouts/docs';
+import { DocsLayout } from '@hanzo/docs/ui/layouts/docs';
 
 <DocsLayout sidebar={{ tabs: false }} />;
 ```
@@ -157,7 +157,7 @@ import { DocsLayout } from '@hanzo/docs-ui/layouts/docs';
 You can specify a `banner` to the [Docs Layout](/docs/ui/layouts/docs) component.
 
 ```tsx
-import { DocsLayout, type DocsLayoutProps } from '@hanzo/docs-ui/layouts/docs';
+import { DocsLayout, type DocsLayoutProps } from '@hanzo/docs/ui/layouts/docs';
 import type { ReactNode } from 'react';
 import { baseOptions } from '@/lib/layout.shared';
 import { source } from '@/lib/source';
@@ -185,7 +185,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 Change the icon/styles of tabs.
 
 ```tsx
-import { DocsLayout } from '@hanzo/docs-ui/layouts/docs';
+import { DocsLayout } from '@hanzo/docs/ui/layouts/docs';
 
 <DocsLayout
   sidebar={{
