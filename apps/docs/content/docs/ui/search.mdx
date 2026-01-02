@@ -8,7 +8,7 @@ description: The UI for document search
 You can customise Search UI from [`<RootProvider />`](/docs/ui/layouts/root-provider).
 
 ```tsx title="app/layout.tsx"
-import { RootProvider } from '@hanzo/docs-ui/provider/<framework>';
+import { RootProvider } from '@hanzo/docs/ui/provider/<framework>';
 import type { ReactNode } from 'react';
 import { SearchDialog } from '@/components/my-search-dialog';
 
@@ -36,7 +36,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 Customise the hot keys to trigger search dialog, by default it's <kbd>⌘</kbd> <kbd>K</kbd> or <kbd>Ctrl</kbd> <kbd>K</kbd>.
 
 ```tsx
-import { RootProvider } from '@hanzo/docs-ui/provider/<framework>';
+import { RootProvider } from '@hanzo/docs/ui/provider/<framework>';
 
 <RootProvider
   search={{
