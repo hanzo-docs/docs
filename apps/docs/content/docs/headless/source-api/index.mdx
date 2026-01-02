@@ -20,10 +20,10 @@ description: Turn content sources into a unified interface
 
 ## Usage
 
-You can use it with built-in content sources like Hanzo Docs MDX.
+You can use it with content sources like Hanzo Docs MDX, see [`source`](/docs/headless/source-api/source) for details.
 
 ```ts
-import { loader } from '@hanzo/docs/core/source';
+import { loader } from '@hanzo/docs-core/source';
 import { docs } from '@hanzo/docs-mdx:collections/server';
 
 export const source = loader({
@@ -37,7 +37,7 @@ export const source = loader({
 You can override the base URL, or specify a function to generate URL for each page.
 
 ```ts
-import { loader } from '@hanzo/docs/core/source';
+import { loader } from '@hanzo/docs-core/source';
 
 loader({
   baseUrl: '/docs',
@@ -49,12 +49,28 @@ loader({
 });
 ```
 
-### Icons
+### Slugs
 
-Load the [icon](/docs/headless/page-conventions#icons) property specified by pages and meta files.
+Define a custom function to generate slugs from page files.
 
 ```ts
-import { loader } from '@hanzo/docs/core/source';
+import { loader } from '@hanzo/docs-core/source';
+
+loader({
+  slugs(file) {
+    console.log(file.path, file.data);
+    // or return `undefined` to fallback to default value
+    return ['my', 'slug'];
+  },
+});
+```
+
+### Icons
+
+Load the [icon](/docs/headless/page-conventions#icons) property specified by page and meta files.
+
+```ts
+import { loader } from '@hanzo/docs-core/source';
 import { icons } from 'lucide-react';
 import { createElement } from 'react';
 
@@ -76,7 +92,7 @@ Pass the `i18n` config to loader.
 
 ```ts title="lib/source.ts"
 import { i18n } from '@/lib/i18n';
-import { loader } from '@hanzo/docs/core/source';
+import { loader } from '@hanzo/docs-core/source';
 
 export const source = loader({
   i18n, // [!code highlight]
@@ -124,7 +140,7 @@ source.getPages('locale');
 import { source } from '@/lib/source';
 
 // without i18n
-source.pageTree;
+source.getPageTree();
 
 // with i18n
 source.getPageTree('locale');
@@ -186,7 +202,7 @@ async function loader() {
 ```
 
 ```tsx tab="Client"
-import { useHanzo DocsLoader } from '@hanzo/docs/core/source/client';
+import { useHanzo DocsLoader } from '@hanzo/docs-core/source/client';
 
 function MyComponent() {
   // receives loader data

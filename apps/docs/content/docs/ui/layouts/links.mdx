@@ -1,11 +1,11 @@
 ---
 title: Layout Links
-description: Customise the shared navigation links on all layouts.
+description: Navigation configurations on all layouts.
 ---
 
 ## Overview
 
-Hanzo Docs allows adding additional links to your layouts with a `links` prop, like linking to your "showcase" page.
+Hanzo Docs allows adding navigation links to your layouts with a `links` prop, like linking to your "showcase" page.
 
 <div className="not-prose grid gap-2 *:border max-sm:*:last:hidden sm:grid-cols-[2fr_1fr]">
 
@@ -15,19 +15,18 @@ Hanzo Docs allows adding additional links to your layouts with a `links` prop, l
 
 </div>
 
-```tsx tab="Shared Options" title="lib/layout.shared.tsx"
-import type { BaseLayoutProps } from '@hanzo/docs/ui/layouts/shared';
+```tsx tab="All" title="lib/layout.shared.tsx"
+import type { BaseLayoutProps } from '@hanzo/docs-ui/layouts/shared';
 
 export function baseOptions(): BaseLayoutProps {
   return {
-    links: [], // [!code highlight]
-    // other options}
+    links: [], // [!code ++]
   };
 }
 ```
 
 ```tsx tab="Docs Layout" title="app/docs/layout.tsx"
-import { DocsLayout } from '@hanzo/docs/ui/layouts/docs';
+import { DocsLayout } from '@hanzo/docs-ui/layouts/docs';
 import { baseOptions } from '@/lib/layout.shared';
 import { source } from '@/lib/source';
 import type { ReactNode } from 'react';
@@ -36,7 +35,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   return (
     <DocsLayout
       {...baseOptions()}
-      tree={source.pageTree}
+      tree={source.getPageTree()}
       links={[]} // [!code highlight]
     >
       {children}
@@ -46,7 +45,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 ```
 
 ```tsx tab="Home Layout" title="app/(home)/layout.tsx"
-import { HomeLayout } from '@hanzo/docs/ui/layouts/home';
+import { HomeLayout } from '@hanzo/docs-ui/layouts/home';
 import { baseOptions } from '@/lib/layout.shared';
 import type { ReactNode } from 'react';
 
@@ -70,7 +69,7 @@ A link to navigate to a URL/href, can be external.
 
 ```tsx title="lib/layout.shared.tsx"
 import { BookIcon } from 'lucide-react';
-import type { BaseLayoutProps } from '@hanzo/docs/ui/layouts/shared';
+import type { BaseLayoutProps } from '@hanzo/docs-ui/layouts/shared';
 
 export function baseOptions(): BaseLayoutProps {
   return {
@@ -98,7 +97,7 @@ The conditions to be marked as active.
 | `none`       | Never be active                                             |
 
 ```tsx title="lib/layout.shared.tsx"
-import type { BaseLayoutProps } from '@hanzo/docs/ui/layouts/shared';
+import type { BaseLayoutProps } from '@hanzo/docs-ui/layouts/shared';
 
 export function baseOptions(): BaseLayoutProps {
   return {
@@ -120,7 +119,7 @@ Icon items are secondary by default.
 
 ```tsx title="lib/layout.shared.tsx"
 import { BookIcon } from 'lucide-react';
-import type { BaseLayoutProps } from '@hanzo/docs/ui/layouts/shared';
+import type { BaseLayoutProps } from '@hanzo/docs-ui/layouts/shared';
 
 export function baseOptions(): BaseLayoutProps {
   return {
@@ -142,7 +141,7 @@ export function baseOptions(): BaseLayoutProps {
 Display a custom component.
 
 ```tsx title="lib/layout.shared.tsx"
-import type { BaseLayoutProps } from '@hanzo/docs/ui/layouts/shared';
+import type { BaseLayoutProps } from '@hanzo/docs-ui/layouts/shared';
 
 export function baseOptions(): BaseLayoutProps {
   return {
@@ -162,7 +161,7 @@ export function baseOptions(): BaseLayoutProps {
 There's also a shortcut for adding GitHub repository link item.
 
 ```tsx twoslash title="lib/layout.shared.tsx"
-import type { BaseLayoutProps } from '@hanzo/docs/ui/layouts/shared';
+import type { BaseLayoutProps } from '@hanzo/docs-ui/layouts/shared';
 
 export function baseOptions(): BaseLayoutProps {
   return {
@@ -176,7 +175,7 @@ export function baseOptions(): BaseLayoutProps {
 A menu containing multiple link items.
 
 ```tsx title="lib/layout.shared.tsx"
-import type { BaseLayoutProps } from '@hanzo/docs/ui/layouts/shared';
+import type { BaseLayoutProps } from '@hanzo/docs-ui/layouts/shared';
 
 export function baseOptions(): BaseLayoutProps {
   return {
@@ -206,13 +205,13 @@ In Home Layout, you can add navigation menu (fully animated) to the navbar.
 ```tsx title="app/(home)/layout.tsx"
 import { baseOptions } from '@/lib/layout.shared';
 import type { ReactNode } from 'react';
-import { HomeLayout } from '@hanzo/docs/ui/layouts/home';
+import { HomeLayout } from '@hanzo/docs-ui/layouts/home';
 import {
   NavbarMenu,
   NavbarMenuContent,
   NavbarMenuLink,
   NavbarMenuTrigger,
-} from '@hanzo/docs/ui/layouts/home/navbar';
+} from '@hanzo/docs-ui/layouts/home/navbar';
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
