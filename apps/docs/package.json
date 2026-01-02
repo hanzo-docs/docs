@@ -19,6 +19,7 @@
     "@hanzo/docs-base-ui": "workspace:*",
     "@hanzo/docs-core": "workspace:*",
     "@hanzo/docs-docgen": "workspace:*",
+    "@hanzo/docs-mdx": "workspace:*",
     "@hanzo/docs-twoslash": "workspace:*",
     "@hanzo/docs-typescript": "workspace:*",
     "@hanzo/docs-ui": "workspace:*",
