@@ -152,7 +152,7 @@ export const source = loader({
   </Accordion>
 
     <Accordion id='multi-docs' title="How to implement multi-docs?">
-        We recommend to use [Sidebar Tabs](/docs/navigation/sidebar#sidebar-tabs).
+        We recommend to use [Sidebar Tabs](/docs/ui/layouts/docs#sidebar-tabs).
     </Accordion>
 
 </Accordions>
@@ -176,6 +176,7 @@ export default defineConfig({
       '@hanzo/docs-ui',
       '@hanzo/docs-openapi',
       '@hanzo/docs-base-ui',
+      '@hanzo/docs-ui',
     ],
   },
 });
@@ -189,7 +190,7 @@ export default defineConfig({
 <Accordions>
   <Accordion id='node-23' title="Getting error on production build?">
 
-    Node.js 23.1 might have problems with Next.js, see [#1021](https://github.com/fuma-nama/hanzo-docs/issues/1021). Make sure to change your Node.js version.
+    Node.js 23.1 might have problems with Next.js, see [#1021](https://github.com/hanzoai/docs/issues/1021). Make sure to change your Node.js version.
 
   </Accordion>
   <Accordion id='dynamic-route' title="It uses Dynamic Route, will it be poor in performance?">
@@ -200,7 +201,7 @@ export default defineConfig({
     You can [enable Static Exports](/docs/deploying/static) on Next.js to get a static build output.
 
   </Accordion>
-  <Accordion id='webpack' title='Reading from "hanzo-docs-mdx:collections/server" is not handled by plugins'>
+  <Accordion id='webpack' title='Reading from "@hanzo/docs-mdx:collections/server" is not handled by plugins'>
 
 Webpack resolves import namespace **before** your import aliases in `tsconfig.json`. When using Hanzo Docs MDX, you have to rename your import alias to `collections/*` instead.
 
@@ -219,7 +220,7 @@ Make sure to update the references as well.
 
 ```ts title="lib/source.ts"
 // [!code --]
-import { docs } from 'hanzo-docs-mdx:collections/server';
+import { docs } from '@hanzo/docs-mdx:collections/server';
 // [!code ++]
 import { docs } from 'collections/server';
 ```
@@ -236,7 +237,7 @@ import { docs } from 'collections/server';
 
     <Files>
       <File name="(home)/docs/test/page.tsx" />
-      <Folder name="docs">
+      <Folder name="docs" defaultOpen>
         <File name="layout.tsx" />
         <File name="[[...slug]]/page.tsx" />
       </Folder>
@@ -260,7 +261,7 @@ import { docs } from 'collections/server';
 
 New to here? Don't worry, we are welcome for your questions.
 
-If you find anything confusing, please give your feedback on [Github Discussion](https://github.com/fuma-nama/hanzo-docs/discussions)!
+If you find anything confusing, please give your feedback on [Github Discussion](https://github.com/hanzoai/docs/discussions)!
 
 ### Writing Content
 
@@ -271,7 +272,7 @@ For authoring docs, make sure to read:
     Hanzo Docs has some additional features for authoring content.
   </Card>
   <Card href="/docs/navigation" title="Navigation">
-    Learn how to customise navigation links and sidebar items.
+    Learn how to customise navigation structure.
   </Card>
   <Card href="/docs/page-conventions" title="Page Slugs & Page Tree">
     Learn how to organise content.
@@ -297,9 +298,5 @@ For authoring docs, make sure to read:
     description="Learn how to enable i18n"
   />
   <Card href="/docs/ui/theme" title="Color Themes" description="Add themes to Hanzo Docs UI" />
-  <Card
-    href="/docs/ui/layouts/docs"
-    title="Layouts"
-    description="Customise your Hanzo Docs UI layouts"
-  />
+  <Card href="/docs/ui/layouts" title="Layouts" description="Customise your Hanzo Docs UI layouts" />
 </Cards>
