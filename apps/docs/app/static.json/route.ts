@@ -13,7 +13,7 @@ export async function GET() {
   for (const page of pages) {
     if (page.data.type === 'openapi') continue;
 
-    const items = getBreadcrumbItems(page.url, source.pageTree, {
+    const items = getBreadcrumbItems(page.url, source.getPageTree(), {
       includePage: false,
       includeRoot: true,
     });
