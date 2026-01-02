@@ -74,4 +74,4 @@ export type AutoTypeTableProps = ComponentPropsWithoutRef<typeof AutoTypeTable>;
 
 export type SearchProps = Required<RootProviderProps>['search'];
 
-export type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
+export type { BaseLayoutProps } from '@hanzo/docs/ui/layouts/shared';
