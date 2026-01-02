@@ -24,7 +24,7 @@ export const linkItems: LinkItemType[] = [
   },
   {
     type: 'icon',
-    url: 'https://github.com/fuma-nama/hanzo-docs',
+    url: 'https://github.com/hanzoai/docs',
     label: 'github',
     text: 'Github',
     icon: (
