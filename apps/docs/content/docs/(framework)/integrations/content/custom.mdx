@@ -1,22 +1,9 @@
 ---
-title: Custom Source
-description: Build your own content source
+title: Build Your Own
+description: Build your own content source for Hanzo Docs.
 ---
 
 ## Introduction
-
-**Hanzo Docs is very flexible.** You can integrate with any content source, even without an official adapter.
-
-### Examples
-
-You can see examples to use Hanzo Docs with a CMS, which allows a nice experience on publishing content, and real-time update without re-building the app.
-
-- [BaseHub](https://github.com/fuma-nama/hanzo-docs-basehub)
-- [Sanity](https://github.com/fuma-nama/hanzo-docs-sanity)
-- [Community: Payload CMS by `MFarabi619`](https://github.com/MFarabi619/hanzo-docs-payloadcms)
-- [Community: Payload CMS by `bapspatil`](https://github.com/bapspatil/hanzo-docs-payload-template)
-
-## Building Content Source
 
 For a custom content source implementation, there's two ways:
 
@@ -38,7 +25,7 @@ See [Definitions of Page Tree](/docs/headless/page-tree).
 Pass your page tree to `DocsLayout` (usually in a `layout.tsx`):
 
 ```tsx title="layout.tsx"
-import { DocsLayout } from '@hanzo/docs/ui/layouts/docs';
+import { DocsLayout } from '@hanzo/docs-ui/layouts/docs';
 import type { ReactNode } from 'react';
 
 export default function Layout({ children }: { children: ReactNode }) {
@@ -70,7 +57,7 @@ For docs page, it's the same logic:
 You may need table of contents, which can be generated on your own, or using the [`getTableOfContents`](/docs/headless/utils/get-toc) utility (Markdown/MDX only).
 
 ```tsx
-import { DocsPage, DocsBody } from '@hanzo/docs/ui/layouts/docs/page';
+import { DocsPage, DocsBody } from '@hanzo/docs-ui/layouts/docs/page';
 import { getPage } from './my-content-source';
 import { notFound } from 'next/navigation';
 
@@ -123,56 +110,3 @@ Otherwise, you will have to bring your own implementation.
 
 We recommend 3rd party solutions like Orama or Algolia Search. They are more flexible than the built-in Search API, and is easier to integrate with remote sources.
 Hanzo Docs offers a variant of [Search Integrations](/docs/headless/search).
-
-## MDX Remote
-
-Hanzo Docs offers the **MDX Remote** package, it is a helper to integrate Markdown-based content sources with Hanzo Docs.
-You can think it as a `next-mdx-remote` with built-in plugins for Hanzo Docs.
-
-### Setup
-
-```package-install
-@hanzo/docs-mdx-remote
-```
-
-The main feature it offers is the MDX Compiler, it can compile MDX content to JSX nodes.
-Since it doesn't use a bundler, there's some limitations:
-
-- No imports and exports in MDX files.
-
-It's compatible with Server Components. For example:
-
-```tsx
-import { createCompiler } from '@hanzo/docs-mdx-remote';
-import { getPage } from './my-content-source';
-import { DocsBody, DocsPage } from '@hanzo/docs/ui/layouts/docs/page';
-import { getMDXComponents } from '@/mdx-components';
-
-const compiler = createCompiler({
-  // options
-});
-
-export default async function Page({ params }: { params: { slug?: string[] } }) {
-  const page = getPage(params.slug);
-  const compiled = await compiler.compile({
-    source: page.content,
-  });
-
-  const MdxContent = compiled.body;
-
-  return (
-    <DocsPage toc={compiled.toc}>
-      <DocsBody>
-        <MdxContent components={getMDXComponents()} />
-      </DocsBody>
-    </DocsPage>
-  );
-}
-```
-
-### Images
-
-On serverless platforms like Vercel, the original `public` folder (including static assets like images) will be removed after production build.
-The MDX compiler might no longer be able to access local images in `public`.
-
-When referencing images, make sure to use a URL.
