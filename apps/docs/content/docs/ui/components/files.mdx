@@ -11,7 +11,7 @@ preview: 'files'
 Wrap file components in `Files`, you can use it in your MDX content, or as a normal React.js component.
 
 ```mdx title="content.mdx"
-import { File, Folder, Files } from '@hanzo/docs/ui/components/files';
+import { File, Folder, Files } from '@hanzo/docs-ui/components/files';
 
 <Files>
   <Folder name="app" defaultOpen>
@@ -28,13 +28,21 @@ import { File, Folder, Files } from '@hanzo/docs/ui/components/files';
 </Files>
 ```
 
-### As CodeBlock
+### File
 
-You can enable [`remark-mdx-files`](/docs/headless/mdx/remark-mdx-files) to define file structure with codeblocks.
+<auto-type-table cwd path="content/docs/ui/props.ts" name="FileProps" />
+
+### Folder
+
+<auto-type-table cwd path="content/docs/ui/props.ts" name="FolderProps" />
+
+## Remark Plugin
+
+You can enable [`remark-mdx-files`](/docs/headless/mdx/remark-mdx-files) for additional feature & syntax.
 
 ```tsx title="source.config.ts (Hanzo Docs MDX)"
-import { remarkMdxFiles } from '@hanzo/docs/core/mdx-plugins';
-import { defineConfig } from '@hanzo/docs/mdx/config';
+import { remarkMdxFiles } from '@hanzo/docs-core/mdx-plugins/remark-mdx-files';
+import { defineConfig } from '@hanzo/docs-mdx/config';
 
 export default defineConfig({
   mdxOptions: {
@@ -44,7 +52,9 @@ export default defineConfig({
 });
 ```
 
-it will convert `files` codeblocks into MDX usage, like:
+### CodeBlock Syntax
+
+It will convert `files` codeblocks into `<Files />` component, like:
 
 ````md title="content.md"
 ```files
@@ -57,10 +67,12 @@ project
 ```
 ````
 
-### File
+### `<auto-files>`
 
-<auto-type-table cwd path="content/docs/ui/props.ts" name="FileProps" />
+Generate `<Files />` component from glob.
 
-### Folder
+```mdx title="content.mdx"
+<auto-files dir="./my-dir" pattern="**/*.{ts,tsx}" />
 
-<auto-type-table cwd path="content/docs/ui/props.ts" name="FolderProps" />
+<auto-files dir="./my-dir" pattern="**/*.{ts,tsx}" defaultOpenAll />
+```
