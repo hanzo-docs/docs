@@ -7,6 +7,7 @@ const withAnalyzer = createBundleAnalyzer({
 });
 
 const config: NextConfig = {
+  output: 'export',
   reactStrictMode: true,
   // Use webpack resolve aliases instead of turbopack to avoid .json resolution issues
   webpack: (config) => {
@@ -39,6 +40,7 @@ const config: NextConfig = {
     'ajv',
   ],
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
@@ -46,18 +48,6 @@ const config: NextConfig = {
         port: '',
       },
     ],
-  },
-  async rewrites() {
-    return [
-      {
-        source: '/docs/:path*.mdx',
-        destination: '/llms.mdx/:path*',
-      },
-      {
-        source: '/docs.mdx',
-        destination: '/llms.mdx',
-      },
-    ];
   },
 };
 
