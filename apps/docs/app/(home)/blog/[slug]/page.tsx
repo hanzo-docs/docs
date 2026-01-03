@@ -10,8 +10,8 @@ import { getMDXComponents } from '@/mdx-components';
 import path from 'node:path';
 import { cn } from '@/lib/cn';
 
-// Force dynamic rendering to avoid Turbopack proxy trap issues during SSG
-export const dynamic = 'force-dynamic';
+// Force static generation for GitHub Pages export
+export const dynamic = 'force-static';
 
 export default async function Page(props: PageProps<'/blog/[slug]'>) {
   const params = await props.params;
