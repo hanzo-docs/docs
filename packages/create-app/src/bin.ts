@@ -47,7 +47,7 @@ async function main(): Promise<void> {
   command.parse(process.argv);
   const defaultName = command.args[0];
   const config = command.opts();
-  intro(pc.bgCyan(pc.bold('Create Hanzo Docs')));
+  intro(pc.bgCyan(pc.bold('Create Fumadocs App')));
 
   const options = await group(
     {
@@ -63,11 +63,11 @@ async function main(): Promise<void> {
       },
       template: async () => {
         if (config.template) return config.template;
-        if (isCI) return '+next+hanzo-docs-mdx';
+        if (isCI) return '+next+fuma-docs-mdx';
 
         return select<Template>({
           message: 'Choose a template',
-          initialValue: '+next+hanzo-docs-mdx',
+          initialValue: '+next+fuma-docs-mdx',
           options: templates,
         });
       },
@@ -86,32 +86,31 @@ async function main(): Promise<void> {
 
         return select({
           message: 'Configure linter?',
-          options:
-            results.template === '+next+hanzo-docs-mdx'
-              ? [
-                  {
-                    value: 'disabled',
-                    label: 'Disabled',
-                  },
-                  {
-                    value: 'eslint',
-                    label: 'ESLint',
-                  },
-                  {
-                    value: 'biome',
-                    label: 'Biome',
-                  },
-                ]
-              : [
-                  {
-                    value: 'disabled',
-                    label: 'Disabled',
-                  },
-                  {
-                    value: 'biome',
-                    label: 'Biome',
-                  },
-                ],
+          options: results.template?.startsWith('+next')
+            ? [
+                {
+                  value: 'disabled',
+                  label: 'Disabled',
+                },
+                {
+                  value: 'eslint',
+                  label: 'ESLint',
+                },
+                {
+                  value: 'biome',
+                  label: 'Biome',
+                },
+              ]
+            : [
+                {
+                  value: 'disabled',
+                  label: 'Disabled',
+                },
+                {
+                  value: 'biome',
+                  label: 'Biome',
+                },
+              ],
         });
       },
       search: async () => {
