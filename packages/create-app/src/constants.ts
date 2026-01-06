@@ -1,10 +1,5 @@
 import { fileURLToPath } from 'node:url';
 import versionPkg from '../../create-app-versions/package.json';
-import { version as coreVersion } from '../../core/package.json';
-import { version as uiVersion } from '../../ui/package.json';
-
-// MDX version from create-app-versions dependencies
-const mdxVersion = '14.1.1';
 
 export const sourceDir = fileURLToPath(new URL(`../`, import.meta.url).href);
 
@@ -12,12 +7,13 @@ export const isCI = Boolean(process.env.CI);
 
 export interface TemplateInfo {
   value:
-    | '+next+hanzo-docs-mdx'
+    | '+next+fuma-docs-mdx'
     | 'waku'
     | 'react-router'
     | 'react-router-spa'
     | 'tanstack-start'
-    | 'tanstack-start-spa';
+    | 'tanstack-start-spa'
+    | '+next+fuma-docs-mdx+static';
   label: string;
   appDir: string;
   /**
@@ -33,49 +29,50 @@ export interface TemplateInfo {
 
 export const templates: TemplateInfo[] = [
   {
-    value: '+next+hanzo-docs-mdx',
-    label: 'Next.js: Hanzo MDX',
+    value: '+next+fuma-docs-mdx',
+    label: 'Next.js: Fumadocs MDX',
     hint: 'recommended',
     appDir: '',
     rootProviderPath: 'app/layout.tsx',
   },
   {
+    value: '+next+fuma-docs-mdx+static',
+    label: 'Next.js Static: Fumadocs MDX',
+    appDir: '',
+    rootProviderPath: 'components/provider.tsx',
+  },
+  {
     value: 'waku',
-    label: 'Waku: Hanzo MDX',
+    label: 'Waku: Fumadocs MDX',
     appDir: 'src',
     rootProviderPath: 'components/provider.tsx',
   },
   {
     value: 'react-router',
-    label: 'React Router: Hanzo MDX (not RSC)',
+    label: 'React Router: Fumadocs MDX (not RSC)',
     appDir: 'app',
     rootProviderPath: 'root.tsx',
   },
   {
     value: 'react-router-spa',
-    label: 'React Router SPA: Hanzo MDX (not RSC)',
+    label: 'React Router SPA: Fumadocs MDX (not RSC)',
     hint: 'SPA mode allows you to host the site statically, compatible with a CDN.',
     appDir: 'app',
     rootProviderPath: 'root.tsx',
   },
   {
     value: 'tanstack-start',
-    label: 'Tanstack Start: Hanzo MDX (not RSC)',
+    label: 'Tanstack Start: Fumadocs MDX (not RSC)',
     appDir: 'src',
     rootProviderPath: 'routes/__root.tsx',
   },
   {
     value: 'tanstack-start-spa',
-    label: 'Tanstack Start SPA: Hanzo MDX (not RSC)',
+    label: 'Tanstack Start SPA: Fumadocs MDX (not RSC)',
     hint: 'SPA mode allows you to host the site statically, compatible with a CDN.',
     appDir: 'src',
     rootProviderPath: 'routes/__root.tsx',
   },
 ];
 
-export const depVersions = {
-  ...versionPkg.dependencies,
-  '@hanzo/docs/core': coreVersion,
-  '@hanzo/docs/ui': uiVersion,
-  '@hanzo/docs/mdx': mdxVersion,
-};
+export const depVersions = versionPkg.dependencies;
