@@ -25,7 +25,7 @@ export function oramaCloud(): TemplatePlugin {
     
 This project uses Orama Cloud for 3rd party search solution.
 
-See https://hanzo.ai/docs/headless/search/orama-cloud for integrating Orama Cloud to Hanzo Docs.`;
+See https://fumadocs.dev/docs/headless/search/orama-cloud for integrating Orama Cloud to Fumadocs.`;
     },
     async afterWrite() {
       const { dest, appDir, template } = this;
@@ -65,7 +65,8 @@ See https://hanzo.ai/docs/headless/search/orama-cloud for integrating Orama Clou
       }
 
       const filePath = {
-        '+next+hanzo-docs-mdx': '.next/server/app/static.json.body',
+        '+next+fuma-docs-mdx': '.next/server/app/static.json.body',
+        '+next+fuma-docs-mdx+static': '.next/server/app/static.json.body',
         'tanstack-start': '.output/public/static.json',
         'tanstack-start-spa': 'dist/client/static.json',
         'react-router': 'build/client/static.json',
@@ -75,7 +76,7 @@ See https://hanzo.ai/docs/headless/search/orama-cloud for integrating Orama Clou
 
       await writeFile(
         path.join(dest, 'scripts/sync-content.ts'),
-        `import { type OramaDocument, sync } from '@hanzo/docs/core/search/orama-cloud';
+        `import { type OramaDocument, sync } from 'fumadocs-core/search/orama-cloud';
 import * as fs from 'node:fs/promises';
 import { OramaCloud } from '@orama/core';
 
