@@ -1,11 +1,11 @@
 ---
 title: Next.js
-description: Use Hanzo Docs MDX with Next.js
+description: Use Fumadocs MDX with Next.js
 ---
 
 ## Setup
 
-Set up Hanzo Docs MDX for your Next.js application.
+Set up Fumadocs MDX for your Next.js application.
 
 <section id="setup-section">
 <div className="fd-steps [&_h3]:fd-step">
@@ -13,13 +13,13 @@ Set up Hanzo Docs MDX for your Next.js application.
 ### Installation
 
 ```npm
-npm i @hanzo/docs @types/mdx
+npm i fumadocs-mdx fumadocs-core @types/mdx
 ```
 
 Create the configuration file:
 
 ```ts title="source.config.ts"
-import { defineDocs, defineConfig } from '@hanzo/docs/mdx/config';
+import { defineDocs, defineConfig } from 'fumadocs-mdx/config';
 
 export const docs = defineDocs({
   dir: 'content/docs',
@@ -31,7 +31,7 @@ export default defineConfig();
 Add the plugin to Next.js config:
 
 ```js title="next.config.mjs"
-import { createMDX } from '@hanzo/docs/mdx/next';
+import { createMDX } from 'fumadocs-mdx/next';
 
 /** @type {import('next').NextConfig} */
 const config = {
@@ -48,25 +48,27 @@ const withMDX = createMDX({
 export default withMDX(config);
 ```
 
-<Callout title="ESM Only" type='warn' className="mt-4">
+<Callout title="ESM Only" type='warn'>
 
-    The Next.js config must be a `.mjs` file since Hanzo Docs is ESM-only.
+Fumadocs MDX is ESM-only, it's recommended to use `next.config.mjs` for accurate ESM resolution.
+
+For TypeScript config file, it requires Native Node.js TypeScript Resolver, you can see [Next.js docs](https://nextjs.org/docs/app/api-reference/config/typescript#using-nodejs-native-typescript-resolver-for-nextconfigts) for details.
 
 </Callout>
 
 <include>.shared.mdx</include>
 
-### Integrate with Hanzo Docs
+### Integrate with Fumadocs
 
-You can create a `lib/source.ts` file and obtain Hanzo Docs source from the `docs` collection output.
+You can create a `lib/source.ts` file and obtain Fumadocs source from the `docs` collection output.
 
 ```ts title="lib/source.ts"
-import { docs } from '@hanzo/docs-mdx:collections/server';
-import { loader } from '@hanzo/docs/core/source';
+import { docs } from 'fumadocs-mdx:collections/server';
+import { loader } from 'fumadocs-core/source';
 
 export const source = loader({
   baseUrl: '/docs',
-  source: docs.toHanzo DocsSource(),
+  source: docs.toFumadocsSource(),
 });
 ```
 
