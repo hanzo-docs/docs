@@ -1,5 +1,4 @@
-import { parseFrontmatter } from '@/utils/frontmatter';
-import type { SourceMap } from 'rollup';
+import { fumaMatter } from '@/utils/fuma-matter';
 import type { Loader } from '@/loaders/adapter';
 import { z } from 'zod';
 import type { DocCollectionItem } from '@/config/build';
@@ -9,13 +8,11 @@ import { createHash } from 'node:crypto';
 import type { ConfigLoader } from '@/loaders/config';
 import { mdxLoaderGlob } from '..';
 
-const querySchema = z
-  .object({
-    only: z.literal(['frontmatter', 'all']).default('all'),
-    collection: z.string().optional(),
-    workspace: z.string().optional(),
-  })
-  .loose();
+const querySchema = z.looseObject({
+  only: z.literal(['frontmatter', 'all']).default('all'),
+  collection: z.string().optional(),
+  workspace: z.string().optional(),
+});
 
 const cacheEntry = z.object({
   code: z.string(),
@@ -31,7 +28,7 @@ export function createMdxLoader({ getCore }: ConfigLoader): Loader {
     async load({ getSource, development: isDevelopment, query, compiler, filePath }) {
       let core = await getCore();
       const value = await getSource();
-      const matter = parseFrontmatter(value);
+      const matter = fumaMatter(value);
       const { collection: collectionName, workspace, only } = querySchema.parse(query);
       if (workspace) {
         core = core.getWorkspaces().get(workspace) ?? core;
@@ -101,7 +98,7 @@ export function createMdxLoader({ getCore }: ConfigLoader): Loader {
 
       const out = {
         code: String(compiled.value),
-        map: compiled.map as SourceMap,
+        map: compiled.map,
       };
 
       await after?.();
