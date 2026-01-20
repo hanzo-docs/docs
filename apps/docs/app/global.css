@@ -1,31 +1,32 @@
 @import 'tailwindcss';
-@import '@hanzo/docs/ui/css/neutral.css';
-@import '@hanzo/docs/ui/css/preset.css';
-@import '@hanzo/docs/twoslash/twoslash.css';
-@import '@hanzo/docs/openapi/css/preset.css';
+@import 'fumadocs-ui/css/neutral.css';
+@import 'fumadocs-ui/css/preset.css';
+@import 'fumadocs-twoslash/twoslash.css';
+@import 'fumadocs-openapi/css/preset.css';
+@import '@fumadocs/story/css/preset.css';
 @plugin 'tailwindcss-animate';
 
 @theme {
   --spacing-page: 1436px;
-  --color-brand: hsl(0, 0%, 9%);
+  --color-brand: hsl(26, 73%, 51%);
   --color-brand-foreground: white;
-  --color-brand-secondary: hsl(0, 0%, 20%);
-  --color-brand-secondary-foreground: hsl(0, 0%, 60%);
-  --color-brand-200: hsl(0, 0%, 15%);
+  --color-brand-secondary: #c6bb58;
+  --color-brand-secondary-foreground: #97890c;
+  --color-brand-200: hsl(33, 100%, 50%);
 
-  --color-landing-foreground: hsl(0, 0%, 40%);
-  --color-landing-foreground-200: hsl(0, 0%, 60%);
+  --color-landing-foreground: #59592a;
+  --color-landing-foreground-200: #a8a866;
 }
 
 .dark {
-  --color-landing-foreground: hsl(0, 0%, 90%);
-  --color-landing-foreground-200: hsl(0, 0%, 70%);
+  --color-landing-foreground: #e4e2d0;
+  --color-landing-foreground-200: #b7af7e;
 
-  --color-brand: hsl(0, 0%, 98%);
-  --color-brand-secondary: hsl(0, 0%, 80%);
-  --color-brand-secondary-foreground: hsl(0, 0%, 30%);
+  --color-brand: #fff383;
+  --color-brand-secondary: #fc7744;
+  --color-brand-secondary-foreground: #521700;
   --color-brand-foreground: black;
-  --color-brand-200: hsl(0, 0%, 95%);
+  --color-brand-200: #fff7c8;
 }
 
 @theme inline {
@@ -84,9 +85,9 @@
 }
 
 :root {
-  --headless-color: hsl(0, 0%, 20%);
-  --framework-color: hsl(0, 0%, 15%);
-  --ui-color: hsl(0, 0%, 25%);
+  --headless-color: hsl(250, 80%, 54%);
+  --framework-color: hsl(41, 100%, 40%);
+  --ui-color: hsl(217, 100%, 58%);
 }
 
 html {
@@ -102,9 +103,9 @@ body {
 }
 
 .dark {
-  --headless-color: hsl(0, 0%, 85%);
-  --framework-color: hsl(0, 0%, 98%);
-  --ui-color: hsl(0, 0%, 80%);
+  --headless-color: hsl(250 100% 80%);
+  --framework-color: #fff383;
+  --ui-color: #a9ceff;
 }
 
 @keyframes circuit_1 {
