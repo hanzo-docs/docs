@@ -1,5 +1,29 @@
 # @fuma-docs/openapi
 
+## 10.2.6
+
+### Patch Changes
+
+- 8d1362e: Fixed a performance issue where getSchema() would bypass the internal cache and re-parse the OpenAPI spec on every call. This was caused by calling the internal getSchemas() function instead of the cached method.
+
+## 10.2.5
+
+### Patch Changes
+
+- cadff12: Use internal implementation for form in OpenAPI playground
+- 897cc26: Improve schema UI array rendering
+- Updated dependencies [6ac37c4]
+  - @fumari/stf@0.0.1
+
+## 10.2.4
+
+### Patch Changes
+
+- e55510b: fix unknown parameter encoding
+- Updated dependencies [9f06196]
+  - fumadocs-ui@16.4.5
+  - fumadocs-core@16.4.5
+
 ## 10.2.3
 
 ### Patch Changes

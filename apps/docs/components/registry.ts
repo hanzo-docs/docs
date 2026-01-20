@@ -1,15 +1,15 @@
-import { type Registry } from '@hanzo/docs/cli/build';
+import { type Registry } from '@fumadocs/cli/build';
 import * as ui from '../../../packages/ui/src/_registry';
 import * as radixUi from '../../../packages/radix-ui/src/_registry';
 import { fileURLToPath } from 'node:url';
 import * as path from 'node:path';
-import { resolveFromRemote } from '@hanzo/docs/cli/build';
+import { resolveFromRemote } from '@fumadocs/cli/build';
 
 const baseDir = path.join(path.dirname(fileURLToPath(import.meta.url)), '../');
 
 export const registry: Registry = {
   dir: baseDir,
-  name: 'hanzo-docs',
+  name: 'fumadocs',
   packageJson: './package.json',
   tsconfigPath: './tsconfig.json',
   onUnknownFile(absolutePath) {
@@ -27,12 +27,15 @@ export const registry: Registry = {
       }
     }
 
-    if (ref.type === 'dependency' && ref.specifier === '@hanzo/docs-ui/components/ui/button') {
-      return resolveFromRemote(
-        radixUi.registry,
-        'button',
-        (file) => path.basename(file.path) === 'button.tsx',
-      )!;
+    if (ref.type === 'dependency' && ref.dep === 'fumadocs-ui') {
+      const match = /fumadocs-ui\/components\/ui\/(.*)/.exec(ref.specifier);
+      if (match) {
+        return resolveFromRemote(
+          radixUi.registry,
+          match[1],
+          (file) => path.basename(file.path, path.extname(file.path)) === match[1],
+        )!;
+      }
     }
 
     return ref;
@@ -60,7 +63,13 @@ export const registry: Registry = {
       files: [
         {
           type: 'components',
-          path: 'components/feedback.tsx',
+          path: 'components/feedback/client.tsx',
+          target: '<dir>/feedback/client.tsx',
+        },
+        {
+          type: 'components',
+          path: 'components/feedback/schema.ts',
+          target: '<dir>/feedback/schema.ts',
         },
       ],
     },
@@ -119,8 +128,8 @@ export const registry: Registry = {
     },
   ],
   dependencies: {
-    '@hanzo/docs-core': null,
-    '@hanzo/docs-ui': null,
+    'fumadocs-core': null,
+    'fumadocs-ui': null,
     'lucide-react': null,
     next: null,
     react: null,
