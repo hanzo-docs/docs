@@ -1,0 +1,15 @@
+{
+  "title": "Commerce",
+  "description": "Hanzo Commerce API and SDK",
+  "icon": "ShoppingCart",
+  "root": true,
+  "pages": [
+    "---Getting Started---",
+    "index",
+    "quickstart",
+    "---Guides---",
+    "guides",
+    "---API Reference---",
+    "api"
+  ]
+}

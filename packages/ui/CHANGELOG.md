@@ -1,5 +1,33 @@
 # @fumadocs/ui
 
+## 16.4.7
+
+### Patch Changes
+
+- 0765817: add default `<Suspense>` layer to search
+- Updated dependencies [5dec9d0]
+  - fumadocs-core@16.4.7
+
+## 16.4.6
+
+### Patch Changes
+
+- Updated dependencies [ea57dbf]
+  - fumadocs-core@16.4.6
+
+## 16.4.5
+
+### Patch Changes
+
+- fumadocs-core@16.4.5
+
+## 16.4.4
+
+### Patch Changes
+
+- Updated dependencies [cdc97e0]
+  - fumadocs-core@16.4.4
+
 ## 16.4.3
 
 ### Patch Changes

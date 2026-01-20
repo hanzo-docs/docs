@@ -1,10 +1,9 @@
-import type { BaseLayoutProps } from '@hanzo/docs/ui/layouts/shared';
-import { Logo } from '@/app/logo';
+import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
 
 export function baseOptions(): BaseLayoutProps {
   return {
     nav: {
-      title: <Logo />,
+      title: 'OpenAPI Playground',
     },
   };
 }

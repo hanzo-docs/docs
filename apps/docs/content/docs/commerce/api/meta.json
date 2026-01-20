@@ -1,0 +1,16 @@
+{
+  "title": "API Reference",
+  "description": "Complete Hanzo Commerce API documentation",
+  "pages": [
+    "index",
+    "authentication",
+    "products",
+    "variants",
+    "collections",
+    "cart",
+    "orders",
+    "payments",
+    "users",
+    "webhooks"
+  ]
+}

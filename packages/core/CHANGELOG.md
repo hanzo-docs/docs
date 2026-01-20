@@ -1,5 +1,25 @@
 # next-docs-zeta
 
+## 16.4.7
+
+### Patch Changes
+
+- 5dec9d0: `useFumadocsLoader()` support other names of the serialized page tree
+
+## 16.4.6
+
+### Patch Changes
+
+- ea57dbf: Introduce `remark-feedback-block` plugin
+
+## 16.4.5
+
+## 16.4.4
+
+### Patch Changes
+
+- cdc97e0: Improve experience with Shiki Twoslash
+
 ## 16.4.3
 
 ### Patch Changes
