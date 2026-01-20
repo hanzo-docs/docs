@@ -45,11 +45,18 @@ export interface DocsPageProps {
   breadcrumb?: Partial<BreadcrumbOptions>;
 
   /**
-   * Footer navigation, you can disable it by passing `false`
+   * Footer navigation, located under the page body.
+   *
+   * You can specify `footer.children` to add extra components under the footer.
    */
   footer?: Partial<FooterOptions>;
 
   children?: ReactNode;
+
+  /**
+   * Apply class names to the `#nd-page` container.
+   */
+  className?: string;
 }
 
 type TableOfContentOptions = Pick<AnchorProviderProps, 'single'> & {
@@ -76,7 +83,7 @@ type TableOfContentPopoverOptions = Omit<TableOfContentOptions, 'single'>;
 
 export function DocsPage({
   breadcrumb: { enabled: breadcrumbEnabled = true, component: breadcrumb, ...breadcrumbProps } = {},
-  footer = {},
+  footer: { enabled: footerEnabled, component: footerReplace, ...footerProps } = {},
   full = false,
   tableOfContentPopover: {
     enabled: tocPopoverEnabled,
@@ -86,6 +93,7 @@ export function DocsPage({
   tableOfContent: { enabled: tocEnabled, component: tocReplace, ...tocOptions } = {},
   toc = [],
   children,
+  className,
 }: DocsPageProps) {
   // disable TOC on full mode, you can still enable it with `enabled` option.
   tocEnabled ??=
@@ -131,11 +139,12 @@ export function DocsPage({
         className={cn(
           'flex flex-col [grid-area:main] px-4 py-6 gap-4 md:px-6 md:pt-8 xl:px-8 xl:pt-14 *:max-w-[900px]',
           full && '*:max-w-[1285px]',
+          className,
         )}
       >
         {breadcrumbEnabled && (breadcrumb ?? <PageBreadcrumb {...breadcrumbProps} />)}
         {children}
-        {footer.enabled !== false && (footer.component ?? <PageFooter items={footer.items} />)}
+        {footerEnabled !== false && (footerReplace ?? <PageFooter {...footerProps} />)}
       </article>
       {tocEnabled &&
         (tocReplace ?? (

@@ -1,0 +1,13 @@
+{
+  "title": "Guides",
+  "description": "Setup and integration guides for Hanzo Commerce",
+  "pages": [
+    "index",
+    "authentication",
+    "products",
+    "cart",
+    "orders",
+    "payments",
+    "analytics"
+  ]
+}
