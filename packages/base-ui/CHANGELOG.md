@@ -1,5 +1,39 @@
 # @fumadocs/base-ui
 
+## 16.4.7
+
+### Patch Changes
+
+- Updated dependencies [0765817]
+- Updated dependencies [5dec9d0]
+  - @fumadocs/ui@16.4.7
+  - fumadocs-core@16.4.7
+
+## 16.4.6
+
+### Patch Changes
+
+- Updated dependencies [ea57dbf]
+  - fumadocs-core@16.4.6
+  - @fumadocs/ui@16.4.6
+
+## 16.4.5
+
+### Patch Changes
+
+- 9f06196: fix `footer.children` props
+  - fumadocs-core@16.4.5
+  - @fumadocs/ui@16.4.5
+
+## 16.4.4
+
+### Patch Changes
+
+- c804ac6: expose `useAutoScroll()`
+- Updated dependencies [cdc97e0]
+  - fumadocs-core@16.4.4
+  - @fumadocs/ui@16.4.4
+
 ## 16.4.3
 
 ### Patch Changes

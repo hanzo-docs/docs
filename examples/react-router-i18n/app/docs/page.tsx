@@ -1,11 +1,11 @@
 import type { Route } from './+types/page';
-import { DocsLayout } from '@hanzo/docs-ui/layouts/docs';
-import { DocsBody, DocsDescription, DocsPage, DocsTitle } from '@hanzo/docs-ui/layouts/docs/page';
+import { DocsLayout } from 'fumadocs-ui/layouts/docs';
+import { DocsBody, DocsDescription, DocsPage, DocsTitle } from 'fumadocs-ui/layouts/docs/page';
 import { source } from '@/lib/source';
-import defaultMdxComponents from '@hanzo/docs/ui/mdx';
-import browserCollections from '@hanzo/docs/mdx:collections/browser';
+import defaultMdxComponents from 'fumadocs-ui/mdx';
+import browserCollections from 'fumadocs-mdx:collections/browser';
 import { baseOptions } from '@/lib/layout.shared';
-import { useHanzo DocsLoader } from '@hanzo/docs/core/source/client';
+import { useFumadocsLoader } from 'fumadocs-core/source/client';
 
 export async function loader({ params }: Route.LoaderArgs) {
   const slugs = params['*'].split('/').filter((v) => v.length > 0);
@@ -19,7 +19,7 @@ export async function loader({ params }: Route.LoaderArgs) {
 }
 
 const clientLoader = browserCollections.docs.createClientLoader({
-  component({ toc, default: Mdx, frontmatter }) {
+  component({ toc, frontmatter, default: Mdx }) {
     return (
       <DocsPage toc={toc}>
         <title>{frontmatter.title}</title>
@@ -35,12 +35,11 @@ const clientLoader = browserCollections.docs.createClientLoader({
 });
 
 export default function Page({ loaderData, params }: Route.ComponentProps) {
-  const Content = clientLoader.getComponent(loaderData.path);
-  const { pageTree } = useHanzo DocsLoader(loaderData);
+  const { pageTree } = useFumadocsLoader(loaderData);
 
   return (
     <DocsLayout {...baseOptions(params.lang)} tree={pageTree}>
-      <Content />
+      {clientLoader.useContent(loaderData.path)}
     </DocsLayout>
   );
 }

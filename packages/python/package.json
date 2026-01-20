@@ -48,15 +48,15 @@
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.9",
-    "@types/node": "^24.10.2",
-    "@types/react": "^19.2.7",
+    "@types/node": "^25.0.5",
+    "@types/react": "^19.2.8",
     "eslint-config-custom": "workspace:*",
     "@hanzo/docs-base-ui": "workspace:*",
     "@hanzo/docs-core": "workspace:*",
     "@hanzo/docs-ui": "workspace:*",
     "lucide-react": "^0.562.0",
     "tsconfig": "workspace:*",
-    "tsdown": "^0.18.4"
+    "tsdown": "^0.19.0"
   },
   "peerDependencies": {
     "@types/react": "*",
