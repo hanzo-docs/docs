@@ -16,7 +16,7 @@
     "jsx": "preserve",
     "incremental": true,
     "paths": {
-      "@hanzo/docs/mdx:collections/*": [".source/*"],
+      "@hanzo/docs/mdx:collections/*": ["docs/*"],
       "@/*": ["./*"]
     },
     "plugins": [
