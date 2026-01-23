@@ -1,4 +1,4 @@
-import type * as PageTree from '@hanzo/docs-core/page-tree';
+import type * as PageTree from 'fumadocs-core/page-tree';
 import type { ReactNode } from 'react';
 
 export interface SidebarTab {
