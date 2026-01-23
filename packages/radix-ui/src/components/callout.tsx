@@ -1,6 +1,6 @@
 import { CircleCheck, CircleX, Info, Lightbulb, TriangleAlert } from 'lucide-react';
 import type { ComponentProps, ReactNode } from 'react';
-import { cn } from '@hanzo/docs-ui/cn';
+import { cn } from '@fumadocs/ui/cn';
 
 export type CalloutType = 'info' | 'warn' | 'error' | 'success' | 'warning' | 'idea';
 

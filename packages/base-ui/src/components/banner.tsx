@@ -2,7 +2,7 @@
 
 import { type HTMLAttributes, useEffect, useState } from 'react';
 import { X } from 'lucide-react';
-import { cn } from '@hanzo/docs-ui/cn';
+import { cn } from '@fumadocs/ui/cn';
 import { buttonVariants } from '@/components/ui/button';
 
 type BannerVariant = 'rainbow' | 'normal';

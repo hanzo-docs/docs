@@ -9,8 +9,8 @@
   },
   "dependencies": {
     "@hanzo/docs-content-collections": "workspace:*",
-    "@hanzo/docs-core": "workspace:*",
-    "@hanzo/docs-ui": "workspace:*",
+    "fumadocs-core": "workspace:*",
+    "fumadocs-ui": "workspace:*",
     "next": "16.1.4",
     "react": "^19.2.3",
     "react-dom": "^19.2.3"

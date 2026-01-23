@@ -1,1 +1,1 @@
-export * from '@hanzo/docs-ui/hooks/use-is-scroll-top';
+export * from '@fumadocs/ui/hooks/use-is-scroll-top';
