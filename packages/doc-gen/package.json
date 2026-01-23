@@ -53,7 +53,7 @@
     "@types/mdast": "^4.0.4",
     "@types/node": "25.0.10",
     "eslint-config-custom": "workspace:*",
-    "@hanzo/docs-core": "workspace:*",
+    "fumadocs-core": "workspace:*",
     "mdast-util-mdx-jsx": "^3.2.0",
     "remark": "^15.0.1",
     "tsconfig": "workspace:*",
@@ -63,6 +63,6 @@
     "vfile": "^6.0.3"
   },
   "peerDependencies": {
-    "@hanzo/docs-core": "^15.7.2 || ^16.0.0"
+    "fumadocs-core": "^15.7.2 || ^16.0.0"
   }
 }
