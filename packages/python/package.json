@@ -52,17 +52,17 @@
     "@types/node": "^25.0.10",
     "@types/react": "^19.2.9",
     "eslint-config-custom": "workspace:*",
-    "@hanzo/docs-base-ui": "workspace:*",
-    "@hanzo/docs-core": "workspace:*",
-    "@hanzo/docs-ui": "workspace:*",
+    "@fumadocs/base-ui": "workspace:*",
+    "fumadocs-core": "workspace:*",
+    "fumadocs-ui": "workspace:*",
     "tsconfig": "workspace:*",
     "tsdown": "^0.19.0"
   },
   "peerDependencies": {
     "@types/react": "*",
-    "@hanzo/docs-base-ui": "^16.0.0",
-    "@hanzo/docs-core": "15.x.x || 16.x.x",
-    "@hanzo/docs-ui": "15.x.x || 16.x.x"
+    "@fumadocs/base-ui": "^16.0.0",
+    "fumadocs-core": "15.x.x || 16.x.x",
+    "fumadocs-ui": "15.x.x || 16.x.x"
   },
   "peerDependenciesMeta": {
     "@types/react": {
