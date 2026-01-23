@@ -112,19 +112,19 @@
     "dev": "tsup --watch"
   },
   "dependencies": {
-    "@hanzo/docs-base-ui": "workspace:*",
-    "@hanzo/docs-cli": "workspace:*",
+    "@fumadocs/base-ui": "workspace:*",
+    "@fumadocs/cli": "workspace:*",
     "@hanzo/docs-content-collections": "workspace:*",
-    "@hanzo/docs-core": "workspace:*",
+    "fumadocs-core": "workspace:*",
     "@hanzo/docs-docgen": "workspace:*",
-    "@hanzo/docs-obsidian": "workspace:*",
-    "@hanzo/docs-openapi": "workspace:*",
+    "fumadocs-obsidian": "workspace:*",
+    "fumadocs-openapi": "workspace:*",
     "@hanzo/docs-press": "workspace:*",
     "@hanzo/docs-python": "workspace:*",
-    "@hanzo/docs-twoslash": "workspace:*",
+    "fumadocs-twoslash": "workspace:*",
     "@hanzo/docs-typescript": "workspace:*",
-    "@hanzo/docs-ui": "workspace:*",
-    "@hanzo/docs-mdx": "workspace:*",
+    "fumadocs-ui": "workspace:*",
+    "fumadocs-mdx": "workspace:*",
     "@hanzo/mdx-runtime": "workspace:*"
   },
   "devDependencies": {

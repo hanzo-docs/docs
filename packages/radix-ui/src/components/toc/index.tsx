@@ -1,1 +1,1 @@
-export * from '@hanzo/docs-ui/components/toc/index';
+export * from '@fumadocs/ui/components/toc/index';

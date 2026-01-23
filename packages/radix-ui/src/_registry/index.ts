@@ -10,10 +10,10 @@ export const registry: Registry = {
   tsconfigPath: '../tsconfig.json',
   packageJson: '../package.json',
   onResolve(ref) {
-    return resolveForwardedAPIs(ref, '@hanzo/docs-ui', registry) ?? ref;
+    return resolveForwardedAPIs(ref, '@fumadocs/ui', registry) ?? ref;
   },
   env: {
-    ui: '@hanzo/docs-ui',
+    ui: '@fumadocs/ui',
   },
   components: [
     {
@@ -322,8 +322,8 @@ export const registry: Registry = {
     },
   ],
   dependencies: {
-    '@hanzo/docs-core': null,
-    '@hanzo/docs-ui': null,
+    'fumadocs-core': null,
+    '@fumadocs/ui': null,
     react: null,
   },
 };

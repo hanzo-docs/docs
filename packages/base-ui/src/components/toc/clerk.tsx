@@ -1,1 +1,1 @@
-export * from '@hanzo/docs-ui/components/toc/clerk';
+export * from '@fumadocs/ui/components/toc/clerk';
