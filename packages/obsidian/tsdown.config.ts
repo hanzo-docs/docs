@@ -2,9 +2,9 @@ import { defineConfig } from 'tsdown';
 
 export default defineConfig({
   external: ['react', /^@hanzo\/docs\//],
-  dts: true,
   fixedExtension: false,
-  target: 'es6',
+  target: 'es2023',
   format: 'esm',
+  dts: true,
   entry: ['src/index.ts', 'src/ui/index.tsx', 'src/mdx/index.ts'],
 });
