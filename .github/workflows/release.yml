@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - dev
+  workflow_dispatch:
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 permissions:
