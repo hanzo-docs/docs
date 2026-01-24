@@ -1,1 +1,1 @@
-export * from '@hanzo/docs-base-ui/components/dialog/search-algolia';
+export * from '@fumadocs/base-ui/components/dialog/search-algolia';

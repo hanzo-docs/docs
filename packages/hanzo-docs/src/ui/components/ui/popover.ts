@@ -1,1 +1,1 @@
-export * from '@hanzo/docs-base-ui/components/ui/popover';
+export * from '@fumadocs/base-ui/components/ui/popover';
