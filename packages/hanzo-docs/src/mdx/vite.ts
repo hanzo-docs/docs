@@ -1,2 +1,1 @@
-export * from 'fumadocs-mdx/vite';
-export { default } from 'fumadocs-mdx/vite';
+export * from '@hanzo/docs-mdx/vite';

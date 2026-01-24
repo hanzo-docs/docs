@@ -1,4 +1,4 @@
-import Link from 'fumadocs-core/link';
+import Link from '@hanzo/docs-core/link';
 import type {
   AnchorHTMLAttributes,
   FC,
@@ -6,11 +6,12 @@ import type {
   ImgHTMLAttributes,
   TableHTMLAttributes,
 } from 'react';
-import { Image as FrameworkImage } from 'fumadocs-core/framework';
+import { useEffectEvent } from '@hanzo/docs-core/utils/use-effect-event';
+import { Image as FrameworkImage } from '@hanzo/docs-core/framework';
 import { Card, Cards } from '@/components/card';
 import { Callout, CalloutContainer, CalloutDescription, CalloutTitle } from '@/components/callout';
 import { Heading } from '@/components/heading';
-import { cn } from '@fumadocs/ui/cn';
+import { cn } from '@hanzo/docs-ui/cn';
 import {
   CodeBlock,
   CodeBlockTab,

@@ -1,143 +1,445 @@
 {
   "name": "@hanzo/docs",
-  "version": "16.3.0",
-  "description": "The documentation framework for Hanzo - React.js library for building beautiful documentation websites",
+  "version": "16.4.0",
+  "description": "Core documentation framework for Hanzo - source, search, i18n, and integrations",
   "keywords": [
     "Hanzo",
     "Docs",
     "Documentation",
-    "React",
     "Next.js",
-    "MDX"
+    "Source",
+    "Search",
+    "i18n"
   ],
-  "homepage": "https://hanzo.ai/docs",
+  "homepage": "https://docs.hanzo.ai",
   "repository": "github:hanzoai/docs",
   "license": "MIT",
   "type": "module",
   "exports": {
-    "./core/breadcrumb": "./dist/core/breadcrumb.js",
-    "./core/toc": "./dist/core/toc.js",
-    "./core/link": "./dist/core/link.js",
-    "./core/dynamic-link": "./dist/core/dynamic-link.js",
-    "./core/negotiation": "./dist/core/negotiation.js",
-    "./core/page-tree": "./dist/core/page-tree.js",
-    "./core/content": "./dist/core/content/index.js",
-    "./core/content/*": "./dist/core/content/*.js",
-    "./core/search": "./dist/core/search/index.js",
-    "./core/search/*": "./dist/core/search/*.js",
-    "./core/source": "./dist/core/source/index.js",
-    "./core/source/client": "./dist/core/source/client.js",
-    "./core/source/schema": "./dist/core/source/schema.js",
-    "./core/source/*": "./dist/core/source/*.js",
-    "./core/mdx-plugins": "./dist/core/mdx-plugins/index.js",
-    "./core/mdx-plugins/*": "./dist/core/mdx-plugins/*.js",
-    "./core/i18n": "./dist/core/i18n/index.js",
-    "./core/i18n/middleware": "./dist/core/i18n/middleware.js",
-    "./core/highlight": "./dist/core/highlight/index.js",
-    "./core/highlight/client": "./dist/core/highlight/client.js",
-    "./core/framework": "./dist/core/framework/index.js",
-    "./core/framework/*": "./dist/core/framework/*.js",
-    "./ui/style.css": {
-      "style": "./dist/ui/style.css",
-      "default": "./dist/ui/style.css"
+    "./core/source": {
+      "types": "./dist/core/source/index.d.ts",
+      "import": "./dist/core/source/index.js"
     },
-    "./ui/image-zoom.css": {
-      "style": "./dist/ui/image-zoom.css",
-      "default": "./dist/ui/image-zoom.css"
+    "./core/source/*": {
+      "types": "./dist/core/source/*.d.ts",
+      "import": "./dist/core/source/*.js"
     },
-    "./ui/css/*": {
-      "style": "./dist/ui/css/*",
-      "default": "./dist/ui/css/*"
+    "./core/search": {
+      "types": "./dist/core/search/index.d.ts",
+      "import": "./dist/core/search/index.js"
     },
-    "./ui/i18n": "./dist/ui/i18n.js",
-    "./ui/mdx": "./dist/ui/mdx.js",
-    "./ui/og": "./dist/ui/og.js",
-    "./ui/page": "./dist/ui/page.js",
-    "./ui/layouts/home": "./dist/ui/layouts/home.js",
-    "./ui/layouts/home/navbar": "./dist/ui/layouts/home/navbar.js",
-    "./ui/layouts/docs": "./dist/ui/layouts/docs.js",
-    "./ui/layouts/docs/page": "./dist/ui/layouts/docs/page.js",
-    "./ui/layouts/notebook": "./dist/ui/layouts/notebook.js",
-    "./ui/layouts/notebook/page": "./dist/ui/layouts/notebook/page.js",
-    "./ui/layouts/shared": "./dist/ui/layouts/shared.js",
-    "./ui/provider/next": "./dist/ui/provider/next.js",
-    "./ui/provider/react-router": "./dist/ui/provider/react-router.js",
-    "./ui/provider/tanstack": "./dist/ui/provider/tanstack.js",
-    "./ui/provider/waku": "./dist/ui/provider/waku.js",
-    "./ui/provider/base": "./dist/ui/provider/base.js",
-    "./ui/provider/*": "./dist/ui/provider/*.js",
-    "./ui/contexts/*": "./dist/ui/contexts/*.js",
-    "./ui/utils/*": "./dist/ui/utils/*.js",
-    "./ui/components/tabs.unstyled": "./dist/ui/components/tabs.unstyled.js",
-    "./ui/components/*": "./dist/ui/components/*.js",
-    "./ui/components/dialog/*": "./dist/ui/components/dialog/*.js",
-    "./ui/components/sidebar/*": "./dist/ui/components/sidebar/*.js",
-    "./ui/components/toc/*": "./dist/ui/components/toc/*.js",
-    "./ui/components/ui/*": "./dist/ui/components/ui/*.js",
-    "./mdx": "./dist/mdx/index.js",
-    "./mdx/*": "./dist/mdx/*.js",
-    "./mdx/runtime/*": "./dist/mdx/runtime/*.js",
-    "./mdx/plugins/*": "./dist/mdx/plugins/*.js",
-    "./mdx:collections/*": "fumadocs-mdx:collections/*",
-    "./cli/build": "./dist/cli/build.js",
-    "./mdx-remote": "./dist/mdx-remote/index.js",
-    "./mdx-remote/*": "./dist/mdx-remote/*.js",
-    "./openapi": "./dist/openapi/index.js",
-    "./openapi/*": "./dist/openapi/*.js",
+    "./core/search/*": {
+      "types": "./dist/core/search/*.d.ts",
+      "import": "./dist/core/search/*.js"
+    },
+    "./core/i18n": {
+      "types": "./dist/core/i18n/index.d.ts",
+      "import": "./dist/core/i18n/index.js"
+    },
+    "./core/i18n/*": {
+      "types": "./dist/core/i18n/*.d.ts",
+      "import": "./dist/core/i18n/*.js"
+    },
+    "./core/page-tree": {
+      "types": "./dist/core/page-tree.d.ts",
+      "import": "./dist/core/page-tree.js"
+    },
+    "./core/breadcrumb": {
+      "types": "./dist/core/breadcrumb.d.ts",
+      "import": "./dist/core/breadcrumb.js"
+    },
+    "./core/toc": {
+      "types": "./dist/core/toc.d.ts",
+      "import": "./dist/core/toc.js"
+    },
+    "./core/link": {
+      "types": "./dist/core/link.d.ts",
+      "import": "./dist/core/link.js"
+    },
+    "./core/dynamic-link": {
+      "types": "./dist/core/dynamic-link.d.ts",
+      "import": "./dist/core/dynamic-link.js"
+    },
+    "./core/negotiation": {
+      "types": "./dist/core/negotiation.d.ts",
+      "import": "./dist/core/negotiation.js"
+    },
+    "./core/content": {
+      "types": "./dist/core/content/index.d.ts",
+      "import": "./dist/core/content/index.js"
+    },
+    "./core/content/*": {
+      "types": "./dist/core/content/*.d.ts",
+      "import": "./dist/core/content/*.js"
+    },
+    "./core/mdx-plugins": {
+      "types": "./dist/core/mdx-plugins/index.d.ts",
+      "import": "./dist/core/mdx-plugins/index.js"
+    },
+    "./core/mdx-plugins/*": {
+      "types": "./dist/core/mdx-plugins/*.d.ts",
+      "import": "./dist/core/mdx-plugins/*.js"
+    },
+    "./core/highlight": {
+      "types": "./dist/core/highlight/index.d.ts",
+      "import": "./dist/core/highlight/index.js"
+    },
+    "./core/highlight/*": {
+      "types": "./dist/core/highlight/*.d.ts",
+      "import": "./dist/core/highlight/*.js"
+    },
+    "./core/framework": {
+      "types": "./dist/core/framework/index.d.ts",
+      "import": "./dist/core/framework/index.js"
+    },
+    "./core/framework/*": {
+      "types": "./dist/core/framework/*.d.ts",
+      "import": "./dist/core/framework/*.js"
+    },
+    "./source": {
+      "types": "./dist/core/source/index.d.ts",
+      "import": "./dist/core/source/index.js"
+    },
+    "./source/client": {
+      "types": "./dist/core/source/client.d.ts",
+      "import": "./dist/core/source/client.js"
+    },
+    "./source/schema": {
+      "types": "./dist/core/source/schema.d.ts",
+      "import": "./dist/core/source/schema.js"
+    },
+    "./source/*": {
+      "types": "./dist/core/source/*.d.ts",
+      "import": "./dist/core/source/*.js"
+    },
+    "./search": {
+      "types": "./dist/core/search/index.d.ts",
+      "import": "./dist/core/search/index.js"
+    },
+    "./search/*": {
+      "types": "./dist/core/search/*.d.ts",
+      "import": "./dist/core/search/*.js"
+    },
+    "./i18n": {
+      "types": "./dist/core/i18n/index.d.ts",
+      "import": "./dist/core/i18n/index.js"
+    },
+    "./i18n/middleware": {
+      "types": "./dist/core/i18n/middleware.d.ts",
+      "import": "./dist/core/i18n/middleware.js"
+    },
+    "./page-tree": {
+      "types": "./dist/core/page-tree.d.ts",
+      "import": "./dist/core/page-tree.js"
+    },
+    "./breadcrumb": {
+      "types": "./dist/core/breadcrumb.d.ts",
+      "import": "./dist/core/breadcrumb.js"
+    },
+    "./toc": {
+      "types": "./dist/core/toc.d.ts",
+      "import": "./dist/core/toc.js"
+    },
+    "./link": {
+      "types": "./dist/core/link.d.ts",
+      "import": "./dist/core/link.js"
+    },
+    "./dynamic-link": {
+      "types": "./dist/core/dynamic-link.d.ts",
+      "import": "./dist/core/dynamic-link.js"
+    },
+    "./negotiation": {
+      "types": "./dist/core/negotiation.d.ts",
+      "import": "./dist/core/negotiation.js"
+    },
+    "./content": {
+      "types": "./dist/core/content/index.d.ts",
+      "import": "./dist/core/content/index.js"
+    },
+    "./content/*": {
+      "types": "./dist/core/content/*.d.ts",
+      "import": "./dist/core/content/*.js"
+    },
+    "./mdx-plugins": {
+      "types": "./dist/core/mdx-plugins/index.d.ts",
+      "import": "./dist/core/mdx-plugins/index.js"
+    },
+    "./mdx-plugins/*": {
+      "types": "./dist/core/mdx-plugins/*.d.ts",
+      "import": "./dist/core/mdx-plugins/*.js"
+    },
+    "./highlight": {
+      "types": "./dist/core/highlight/index.d.ts",
+      "import": "./dist/core/highlight/index.js"
+    },
+    "./highlight/client": {
+      "types": "./dist/core/highlight/client.d.ts",
+      "import": "./dist/core/highlight/client.js"
+    },
+    "./framework": {
+      "types": "./dist/core/framework/index.d.ts",
+      "import": "./dist/core/framework/index.js"
+    },
+    "./framework/*": {
+      "types": "./dist/core/framework/*.d.ts",
+      "import": "./dist/core/framework/*.js"
+    },
+    "./openapi": {
+      "types": "./dist/openapi/index.d.ts",
+      "import": "./dist/openapi/index.js"
+    },
+    "./openapi/*": {
+      "types": "./dist/openapi/*.d.ts",
+      "import": "./dist/openapi/*.js"
+    },
     "./openapi/css/*": {
       "style": "./dist/openapi/css/*",
       "default": "./dist/openapi/css/*"
     },
-    "./typescript": "./dist/typescript/index.js",
-    "./typescript/*": "./dist/typescript/*.js",
-    "./twoslash": "./dist/twoslash/index.js",
-    "./twoslash/*": "./dist/twoslash/*.js",
+    "./typescript": {
+      "types": "./dist/typescript/index.d.ts",
+      "import": "./dist/typescript/index.js"
+    },
+    "./typescript/*": {
+      "types": "./dist/typescript/*.d.ts",
+      "import": "./dist/typescript/*.js"
+    },
+    "./twoslash": {
+      "types": "./dist/twoslash/index.d.ts",
+      "import": "./dist/twoslash/index.js"
+    },
+    "./twoslash/*": {
+      "types": "./dist/twoslash/*.d.ts",
+      "import": "./dist/twoslash/*.js"
+    },
     "./twoslash/twoslash.css": {
       "style": "./dist/twoslash/twoslash.css",
       "default": "./dist/twoslash/twoslash.css"
     },
-    "./docgen": "./dist/docgen/index.js",
-    "./docgen/*": "./dist/docgen/*.js",
-    "./python": "./dist/python/index.js",
-    "./python/*": "./dist/python/*.js",
-    "./obsidian": "./dist/obsidian/index.js",
-    "./obsidian/*": "./dist/obsidian/*.js",
-    "./content-collections": "./dist/content-collections/index.js",
-    "./content-collections/*": "./dist/content-collections/*.js",
-    "./press": "./dist/press/index.js",
-    "./press/*": "./dist/press/*.js"
+    "./docgen": {
+      "types": "./dist/docgen/index.d.ts",
+      "import": "./dist/docgen/index.js"
+    },
+    "./docgen/*": {
+      "types": "./dist/docgen/*.d.ts",
+      "import": "./dist/docgen/*.js"
+    },
+    "./python": {
+      "types": "./dist/python/index.d.ts",
+      "import": "./dist/python/index.js"
+    },
+    "./python/*": {
+      "types": "./dist/python/*.d.ts",
+      "import": "./dist/python/*.js"
+    },
+    "./obsidian": {
+      "types": "./dist/obsidian/index.d.ts",
+      "import": "./dist/obsidian/index.js"
+    },
+    "./obsidian/*": {
+      "types": "./dist/obsidian/*.d.ts",
+      "import": "./dist/obsidian/*.js"
+    },
+    "./content-collections": {
+      "types": "./dist/content-collections/index.d.ts",
+      "import": "./dist/content-collections/index.js"
+    },
+    "./content-collections/*": {
+      "types": "./dist/content-collections/*.d.ts",
+      "import": "./dist/content-collections/*.js"
+    },
+    "./press": {
+      "types": "./dist/press/index.d.ts",
+      "import": "./dist/press/index.js"
+    },
+    "./press/*": {
+      "types": "./dist/press/*.d.ts",
+      "import": "./dist/press/*.js"
+    },
+    "./mdx-remote": {
+      "types": "./dist/mdx-remote/index.d.ts",
+      "import": "./dist/mdx-remote/index.js"
+    },
+    "./mdx-remote/*": {
+      "types": "./dist/mdx-remote/*.d.ts",
+      "import": "./dist/mdx-remote/*.js"
+    },
+    "./cli/build": {
+      "types": "./dist/cli/build.d.ts",
+      "import": "./dist/cli/build.js"
+    },
+    "./mdx": {
+      "types": "./dist/mdx/index.d.ts",
+      "import": "./dist/mdx/index.js",
+      "default": "./dist/mdx/index.js"
+    },
+    "./mdx/next": {
+      "types": "./dist/mdx/next.d.ts",
+      "import": "./dist/mdx/next.js",
+      "default": "./dist/mdx/next.js"
+    },
+    "./mdx/config": {
+      "types": "./dist/mdx/config.d.ts",
+      "import": "./dist/mdx/config.js",
+      "default": "./dist/mdx/config.js"
+    },
+    "./mdx/vite": {
+      "types": "./dist/mdx/vite.d.ts",
+      "import": "./dist/mdx/vite.js",
+      "default": "./dist/mdx/vite.js"
+    },
+    "./mdx/bun": {
+      "types": "./dist/mdx/bun.d.ts",
+      "import": "./dist/mdx/bun.js",
+      "default": "./dist/mdx/bun.js"
+    },
+    "./mdx/runtime/server": {
+      "types": "./dist/mdx/runtime/server.d.ts",
+      "import": "./dist/mdx/runtime/server.js",
+      "default": "./dist/mdx/runtime/server.js"
+    },
+    "./mdx/runtime/browser": {
+      "types": "./dist/mdx/runtime/browser.d.ts",
+      "import": "./dist/mdx/runtime/browser.js",
+      "default": "./dist/mdx/runtime/browser.js"
+    },
+    "./mdx/runtime/dynamic": {
+      "types": "./dist/mdx/runtime/dynamic.d.ts",
+      "import": "./dist/mdx/runtime/dynamic.js",
+      "default": "./dist/mdx/runtime/dynamic.js"
+    },
+    "./mdx/runtime/types": {
+      "types": "./dist/mdx/runtime/types.d.ts",
+      "import": "./dist/mdx/runtime/types.js",
+      "default": "./dist/mdx/runtime/types.js"
+    },
+    "./ui": {
+      "types": "./dist/ui/index.d.ts",
+      "import": "./dist/ui/index.js"
+    },
+    "./ui/mdx": {
+      "types": "./dist/ui/mdx.d.ts",
+      "import": "./dist/ui/mdx.js"
+    },
+    "./ui/og": {
+      "types": "./dist/ui/og.d.ts",
+      "import": "./dist/ui/og.js"
+    },
+    "./ui/page": {
+      "types": "./dist/ui/page.d.ts",
+      "import": "./dist/ui/page.js"
+    },
+    "./ui/i18n": {
+      "types": "./dist/ui/i18n.d.ts",
+      "import": "./dist/ui/i18n.js"
+    },
+    "./ui/components/banner": {
+      "types": "./dist/ui/components/banner.d.ts",
+      "import": "./dist/ui/components/banner.js"
+    },
+    "./ui/components/inline-toc": {
+      "types": "./dist/ui/components/inline-toc.d.ts",
+      "import": "./dist/ui/components/inline-toc.js"
+    },
+    "./ui/components/files": {
+      "types": "./dist/ui/components/files.d.ts",
+      "import": "./dist/ui/components/files.js"
+    },
+    "./ui/components/image-zoom": {
+      "types": "./dist/ui/components/image-zoom.d.ts",
+      "import": "./dist/ui/components/image-zoom.js"
+    },
+    "./ui/components/*": {
+      "types": "./dist/ui/components/*.d.ts",
+      "import": "./dist/ui/components/*.js"
+    },
+    "./ui/layouts/*": {
+      "types": "./dist/ui/layouts/*.d.ts",
+      "import": "./dist/ui/layouts/*.js"
+    },
+    "./ui/contexts/*": {
+      "types": "./dist/ui/contexts/*.d.ts",
+      "import": "./dist/ui/contexts/*.js"
+    },
+    "./ui/provider/*": {
+      "types": "./dist/ui/provider/*.d.ts",
+      "import": "./dist/ui/provider/*.js"
+    },
+    "./ui/utils/*": {
+      "types": "./dist/ui/utils/*.d.ts",
+      "import": "./dist/ui/utils/*.js"
+    }
   },
   "scripts": {
     "build": "tsup && node scripts/copy-css.js",
     "dev": "tsup --watch"
   },
   "dependencies": {
-    "@fumadocs/base-ui": "workspace:*",
-    "@fumadocs/cli": "workspace:*",
-    "@hanzo/docs-content-collections": "workspace:*",
-    "fumadocs-core": "workspace:*",
-    "@hanzo/docs-docgen": "workspace:*",
-    "fumadocs-obsidian": "workspace:*",
-    "fumadocs-openapi": "workspace:*",
-    "@hanzo/docs-press": "workspace:*",
-    "@hanzo/docs-python": "workspace:*",
-    "fumadocs-twoslash": "workspace:*",
+    "@hanzo/docs-core": "workspace:*",
+    "@hanzo/docs-mdx": "workspace:*",
+    "@hanzo/docs-ui": "workspace:*",
+    "@hanzo/docs-radix-ui": "workspace:*",
+    "@hanzo/docs-openapi": "workspace:*",
+    "@hanzo/docs-twoslash": "workspace:*",
+    "@hanzo/docs-obsidian": "workspace:*",
+    "@hanzo/docs-cli": "workspace:*",
+    "@hanzo/docs-mdx-remote": "workspace:*",
+    "@hanzo/mdx-runtime": "workspace:*",
     "@hanzo/docs-typescript": "workspace:*",
-    "fumadocs-ui": "workspace:*",
-    "fumadocs-mdx": "workspace:*",
-    "@hanzo/mdx-runtime": "workspace:*"
+    "@hanzo/docs-docgen": "workspace:*",
+    "@hanzo/docs-python": "workspace:*",
+    "@hanzo/docs-content-collections": "workspace:*",
+    "@hanzo/docs-press": "workspace:*"
   },
   "devDependencies": {
+    "@types/node": "^25.0.10",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3"
   },
   "peerDependencies": {
-    "next": "^15.0.0 || ^16.0.0",
+    "@hanzo/mdx": "^14.0.0",
+    "@hanzo/ui": "^5.0.0",
+    "@orama/core": "1.x.x",
+    "@oramacloud/client": "2.x.x",
+    "@tanstack/react-router": "1.x.x",
+    "algoliasearch": "5.x.x",
+    "lucide-react": "*",
+    "next": ">=15.0.0",
     "react": "^18.0.0 || ^19.0.0",
-    "react-dom": "^18.0.0 || ^19.0.0"
+    "react-dom": "^18.0.0 || ^19.0.0",
+    "react-router": "7.x.x",
+    "waku": "^0.26.0 || ^0.27.0",
+    "zod": ">=3.0.0"
   },
   "peerDependenciesMeta": {
+    "@hanzo/mdx": {
+      "optional": true
+    },
+    "@hanzo/ui": {
+      "optional": true
+    },
+    "@orama/core": {
+      "optional": true
+    },
+    "@oramacloud/client": {
+      "optional": true
+    },
+    "@tanstack/react-router": {
+      "optional": true
+    },
+    "algoliasearch": {
+      "optional": true
+    },
+    "lucide-react": {
+      "optional": true
+    },
     "next": {
+      "optional": true
+    },
+    "react-router": {
+      "optional": true
+    },
+    "waku": {
       "optional": true
     }
   },

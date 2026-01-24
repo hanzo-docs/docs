@@ -1,13 +1,13 @@
 import { createProcessor } from '@mdx-js/mdx';
 import { VFile } from 'vfile';
-import { remarkInclude } from '@/loaders/mdx/remark-include';
+import { remarkInclude } from './remark-include';
 import type { StructuredData } from '@hanzo/docs-core/mdx-plugins';
 import type { TOCItemType } from '@hanzo/docs-core/toc';
 import type { FC } from 'react';
 import type { MDXProps } from 'mdx/types';
-import { type PostprocessOptions, remarkPostprocess } from '@/loaders/mdx/remark-postprocess';
-import type { Core } from '@/core';
-import type { DocCollectionItem } from '@/config/build';
+import { type PostprocessOptions, remarkPostprocess } from './remark-postprocess';
+import type { Core } from '../../core';
+import type { DocCollectionItem } from '../../config/build';
 
 type Processor = ReturnType<typeof createProcessor>;
 

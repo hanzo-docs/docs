@@ -12,7 +12,7 @@ import {
 import { Input } from '@/ui/components/input';
 import { getDefaultValue } from '../utils/get-default-values';
 import { cn } from '@/utils/cn';
-import { buttonVariants } from 'fumadocs-ui/components/ui/button';
+import { buttonVariants } from '@hanzo/docs-radix-ui/components/ui/button';
 import { FormatFlags, typeToString } from '@/type-tree/stringify';
 import type { ObjectNode, TypeNode } from '../type-tree/types';
 import { stringifyFieldKey } from '@fumari/stf/lib/utils';

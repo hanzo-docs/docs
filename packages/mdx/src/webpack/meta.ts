@@ -1,8 +1,8 @@
 import { type LoaderContext } from 'webpack';
-import { toWebpack, type WebpackLoader } from '@/loaders/adapter';
-import { createStandaloneConfigLoader } from '@/loaders/config';
-import { createMetaLoader } from '@/loaders/meta';
-import { getCore, type WebpackLoaderOptions } from '@/webpack';
+import { toWebpack, type WebpackLoader } from '../loaders/adapter';
+import { createStandaloneConfigLoader } from '../loaders/config';
+import { createMetaLoader } from '../loaders/meta';
+import { getCore, type WebpackLoaderOptions } from './';
 
 let instance: WebpackLoader | undefined;
 

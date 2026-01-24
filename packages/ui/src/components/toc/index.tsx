@@ -6,9 +6,9 @@ import {
   type RefObject,
   use,
   useEffect,
-  useEffectEvent,
   useRef,
 } from 'react';
+import { useEffectEvent } from '@hanzo/docs-core/utils/use-effect-event';
 import { cn } from '@/cn';
 import { mergeRefs } from '@/merge-refs';
 import { useOnChange } from '@hanzo/docs-core/utils/use-on-change';
