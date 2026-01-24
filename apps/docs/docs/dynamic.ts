@@ -28,4 +28,4 @@ const create = await dynamic<typeof Config, import("@hanzo/docs-mdx/runtime/type
       lastModified?: Date;
     },
   }
-}>(Config, {"configPath":"source.config.ts","environment":"next","outDir":".docs"}, {"doc":{"passthroughs":["extractedReferences","lastModified"]}});
+}>(Config, {"configPath":"source.config.ts","environment":"next","outDir":"docs"}, {"doc":{"passthroughs":["extractedReferences","lastModified"]}});

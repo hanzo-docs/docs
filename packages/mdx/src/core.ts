@@ -3,7 +3,7 @@ import type {
   DocCollectionItem,
   LoadedConfig,
   MetaCollectionItem,
-} from '@/config/build';
+} from './config/build';
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import type { FSWatcher } from 'chokidar';

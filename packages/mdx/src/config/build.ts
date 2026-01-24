@@ -5,9 +5,9 @@ import type {
   DocsCollection,
   GlobalConfig,
   MetaCollection,
-} from '@/config/define';
+} from './define';
 import picomatch from 'picomatch';
-import { applyMdxPreset } from '@/config/preset';
+import { applyMdxPreset } from './preset';
 import path from 'node:path';
 
 export type BuildEnvironment = 'bundler' | 'runtime';
