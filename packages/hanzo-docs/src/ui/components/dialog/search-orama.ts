@@ -1,1 +1,1 @@
-export * from '@hanzo/docs-base-ui/components/dialog/search-orama';
+export * from '@fumadocs/base-ui/components/dialog/search-orama';

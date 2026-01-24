@@ -1,2 +1,2 @@
-export * from '@hanzo/docs-mdx/plugins/last-modified';
-export { default } from '@hanzo/docs-mdx/plugins/last-modified';
+export * from 'fumadocs-mdx/plugins/last-modified';
+export { default } from 'fumadocs-mdx/plugins/last-modified';

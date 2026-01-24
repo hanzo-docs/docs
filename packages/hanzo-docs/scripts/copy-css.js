@@ -5,20 +5,20 @@ import { fileURLToPath } from 'url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, '..');
 
-// Copy CSS files from @hanzo/docs-base-ui
-const uiCssSource = join(root, 'node_modules/@hanzo/docs-base-ui/css');
+// Copy CSS files from @fumadocs/base-ui
+const uiCssSource = join(root, 'node_modules/@fumadocs/base-ui/css');
 const uiCssDest = join(root, 'dist/ui/css');
 
 // Copy style.css from dist
-const uiDistSource = join(root, 'node_modules/@hanzo/docs-base-ui/dist');
+const uiDistSource = join(root, 'node_modules/@fumadocs/base-ui/dist');
 const uiDistDest = join(root, 'dist/ui');
 
-// Copy twoslash.css from @hanzo/docs-twoslash (styles folder)
-const twoslashStylesSource = join(root, 'node_modules/@hanzo/docs-twoslash/styles');
+// Copy twoslash.css from fumadocs-twoslash (styles folder)
+const twoslashStylesSource = join(root, 'node_modules/fumadocs-twoslash/styles');
 const twoslashDistDest = join(root, 'dist/twoslash');
 
-// Copy openapi CSS from @hanzo/docs-openapi
-const openapiCssSource = join(root, 'node_modules/@hanzo/docs-openapi/css');
+// Copy openapi CSS from fumadocs-openapi
+const openapiCssSource = join(root, 'node_modules/fumadocs-openapi/css');
 const openapiCssDest = join(root, 'dist/openapi/css');
 
 try {
