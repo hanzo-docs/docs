@@ -1,11 +1,11 @@
 import type { Route } from './+types/page';
-import { DocsLayout } from 'fumadocs-ui/layouts/docs';
-import { DocsBody, DocsDescription, DocsPage, DocsTitle } from 'fumadocs-ui/layouts/docs/page';
+import { DocsLayout } from '@hanzo/docs-ui/layouts/docs';
+import { DocsBody, DocsDescription, DocsPage, DocsTitle } from '@hanzo/docs-ui/layouts/docs/page';
 import { source } from '@/lib/source';
-import defaultMdxComponents from 'fumadocs-ui/mdx';
-import browserCollections from 'fumadocs-mdx:collections/browser';
+import defaultMdxComponents from '@hanzo/docs-ui/mdx';
+import browserCollections from '@hanzo/docs-mdx:collections/browser';
 import { baseOptions } from '@/lib/layout.shared';
-import { useFumadocsLoader } from 'fumadocs-core/source/client';
+import { useHanzoDocsLoader } from '@hanzo/docs-core/source/client';
 
 export async function loader({ params }: Route.LoaderArgs) {
   const slugs = params['*'].split('/').filter((v) => v.length > 0);
@@ -35,7 +35,7 @@ const clientLoader = browserCollections.docs.createClientLoader({
 });
 
 export default function Page({ loaderData, params }: Route.ComponentProps) {
-  const { pageTree } = useFumadocsLoader(loaderData);
+  const { pageTree } = useHanzoDocsLoader(loaderData);
 
   return (
     <DocsLayout {...baseOptions(params.lang)} tree={pageTree}>
