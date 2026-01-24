@@ -1,1 +1,1 @@
-export * from '@fumadocs/ui/og/next';
+export * from '@hanzo/docs-radix-ui/og/next';

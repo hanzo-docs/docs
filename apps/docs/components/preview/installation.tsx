@@ -1,4 +1,4 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@hanzo/docs-base-ui/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@hanzo/docs-radix-ui/components/ui/tabs';
 import { CodeBlock } from '@/components/code-block';
 
 export function Installation({ name }: { name: string }) {

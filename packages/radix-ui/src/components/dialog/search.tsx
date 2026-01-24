@@ -9,19 +9,19 @@ import {
   use,
   useCallback,
   useEffect,
-  useEffectEvent,
   useMemo,
   useRef,
   useState,
 } from 'react';
+import { useEffectEvent } from '@hanzo/docs-core/utils/use-effect-event';
 import { I18nLabel, useI18n } from '@/contexts/i18n';
-import { cn } from '@fumadocs/ui/cn';
+import { cn } from '@hanzo/docs-ui/cn';
 import { Dialog, DialogContent, DialogOverlay, DialogTitle } from '@radix-ui/react-dialog';
-import type { HighlightedText, ReactSortedResult as BaseResultType } from 'fumadocs-core/search';
+import type { HighlightedText, ReactSortedResult as BaseResultType } from '@hanzo/docs-core/search';
 import { cva } from 'class-variance-authority';
-import { useRouter } from 'fumadocs-core/framework';
+import { useRouter } from '@hanzo/docs-core/framework';
 import type { SharedProps } from '@/contexts/search';
-import { useOnChange } from 'fumadocs-core/utils/use-on-change';
+import { useOnChange } from '@hanzo/docs-core/utils/use-on-change';
 import scrollIntoView from 'scroll-into-view-if-needed';
 import { buttonVariants } from '@/components/ui/button';
 

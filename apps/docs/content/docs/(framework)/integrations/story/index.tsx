@@ -1,4 +1,4 @@
-import { createFileSystemCache, defineStoryFactory } from '@fumadocs/story';
+import { createFileSystemCache, defineStoryFactory } from '@hanzo/docs-story';
 import { CalloutStory } from './client';
 
 const { defineStory } = defineStoryFactory({

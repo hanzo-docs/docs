@@ -5,13 +5,13 @@ import {
   defineDocs,
   frontmatterSchema,
   metaSchema,
-} from 'fumadocs-mdx/config';
+} from '@hanzo/docs-mdx/config';
 import { z } from 'zod';
 import type { ElementContent } from 'hast';
-import jsonSchema from 'fumadocs-mdx/plugins/json-schema';
-import lastModified from 'fumadocs-mdx/plugins/last-modified';
+import jsonSchema from '@hanzo/docs-mdx/plugins/json-schema';
+import lastModified from '@hanzo/docs-mdx/plugins/last-modified';
 import type { ShikiTransformer } from 'shiki';
-import type { RemarkFeedbackBlockOptions } from 'fumadocs-core/mdx-plugins';
+import type { RemarkFeedbackBlockOptions } from '@hanzo/docs-core/mdx-plugins';
 
 export const docs = defineDocs({
   docs: {
@@ -29,22 +29,22 @@ export const docs = defineDocs({
     },
     async: true,
     async mdxOptions(environment) {
-      const { rehypeCodeDefaultOptions } = await import('fumadocs-core/mdx-plugins/rehype-code');
+      const { rehypeCodeDefaultOptions } = await import('@hanzo/docs-core/mdx-plugins/rehype-code');
       const { remarkStructureDefaultOptions } =
-        await import('fumadocs-core/mdx-plugins/remark-structure');
-      const { remarkSteps } = await import('fumadocs-core/mdx-plugins/remark-steps');
+        await import('@hanzo/docs-core/mdx-plugins/remark-structure');
+      const { remarkSteps } = await import('@hanzo/docs-core/mdx-plugins/remark-steps');
       const { remarkFeedbackBlock } =
-        await import('fumadocs-core/mdx-plugins/remark-feedback-block');
-      const { transformerTwoslash } = await import('fumadocs-twoslash');
-      const { createFileSystemTypesCache } = await import('fumadocs-twoslash/cache-fs');
+        await import('@hanzo/docs-core/mdx-plugins/remark-feedback-block');
+      const { transformerTwoslash } = await import('@hanzo/docs-twoslash');
+      const { createFileSystemTypesCache } = await import('@hanzo/docs-twoslash/cache-fs');
       const { default: remarkMath } = await import('remark-math');
-      const { remarkTypeScriptToJavaScript } = await import('fumadocs-docgen/remark-ts2js');
+      const { remarkTypeScriptToJavaScript } = await import('@hanzo/docs-docgen/remark-ts2js');
       const { default: rehypeKatex } = await import('rehype-katex');
       const { remarkAutoTypeTable, createGenerator, createFileSystemGeneratorCache } =
-        await import('fumadocs-typescript');
+        await import('@hanzo/docs-typescript');
 
       const generator = createGenerator({
-        cache: createFileSystemGeneratorCache('.next/fumadocs-typescript'),
+        cache: createFileSystemGeneratorCache('.next/@hanzo/docs-typescript'),
       });
       const feedbackOptions: RemarkFeedbackBlockOptions = {
         resolve(node) {
@@ -112,8 +112,8 @@ export const blog = defineCollections({
   }),
   async: true,
   async mdxOptions(environment) {
-    const { rehypeCodeDefaultOptions } = await import('fumadocs-core/mdx-plugins/rehype-code');
-    const { remarkSteps } = await import('fumadocs-core/mdx-plugins/remark-steps');
+    const { rehypeCodeDefaultOptions } = await import('@hanzo/docs-core/mdx-plugins/rehype-code');
+    const { remarkSteps } = await import('@hanzo/docs-core/mdx-plugins/remark-steps');
 
     return applyMdxPreset({
       rehypeCodeOptions: {

@@ -1,11 +1,11 @@
-import { fumaMatter } from '@/utils/fuma-matter';
-import type { Loader } from '@/loaders/adapter';
+import { parseFrontmatter } from '../../utils/frontmatter';
+import type { Loader } from '../adapter';
 import { z } from 'zod';
-import type { DocCollectionItem } from '@/config/build';
+import type { DocCollectionItem } from '../../config/build';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
-import type { ConfigLoader } from '@/loaders/config';
+import type { ConfigLoader } from '../config';
 import { mdxLoaderGlob } from '..';
 
 const querySchema = z.looseObject({
@@ -28,7 +28,7 @@ export function createMdxLoader({ getCore }: ConfigLoader): Loader {
     async load({ getSource, development: isDevelopment, query, compiler, filePath }) {
       let core = await getCore();
       const value = await getSource();
-      const matter = fumaMatter(value);
+      const matter = parseFrontmatter(value);
       const { collection: collectionName, workspace, only } = querySchema.parse(query);
       if (workspace) {
         core = core.getWorkspaces().get(workspace) ?? core;
@@ -85,7 +85,7 @@ export function createMdxLoader({ getCore }: ConfigLoader): Loader {
         };
       }
 
-      const { buildMDX } = await import('@/loaders/mdx/build-mdx');
+      const { buildMDX } = await import('./build-mdx');
       const compiled = await buildMDX(core, docCollection, {
         isDevelopment,
         // ensure the line number is correct in errors
