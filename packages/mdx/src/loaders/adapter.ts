@@ -1,11 +1,11 @@
-import type { CompilerOptions } from '@/loaders/mdx/build-mdx';
+import type { CompilerOptions } from './mdx/build-mdx';
 import type { LoadFnOutput, LoadHook } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import fs from 'node:fs/promises';
 import type { TransformPluginContext } from 'rollup';
 import type { Environment, TransformResult } from 'vite';
 import { parse } from 'node:querystring';
-import { ValidationError } from '@/utils/validation';
+import { ValidationError } from '../utils/validation';
 import type { LoaderContext } from 'webpack';
 import { readFileSync } from 'node:fs';
 

@@ -1,1 +1,1 @@
-export * from 'fumadocs-twoslash/ui';
+export * from '@hanzo/docs-twoslash/ui';

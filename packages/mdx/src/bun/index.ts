@@ -1,11 +1,11 @@
 import type { BunPlugin } from 'bun';
-import { createMdxLoader } from '@/loaders/mdx';
-import { buildConfig } from '@/config/build';
+import { createMdxLoader } from '../loaders/mdx';
+import { buildConfig } from '../config/build';
 import { pathToFileURL } from 'node:url';
-import { _Defaults, type CoreOptions, createCore } from '@/core';
-import { createIntegratedConfigLoader } from '@/loaders/config';
-import { createMetaLoader } from '@/loaders/meta';
-import { toBun } from '@/loaders/adapter';
+import { _Defaults, type CoreOptions, createCore } from '../core';
+import { createIntegratedConfigLoader } from '../loaders/config';
+import { createMetaLoader } from '../loaders/meta';
+import { toBun } from '../loaders/adapter';
 
 export interface MdxPluginOptions extends Partial<CoreOptions> {
   /**

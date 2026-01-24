@@ -1,1 +1,1 @@
-export * from '@fumadocs/base-ui/components/tabs';
+export * from '@hanzo/docs-radix-ui/components/tabs';

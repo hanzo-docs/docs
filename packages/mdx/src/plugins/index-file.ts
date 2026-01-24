@@ -1,14 +1,14 @@
-import type { Core, CoreOptions, Plugin, PluginContext } from '@/core';
-import type { CollectionItem, DocCollectionItem, MetaCollectionItem } from '@/config/build';
+import type { Core, CoreOptions, Plugin, PluginContext } from '../core';
+import type { CollectionItem, DocCollectionItem, MetaCollectionItem } from '../config/build';
 import path from 'path';
-import { type CodeGen, createCodegen, ident, slash } from '@/utils/codegen';
+import { type CodeGen, createCodegen, ident, slash } from '../utils/codegen';
 import { glob } from 'tinyglobby';
-import { createFSCache } from '@/utils/fs-cache';
+import { createFSCache } from '../utils/fs-cache';
 import { createHash } from 'crypto';
-import type { LazyEntry } from '@/runtime/dynamic';
-import type { EmitEntry } from '@/core';
-import { parseFrontmatter } from '@/utils/frontmatter';
-import type { ServerOptions } from '@/runtime/server';
+import type { LazyEntry } from '../runtime/dynamic';
+import type { EmitEntry } from '../core';
+import { parseFrontmatter } from '../utils/frontmatter';
+import type { ServerOptions } from '../runtime/server';
 
 export interface IndexFilePluginOptions {
   target?: 'default' | 'vite';

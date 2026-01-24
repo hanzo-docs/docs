@@ -1,17 +1,17 @@
 {
-  "name": "@fumadocs/mdx-remote",
+  "name": "@hanzo/docs-mdx-remote",
   "version": "1.4.4",
-  "description": "The remote MDX files adapter for Fumadocs",
+  "description": "The remote MDX files adapter for Hanzo Docs",
   "keywords": [
     "Docs",
     "NextJs",
     "fumadocs",
     "next-mdx-remote"
   ],
-  "homepage": "https://fumadocs.dev",
+  "homepage": "https://docs.hanzo.ai",
   "license": "MIT",
   "author": "Fuma Nama",
-  "repository": "github:fuma-nama/fumadocs",
+  "repository": "github:hanzoai/docs",
   "files": [
     "dist/*"
   ],
@@ -48,7 +48,7 @@
     "@types/node": "25.0.5",
     "@types/react": "^19.2.8",
     "eslint-config-custom": "workspace:*",
-    "fumadocs-core": "workspace:*",
+    "@hanzo/docs-core": "workspace:*",
     "react": "^19.2.3",
     "tinyglobby": "^0.2.15",
     "tsconfig": "workspace:*",
@@ -58,7 +58,7 @@
   },
   "peerDependencies": {
     "@types/react": "*",
-    "fumadocs-core": "^15.0.0 || ^16.0.0",
+    "@hanzo/docs-core": "^15.0.0 || ^16.0.0",
     "react": "18.x.x || 19.x.x"
   },
   "peerDependenciesMeta": {

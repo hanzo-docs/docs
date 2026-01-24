@@ -1,6 +1,7 @@
-import Link from 'fumadocs-core/link';
+import Link from '@hanzo/docs-core/link';
 import type { HTMLAttributes, ReactNode } from 'react';
-import { cn } from '@fumadocs/ui/cn';
+import { useEffectEvent } from '@hanzo/docs-core/utils/use-effect-event';
+import { cn } from '@hanzo/docs-ui/cn';
 
 export function Cards(props: HTMLAttributes<HTMLDivElement>) {
   return (

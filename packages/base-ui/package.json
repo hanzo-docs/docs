@@ -1,15 +1,15 @@
 {
-  "name": "@fumadocs/base-ui",
+  "name": "@hanzo/docs-base-ui",
   "version": "16.4.8",
-  "description": "The Base UI version of Fumadocs UI",
+  "description": "The Base UI version of Hanzo Docs UI",
   "keywords": [
     "Docs",
-    "Fumadocs"
+    "Hanzo Docs"
   ],
-  "homepage": "https://fumadocs.dev",
+  "homepage": "https://docs.hanzo.ai",
   "license": "MIT",
   "author": "Fuma Nama",
-  "repository": "github:fuma-nama/fumadocs",
+  "repository": "github:hanzoai/docs",
   "files": [
     "css/*",
     "dist/*"
@@ -23,6 +23,10 @@
       "types": "./dist/components/*.d.ts",
       "import": "./dist/components/*.js",
       "default": "./dist/components/*.js"
+    },
+    "./contexts/*": {
+      "types": "./dist/contexts/*.d.ts",
+      "import": "./dist/contexts/*.js"
     },
     "./i18n": {
       "types": "./dist/i18n.d.ts",
@@ -96,7 +100,7 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.1.0",
-    "@fumadocs/ui": "workspace:*",
+    "@hanzo/docs-radix-ui": "workspace:*",
     "class-variance-authority": "^0.7.1",
     "lucide-react": "^0.563.0",
     "next-themes": "^0.4.6",
@@ -104,20 +108,20 @@
     "scroll-into-view-if-needed": "^3.1.0"
   },
   "devDependencies": {
-    "@fumadocs/cli": "workspace:*",
+    "@hanzo/docs-cli": "workspace:*",
     "@tailwindcss/cli": "^4.1.18",
     "@types/node": "^25.0.10",
     "@types/react": "^19.2.9",
     "@types/react-dom": "^19.2.3",
     "eslint-config-custom": "workspace:*",
-    "fumadocs-core": "workspace:*",
+    "@hanzo/docs-core": "workspace:*",
     "tailwindcss": "^4.1.18",
     "tsconfig": "workspace:*",
     "tsdown": "^0.19.0"
   },
   "peerDependencies": {
     "@types/react": "*",
-    "fumadocs-core": "workspace:*",
+    "@hanzo/docs-core": "workspace:*",
     "next": "16.x.x",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

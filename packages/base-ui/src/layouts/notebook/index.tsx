@@ -11,12 +11,12 @@ import {
   SidebarViewport,
 } from './sidebar';
 import { TreeContextProvider } from '@/contexts/tree';
-import { cn } from '@fumadocs/ui/cn';
+import { cn } from '@hanzo/docs-ui/cn';
 import { buttonVariants } from '@/components/ui/button';
 import { Languages, Sidebar as SidebarIcon, X } from 'lucide-react';
 import { LanguageToggle } from '@/layouts/shared/language-toggle';
 import { ThemeToggle } from '@/layouts/shared/theme-toggle';
-import type * as PageTree from 'fumadocs-core/page-tree';
+import type * as PageTree from '@hanzo/docs-core/page-tree';
 import {
   LayoutBody,
   LayoutContextProvider,
@@ -25,7 +25,7 @@ import {
   NavbarLinkItem,
 } from '@/layouts/notebook/client';
 import { LargeSearchToggle, SearchToggle } from '@/layouts/shared/search-toggle';
-import { LinkItem, type LinkItemType } from '@fumadocs/ui/link-item';
+import { LinkItem, type LinkItemType } from '@hanzo/docs-radix-ui/link-item';
 import type { SidebarPageTreeComponents } from '@/components/sidebar/page-tree';
 import { getSidebarTabs, type GetSidebarTabsOptions } from '@/components/sidebar/tabs';
 import { SidebarTabsDropdown, type SidebarTabWithProps } from '@/components/sidebar/tabs/dropdown';
