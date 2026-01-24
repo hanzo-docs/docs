@@ -15,17 +15,17 @@ import type { FetchResult } from '@/playground/fetcher';
 import type { ParameterField, SecurityEntry } from '@/playground/index';
 import { getStatusInfo } from './status-info';
 import { joinURL, resolveRequestData, resolveServerUrl, withBase } from '@/utils/url';
-import { DynamicCodeBlock } from 'fumadocs-ui/components/dynamic-codeblock';
+import { DynamicCodeBlock } from '@hanzo/docs-radix-ui/components/dynamic-codeblock';
 import { MethodLabel } from '@/ui/components/method-label';
 import { useQuery } from '@/utils/use-query';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from 'fumadocs-ui/components/ui/collapsible';
+} from '@hanzo/docs-radix-ui/components/ui/collapsible';
 import { X, ChevronDown, LoaderCircle } from 'lucide-react';
 import { encodeRequestData } from '@/requests/media/encode';
-import { buttonVariants } from 'fumadocs-ui/components/ui/button';
+import { buttonVariants } from '@hanzo/docs-radix-ui/components/ui/button';
 import { cn } from '@/utils/cn';
 import { SchemaProvider, SchemaScope, useResolvedSchema } from '@/playground/schema';
 import {
@@ -95,7 +95,7 @@ export interface PlaygroundClientOptions {
    * render the paremeter inputs of API endpoint.
    *
    * for updating values, use:
-   * - the `Custom.useController()` from `fumadocs-openapi/playground/client`.
+   * - the `Custom.useController()` from `@hanzo/docs-openapi/playground/client`.
    *
    * Recommended types packages: `json-schema-typed`, `openapi-types`.
    */

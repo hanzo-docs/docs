@@ -393,7 +393,7 @@ export function loader(
       const { renderToString } = await import('react-dom/server.edge');
 
       return {
-        $fumadocs_loader: 'page-tree',
+        $hanzo_docs_loader: 'page-tree',
         data: visit(tree, (node) => {
           node = { ...node };
           if ('icon' in node && node.icon) {

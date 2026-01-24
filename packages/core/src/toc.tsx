@@ -6,12 +6,12 @@ import {
   type RefObject,
   useContext,
   useEffect,
-  useEffectEvent,
   useLayoutEffect,
   useMemo,
   useRef,
   useState,
 } from 'react';
+import { useEffectEvent } from '@/utils/use-effect-event';
 import scrollIntoView from 'scroll-into-view-if-needed';
 import { mergeRefs } from '@/utils/merge-refs';
 

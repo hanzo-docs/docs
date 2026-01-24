@@ -1,7 +1,8 @@
 'use client';
 import * as PopoverPrimitive from '@radix-ui/react-popover';
 import * as React from 'react';
-import { cn } from '@fumadocs/ui/cn';
+import { useEffectEvent } from '@hanzo/docs-core/utils/use-effect-event';
+import { cn } from '@hanzo/docs-ui/cn';
 
 const Popover = PopoverPrimitive.Root;
 

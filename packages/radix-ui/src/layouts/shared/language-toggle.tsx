@@ -1,8 +1,9 @@
 'use client';
 import type { ComponentProps } from 'react';
+import { useEffectEvent } from '@hanzo/docs-core/utils/use-effect-event';
 import { useI18n } from '@/contexts/i18n';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { cn } from '@fumadocs/ui/cn';
+import { cn } from '@hanzo/docs-ui/cn';
 import { buttonVariants } from '@/components/ui/button';
 
 export type LanguageSelectProps = ComponentProps<'button'>;

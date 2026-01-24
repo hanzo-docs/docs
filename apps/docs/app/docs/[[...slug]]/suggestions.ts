@@ -1,8 +1,8 @@
 import type { Suggestion } from '@/components/not-found';
-import { DataSourceId, orama } from '@/lib/orama/client';
+import { DataSourceId, getOrama } from '@/lib/orama/client';
 
 export async function getSuggestions(pathname: string): Promise<Suggestion[]> {
-  const results = await orama.search({
+  const results = await getOrama().search({
     term: pathname,
     mode: 'vector',
     datasources: [DataSourceId],

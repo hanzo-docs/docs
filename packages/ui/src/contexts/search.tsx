@@ -6,10 +6,10 @@ import {
   Suspense,
   use,
   useEffect,
-  useEffectEvent,
   useMemo,
   useState,
 } from 'react';
+import { useEffectEvent } from '@hanzo/docs-core/utils/use-effect-event';
 
 interface HotKey {
   display: ReactNode;

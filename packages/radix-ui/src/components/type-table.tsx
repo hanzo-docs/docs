@@ -1,10 +1,11 @@
 'use client';
 
 import { ChevronDown } from 'lucide-react';
-import Link from 'fumadocs-core/link';
+import Link from '@hanzo/docs-core/link';
 import { cva } from 'class-variance-authority';
-import { cn } from '@fumadocs/ui/cn';
+import { cn } from '@hanzo/docs-ui/cn';
 import { type ReactNode, useState } from 'react';
+import { useEffectEvent } from '@hanzo/docs-core/utils/use-effect-event';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
 export interface ParameterNode {

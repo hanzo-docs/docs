@@ -1,5 +1,5 @@
-import type { EmitEntry, Plugin } from '@/core';
-import type { DocsCollectionItem, MetaCollectionItem } from '@/config/build';
+import type { EmitEntry, Plugin } from '../core';
+import type { DocsCollectionItem, MetaCollectionItem } from '../config/build';
 import { z } from 'zod';
 import fs from 'node:fs/promises';
 import path from 'node:path';

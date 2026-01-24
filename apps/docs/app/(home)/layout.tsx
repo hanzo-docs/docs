@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { HomeLayout } from '@hanzo/docs/ui/layouts/home';
 import { baseOptions, linkItems } from '@/lib/layout.shared';
 import {
@@ -11,7 +12,7 @@ import Image from 'next/image';
 import Preview from '@/public/banner.png';
 import { Book, ComponentIcon, Pencil, PlusIcon, Server } from 'lucide-react';
 
-export default function Layout({ children }: LayoutProps<'/'>) {
+export default function Layout({ children }: { children: ReactNode }) {
   return (
     <HomeLayout
       {...baseOptions()}

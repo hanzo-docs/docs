@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { x } from 'tinyexec';
-import type { Plugin } from '@/core';
-import { ident } from '@/utils/codegen';
+import type { Plugin } from '../core';
+import { ident } from '../utils/codegen';
 
 const cache = new Map<string, Promise<Date | null>>();
 type VersionControlFn = (filePath: string) => Promise<Date | null | undefined>;

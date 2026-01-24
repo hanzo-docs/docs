@@ -1,1 +1,1 @@
-export * from '@fumadocs/base-ui/components/image-zoom';
+export * from '@hanzo/docs-radix-ui/components/image-zoom';

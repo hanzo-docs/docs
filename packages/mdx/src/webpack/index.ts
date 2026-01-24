@@ -1,4 +1,4 @@
-import { type Core, createCore } from '@/core';
+import { type Core, createCore } from '../core';
 
 export interface WebpackLoaderOptions {
   absoluteCompiledConfigPath: string;
