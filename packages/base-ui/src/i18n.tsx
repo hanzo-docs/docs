@@ -1,1 +1,1 @@
-export * from '@fumadocs/ui/i18n';
+export * from '@hanzo/docs-radix-ui/i18n';

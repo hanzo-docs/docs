@@ -1,11 +1,11 @@
-import { buildConfig, type DocCollectionItem } from '@/config/build';
-import { buildMDX, type CompiledMDXProperties } from '@/loaders/mdx/build-mdx';
+import { buildConfig, type DocCollectionItem } from '../config/build';
+import { buildMDX, type CompiledMDXProperties } from '../loaders/mdx/build-mdx';
 import { executeMdx } from '@hanzo/mdx-runtime/client';
 import { pathToFileURL } from 'node:url';
-import { parseFrontmatter } from '@/utils/frontmatter';
+import { parseFrontmatter } from '../utils/frontmatter';
 import fs from 'node:fs/promises';
 import { server, type ServerOptions } from './server';
-import { type CoreOptions, createCore } from '@/core';
+import { type CoreOptions, createCore } from '../core';
 import type { FileInfo, InternalTypeConfig } from './types';
 
 export interface LazyEntry<Data = unknown> {

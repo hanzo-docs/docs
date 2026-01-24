@@ -1,1 +1,1 @@
-export * from '@fumadocs/base-ui/components/type-table';
+export * from '@hanzo/docs-radix-ui/components/type-table';

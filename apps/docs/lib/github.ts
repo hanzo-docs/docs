@@ -72,8 +72,17 @@ async function getFeedbackDestination() {
   return (cachedDestination = repository);
 }
 
+// Note: Server Actions are disabled for static export
+// These functions are stubbed out and return mock responses
+// To enable feedback, deploy with a server (non-static export) and uncomment 'use server' directives
+
 export async function onPageFeedbackAction(feedback: PageFeedback): Promise<ActionResponse> {
-  'use server';
+  // 'use server'; // Disabled for static export
+  if (typeof window !== 'undefined') {
+    // Client-side: return mock response
+    console.log('Feedback submitted (static export - no server):', feedback);
+    return { githubUrl: '#' };
+  }
   feedback = pageFeedback.parse(feedback);
   return createDiscussionThread(
     feedback.url,
@@ -82,7 +91,12 @@ export async function onPageFeedbackAction(feedback: PageFeedback): Promise<Acti
 }
 
 export async function onBlockFeedbackAction(feedback: BlockFeedback): Promise<ActionResponse> {
-  'use server';
+  // 'use server'; // Disabled for static export
+  if (typeof window !== 'undefined') {
+    // Client-side: return mock response
+    console.log('Block feedback submitted (static export - no server):', feedback);
+    return { githubUrl: '#' };
+  }
   feedback = blockFeedback.parse(feedback);
   return createDiscussionThread(
     feedback.url,

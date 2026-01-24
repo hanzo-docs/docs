@@ -1,1 +1,1 @@
-export * from 'fumadocs-obsidian/mdx';
+export * from '@hanzo/docs-obsidian/mdx';

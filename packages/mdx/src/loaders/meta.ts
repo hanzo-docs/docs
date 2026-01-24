@@ -1,9 +1,9 @@
-import type { Loader, LoaderInput } from '@/loaders/adapter';
-import type { ConfigLoader } from '@/loaders/config';
+import type { Loader, LoaderInput } from './adapter';
+import type { ConfigLoader } from './config';
 import { load } from 'js-yaml';
 import { z } from 'zod';
 import { metaLoaderGlob } from '.';
-import type { MetaCollectionItem } from '@/config/build';
+import type { MetaCollectionItem } from '../config/build';
 
 const querySchema = z.looseObject({
   collection: z.string().optional(),
