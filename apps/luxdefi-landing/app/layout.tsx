@@ -1,24 +1,15 @@
 import type { Metadata } from 'next';
-import { Inter, JetBrains_Mono } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import './globals.css';
-import { config } from '@/lib/config';
 
 const inter = Inter({
   variable: '--font-sans',
   subsets: ['latin'],
 });
 
-const jetbrainsMono = JetBrains_Mono({
-  variable: '--font-mono',
-  subsets: ['latin'],
-});
-
 export const metadata: Metadata = {
-  title: config.meta.title,
-  description: config.meta.description,
-  icons: {
-    icon: '/favicon.ico',
-  },
+  title: 'Lux DeFi - Redirecting',
+  description: 'Lux DeFi has been consolidated into Lux Network. Redirecting...',
 };
 
 export default function RootLayout({
@@ -28,7 +19,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`${inter.variable} ${jetbrainsMono.variable} antialiased`}>{children}</body>
+      <head>
+        <meta httpEquiv="refresh" content="3;url=https://luxfi.github.io" />
+      </head>
+      <body className={`${inter.variable} antialiased`}>{children}</body>
     </html>
   );
 }
