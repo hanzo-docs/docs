@@ -1,28 +1,5 @@
 name: Deploy Docs to GitHub Pages
 
-# BLOCKING ISSUE: Build fails due to incomplete package migration.
-#
-# The source files in apps/docs/ still import from:
-#   - hanzo-docs-ui (should be @hanzo/docs-ui)
-#   - hanzo-docs-core (should be @hanzo/docs-core)
-#
-# Files needing updates:
-#   - apps/docs/app/global.css (CSS imports)
-#   - apps/docs/app/provider.tsx
-#   - apps/docs/app/layout.tsx
-#   - apps/docs/app/docs/layout.tsx
-#   - apps/docs/mdx-components.tsx
-#   - apps/docs/components/*.tsx
-#   - apps/docs/scripts/*.ts
-#   - And ~40+ more files
-#
-# Additionally, GitHub Pages requires static export which disables:
-#   - API routes (/api/*)
-#   - Server-side rendering
-#   - Dynamic routes without generateStaticParams
-#
-# For full Next.js functionality, use Vercel or Cloudflare Pages instead.
-
 on:
   push:
     branches:
@@ -55,19 +32,17 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version: '22'
           cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Build packages
-        run: pnpm build --filter=!docs
+        run: pnpm build --filter=./packages/*
 
       - name: Build docs with static export
         working-directory: apps/docs
-        env:
-          NEXT_OUTPUT: export
         run: pnpm build
 
       - name: Setup Pages
