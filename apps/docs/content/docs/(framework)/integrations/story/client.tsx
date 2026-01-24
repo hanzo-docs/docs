@@ -1,5 +1,5 @@
 'use client';
-import { Callout } from 'fumadocs-ui/components/callout';
+import { Callout } from '@hanzo/docs-radix-ui/components/callout';
 import { ComponentProps } from 'react';
 
 export function CalloutStory(

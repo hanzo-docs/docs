@@ -121,7 +121,7 @@ export function defineStoryFactory(factoryOptions: StoryFactoryOptions = {}): St
           getHash(`extract-types:${filePath}:${name}:${fileContent}`),
           async () => {
             const project = initProject();
-            const injection = `export type _StoryProps_ = import('@fumadocs/story').GetProps<typeof ${name}>`;
+            const injection = `export type _StoryProps_ = import('@hanzo/docs-story').GetProps<typeof ${name}>`;
             const sourceFile = project.createSourceFile(filePath, `${fileContent}\n${injection}`, {
               overwrite: true,
             });

@@ -1,13 +1,13 @@
 import type { NextConfig } from 'next';
 import type { Configuration } from 'webpack';
-import type { WebpackLoaderOptions } from '@/webpack';
+import type { WebpackLoaderOptions } from '../webpack';
 import type { TurbopackLoaderOptions, TurbopackOptions } from 'next/dist/server/config-shared';
 import * as path from 'node:path';
-import { loadConfig } from '@/config/load-from-file';
-import { _Defaults, type Core, createCore } from '@/core';
-import { mdxLoaderGlob, metaLoaderGlob } from '@/loaders';
-import type { IndexFilePluginOptions } from '@/plugins/index-file';
-import indexFile from '@/plugins/index-file';
+import { loadConfig } from '../config/load-from-file';
+import { _Defaults, type Core, createCore } from '../core';
+import { mdxLoaderGlob, metaLoaderGlob } from '../loaders';
+import type { IndexFilePluginOptions } from '../plugins/index-file';
+import indexFile from '../plugins/index-file';
 
 export interface CreateMDXOptions {
   /**

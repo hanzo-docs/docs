@@ -1,7 +1,8 @@
 'use client';
 import * as React from 'react';
+import { useEffectEvent } from '@hanzo/docs-core/utils/use-effect-event';
 import * as Primitive from '@radix-ui/react-navigation-menu';
-import { cn } from '@fumadocs/ui/cn';
+import { cn } from '@hanzo/docs-ui/cn';
 
 export type NavigationMenuContentProps = Primitive.NavigationMenuContentProps;
 export type NavigationMenuTriggerProps = Primitive.NavigationMenuTriggerProps;

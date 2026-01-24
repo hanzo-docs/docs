@@ -1,1 +1,1 @@
-export * from '@fumadocs/base-ui/layouts/shared';
+export * from '@hanzo/docs-radix-ui/layouts/shared';

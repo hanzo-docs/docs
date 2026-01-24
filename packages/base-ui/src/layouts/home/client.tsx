@@ -5,20 +5,20 @@ import {
   Fragment,
   use,
   useEffect,
-  useEffectEvent,
+  useCallback,
   useMemo,
   useState,
 } from 'react';
 import { cva } from 'class-variance-authority';
-import Link from 'fumadocs-core/link';
-import { cn } from '@fumadocs/ui/cn';
+import Link from '@hanzo/docs-core/link';
+import { cn } from '@hanzo/docs-ui/cn';
 import {
   type LinkItemType,
   type NavOptions,
   renderTitleNav,
   resolveLinkItems,
 } from '@/layouts/shared';
-import { LinkItem } from '@fumadocs/ui/link-item';
+import { LinkItem } from '@hanzo/docs-radix-ui/link-item';
 import {
   NavigationMenuRoot,
   NavigationMenuContent,
@@ -33,7 +33,7 @@ import { LargeSearchToggle, SearchToggle } from '@/layouts/shared/search-toggle'
 import { ThemeToggle } from '@/layouts/shared/theme-toggle';
 import { LanguageToggle, LanguageToggleText } from '@/layouts/shared/language-toggle';
 import { ChevronDown, Languages } from 'lucide-react';
-import { useIsScrollTop } from '@fumadocs/ui/hooks/use-is-scroll-top';
+import { useIsScrollTop } from '@hanzo/docs-radix-ui/hooks/use-is-scroll-top';
 import { NavigationMenu } from '@base-ui/react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
@@ -200,11 +200,11 @@ export function Header({
 function MobileMenuCollapsible(props: ComponentProps<typeof Collapsible>) {
   const [open, setOpen] = useState(false);
 
-  const onClick = useEffectEvent((e: Event) => {
+  const onClick = useCallback((e: Event) => {
     if (!open) return;
     const header = document.getElementById('nd-nav');
     if (header && !header.contains(e.target as HTMLElement)) setOpen(false);
-  });
+  }, [open]);
 
   useEffect(() => {
     window.addEventListener('click', onClick);
@@ -212,7 +212,7 @@ function MobileMenuCollapsible(props: ComponentProps<typeof Collapsible>) {
     return () => {
       window.removeEventListener('click', onClick);
     };
-  }, []);
+  }, [onClick]);
 
   return (
     <MobileMenuContext

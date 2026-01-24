@@ -1,4 +1,4 @@
-@import '@fumadocs/ui/css/base.css';
+@import '../../ui/css/base.css';
 
 /* TODO: remove them on next major */
 @import './layouts/docs.css';

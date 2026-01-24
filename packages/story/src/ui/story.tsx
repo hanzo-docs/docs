@@ -7,7 +7,7 @@ import { StfProvider, useDataEngine, useListener, useStf } from '@fumari/stf';
 import { ErrorBoundary } from 'react-error-boundary';
 import { AlertCircle } from 'lucide-react';
 import { cn } from '@/utils/cn';
-import { buttonVariants } from 'fumadocs-ui/components/ui/button';
+import { buttonVariants } from '@hanzo/docs-radix-ui/components/ui/button';
 import { VariantInfo } from '..';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './components/select';
 

@@ -57,9 +57,9 @@
     "@types/react": "^19.2.9",
     "@types/react-dom": "^19.2.3",
     "eslint-config-custom": "workspace:*",
-    "@fumadocs/base-ui": "workspace:*",
-    "fumadocs-core": "workspace:*",
-    "fumadocs-ui": "workspace:*",
+    "@hanzo/docs-base-ui": "workspace:*",
+    "@hanzo/docs-core": "workspace:*",
+    "@hanzo/docs-ui": "workspace:*",
     "tsconfig": "workspace:*",
     "tsdown": "^0.19.0",
     "typescript": "^5.9.3"
@@ -67,13 +67,13 @@
   "peerDependencies": {
     "@types/react": "*",
     "@fumadocs/base-ui": "^16.0.0",
-    "fumadocs-core": "^15.7.0 || ^16.0.0",
-    "fumadocs-ui": "^15.7.0 || ^16.0.0",
+    "@hanzo/docs-core": "^15.7.0 || ^16.0.0",
+    "@hanzo/docs-ui": "^15.7.0 || ^16.0.0",
     "react": "*",
     "typescript": "*"
   },
   "peerDependenciesMeta": {
-    "fumadocs-ui": {
+    "@hanzo/docs-ui": {
       "optional": true
     },
     "@types/react": {

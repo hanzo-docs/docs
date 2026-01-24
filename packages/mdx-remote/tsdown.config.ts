@@ -1,7 +1,7 @@
 import { defineConfig } from 'tsdown';
 
 export default defineConfig({
-  external: ['fumadocs-core', 'next', 'react'],
+  external: ['@hanzo/docs-core', 'next', 'react'],
   dts: true,
   fixedExtension: false,
   target: 'es2021',

@@ -1,8 +1,8 @@
 import { type LoaderContext } from 'webpack';
-import { createMdxLoader } from '@/loaders/mdx';
-import { toWebpack, type WebpackLoader } from '@/loaders/adapter';
-import { createStandaloneConfigLoader } from '@/loaders/config';
-import { getCore, type WebpackLoaderOptions } from '@/webpack';
+import { createMdxLoader } from '../loaders/mdx';
+import { toWebpack, type WebpackLoader } from '../loaders/adapter';
+import { createStandaloneConfigLoader } from '../loaders/config';
+import { getCore, type WebpackLoaderOptions } from './';
 
 let instance: WebpackLoader | undefined;
 
