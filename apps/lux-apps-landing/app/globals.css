@@ -1,0 +1,78 @@
+@import 'tailwindcss';
+
+/**
+ * Lux Apps Brand Colors
+ * Monochrome theme - consistent with Lux brand
+ */
+
+:root {
+  /* Lux Monochrome */
+  --lux-white: #ffffff;
+  --lux-gray-100: #f5f5f5;
+  --lux-gray-200: #e5e5e5;
+  --lux-gray-300: #d4d4d4;
+  --lux-gray-400: #a3a3a3;
+  --lux-gray-500: #737373;
+  --lux-gray-600: #525252;
+  --lux-gray-700: #404040;
+  --lux-gray-800: #262626;
+  --lux-gray-900: #171717;
+  --lux-black: #0a0a0a;
+
+  /* Semantic Aliases */
+  --brand: var(--lux-white);
+  --brand-light: var(--lux-gray-100);
+  --brand-dark: var(--lux-gray-300);
+  --brand-hover: var(--lux-gray-200);
+  --brand-secondary: var(--lux-gray-400);
+
+  /* Dark Theme (default) */
+  --bg-primary: var(--lux-black);
+  --bg-secondary: var(--lux-gray-900);
+  --bg-tertiary: var(--lux-gray-800);
+  --bg-card: rgba(255, 255, 255, 0.03);
+
+  /* Borders */
+  --border: var(--lux-gray-800);
+  --border-light: var(--lux-gray-700);
+
+  /* Text */
+  --text-primary: var(--lux-white);
+  --text-secondary: var(--lux-gray-400);
+  --text-muted: var(--lux-gray-500);
+}
+
+@theme {
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-secondary: var(--brand-secondary);
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-bg-card: var(--bg-card);
+  --color-border: var(--border);
+  --color-border-light: var(--border-light);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, monospace;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.hero-glow {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  height: 600px;
+  background: radial-gradient(ellipse at center, var(--brand) 0%, transparent 70%);
+  opacity: 0.03;
+  filter: blur(100px);
+  pointer-events: none;
+}
