@@ -1,20 +1,20 @@
 'use client';
 import { cn } from '@/lib/cn';
-import { buttonVariants } from 'fumadocs-ui/components/ui/button';
+import { buttonVariants } from '@hanzo/docs-radix-ui/components/ui/button';
 import { MessageSquare, ThumbsDown, ThumbsUp } from 'lucide-react';
 import {
   ReactNode,
   type SyntheticEvent,
   useEffect,
-  useEffectEvent,
+  useRef,
   useState,
   useTransition,
 } from 'react';
-import { Collapsible, CollapsibleContent } from 'fumadocs-ui/components/ui/collapsible';
+import { Collapsible, CollapsibleContent } from '@hanzo/docs-radix-ui/components/ui/collapsible';
 import { cva } from 'class-variance-authority';
 import { usePathname } from 'next/navigation';
-import { Popover, PopoverContent, PopoverTrigger } from 'fumadocs-ui/components/ui/popover';
-import type { FeedbackBlockProps } from 'fumadocs-core/mdx-plugins/remark-feedback-block';
+import { Popover, PopoverContent, PopoverTrigger } from '@hanzo/docs-radix-ui/components/ui/popover';
+import type { FeedbackBlockProps } from '@hanzo/docs-core/mdx-plugins/remark-feedback-block';
 import {
   actionResponse,
   blockFeedback,
@@ -192,7 +192,7 @@ export function Feedback({
 /**
  * A feedback component for each content block in page, should be used with `remark-feedback-block`.
  *
- * See https://fumadocs.dev/docs/integrations/feedback.
+ * See https://docs.hanzo.ai/docs/integrations/feedback.
  */
 export function FeedbackBlock({
   id,
@@ -328,12 +328,13 @@ export function FeedbackBlock({
 function useSubmissionStorage<Result>(blockId: string, validate: (v: unknown) => Result | null) {
   const storageKey = `docs-feedback-${blockId}`;
   const [value, setValue] = useState<Result | null>(null);
-  const validateCallback = useEffectEvent(validate);
+  const validateRef = useRef(validate);
+  validateRef.current = validate;
 
   useEffect(() => {
     const item = localStorage.getItem(storageKey);
     if (item === null) return;
-    const validated = validateCallback(JSON.parse(item));
+    const validated = validateRef.current(JSON.parse(item));
 
     if (validated !== null) setValue(validated);
   }, [storageKey]);

@@ -1,1 +1,1 @@
-export * from '@fumadocs/base-ui/utils/use-copy-button';
+export * from '@hanzo/docs-radix-ui/utils/use-copy-button';

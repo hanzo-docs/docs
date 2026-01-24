@@ -1,1 +1,1 @@
-export * from '@fumadocs/base-ui/layouts/home/navbar';
+export * from '@hanzo/docs-radix-ui/layouts/home/navbar';

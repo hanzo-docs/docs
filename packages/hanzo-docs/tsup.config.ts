@@ -26,26 +26,42 @@ const entries = getEntries('./src');
 export default defineConfig({
   entry: entries,
   format: ['esm'],
-  dts: true, // Generate declaration files for type support
+  dts: true,
   splitting: false,
   clean: true,
   external: [
-    'fumadocs-core',
-    'fumadocs-ui',
-    '@fumadocs/base-ui',
-    'fumadocs-mdx',
-    'fumadocs-openapi',
-    'fumadocs-twoslash',
+    // Core packages (we re-export from these)
+    '@hanzo/docs-core',
+    '@hanzo/docs-mdx',
+    '@hanzo/docs-ui',
+    '@hanzo/docs-radix-ui',
+    '@hanzo/docs-openapi',
+    '@hanzo/docs-twoslash',
+    '@hanzo/docs-obsidian',
+    '@hanzo/docs-mdx-remote',
+    '@hanzo/docs-cli',
+    // Hanzo packages (peer dependencies)
+    '@hanzo/ui',
+    '@hanzo/mdx',
     '@hanzo/docs-typescript',
     '@hanzo/docs-docgen',
-    '@fumadocs/cli',
-    '@hanzo/mdx-runtime',
     '@hanzo/docs-python',
-    'fumadocs-obsidian',
     '@hanzo/docs-content-collections',
     '@hanzo/docs-press',
+    '@hanzo/mdx-runtime',
+    // React ecosystem
     'react',
     'react-dom',
-    'next'
+    'next',
+    // Optional integrations
+    'algoliasearch',
+    '@orama/orama',
+    '@orama/core',
+    '@oramacloud/client',
+    '@tanstack/react-router',
+    'react-router',
+    'waku',
+    'zod',
+    'lucide-react'
   ],
 });

@@ -1,8 +1,9 @@
 'use client';
 import type { ComponentProps } from 'react';
+import { useEffectEvent } from '@hanzo/docs-core/utils/use-effect-event';
 import { RootProvider as BaseProvider } from '@/provider/base';
-import { NextProvider } from 'fumadocs-core/framework/next';
-import type { Framework } from 'fumadocs-core/framework';
+import { NextProvider } from '@hanzo/docs-core/framework/next';
+import type { Framework } from '@hanzo/docs-core/framework';
 
 export interface RootProviderProps extends ComponentProps<typeof BaseProvider> {
   /**

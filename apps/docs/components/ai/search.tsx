@@ -5,8 +5,8 @@ import {
   type ReactNode,
   type SyntheticEvent,
   use,
+  useCallback,
   useEffect,
-  useEffectEvent,
   useMemo,
   useRef,
   useState,
@@ -108,7 +108,7 @@ function SearchAIActions() {
 const StorageKeyInput = '__ai_search_input';
 function SearchAIInput(props: ComponentProps<'form'>) {
   const { status, sendMessage, stop } = useChatContext();
-  const [input, setInput] = useState(() => localStorage.getItem(StorageKeyInput) ?? '');
+  const [input, setInput] = useState('');
   const isLoading = status === 'streaming' || status === 'submitted';
   const onStart = (e?: SyntheticEvent) => {
     e?.preventDefault();
@@ -116,7 +116,16 @@ function SearchAIInput(props: ComponentProps<'form'>) {
     setInput('');
   };
 
-  localStorage.setItem(StorageKeyInput, input);
+  // Load initial value from localStorage on client
+  useEffect(() => {
+    const stored = localStorage.getItem(StorageKeyInput);
+    if (stored) setInput(stored);
+  }, []);
+
+  // Persist input to localStorage
+  useEffect(() => {
+    localStorage.setItem(StorageKeyInput, input);
+  }, [input]);
 
   useEffect(() => {
     if (isLoading) document.getElementById('nd-ai-input')?.focus();
@@ -323,22 +332,25 @@ export function AISearchPanel() {
   const { open, setOpen } = use(Context)!;
   const chat = useChatContext();
 
-  const onKeyPress = useEffectEvent((e: KeyboardEvent) => {
-    if (e.key === 'Escape' && open) {
+  const openRef = useRef(open);
+  openRef.current = open;
+
+  const onKeyPress = useCallback((e: KeyboardEvent) => {
+    if (e.key === 'Escape' && openRef.current) {
       setOpen(false);
       e.preventDefault();
     }
 
-    if (e.key === '/' && (e.metaKey || e.ctrlKey) && !open) {
+    if (e.key === '/' && (e.metaKey || e.ctrlKey) && !openRef.current) {
       setOpen(true);
       e.preventDefault();
     }
-  });
+  }, [setOpen]);
 
   useEffect(() => {
     window.addEventListener('keydown', onKeyPress);
     return () => window.removeEventListener('keydown', onKeyPress);
-  }, []);
+  }, [onKeyPress]);
 
   return (
     <>

@@ -1,1 +1,1 @@
-export * from '@fumadocs/ui/components/toc/clerk';
+export * from '@hanzo/docs-radix-ui/components/toc/clerk';

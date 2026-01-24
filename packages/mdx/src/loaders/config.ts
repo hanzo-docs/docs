@@ -1,4 +1,4 @@
-import type { Core } from '@/core';
+import type { Core } from '../core';
 import fs from 'node:fs/promises';
 
 export interface ConfigLoader {
