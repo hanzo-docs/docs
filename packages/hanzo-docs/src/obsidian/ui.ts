@@ -1,1 +1,1 @@
-export * from '@hanzo/docs-obsidian/ui';
+export * from 'fumadocs-obsidian/ui';

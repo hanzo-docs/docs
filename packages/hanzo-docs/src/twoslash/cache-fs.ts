@@ -1,1 +1,1 @@
-export * from '@hanzo/docs-twoslash/cache-fs';
+export * from 'fumadocs-twoslash/cache-fs';
