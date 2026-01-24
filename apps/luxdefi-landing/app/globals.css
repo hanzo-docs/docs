@@ -1,78 +1,11 @@
 @import 'tailwindcss';
 
 /**
- * Lux DeFi Brand Colors
- * Emerald theme - finance and growth
+ * Lux DeFi Redirect Page
+ * Minimal monochrome styling
  */
 
-:root {
-  /* Lux DeFi Emerald */
-  --luxdefi-50: #ecfdf5;
-  --luxdefi-100: #d1fae5;
-  --luxdefi-200: #a7f3d0;
-  --luxdefi-300: #6ee7b7;
-  --luxdefi-400: #34d399;
-  --luxdefi-500: #10b981;
-  --luxdefi-600: #059669;
-  --luxdefi-700: #047857;
-  --luxdefi-800: #065f46;
-  --luxdefi-900: #064e3b;
-  --luxdefi-950: #022c22;
-
-  /* Semantic Aliases */
-  --brand: var(--luxdefi-500);
-  --brand-light: var(--luxdefi-400);
-  --brand-dark: var(--luxdefi-600);
-  --brand-hover: var(--luxdefi-400);
-  --brand-secondary: var(--luxdefi-700);
-
-  /* Dark Theme (default) */
-  --bg-primary: #0a0a0a;
-  --bg-secondary: #0a1410;
-  --bg-tertiary: #0f1f17;
-  --bg-card: rgba(6, 78, 59, 0.1);
-
-  /* Borders */
-  --border: #064e3b;
-  --border-light: #047857;
-
-  /* Text */
-  --text-primary: #fafafa;
-  --text-secondary: #a3a3a3;
-  --text-muted: #737373;
-}
-
-@theme {
-  --color-brand: var(--brand);
-  --color-brand-hover: var(--brand-hover);
-  --color-brand-secondary: var(--brand-secondary);
-  --color-bg-primary: var(--bg-primary);
-  --color-bg-secondary: var(--bg-secondary);
-  --color-bg-card: var(--bg-card);
-  --color-border: var(--border);
-  --color-text-primary: var(--text-primary);
-  --color-text-secondary: var(--text-secondary);
-  --color-text-muted: var(--text-muted);
-
-  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-mono), ui-monospace, monospace;
-}
-
 body {
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-}
-
-/* Gradient glow effect - emerald glow */
-.hero-glow {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 800px;
-  height: 600px;
-  background: radial-gradient(ellipse at center, var(--brand) 0%, transparent 70%);
-  opacity: 0.05;
-  filter: blur(100px);
-  pointer-events: none;
+  background-color: black;
+  color: white;
 }
