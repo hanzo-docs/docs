@@ -1,0 +1,79 @@
+@import 'tailwindcss';
+
+/**
+ * Lux Brand Colors
+ * Monochrome theme - clean and professional
+ */
+
+:root {
+  /* Lux Monochrome */
+  --lux-white: #ffffff;
+  --lux-50: #fafafa;
+  --lux-100: #f5f5f5;
+  --lux-200: #e5e5e5;
+  --lux-300: #d4d4d4;
+  --lux-400: #a3a3a3;
+  --lux-500: #737373;
+  --lux-600: #525252;
+  --lux-700: #404040;
+  --lux-800: #262626;
+  --lux-900: #171717;
+  --lux-950: #0a0a0a;
+
+  /* Semantic Aliases */
+  --brand: var(--lux-white);
+  --brand-light: var(--lux-200);
+  --brand-dark: var(--lux-400);
+  --brand-hover: var(--lux-300);
+  --brand-secondary: var(--lux-500);
+
+  /* Dark Theme (default) */
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #141414;
+  --bg-tertiary: #1a1a1a;
+  --bg-card: rgba(23, 23, 23, 0.5);
+
+  /* Borders */
+  --border: #262626;
+  --border-light: #404040;
+
+  /* Text */
+  --text-primary: #fafafa;
+  --text-secondary: #a3a3a3;
+  --text-muted: #737373;
+}
+
+@theme {
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-secondary: var(--brand-secondary);
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-bg-card: var(--bg-card);
+  --color-border: var(--border);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, monospace;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Gradient glow effect - subtle white glow */
+.hero-glow {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  height: 600px;
+  background: radial-gradient(ellipse at center, var(--brand) 0%, transparent 70%);
+  opacity: 0.03;
+  filter: blur(100px);
+  pointer-events: none;
+}
