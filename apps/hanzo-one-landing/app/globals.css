@@ -1,0 +1,70 @@
+@import 'tailwindcss';
+
+/**
+ * Hanzo Brand Colors
+ * Official Hanzo Red: #d81c33
+ */
+
+:root {
+  --hanzo-red: #d81c33;
+  --hanzo-red-50: #fdf2f3;
+  --hanzo-red-100: #fce4e6;
+  --hanzo-red-200: #fbcdd2;
+  --hanzo-red-300: #f7a8b1;
+  --hanzo-red-400: #f17485;
+  --hanzo-red-500: #e6475c;
+  --hanzo-red-600: #d81c33;
+  --hanzo-red-700: #b5152b;
+  --hanzo-red-800: #961528;
+  --hanzo-red-900: #7d1626;
+  --hanzo-red-950: #450710;
+
+  --brand: var(--hanzo-red);
+  --brand-light: var(--hanzo-red-500);
+  --brand-dark: var(--hanzo-red-700);
+  --brand-hover: #c01830;
+  --brand-secondary: var(--hanzo-red-400);
+
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #141414;
+  --bg-tertiary: #1a1a1a;
+  --bg-card: rgba(23, 23, 23, 0.5);
+  --border: #262626;
+  --border-light: #404040;
+  --text-primary: #fafafa;
+  --text-secondary: #a3a3a3;
+  --text-muted: #737373;
+}
+
+@theme {
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-secondary: var(--brand-secondary);
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-bg-card: var(--bg-card);
+  --color-border: var(--border);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, monospace;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.hero-glow {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  height: 600px;
+  background: radial-gradient(ellipse at center, var(--brand) 0%, transparent 70%);
+  opacity: 0.08;
+  filter: blur(100px);
+  pointer-events: none;
+}

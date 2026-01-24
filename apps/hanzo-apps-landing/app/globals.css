@@ -1,0 +1,70 @@
+@import 'tailwindcss';
+
+/**
+ * Hanzo Apps Brand Colors
+ * Red theme - consistent with Hanzo brand
+ */
+
+:root {
+  /* Hanzo Red */
+  --hanzo-red: #d81c33;
+  --hanzo-red-light: #e63950;
+  --hanzo-red-dark: #b01628;
+
+  /* Semantic Aliases */
+  --brand: var(--hanzo-red);
+  --brand-light: var(--hanzo-red-light);
+  --brand-dark: var(--hanzo-red-dark);
+  --brand-hover: var(--hanzo-red-light);
+  --brand-secondary: var(--hanzo-red-dark);
+
+  /* Dark Theme (default) */
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #141414;
+  --bg-tertiary: #1a1a1a;
+  --bg-card: rgba(216, 28, 51, 0.05);
+
+  /* Borders */
+  --border: #262626;
+  --border-light: #404040;
+
+  /* Text */
+  --text-primary: #fafafa;
+  --text-secondary: #a3a3a3;
+  --text-muted: #737373;
+}
+
+@theme {
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-secondary: var(--brand-secondary);
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-bg-card: var(--bg-card);
+  --color-border: var(--border);
+  --color-border-light: var(--border-light);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, monospace;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.hero-glow {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  height: 600px;
+  background: radial-gradient(ellipse at center, var(--brand) 0%, transparent 70%);
+  opacity: 0.08;
+  filter: blur(100px);
+  pointer-events: none;
+}
