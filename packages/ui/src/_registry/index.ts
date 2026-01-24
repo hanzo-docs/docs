@@ -5,7 +5,7 @@ import type {
   SourceReference,
   Component,
   ComponentFile,
-} from '@fumadocs/cli/build';
+} from '@hanzo/docs-cli/build';
 import * as path from 'node:path';
 import { Glob } from 'bun';
 
@@ -24,8 +24,8 @@ const installables = new Map<
 const forwardables = new Map<string, string>();
 
 /**
- * - transform import to `@fumadocs/ui` into sub component references, or forward to upstream package instead.
- * - when importing files from upstream package that's forwarded from `@fumadocs/ui` (e.g. contexts), they will be treated as direct imports to `@fumadocs/ui`.
+ * - transform import to `@hanzo/docs-base-ui` into sub component references, or forward to upstream package instead.
+ * - when importing files from upstream package that's forwarded from `@hanzo/docs-base-ui` (e.g. contexts), they will be treated as direct imports to `@hanzo/docs-base-ui`.
  */
 export function resolveForwardedAPIs(
   ref: SourceReference,
@@ -34,7 +34,7 @@ export function resolveForwardedAPIs(
 ): Reference | undefined {
   const renameDirs: [ui: string, upstream: string][] = [['hooks', 'utils']];
 
-  if (ref.type === 'dependency' && ref.dep === '@fumadocs/ui') {
+  if (ref.type === 'dependency' && ref.dep === '@hanzo/docs-base-ui') {
     let specifier = ref.specifier;
     if (installables.has(specifier)) {
       const { comp, file } = installables.get(specifier)!;
@@ -51,7 +51,7 @@ export function resolveForwardedAPIs(
     specifier =
       upstreamPackage +
       specifier
-        .slice('@fumadocs/ui'.length)
+        .slice('@hanzo/docs-base-ui'.length)
         .split('/')
         .map((v) => {
           for (const [ui, upstream] of renameDirs) {
@@ -85,7 +85,7 @@ export function resolveForwardedAPIs(
       return resolveForwardedAPIs(
         {
           type: 'dependency',
-          dep: '@fumadocs/ui',
+          dep: '@hanzo/docs-base-ui',
           specifier: forwarded,
         },
         upstreamPackage,
@@ -102,7 +102,7 @@ export const registry: Registry = {
   variables: {
     ui: {
       description: 'the main UI package',
-      default: 'fumadocs-ui',
+      default: '@hanzo/docs-ui',
     },
   },
   onResolve(ref) {
@@ -201,7 +201,7 @@ export const registry: Registry = {
     },
   ],
   dependencies: {
-    'fumadocs-core': null,
+    '@hanzo/docs-core': null,
     react: null,
   },
 };
@@ -221,14 +221,14 @@ function removeExtname(file: string) {
 
 for (const comp of registry.components) {
   for (const file of comp.files) {
-    installables.set(`@fumadocs/ui/${removeExtname(file.path).replaceAll('\\', '/')}`, {
+    installables.set(`@hanzo/docs-base-ui/${removeExtname(file.path).replaceAll('\\', '/')}`, {
       comp,
       file,
     });
   }
 }
 
-forwardables.set('i18n.tsx', '@fumadocs/ui/i18n');
+forwardables.set('i18n.tsx', '@hanzo/docs-base-ui/i18n');
 for await (const file of new Glob('{contexts,components,hooks}/**/*').scan(srcDir)) {
-  forwardables.set(file, `@fumadocs/ui/${removeExtname(file)}`);
+  forwardables.set(file, `@hanzo/docs-base-ui/${removeExtname(file)}`);
 }

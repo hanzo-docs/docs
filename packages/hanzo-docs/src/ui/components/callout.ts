@@ -1,1 +1,1 @@
-export * from '@fumadocs/base-ui/components/callout';
+export * from '@hanzo/docs-radix-ui/components/callout';

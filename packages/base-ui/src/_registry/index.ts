@@ -324,7 +324,7 @@ export const registry: Registry = {
     },
   ],
   dependencies: {
-    'fumadocs-core': null,
+    '@hanzo/docs-core': null,
     '@hanzo/docs-base-ui': null,
     react: null,
   },

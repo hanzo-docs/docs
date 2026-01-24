@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { DocsLayout } from '@hanzo/docs/ui/layouts/docs';
 import { baseOptions, linkItems, logo } from '@/lib/layout.shared';
 import { source } from '@/lib/source';
@@ -5,7 +6,7 @@ import { AISearch, AISearchPanel, AISearchTrigger } from '@/components/ai/search
 import 'katex/dist/katex.min.css';
 import { getSection } from '@/lib/source/navigation';
 
-export default function Layout({ children }: LayoutProps<'/docs'>) {
+export default function Layout({ children }: { children: ReactNode }) {
   const base = baseOptions();
 
   return (

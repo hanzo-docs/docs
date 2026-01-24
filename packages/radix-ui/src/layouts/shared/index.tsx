@@ -1,7 +1,8 @@
 import type { ComponentProps, ReactNode } from 'react';
-import type { I18nConfig } from 'fumadocs-core/i18n';
-import type { LinkItemType } from '@fumadocs/ui/link-item';
-import Link from 'fumadocs-core/link';
+import { useEffectEvent } from '@hanzo/docs-core/utils/use-effect-event';
+import type { I18nConfig } from '@hanzo/docs-core/i18n';
+import type { LinkItemType } from '@hanzo/docs-ui/link-item';
+import Link from '@hanzo/docs-core/link';
 
 export interface NavOptions {
   enabled: boolean;
@@ -99,4 +100,4 @@ export function renderTitleNav(
   );
 }
 
-export type * from '@fumadocs/ui/link-item';
+export type * from '@hanzo/docs-ui/link-item';

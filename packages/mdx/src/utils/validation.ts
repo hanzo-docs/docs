@@ -1,4 +1,4 @@
-import type { CollectionSchema } from '@/config';
+import type { CollectionSchema } from '../config';
 import type { StandardSchemaV1 } from '@standard-schema/spec';
 
 export class ValidationError extends Error {

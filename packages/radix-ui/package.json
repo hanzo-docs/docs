@@ -1,15 +1,15 @@
 {
-  "name": "fumadocs-ui",
+  "name": "@hanzo/docs-radix-ui",
   "version": "16.4.8",
-  "description": "The Radix UI version of Fumadocs UI",
+  "description": "The Radix UI version of Hanzo Docs UI",
   "keywords": [
     "Docs",
-    "Fumadocs"
+    "Hanzo Docs"
   ],
-  "homepage": "https://fumadocs.dev",
+  "homepage": "https://docs.hanzo.ai",
   "license": "MIT",
   "author": "Fuma Nama",
-  "repository": "github:fuma-nama/fumadocs",
+  "repository": "github:hanzoai/docs",
   "files": [
     "css/*",
     "dist/*"
@@ -72,6 +72,14 @@
       "types": "./dist/contexts/*.d.ts",
       "import": "./dist/contexts/*.js"
     },
+    "./hooks/*": {
+      "types": "./dist/utils/*.d.ts",
+      "import": "./dist/utils/*.js"
+    },
+    "./utils/*": {
+      "types": "./dist/utils/*.d.ts",
+      "import": "./dist/utils/*.js"
+    },
     "./mdx": {
       "types": "./dist/mdx.d.ts",
       "node": "./dist/mdx.server.js",
@@ -103,7 +111,7 @@
     "types:check": "tsc --noEmit"
   },
   "dependencies": {
-    "@fumadocs/ui": "workspace:*",
+    "@hanzo/docs-ui": "workspace:*",
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-collapsible": "^1.1.12",
     "@radix-ui/react-dialog": "^1.1.15",
@@ -121,20 +129,20 @@
     "scroll-into-view-if-needed": "^3.1.0"
   },
   "devDependencies": {
-    "@fumadocs/cli": "workspace:*",
+    "@hanzo/docs-cli": "workspace:*",
     "@tailwindcss/cli": "^4.1.18",
     "@types/node": "^25.0.10",
     "@types/react": "^19.2.9",
     "@types/react-dom": "^19.2.3",
     "eslint-config-custom": "workspace:*",
-    "fumadocs-core": "workspace:*",
+    "@hanzo/docs-core": "workspace:*",
     "tailwindcss": "^4.1.18",
     "tsconfig": "workspace:*",
     "tsdown": "^0.19.0"
   },
   "peerDependencies": {
     "@types/react": "*",
-    "fumadocs-core": "workspace:*",
+    "@hanzo/docs-core": "^16.5.0",
     "next": "16.x.x",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

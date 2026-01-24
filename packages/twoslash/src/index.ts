@@ -142,13 +142,13 @@ function renderMarkdown(this: ShikiTransformerContextCommon, md: string): Elemen
           } catch (e) {
             if (e instanceof Error) {
               console.error(
-                `[fumadocs-twoslash] encountered an error when highlighting codeblock in a Twoslash popup: ${e.message}`,
+                `[@hanzo/docs-twoslash] encountered an error when highlighting codeblock in a Twoslash popup: ${e.message}`,
               );
             }
 
             if (e instanceof ShikiError) {
               console.error(
-                `[fumadocs-twoslash] if language "${node.lang}" is not found, you may have enabled lazy loading which is not compatible with Twoslash, please consider to define "${node.lang}" in the "langs" option first.`,
+                `[@hanzo/docs-twoslash] if language "${node.lang}" is not found, you may have enabled lazy loading which is not compatible with Twoslash, please consider to define "${node.lang}" in the "langs" option first.`,
               );
             }
 

@@ -1,6 +1,7 @@
 import createBundleAnalyzer from '@next/bundle-analyzer';
 import { createMDX } from '@hanzo/docs/mdx/next';
 import type { NextConfig } from 'next';
+import path from 'path';
 
 const withAnalyzer = createBundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
@@ -9,13 +10,13 @@ const withAnalyzer = createBundleAnalyzer({
 const config: NextConfig = {
   output: 'export',
   reactStrictMode: true,
-  // Use webpack resolve aliases instead of turbopack to avoid .json resolution issues
+  // Use webpack resolve aliases for virtual modules
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
-      '@hanzo/mdx:collections/server': './.docs/server.ts',
-      '@hanzo/mdx:collections/browser': './.docs/browser.ts',
-      '@hanzo/mdx:collections/dynamic': './.docs/dynamic.ts',
+      '@hanzo/mdx:collections/server': path.resolve(__dirname, 'docs/server.ts'),
+      '@hanzo/mdx:collections/browser': path.resolve(__dirname, 'docs/browser.ts'),
+      '@hanzo/mdx:collections/dynamic': path.resolve(__dirname, 'docs/dynamic.ts'),
     };
     return config;
   },
@@ -53,4 +54,6 @@ const config: NextConfig = {
 
 const withMDX = createMDX();
 
-export default withAnalyzer(withMDX(config));
+// Type assertion needed due to version mismatch between @hanzo/docs-mdx (next@16) and docs app (next@15)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default withAnalyzer(withMDX(config as any) as any);

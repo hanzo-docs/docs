@@ -11,7 +11,8 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { cn } from '@fumadocs/ui/cn';
+import { useEffectEvent } from '@hanzo/docs-core/utils/use-effect-event';
+import { cn } from '@hanzo/docs-ui/cn';
 import * as Unstyled from './ui/tabs';
 
 type CollectionKey = string | symbol;
