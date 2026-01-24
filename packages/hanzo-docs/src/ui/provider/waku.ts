@@ -1,1 +1,1 @@
-export * from '@hanzo/docs-base-ui/provider/waku';
+export * from '@fumadocs/base-ui/provider/waku';
