@@ -5,7 +5,7 @@
 export const config = {
   org: {
     name: 'Zoo Apps',
-    github: 'zoo-labs',
+    github: 'zoo-apps',
     tagline: 'Open Source',
     description: 'Open-source applications from Zoo Labs. AI-powered tools, blockchain infrastructure, and developer utilities.',
   },
@@ -13,7 +13,7 @@ export const config = {
   links: {
     website: 'https://zoo.network',
     docs: 'https://docs.zoo.network',
-    github: 'https://github.com/zoo-labs',
+    github: 'https://github.com/zoo-apps',
     discord: 'https://discord.gg/zoo',
     twitter: 'https://twitter.com/zoolabs',
   },
@@ -36,16 +36,16 @@ export const config = {
         links: [
           { label: 'Website', href: 'https://zoo.network' },
           { label: 'Documentation', href: 'https://docs.zoo.network' },
-          { label: 'GitHub', href: 'https://github.com/zoo-labs' },
+          { label: 'GitHub', href: 'https://github.com/zoo-apps' },
         ],
       },
       {
         title: 'Applications',
         links: [
-          { label: 'Zoo App', href: 'https://github.com/zoo-labs/zoo' },
-          { label: 'SDK', href: 'https://github.com/zoo-labs/sdk' },
-          { label: 'CLI', href: 'https://github.com/zoo-labs/cli' },
-          { label: 'API', href: 'https://github.com/zoo-labs/api' },
+          { label: 'Zoo App', href: 'https://github.com/zoo-apps/zoo' },
+          { label: 'SDK', href: 'https://github.com/zoo-apps/sdk' },
+          { label: 'CLI', href: 'https://github.com/zoo-apps/cli' },
+          { label: 'API', href: 'https://github.com/zoo-apps/api' },
         ],
       },
       {
