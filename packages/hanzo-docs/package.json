@@ -78,7 +78,7 @@
     "./mdx/*": "./dist/mdx/*.js",
     "./mdx/runtime/*": "./dist/mdx/runtime/*.js",
     "./mdx/plugins/*": "./dist/mdx/plugins/*.js",
-    "./mdx:collections/*": "@hanzo/docs-mdx:collections/*",
+    "./mdx:collections/*": "fumadocs-mdx:collections/*",
     "./cli/build": "./dist/cli/build.js",
     "./mdx-remote": "./dist/mdx-remote/index.js",
     "./mdx-remote/*": "./dist/mdx-remote/*.js",

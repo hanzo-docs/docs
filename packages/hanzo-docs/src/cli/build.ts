@@ -1,1 +1,1 @@
-export * from '@hanzo/docs-cli/build';
+export * from '@fumadocs/cli/build';

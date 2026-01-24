@@ -1,1 +1,1 @@
-export * from '@hanzo/docs-base-ui/components/sidebar/base';
+export * from '@fumadocs/base-ui/components/sidebar/base';
