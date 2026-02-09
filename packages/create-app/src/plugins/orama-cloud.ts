@@ -65,8 +65,8 @@ See https://hanzoai.github.io/docs/docs/headless/search/orama-cloud for integrat
       }
 
       const filePath = {
-        '+next+fuma-docs-mdx': '.next/server/app/static.json.body',
-        '+next+fuma-docs-mdx+static': '.next/server/app/static.json.body',
+        '+next+hanzo-docs-mdx': '.next/server/app/static.json.body',
+        '+next+hanzo-docs-mdx+static': '.next/server/app/static.json.body',
         'tanstack-start': '.output/public/static.json',
         'tanstack-start-spa': 'dist/client/static.json',
         'react-router': 'build/client/static.json',
