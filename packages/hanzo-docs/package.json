@@ -11,7 +11,7 @@
     "Search",
     "i18n"
   ],
-  "homepage": "https://docs.hanzo.ai",
+  "homepage": "https://hanzoai.github.io/docs",
   "repository": "github:hanzoai/docs",
   "license": "MIT",
   "type": "module",

@@ -162,7 +162,7 @@ export const hanzoBrand: BrandConfig = {
   baseUrl: 'https://hips.hanzo.ai',
   githubRepo: 'https://github.com/hanzoai/hips',
   forumUrl: 'https://forum.hanzo.ai',
-  docsUrl: 'https://docs.hanzo.ai',
+  docsUrl: 'https://hanzoai.github.io/docs',
 
   proposalPrefix: 'HIP',
   proposalName: 'Hanzo Improvement Proposal',

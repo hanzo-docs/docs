@@ -23,7 +23,7 @@ export function baseOptions(): BaseLayoutProps {
         </>
       ),
     },
-    // see https://docs.hanzo.ai/docs/ui/navigation/links
+    // see https://hanzoai.github.io/docs/docs/ui/navigation/links
     links: [],
   };
 }
