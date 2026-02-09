@@ -3,8 +3,7 @@
 import { cva } from 'class-variance-authority';
 import { File as FileIcon, Folder as FolderIcon, FolderOpen } from 'lucide-react';
 import { type HTMLAttributes, type ReactNode, useState } from 'react';
-import { useEffectEvent } from '@hanzo/docs-core/utils/use-effect-event';
-import { cn } from '@hanzo/docs-ui/cn';
+import { cn } from '@/utils/cn';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
 
 const itemVariants = cva(

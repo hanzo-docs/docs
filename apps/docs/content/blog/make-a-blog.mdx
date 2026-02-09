@@ -1,31 +1,32 @@
 ---
-title: Making a Blog with Hanzo Docs
-description: Hanzo Docs + Blog
+title: Making a Blog with Fumadocs
+description: Fumadocs + Blog
 author: Fuma Nama
 date: 2024-12-15
 ---
 
-Hanzo Docs is a docs framework, but it's also a powerful tool to manage content in Next.js. You can use Hanzo Docs to build a blog site along with docs, on a single Next.js app.
+Fumadocs is a docs framework, but it's also a powerful tool to manage content in Next.js. You can use Fumadocs to build a blog site along with docs, on a single Next.js app.
 
 ## Overview
 
-This guide helps you build a blog site with Hanzo Docs and Hanzo Docs MDX.
+This guide helps you build a blog site with Fumadocs and Fumadocs MDX.
 
-We will use Hanzo Docs MDX to manage the content, and implement our own UI with Tailwind CSS & Hanzo Docs UI.
+We will use Fumadocs MDX to manage the content, and implement our own UI with Tailwind CSS & Fumadocs UI.
 
 ### Configure Content
 
 Define a `blogPosts` collection.
 
 ```ts title="source.config.ts"
-import { defineCollections, frontmatterSchema } from '@hanzo/docs/mdx/config';
+import { defineCollections } from 'fumadocs-mdx/config';
+import { pageSchema } from 'fumadocs-core/source/schema';
 import { z } from 'zod';
 
 export const blogPosts = defineCollections({
   type: 'doc',
   dir: 'content/blog',
   // add required frontmatter properties
-  schema: frontmatterSchema.extend({
+  schema: pageSchema.extend({
     author: z.string(),
     date: z.string().date().or(z.date()),
   }),
@@ -35,13 +36,13 @@ export const blogPosts = defineCollections({
 Parse the output collection in `source.ts`:
 
 ```ts title="lib/source.ts"
-import { loader } from '@hanzo/docs/core/source';
-import { toHanzo DocsSource } from '@hanzo/docs/mdx/runtime/server';
-import { blogPosts } from '@hanzo/docs-mdx:collections/server';
+import { loader } from 'fumadocs-core/source';
+import { toFumadocsSource } from 'fumadocs-mdx/runtime/server';
+import { blogPosts } from 'fumadocs-mdx:collections/server';
 
 export const blog = loader({
   baseUrl: '/blog',
-  source: toHanzo DocsSource(blogPosts, []),
+  source: toFumadocsSource(blogPosts, []),
 });
 ```
 
@@ -83,7 +84,7 @@ export default function Home() {
 
 <Callout title='Good to Know'>
 
-Colors like `text-fd-muted-foreground` are from the design system of Hanzo Docs UI, you may also use your own colors, or use Shadcn UI.
+Colors like `text-fd-muted-foreground` are from the design system of Fumadocs UI, you may also use your own colors, or use Shadcn UI.
 
 </Callout>
 
@@ -94,8 +95,8 @@ Note that blog posts won't have nested slugs like `/slug1/slug2`. We don't need 
 ```tsx title="app/(home)/blog/[slug]/page.tsx"
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { InlineTOC } from '@hanzo/docs/ui/components/inline-toc';
-import defaultMdxComponents from '@hanzo/docs/ui/mdx';
+import { InlineTOC } from 'fumadocs-ui/components/inline-toc';
+import defaultMdxComponents from 'fumadocs-ui/mdx';
 import { blog } from '@/lib/source';
 
 export default async function Page(props: { params: Promise<{ slug: string }> }) {

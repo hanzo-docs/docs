@@ -2,7 +2,7 @@
 
 import { type HTMLAttributes, useEffect, useState } from 'react';
 import { X } from 'lucide-react';
-import { cn } from '@hanzo/docs-ui/cn';
+import { cn } from '@/utils/cn';
 import { buttonVariants } from '@/components/ui/button';
 
 type BannerVariant = 'rainbow' | 'normal';
@@ -36,7 +36,7 @@ export function Banner({
   rainbowColors?: string[];
 
   /**
-   * Change Hanzo Docs layout styles
+   * Change Fumadocs layout styles
    *
    * @defaultValue true
    */

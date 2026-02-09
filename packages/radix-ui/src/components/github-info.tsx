@@ -1,7 +1,6 @@
-import { cn } from '@hanzo/docs-ui/cn';
+import { cn } from '@/utils/cn';
 import { Star } from 'lucide-react';
 import { type AnchorHTMLAttributes } from 'react';
-import { useEffectEvent } from '@hanzo/docs-core/utils/use-effect-event';
 
 async function getRepoStarsAndForks(
   owner: string,
