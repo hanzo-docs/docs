@@ -159,6 +159,9 @@ importers:
       '@ai-sdk/react':
         specifier: ^3.0.79
         version: 3.0.79(react@19.2.4)(zod@4.3.6)
+      '@hanzo/docs':
+        specifier: workspace:*
+        version: link:../../packages/hanzo-docs
       '@hanzo/docs-base-ui':
         specifier: workspace:*
         version: link:../../packages/base-ui
