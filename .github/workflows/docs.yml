@@ -39,6 +39,9 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build packages
+        env:
+          NODE_OPTIONS: '--max-old-space-size=8192'
+          SKIP_DTS: '1'
         run: pnpm build --filter=./packages/*
 
       - name: Build docs with static export

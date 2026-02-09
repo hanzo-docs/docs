@@ -26,7 +26,7 @@ const entries = getEntries('./src');
 export default defineConfig({
   entry: entries,
   format: ['esm'],
-  dts: true,
+  dts: process.env.SKIP_DTS !== '1',
   splitting: false,
   clean: true,
   external: [

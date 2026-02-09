@@ -1,0 +1,174 @@
+---
+title: CLI Reference
+description: Complete command-line reference for the dev CLI tool.
+---
+
+## Synopsis
+
+```bash
+dev [OPTIONS] [PROMPT]
+dev <SUBCOMMAND> [OPTIONS]
+```
+
+Hanzo Dev is an AI-powered coding assistant that runs in your terminal. When invoked without a subcommand, it launches the interactive TUI.
+
+## Global Options
+
+| Option | Short | Description |
+| --- | --- | --- |
+| `--model <MODEL>` | `-m` | Model the agent should use |
+| `--profile <PROFILE>` | `-p` | Configuration profile from config.toml |
+| `--sandbox <MODE>` | `-s` | Sandbox policy for shell commands |
+| `--ask-for-approval <POLICY>` | `-a` | When to require human approval |
+| `--cd <DIR>` | `-C` | Working directory for the agent |
+| `--image <FILE>` | `-i` | Attach image(s) to initial prompt |
+| `--oss` | | Use local open source model provider (Ollama) |
+| `--full-auto` | | Enable low-friction sandboxed automatic execution |
+| `--dangerously-bypass-approvals-and-sandbox` | | Skip all safety checks (DANGEROUS) |
+| `--auto` | | Run Auto Drive for non-interactive sessions |
+| `--debug` | `-d` | Enable debug logging of LLM requests |
+| `-c <KEY=VALUE>` | | Override configuration values |
+| `--version` | | Print version information |
+| `--help` | `-h` | Print help information |
+
+## Subcommands
+
+### exec
+
+Run non-interactively for a single task. Alias: `e`
+
+```bash
+dev exec [OPTIONS] [PROMPT]
+```
+
+| Option | Description |
+| --- | --- |
+| `--auto` | Run Auto Drive instead of single turn |
+| `--json` | Print events to stdout as JSONL |
+| `--max-seconds <N>` | Maximum wall-clock time budget |
+| `--turn-cap <N>` | Maximum Auto Drive coordinator turns |
+| `--output-last-message <FILE>` | Write final message to file |
+| `--output-schema <FILE>` | JSON Schema for structured output |
+| `--skip-git-repo-check` | Allow running outside Git repos |
+
+### auto
+
+Run Auto Drive headless. Alias for `exec --auto --full-auto`.
+
+```bash
+dev auto [OPTIONS] [PROMPT]
+```
+
+### resume
+
+Resume a previous interactive session.
+
+```bash
+dev resume [SESSION_ID] [OPTIONS]
+```
+
+| Option | Description |
+| --- | --- |
+| `--last` | Continue the most recent session |
+
+### login / logout
+
+Manage authentication credentials.
+
+```bash
+dev login [--with-api-key]
+dev login status
+dev logout
+```
+
+### apply
+
+Apply the latest diff produced by the agent. Alias: `a`
+
+```bash
+dev apply
+```
+
+### mcp
+
+Manage MCP servers. Alias: `acp`
+
+```bash
+dev mcp list [--json]
+dev mcp get <NAME> [--json]
+dev mcp add <NAME> [OPTIONS] [-- COMMAND...]
+dev mcp remove <NAME>
+```
+
+### bridge
+
+Manage browser integration.
+
+```bash
+dev bridge subscription [OPTIONS]
+dev bridge list
+dev bridge tail [OPTIONS]
+dev bridge screenshot [OPTIONS]
+dev bridge javascript <CODE> [OPTIONS]
+```
+
+### cloud
+
+Browse and manage Cloud tasks. Alias: `cloud-tasks`
+
+```bash
+dev cloud submit <PROMPT> [OPTIONS]
+```
+
+### llm
+
+Side-channel LLM utilities.
+
+```bash
+dev llm request [OPTIONS]
+```
+
+### completion
+
+Generate shell completion scripts.
+
+```bash
+dev completion bash
+dev completion zsh
+dev completion fish
+dev completion powershell
+```
+
+### doctor
+
+Diagnose PATH, binary collisions, and version conflicts.
+
+```bash
+dev doctor
+```
+
+### debug
+
+Internal debugging commands (macOS: seatbelt, Linux: landlock).
+
+```bash
+dev debug seatbelt [COMMAND...]
+dev debug landlock [COMMAND...]
+```
+
+## Environment Variables
+
+| Variable | Description |
+| --- | --- |
+| `OPENAI_API_KEY` | OpenAI API key |
+| `CODE_HOME` | Override config directory (default: `~/.hanzo`) |
+| `CODEX_HOME` | Legacy config directory (fallback) |
+| `CODEX_SECURE_MODE` | Enable security hardening when set to `"1"` |
+
+## Exit Codes
+
+| Code | Description |
+| --- | --- |
+| 0 | Success |
+| 1 | General error |
+| 130 | Interrupted (SIGINT) |
