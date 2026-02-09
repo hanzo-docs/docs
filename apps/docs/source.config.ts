@@ -59,9 +59,6 @@ export const docs = defineDocs({
         shiki: shikiConfig,
       };
       return applyMdxPreset({
-        remarkStructureOptions: {
-          types: [...remarkStructureDefaultOptions.types, 'code'],
-        },
         rehypeCodeOptions: isLint
           ? false
           : {
