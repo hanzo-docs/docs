@@ -17,7 +17,7 @@ When multiple AI agents process the same query, their responses may differ. Agen
 
 ## Configuration
 
-```capnp
+```c
 struct AgentConsensusConfig {
   threshold @0 :Float64;           # Required vote fraction (0.0-1.0)
   minResponses @1 :UInt32;         # Minimum responses before consensus check
@@ -39,7 +39,7 @@ Example configurations:
 
 ### 1. Submit Query
 
-```capnp
+```c
 struct AgentSubmitQueryRequest {
   query @0 :Text;
   config @1 :AgentConsensusConfig;
@@ -54,7 +54,7 @@ struct AgentSubmitQueryResponse {
 
 Agents submit their responses:
 
-```capnp
+```c
 struct AgentSubmitResponseRequest {
   queryId @0 :AgentQueryId;
   agentId @1 :Text;
@@ -66,7 +66,7 @@ struct AgentSubmitResponseRequest {
 
 ### 3. Check Consensus
 
-```capnp
+```c
 struct AgentTryConsensusResponse {
   union {
     result @0 :Text;               # Consensus reached
@@ -79,7 +79,7 @@ struct AgentTryConsensusResponse {
 
 ## Query State
 
-```capnp
+```c
 struct AgentQueryState {
   queryId @0 :AgentQueryId;
   query @1 :Text;                  # Original query
@@ -99,7 +99,7 @@ struct AgentResponseVote {
 
 ## Consensus Service
 
-```capnp
+```c
 interface AgentConsensusService {
   # Submit a new query for consensus
   submitQuery @0 (request :AgentSubmitQueryRequest) -> (response :AgentSubmitQueryResponse);

@@ -22,7 +22,7 @@ ZAP uses:
 
 Key encapsulation mechanism for secure key exchange:
 
-```capnp
+```c
 struct MLKEMPublicKey {
   # ML-KEM-768 public key (1184 bytes)
   data @0 :Data;
@@ -38,7 +38,7 @@ struct MLKEMCiphertext {
 
 Digital signature scheme for authentication:
 
-```capnp
+```c
 struct MLDSAPublicKey {
   # ML-DSA-65 public key (1952 bytes)
   data @0 :Data;
@@ -84,7 +84,7 @@ Client                                     Server
 
 ### Init Message
 
-```capnp
+```c
 struct PQHandshakeInit {
   # Client's X25519 ephemeral public key (32 bytes)
   x25519PublicKey @0 :Data;
@@ -108,7 +108,7 @@ struct PQHandshakeInit {
 
 ### Response Message
 
-```capnp
+```c
 struct PQHandshakeResponse {
   # Server's X25519 ephemeral public key (32 bytes)
   x25519PublicKey @0 :Data;
@@ -151,7 +151,7 @@ This ensures security even if one algorithm is broken.
 
 After handshake, all messages are encrypted:
 
-```capnp
+```c
 struct PQChannelMessage {
   # Sequence number for replay protection
   sequence @0 :UInt64;
@@ -171,7 +171,7 @@ struct PQChannelMessage {
 
 For long-lived sessions, keys can be rotated:
 
-```capnp
+```c
 struct PQKeyRotation {
   # New ML-KEM public key for next epoch
   newMlkemPublicKey @0 :MLKEMPublicKey;
