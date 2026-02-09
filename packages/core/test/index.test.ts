@@ -98,12 +98,12 @@ test('Breadcrumbs', () => {
 });
 
 test('I18n: Format URL', () => {
-  expect(DefaultFormatter.get(new NextURL('https://hanzo-docs.dev/en'))).toBe('en');
-  expect(DefaultFormatter.get(new NextURL('https://hanzo-docs.dev/en/test'))).toBe('en');
-  expect(DefaultFormatter.get(new NextURL('https://hanzo-docs.dev'))).toBeUndefined();
+  expect(DefaultFormatter.get(new NextURL('https://docs.hanzo.ai/en'))).toBe('en');
+  expect(DefaultFormatter.get(new NextURL('https://docs.hanzo.ai/en/test'))).toBe('en');
+  expect(DefaultFormatter.get(new NextURL('https://docs.hanzo.ai'))).toBeUndefined();
   expect(
     DefaultFormatter.get(
-      new NextURL('https://hanzo-docs.dev/docs', {
+      new NextURL('https://docs.hanzo.ai/docs', {
         nextConfig: {
           basePath: '/docs',
         },
@@ -112,7 +112,7 @@ test('I18n: Format URL', () => {
   ).toBeUndefined();
   expect(
     DefaultFormatter.get(
-      new NextURL('https://hanzo-docs.dev/docs/en/test', {
+      new NextURL('https://docs.hanzo.ai/docs/en/test', {
         nextConfig: {
           basePath: '/docs',
         },
@@ -120,35 +120,35 @@ test('I18n: Format URL', () => {
     ),
   ).toBe('en');
 
-  expect(DefaultFormatter.add(new NextURL('https://hanzo-docs.dev'), 'cn').href).toBe(
-    'https://hanzo-docs.dev/cn/',
+  expect(DefaultFormatter.add(new NextURL('https://docs.hanzo.ai'), 'cn').href).toBe(
+    'https://docs.hanzo.ai/cn/',
   );
   expect(
     DefaultFormatter.add(
-      new NextURL('https://hanzo-docs.dev/docs', {
+      new NextURL('https://docs.hanzo.ai/docs', {
         nextConfig: {
           basePath: '/docs',
         },
       }),
       'cn',
     ).href,
-  ).toBe('https://hanzo-docs.dev/docs/cn/');
+  ).toBe('https://docs.hanzo.ai/docs/cn/');
 
-  expect(DefaultFormatter.remove(new NextURL('https://hanzo-docs.dev/en')).href).toBe(
-    'https://hanzo-docs.dev/',
+  expect(DefaultFormatter.remove(new NextURL('https://docs.hanzo.ai/en')).href).toBe(
+    'https://docs.hanzo.ai/',
   );
-  expect(DefaultFormatter.remove(new NextURL('https://hanzo-docs.dev/en/test/hello')).href).toBe(
-    'https://hanzo-docs.dev/test/hello',
+  expect(DefaultFormatter.remove(new NextURL('https://docs.hanzo.ai/en/test/hello')).href).toBe(
+    'https://docs.hanzo.ai/test/hello',
   );
   expect(
     DefaultFormatter.remove(
-      new NextURL('https://hanzo-docs.dev/docs/en', {
+      new NextURL('https://docs.hanzo.ai/docs/en', {
         nextConfig: {
           basePath: '/docs',
         },
       }),
     ).href,
-  ).toBe('https://hanzo-docs.dev/docs/');
+  ).toBe('https://docs.hanzo.ai/docs/');
 });
 
 const tree: Root = {
