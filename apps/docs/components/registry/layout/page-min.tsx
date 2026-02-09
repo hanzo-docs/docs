@@ -2,7 +2,7 @@
 import { type ComponentProps, type ReactNode, useMemo } from 'react';
 import { AnchorProvider, type TOCItemType, useActiveAnchors } from '@hanzo/docs-core/toc';
 import { cn } from '@/lib/cn';
-import { useTreeContext } from '@hanzo/docs-ui/contexts/tree';
+import { useTreeContext } from '@hanzo/docs-base-ui/contexts/tree';
 import { Link, usePathname } from '@hanzo/docs-core/framework';
 import type * as PageTree from '@hanzo/docs-core/page-tree';
 

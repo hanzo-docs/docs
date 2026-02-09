@@ -1,1 +1,1 @@
-export * from '@hanzo/docs-radix-ui/components/accordion';
+export * from '@hanzo/docs-ui/components/accordion';

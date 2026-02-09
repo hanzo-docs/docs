@@ -2,9 +2,9 @@
 import type * as PageTree from '@hanzo/docs-core/page-tree';
 import { type ComponentProps, createContext, type ReactNode, use, useMemo, useState } from 'react';
 import { cn } from '@/lib/cn';
-import { TreeContextProvider, useTreeContext } from '@hanzo/docs-ui/contexts/tree';
+import { TreeContextProvider, useTreeContext } from '@hanzo/docs-base-ui/contexts/tree';
 import Link from '@hanzo/docs-core/link';
-import { useSearchContext } from '@hanzo/docs-ui/contexts/search';
+import { useSearchContext } from '@hanzo/docs-base-ui/contexts/search';
 import { cva } from 'class-variance-authority';
 import { usePathname } from '@hanzo/docs-core/framework';
 

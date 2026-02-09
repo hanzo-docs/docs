@@ -1,4 +1,4 @@
-import * as Base from '@hanzo/docs-ui/components/codeblock';
+import * as Base from '@hanzo/docs-base-ui/components/codeblock';
 import { cn } from '@/lib/cn';
 import { highlight } from '@hanzo/docs-core/highlight/core';
 import { shikiConfig } from '@/lib/shiki';
