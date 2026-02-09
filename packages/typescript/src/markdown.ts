@@ -1,10 +1,10 @@
 import type { ElementContent, Nodes } from 'hast';
 import { remark } from 'remark';
-import { remarkGfm } from 'fumadocs-core/mdx-plugins/remark-gfm';
-import { createRehypeCode } from 'fumadocs-core/mdx-plugins/rehype-code.core';
+import { remarkGfm } from '@hanzo/docs-core/mdx-plugins/remark-gfm';
+import { createRehypeCode } from '@hanzo/docs-core/mdx-plugins/rehype-code.core';
 import remarkRehype from 'remark-rehype';
-import { highlightHast } from 'fumadocs-core/highlight/core';
-import { configDefault } from 'fumadocs-core/highlight';
+import { highlightHast } from '@hanzo/docs-core/highlight/core';
+import { configDefault } from '@hanzo/docs-core/highlight';
 
 export interface MarkdownRenderer {
   renderTypeToHast: (type: string) => Nodes | Promise<Nodes>;

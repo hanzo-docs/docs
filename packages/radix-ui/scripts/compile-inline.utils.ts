@@ -1,4 +1,4 @@
-import { compile } from '@fumadocs/tailwind/compile';
+import { compile } from '@hanzo/docs-tailwind/compile';
 import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 

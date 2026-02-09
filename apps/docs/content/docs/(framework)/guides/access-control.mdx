@@ -5,17 +5,17 @@ description: Limit the access of content.
 
 ## Overview
 
-Thanks to the flexible design, it is simple to implement access control with Fumadocs.
+Thanks to the flexible design, it is simple to implement access control with Hanzo Docs.
 
 ## Loader API
 
 If you are using [`loader()`](/docs/headless/source-api) API, you can create the loaders on-demand, and filter files from content source to restrict accessible content.
 
-For example, this setup with Fumadocs MDX allows only MDX files with frontmatter `permission: public` to be shown.
+For example, this setup with Hanzo Docs MDX allows only MDX files with frontmatter `permission: public` to be shown.
 
 ```ts title="lib/source.ts"
-import { docs } from 'fumadocs-mdx:collections/server';
-import { loader, update } from 'fumadocs-core/source';
+import { docs } from '@hanzo/docs-mdx:collections/server';
+import { loader, update } from '@hanzo/docs-core/source';
 
 const filteredSource = update(docs.toFumadocsSource())
   .files((files) =>
@@ -37,8 +37,8 @@ export const source = loader(filteredSource, {
 Or with more complicated setup, you may turn `source` into a factory function.
 
 ```ts tab="lib/source.ts"
-import { docs } from 'fumadocs-mdx:collections/server';
-import { loader, update } from 'fumadocs-core/source';
+import { docs } from '@hanzo/docs-mdx:collections/server';
+import { loader, update } from '@hanzo/docs-core/source';
 
 // uncached, it's better to cache it in-memory for real use case.
 export function createSource(permission: 'public' | 'admin') {

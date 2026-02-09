@@ -8,15 +8,15 @@
     "build": "vite build",
     "start": "node .output/server/index.mjs",
     "preview": "vite preview",
-    "types:check": "fumadocs-mdx && tsc --noEmit"
+    "types:check": "@hanzo/docs-mdx && tsc --noEmit"
   },
   "dependencies": {
     "@tanstack/react-router": "1.158.4",
     "@tanstack/react-router-devtools": "1.158.4",
     "@tanstack/react-start": "1.159.0",
-    "fumadocs-core": "workspace:*",
-    "fumadocs-mdx": "workspace:*",
-    "fumadocs-ui": "workspace:*",
+    "@hanzo/docs-core": "workspace:*",
+    "@hanzo/docs-mdx": "workspace:*",
+    "@hanzo/docs-ui": "workspace:*",
     "lucide-react": "^0.563.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",

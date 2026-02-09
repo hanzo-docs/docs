@@ -1,11 +1,11 @@
-import { DocsLayout } from 'fumadocs-ui/layouts/docs';
+import { DocsLayout } from '@hanzo/docs-ui/layouts/docs';
 import { baseOptions, linkItems, logo } from '@/components/layouts/shared';
 import { source } from '@/lib/source';
 import { AISearch, AISearchPanel, AISearchTrigger } from '@/components/ai/search';
 import { getSection } from '@/lib/source/navigation';
 import { MessageCircleIcon } from 'lucide-react';
 import { cn } from '@/lib/cn';
-import { buttonVariants } from 'fumadocs-ui/components/ui/button';
+import { buttonVariants } from '@hanzo/docs-ui/components/ui/button';
 import 'katex/dist/katex.min.css';
 
 export default function Layout({ children }: LayoutProps<'/docs'>) {
@@ -22,7 +22,7 @@ export default function Layout({ children }: LayoutProps<'/docs'>) {
         title: (
           <>
             {logo}
-            <span className="font-medium in-[.uwu]:hidden max-md:hidden">Fumadocs</span>
+            <span className="font-medium in-[.uwu]:hidden max-md:hidden">Hanzo Docs</span>
           </>
         ),
       }}
