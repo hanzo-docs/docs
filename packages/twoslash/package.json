@@ -59,13 +59,13 @@
     "@types/node": "25.2.1",
     "@types/react": "^19.2.13",
     "eslint-config-custom": "workspace:*",
-    "@hanzo/docs-ui": "workspace:*",
+    "@hanzo/docs-base-ui": "workspace:*",
     "tsconfig": "workspace:*",
     "tsdown": "^0.20.3"
   },
   "peerDependencies": {
     "@types/react": "*",
-    "@hanzo/docs-ui": "^15.0.0 || ^16.0.0",
+    "@hanzo/docs-base-ui": "^15.0.0 || ^16.0.0",
     "react": "18.x.x || 19.x.x"
   },
   "peerDependenciesMeta": {
