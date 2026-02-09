@@ -1,5 +1,13 @@
 # fumadocs-obsidian
 
+## 0.0.12
+
+### Patch Changes
+
+- 9fe9f7c: Rebrand from Fuma Nama to Hanzo AI, update canonical URL to hanzoai.github.io/docs, fix DTS generation OOM in unified wrapper package, and update all package metadata.
+- Updated dependencies [9fe9f7c]
+  - @hanzo/docs-core@16.5.3
+
 ## 0.0.11
 
 ### Patch Changes
