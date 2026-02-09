@@ -1,5 +1,5 @@
 'use client';
-import { cn } from '@hanzo/docs-ui/cn';
+import { cn } from '@/utils/cn';
 import {
   type ComponentProps,
   createContext,
@@ -12,13 +12,12 @@ import {
   useRef,
   useState,
 } from 'react';
-import { useEffectEvent } from '@hanzo/docs-core/utils/use-effect-event';
 import { useSidebar } from '@/components/sidebar/base';
 import { ChevronDown } from 'lucide-react';
-import Link from '@hanzo/docs-core/link';
-import { usePathname } from '@hanzo/docs-core/framework';
-import { useIsScrollTop } from '@hanzo/docs-ui/hooks/use-is-scroll-top';
-import { LinkItem, type LinkItemType, type MenuItemType } from '@hanzo/docs-ui/link-item';
+import Link from 'fumadocs-core/link';
+import { usePathname } from 'fumadocs-core/framework';
+import { useIsScrollTop } from '@/utils/use-is-scroll-top';
+import { LinkItem, type LinkItemType, type MenuItemType } from '@/utils/link-item';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { isTabActive, type SidebarTabWithProps } from '@/components/sidebar/tabs/dropdown';
 

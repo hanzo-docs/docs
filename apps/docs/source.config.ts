@@ -1,21 +1,22 @@
-import {
-  applyMdxPreset,
-  defineCollections,
-  defineConfig,
-  defineDocs,
-  frontmatterSchema,
-  metaSchema,
-} from '@hanzo/docs-mdx/config';
+import { applyMdxPreset, defineCollections, defineConfig, defineDocs } from 'fumadocs-mdx/config';
 import { z } from 'zod';
 import type { ElementContent } from 'hast';
-import jsonSchema from '@hanzo/docs-mdx/plugins/json-schema';
-import lastModified from '@hanzo/docs-mdx/plugins/last-modified';
+import jsonSchema from 'fumadocs-mdx/plugins/json-schema';
+import lastModified from 'fumadocs-mdx/plugins/last-modified';
 import type { ShikiTransformer } from 'shiki';
-import type { RemarkFeedbackBlockOptions } from '@hanzo/docs-core/mdx-plugins';
+import type { RemarkFeedbackBlockOptions } from 'fumadocs-core/mdx-plugins';
+import type { RemarkAutoTypeTableOptions } from 'fumadocs-typescript';
+import { shikiConfig } from './lib/shiki';
+import { metaSchema, pageSchema } from 'fumadocs-core/source/schema';
+import { visit } from 'unist-util-visit';
+import type { Transformer } from 'unified';
+import type { Root } from 'mdast';
+
+const isLint = process.env.LINT === '1';
 
 export const docs = defineDocs({
   docs: {
-    schema: frontmatterSchema.extend({
+    schema: pageSchema.extend({
       preview: z.string().optional(),
       index: z.boolean().default(false),
       /**
@@ -26,26 +27,24 @@ export const docs = defineDocs({
     postprocess: {
       includeProcessedMarkdown: true,
       extractLinkReferences: true,
+      valueToExport: ['elementIds'],
     },
     async: true,
     async mdxOptions(environment) {
-      const { rehypeCodeDefaultOptions } = await import('@hanzo/docs-core/mdx-plugins/rehype-code');
+      const { rehypeCodeDefaultOptions } = await import('fumadocs-core/mdx-plugins/rehype-code');
       const { remarkStructureDefaultOptions } =
-        await import('@hanzo/docs-core/mdx-plugins/remark-structure');
-      const { remarkSteps } = await import('@hanzo/docs-core/mdx-plugins/remark-steps');
+        await import('fumadocs-core/mdx-plugins/remark-structure');
+      const { remarkSteps } = await import('fumadocs-core/mdx-plugins/remark-steps');
       const { remarkFeedbackBlock } =
-        await import('@hanzo/docs-core/mdx-plugins/remark-feedback-block');
-      const { transformerTwoslash } = await import('@hanzo/docs-twoslash');
-      const { createFileSystemTypesCache } = await import('@hanzo/docs-twoslash/cache-fs');
+        await import('fumadocs-core/mdx-plugins/remark-feedback-block');
+      const { transformerTwoslash } = await import('fumadocs-twoslash');
+      const { createFileSystemTypesCache } = await import('fumadocs-twoslash/cache-fs');
       const { default: remarkMath } = await import('remark-math');
-      const { remarkTypeScriptToJavaScript } = await import('@hanzo/docs-docgen/remark-ts2js');
+      const { remarkTypeScriptToJavaScript } = await import('fumadocs-docgen/remark-ts2js');
       const { default: rehypeKatex } = await import('rehype-katex');
       const { remarkAutoTypeTable, createGenerator, createFileSystemGeneratorCache } =
-        await import('@hanzo/docs-typescript');
+        await import('fumadocs-typescript');
 
-      const generator = createGenerator({
-        cache: createFileSystemGeneratorCache('.next/@hanzo/docs-typescript'),
-      });
       const feedbackOptions: RemarkFeedbackBlockOptions = {
         resolve(node) {
           // defensive approach
@@ -53,25 +52,33 @@ export const docs = defineDocs({
           return node.type === 'paragraph' || node.type === 'image' || node.type === 'list';
         },
       };
+      const typeTableOptions: RemarkAutoTypeTableOptions = {
+        generator: createGenerator({
+          cache: createFileSystemGeneratorCache('.next/fumadocs-typescript'),
+        }),
+        shiki: shikiConfig,
+      };
       return applyMdxPreset({
         remarkStructureOptions: {
           types: [...remarkStructureDefaultOptions.types, 'code'],
         },
-        rehypeCodeOptions: {
-          langs: ['ts', 'js', 'html', 'tsx', 'mdx'],
-          inline: 'tailing-curly-colon',
-          themes: {
-            light: 'catppuccin-latte',
-            dark: 'catppuccin-mocha',
-          },
-          transformers: [
-            ...(rehypeCodeDefaultOptions.transformers ?? []),
-            transformerTwoslash({
-              typesCache: createFileSystemTypesCache(),
-            }),
-            transformerEscape(),
-          ],
-        },
+        rehypeCodeOptions: isLint
+          ? false
+          : {
+              langs: ['ts', 'js', 'html', 'tsx', 'mdx'],
+              inline: 'tailing-curly-colon',
+              themes: {
+                light: 'catppuccin-latte',
+                dark: 'catppuccin-mocha',
+              },
+              transformers: [
+                ...(rehypeCodeDefaultOptions.transformers ?? []),
+                transformerTwoslash({
+                  typesCache: createFileSystemTypesCache(),
+                }),
+                transformerEscape(),
+              ],
+            },
         remarkCodeTabOptions: {
           parseMdx: true,
         },
@@ -80,18 +87,15 @@ export const docs = defineDocs({
             id: 'package-manager',
           },
         },
-        remarkPlugins: [
-          remarkSteps,
-          remarkMath,
-          [remarkFeedbackBlock, feedbackOptions],
-          [
-            remarkAutoTypeTable,
-            {
-              generator,
-            },
-          ],
-          remarkTypeScriptToJavaScript,
-        ],
+        remarkPlugins: isLint
+          ? [remarkElementIds]
+          : [
+              remarkSteps,
+              remarkMath,
+              [remarkFeedbackBlock, feedbackOptions],
+              [remarkAutoTypeTable, typeTableOptions],
+              remarkTypeScriptToJavaScript,
+            ],
         rehypePlugins: (v) => [rehypeKatex, ...v],
       })(environment);
     },
@@ -106,24 +110,26 @@ export const docs = defineDocs({
 export const blog = defineCollections({
   type: 'doc',
   dir: 'content/blog',
-  schema: frontmatterSchema.extend({
+  schema: pageSchema.extend({
     author: z.string(),
     date: z.iso.date().or(z.date()),
   }),
   async: true,
   async mdxOptions(environment) {
-    const { rehypeCodeDefaultOptions } = await import('@hanzo/docs-core/mdx-plugins/rehype-code');
-    const { remarkSteps } = await import('@hanzo/docs-core/mdx-plugins/remark-steps');
+    const { rehypeCodeDefaultOptions } = await import('fumadocs-core/mdx-plugins/rehype-code');
+    const { remarkSteps } = await import('fumadocs-core/mdx-plugins/remark-steps');
 
     return applyMdxPreset({
-      rehypeCodeOptions: {
-        inline: 'tailing-curly-colon',
-        themes: {
-          light: 'catppuccin-latte',
-          dark: 'catppuccin-mocha',
-        },
-        transformers: [...(rehypeCodeDefaultOptions.transformers ?? []), transformerEscape()],
-      },
+      rehypeCodeOptions: isLint
+        ? false
+        : {
+            inline: 'tailing-curly-colon',
+            themes: {
+              light: 'catppuccin-latte',
+              dark: 'catppuccin-mocha',
+            },
+            transformers: [...(rehypeCodeDefaultOptions.transformers ?? []), transformerEscape()],
+          },
       remarkCodeTabOptions: {
         parseMdx: true,
       },
@@ -132,7 +138,7 @@ export const blog = defineCollections({
           id: 'package-manager',
         },
       },
-      remarkPlugins: [remarkSteps],
+      remarkPlugins: isLint ? [remarkElementIds] : [remarkSteps],
     })(environment);
   },
 });
@@ -154,6 +160,25 @@ function transformerEscape(): ShikiTransformer {
       replace(hast);
       return hast;
     },
+  };
+}
+
+function remarkElementIds(): Transformer<Root, Root> {
+  return (tree, file) => {
+    file.data ??= {};
+    file.data.elementIds ??= [];
+
+    visit(tree, 'mdxJsxFlowElement', (element) => {
+      if (!element.name || !element.attributes) return;
+
+      const idAttr = element.attributes.find(
+        (attr) => attr.type === 'mdxJsxAttribute' && attr.name === 'id',
+      );
+
+      if (idAttr && typeof idAttr.value === 'string') {
+        (file.data.elementIds as string[]).push(idAttr.value);
+      }
+    });
   };
 }
 

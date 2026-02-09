@@ -1,20 +1,11 @@
 import { defineConfig } from 'tsdown';
-import { resolve, dirname } from 'path';
-import { fileURLToPath } from 'url';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
-const external = ['next', 'typescript', 'bun'];
+const external = ['next', 'typescript', 'webpack', 'bun', 'mdx/types'];
 
 const noExternal = [
-  // TODO: remove this when the min `@hanzo/docs-core` version is above 16.2.3
-  '@hanzo/docs-core/source/schema',
+  // TODO: remove this when the min `fumadocs-core` version is above 16.2.3
+  'fumadocs-core/source/schema',
 ];
-
-// Resolve @/* path alias
-const alias = {
-  '@/': resolve(__dirname, './src') + '/',
-};
 
 export default defineConfig([
   {
@@ -32,7 +23,7 @@ export default defineConfig([
     dts: true,
     fixedExtension: false,
     target: 'node22',
-    alias,
+    inlineOnly: [],
   },
   {
     outDir: 'dist/next',
@@ -45,6 +36,6 @@ export default defineConfig([
     dts: false,
     fixedExtension: false,
     target: 'node22',
-    alias,
+    inlineOnly: [],
   },
 ]);

@@ -6,5 +6,5 @@ export default defineConfig({
   target: 'node22',
   format: 'esm',
   entry: ['src/{index,configuration}.ts'],
-  external: [/^@hanzo\/docs\//],
+  inlineOnly: [],
 });

@@ -1,5 +1,60 @@
 # @fumadocs/base-ui
 
+## 16.5.2
+
+### Patch Changes
+
+- c22f6ee: bump tsdown
+- Updated dependencies [c22f6ee]
+  - @fumadocs/tailwind@0.0.2
+  - fumadocs-core@16.5.2
+
+## 16.5.1
+
+### Patch Changes
+
+- c08364a: support Flux layout
+- 53ad20b: Pre-scan class names to optimize Tailwind CSS compilation performance
+- Updated dependencies [db93ebd]
+  - @fumadocs/tailwind@0.0.1
+  - fumadocs-core@16.5.1
+
+## 16.5.0
+
+### Patch Changes
+
+- 85cc22f: support `.core` exports for dynamic codeblocks, migrate to effect-based `useShiki()` to avoid limitations of `<Suspense />`.
+- Updated dependencies [85cc22f]
+- Updated dependencies [9ba1250]
+  - @fumadocs/ui@16.5.0
+  - fumadocs-core@16.5.0
+
+## 16.4.11
+
+### Patch Changes
+
+- Updated dependencies [a75a84d]
+  - fumadocs-core@16.4.11
+  - @fumadocs/ui@16.4.11
+
+## 16.4.10
+
+### Patch Changes
+
+- 430a5f1: support `on` on docs layout
+- Updated dependencies [099fde7]
+- Updated dependencies [6fd7e63]
+  - fumadocs-core@16.4.10
+  - @fumadocs/ui@16.4.10
+
+## 16.4.9
+
+### Patch Changes
+
+- Updated dependencies [48dd0c2]
+  - fumadocs-core@16.4.9
+  - @fumadocs/ui@16.4.9
+
 ## 16.4.8
 
 ### Patch Changes

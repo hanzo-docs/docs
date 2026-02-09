@@ -1,11 +1,10 @@
 'use client';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { type ComponentProps, type ReactNode, useMemo, useState } from 'react';
-import { useEffectEvent } from '@hanzo/docs-core/utils/use-effect-event';
-import Link from '@hanzo/docs-core/link';
-import { usePathname } from '@hanzo/docs-core/framework';
-import { cn } from '@hanzo/docs-ui/cn';
-import { isActive, normalize } from '@hanzo/docs-ui/urls';
+import Link from 'fumadocs-core/link';
+import { usePathname } from 'fumadocs-core/framework';
+import { cn } from '@/utils/cn';
+import { isActive, normalize } from '@/utils/urls';
 import { useSidebar } from '@/components/sidebar/base';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import type { SidebarTab } from '.';
