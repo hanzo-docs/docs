@@ -2,4 +2,4 @@
 
 Radix UI components for Hanzo Docs.
 
-[Read Documentation](https://docs.hanzo.ai/docs/ui)
+[Read Documentation](https://hanzoai.github.io/docs/docs/ui)
