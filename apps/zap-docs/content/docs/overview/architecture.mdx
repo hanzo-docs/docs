@@ -42,7 +42,7 @@ This document describes the internal architecture of the ZAP protocol and its ke
 
 The primary interface for tool/resource operations:
 
-```capnp
+```c
 interface Zap {
   # Initialize connection with capability exchange
   init @0 (client :ClientInfo) -> (server :ServerInfo);
@@ -69,7 +69,7 @@ interface Zap {
 
 Bridges MCP and ZAP servers:
 
-```capnp
+```c
 interface Gateway extends(Zap) {
   addServer @0 (name :Text, url :Text, config :ServerConfig) -> (id :Text);
   removeServer @1 (id :Text) -> ();
@@ -80,7 +80,7 @@ interface Gateway extends(Zap) {
 
 Transport configuration:
 
-```capnp
+```c
 struct ServerConfig {
   transport @0 :Transport;
   auth @1 :Auth;
@@ -100,7 +100,7 @@ struct ServerConfig {
 
 Agent discovery and registration:
 
-```capnp
+```c
 interface Coordinator {
   register @0 (agent :AgentInfo) -> (id :Text, gateway :Gateway);
   heartbeat @1 (id :Text) -> (ok :Bool);
@@ -137,7 +137,7 @@ Key derivation:
 
 ### Channel Security
 
-```capnp
+```c
 struct PQChannelMessage {
   sequence @0 :UInt64;       # Replay protection
   ciphertext @1 :Data;       # AEAD encrypted
@@ -178,7 +178,7 @@ Finalization:
 
 Voting-based response aggregation:
 
-```capnp
+```c
 struct AgentConsensusConfig {
   threshold @0 :Float64;        # Required vote fraction
   minResponses @1 :UInt32;      # Minimum responses
@@ -197,7 +197,7 @@ Consensus flow:
 
 ### W3C DID Document
 
-```capnp
+```c
 struct DidDocument {
   context @0 :List(Text);
   id @1 :Text;
