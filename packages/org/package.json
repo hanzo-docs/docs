@@ -1,0 +1,65 @@
+{
+  "name": "@hanzo/docs-org",
+  "version": "0.1.0",
+  "description": "Multi-org documentation configuration and components for Hanzo Docs",
+  "keywords": ["Docs", "Hanzo Docs", "Multi-org"],
+  "homepage": "https://hanzoai.github.io/docs",
+  "license": "MIT",
+  "author": "Hanzo AI",
+  "repository": "github:hanzoai/docs",
+  "files": ["dist/*"],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./config": {
+      "types": "./dist/config.d.ts",
+      "import": "./dist/config.js"
+    },
+    "./layout": {
+      "types": "./dist/layout.d.ts",
+      "import": "./dist/layout.js"
+    },
+    "./components/*": {
+      "types": "./dist/components/*.d.ts",
+      "import": "./dist/components/*.js"
+    },
+    "./presets/*": {
+      "types": "./dist/presets/*.d.ts",
+      "import": "./dist/presets/*.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "clean": "rimraf dist",
+    "dev": "tsdown --watch",
+    "lint": "eslint .",
+    "types:check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "lucide-react": "^0.563.0"
+  },
+  "devDependencies": {
+    "@hanzo/docs-base-ui": "workspace:*",
+    "@hanzo/docs-core": "workspace:*",
+    "@types/react": "^19.2.13",
+    "eslint-config-custom": "workspace:*",
+    "tsconfig": "workspace:*",
+    "tsdown": "^0.20.3"
+  },
+  "peerDependencies": {
+    "@hanzo/docs-base-ui": "workspace:*",
+    "@hanzo/docs-core": "workspace:*",
+    "@types/react": "*",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "peerDependenciesMeta": {
+    "@types/react": { "optional": true }
+  }
+}
