@@ -1,0 +1,74 @@
+---
+title: Slash Commands
+description: All built-in slash commands available in the Hanzo Dev TUI.
+---
+
+Hanzo Dev supports slash commands in the TUI composer. Commands marked "prompt-expanding" transform your input into a full prompt and typically kick off multi-agent flows.
+
+## Navigation & Session
+
+| Command | Description |
+| --- | --- |
+| `/browser` | Open internal browser |
+| `/chrome` | Connect to your Chrome browser |
+| `/new` | Start a new chat during a conversation |
+| `/resume` | Resume a past session for this folder |
+| `/quit` | Exit Hanzo Dev |
+| `/logout` | Log out |
+| `/login` | Manage sign-ins (select, add, or disconnect) |
+| `/settings [section]` | Open settings panel (optional: `model`, `theme`, `agents`, `skills`, `auto`, `review`, `validation`, `limits`, `chrome`, `mcp`, `notifications`) |
+
+## Workspace & Git
+
+| Command | Description |
+| --- | --- |
+| `/init` | Create an `AGENTS.md` file with instructions |
+| `/diff` | Show `git diff` (including untracked files) |
+| `/undo` | Open snapshot picker to restore workspace files |
+| `/branch [task]` | Create a worktree branch and switch to it |
+| `/merge` | Merge current worktree branch back into default |
+| `/push` | Commit, push, and monitor workflows |
+| `/review [focus]` | Open review picker or review with focus text |
+| `/cloud` | Browse Cloud tasks from the TUI |
+| `/cmd <name>` | Run a project command for the current workspace |
+
+## UX & Display
+
+| Command | Description |
+| --- | --- |
+| `/theme` | Customize the app theme |
+| `/verbosity (high\|medium\|low)` | Change text verbosity |
+| `/model` | Choose your default model |
+| `/reasoning (minimal\|low\|medium\|high)` | Change reasoning effort |
+| `/prompts` | Manage custom prompts |
+| `/skills` | Manage skills |
+| `/status` | Show session configuration and token usage |
+| `/limits` | Adjust session limits and rate-limit usage |
+| `/update` | Check version and run guided upgrade |
+| `/notifications [status\|on\|off]` | Manage notification settings |
+| `/mcp [status\|on\|off \<name\>\|add]` | Manage MCP servers |
+| `/validation [status\|on\|off]` | Inspect or toggle validation harness |
+
+## Search & Mentions
+
+| Command | Description |
+| --- | --- |
+| `/mention` | Mention a file (opens file search) |
+
+## Performance & Agents
+
+| Command | Description |
+| --- | --- |
+| `/perf (on\|off\|show\|reset)` | Performance tracing controls |
+| `/agents` | Configure agents and subagent commands |
+| `/auto [goal]` | Start the Auto Drive coordinator |
+
+## Prompt-Expanding (Multi-Agent)
+
+These commands expand into full prompts and start multiple agents. They require a task/problem description.
+
+| Command | Description |
+| --- | --- |
+| `/plan <task>` | Create a comprehensive plan (multiple agents) |
+| `/solve <problem>` | Solve a challenging problem (multiple agents) |
+| `/code <task>` | Perform a coding task (multiple agents) |

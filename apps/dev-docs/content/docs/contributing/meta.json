@@ -1,0 +1,10 @@
+{
+  "title": "Contributing",
+  "description": "How to contribute to Hanzo Dev",
+  "icon": "Users",
+  "root": true,
+  "pages": [
+    "index",
+    "cla"
+  ]
+}
