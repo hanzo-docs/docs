@@ -9,15 +9,15 @@ import { highlight, type CoreHighlightOptions } from '@hanzo/docs-core/highlight
 import type { OpenAPIServer } from '@/server';
 import type { APIPageClientOptions } from './client';
 import type { CodeUsageGenerator } from './operation/usage-tabs';
-import { Heading } from '@hanzo/docs-ui/components/heading';
+import { Heading } from '@hanzo/docs-base-ui/components/heading';
 import { createRehypeCode } from '@hanzo/docs-core/mdx-plugins/rehype-code.core';
 import { remarkGfm } from '@hanzo/docs-core/mdx-plugins/remark-gfm';
-import defaultMdxComponents from '@hanzo/docs-ui/mdx';
+import defaultMdxComponents from '@hanzo/docs-base-ui/mdx';
 import { remark } from 'remark';
 import remarkRehype from 'remark-rehype';
 import { toJsxRuntime } from 'hast-util-to-jsx-runtime';
 import * as JsxRuntime from 'react/jsx-runtime';
-import { CodeBlock, Pre } from '@hanzo/docs-ui/components/codeblock';
+import { CodeBlock, Pre } from '@hanzo/docs-base-ui/components/codeblock';
 import type { SchemaUIOptions } from './schema';
 import type { ResponseTab } from './operation/response-tabs';
 import type { ExampleRequestItem } from './operation/request-tabs';

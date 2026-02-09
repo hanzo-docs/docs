@@ -58,7 +58,7 @@
     "@types/react-dom": "^19.2.3",
     "eslint-config-custom": "workspace:*",
     "@hanzo/docs-core": "workspace:*",
-    "@hanzo/docs-ui": "workspace:*",
+    "@hanzo/docs-base-ui": "workspace:*",
     "tsconfig": "workspace:*",
     "tsdown": "^0.20.3",
     "typescript": "^5.9.3"
@@ -69,7 +69,7 @@
     "@types/mdast": "*",
     "@types/react": "*",
     "@hanzo/docs-core": "^16.5.0",
-    "@hanzo/docs-ui": "^16.5.0",
+    "@hanzo/docs-base-ui": "^16.5.0",
     "react": "*",
     "typescript": "*"
   },
@@ -83,7 +83,7 @@
     "@types/mdast": {
       "optional": true
     },
-    "@hanzo/docs-ui": {
+    "@hanzo/docs-base-ui": {
       "optional": true
     },
     "@types/react": {

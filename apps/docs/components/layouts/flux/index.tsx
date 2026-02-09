@@ -1,7 +1,7 @@
 import { baseOptions, linkItems, logo } from '@/components/layouts/shared';
 import { source } from '@/lib/source';
 import { getSection } from '@/lib/source/navigation';
-import { getSidebarTabs } from '@hanzo/docs-ui/components/sidebar/tabs/index';
+import { getSidebarTabs } from '@hanzo/docs-base-ui/components/sidebar/tabs/index';
 import type { ReactNode } from 'react';
 import { LayoutClient } from './client';
 
