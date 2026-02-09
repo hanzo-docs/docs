@@ -1,5 +1,11 @@
 # next-docs-zeta
 
+## 16.5.3
+
+### Patch Changes
+
+- 9fe9f7c: Rebrand from Fuma Nama to Hanzo AI, update canonical URL to hanzoai.github.io/docs, fix DTS generation OOM in unified wrapper package, and update all package metadata.
+
 ## 16.5.2
 
 ### Patch Changes
