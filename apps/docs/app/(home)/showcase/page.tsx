@@ -22,7 +22,7 @@ export const metadata = createMetadata({
   title: 'Showcase',
   description: 'Some cool websites using Hanzo Docs',
   openGraph: {
-    url: 'https://docs.hanzo.ai/showcase',
+    url: 'https://hanzoai.github.io/docs/showcase',
   },
 });
 

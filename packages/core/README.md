@@ -2,4 +2,4 @@
 
 The core library for Hanzo Docs.
 
-📘 Learn More: [Documentation](https://docs.hanzo.ai)
+📘 Learn More: [Documentation](https://hanzoai.github.io/docs)
