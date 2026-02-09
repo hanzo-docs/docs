@@ -17,7 +17,7 @@ Ringtail enables t-of-n threshold signing where:
 
 ## Protocol Parameters
 
-```capnp
+```c
 struct RingtailParams {
   m @0 :UInt16 = 8;                # Matrix rows
   n @1 :UInt16 = 7;                # Matrix columns
@@ -43,7 +43,7 @@ Each party i:
 3. Computes MACs for all other parties
 4. Broadcasts D_i with MACs
 
-```capnp
+```c
 struct RingtailRound1Output {
   partyId @0 :UInt32;
   sessionId @1 :UInt64;
@@ -62,7 +62,7 @@ Each party i:
 4. Computes response z_i = r_i + c * s_i (where s_i is secret share)
 5. Broadcasts z_i
 
-```capnp
+```c
 struct RingtailRound2Output {
   partyId @0 :UInt32;
   sessionId @1 :UInt64;
@@ -79,7 +79,7 @@ Combiner aggregates responses:
 3. Computes correction term delta
 4. Outputs signature (c, z, delta)
 
-```capnp
+```c
 struct RingtailSignature {
   c @0 :Poly;                      # Challenge polynomial (sparse)
   z @1 :PolyVector;                # Aggregated response vector
@@ -91,7 +91,7 @@ struct RingtailSignature {
 
 ## Party Interface
 
-```capnp
+```c
 interface RingtailParty {
   # Get party information
   getInfo @0 () -> (info :RingtailPartyInfo);
@@ -118,7 +118,7 @@ interface RingtailParty {
 
 ## Coordinator Interface
 
-```capnp
+```c
 interface RingtailCoordinator {
   # Initialize a new signing session
   initSession @0 (message :Data, participants :List(UInt32)) -> (sessionId :UInt64);
@@ -198,7 +198,7 @@ valid, _ := party.Verify(ctx, signature, []byte("Message to sign"))
 
 ## Party Status
 
-```capnp
+```c
 enum RingtailPartyStatus {
   idle @0;
   signingRound1 @1;
@@ -213,7 +213,7 @@ enum RingtailPartyStatus {
 
 Sessions can be aborted:
 
-```capnp
+```c
 struct RingtailAbort {
   sessionId @0 :UInt64;
   reason @1 :Text;

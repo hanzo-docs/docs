@@ -18,7 +18,7 @@ Unlike JSON-RPC used by MCP, ZAP leverages Cap'n Proto's zero-copy serialization
 - **Shared memory**: Messages can be passed between processes without copying
 - **Compact encoding**: Binary format is 2-10x smaller than JSON
 
-```capnp
+```c
 struct ToolCall {
   id @0 :Text;
   name @1 :Text;
@@ -31,7 +31,7 @@ struct ToolCall {
 
 ZAP uses Cap'n Proto's capability-based RPC system:
 
-```capnp
+```c
 interface Zap {
   init @0 (client :ClientInfo) -> (server :ServerInfo);
   listTools @1 () -> (tools :ToolList);
@@ -49,7 +49,7 @@ interface Zap {
 
 ZAP maintains full backward compatibility with MCP through the Gateway interface:
 
-```capnp
+```c
 interface Gateway extends(Zap) {
   addServer @0 (name :Text, url :Text, config :ServerConfig) -> (id :Text);
   removeServer @1 (id :Text) -> ();
@@ -95,7 +95,7 @@ The Gateway can bridge:
 
 Tools are functions that agents can invoke:
 
-```capnp
+```c
 struct Tool {
   name @0 :Text;
   description @1 :Text;
@@ -108,7 +108,7 @@ struct Tool {
 
 Resources are data sources with optional streaming:
 
-```capnp
+```c
 struct Resource {
   uri @0 :Text;
   name @1 :Text;
@@ -127,7 +127,7 @@ interface ResourceStream {
 
 Prompts are reusable message templates:
 
-```capnp
+```c
 struct Prompt {
   name @0 :Text;
   description @1 :Text;
