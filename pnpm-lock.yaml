@@ -59,6 +59,9 @@ importers:
       '@ai-sdk/react':
         specifier: ^3.0.79
         version: 3.0.79(react@19.2.4)(zod@4.3.6)
+      '@hanzo/docs-base-ui':
+        specifier: workspace:*
+        version: link:../../packages/radix-ui
       '@hanzo/docs-core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -80,9 +83,6 @@ importers:
       '@hanzo/docs-typescript':
         specifier: workspace:^
         version: link:../../packages/typescript
-      '@hanzo/docs-ui':
-        specifier: workspace:*
-        version: link:../../packages/radix-ui
       '@mixedbread/sdk':
         specifier: ^0.50.1
         version: 0.50.1
@@ -305,7 +305,7 @@ importers:
         version: link:../../packages/hanzo-docs
       '@hanzo/docs-base-ui':
         specifier: workspace:*
-        version: link:../../packages/base-ui
+        version: link:../../packages/radix-ui
       '@hanzo/docs-core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -408,7 +408,7 @@ importers:
         version: 4.4.2(@types/node@25.2.1)(@types/react-dom@19.2.3(@types/react@19.2.13))(@types/react@19.2.13)(jiti@2.6.1)(lightningcss@1.31.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)
       '@hanzo/docs-base-ui':
         specifier: workspace:*
-        version: link:../../packages/base-ui
+        version: link:../../packages/radix-ui
       '@hanzo/docs-core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -445,7 +445,7 @@ importers:
     dependencies:
       '@hanzo/docs-base-ui':
         specifier: workspace:*
-        version: link:../../packages/base-ui
+        version: link:../../packages/radix-ui
       '@hanzo/docs-content-collections':
         specifier: workspace:*
         version: link:../../packages/content-collections
@@ -488,7 +488,7 @@ importers:
     dependencies:
       '@hanzo/docs-base-ui':
         specifier: workspace:*
-        version: link:../../packages/base-ui
+        version: link:../../packages/radix-ui
       '@hanzo/docs-core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -546,7 +546,7 @@ importers:
     dependencies:
       '@hanzo/docs-base-ui':
         specifier: workspace:*
-        version: link:../../packages/base-ui
+        version: link:../../packages/radix-ui
       '@hanzo/docs-core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -586,7 +586,7 @@ importers:
         version: link:../../packages/hanzo-docs
       '@hanzo/docs-base-ui':
         specifier: workspace:*
-        version: link:../../packages/base-ui
+        version: link:../../packages/radix-ui
       '@hanzo/docs-core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -635,7 +635,7 @@ importers:
     dependencies:
       '@hanzo/docs-base-ui':
         specifier: workspace:*
-        version: link:../../packages/base-ui
+        version: link:../../packages/radix-ui
       '@hanzo/docs-core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -687,7 +687,7 @@ importers:
     dependencies:
       '@hanzo/docs-base-ui':
         specifier: workspace:*
-        version: link:../../packages/base-ui
+        version: link:../../packages/radix-ui
       '@hanzo/docs-core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -730,7 +730,7 @@ importers:
     dependencies:
       '@hanzo/docs-base-ui':
         specifier: workspace:*
-        version: link:../../packages/base-ui
+        version: link:../../packages/radix-ui
       '@hanzo/docs-core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -785,7 +785,7 @@ importers:
     dependencies:
       '@hanzo/docs-base-ui':
         specifier: workspace:*
-        version: link:../../packages/base-ui
+        version: link:../../packages/radix-ui
       '@hanzo/docs-core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -831,7 +831,7 @@ importers:
     dependencies:
       '@hanzo/docs-base-ui':
         specifier: workspace:*
-        version: link:../../packages/base-ui
+        version: link:../../packages/radix-ui
       '@hanzo/docs-core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -886,7 +886,7 @@ importers:
         version: link:../../packages/hanzo-docs
       '@hanzo/docs-base-ui':
         specifier: workspace:*
-        version: link:../../packages/base-ui
+        version: link:../../packages/radix-ui
       '@hanzo/docs-core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -941,7 +941,7 @@ importers:
     dependencies:
       '@hanzo/docs-base-ui':
         specifier: workspace:*
-        version: link:../../packages/base-ui
+        version: link:../../packages/radix-ui
       '@hanzo/docs-core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -990,7 +990,7 @@ importers:
     dependencies:
       '@hanzo/docs-base-ui':
         specifier: workspace:*
-        version: link:../../packages/base-ui
+        version: link:../../packages/radix-ui
       '@hanzo/docs-core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -1054,7 +1054,7 @@ importers:
     dependencies:
       '@hanzo/docs-base-ui':
         specifier: workspace:*
-        version: link:../../packages/base-ui
+        version: link:../../packages/radix-ui
       '@hanzo/docs-core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -1121,7 +1121,7 @@ importers:
     dependencies:
       '@hanzo/docs-base-ui':
         specifier: workspace:*
-        version: link:../../packages/base-ui
+        version: link:../../packages/radix-ui
       '@hanzo/docs-core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -1188,7 +1188,7 @@ importers:
     dependencies:
       '@hanzo/docs-base-ui':
         specifier: workspace:*
-        version: link:../../packages/base-ui
+        version: link:../../packages/radix-ui
       '@hanzo/docs-core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -1255,7 +1255,7 @@ importers:
     dependencies:
       '@hanzo/docs-base-ui':
         specifier: workspace:*
-        version: link:../../packages/base-ui
+        version: link:../../packages/radix-ui
       '@hanzo/docs-core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -1292,7 +1292,7 @@ importers:
     dependencies:
       '@hanzo/docs-base-ui':
         specifier: workspace:*
-        version: link:../../packages/base-ui
+        version: link:../../packages/radix-ui
       '@hanzo/docs-core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -1359,7 +1359,7 @@ importers:
     dependencies:
       '@hanzo/docs-base-ui':
         specifier: workspace:*
-        version: link:../../packages/base-ui
+        version: link:../../packages/radix-ui
       '@hanzo/docs-core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -1426,7 +1426,7 @@ importers:
     dependencies:
       '@hanzo/docs-base-ui':
         specifier: workspace:*
-        version: link:../../packages/base-ui
+        version: link:../../packages/radix-ui
       '@hanzo/docs-core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -1502,7 +1502,7 @@ importers:
     dependencies:
       '@hanzo/docs-base-ui':
         specifier: workspace:*
-        version: link:../../packages/base-ui
+        version: link:../../packages/radix-ui
       '@hanzo/docs-core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -1572,7 +1572,7 @@ importers:
     dependencies:
       '@hanzo/docs-base-ui':
         specifier: workspace:*
-        version: link:../../packages/base-ui
+        version: link:../../packages/radix-ui
       '@hanzo/docs-core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -1627,7 +1627,7 @@ importers:
     dependencies:
       '@hanzo/docs-base-ui':
         specifier: workspace:*
-        version: link:../../packages/base-ui
+        version: link:../../packages/radix-ui
       '@hanzo/docs-core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -2035,7 +2035,7 @@ importers:
         version: 2.3.14
       '@hanzo/docs-base-ui':
         specifier: workspace:*
-        version: link:../base-ui
+        version: link:../radix-ui
       '@hanzo/docs-core':
         specifier: workspace:*
         version: link:../core
@@ -2119,7 +2119,7 @@ importers:
     dependencies:
       '@hanzo/docs-base-ui':
         specifier: workspace:*
-        version: link:../base-ui
+        version: link:../radix-ui
       '@hanzo/docs-cli':
         specifier: workspace:*
         version: link:../cli
@@ -2156,9 +2156,6 @@ importers:
       '@hanzo/docs-typescript':
         specifier: workspace:*
         version: link:../typescript
-      '@hanzo/docs-ui':
-        specifier: workspace:*
-        version: link:../radix-ui
       '@hanzo/mdx':
         specifier: ^14.0.0
         version: 14.2.5(@hanzo/ui@5.3.34(@hanzo/docs-core@packages+core)(@hookform/resolvers@3.10.0(react-hook-form@7.71.1(react@19.2.4)))(@modelcontextprotocol/sdk@1.26.0(zod@4.3.6))(@types/react-dom@19.2.3(@types/react@19.2.13))(@types/react@19.2.13)(embla-carousel@8.6.0)(lucide-react@0.563.0(react@19.2.4))(mobx@6.15.0)(next-themes@0.4.6(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(next@16.1.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react-hook-form@7.71.1(react@19.2.4))(react@19.2.4)(tailwindcss@4.1.18)(validator@13.15.26))(next@16.1.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)(vite@7.3.1(@types/node@25.2.1)(jiti@2.6.1)(lightningcss@1.31.1)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
@@ -2584,7 +2581,7 @@ importers:
     devDependencies:
       '@hanzo/docs-base-ui':
         specifier: workspace:*
-        version: link:../base-ui
+        version: link:../radix-ui
       '@hanzo/docs-core':
         specifier: workspace:*
         version: link:../core
@@ -2629,7 +2626,7 @@ importers:
     dependencies:
       '@hanzo/docs-base-ui':
         specifier: workspace:*
-        version: link:../base-ui
+        version: link:../radix-ui
       '@hanzo/docs-core':
         specifier: workspace:*
         version: link:../core
@@ -2715,7 +2712,7 @@ importers:
     devDependencies:
       '@hanzo/docs-base-ui':
         specifier: workspace:*
-        version: link:../base-ui
+        version: link:../radix-ui
       '@hanzo/docs-core':
         specifier: workspace:*
         version: link:../core
@@ -2913,7 +2910,7 @@ importers:
         version: 3.2.0
       '@hanzo/docs-base-ui':
         specifier: workspace:*
-        version: link:../base-ui
+        version: link:../radix-ui
       '@types/node':
         specifier: 25.2.1
         version: 25.2.1
@@ -3004,7 +3001,7 @@ importers:
     devDependencies:
       '@hanzo/docs-base-ui':
         specifier: workspace:*
-        version: link:../base-ui
+        version: link:../radix-ui
       '@types/hast':
         specifier: ^3.0.4
         version: 3.0.4
@@ -3062,7 +3059,7 @@ importers:
     devDependencies:
       '@hanzo/docs-base-ui':
         specifier: workspace:*
-        version: link:../base-ui
+        version: link:../radix-ui
       '@hanzo/docs-core':
         specifier: workspace:*
         version: link:../core

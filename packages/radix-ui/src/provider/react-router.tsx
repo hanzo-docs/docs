@@ -1,6 +1,5 @@
 'use client';
-import type { ComponentProps } from 'react';
-import { useEffectEvent } from '@hanzo/docs-core/utils/use-effect-event';
+import { type ComponentProps, useEffectEvent } from 'react';
 import { RootProvider as BaseProvider } from '@/provider/base';
 import { ReactRouterProvider } from '@hanzo/docs-core/framework/react-router';
 import type { Framework } from '@hanzo/docs-core/framework';
