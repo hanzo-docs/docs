@@ -7,8 +7,11 @@ const withAnalyzer = createBundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
 });
 
+const isGitHubPages = process.env.GITHUB_PAGES === '1';
+
 const config: NextConfig = {
   output: process.env.NEXT_EXPORT === '1' ? 'export' : undefined,
+  basePath: isGitHubPages ? '/docs' : undefined,
   reactStrictMode: true,
   // Use webpack resolve aliases for virtual modules
   webpack: (config) => {

@@ -94,7 +94,7 @@ export default function Page() {
         <p className="text-2xl tracking-tight leading-snug font-light col-span-full md:text-3xl xl:text-4xl">
           Hanzo Docs is a <span className="text-brand font-medium">React.js</span> documentation
           framework for <span className="text-brand font-medium">Developers</span>, beautifully
-          designed by <span className="text-brand font-medium">Fuma Nama</span>. Bringing powerful
+          designed by <span className="text-brand font-medium">Hanzo AI</span>. Bringing powerful
           features for your docs workflows, with high customizability to fit your preferences, works
           seamlessly with any React.js framework, CMS — anything.
         </p>
@@ -294,7 +294,7 @@ Like headless docs to build exactly what you need.`,
     avatar: 'https://avatars.githubusercontent.com/u/35677084',
     user: 'Anthony Shew',
     role: 'Turbo DX at Vercel',
-    message: `Major shoutout to @fuma_nama for making hanzo-docs, a gorgeous documentation framework that composes beautifully into the App Router.`,
+    message: `Major shoutout to @hanzoai for making hanzo-docs, a gorgeous documentation framework that composes beautifully into the App Router.`,
   },
   {
     user: 'Aiden Bai',
