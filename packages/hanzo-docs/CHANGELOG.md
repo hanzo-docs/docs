@@ -1,5 +1,26 @@
 # @hanzo/docs
 
+## 16.4.1
+
+### Patch Changes
+
+- 9fe9f7c: Rebrand from Fuma Nama to Hanzo AI, update canonical URL to hanzoai.github.io/docs, fix DTS generation OOM in unified wrapper package, and update all package metadata.
+- Updated dependencies [9fe9f7c]
+  - @hanzo/docs-core@16.5.3
+  - @hanzo/docs-base-ui@16.5.3
+  - @hanzo/docs-mdx@14.2.8
+  - @hanzo/docs-openapi@10.3.4
+  - @hanzo/docs-cli@1.2.5
+  - @hanzo/docs-twoslash@3.1.14
+  - @hanzo/docs-typescript@5.1.3
+  - @hanzo/docs-docgen@3.0.7
+  - @hanzo/docs-python@0.0.9
+  - @hanzo/docs-obsidian@0.0.12
+  - @hanzo/docs-press@0.0.9
+  - @hanzo/docs-mdx-remote@1.4.6
+  - @hanzo/docs-content-collections@1.2.7
+  - @hanzo/mdx-runtime@1.6.1
+
 ## 16.2.8
 
 ### Patch Changes
