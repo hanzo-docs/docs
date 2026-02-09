@@ -35,19 +35,22 @@ jobs:
           node-version: '22'
           cache: 'pnpm'
 
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Build packages
         env:
           NODE_OPTIONS: '--max-old-space-size=8192'
-          SKIP_DTS: '1'
         run: pnpm build --filter=./packages/*
 
       - name: Build docs with static export
         working-directory: apps/docs
         env:
           GITHUB_PAGES: '1'
+          NODE_OPTIONS: '--max-old-space-size=8192'
         run: pnpm build
 
       - name: Setup Pages
