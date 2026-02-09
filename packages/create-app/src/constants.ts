@@ -17,7 +17,9 @@ export interface TemplateInfo {
     | 'react-router-spa'
     | 'tanstack-start'
     | 'tanstack-start-spa'
-    | '+next+hanzo-docs-mdx+static';
+    | '+next+hanzo-docs-mdx+static'
+    | '+next+hanzo-docs-mdx+org'
+    | '+next+hanzo-docs-mdx+hub';
   label: string;
   appDir: string;
   /**
@@ -44,6 +46,20 @@ export const templates: TemplateInfo[] = [
     label: 'Next.js Static: Hanzo Docs MDX',
     appDir: '',
     rootProviderPath: 'components/provider.tsx',
+  },
+  {
+    value: '+next+hanzo-docs-mdx+org',
+    label: 'Next.js Org Docs: Hanzo Docs MDX',
+    hint: 'multi-org project documentation with project switcher',
+    appDir: '',
+    rootProviderPath: 'components/provider.tsx',
+  },
+  {
+    value: '+next+hanzo-docs-mdx+hub',
+    label: 'Next.js Org Hub: Hanzo Docs',
+    hint: 'org landing page linking to all project docs',
+    appDir: '',
+    rootProviderPath: 'app/layout.tsx',
   },
   {
     value: 'waku',
