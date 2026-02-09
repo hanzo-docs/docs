@@ -57,8 +57,8 @@ export function Hero() {
           className="absolute inset-0 animate-fd-fade-in duration-800"
           colors={
             resolvedTheme === 'dark'
-              ? ['#39BE1C', '#9c2f05', '#7A2A0000']
-              : ['#fcfc51', '#ffa057', '#7A2A0020']
+              ? ['#fd4444', '#4a0000', '#1a000000']
+              : ['#ff6b6b', '#fd4444', '#e03e3e20']
           }
           colorBack="#00000000"
           softness={1}
@@ -75,7 +75,7 @@ export function Hero() {
           width={720}
           height={720}
           colorBack="#00000000"
-          colorFront={resolvedTheme === 'dark' ? '#DF3F00' : '#fa8023'}
+          colorFront={resolvedTheme === 'dark' ? '#fd4444' : '#e03e3e'}
           shape="sphere"
           type="4x4"
           scale={0.5}
@@ -335,7 +335,7 @@ export function AgnosticBackground() {
     >
       <Dithering
         colorBack="#00000000"
-        colorFront={resolvedTheme === 'dark' ? '#fc7744' : '#c6bb58'}
+        colorFront={resolvedTheme === 'dark' ? '#fd4444' : '#ff6b6b'}
         shape="warp"
         type="4x4"
         speed={visible ? 0.4 : 0}
@@ -353,11 +353,11 @@ export function ContentAdoptionBackground(props: ComponentProps<typeof GrainGrad
     <GrainGradient
       colors={
         resolvedTheme === 'dark'
-          ? ['#39BE1C', '#9c2f05', '#7A2A0000']
-          : ['#DF3F00', '#fcfc51', '#ffa057', '#7A2A0020']
+          ? ['#fd4444', '#4a0000', '#1a000000']
+          : ['#ff6b6b', '#fd4444', '#e03e3e', '#1a000020']
       }
       speed={0}
-      colorBack="#1D1004"
+      colorBack="#1a0000"
       shape="sphere"
       {...props}
     />
