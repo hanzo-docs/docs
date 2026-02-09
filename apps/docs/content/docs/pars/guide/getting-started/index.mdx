@@ -1,0 +1,151 @@
+---
+title: Getting Started
+description: The basics of Pars DAO governance
+---
+
+# Getting Started with Pars DAO
+
+Pars DAO is a decentralized governance system for the global Persian community. This guide covers the fundamentals you need to participate.
+
+## The Basics
+
+### What is Pars DAO?
+
+Pars DAO is a decentralized autonomous organization that governs:
+- **Pars Network** - The underlying blockchain infrastructure
+- **PARS-10 Committees** - 10 specialized operational units
+- **Treasury** - Community-controlled funds
+- **Protocol Parameters** - Network configuration and upgrades
+
+### Key Components
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      Pars Council (شورا)                     │
+│                    Top-level governance                      │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐   │
+│  │ Security │  │ Treasury │  │  Health  │  │ Culture  │   │
+│  │   امنیّت  │  │   خزانه   │  │  سلامت   │  │  فرهنگ   │   │
+│  └──────────┘  └──────────┘  └──────────┘  └──────────┘   │
+│                                                              │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐   │
+│  │ Research │  │  Infra   │  │ Consular │  │ Venture  │   │
+│  │   دانش   │  │ سازندگی  │  │   پیام   │  │   وقف    │   │
+│  └──────────┘  └──────────┘  └──────────┘  └──────────┘   │
+│                                                              │
+│  ┌──────────┐  ┌──────────┐                                │
+│  │Governance│  │  Impact  │                                │
+│  │   داد    │  │  میزان   │                                │
+│  └──────────┘  └──────────┘                                │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Tokens
+
+| Token | Purpose | How to Get |
+|-------|---------|------------|
+| **PARS** | Base governance token | Bond collateral, DEX |
+| **xPARS** | Staked PARS (rebasing) | Stake PARS |
+| **veASHA** | Voting power | Lock ASHA/xPARS |
+| **ASHA** | Reserve token | Bond collateral |
+
+### Governance Flow
+
+1. **Acquire ASHA** - Bond collateral or purchase on DEX
+2. **Lock for veASHA** - Lock ASHA to receive voting power
+3. **Join Committee** - Stake minimum 1,000 veASHA
+4. **Submit Resolutions** - Propose changes (requires 10K veASHA)
+5. **Vote** - Cast votes on active Resolutions
+6. **Execute** - Passed Resolutions execute after timelock
+
+## Connecting to Pars
+
+### Supported Wallets
+
+- MetaMask
+- WalletConnect
+- Rabby
+- Safe (Multisig)
+- Hardware wallets (Ledger, Trezor)
+
+### Network Configuration
+
+| Parameter | Value |
+|-----------|-------|
+| Network Name | Pars Network |
+| Chain ID | 6133 |
+| RPC URL | `https://rpc.pars.network` |
+| Block Explorer | `https://explorer.pars.network` |
+| Currency | PARS |
+
+### Adding Pars Network
+
+1. Open your wallet
+2. Go to Settings → Networks → Add Network
+3. Enter the network details above
+4. Click Save
+
+Or visit [pars.vote](https://pars.vote) and click "Add Network" for automatic configuration.
+
+## Your First Steps
+
+### 1. Get PARS Tokens
+
+**Option A: Bond Collateral**
+- Go to [pars.vote/bond](https://pars.vote/bond)
+- Select collateral type (ETH, BTC, USDC, etc.)
+- Approve and bond
+- Receive ASHA at a discount
+
+**Option B: Purchase on DEX**
+- Visit a supported DEX
+- Swap for PARS or ASHA
+
+### 2. Stake for Voting Power
+
+```
+PARS → Stake → xPARS → Lock → veASHA
+              or
+ASHA → Lock → veASHA
+```
+
+1. Go to [pars.vote/stake](https://pars.vote/stake)
+2. Approve ASHA spending
+3. Choose lock duration (longer = more voting power)
+4. Confirm transaction
+
+### 3. Explore the DAO
+
+- **[Dashboard](https://pars.vote)** - Overview of all activity
+- **[Committees](https://pars.vote/committees)** - Browse the 10 Committees
+- **[Resolutions](https://pars.vote/resolutions)** - Active proposals
+- **[Treasury](https://pars.vote/treasury)** - Fund allocations
+
+## Understanding Voting Power
+
+Your voting power depends on:
+
+1. **Token Amount** - Base amount of ASHA locked
+2. **Lock Duration** - Longer locks = higher multiplier (up to 4x)
+3. **Karma Score** - Activity-based reputation (up to 3.16x)
+
+**Formula:**
+```
+veASHA = tokens × sqrt(karma/100) × (1 + lock_months × 0.1)
+```
+
+**Example:**
+- Lock 1,000 ASHA for 24 months
+- With 400 Karma score
+- veASHA = 1,000 × 2.0 × 3.4 = **6,800 veASHA**
+
+## Safety Tips
+
+1. **Verify URLs** - Always use official pars.vote domain
+2. **Check transactions** - Review before signing
+3. **Hardware wallet** - Recommended for large holdings
+4. **Revoke approvals** - Remove unused token approvals
+5. **Test first** - Try with small amounts initially
