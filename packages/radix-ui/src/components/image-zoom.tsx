@@ -1,8 +1,7 @@
 'use client';
 
 import { Image, type ImageProps } from '@hanzo/docs-core/framework';
-import type { ComponentProps } from 'react';
-import { useEffectEvent } from '@hanzo/docs-core/utils/use-effect-event';
+import { type ComponentProps, useEffectEvent } from 'react';
 import Zoom, { type UncontrolledProps } from 'react-medium-image-zoom';
 import './image-zoom.css';
 

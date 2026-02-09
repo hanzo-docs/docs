@@ -1,1 +1,1 @@
-export * from '@hanzo/docs-ui/components/steps';
+export * from '@hanzo/docs-base-ui/components/steps';

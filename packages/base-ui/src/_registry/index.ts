@@ -15,7 +15,7 @@ export const registry: Registry = {
     ui: '@hanzo/docs-base-ui',
   },
   onResolve(ref) {
-    return resolveExternal(ref, '@hanzo/docs-ui', srcDir) ?? ref;
+    return resolveExternal(ref, '@hanzo/docs-base-ui', srcDir) ?? ref;
   },
   components: [
     ...commonComponents,
@@ -358,7 +358,7 @@ export const registry: Registry = {
   dependencies: {
     '@hanzo/docs-core': null,
     '@hanzo/docs-base-ui': null,
-    '@hanzo/docs-ui': 'npm:@hanzo/docs-base-ui',
+    '@hanzo/docs-base-ui': 'npm:@hanzo/docs-base-ui',
     react: null,
   },
 };
