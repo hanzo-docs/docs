@@ -1,0 +1,15 @@
+{
+  "title": "Services",
+  "description": "Hanzo AI Platform Services",
+  "defaultOpen": true,
+  "pages": [
+    "index",
+    "iam",
+    "kms",
+    "gateway",
+    "vector",
+    "nexus",
+    "cloud",
+    "commerce"
+  ]
+}
