@@ -1,6 +1,5 @@
 import { useTreeContext, useTreePath } from '@/contexts/tree';
-import { type FC, type ReactNode, useMemo, Fragment } from 'react';
-import { useEffectEvent } from '@hanzo/docs-core/utils/use-effect-event';
+import { type FC, Fragment, type ReactNode, useEffectEvent, useMemo } from 'react';
 import type * as PageTree from '@hanzo/docs-core/page-tree';
 import type * as Base from './base';
 

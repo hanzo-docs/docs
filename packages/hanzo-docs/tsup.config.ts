@@ -33,7 +33,7 @@ export default defineConfig({
     // Core packages (we re-export from these)
     '@hanzo/docs-core',
     '@hanzo/docs-mdx',
-    '@hanzo/docs-ui',
+    '@hanzo/docs-base-ui',
     '@hanzo/docs-ui',
     '@hanzo/docs-openapi',
     '@hanzo/docs-twoslash',

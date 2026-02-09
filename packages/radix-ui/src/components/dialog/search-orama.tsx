@@ -1,8 +1,7 @@
 'use client';
 
 import { type OramaCloudOptions, useDocsSearch } from '@hanzo/docs-core/search/client';
-import { type ReactNode, useMemo, useState } from 'react';
-import { useEffectEvent } from '@hanzo/docs-core/utils/use-effect-event';
+import { type ReactNode, useEffectEvent, useMemo, useState } from 'react';
 import { useOnChange } from '@hanzo/docs-core/utils/use-on-change';
 import {
   SearchDialog,
