@@ -1,0 +1,61 @@
+---
+title: Example Configuration
+description: Sample config.toml for Hanzo Dev.
+---
+
+## Sample Configuration
+
+```toml
+# ~/.hanzo/config.toml
+
+# Default model
+model = "gpt-5.1"
+model_reasoning_effort = "medium"
+
+# Sandbox policy
+sandbox = "workspace-write"
+approval_policy = "on-failure"
+
+# Auto Drive settings
+auto_drive_use_chat_model = false
+auto_drive_observer_cadence = 5
+
+[auto_drive]
+review_enabled = true
+agents_enabled = true
+qa_automation_enabled = true
+cross_check_enabled = true
+observer_enabled = true
+coordinator_routing = true
+continue_mode = "ten-seconds"
+model = "gpt-5.1"
+model_reasoning_effort = "high"
+auto_resolve_review_attempts = 5
+
+# MCP servers
+[mcp_servers.my-tool]
+command = "npx"
+args = ["-y", "@my/mcp-server"]
+env = { "API_KEY" = "sk-..." }
+
+# Agent configuration
+[[agents]]
+name = "claude-opus-4.5"
+command = "claude"
+enabled = true
+description = "Claude Opus agent"
+
+[[agents]]
+name = "custom-coder"
+command = "/usr/local/bin/coder"
+args_write = ["-s", "workspace-write", "--dangerously-bypass-approvals-and-sandbox", "exec", "--skip-git-repo-check"]
+enabled = true
+
+# Subagent orchestration
+[[subagents.commands]]
+name = "plan"
+read_only = true
+agents = ["code-gpt-5.2-codex", "claude-opus-4.5"]
+orchestrator_instructions = "Have each agent analyze the problem from different angles."
+agent_instructions = "Be thorough and consider edge cases."
+```
