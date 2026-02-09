@@ -186,6 +186,9 @@ importers:
       '@hanzo/docs-typescript':
         specifier: workspace:^
         version: link:../../packages/typescript
+      '@hanzo/docs-ui':
+        specifier: workspace:*
+        version: link:../../packages/radix-ui
       '@mixedbread/sdk':
         specifier: ^0.50.1
         version: 0.50.1
