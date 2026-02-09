@@ -8,7 +8,7 @@
   ],
   "homepage": "https://hanzoai.github.io/docs",
   "license": "MIT",
-  "author": "Fuma Nama",
+  "author": "Hanzo AI",
   "repository": "github:hanzoai/docs",
   "bin": {
     "hanzo-docs": "./dist/index.js"
