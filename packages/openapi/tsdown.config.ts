@@ -1,4 +1,5 @@
 import { defineConfig } from 'tsdown';
+import { compileInline } from './scripts/compile-inline.utils';
 
 export default defineConfig({
   format: 'esm',
@@ -6,6 +7,7 @@ export default defineConfig({
   entry: [
     './src/index.ts',
     './src/ui/index.ts',
+    './src/ui/base.tsx',
     './src/ui/client/index.tsx',
     './src/playground/{index,client}.tsx',
     './src/scalar/index.tsx',
@@ -16,5 +18,8 @@ export default defineConfig({
   dts: {
     sourcemap: false,
   },
-  external: [/json-schema-typed/, 'openapi-types'],
+  async onSuccess() {
+    await compileInline();
+  },
+  inlineOnly: [],
 });

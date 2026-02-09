@@ -1,15 +1,15 @@
 {
-  "name": "@hanzo/docs-cli",
-  "version": "1.2.2",
-  "description": "The CLI tool for Hanzo Docs",
+  "name": "@fumadocs/cli",
+  "version": "1.2.4",
+  "description": "The CLI tool for Fumadocs",
   "keywords": [
     "Docs",
-    "Hanzo Docs"
+    "Fumadocs"
   ],
-  "homepage": "https://docs.hanzo.ai",
+  "homepage": "https://fumadocs.dev",
   "license": "MIT",
   "author": "Fuma Nama",
-  "repository": "github:hanzoai/docs",
+  "repository": "github:fuma-nama/fumadocs",
   "bin": {
     "fumadocs": "./dist/index.js"
   },
@@ -35,22 +35,22 @@
     "types:check": "tsc --noEmit"
   },
   "dependencies": {
-    "@clack/prompts": "^0.11.0",
-    "commander": "^14.0.2",
+    "@clack/prompts": "^1.0.0",
+    "commander": "^14.0.3",
     "magic-string": "^0.30.21",
-    "oxc-parser": "^0.110.0",
-    "oxc-resolver": "^11.16.3",
+    "oxc-parser": "^0.112.0",
+    "oxc-resolver": "^11.17.0",
     "package-manager-detector": "^1.6.0",
     "picocolors": "^1.1.1",
     "tinyexec": "^1.0.2",
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@oxc-project/types": "^0.110.0",
-    "@types/node": "25.0.10",
+    "@oxc-project/types": "^0.112.0",
+    "@types/node": "25.2.1",
     "eslint-config-custom": "workspace:*",
-    "shadcn": "3.7.0",
+    "shadcn": "3.8.4",
     "tsconfig": "workspace:*",
-    "tsdown": "^0.19.0"
+    "tsdown": "^0.20.3"
   }
 }
