@@ -1,6 +1,6 @@
 'use client';
-import * as base from 'fumadocs-core/highlight/core/client';
-import { configDefault } from 'fumadocs-core/highlight';
+import * as base from '@hanzo/docs-core/highlight/core/client';
+import { configDefault } from '@hanzo/docs-core/highlight';
 import type { ReactNode } from 'react';
 
 export function ShikiConfigProvider({ children }: { children: ReactNode }) {

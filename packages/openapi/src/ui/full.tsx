@@ -1,6 +1,6 @@
 import type { OpenAPIServer } from '@/server';
 import * as base from './base';
-import { configDefault } from 'fumadocs-core/highlight';
+import { configDefault } from '@hanzo/docs-core/highlight';
 import { getTypescriptSchema } from '@/utils/get-typescript-schema';
 import { ApiPageProps } from './api-page';
 import { ShikiConfigProvider } from './full.client';

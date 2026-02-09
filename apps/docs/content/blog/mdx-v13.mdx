@@ -1,5 +1,5 @@
 ---
-title: Fumadocs MDX v13
+title: Hanzo Docs MDX v13
 description: Better cross-framework compatibility and flexibility.
 author: Fuma Nama
 date: 2025-10-23
@@ -7,17 +7,17 @@ date: 2025-10-23
 
 ## Overview
 
-Fumadocs MDX refined its API surface for better cross-framework compatibility and flexibility.
+Hanzo Docs MDX refined its API surface for better cross-framework compatibility and flexibility.
 
 ### Plugins API
 
 We introduced Plugins API, enabling extensible modifications to MDX configurations without bundler-specific code—ideal for file generation (e.g., types, indexes) or config alterations.
 
-There's a `json-schema` plugin natively provided by Fumadocs MDX.
+There's a `json-schema` plugin natively provided by Hanzo Docs MDX.
 
 ```ts title="source.config.ts"
-import jsonSchema from 'fumadocs-mdx/plugins/json-schema';
-import { defineConfig, defineDocs } from 'fumadocs-mdx/config';
+import jsonSchema from '@hanzo/docs-mdx/plugins/json-schema';
+import { defineConfig, defineDocs } from '@hanzo/docs-mdx/config';
 
 export const docs = defineDocs({
   dir: 'content/docs',
@@ -32,7 +32,7 @@ export default defineConfig({
 
 ### Next.js
 
-`createMDXSource` and `resolveFiles` are now relocated to `fumadocs-mdx/runtime/next`.
+`createMDXSource` and `resolveFiles` are now relocated to `@hanzo/docs-mdx/runtime/next`.
 
 This should not affect majority of projects, as `docs.toFumadocsSource()` is now the preferred way.
 
@@ -56,13 +56,13 @@ The `source.generated.ts` file is now moved to `.source/index.ts`, you are recom
 - run dev server/typegen to generate a `.source` folder.
 - import it over the original `source.generated.ts`.
 
-- note that both docs and `create-fumadocs-app` are updated to `.source` folder.
+- note that both docs and `create-hanzo-docs-app` are updated to `.source` folder.
 
 We also supported index file generation targeting other runtimes like Bun/Node.js.
 
 ```ts title="vite.config.ts"
 import { defineConfig } from 'vite';
-import mdx from 'fumadocs-mdx/vite';
+import mdx from '@hanzo/docs-mdx/vite';
 import * as MdxConfig from './source.config';
 
 export default defineConfig({

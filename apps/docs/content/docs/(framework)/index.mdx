@@ -1,6 +1,6 @@
 ---
 title: Quick Start
-description: Getting Started with Fumadocs
+description: Getting Started with Hanzo Docs
 icon: Rocket
 ---
 
@@ -13,21 +13,21 @@ Fumadocs has different parts:
 
 <Cards>
 
-<Card icon={<CpuIcon className="text-purple-300" />} title='Fumadocs Core' href='/docs/headless'>
+<Card icon={<CpuIcon className="text-purple-300" />} title='Hanzo Docs Core' href='/docs/headless'>
 
 Handles most of the logic, including document search, content source adapters, and Markdown extensions.
 
 </Card>
 
-<Card icon={<PanelsTopLeft className="text-blue-300" />} title='Fumadocs UI'  href='/docs/ui'>
+<Card icon={<PanelsTopLeft className="text-blue-300" />} title='Hanzo Docs UI'  href='/docs/ui'>
 
-The default theme of Fumadocs offers a beautiful look for documentation sites and interactive components.
+The default theme of Hanzo Docs offers a beautiful look for documentation sites and interactive components.
 
 </Card>
 
 <Card icon={<Database />} title='Content Source'>
 
-The source of your content, can be a CMS or local data layers like [Fumadocs MDX](/docs/mdx) (the official content source).
+The source of your content, can be a CMS or local data layers like [Hanzo Docs MDX](/docs/mdx) (the official content source).
 
 </Card>
 
@@ -74,7 +74,7 @@ bun create fumadocs-app
 It will ask you the built-in template to use:
 
 - **React.js framework**: Next.js, Waku, React Router, Tanstack Start.
-- **Content source**: Fumadocs MDX.
+- **Content source**: Hanzo Docs MDX.
 
 A new fumadocs app should be initialized. Now you can start hacking!
 
@@ -142,7 +142,7 @@ Some common questions you may encounter.
     Finally, update the base URL of pages in `source.ts`:
 
 ```ts title="lib/source.ts"
-import { loader } from 'fumadocs-core/source';
+import { loader } from '@hanzo/docs-core/source';
 
 export const source = loader({
   baseUrl: '/info', // to the new value [!code highlight]
@@ -171,7 +171,7 @@ import { defineConfig } from 'vite';
 export default defineConfig({
   resolve: {
     // add other Fumadocs deps as needed
-    noExternal: ['fumadocs-core', 'fumadocs-ui', 'fumadocs-openapi', '@fumadocs/base-ui'],
+    noExternal: ['@hanzo/docs-core', '@hanzo/docs-ui', '@hanzo/docs-openapi', '@hanzo/docs-base-ui'],
   },
 });
 ```
@@ -184,7 +184,7 @@ export default defineConfig({
 <Accordions>
   <Accordion id='node-23' title="Getting error on production build?">
 
-    Node.js 23.1 might have problems with Next.js, see [#1021](https://github.com/fuma-nama/fumadocs/issues/1021). Make sure to change your Node.js version.
+    Node.js 23.1 might have problems with Next.js, see [#1021](https://github.com/hanzoai/docs/issues/1021). Make sure to change your Node.js version.
 
   </Accordion>
   <Accordion id='dynamic-route' title="It uses Dynamic Route, will it be poor in performance?">
@@ -195,9 +195,9 @@ export default defineConfig({
     You can [enable Static Exports](/docs/deploying/static) on Next.js to get a static build output.
 
   </Accordion>
-  <Accordion id='webpack' title='Reading from "fumadocs-mdx:collections/server" is not handled by plugins'>
+  <Accordion id='webpack' title='Reading from "@hanzo/docs-mdx:collections/server" is not handled by plugins'>
 
-Webpack resolves import namespace **before** your import aliases in `tsconfig.json`. When using Fumadocs MDX, you have to rename your import alias to `collections/*` instead.
+Webpack resolves import namespace **before** your import aliases in `tsconfig.json`. When using Hanzo Docs MDX, you have to rename your import alias to `collections/*` instead.
 
 ```json title="tsconfig.json"
 {
@@ -214,7 +214,7 @@ Make sure to update the references as well.
 
 ```ts title="lib/source.ts"
 // [!code --]
-import { docs } from 'fumadocs-mdx:collections/server';
+import { docs } from '@hanzo/docs-mdx:collections/server';
 // [!code ++]
 import { docs } from 'collections/server';
 ```
@@ -255,7 +255,7 @@ import { docs } from 'collections/server';
 
 New to here? Don't worry, we are welcome for your questions.
 
-If you find anything confusing, please give your feedback on [Github Discussion](https://github.com/fuma-nama/fumadocs/discussions)!
+If you find anything confusing, please give your feedback on [Github Discussion](https://github.com/hanzoai/docs/discussions)!
 
 ### Writing Content
 
@@ -291,6 +291,6 @@ For authoring docs, make sure to read:
     title="Internationalization"
     description="Learn how to enable i18n"
   />
-  <Card href="/docs/ui/theme" title="Color Themes" description="Add themes to Fumadocs UI" />
-  <Card href="/docs/ui/layouts" title="Layouts" description="Customise your Fumadocs UI layouts" />
+  <Card href="/docs/ui/theme" title="Color Themes" description="Add themes to Hanzo Docs UI" />
+  <Card href="/docs/ui/layouts" title="Layouts" description="Customise your Hanzo Docs UI layouts" />
 </Cards>

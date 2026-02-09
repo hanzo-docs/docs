@@ -55,7 +55,7 @@ export function statusBadgesPlugin(
   const { renderBadge = (status) => <span data-status={status}>{status}</span> } = options;
 
   return {
-    name: 'fumadocs:status-badges',
+    name: 'hanzo-docs:status-badges',
     transformPageTree: {
       file(node, filePath) {
         if (!filePath) return node;

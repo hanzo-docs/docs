@@ -7,7 +7,7 @@ Fumadocs doesn't have a built-in Mermaid wrapper provided, we recommend using `m
 
 ## Setup
 
-Install the required dependencies, `next-themes` is used with Fumadocs to manage the light/dark mode.
+Install the required dependencies, `next-themes` is used with Hanzo Docs to manage the light/dark mode.
 
 ```package-install
 mermaid next-themes
@@ -24,7 +24,7 @@ Create the Mermaid component:
 Add the component as a MDX component:
 
 ```tsx title="mdx-components.tsx"
-import defaultMdxComponents from 'fumadocs-ui/mdx';
+import defaultMdxComponents from '@hanzo/docs-ui/mdx';
 import { Mermaid } from '@/components/mdx/mermaid'; // [!code ++]
 import type { MDXComponents } from 'mdx/types';
 
@@ -117,9 +117,9 @@ Sit down: 5: Me
 
 You can convert `mermaid` codeblocks into the MDX usage with the `remarkMdxMermaid` remark plugin.
 
-```tsx tab="Fumadocs MDX" title="source.config.ts"
-import { remarkMdxMermaid } from 'fumadocs-core/mdx-plugins';
-import { defineConfig } from 'fumadocs-mdx/config';
+```tsx tab="Hanzo Docs MDX" title="source.config.ts"
+import { remarkMdxMermaid } from '@hanzo/docs-core/mdx-plugins';
+import { defineConfig } from '@hanzo/docs-mdx/config';
 
 export default defineConfig({
   mdxOptions: {
