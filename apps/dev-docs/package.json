@@ -8,7 +8,7 @@
     "build:post": "bun ./scripts/post-build.ts",
     "types:check": "@hanzo/docs-mdx && next typegen && tsc --noEmit",
     "clean": "rimraf .next",
-    "dev": "next dev --port 3003",
+    "dev": "next dev --port 3003 --webpack",
     "lint": "@hanzo/docs-mdx && eslint .",
     "start": "next start"
   },
