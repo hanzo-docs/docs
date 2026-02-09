@@ -43,6 +43,8 @@ jobs:
 
       - name: Build docs with static export
         working-directory: apps/docs
+        env:
+          GITHUB_PAGES: '1'
         run: pnpm build
 
       - name: Setup Pages
