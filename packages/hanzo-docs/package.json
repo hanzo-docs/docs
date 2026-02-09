@@ -1,6 +1,6 @@
 {
   "name": "@hanzo/docs",
-  "version": "16.4.0",
+  "version": "16.4.1",
   "description": "Core documentation framework for Hanzo - source, search, i18n, and integrations",
   "keywords": [
     "Hanzo",
