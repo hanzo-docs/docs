@@ -34,7 +34,7 @@ export default defineConfig({
     '@hanzo/docs-core',
     '@hanzo/docs-mdx',
     '@hanzo/docs-ui',
-    '@hanzo/docs-radix-ui',
+    '@hanzo/docs-ui',
     '@hanzo/docs-openapi',
     '@hanzo/docs-twoslash',
     '@hanzo/docs-obsidian',
