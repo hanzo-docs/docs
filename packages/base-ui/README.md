@@ -2,4 +2,4 @@
 
 The React.js docs framework base UI components.
 
-[Read Documentation](https://hanzo-docs.dev/docs/ui)
+[Read Documentation](https://docs.hanzo.ai/docs/ui)
