@@ -63,11 +63,11 @@ async function main(): Promise<void> {
       },
       template: async () => {
         if (config.template) return config.template;
-        if (isCI) return '+next+fuma-docs-mdx';
+        if (isCI) return '+next+hanzo-docs-mdx';
 
         return select<Template>({
           message: 'Choose a template',
-          initialValue: '+next+fuma-docs-mdx',
+          initialValue: '+next+hanzo-docs-mdx',
           options: templates,
         });
       },
