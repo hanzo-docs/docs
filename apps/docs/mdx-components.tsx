@@ -1,6 +1,6 @@
 import defaultMdxComponents from '@hanzo/docs/ui/mdx';
-import * as FilesComponents from '@hanzo/docs/ui/components/files';
-import * as TabsComponents from '@hanzo/docs/ui/components/tabs';
+import { Files, File, Folder } from '@hanzo/docs/ui/components/files';
+import { Tabs, Tab, TabsContent } from '@hanzo/docs/ui/components/tabs';
 import type { MDXComponents } from 'mdx/types';
 import { Accordion, Accordions } from '@hanzo/docs/ui/components/accordion';
 import * as icons from 'lucide-react';
@@ -9,8 +9,12 @@ export function getMDXComponents(components?: MDXComponents) {
   return {
     ...(icons as unknown as MDXComponents),
     ...defaultMdxComponents,
-    ...TabsComponents,
-    ...FilesComponents,
+    Tabs,
+    Tab,
+    TabsContent,
+    Files,
+    File,
+    Folder,
     Accordion,
     Accordions,
     ...components,
