@@ -47,7 +47,7 @@ async function main(): Promise<void> {
   command.parse(process.argv);
   const defaultName = command.args[0];
   const config = command.opts();
-  intro(pc.bgCyan(pc.bold('Create Fumadocs App')));
+  intro(pc.bgCyan(pc.bold('Create Hanzo Docs App')));
 
   const options = await group(
     {

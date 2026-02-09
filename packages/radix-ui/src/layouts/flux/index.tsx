@@ -1,5 +1,5 @@
 'use client';
-import type * as PageTree from 'fumadocs-core/page-tree';
+import type * as PageTree from '@hanzo/docs-core/page-tree';
 import type { BaseLayoutProps } from '@/layouts/shared';
 import { TreeContextProvider } from '@/contexts/tree';
 import { getSidebarTabs, type GetSidebarTabsOptions } from '@/components/sidebar/tabs';
