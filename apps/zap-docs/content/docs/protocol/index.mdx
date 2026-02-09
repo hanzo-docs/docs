@@ -41,7 +41,7 @@ ZAP uses Cap'n Proto's standard wire format for all messages.
 
 RPC messages wrap Cap'n Proto method calls:
 
-```capnp
+```c
 struct Message {
   union {
     unimplemented @0 :Void;
@@ -217,7 +217,7 @@ Client                          Server
 
 After handshake, all RPC messages are encrypted:
 
-```capnp
+```c
 struct PQChannelMessage {
   sequence @0 :UInt64;       # Replay protection
   ciphertext @1 :Data;       # AEAD encrypted
@@ -232,7 +232,7 @@ Encryption: ChaCha20-Poly1305 or AES-256-GCM
 
 ### Exception Types
 
-```capnp
+```c
 struct Exception {
   reason @0 :Text;
   obsoleteIsCallersFault @1 :Bool;
@@ -269,7 +269,7 @@ Cap'n Proto RPC has built-in flow control:
 
 For large data, use streaming interfaces:
 
-```capnp
+```c
 interface ResourceStream {
   next @0 () -> (content :ResourceContent, done :Bool);
   cancel @1 () -> ();
@@ -284,7 +284,7 @@ Client pulls data with `next()` calls, controlling rate.
 
 Exchanged during init:
 
-```capnp
+```c
 struct ClientInfo {
   name @0 :Text;
   version @1 :Text;
@@ -301,7 +301,7 @@ struct ServerInfo {
 
 Server declares supported features:
 
-```capnp
+```c
 struct Capabilities {
   tools @0 :Bool;
   resources @1 :Bool;
@@ -333,7 +333,7 @@ MCP Server (stdio)          Gateway              ZAP Client
 
 JSON data embedded as `Data` fields:
 
-```capnp
+```c
 struct ToolCall {
   id @0 :Text;
   name @1 :Text;
