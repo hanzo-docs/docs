@@ -1,0 +1,92 @@
+import { defineOrg } from '../config';
+
+export const hanzo = defineOrg({
+  name: 'Hanzo AI',
+  slug: 'hanzo',
+  domain: 'hanzo.ai',
+  docsPattern: '{project}.hanzo.ai',
+  github: 'https://github.com/hanzoai',
+  logo: 'H',
+  brand: {
+    primary: '262 83% 58%',
+  },
+  projects: [
+    {
+      slug: 'dev',
+      name: 'Hanzo Dev',
+      description: 'AI-powered coding assistant',
+      icon: 'terminal',
+      category: 'Tools',
+    },
+    {
+      slug: 'llm',
+      name: 'LLM Gateway',
+      description: 'Unified proxy for 100+ LLM providers',
+      icon: 'brain',
+      category: 'Infrastructure',
+    },
+    {
+      slug: 'mcp',
+      name: 'MCP',
+      description: 'Model Context Protocol tools',
+      icon: 'puzzle',
+      category: 'Infrastructure',
+    },
+    {
+      slug: 'agent',
+      name: 'Agent SDK',
+      description: 'Multi-agent orchestration framework',
+      icon: 'bot',
+      category: 'Tools',
+    },
+    {
+      slug: 'chat',
+      name: 'Chat',
+      description: 'AI chat interface with MCP integration',
+      icon: 'message-circle',
+      category: 'Apps',
+    },
+    {
+      slug: 'search',
+      name: 'Search',
+      description: 'AI-powered search with generative UI',
+      icon: 'search',
+      category: 'Apps',
+    },
+    {
+      slug: 'flow',
+      name: 'Flow',
+      description: 'Visual workflow builder',
+      icon: 'git-branch',
+      category: 'Tools',
+    },
+    {
+      slug: 'platform',
+      name: 'Platform',
+      description: 'PaaS for deploying AI services',
+      icon: 'cloud',
+      category: 'Infrastructure',
+    },
+    {
+      slug: 'operative',
+      name: 'Operative',
+      description: 'Computer use for Claude',
+      icon: 'monitor',
+      category: 'Tools',
+    },
+    {
+      slug: 'js-sdk',
+      name: 'JS SDK',
+      description: 'TypeScript client library',
+      icon: 'code',
+      category: 'SDKs',
+    },
+    {
+      slug: 'python-sdk',
+      name: 'Python SDK',
+      description: 'Python client library',
+      icon: 'code',
+      category: 'SDKs',
+    },
+  ],
+});
