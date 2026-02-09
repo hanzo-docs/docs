@@ -1,0 +1,268 @@
+---
+title: Bonding & ASHA
+description: Reserve token bonding, collateral types, and liquid staking
+---
+
+# Bonding & ASHA
+
+ASHA is the reserve token of Pars DAO, inspired by Olympus DAO's OHM model. Users bond collateral to the treasury and receive ASHA at a discount. The treasury uses bonded assets to back ASHA value and generate yield.
+
+## ASHA Overview
+
+| Property | Value |
+|----------|-------|
+| **Name** | ASHA |
+| **Type** | Reserve/backing token |
+| **Model** | OHM-style with modifications |
+| **Backing** | Protocol-owned liquidity + yield-bearing assets |
+| **Governance** | Lock ASHA → veASHA for voting |
+
+## Two-System Architecture
+
+Pars uses two complementary systems:
+
+### 1. Liquid Staking (L-tokens)
+- **Purpose**: 1:1 in-kind receipt tokens
+- **Example**: Stake ETH → Receive LETH
+- **Yield**: From underlying staking rewards
+- **Redemption**: Always 1:1 (minus withdrawal queue)
+
+### 2. ASHA Bonding
+- **Purpose**: Treasury growth via discounted bonds
+- **Example**: Bond LETH → Receive ASHA at discount
+- **Discount**: 5-25% depending on tier and demand
+- **Vesting**: 7-21 days linear unlock
+
+```
+User Assets          Liquid Staking         ASHA Bonding
+    │                     │                      │
+    ▼                     ▼                      ▼
+┌───────┐           ┌──────────┐           ┌──────────┐
+│  ETH  │ ────────▶ │   LETH   │ ────────▶ │   ASHA   │
+│  BTC  │           │   LBTC   │           │(discount)│
+│  SOL  │           │   LSOL   │           └──────────┘
+│  XRP  │           │   LXRP   │
+│ PARS  │           │  LPARS   │
+│ MIGA  │           │  LMIGA   │
+│CYRUS  │           │ LCYRUS   │
+└───────┘           └──────────┘
+```
+
+## Accepted Collateral
+
+### Tier A+ (Highest Quality)
+| Asset | L-token | Bond Discount | Vesting |
+|-------|---------|---------------|---------|
+| ETH | LETH | 6-14% | 7 days |
+| BTC | LBTC | 6-14% | 7 days |
+
+### Tier B+ (Protocol Assets)
+| Asset | L-token | Bond Discount | Vesting |
+|-------|---------|---------------|---------|
+| PARS | LPARS | 10-20% | 14 days |
+
+### Tier C+ (Ecosystem Assets)
+| Asset | L-token | Bond Discount | Vesting |
+|-------|---------|---------------|---------|
+| MIGA | LMIGA | 12-24% | 21 days |
+| CYRUS | LCYRUS | 12-24% | 21 days |
+
+### Tier D (Stablecoins)
+| Asset | Bond Discount | Vesting |
+|-------|---------------|---------|
+| USDC | 3-8% | 5 days |
+| DAI | 3-8% | 5 days |
+
+### Tier E (LP Tokens)
+| Asset | Bond Discount | Vesting |
+|-------|---------------|---------|
+| ASHA-ETH LP | 8-18% | 14 days |
+| ASHA-USDC LP | 6-12% | 10 days |
+
+## Bond Mechanics
+
+### Discount Calculation
+
+Bond discount varies based on:
+- **Debt ratio**: Higher debt = lower discount
+- **Asset tier**: Higher quality = lower discount (but safer)
+- **Market conditions**: Dynamic adjustment
+
+```
+discount = baseDiscount × (1 - debtRatio) × tierMultiplier
+```
+
+### Bonding Process
+
+1. **Select collateral**: Choose asset to bond
+2. **Quote**: System shows ASHA amount and discount
+3. **Approve**: Approve collateral spending
+4. **Bond**: Execute bond transaction
+5. **Vest**: ASHA unlocks linearly over vesting period
+6. **Claim**: Claim vested ASHA anytime
+
+```solidity
+interface IBondDepository {
+    function deposit(
+        uint256 amount,
+        uint256 maxPrice,
+        address depositor
+    ) external returns (uint256 payout, uint256 expiry);
+
+    function redeem(address depositor, bool stake) external returns (uint256);
+
+    function bondPrice() external view returns (uint256);
+    function bondInfo(address depositor) external view returns (Bond memory);
+}
+```
+
+### Example Bond
+
+```typescript
+// User bonds 1 LETH for ASHA
+const quote = await bondDepository.bondPrice();  // e.g., 0.90 ETH per ASHA
+const discount = (1 - 0.90) * 100;  // 10% discount
+
+await leth.approve(bondDepository.address, parseEther('1'));
+const tx = await bondDepository.deposit(
+    parseEther('1'),      // 1 LETH
+    parseEther('0.95'),   // Max price (slippage protection)
+    userAddress
+);
+
+// User receives ~1.11 ASHA (1 / 0.90), vesting over 7 days
+```
+
+## Liquid Staking
+
+### L-token Properties
+
+| Property | Description |
+|----------|-------------|
+| **Exchange rate** | Always 1:1 with underlying |
+| **Yield source** | Native staking rewards |
+| **Composability** | Can use in DeFi (bond, LP, collateral) |
+| **Withdrawal** | Queue-based (instant if liquidity available) |
+
+### Supported L-tokens
+
+```solidity
+interface ILiquidStakingToken {
+    function stake(uint256 amount) external returns (uint256 lTokenAmount);
+    function requestWithdrawal(uint256 amount) external returns (uint256 requestId);
+    function claimWithdrawal(uint256 requestId) external returns (uint256 underlyingAmount);
+
+    function exchangeRate() external view returns (uint256);  // Always 1e18 (1:1)
+    function totalUnderlying() external view returns (uint256);
+}
+```
+
+### Yield Strategies (per asset)
+
+| L-token | Underlying Strategy | Expected APY |
+|---------|---------------------|--------------|
+| LETH | Lido stETH + EigenLayer | 4-8% |
+| LBTC | Babylon staking | 3-6% |
+| LSOL | Jito MEV + staking | 6-10% |
+| LPARS | Protocol fees + staking | 5-12% |
+| LMIGA | Protocol fees | 3-8% |
+
+## Treasury Backing
+
+ASHA is backed by protocol-owned assets:
+
+### Backing Ratio
+
+```
+Backing Ratio = Treasury Value / ASHA Supply
+```
+
+**Target**: Backing ratio ≥ 1.0 (fully backed)
+
+### Treasury Composition
+
+```
+┌─────────────────────────────────────┐
+│          Treasury Assets            │
+├─────────────────────────────────────┤
+│  40% │ Stablecoins (USDC, DAI)     │
+│  30% │ Blue-chips (LETH, LBTC)      │
+│  20% │ Protocol assets (LPARS, LP)  │
+│  10% │ Strategic (ecosystem tokens) │
+└─────────────────────────────────────┘
+```
+
+### Yield Generation
+
+Treasury assets generate yield through:
+1. **Staking**: L-tokens earn staking rewards
+2. **Liquidity**: LP positions earn fees
+3. **Lending**: Conservative DeFi deployment
+4. **Protocol fees**: Bridge, DEX, governance fees
+
+## Governance Integration
+
+### ASHA → veASHA
+
+Lock ASHA to receive veASHA voting power:
+
+```solidity
+// Lock ASHA for governance
+await asha.approve(veAsha.address, amount);
+await veAsha.stake(amount, lockDuration);
+
+// Voting power calculated
+const power = await veAsha.getVotingPower(userAddress);
+```
+
+### Bond + Stake
+
+Users can bond and immediately stake for veASHA:
+
+```typescript
+// Bond LETH and stake resulting ASHA
+const tx = await bondDepository.deposit(
+    parseEther('1'),
+    parseEther('0.95'),
+    userAddress
+);
+
+// After vesting, claim and stake
+await bondDepository.redeem(userAddress, true);  // stake=true
+```
+
+## Risk Parameters
+
+### Bond Capacity
+
+Each asset has limited bond capacity per epoch:
+
+| Tier | Max Capacity/Day | Rationale |
+|------|------------------|-----------|
+| A+ | 5% of treasury | High quality, lower risk |
+| B+ | 3% of treasury | Protocol alignment |
+| C+ | 2% of treasury | Higher volatility |
+| D | 10% of treasury | Stable, low risk |
+
+### Circuit Breakers
+
+- **Price deviation**: Pause bonds if ASHA price drops >20% in 24h
+- **Backing ratio**: Pause bonds if ratio drops below 0.95
+- **Capacity**: Automatic pause when daily capacity reached
+
+## Contracts
+
+### BondDepository
+```
+Address: 0x... (Pars Network)
+```
+
+### LiquidStakingFactory
+```
+Address: 0x... (Pars Network)
+```
+
+### Treasury
+```
+Address: 0x... (Pars Network)
+```

@@ -1,0 +1,11 @@
+{
+  "title": "KMS",
+  "description": "Key Management Service",
+  "pages": [
+    "index",
+    "mpc-custody",
+    "hsm",
+    "signing",
+    "api"
+  ]
+}

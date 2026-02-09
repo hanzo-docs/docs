@@ -1,0 +1,145 @@
+---
+title: Governance
+description: veASHA voting, resolutions, and proposal process for Pars DAO
+---
+
+# Governance
+
+Pars DAO governance is powered by veASHA (vote-escrowed ASHA). Token holders stake PARS, MIGA, CYRUS, or ASHA to receive veASHA voting power, which determines influence over treasury allocation, Committee funding, and constitutional amendments.
+
+## veASHA Voting Power
+
+veASHA is the governance token derived from staking. Voting power is calculated based on:
+
+- **Token amount**: Base amount staked
+- **Lock duration**: Longer locks = more power (up to 4x multiplier)
+- **Karma score**: Activity-based reputation boost (up to 3.16x multiplier)
+
+### Voting Power Formula
+
+```
+veASHA = tokens × sqrt(karma/100) × (1 + lock_months × 0.1)
+```
+
+**Maximum boost**: 3.16x (Karma) × 4.0x (Lock) = **12.64x**
+
+### Lock Duration Multipliers
+
+| Lock Period | Multiplier |
+|-------------|------------|
+| No lock | 1.0x |
+| 3 months | 1.3x |
+| 6 months | 1.6x |
+| 12 months | 2.2x |
+| 24 months | 3.4x |
+| 36 months | 4.0x (max) |
+
+## Resolution Types
+
+### Standard Resolution
+- **Quorum**: 1M veASHA
+- **Approval**: 50% majority
+- **Timelock**: 3 days
+- **Use**: Committee funding, grants, operational changes
+
+### Constitutional Amendment
+- **Quorum**: 5M veASHA
+- **Approval**: 67% supermajority
+- **Timelock**: 14 days
+- **Use**: Charter changes, Committee creation/dissolution
+
+### Emergency Resolution
+- **Quorum**: 500K veASHA
+- **Approval**: 75% supermajority
+- **Timelock**: None (Guardian multisig can execute)
+- **Use**: Security incidents, critical bugs
+
+## Proposal Process
+
+### 1. Draft Phase (7 days)
+- Author posts proposal to governance forum
+- Community provides feedback
+- Author refines proposal based on input
+
+### 2. Formal Submission
+- Requires 10K veASHA to submit
+- Proposal enters voting queue
+- 3-day review period before voting
+
+### 3. Voting Period (7 days)
+- veASHA holders cast votes (For/Against/Abstain)
+- Votes are weighted by veASHA balance
+- Delegation is supported
+
+### 4. Execution
+- If passed: enters timelock queue
+- After timelock: Guardian multisig or automatic execution
+- Failed proposals can be resubmitted after 30 days
+
+## Delegation
+
+veASHA holders can delegate their voting power to trusted representatives:
+
+```solidity
+function delegate(address delegatee) external;
+function delegateBySig(address delegatee, uint nonce, uint expiry, uint8 v, bytes32 r, bytes32 s) external;
+```
+
+**Delegation rules**:
+- Delegated votes can be recalled anytime
+- Delegatees cannot re-delegate received power
+- Self-delegation is the default state
+
+## Karma System
+
+Karma rewards active participation and decays for inactive members:
+
+| Activity | Karma Earned |
+|----------|--------------|
+| Vote on resolution | +5 |
+| Submit approved proposal | +50 |
+| Committee participation | +10/month |
+| Grant completion | +25 |
+
+| Decay Rate | Condition |
+|------------|-----------|
+| 1%/year | Active (≥1 tx/month) |
+| 10%/year | Inactive |
+| Minimum | 50 (for verified DIDs) |
+
+## Guardian Council
+
+During bootstrap phase, a Guardian Council provides oversight:
+
+- **Composition**: 7 multisig signers (4/7 threshold)
+- **Powers**: Emergency pause, critical execution veto
+- **Sunset**: Powers reduce over 24 months as governance matures
+- **Transparency**: All actions logged on-chain
+
+## Smart Contracts
+
+### Governor Contract
+```solidity
+interface IGovernor {
+    function propose(
+        address[] memory targets,
+        uint256[] memory values,
+        bytes[] memory calldatas,
+        string memory description
+    ) external returns (uint256 proposalId);
+
+    function castVote(uint256 proposalId, uint8 support) external returns (uint256 balance);
+    function castVoteWithReason(uint256 proposalId, uint8 support, string calldata reason) external;
+    function execute(uint256 proposalId) external;
+}
+```
+
+### veASHA Contract
+```solidity
+interface IVeASHA {
+    function stake(uint256 amount, uint256 lockDuration) external;
+    function withdraw() external;
+    function getVotingPower(address account) external view returns (uint256);
+    function delegate(address delegatee) external;
+}
+```
