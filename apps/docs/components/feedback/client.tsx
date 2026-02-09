@@ -53,7 +53,7 @@ export function Feedback({
 }: {
   onSendAction: (feedback: PageFeedback) => Promise<ActionResponse>;
 }) {
-  const url = usePathname();
+  const url = usePathname() ?? '/';
   const { previous, setPrevious } = useSubmissionStorage(url, (v) => {
     const result = pageFeedbackResult.safeParse(v);
     return result.success ? result.data : null;
@@ -203,7 +203,7 @@ export function FeedbackBlock({
   onSendAction: (feedback: BlockFeedback) => Promise<ActionResponse>;
   children: ReactNode;
 }) {
-  const url = usePathname();
+  const url = usePathname() ?? '/';
   const blockId = `${url}-${id}`;
   const { previous, setPrevious } = useSubmissionStorage(blockId, (v) => {
     const result = blockFeedbackResult.safeParse(v);
