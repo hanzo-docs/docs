@@ -192,7 +192,7 @@ export function Feedback({
 /**
  * A feedback component for each content block in page, should be used with `remark-feedback-block`.
  *
- * See https://docs.hanzo.ai/docs/integrations/feedback.
+ * See https://hanzoai.github.io/docs/docs/integrations/feedback.
  */
 export function FeedbackBlock({
   id,

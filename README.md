@@ -57,7 +57,7 @@ NEXT_PUBLIC_BRAND=hanzo  # or 'lux' or 'zoo'
 
 | Brand | Organization | Documentation |
 |-------|-------------|---------------|
-| `hanzo` | Hanzo AI Inc | [docs.hanzo.ai](https://docs.hanzo.ai) |
+| `hanzo` | Hanzo AI Inc | [hanzoai.github.io/docs](https://hanzoai.github.io/docs) |
 | `lux` | Lux Network | [docs.lux.network](https://docs.lux.network) |
 | `zoo` | Zoo Labs Foundation | [docs.zoo.ngo](https://docs.zoo.ngo) |
 
@@ -90,7 +90,7 @@ pnpm types:check      # Type check
 
 ## Documentation Sites
 
-### Hanzo Docs (docs.hanzo.ai)
+### Hanzo Docs (hanzoai.github.io/docs)
 
 Documentation for Hanzo AI infrastructure including:
 - LLM Gateway

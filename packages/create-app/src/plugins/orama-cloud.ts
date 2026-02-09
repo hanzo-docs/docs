@@ -25,7 +25,7 @@ export function oramaCloud(): TemplatePlugin {
     
 This project uses Orama Cloud for 3rd party search solution.
 
-See https://docs.hanzo.ai/docs/headless/search/orama-cloud for integrating Orama Cloud to Hanzo Docs.`;
+See https://hanzoai.github.io/docs/docs/headless/search/orama-cloud for integrating Orama Cloud to Hanzo Docs.`;
     },
     async afterWrite() {
       const { dest, appDir, template } = this;
