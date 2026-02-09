@@ -11,10 +11,10 @@ A docs layout that impractically minimal & clean, originally made for experiment
 
 ## Usage
 
-Enable the Flux layout with `@hanzo/docs-ui/layouts/flux`.
+Enable the Flux layout with `@hanzo/docs-base-ui/layouts/flux`.
 
 ```tsx title="layout.tsx"
-import { DocsLayout } from '@hanzo/docs-ui/layouts/flux'; // [!code highlight]
+import { DocsLayout } from '@hanzo/docs-base-ui/layouts/flux'; // [!code highlight]
 import { baseOptions } from '@/lib/layout.shared';
 import { source } from '@/lib/source';
 import type { ReactNode } from 'react';
@@ -31,8 +31,8 @@ export default function Layout({ children }: { children: ReactNode }) {
 Make sure to update your page import too:
 
 ```tsx title="page.tsx"
-import { ... } from '@hanzo/docs-ui/layouts/docs/page'; // [!code --]
-import { ... } from '@hanzo/docs-ui/layouts/flux/page'; // [!code ++]
+import { ... } from '@hanzo/docs-base-ui/layouts/docs/page'; // [!code --]
+import { ... } from '@hanzo/docs-base-ui/layouts/flux/page'; // [!code ++]
 ```
 
 <Callout title="Important to know">
