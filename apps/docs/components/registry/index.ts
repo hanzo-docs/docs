@@ -1,14 +1,14 @@
-import { type Registry } from '@fumadocs/cli/build';
+import { type Registry } from '@hanzo/docs-cli/build';
 import * as radixUi from '../../../../packages/radix-ui/src/_registry';
 import { fileURLToPath } from 'node:url';
 import * as path from 'node:path';
-import { resolveFromRemote } from '@fumadocs/cli/build';
+import { resolveFromRemote } from '@hanzo/docs-cli/build';
 
 const baseDir = path.join(path.dirname(fileURLToPath(import.meta.url)), '../../');
 
 export const registry: Registry = {
   dir: baseDir,
-  name: 'fumadocs',
+  name: 'hanzo-docs',
   packageJson: './package.json',
   tsconfigPath: './tsconfig.json',
   onUnknownFile(absolutePath) {
@@ -26,8 +26,8 @@ export const registry: Registry = {
       }
     }
 
-    if (ref.type === 'dependency' && ref.dep === 'fumadocs-ui') {
-      const match = /fumadocs-ui\/components\/ui\/(.*)/.exec(ref.specifier);
+    if (ref.type === 'dependency' && ref.dep === '@hanzo/docs-ui') {
+      const match = /@hanzo/docs-ui\/components\/ui\/(.*)/.exec(ref.specifier);
       if (match) {
         return resolveFromRemote(
           radixUi.registry,
@@ -144,8 +144,8 @@ export const registry: Registry = {
     },
   ],
   dependencies: {
-    'fumadocs-core': null,
-    'fumadocs-ui': null,
+    '@hanzo/docs-core': null,
+    '@hanzo/docs-ui': null,
     'lucide-react': null,
     next: null,
     react: null,

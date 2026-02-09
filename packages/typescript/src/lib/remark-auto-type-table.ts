@@ -9,7 +9,7 @@ import { visit } from 'unist-util-visit';
 import { type BaseTypeTableProps, type GenerateTypeTableOptions } from '@/lib/type-table';
 import { toEstree } from 'hast-util-to-estree';
 import { type ParameterTag, parseTags } from '@/lib/parse-tags';
-import type { ResolvedShikiConfig } from 'fumadocs-core/highlight/config';
+import type { ResolvedShikiConfig } from '@hanzo/docs-core/highlight/config';
 
 function objectBuilder() {
   const out: ObjectExpression = {

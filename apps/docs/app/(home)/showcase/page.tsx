@@ -308,7 +308,7 @@ export default function Showcase() {
         </p>
         <div className="mt-6">
           <a
-            href="https://github.com/fuma-nama/hanzo-docs/discussions/30"
+            href="https://github.com/hanzoai/docs/discussions/30"
             target="_blank"
             rel="noreferrer noopener"
             className={cn(
@@ -371,7 +371,7 @@ export default function Showcase() {
         ))}
         <div className="absolute text-center bottom-0 inset-x-0 pt-4 bg-gradient-to-t from-fd-background">
           <Link
-            href="https://github.com/fuma-nama/hanzo-docs/discussions/30"
+            href="https://github.com/hanzoai/docs/discussions/30"
             className={cn(
               buttonVariants({
                 size: 'sm',

@@ -1,4 +1,4 @@
-import { createStoryClient } from '@fumadocs/story/client';
+import { createStoryClient } from '@hanzo/docs-story/client';
 import { CalloutStory } from '.';
 import type { story } from './story';
 

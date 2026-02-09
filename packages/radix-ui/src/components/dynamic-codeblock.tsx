@@ -1,7 +1,7 @@
 'use client';
-import { useShikiConfigOptional } from 'fumadocs-core/highlight/core/client';
+import { useShikiConfigOptional } from '@hanzo/docs-core/highlight/core/client';
 import * as base from './dynamic-codeblock.core';
-import { configDefault } from 'fumadocs-core/highlight';
+import { configDefault } from '@hanzo/docs-core/highlight';
 
 export function DynamicCodeBlock(props: base.DynamicCodeblockProps) {
   const config = useShikiConfigOptional() ?? configDefault;

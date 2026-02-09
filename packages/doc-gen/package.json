@@ -1,17 +1,17 @@
 {
-  "name": "fumadocs-docgen",
+  "name": "@hanzo/docs-docgen",
   "version": "3.0.6",
   "description": "Useful remark utilities and plugins",
   "keywords": [
     "Docs",
-    "fumadocs",
+    "hanzo-docs",
     "mdx",
     "remark"
   ],
-  "homepage": "https://fumadocs.dev",
+  "homepage": "https://docs.hanzo.ai",
   "license": "MIT",
   "author": "Fuma Nama",
-  "repository": "github:fuma-nama/fumadocs",
+  "repository": "github:hanzoai/docs",
   "files": [
     "dist/*"
   ],
@@ -55,7 +55,7 @@
     "@types/mdast": "^4.0.4",
     "@types/node": "25.2.1",
     "eslint-config-custom": "workspace:*",
-    "fumadocs-core": "workspace:*",
+    "@hanzo/docs-core": "workspace:*",
     "mdast-util-mdx-jsx": "^3.2.0",
     "remark": "^15.0.1",
     "tsconfig": "workspace:*",
@@ -66,7 +66,7 @@
     "@types/estree": "*",
     "@types/hast": "*",
     "@types/mdast": "*",
-    "fumadocs-core": "^15.7.2 || ^16.0.0",
+    "@hanzo/docs-core": "^15.7.2 || ^16.0.0",
     "mdast-util-mdx-jsx": "*"
   },
   "peerDependenciesMeta": {

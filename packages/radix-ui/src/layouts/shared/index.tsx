@@ -1,7 +1,7 @@
 import { useMemo, type ComponentProps, type ReactNode } from 'react';
-import type { I18nConfig } from 'fumadocs-core/i18n';
+import type { I18nConfig } from '@hanzo/docs-core/i18n';
 import type { LinkItemType } from '@/utils/link-item';
-import Link from 'fumadocs-core/link';
+import Link from '@hanzo/docs-core/link';
 
 export interface NavOptions {
   enabled: boolean;

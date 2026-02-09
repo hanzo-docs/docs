@@ -23,7 +23,7 @@ export interface PluginOptions {
   configPath?: string;
 
   /**
-   * Update Vite config to fix module resolution of Fumadocs
+   * Update Vite config to fix module resolution of Hanzo Docs
    *
    * @defaultValue true
    */
@@ -57,7 +57,7 @@ export default async function mdx(
   );
 
   return {
-    name: 'fumadocs-mdx',
+    name: '@hanzo/docs-mdx',
     // needed, otherwise other plugins will be executed before our `transform`.
     enforce: 'pre',
     config(config) {
@@ -65,9 +65,9 @@ export default async function mdx(
 
       return mergeConfig(config, {
         resolve: {
-          noExternal: ['fumadocs-core', 'fumadocs-ui', 'fumadocs-openapi', '@fumadocs/base-ui'],
+          noExternal: ['@hanzo/docs-core', '@hanzo/docs-ui', '@hanzo/docs-openapi', '@hanzo/docs-base-ui'],
           // only dedupe for public, non-transitive libs
-          dedupe: ['fumadocs-core', 'fumadocs-ui', 'fumadocs-openapi', '@fumadocs/base-ui'],
+          dedupe: ['@hanzo/docs-core', '@hanzo/docs-ui', '@hanzo/docs-openapi', '@hanzo/docs-base-ui'],
         },
       } satisfies UserConfig);
     },
