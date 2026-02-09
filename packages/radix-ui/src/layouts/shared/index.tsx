@@ -1,8 +1,7 @@
-import type { ComponentProps, ReactNode } from 'react';
-import { useEffectEvent } from '@hanzo/docs-core/utils/use-effect-event';
-import type { I18nConfig } from '@hanzo/docs-core/i18n';
-import type { LinkItemType } from '@hanzo/docs-ui/link-item';
-import Link from '@hanzo/docs-core/link';
+import { useMemo, type ComponentProps, type ReactNode } from 'react';
+import type { I18nConfig } from 'fumadocs-core/i18n';
+import type { LinkItemType } from '@/utils/link-item';
+import Link from 'fumadocs-core/link';
 
 export interface NavOptions {
   enabled: boolean;
@@ -100,4 +99,28 @@ export function renderTitleNav(
   );
 }
 
-export type * from '@hanzo/docs-ui/link-item';
+export function useLinkItems({ githubUrl, links }: Pick<BaseLayoutProps, 'links' | 'githubUrl'>) {
+  return useMemo(() => {
+    const all = resolveLinkItems({ links, githubUrl });
+    const navItems: LinkItemType[] = [];
+    const menuItems: LinkItemType[] = [];
+
+    for (const item of all) {
+      switch (item.on) {
+        case 'menu':
+          menuItems.push(item);
+          break;
+        case 'nav':
+          navItems.push(item);
+          break;
+        default:
+          navItems.push(item);
+          menuItems.push(item);
+      }
+    }
+
+    return { navItems, menuItems, all };
+  }, [links, githubUrl]);
+}
+
+export type * from '@/utils/link-item';

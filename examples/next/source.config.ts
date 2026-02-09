@@ -1,11 +1,12 @@
-import { defineConfig, defineDocs, frontmatterSchema, metaSchema } from '@hanzo/docs-mdx/config';
+import { defineConfig, defineDocs } from 'fumadocs-mdx/config';
+import { metaSchema, pageSchema } from 'fumadocs-core/source/schema';
 
 // You can customise Zod schemas for frontmatter and `meta.json` here
-// see https://docs.hanzo.ai/docs/mdx/collections
+// see https://fumadocs.dev/docs/mdx/collections
 export const docs = defineDocs({
   dir: 'content/docs',
   docs: {
-    schema: frontmatterSchema,
+    schema: pageSchema,
     postprocess: {
       includeProcessedMarkdown: true,
     },
