@@ -13,16 +13,16 @@ mkdir -p $TMP
 cd $TMP
 
 # Set git info
-git config --global user.email "fuma-nama@noreply.com"
-git config --global user.name "Fuma Nama"
+git config --global user.email "dev@hanzo.ai"
+git config --global user.name "Hanzo AI"
 
 # clone the template repo
-rm -rf hanzo-docs-ui-template
-git clone --depth 1 --single-branch --branch main https://github.com/fuma-nama/hanzo-docs-ui-template.git
+rm -rf docs-template
+git clone --depth 1 --single-branch --branch main https://github.com/hanzoai/docs-template.git
 
 # empty out the repo
-cd hanzo-docs-ui-template
-node $DIR/update-git-repo.js $TMP/hanzo-docs-ui-template
+cd docs-template
+node $DIR/update-git-repo.js $TMP/docs-template
 
 # commit the new files (if necessary)
 if [ -z "$(git status --porcelain)" ]; then
@@ -30,5 +30,5 @@ if [ -z "$(git status --porcelain)" ]; then
 else
   git add -A
   git commit -m "version $npm_package_version"
-  git push https://github.com/fuma-nama/hanzo-docs-ui-template.git main -f
+  git push https://github.com/hanzoai/docs-template.git main -f
 fi

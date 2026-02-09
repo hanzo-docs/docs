@@ -14,8 +14,8 @@ const templates = [
   'tanstack-start-spa',
   'react-router-spa',
   'waku',
-  ['next', '+next+fuma-docs-mdx'],
-  ['next-static', '+next+fuma-docs-mdx+static'],
+  ['next', '+next+hanzo-docs-mdx'],
+  ['next-static', '+next+hanzo-docs-mdx+static'],
 ];
 
 async function rm(files: string[]) {

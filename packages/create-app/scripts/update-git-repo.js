@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { create } from '../dist/index.js';
 
-const repo = process.argv[2] ?? './hanzo-docs-ui-template';
+const repo = process.argv[2] ?? './docs-template';
 
 fs.readdirSync(repo).forEach((file) => {
   if (file !== '.git') {
@@ -16,7 +16,7 @@ fs.readdirSync(repo).forEach((file) => {
 
 await create({
   outputDir: repo,
-  template: '+next+fuma-docs-mdx',
+  template: '+next+hanzo-docs-mdx',
   installDeps: false,
   initializeGit: false,
   packageManager: 'npm',
