@@ -12,7 +12,7 @@ interface BlogData {
   date: string | Date;
 }
 
-const baseUrl = 'https://docs.hanzo.ai';
+const baseUrl = 'https://hanzoai.github.io/docs';
 
 export function GET() {
   const feed = new Feed({
