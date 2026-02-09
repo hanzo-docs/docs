@@ -11,7 +11,7 @@ interface TargetInfo {
 }
 
 export async function customise(client: RegistryClient) {
-  intro(picocolors.bgBlack(picocolors.whiteBright('Customise Fumadocs UI')));
+  intro(picocolors.bgBlack(picocolors.whiteBright('Customise Hanzo Docs UI')));
   const config = client.config;
   const installer = new ComponentInstaller(client);
   const registry = UIRegistries[config.uiLibrary];
@@ -38,7 +38,7 @@ export async function customise(client: RegistryClient) {
         if (v.results.layout !== 'docs')
           return Promise.resolve({
             target: [`${registry}/layouts/home`],
-            replace: [['fumadocs-ui/layouts/home', `@/components/layout/home`]],
+            replace: [['@hanzo/docs-ui/layouts/home', `@/components/layout/home`]],
           });
 
         return select<TargetInfo>({
@@ -48,10 +48,10 @@ export async function customise(client: RegistryClient) {
               label: 'Start from minimal styles',
               hint: 'for those who want to build their own variant from ground up.',
               value: {
-                target: ['fumadocs/ui/layouts/docs-min'],
+                target: ['hanzo-docs/ui/layouts/docs-min'],
                 replace: [
-                  ['fumadocs-ui/layouts/docs', '@/components/layout/docs'],
-                  ['fumadocs-ui/layouts/docs/page', '@/components/layout/docs/page'],
+                  ['@hanzo/docs-ui/layouts/docs', '@/components/layout/docs'],
+                  ['@hanzo/docs-ui/layouts/docs/page', '@/components/layout/docs/page'],
                 ],
               },
             },
@@ -60,8 +60,8 @@ export async function customise(client: RegistryClient) {
               value: {
                 target: [`${registry}/layouts/docs`],
                 replace: [
-                  ['fumadocs-ui/layouts/docs', '@/components/layout/docs'],
-                  ['fumadocs-ui/layouts/docs/page', '@/components/layout/docs/page'],
+                  ['@hanzo/docs-ui/layouts/docs', '@/components/layout/docs'],
+                  ['@hanzo/docs-ui/layouts/docs/page', '@/components/layout/docs/page'],
                 ],
               },
               hint: 'useful for adjusting small details.',
@@ -71,8 +71,8 @@ export async function customise(client: RegistryClient) {
               value: {
                 target: [`${registry}/layouts/notebook`],
                 replace: [
-                  ['fumadocs-ui/layouts/notebook', '@/components/layout/notebook'],
-                  ['fumadocs-ui/layouts/notebook/page', '@/components/layout/notebook/page'],
+                  ['@hanzo/docs-ui/layouts/notebook', '@/components/layout/notebook'],
+                  ['@hanzo/docs-ui/layouts/notebook/page', '@/components/layout/notebook/page'],
                 ],
               },
               hint: 'useful for adjusting small details.',
@@ -82,8 +82,8 @@ export async function customise(client: RegistryClient) {
               value: {
                 target: [`${registry}/layouts/flux`],
                 replace: [
-                  ['fumadocs-ui/layouts/flux', '@/components/layout/flux'],
-                  ['fumadocs-ui/layouts/flux/page', '@/components/layout/flux/page'],
+                  ['@hanzo/docs-ui/layouts/flux', '@/components/layout/flux'],
+                  ['@hanzo/docs-ui/layouts/flux/page', '@/components/layout/flux/page'],
                 ],
               },
               hint: 'useful for adjusting small details.',
