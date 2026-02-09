@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import { type ComponentProps, type FC, type ReactNode } from 'react';
 import * as Twoslash from '@hanzo/docs-twoslash/ui';
-import { Callout } from '@hanzo/docs-ui/components/callout';
-import { TypeTable } from '@hanzo/docs-ui/components/type-table';
+import { Callout } from '@hanzo/docs-base-ui/components/callout';
+import { TypeTable } from '@hanzo/docs-base-ui/components/type-table';
 import * as Preview from '@/components/preview';
 import { createMetadata, getPageImage } from '@/lib/metadata';
 import { source } from '@/lib/source';
@@ -13,13 +13,13 @@ import { onBlockFeedbackAction, onPageFeedbackAction, owner, repo } from '@/lib/
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import Link from '@hanzo/docs-core/link';
 import { findSiblings } from '@hanzo/docs-core/page-tree';
-import { Card, Cards } from '@hanzo/docs-ui/components/card';
+import { Card, Cards } from '@hanzo/docs-base-ui/components/card';
 import { getMDXComponents } from '@/mdx-components';
 import { LLMCopyButton, ViewOptions } from '@/components/ai/page-actions';
-import { Banner } from '@hanzo/docs-ui/components/banner';
+import { Banner } from '@hanzo/docs-base-ui/components/banner';
 import { Installation } from '@/components/preview/installation';
 import { Customisation } from '@/components/preview/customisation';
-import { DocsBody, DocsPage, PageLastUpdate } from '@hanzo/docs-ui/layouts/docs/page';
+import { DocsBody, DocsPage, PageLastUpdate } from '@hanzo/docs-base-ui/layouts/docs/page';
 import { NotFound } from '@/components/layouts/not-found';
 import { getSuggestions } from './suggestions';
 import { PathUtils } from '@hanzo/docs-core/source';
