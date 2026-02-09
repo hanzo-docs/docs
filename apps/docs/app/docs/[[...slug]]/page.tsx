@@ -1,33 +1,28 @@
 import type { Metadata } from 'next';
 import { type ComponentProps, type FC, type ReactNode } from 'react';
-import * as Twoslash from '@hanzo/docs-twoslash/ui';
-import { Callout } from '@hanzo/docs-radix-ui/components/callout';
-import { TypeTable } from '@hanzo/docs-radix-ui/components/type-table';
+import * as Twoslash from 'fumadocs-twoslash/ui';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { TypeTable } from 'fumadocs-ui/components/type-table';
 import * as Preview from '@/components/preview';
 import { createMetadata, getPageImage } from '@/lib/metadata';
 import { source } from '@/lib/source';
 import { Wrapper } from '@/components/preview/wrapper';
 import { Mermaid } from '@/components/mdx/mermaid';
-// Feedback disabled for static export - requires Server Actions
-// import { Feedback, FeedbackBlock } from '@/components/feedback/client';
-import { owner, repo } from '@/lib/github';
+import { Feedback, FeedbackBlock } from '@/components/feedback/client';
+import { onBlockFeedbackAction, onPageFeedbackAction, owner, repo } from '@/lib/github';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
-import Link from '@hanzo/docs-core/link';
-import { findSiblings } from '@hanzo/docs-core/page-tree';
-import { Card, Cards } from '@hanzo/docs-radix-ui/components/card';
+import Link from 'fumadocs-core/link';
+import { findSiblings } from 'fumadocs-core/page-tree';
+import { Card, Cards } from 'fumadocs-ui/components/card';
 import { getMDXComponents } from '@/mdx-components';
 import { LLMCopyButton, ViewOptions } from '@/components/ai/page-actions';
-import { Banner } from '@hanzo/docs-radix-ui/components/banner';
+import { Banner } from 'fumadocs-ui/components/banner';
 import { Installation } from '@/components/preview/installation';
 import { Customisation } from '@/components/preview/customisation';
-import { DocsBody, DocsPage, PageLastUpdate } from '@hanzo/docs-radix-ui/layouts/docs/page';
-import { NotFound } from '@/components/not-found';
+import { DocsBody, DocsPage, PageLastUpdate } from 'fumadocs-ui/layouts/docs/page';
+import { NotFound } from '@/components/layouts/not-found';
 import { getSuggestions } from './suggestions';
-import { PathUtils } from '@hanzo/docs-core/source';
-
-interface DocsPageParams {
-  params: Promise<{ slug?: string[] }>;
-}
+import { PathUtils } from 'fumadocs-core/source';
 
 function PreviewRenderer({ preview }: { preview: string }): ReactNode {
   if (preview && preview in Preview) {
@@ -40,7 +35,7 @@ function PreviewRenderer({ preview }: { preview: string }): ReactNode {
 
 export const revalidate = false;
 
-export default async function Page(props: DocsPageParams) {
+export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   const params = await props.params;
   const page = source.getPage(params.slug);
 
@@ -109,8 +104,11 @@ export default async function Page(props: DocsPageParams) {
                 </HoverCard>
               );
             },
-            // Feedback disabled for static export - stub component renders children only
-            FeedbackBlock: ({ children }: { children?: ReactNode }) => <>{children}</>,
+            FeedbackBlock: ({ children, ...props }) => (
+              <FeedbackBlock {...props} onSendAction={onBlockFeedbackAction}>
+                {children}
+              </FeedbackBlock>
+            ),
             Banner,
             Mermaid,
             TypeTable,
@@ -125,7 +123,7 @@ export default async function Page(props: DocsPageParams) {
         />
         {page.data.index ? <DocsCategory url={page.url} /> : null}
       </div>
-      {/* Feedback disabled for static export */}
+      <Feedback onSendAction={onPageFeedbackAction} />
       {lastModified && <PageLastUpdate date={lastModified} />}
     </DocsPage>
   );
@@ -151,7 +149,7 @@ function DocsCategory({ url }: { url: string }) {
   );
 }
 
-export async function generateMetadata(props: DocsPageParams): Promise<Metadata> {
+export async function generateMetadata(props: PageProps<'/docs/[[...slug]]'>): Promise<Metadata> {
   const { slug = [] } = await props.params;
   const page = source.getPage(slug);
   if (!page)

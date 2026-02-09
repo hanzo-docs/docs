@@ -1,21 +1,24 @@
 import { fileURLToPath } from 'node:url';
-import type { Registry } from '@hanzo/docs-cli/build';
+import type { Registry } from '@fumadocs/cli/build';
 import * as path from 'node:path';
-import { resolveForwardedAPIs } from '../../../ui/src/_registry';
+import { commonComponents, resolveExternal } from '../../../shared/registry';
+
+const dir = path.join(path.dirname(fileURLToPath(import.meta.url)), '../');
 
 // in shadcn cli, the order of files matters when writing import paths on consumer's codebase
 export const registry: Registry = {
-  name: 'hanzo-docs/radix-ui',
-  dir: path.join(path.dirname(fileURLToPath(import.meta.url)), '../'),
+  name: 'fumadocs/radix-ui',
+  dir,
   tsconfigPath: '../tsconfig.json',
   packageJson: '../package.json',
-  onResolve(ref) {
-    return resolveForwardedAPIs(ref, '@hanzo/docs-base-ui', registry) ?? ref;
-  },
   env: {
-    ui: '@hanzo/docs-base-ui',
+    ui: 'fumadocs-ui',
+  },
+  onResolve(ref) {
+    return resolveExternal(ref, 'fumadocs-ui', dir) ?? ref;
   },
   components: [
+    ...commonComponents,
     {
       name: 'layouts/shared',
       unlisted: true,
@@ -94,6 +97,37 @@ export const registry: Registry = {
           type: 'components',
           path: 'layouts/docs/page/client.tsx',
           target: '<dir>/layout/docs/page/client.tsx',
+        },
+      ],
+      unlisted: true,
+    },
+    {
+      name: 'layouts/flux',
+      files: [
+        {
+          type: 'components',
+          path: 'layouts/flux/index.tsx',
+          target: '<dir>/layout/flux/index.tsx',
+        },
+        {
+          type: 'components',
+          path: 'layouts/flux/tab-dropdown.tsx',
+          target: '<dir>/layout/flux/tab-dropdown.tsx',
+        },
+        {
+          type: 'components',
+          path: 'layouts/flux/sidebar.tsx',
+          target: '<dir>/layout/flux/sidebar.tsx',
+        },
+        {
+          type: 'components',
+          path: 'layouts/flux/page/index.tsx',
+          target: '<dir>/layout/flux/page/index.tsx',
+        },
+        {
+          type: 'components',
+          path: 'layouts/flux/page/client.tsx',
+          target: '<dir>/layout/flux/page/client.tsx',
         },
       ],
       unlisted: true,
@@ -322,8 +356,8 @@ export const registry: Registry = {
     },
   ],
   dependencies: {
-    '@hanzo/docs-core': null,
-    '@hanzo/docs-base-ui': null,
+    'fumadocs-core': null,
+    'fumadocs-ui': null,
     react: null,
   },
 };

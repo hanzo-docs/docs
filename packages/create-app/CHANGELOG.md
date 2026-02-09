@@ -1,5 +1,22 @@
 # create-next-docs-app
 
+## 16.0.49
+
+### Patch Changes
+
+- 8d63b55: fix Waku template
+- c22f6ee: bump tsdown
+
+## 16.0.48
+
+## 16.0.47
+
+## 16.0.45
+
+## 16.0.44
+
+## 16.0.43
+
 ## 16.0.42
 
 ## 16.0.41
