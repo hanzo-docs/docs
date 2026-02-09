@@ -3,8 +3,8 @@ import { useMemo, useState } from 'react';
 import { Check, ChevronDown, Copy, ExternalLinkIcon } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { useCopyButton } from '@hanzo/docs-base-ui/utils/use-copy-button';
-import { buttonVariants } from '@hanzo/docs-ui/components/ui/button';
-import { Popover, PopoverContent, PopoverTrigger } from '@hanzo/docs-ui/components/ui/popover';
+import { buttonVariants } from '@hanzo/docs-base-ui/components/ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from '@hanzo/docs-base-ui/components/ui/popover';
 import { cva } from 'class-variance-authority';
 
 const cache = new Map<string, string>();

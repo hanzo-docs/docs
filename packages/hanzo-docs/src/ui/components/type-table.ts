@@ -1,1 +1,1 @@
-export * from '@hanzo/docs-ui/components/type-table';
+export * from '@hanzo/docs-base-ui/components/type-table';

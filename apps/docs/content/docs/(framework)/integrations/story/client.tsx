@@ -1,5 +1,5 @@
 'use client';
-import { Callout } from '@hanzo/docs-ui/components/callout';
+import { Callout } from '@hanzo/docs-base-ui/components/callout';
 import { ComponentProps } from 'react';
 
 export function CalloutStory(

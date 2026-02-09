@@ -1,1 +1,1 @@
-export * from '@hanzo/docs-ui/components/ui/button';
+export * from '@hanzo/docs-base-ui/components/ui/button';

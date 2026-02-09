@@ -1,5 +1,4 @@
-import type { ReactNode } from 'react';
-import { useEffectEvent } from '@hanzo/docs-core/utils/use-effect-event';
+import { type ReactNode, useEffectEvent } from 'react';
 
 export function Steps({ children }: { children: ReactNode }) {
   return <div className="fd-steps">{children}</div>;

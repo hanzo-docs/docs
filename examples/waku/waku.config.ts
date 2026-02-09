@@ -9,7 +9,7 @@ export default defineConfig({
   vite: {
     // we do this to avoid Vite from bundling React contexts and cause duplicated contexts conflicts.
     optimizeDeps: {
-      exclude: ['@hanzo/docs-ui', '@hanzo/docs-core'],
+      exclude: ['@hanzo/docs-base-ui', '@hanzo/docs-core'],
     },
 
     plugins: [tailwindcss(), mdx(MdxConfig), tsconfigPaths()],

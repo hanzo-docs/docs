@@ -18,7 +18,7 @@
     "noEmit": true,
     "paths": {
       "@/*": ["./src/*"],
-      "hanzo-docs-mdx:collections/*": ["docs/*"]
+      "@hanzo/docs/mdx:collections/*": ["docs/*"]
     }
   },
   "exclude": ["node_modules", "dist"]

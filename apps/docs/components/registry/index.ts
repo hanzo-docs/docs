@@ -26,8 +26,8 @@ export const registry: Registry = {
       }
     }
 
-    if (ref.type === 'dependency' && ref.dep === '@hanzo/docs-ui') {
-      const match = /@hanzo/docs-ui\/components\/ui\/(.*)/.exec(ref.specifier);
+    if (ref.type === 'dependency' && ref.dep === '@hanzo/docs-base-ui') {
+      const match = /@hanzo\/docs-base-ui\/components\/ui\/(.*)/.exec(ref.specifier);
       if (match) {
         return resolveFromRemote(
           radixUi.registry,
@@ -145,7 +145,7 @@ export const registry: Registry = {
   ],
   dependencies: {
     '@hanzo/docs-core': null,
-    '@hanzo/docs-ui': null,
+    '@hanzo/docs-base-ui': null,
     'lucide-react': null,
     next: null,
     react: null,

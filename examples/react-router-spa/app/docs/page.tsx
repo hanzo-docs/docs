@@ -1,8 +1,8 @@
 import type { Route } from './+types/page';
-import { DocsLayout } from '@hanzo/docs-ui/layouts/docs';
-import { DocsBody, DocsDescription, DocsPage, DocsTitle } from '@hanzo/docs-ui/layouts/docs/page';
+import { DocsLayout } from '@hanzo/docs-base-ui/layouts/docs';
+import { DocsBody, DocsDescription, DocsPage, DocsTitle } from '@hanzo/docs-base-ui/layouts/docs/page';
 import { source } from '@/lib/source';
-import defaultMdxComponents from '@hanzo/docs-ui/mdx';
+import defaultMdxComponents from '@hanzo/docs-base-ui/mdx';
 import browserCollections from '@hanzo/docs-mdx:collections/browser';
 import { baseOptions } from '@/lib/layout.shared';
 import { useHanzoDocsLoader } from '@hanzo/docs-core/source/client';

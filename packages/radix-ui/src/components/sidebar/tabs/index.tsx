@@ -1,6 +1,5 @@
 import type * as PageTree from '@hanzo/docs-core/page-tree';
-import type { ReactNode } from 'react';
-import { useEffectEvent } from '@hanzo/docs-core/utils/use-effect-event';
+import { type ReactNode, useEffectEvent } from 'react';
 
 export interface SidebarTab {
   /**

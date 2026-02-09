@@ -1,18 +1,28 @@
 // source.config.ts
-import {
-  applyMdxPreset,
-  defineCollections,
-  defineConfig,
-  defineDocs,
-  frontmatterSchema,
-  metaSchema
-} from "@hanzo/docs-mdx/config";
+import { applyMdxPreset, defineCollections, defineConfig, defineDocs } from "@hanzo/docs-mdx/config";
 import { z } from "zod";
 import jsonSchema from "@hanzo/docs-mdx/plugins/json-schema";
 import lastModified from "@hanzo/docs-mdx/plugins/last-modified";
+
+// lib/shiki.ts
+import { configDefault } from "@hanzo/docs-core/highlight";
+var shikiConfig = {
+  ...configDefault,
+  defaultThemes: {
+    themes: {
+      light: "github-light",
+      dark: "vesper"
+    }
+  }
+};
+
+// source.config.ts
+import { metaSchema, pageSchema } from "@hanzo/docs-core/source/schema";
+import { visit } from "unist-util-visit";
+var isLint = process.env.LINT === "1";
 var docs = defineDocs({
   docs: {
-    schema: frontmatterSchema.extend({
+    schema: pageSchema.extend({
       preview: z.string().optional(),
       index: z.boolean().default(false),
       /**
@@ -22,7 +32,8 @@ var docs = defineDocs({
     }),
     postprocess: {
       includeProcessedMarkdown: true,
-      extractLinkReferences: true
+      extractLinkReferences: true,
+      valueToExport: ["elementIds"]
     },
     async: true,
     async mdxOptions(environment) {
@@ -36,20 +47,23 @@ var docs = defineDocs({
       const { remarkTypeScriptToJavaScript } = await import("@hanzo/docs-docgen/remark-ts2js");
       const { default: rehypeKatex } = await import("rehype-katex");
       const { remarkAutoTypeTable, createGenerator, createFileSystemGeneratorCache } = await import("@hanzo/docs-typescript");
-      const generator = createGenerator({
-        cache: createFileSystemGeneratorCache(".next/@hanzo/docs-typescript")
-      });
       const feedbackOptions = {
         resolve(node) {
           if (node.type === "mdxJsxFlowElement") return "skip";
           return node.type === "paragraph" || node.type === "image" || node.type === "list";
         }
       };
+      const typeTableOptions = {
+        generator: createGenerator({
+          cache: createFileSystemGeneratorCache(".next/@hanzo/docs-typescript")
+        }),
+        shiki: shikiConfig
+      };
       return applyMdxPreset({
         remarkStructureOptions: {
           types: [...remarkStructureDefaultOptions.types, "code"]
         },
-        rehypeCodeOptions: {
+        rehypeCodeOptions: isLint ? false : {
           langs: ["ts", "js", "html", "tsx", "mdx"],
           inline: "tailing-curly-colon",
           themes: {
@@ -72,16 +86,11 @@ var docs = defineDocs({
             id: "package-manager"
           }
         },
-        remarkPlugins: [
+        remarkPlugins: isLint ? [remarkElementIds] : [
           remarkSteps,
           remarkMath,
           [remarkFeedbackBlock, feedbackOptions],
-          [
-            remarkAutoTypeTable,
-            {
-              generator
-            }
-          ],
+          [remarkAutoTypeTable, typeTableOptions],
           remarkTypeScriptToJavaScript
         ],
         rehypePlugins: (v) => [rehypeKatex, ...v]
@@ -97,7 +106,7 @@ var docs = defineDocs({
 var blog = defineCollections({
   type: "doc",
   dir: "content/blog",
-  schema: frontmatterSchema.extend({
+  schema: pageSchema.extend({
     author: z.string(),
     date: z.iso.date().or(z.date())
   }),
@@ -106,7 +115,7 @@ var blog = defineCollections({
     const { rehypeCodeDefaultOptions } = await import("@hanzo/docs-core/mdx-plugins/rehype-code");
     const { remarkSteps } = await import("@hanzo/docs-core/mdx-plugins/remark-steps");
     return applyMdxPreset({
-      rehypeCodeOptions: {
+      rehypeCodeOptions: isLint ? false : {
         inline: "tailing-curly-colon",
         themes: {
           light: "catppuccin-latte",
@@ -122,7 +131,7 @@ var blog = defineCollections({
           id: "package-manager"
         }
       },
-      remarkPlugins: [remarkSteps]
+      remarkPlugins: isLint ? [remarkElementIds] : [remarkSteps]
     })(environment);
   }
 });
@@ -142,6 +151,21 @@ function transformerEscape() {
       replace(hast);
       return hast;
     }
+  };
+}
+function remarkElementIds() {
+  return (tree, file) => {
+    file.data ??= {};
+    file.data.elementIds ??= [];
+    visit(tree, "mdxJsxFlowElement", (element) => {
+      if (!element.name || !element.attributes) return;
+      const idAttr = element.attributes.find(
+        (attr) => attr.type === "mdxJsxAttribute" && attr.name === "id"
+      );
+      if (idAttr && typeof idAttr.value === "string") {
+        file.data.elementIds.push(idAttr.value);
+      }
+    });
   };
 }
 var source_config_default = defineConfig({
