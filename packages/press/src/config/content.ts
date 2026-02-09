@@ -1,25 +1,26 @@
-import type { DefaultMDXOptions } from '@hanzo/docs-mdx/config';
-import { defineConfig, defineDocs, frontmatterSchema, metaSchema } from '@hanzo/docs-mdx/config';
+import type { DefaultMDXOptions } from 'fumadocs-mdx/config';
+import { defineConfig, defineDocs } from 'fumadocs-mdx/config';
+import { metaSchema, pageSchema } from 'fumadocs-core/source/schema';
 import { z } from 'zod';
-import type { PressConfig } from './global';
+import type { FumapressConfig } from './global';
 import type { ProcessorOptions } from '@mdx-js/mdx';
 
 export interface ContentConfig {
   mdx?:
     | ({
-        preset?: 'hanzo-docs';
+        preset?: 'fumadocs';
       } & DefaultMDXOptions)
     | ({
         preset: 'minimal';
       } & ProcessorOptions);
 }
 
-export async function createContentConfig(config: PressConfig) {
+export async function createContentConfig(config: FumapressConfig) {
   return {
     docs: defineDocs({
       dir: 'content',
       docs: {
-        schema: frontmatterSchema
+        schema: pageSchema
           .extend({
             layout: z.string().default('docs'),
           })
@@ -35,4 +36,4 @@ export async function createContentConfig(config: PressConfig) {
   };
 }
 
-export type DocsMDXConfig = Awaited<ReturnType<typeof createContentConfig>>;
+export type FumadocsMDXConfig = Awaited<ReturnType<typeof createContentConfig>>;
