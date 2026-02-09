@@ -8,7 +8,7 @@ const withAnalyzer = createBundleAnalyzer({
 });
 
 const config: NextConfig = {
-  output: 'export',
+  output: process.env.NEXT_EXPORT === '1' ? 'export' : undefined,
   reactStrictMode: true,
   // Use webpack resolve aliases for virtual modules
   webpack: (config) => {

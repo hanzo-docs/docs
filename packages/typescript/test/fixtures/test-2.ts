@@ -5,7 +5,7 @@ export interface Player {
   /**
    * The name of player
    *
-   * @see https://hanzo-docs.dev
+   * @see https://docs.hanzo.ai
    * @defaultValue Henry
    */
   name: string;
