@@ -1,18 +1,17 @@
-import type { ReactNode } from 'react';
-import { HomeLayout } from '@hanzo/docs/ui/layouts/home';
-import { baseOptions, linkItems } from '@/lib/layout.shared';
+import { HomeLayout } from 'fumadocs-ui/layouts/home';
+import { baseOptions, linkItems } from '@/components/layouts/shared';
 import {
   NavbarMenu,
   NavbarMenuContent,
   NavbarMenuLink,
   NavbarMenuTrigger,
-} from '@hanzo/docs/ui/layouts/home/navbar';
-import Link from '@hanzo/docs/core/link';
+} from 'fumadocs-ui/layouts/home/navbar';
+import Link from 'fumadocs-core/link';
 import Image from 'next/image';
 import Preview from '@/public/banner.png';
 import { Book, ComponentIcon, Pencil, PlusIcon, Server } from 'lucide-react';
 
-export default function Layout({ children }: { children: ReactNode }) {
+export default function Layout({ children }: LayoutProps<'/'>) {
   return (
     <HomeLayout
       {...baseOptions()}
@@ -56,7 +55,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                   </div>
                   <p className="font-medium">Getting Started</p>
                   <p className="text-fd-muted-foreground text-sm">
-                    Learn to use Hanzo Docs on your docs site.
+                    Learn to use Fumadocs on your docs site.
                   </p>
                 </NavbarMenuLink>
 
@@ -80,7 +79,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                   <Pencil className="bg-fd-primary text-fd-primary-foreground p-1 mb-2 rounded-md" />
                   <p className="font-medium">Markdown</p>
                   <p className="text-fd-muted-foreground text-sm">
-                    Learn the writing format/syntax of Hanzo Docs.
+                    Learn the writing format/syntax of Fumadocs.
                   </p>
                 </NavbarMenuLink>
 
@@ -91,7 +90,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                   <PlusIcon className="bg-fd-primary text-fd-primary-foreground p-1 mb-2 rounded-md" />
                   <p className="font-medium">Manual Installation</p>
                   <p className="text-fd-muted-foreground text-sm">
-                    Setup Hanzo Docs for your existing Next.js app.
+                    Setup Fumadocs for your existing Next.js app.
                   </p>
                 </NavbarMenuLink>
               </NavbarMenuContent>

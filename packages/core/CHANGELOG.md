@@ -1,5 +1,38 @@
 # next-docs-zeta
 
+## 16.5.2
+
+### Patch Changes
+
+- c22f6ee: bump tsdown
+
+## 16.5.1
+
+## 16.5.0
+
+### Minor Changes
+
+- 9ba1250: Support Universal Shiki configuration
+
+## 16.4.11
+
+### Patch Changes
+
+- a75a84d: fix duplicated transformer execution for fallback trees
+
+## 16.4.10
+
+### Patch Changes
+
+- 099fde7: [Page Tree] Extract index page from folder
+- 6fd7e63: handle circular reference in page tree
+
+## 16.4.9
+
+### Patch Changes
+
+- 48dd0c2: fix incorrect page tree output
+
 ## 16.4.8
 
 ### Patch Changes

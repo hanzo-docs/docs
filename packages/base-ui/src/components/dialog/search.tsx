@@ -9,18 +9,19 @@ import {
   use,
   useCallback,
   useEffect,
+  useEffectEvent,
   useMemo,
   useRef,
   useState,
 } from 'react';
 import { I18nLabel, useI18n } from '@/contexts/i18n';
-import { cn } from '@hanzo/docs-ui/cn';
+import { cn } from '@/utils/cn';
 import { Dialog } from '@base-ui/react/dialog';
-import type { HighlightedText, ReactSortedResult as BaseResultType } from '@hanzo/docs-core/search';
+import type { HighlightedText, ReactSortedResult as BaseResultType } from 'fumadocs-core/search';
 import { cva } from 'class-variance-authority';
-import { useRouter } from '@hanzo/docs-core/framework';
+import { useRouter } from 'fumadocs-core/framework';
 import type { SharedProps } from '@/contexts/search';
-import { useOnChange } from '@hanzo/docs-core/utils/use-on-change';
+import { useOnChange } from 'fumadocs-core/utils/use-on-change';
 import scrollIntoView from 'scroll-into-view-if-needed';
 import { buttonVariants } from '@/components/ui/button';
 
@@ -77,7 +78,7 @@ export function SearchDialog({
   children,
 }: SearchDialogProps) {
   const router = useRouter();
-  const onSelect = useCallback((item: SearchItemType) => {
+  const onSelect = useEffectEvent((item: SearchItemType) => {
     if (item.type === 'action') {
       item.onSelect();
     } else if (item.external) {
@@ -88,7 +89,7 @@ export function SearchDialog({
 
     onOpenChange(false);
     onSelectProp?.(item);
-  }, [router, onOpenChange, onSelectProp]);
+  });
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
@@ -231,7 +232,7 @@ export function SearchDialogList({
     items && items.length > 0 ? items[0].id : null,
   );
 
-  const onKey = useCallback((e: KeyboardEvent) => {
+  const onKey = useEffectEvent((e: KeyboardEvent) => {
     if (!items || e.isComposing) return;
 
     if (e.key === 'ArrowDown' || e.key == 'ArrowUp') {
@@ -250,7 +251,7 @@ export function SearchDialogList({
       if (selected) onSelect(selected);
       e.preventDefault();
     }
-  }, [items, active, onSelect]);
+  });
 
   useEffect(() => {
     const element = ref.current;
@@ -270,7 +271,7 @@ export function SearchDialogList({
       observer.disconnect();
       window.removeEventListener('keydown', onKey);
     };
-  }, [onKey]);
+  }, []);
 
   useOnChange(items, () => {
     if (items && items.length > 0) {
