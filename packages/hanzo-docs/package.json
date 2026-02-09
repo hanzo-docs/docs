@@ -371,7 +371,7 @@
     }
   },
   "scripts": {
-    "build": "tsup && node scripts/copy-css.js",
+    "build": "tsup && tsc --emitDeclarationOnly && node scripts/copy-css.js",
     "dev": "tsup --watch"
   },
   "dependencies": {
