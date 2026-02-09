@@ -1,5 +1,5 @@
 import { fileURLToPath } from 'node:url';
-import type { Registry } from '@fumadocs/cli/build';
+import type { Registry } from '@hanzo/docs-cli/build';
 import * as path from 'node:path';
 import { commonComponents, resolveExternal } from '../../../shared/registry';
 
@@ -7,15 +7,15 @@ const srcDir = path.join(path.dirname(fileURLToPath(import.meta.url)), '../');
 
 // in shadcn cli, the order of files matters when writing import paths on consumer's codebase
 export const registry: Registry = {
-  name: 'fumadocs/base-ui',
+  name: 'hanzo-docs/base-ui',
   dir: srcDir,
   tsconfigPath: '../tsconfig.json',
   packageJson: '../package.json',
   env: {
-    ui: '@fumadocs/base-ui',
+    ui: '@hanzo/docs-base-ui',
   },
   onResolve(ref) {
-    return resolveExternal(ref, 'fumadocs-ui', srcDir) ?? ref;
+    return resolveExternal(ref, '@hanzo/docs-ui', srcDir) ?? ref;
   },
   components: [
     ...commonComponents,
@@ -356,9 +356,9 @@ export const registry: Registry = {
     },
   ],
   dependencies: {
-    'fumadocs-core': null,
-    '@fumadocs/base-ui': null,
-    'fumadocs-ui': 'npm:@fumadocs/base-ui',
+    '@hanzo/docs-core': null,
+    '@hanzo/docs-base-ui': null,
+    '@hanzo/docs-ui': 'npm:@hanzo/docs-base-ui',
     react: null,
   },
 };
