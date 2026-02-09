@@ -12,7 +12,7 @@
 - [ ] Other (please describe):
 
 ## Checklist
-- [ ] I have read the [CONTRIBUTING.md](https://github.com/fuma-nama/fumadocs/blob/dev/.github/contributing.md)
+- [ ] I have read the [CONTRIBUTING.md](https://github.com/hanzoai/docs/blob/dev/.github/contributing.md)
 - [ ] My code follows the code style of this project
 - [ ] I have added tests where applicable
 - [ ] I have tested my changes locally
