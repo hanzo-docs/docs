@@ -1,0 +1,80 @@
+---
+title: Pars DAO
+description: Decentralized governance for the global Persian community
+---
+
+# Pars DAO
+
+Pars DAO is a decentralized governance system for the global Persian community. It operates through 10 specialized Committees, manages treasury through dual-bucket architecture, and enables community-driven funding through transparent on-chain governance.
+
+## Core Principles
+
+- **Community First**: All decisions made by veASHA token holders
+- **Transparent Treasury**: Dual-bucket system with public accounting
+- **Decentralized Operations**: 10 specialized Committees with dedicated mandates
+- **Flexible Structure**: Spawn Sub-DAOs and Working Groups as needed
+- **Recall Mechanisms**: Community can recall funds from underperforming units
+
+## Token Architecture
+
+| Token | Purpose | Governance Power |
+|-------|---------|------------------|
+| **PARS** | Network governance token | Stake → veASHA |
+| **MIGA** | Protocol governance token | Stake → veASHA |
+| **CYRUS** | Cultural heritage token | Stake → veASHA |
+| **ASHA** | Reserve/backing token (OHM-style) | Lock → veASHA |
+| **veASHA** | Voting power token | Direct voting |
+| **L-tokens** | Liquid staked assets (LETH, LBTC, etc.) | Collateral for ASHA |
+
+## Quick Links
+
+<Cards>
+  <Card title="Governance" href="/docs/pars/governance">
+    veASHA voting, resolutions, and proposal process
+  </Card>
+  <Card title="Committees" href="/docs/pars/committees">
+    The 10 operational Committees of Pars DAO
+  </Card>
+  <Card title="Treasury" href="/docs/pars/treasury">
+    Working Treasury and Endowment management
+  </Card>
+  <Card title="Bonding" href="/docs/pars/bonding">
+    ASHA bonding, collateral, and liquid staking
+  </Card>
+</Cards>
+
+## Architecture Overview
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        Pars DAO                                  │
+│                    (veASHA Governance)                           │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  ┌─────────────────┐    ┌─────────────────┐                     │
+│  │ Working Treasury│    │    Endowment    │                     │
+│  │   (24mo ops)    │    │  (60% locked)   │                     │
+│  └────────┬────────┘    └────────┬────────┘                     │
+│           │                      │                               │
+│           ▼                      ▼                               │
+│  ┌─────────────────────────────────────────────────────────┐    │
+│  │                   10 Committees                          │    │
+│  │  Security│Treasury│Governance│Health│Culture│Research   │    │
+│  │  Infrastructure│Consular│Venture│Impact                 │    │
+│  └─────────────────────────────────────────────────────────┘    │
+│           │                                                      │
+│           ▼                                                      │
+│  ┌─────────────────────────────────────────────────────────┐    │
+│  │              Sub-DAOs & Working Groups                   │    │
+│  │         (Spawned by Committees, recallable)             │    │
+│  └─────────────────────────────────────────────────────────┘    │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+## Getting Started
+
+1. **Acquire tokens**: Get PARS, MIGA, or CYRUS on [Pars Network](https://pars.network)
+2. **Stake for veASHA**: Lock tokens to receive voting power
+3. **Participate**: Vote on resolutions, submit proposals, join Committees
+4. **Earn**: Stake in Liquid Vault for yield-bearing L-tokens

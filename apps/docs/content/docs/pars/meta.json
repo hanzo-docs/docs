@@ -1,0 +1,18 @@
+{
+  "title": "Pars DAO",
+  "description": "Governance, Treasury, and Bonding for Pars Network",
+  "icon": "Shield",
+  "root": true,
+  "pages": [
+    "---Overview---",
+    "index",
+    "---Governance---",
+    "governance",
+    "---Treasury---",
+    "treasury",
+    "---Committees---",
+    "committees",
+    "---Bonding---",
+    "bonding"
+  ]
+}

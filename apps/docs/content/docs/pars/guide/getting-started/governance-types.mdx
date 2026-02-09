@@ -1,0 +1,209 @@
+---
+title: Governance Types
+description: Choose the right governance model for your Committee or Sub-DAO
+---
+
+# Which Governance Type is Right For You?
+
+Pars DAO supports multiple governance models. Choose based on your organization's needs, trust level, and operational requirements.
+
+## Governance Models
+
+### 1. Multisig
+
+**Best for:** Small teams, security-critical operations, fast execution
+
+A multisig requires M-of-N signers to approve transactions. No token voting required.
+
+| Pros | Cons |
+|------|------|
+| Fast execution | Centralized trust |
+| Simple operations | Limited participation |
+| Clear accountability | Signer coordination |
+| No token requirements | Single point of failure |
+
+**Typical Configuration:**
+- 3-of-5 for operational funds
+- 4-of-7 for critical operations
+- 5-of-7 for treasury reserves
+
+**Used by:** Security Committee, Consular Committee
+
+### 2. Token Voting
+
+**Best for:** Large communities, democratic decisions, broad participation
+
+Token holders vote directly on proposals using veASHA voting power.
+
+| Pros | Cons |
+|------|------|
+| Democratic | Slower execution |
+| Broad participation | Voter apathy risk |
+| Transparent | Whale influence |
+| Aligned incentives | Quorum challenges |
+
+**Parameters:**
+- Quorum: 1M veASHA (Standard), 5M veASHA (Constitutional)
+- Approval: 50% (Standard), 67% (Constitutional)
+- Voting period: 7 days
+
+**Used by:** Health, Culture, Research, Impact Committees
+
+### 3. Hybrid (Multisig + Token Veto)
+
+**Best for:** Balanced governance, operational efficiency with community oversight
+
+Multisig executes day-to-day, but token holders can veto significant decisions.
+
+| Pros | Cons |
+|------|------|
+| Fast operations | More complex |
+| Community safeguard | Two governance systems |
+| Flexible thresholds | Potential conflicts |
+| Best of both worlds | Learning curve |
+
+**Configuration:**
+- Multisig handles routine operations
+- Large decisions require token vote
+- Token holders can veto within timelock
+
+**Used by:** Treasury, Infrastructure, Venture Committees
+
+### 4. Delegated
+
+**Best for:** Early-stage projects, rapid iteration, proof of concept
+
+Parent Committee controls the Sub-DAO directly.
+
+| Pros | Cons |
+|------|------|
+| Maximum control | Less autonomy |
+| Quick decisions | Dependency |
+| Easy oversight | Limited growth |
+| Simple structure | Bottleneck risk |
+
+**Used by:** New Working Groups, early-stage Sub-DAOs
+
+## Comparison Matrix
+
+| Feature | Multisig | Token Vote | Hybrid | Delegated |
+|---------|----------|------------|--------|-----------|
+| Speed | ⚡ Fast | 🐢 Slow | ⚡ Fast | ⚡ Fast |
+| Decentralization | Low | High | Medium | Low |
+| Participation | Limited | Broad | Medium | Limited |
+| Complexity | Simple | Medium | Complex | Simple |
+| Accountability | Clear | Diffuse | Mixed | Clear |
+| Scalability | Limited | High | High | Limited |
+
+## Choosing Your Model
+
+### Decision Tree
+
+```
+Start
+  │
+  ├── Is speed critical?
+  │     ├── Yes → Consider Multisig or Hybrid
+  │     └── No → Continue
+  │
+  ├── Is broad participation important?
+  │     ├── Yes → Consider Token Voting
+  │     └── No → Continue
+  │
+  ├── Is this a new/experimental project?
+  │     ├── Yes → Consider Delegated
+  │     └── No → Continue
+  │
+  ├── Do you need community oversight?
+  │     ├── Yes → Consider Hybrid
+  │     └── No → Consider Multisig
+  │
+  └── Default: Token Voting
+```
+
+### Recommendations by Use Case
+
+| Use Case | Recommended | Rationale |
+|----------|-------------|-----------|
+| Security operations | Multisig (3/5) | Speed, accountability |
+| Community grants | Token Voting | Broad participation |
+| Treasury management | Hybrid | Efficiency + oversight |
+| New Working Group | Delegated | Quick iteration |
+| Cultural programs | Token Voting | Community alignment |
+| Emergency response | Multisig (2/3) | Rapid action |
+| Infrastructure upgrades | Hybrid | Technical + community |
+
+## Transitioning Between Models
+
+### Delegated → Token Voting
+
+When a Working Group matures:
+
+1. Establish clear governance parameters
+2. Create governance token (if separate from veASHA)
+3. Propose transition Resolution
+4. Migrate treasury to new governance
+5. Document new processes
+
+### Token Voting → Hybrid
+
+When operations need more speed:
+
+1. Identify routine vs. significant decisions
+2. Create operational multisig
+3. Define veto thresholds
+4. Configure timelock periods
+5. Test with small operations
+
+### Any → Guardian Oversight
+
+During emergencies or bootstrap:
+
+1. Guardian Council can be added as oversight
+2. Veto power over harmful actions
+3. Time-limited (sunset clauses)
+4. Transparent action logging
+
+## Configuration Examples
+
+### Multisig Setup
+
+```typescript
+const multisigConfig = {
+  type: 'multisig',
+  threshold: 3,
+  signers: 5,
+  timelockDelay: 24 * 60 * 60, // 1 day
+  emergencyThreshold: 4 // Higher for emergency actions
+};
+```
+
+### Token Voting Setup
+
+```typescript
+const tokenVotingConfig = {
+  type: 'token-voting',
+  votingToken: 'veASHA',
+  quorum: parseEther('1000000'), // 1M veASHA
+  approval: 50, // 50% majority
+  votingPeriod: 7 * 24 * 60 * 60, // 7 days
+  timelockDelay: 3 * 24 * 60 * 60 // 3 days
+};
+```
+
+### Hybrid Setup
+
+```typescript
+const hybridConfig = {
+  type: 'hybrid',
+  multisig: {
+    threshold: 3,
+    signers: 5
+  },
+  tokenVeto: {
+    vetoThreshold: parseEther('500000'), // 500K veASHA to veto
+    vetoPeriod: 48 * 60 * 60 // 48 hours
+  },
+  largeDecisionThreshold: parseEther('10000') // >$10K requires token vote
+};
+```

@@ -1,0 +1,248 @@
+---
+title: Hanzo Gateway
+description: Multi-provider AI inference gateway
+---
+
+# Hanzo Gateway
+
+Hanzo Gateway is a production-ready multi-provider AI inference platform. It provides secure, cost-effective AI inference across multiple providers with built-in rate limiting, cost controls, and device authentication.
+
+## Features
+
+- **Multi-Provider Support**: OpenAI, Anthropic Claude, DigitalOcean Gradient, Together, Fireworks
+- **Cost Optimization**: Default to affordable providers, automatic fallback
+- **Rate Limiting**: Per-key and per-team limits
+- **Device Authentication**: Secure device-based auth
+- **OpenAI Compatible**: Drop-in replacement API
+- **Health Monitoring**: Built-in health checks and metrics
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         HANZO GATEWAY                                    │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                          │
+│  ┌────────────────────────────────────────────────────────────────┐     │
+│  │                    Gateway Layer                                │     │
+│  │   ┌──────────┬──────────┬───────────┬─────────────────┐        │     │
+│  │   │  Auth    │  Rate    │   Cost    │    Routing      │        │     │
+│  │   │  Layer   │  Limit   │  Control  │    Engine       │        │     │
+│  │   └────┬─────┴────┬─────┴─────┬─────┴───────┬─────────┘        │     │
+│  └────────┼──────────┼───────────┼─────────────┼──────────────────┘     │
+│           │          │           │             │                         │
+│           ▼          ▼           ▼             ▼                         │
+│  ┌─────────────────────────────────────────────────────────────────┐    │
+│  │                    Provider Adapters                             │    │
+│  │  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐   │    │
+│  │  │ OpenAI  │ │Anthropic│ │DigitalO │ │Together │ │Fireworks│   │    │
+│  │  │  GPT-4  │ │ Claude  │ │ Qwen3   │ │ Llama   │ │ Mixtral │   │    │
+│  │  └─────────┘ └─────────┘ └─────────┘ └─────────┘ └─────────┘   │    │
+│  └─────────────────────────────────────────────────────────────────┘    │
+│                                                                          │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+## Endpoints
+
+| Environment | URL |
+|-------------|-----|
+| Production | `https://gateway.hanzo.ai` |
+| Staging | `https://stg.gateway.hanzo.ai` |
+
+## Quick Start
+
+### 1. Development Setup
+
+```bash
+cd ~/work/hanzo/gateway
+
+# Copy environment
+cp .env.example .env
+
+# Start with Docker
+docker compose up
+
+# Or run directly
+npm start
+```
+
+### 2. Make API Calls
+
+```typescript
+import OpenAI from 'openai'
+
+const client = new OpenAI({
+  apiKey: process.env.HANZO_GATEWAY_KEY,
+  baseURL: 'https://gateway.hanzo.ai/v1'
+})
+
+const response = await client.chat.completions.create({
+  model: 'gpt-4o',
+  messages: [{ role: 'user', content: 'Hello!' }]
+})
+```
+
+### 3. Use Different Providers
+
+```typescript
+// Default: Cost-optimized (DigitalOcean Qwen3-32B)
+const response = await client.chat.completions.create({
+  model: 'qwen3-32b',
+  messages: [{ role: 'user', content: 'Hello!' }]
+})
+
+// OpenAI
+const gpt = await client.chat.completions.create({
+  model: 'gpt-4o',
+  messages: [{ role: 'user', content: 'Hello!' }]
+})
+
+// Anthropic
+const claude = await client.chat.completions.create({
+  model: 'claude-3-opus',
+  messages: [{ role: 'user', content: 'Hello!' }]
+})
+```
+
+## Supported Models
+
+### OpenAI
+
+| Model | Context | Description |
+|-------|---------|-------------|
+| gpt-4o | 128K | Latest GPT-4 Omni |
+| gpt-4o-mini | 128K | Cost-efficient GPT-4 |
+| gpt-4-turbo | 128K | GPT-4 Turbo |
+| o1 | 128K | Reasoning model |
+
+### Anthropic
+
+| Model | Context | Description |
+|-------|---------|-------------|
+| claude-3-opus | 200K | Most capable |
+| claude-3-5-sonnet | 200K | Best balance |
+| claude-3-haiku | 200K | Fastest |
+
+### DigitalOcean Gradient
+
+| Model | Context | Description |
+|-------|---------|-------------|
+| qwen3-32b | 32K | Cost-effective default |
+| llama-3.1-70b | 128K | Open source large |
+
+### Together/Fireworks
+
+| Model | Context | Description |
+|-------|---------|-------------|
+| llama-3.1-405b | 128K | Largest open |
+| mixtral-8x22b | 64K | MoE model |
+
+## Configuration
+
+### Environment Variables
+
+```bash
+# Required
+HANZO_GATEWAY_PORT=3000
+HANZO_IAM_URL=https://iam.hanzo.ai
+
+# Providers (add as needed)
+OPENAI_API_KEY=sk-xxx
+ANTHROPIC_API_KEY=sk-ant-xxx
+DO_API_KEY=xxx
+TOGETHER_API_KEY=xxx
+FIREWORKS_API_KEY=xxx
+
+# Rate Limiting
+RATE_LIMIT_REQUESTS=100
+RATE_LIMIT_WINDOW=60
+
+# Cost Controls
+MAX_DAILY_SPEND=100.00
+DEFAULT_MODEL=qwen3-32b
+```
+
+## Device Authentication
+
+```typescript
+// Register device
+const device = await gateway.devices.register({
+  name: 'iPhone 15',
+  platform: 'ios',
+  pushToken: 'xxx'
+})
+
+// Authenticate with device
+const token = await gateway.devices.authenticate({
+  deviceId: device.id,
+  signature: signChallenge(challenge)
+})
+```
+
+## Cost Controls
+
+```typescript
+// Set budget
+await gateway.budgets.set({
+  teamId: 'team-123',
+  dailyLimit: 100.00,
+  monthlyLimit: 2000.00
+})
+
+// Check spend
+const spend = await gateway.spend.get({
+  teamId: 'team-123',
+  period: 'month'
+})
+```
+
+## Health Checks
+
+```bash
+# Liveness
+curl https://gateway.hanzo.ai/health
+
+# Readiness
+curl https://gateway.hanzo.ai/ready
+
+# Metrics
+curl https://gateway.hanzo.ai/metrics
+```
+
+## Docker Deployment
+
+```bash
+docker pull hanzoai/gateway:latest
+
+docker run -d \
+  --name hanzo-gateway \
+  -p 3000:3000 \
+  -e OPENAI_API_KEY=sk-xxx \
+  -e ANTHROPIC_API_KEY=sk-ant-xxx \
+  hanzoai/gateway:latest
+```
+
+## Integration with Engine
+
+For local inference, Hanzo Gateway can connect to Hanzo Engine (Rust-based inference):
+
+```bash
+# Start engine
+cd ~/work/hanzo/engine
+cargo run --release -- serve --port 8080
+
+# Configure gateway
+HANZO_ENGINE_URL=http://localhost:8080
+```
+
+## Next Steps
+
+<Cards>
+  <Card title="Models" href="/docs/services/gateway/models">
+    Complete model catalog
+  </Card>
+  <Card title="Engine" href="/docs/services/engine">
+    Local Rust inference
+  </Card>
+</Cards>
