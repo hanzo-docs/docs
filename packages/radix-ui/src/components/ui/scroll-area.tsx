@@ -1,7 +1,6 @@
 import * as Primitive from '@radix-ui/react-scroll-area';
 import * as React from 'react';
-import { useEffectEvent } from '@hanzo/docs-core/utils/use-effect-event';
-import { cn } from '@hanzo/docs-ui/cn';
+import { cn } from '@/utils/cn';
 
 const ScrollArea = React.forwardRef<
   React.ComponentRef<typeof Primitive.Root>,

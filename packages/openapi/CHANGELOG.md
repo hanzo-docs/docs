@@ -1,5 +1,49 @@
 # @fuma-docs/openapi
 
+## 10.3.3
+
+### Patch Changes
+
+- c22f6ee: bump tsdown
+- Updated dependencies [c22f6ee]
+  - fumadocs-ui@16.5.2
+  - fumadocs-core@16.5.2
+  - @fumari/stf@0.0.2
+
+## 10.3.2
+
+### Patch Changes
+
+- 53ad20b: Pre-scan class names to optimize Tailwind CSS compilation performance
+- Updated dependencies [c08364a]
+- Updated dependencies [53ad20b]
+  - fumadocs-ui@16.5.1
+  - fumadocs-core@16.5.1
+
+## 10.3.1
+
+### Minor Changes
+
+- c03f8c3: Support `/ui/base` for reduced bundle size
+
+### Patch Changes
+
+- Updated dependencies [9ba1250]
+  - fumadocs-ui@16.5.0
+  - fumadocs-core@16.5.0
+
+## 10.2.7
+
+### Patch Changes
+
+- eb3d763: Break long words in openapi examples
+- 2abaff9: Improve object inputs
+- Updated dependencies [430a5f1]
+- Updated dependencies [099fde7]
+- Updated dependencies [6fd7e63]
+  - fumadocs-ui@16.4.10
+  - fumadocs-core@16.4.10
+
 ## 10.2.6
 
 ### Patch Changes

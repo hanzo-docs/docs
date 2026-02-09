@@ -1,10 +1,9 @@
 'use client';
 import type { ComponentProps } from 'react';
-import { useEffectEvent } from '@hanzo/docs-core/utils/use-effect-event';
 import { Search } from 'lucide-react';
 import { useSearchContext } from '@/contexts/search';
 import { useI18n } from '@/contexts/i18n';
-import { cn } from '@hanzo/docs-ui/cn';
+import { cn } from '@/utils/cn';
 import { type ButtonProps, buttonVariants } from '@/components/ui/button';
 
 interface SearchToggleProps extends Omit<ComponentProps<'button'>, 'color'>, ButtonProps {

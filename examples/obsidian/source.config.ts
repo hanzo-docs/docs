@@ -1,11 +1,12 @@
-import { defineConfig, defineDocs, frontmatterSchema } from '@hanzo/docs-mdx/config';
-import { remarkObsidian, RemarkObsidianOptions } from 'hanzo-docs-obsidian/mdx';
-import { readVaultFiles } from 'hanzo-docs-obsidian';
+import { defineConfig, defineDocs } from 'fumadocs-mdx/config';
+import { remarkObsidian, RemarkObsidianOptions } from 'fumadocs-obsidian/mdx';
+import { readVaultFiles } from 'fumadocs-obsidian';
+import { pageSchema } from 'fumadocs-core/source/schema';
 
 export const docs = defineDocs({
   dir: 'content/docs',
   docs: {
-    schema: frontmatterSchema.partial(),
+    schema: pageSchema.partial(),
   },
 });
 
