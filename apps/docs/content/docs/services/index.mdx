@@ -1,0 +1,145 @@
+---
+title: Hanzo Services
+description: Complete documentation for all Hanzo AI platform services
+---
+
+# Hanzo AI Platform Services
+
+Hanzo provides a comprehensive suite of AI-first platform services designed for enterprise-grade applications. All services use unified OAuth2/OIDC authentication via Hanzo IAM.
+
+## Service Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                          HANZO AI PLATFORM                               │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                          │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌─────────────┐ │
+│  │     IAM      │  │     KMS      │  │   Gateway    │  │   Vector    │ │
+│  │  iam.hanzo   │  │  kms.hanzo   │  │gateway.hanzo │  │vector.hanzo │ │
+│  │              │  │              │  │              │  │             │ │
+│  │  - OAuth2    │  │  - MPC Keys  │  │  - LLM API   │  │  - Search   │ │
+│  │  - OIDC      │  │  - HSM       │  │  - Routing   │  │  - Embed    │ │
+│  │  - Web3      │  │  - Signing   │  │  - Caching   │  │  - Store    │ │
+│  │  - MPC Auth  │  │  - Custody   │  │  - Rate Lim  │  │  - Index    │ │
+│  └──────────────┘  └──────────────┘  └──────────────┘  └─────────────┘ │
+│                                                                          │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌─────────────┐ │
+│  │    Nexus     │  │    Cloud     │  │   Commerce   │  │   Console   │ │
+│  │ nexus.hanzo  │  │ cloud.hanzo  │  │  api.hanzo   │  │console.hanzo│ │
+│  │              │  │              │  │              │  │             │ │
+│  │  - RAG       │  │  - Deploy    │  │  - Orders    │  │  - Observe  │ │
+│  │  - Knowledge │  │  - Infra     │  │  - Payments  │  │  - Monitor  │ │
+│  │  - Agents    │  │  - Scaling   │  │  - Products  │  │  - Traces   │ │
+│  │  - Memory    │  │  - Serving   │  │  - Analytics │  │  - Logs     │ │
+│  └──────────────┘  └──────────────┘  └──────────────┘  └─────────────┘ │
+│                                                                          │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+## Core Services
+
+| Service | Endpoint | Description |
+|---------|----------|-------------|
+| [IAM](/docs/services/iam) | `iam.hanzo.ai` | Identity, authentication, OAuth2/OIDC, Web3, MPC auth |
+| [KMS](/docs/services/kms) | `kms.hanzo.ai` | Key management, MPC custody, HSM, signing |
+| [Gateway](/docs/services/gateway) | `gateway.hanzo.ai` | LLM API gateway, routing, caching, rate limiting |
+| [Vector](/docs/services/vector) | `vector.hanzo.ai` | Vector database, embeddings, similarity search |
+| [Nexus](/docs/services/nexus) | `nexus.hanzo.ai` | RAG, knowledge graphs, agents, memory |
+| [Cloud](/docs/services/cloud) | `cloud.hanzo.ai` | AI platform, deployment, infrastructure |
+| [Commerce](/docs/services/commerce) | `api.hanzo.ai` | E-commerce API, orders, payments, products |
+
+## Authentication
+
+All services authenticate via Hanzo IAM using OAuth2/OIDC:
+
+```typescript
+import { HanzoClient } from '@hanzo/sdk'
+
+const client = new HanzoClient({
+  apiKey: process.env.HANZO_API_KEY,
+  // Or use OAuth2
+  accessToken: 'your-access-token'
+})
+```
+
+### API Keys
+
+Generate API keys via the Gateway API:
+
+```bash
+curl -X POST https://gateway.hanzo.ai/key/generate \
+  -H "Authorization: Bearer $HANZO_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "models": ["claude-3-opus", "gpt-4", "*"],
+    "max_budget": 1000.00
+  }'
+```
+
+### OAuth2 Flow
+
+```
+1. Redirect → https://iam.hanzo.ai/login/oauth/authorize
+2. User authenticates
+3. Callback with authorization code
+4. Exchange code → https://iam.hanzo.ai/api/login/oauth/access_token
+5. Use access token for API calls
+```
+
+## OpenAPI Specifications
+
+All services have comprehensive OpenAPI 3.1 specifications:
+
+| Service | Spec URL |
+|---------|----------|
+| IAM | `/Users/z/work/hanzo/openapi/iam/openapi.yaml` |
+| Gateway | `/Users/z/work/hanzo/openapi/gateway/openapi.yaml` |
+| Vector | `/Users/z/work/hanzo/openapi/vector/openapi.yaml` |
+| Nexus | `/Users/z/work/hanzo/openapi/nexus/openapi.yaml` |
+| Cloud | `/Users/z/work/hanzo/openapi/cloud/openapi.yaml` |
+| Commerce | `/Users/z/work/hanzo/openapi/commerce/openapi.yaml` |
+
+## SDKs
+
+Official SDKs are available in multiple languages:
+
+- **TypeScript/JavaScript**: `@hanzo/sdk`, `@hanzo/commerce`
+- **Python**: `hanzoai`, `hanzo-mcp`
+- **Go**: `github.com/hanzoai/go-sdk`
+- **Rust**: `hanzo-rs`
+
+## Environment Variables
+
+Standard environment variables across all SDKs:
+
+```bash
+# API Access
+HANZO_API_KEY=your-api-key
+HANZO_TOKEN=your-oauth-token
+
+# Service Endpoints (optional, use defaults)
+HANZO_IAM_URL=https://iam.hanzo.ai
+HANZO_GATEWAY_URL=https://gateway.hanzo.ai
+HANZO_VECTOR_URL=https://vector.hanzo.ai
+HANZO_NEXUS_URL=https://nexus.hanzo.ai
+HANZO_CLOUD_URL=https://cloud.hanzo.ai
+HANZO_COMMERCE_URL=https://api.hanzo.ai
+```
+
+## Next Steps
+
+<Cards>
+  <Card title="IAM" href="/docs/services/iam">
+    Identity and access management, OAuth2, Web3, MPC
+  </Card>
+  <Card title="KMS" href="/docs/services/kms">
+    Key management, MPC custody, HSM integration
+  </Card>
+  <Card title="Gateway" href="/docs/services/gateway">
+    LLM API gateway with 200+ models
+  </Card>
+  <Card title="Vector" href="/docs/services/vector">
+    Vector database for embeddings and search
+  </Card>
+</Cards>
