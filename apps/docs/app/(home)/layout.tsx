@@ -1,11 +1,11 @@
-import { HomeLayout } from '@hanzo/docs-ui/layouts/home';
+import { HomeLayout } from '@hanzo/docs-base-ui/layouts/home';
 import { baseOptions, linkItems } from '@/components/layouts/shared';
 import {
   NavbarMenu,
   NavbarMenuContent,
   NavbarMenuLink,
   NavbarMenuTrigger,
-} from '@hanzo/docs-ui/layouts/home/navbar';
+} from '@hanzo/docs-base-ui/layouts/home/navbar';
 import Link from '@hanzo/docs-core/link';
 import Image from 'next/image';
 import Preview from '@/public/banner.png';

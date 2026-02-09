@@ -1,4 +1,4 @@
-import type { BaseLayoutProps } from '@hanzo/docs-ui/layouts/shared';
+import type { BaseLayoutProps } from '@hanzo/docs-base-ui/layouts/shared';
 
 export function baseOptions(): BaseLayoutProps {
   return {

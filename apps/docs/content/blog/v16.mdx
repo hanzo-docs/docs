@@ -26,10 +26,10 @@ Fumadocs 16 removed substantial amount of deprecated APIs accumulated since v15.
 
 - **Minimum React.js Version Raised to 19.2.0**: React 19.2 brings crucial performance improvements to Hanzo Docs UI.
   - **Next.js Projects**: Next.js projects using Hanzo Docs UI must use Next.js 16 or later, as Next.js uses its own canary channel for React.js.
-- **`@hanzo/docs-ui/provider` is removed**:
-  - Use `@hanzo/docs-ui/provider/next` for root provider.
-  - Use individual exports for contexts from `@hanzo/docs-ui/contexts/*`.
-- `@hanzo/docs-ui/page`:
+- **`@hanzo/docs-base-ui/provider` is removed**:
+  - Use `@hanzo/docs-base-ui/provider/next` for root provider.
+  - Use individual exports for contexts from `@hanzo/docs-base-ui/contexts/*`.
+- `@hanzo/docs-base-ui/page`:
   - Removed `<DocsCategory />`, use `getPageTreePeers()` instead:
 
     ```tsx title="page.tsx"

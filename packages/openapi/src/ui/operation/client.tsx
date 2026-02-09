@@ -1,6 +1,6 @@
 'use client';
 
-import { useCopyButton } from '@hanzo/docs-ui/hooks/use-copy-button';
+import { useCopyButton } from '@hanzo/docs-base-ui/utils/use-copy-button';
 import { buttonVariants } from '@hanzo/docs-base-ui/components/ui/button';
 import { cn } from '@/utils/cn';
 import { Check, Copy } from 'lucide-react';

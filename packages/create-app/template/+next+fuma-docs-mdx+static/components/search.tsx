@@ -9,10 +9,10 @@ import {
   SearchDialogList,
   SearchDialogOverlay,
   type SharedProps,
-} from '@hanzo/docs-ui/components/dialog/search';
+} from '@hanzo/docs-base-ui/components/dialog/search';
 import { useDocsSearch } from '@hanzo/docs-core/search/client';
 import { create } from '@orama/orama';
-import { useI18n } from '@hanzo/docs-ui/contexts/i18n';
+import { useI18n } from '@hanzo/docs-base-ui/contexts/i18n';
 
 function initOrama() {
   return create({

@@ -1,1 +1,1 @@
-export * from '@hanzo/docs-radix-ui/components/steps';
+export * from '@hanzo/docs-ui/components/steps';
