@@ -9,6 +9,6 @@
     "eslint": "^10.0.0",
     "@hanzo/docs-core": "workspace:*",
     "@hanzo/docs-mdx": "workspace:*",
-    "@hanzo/docs-ui": "workspace:*"
+    "@hanzo/docs-base-ui": "workspace:*"
   }
 }

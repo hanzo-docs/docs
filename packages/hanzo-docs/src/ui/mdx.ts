@@ -1,2 +1,2 @@
-export * from '@hanzo/docs-radix-ui/mdx';
-export { default } from '@hanzo/docs-radix-ui/mdx';
+export * from '@hanzo/docs-ui/mdx';
+export { default } from '@hanzo/docs-ui/mdx';

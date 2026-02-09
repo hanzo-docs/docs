@@ -1,7 +1,7 @@
-import { type ParameterNode, type TypeNode, TypeTable } from '@hanzo/docs-ui/components/type-table';
+import { type ParameterNode, type TypeNode, TypeTable } from '@hanzo/docs-base-ui/components/type-table';
 import { type Jsx, toJsxRuntime } from 'hast-util-to-jsx-runtime';
 import * as runtime from 'react/jsx-runtime';
-import defaultMdxComponents from '@hanzo/docs-ui/mdx';
+import defaultMdxComponents from '@hanzo/docs-base-ui/mdx';
 import 'server-only';
 import type { ReactNode } from 'react';
 import { type BaseTypeTableProps, type GenerateTypeTableOptions } from '@/lib/type-table';
