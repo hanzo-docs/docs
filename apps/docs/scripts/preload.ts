@@ -1,7 +1,13 @@
-import { createMdxPlugin } from '@hanzo/docs/mdx/bun';
-import { postInstall } from '@hanzo/docs/mdx/next';
+export {};
 
-process.env.LINT = '1';
-const configPath = 'source.config.ts';
-await postInstall({ configPath });
-Bun.plugin(createMdxPlugin({ configPath }));
+try {
+  const { createMdxPlugin } = await import('@hanzo/docs/mdx/bun');
+  const { postInstall } = await import('@hanzo/docs/mdx/next');
+
+  process.env.LINT = '1';
+  const configPath = 'source.config.ts';
+  await postInstall({ configPath });
+  Bun.plugin(createMdxPlugin({ configPath }));
+} catch {
+  // MDX plugin not available (e.g. CI before packages are linked)
+}
