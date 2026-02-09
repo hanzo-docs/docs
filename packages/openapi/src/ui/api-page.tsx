@@ -60,12 +60,12 @@ export async function APIPage({
       operations: operations?.map((item) => {
         const pathItem = dereferenced.paths?.[item.path];
         if (!pathItem)
-          throw new Error(`[Fumadocs OpenAPI] Path not found in OpenAPI schema: ${item.path}`);
+          throw new Error(`[Hanzo Docs OpenAPI] Path not found in OpenAPI schema: ${item.path}`);
 
         const operation = pathItem[item.method];
         if (!operation)
           throw new Error(
-            `[Fumadocs OpenAPI] Method ${item.method} not found in operation: ${item.path}`,
+            `[Hanzo Docs OpenAPI] Method ${item.method} not found in operation: ${item.path}`,
           );
 
         const method = createMethod(item.method, pathItem, operation);
@@ -87,12 +87,12 @@ export async function APIPage({
       webhooks: webhooks?.map((item) => {
         const webhook = dereferenced.webhooks?.[item.name];
         if (!webhook)
-          throw new Error(`[Fumadocs OpenAPI] Webhook not found in OpenAPI schema: ${item.name}`);
+          throw new Error(`[Hanzo Docs OpenAPI] Webhook not found in OpenAPI schema: ${item.name}`);
 
         const hook = webhook[item.method];
         if (!hook)
           throw new Error(
-            `[Fumadocs OpenAPI] Method ${item.method} not found in webhook: ${item.name}`,
+            `[Hanzo Docs OpenAPI] Method ${item.method} not found in webhook: ${item.name}`,
           );
 
         return {

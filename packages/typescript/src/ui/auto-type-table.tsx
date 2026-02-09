@@ -1,14 +1,14 @@
-import { type ParameterNode, type TypeNode, TypeTable } from 'fumadocs-ui/components/type-table';
+import { type ParameterNode, type TypeNode, TypeTable } from '@hanzo/docs-ui/components/type-table';
 import { type Jsx, toJsxRuntime } from 'hast-util-to-jsx-runtime';
 import * as runtime from 'react/jsx-runtime';
-import defaultMdxComponents from 'fumadocs-ui/mdx';
+import defaultMdxComponents from '@hanzo/docs-ui/mdx';
 import 'server-only';
 import type { ReactNode } from 'react';
 import { type BaseTypeTableProps, type GenerateTypeTableOptions } from '@/lib/type-table';
 import { type Generator } from '@/lib/base';
 import type { Nodes } from 'hast';
 import { parseTags } from '@/lib/parse-tags';
-import type { ResolvedShikiConfig } from 'fumadocs-core/highlight/config';
+import type { ResolvedShikiConfig } from '@hanzo/docs-core/highlight/config';
 import { markdownRenderer } from '@/markdown';
 
 interface JSXMarkdownRenderer {

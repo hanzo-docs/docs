@@ -1,5 +1,5 @@
 @import './shiki.css';
-@plugin '@fumadocs/tailwind/typography';
+@plugin '@hanzo/docs-tailwind/typography';
 
 :root {
   --fd-sidebar-drawer-offset: 100%;

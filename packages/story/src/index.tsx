@@ -122,7 +122,7 @@ export function defineStoryFactory(factoryOptions: StoryFactoryOptions = {}): St
     const fileContent = await fs.readFile(filePath, 'utf-8');
     return cached(cache, getHash(`controls:${filePath}:${name}:${fileContent}`), async () => {
       const project = await initProject();
-      const injection = `export type _StoryProps_ = import('@fumadocs/story').GetProps<typeof ${name}>`;
+      const injection = `export type _StoryProps_ = import('@hanzo/docs-story').GetProps<typeof ${name}>`;
       const sourceFile = project.createSourceFile(filePath, `${fileContent}\n${injection}`, {
         overwrite: true,
       });
