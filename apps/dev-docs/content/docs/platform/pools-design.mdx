@@ -708,7 +708,7 @@ service PoolsService {
 }
 ```
 
-### 6.2 Platform <-> hanzo-node Communication
+### 6.2 Platform to hanzo-node Communication
 
 ```typescript
 // /server/services/hanzo-node-client.ts
@@ -1013,11 +1013,11 @@ describe("Pool Deployment", () => {
 
 | Metric                  | Description                      | Alert Threshold |
 | ----------------------- | -------------------------------- | --------------- |
-| pool_liquidity_total    | Total liquidity across all pools | < $100K         |
+| pool_liquidity_total    | Total liquidity across all pools | under $100K     |
 | pool_utilization        | Resource utilization per pool    | > 90%           |
 | swap_volume_24h         | 24-hour trading volume           | N/A             |
-| deployment_success_rate | Pool deployment success rate     | < 95%           |
-| provider_sla_score      | Average provider SLA score       | < 97%           |
+| deployment_success_rate | Pool deployment success rate     | under 95%       |
+| provider_sla_score      | Average provider SLA score       | under 97%       |
 | transaction_latency_p99 | 99th percentile tx latency       | > 5s            |
 
 ### 11.2 Grafana Dashboard
