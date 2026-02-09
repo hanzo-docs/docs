@@ -1,5 +1,5 @@
 import { type Config, defineConfig } from 'waku/config';
-import mdx from 'fumadocs-mdx/vite';
+import mdx from '@hanzo/docs-mdx/vite';
 import * as MdxConfig from './source.config.js';
 import tailwindcss from '@tailwindcss/vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
@@ -9,7 +9,7 @@ export default defineConfig({
   vite: {
     // we do this to avoid Vite from bundling React contexts and cause duplicated contexts conflicts.
     optimizeDeps: {
-      exclude: ['fumadocs-ui', 'fumadocs-core'],
+      exclude: ['@hanzo/docs-ui', '@hanzo/docs-core'],
     },
 
     plugins: [tailwindcss(), mdx(MdxConfig), tsconfigPaths()],

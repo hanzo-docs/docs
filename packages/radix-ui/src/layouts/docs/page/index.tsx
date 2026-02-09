@@ -12,7 +12,7 @@ import {
   PageTOCPopoverContent,
   PageTOCPopoverTrigger,
 } from './client';
-import type { AnchorProviderProps, TOCItemType } from 'fumadocs-core/toc';
+import type { AnchorProviderProps, TOCItemType } from '@hanzo/docs-core/toc';
 import * as TocDefault from '@/components/toc/default';
 import * as TocClerk from '@/components/toc/clerk';
 import { TOCProvider, TOCScrollArea } from '@/components/toc';

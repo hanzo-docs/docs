@@ -36,7 +36,7 @@ export function deserializePageTree(serialized: SerializedPageTree): PageTree.Ro
 }
 
 /**
- * Deserialize loader data that is serialized by the server-side Fumadocs `loader()`, supported:
+ * Deserialize loader data that is serialized by the server-side Hanzo Docs `loader()`, supported:
  * - Page Tree
  *
  * other unrelated properties are kept in the output.
