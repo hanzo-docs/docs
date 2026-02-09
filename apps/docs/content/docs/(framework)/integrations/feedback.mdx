@@ -22,7 +22,7 @@ npx @hanzo/docs-cli@latest add feedback
 To create a page-level feedback UI, add the `<Feedback />` component to your docs page:
 
 ```tsx
-import { DocsPage } from '@hanzo/docs-ui/layout/docs/page';
+import { DocsPage } from '@hanzo/docs-base-ui/layout/docs/page';
 import { Feedback } from '@/components/feedback/client';
 import posthog from 'posthog-js';
 
@@ -69,7 +69,7 @@ Then, define the `FeedbackBlock` MDX component:
 
 ```tsx title="mdx-components.tsx"
 import { FeedbackBlock } from '@/components/feedback/client';
-import defaultComponents from '@hanzo/docs-ui/mdx';
+import defaultComponents from '@hanzo/docs-base-ui/mdx';
 import type { MDXComponents } from 'mdx/types';
 
 export function getMDXComponents(components?: MDXComponents): MDXComponents {
