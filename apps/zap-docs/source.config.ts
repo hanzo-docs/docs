@@ -1,16 +1,13 @@
 import {
   applyMdxPreset,
-  defineCollections,
   defineConfig,
   defineDocs,
   frontmatterSchema,
   metaSchema,
 } from '@hanzo/docs-mdx/config';
 import { z } from 'zod';
-import type { ElementContent } from 'hast';
 import jsonSchema from '@hanzo/docs-mdx/plugins/json-schema';
 import lastModified from '@hanzo/docs-mdx/plugins/last-modified';
-import type { ShikiTransformer } from 'shiki';
 
 export const docs = defineDocs({
   docs: {
@@ -33,7 +30,7 @@ export const docs = defineDocs({
           types: [...remarkStructureDefaultOptions.types, 'code'],
         },
         rehypeCodeOptions: {
-          langs: ['ts', 'js', 'go', 'rust', 'python', 'cpp', 'c', 'java', 'csharp', 'erlang', 'ocaml', 'haskell', 'capnp', 'bash', 'json', 'yaml'],
+          langs: ['ts', 'js', 'go', 'rust', 'python', 'cpp', 'c', 'java', 'csharp', 'erlang', 'ocaml', 'haskell', 'bash', 'json', 'yaml', 'toml', 'cmake', 'powershell', 'typescript'],
           inline: 'tailing-curly-colon',
           themes: {
             light: 'github-light',
@@ -41,7 +38,6 @@ export const docs = defineDocs({
           },
           transformers: [
             ...(rehypeCodeDefaultOptions.transformers ?? []),
-            transformerCapnp(),
           ],
         },
         remarkCodeTabOptions: {
@@ -62,16 +58,6 @@ export const docs = defineDocs({
     }),
   },
 });
-
-function transformerCapnp(): ShikiTransformer {
-  return {
-    name: 'zap:capnp-highlighter',
-    code(hast) {
-      // Cap'n Proto schema highlighting enhancement
-      return hast;
-    },
-  };
-}
 
 export default defineConfig({
   plugins: [

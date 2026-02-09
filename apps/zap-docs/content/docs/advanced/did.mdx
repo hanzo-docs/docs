@@ -19,7 +19,7 @@ DIDs provide:
 
 ZAP supports three DID methods:
 
-```capnp
+```c
 enum DidMethod {
   lux @0;     # Lux blockchain-anchored DID
   key @1;     # Self-certifying DID from cryptographic key
@@ -68,7 +68,7 @@ did:web:example.com
 
 ## DID Document
 
-```capnp
+```c
 struct DidDocument {
   context @0 :List(Text);  # JSON-LD context
   id @1 :Text;             # DID subject
@@ -91,7 +91,7 @@ struct DidDocument {
 
 ### Verification Methods
 
-```capnp
+```c
 struct VerificationMethod {
   id @0 :Text;           # e.g., "did:lux:z6Mk...#keys-1"
   type @1 :VerificationMethodType;
@@ -110,7 +110,7 @@ enum VerificationMethodType {
 
 ### Services
 
-```capnp
+```c
 struct Service {
   id @0 :Text;           # e.g., "did:lux:z6Mk...#zap-agent"
   type @1 :ServiceType;
@@ -127,7 +127,7 @@ enum ServiceType {
 
 ## DID Registry
 
-```capnp
+```c
 interface DidRegistry {
   # Resolve a DID to its document
   resolve @0 (request :DidResolveRequest) -> (response :DidResolveResponse);
@@ -247,7 +247,7 @@ registry.update(&did, doc, signature).await?;
 
 ZAP nodes use DIDs for identification:
 
-```capnp
+```c
 struct NodeIdentity {
   did @0 :Did;
   publicKey @1 :Data;    # ML-DSA-65 public key (1952 bytes)

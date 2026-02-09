@@ -14,7 +14,7 @@ ZAP uses Cap'n Proto schemas to define messages and interfaces. This page covers
 
 Every Cap'n Proto schema file starts with a unique ID:
 
-```capnp
+```c
 @0xb2a3f4c5d6e7f8a9;  # Unique file ID
 
 # Annotations for code generation
@@ -39,7 +39,7 @@ $Go.import("github.com/zap-protocol/zap-go");
 
 Structs define composite data types:
 
-```capnp
+```c
 struct Timestamp {
   seconds @0 :Int64;
   nanos @1 :UInt32;
@@ -61,7 +61,7 @@ Field numbers (`@0`, `@1`, etc.) define wire format order and enable schema evol
 
 Enumerations for fixed value sets:
 
-```capnp
+```c
 enum LogLevel {
   debug @0;
   info @1;
@@ -82,7 +82,7 @@ enum Transport {
 
 Tagged unions for variant types:
 
-```capnp
+```c
 struct ResourceContent {
   uri @0 :Text;
   mimeType @1 :Text;
@@ -97,7 +97,7 @@ struct ResourceContent {
 
 Homogeneous collections:
 
-```capnp
+```c
 struct ToolList {
   tools @0 :List(Tool);
 }
@@ -118,7 +118,7 @@ struct PromptMessage {
 
 ### Tool Definitions
 
-```capnp
+```c
 struct Tool {
   name @0 :Text;
   description @1 :Text;
@@ -143,7 +143,7 @@ struct ToolResult {
 
 ### Resource Definitions
 
-```capnp
+```c
 struct Resource {
   uri @0 :Text;
   name @1 :Text;
@@ -164,7 +164,7 @@ struct ResourceContent {
 
 ### Prompt Definitions
 
-```capnp
+```c
 struct Prompt {
   name @0 :Text;
   description @1 :Text;
@@ -203,7 +203,7 @@ struct PromptMessage {
 
 Interfaces define RPC methods:
 
-```capnp
+```c
 interface Zap {
   init @0 (client :ClientInfo) -> (server :ServerInfo);
   listTools @1 () -> (tools :ToolList);
@@ -221,7 +221,7 @@ interface Zap {
 
 Interfaces can extend others:
 
-```capnp
+```c
 interface Gateway extends(Zap) {
   addServer @0 (name :Text, url :Text, config :ServerConfig) -> (id :Text);
   removeServer @1 (id :Text) -> ();
@@ -234,7 +234,7 @@ interface Gateway extends(Zap) {
 
 Return capability objects for streaming:
 
-```capnp
+```c
 interface ResourceStream {
   next @0 () -> (content :ResourceContent, done :Bool);
   cancel @1 () -> ();
@@ -249,7 +249,7 @@ Cap'n Proto schemas support forward/backward compatible evolution:
 
 Add new fields with higher ordinals:
 
-```capnp
+```c
 struct Tool {
   name @0 :Text;
   description @1 :Text;
@@ -263,7 +263,7 @@ struct Tool {
 
 Provide defaults for new fields:
 
-```capnp
+```c
 struct ServerConfig {
   transport @0 :Transport;
   auth @1 :Auth;
@@ -275,7 +275,7 @@ struct ServerConfig {
 
 Mark fields as deprecated (still readable):
 
-```capnp
+```c
 struct OldStruct {
   oldField @0 :Text $deprecated;  # Annotation
   newField @1 :Text;

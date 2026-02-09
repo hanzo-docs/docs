@@ -1,6 +1,6 @@
 import { twMerge } from 'tailwind-merge';
-import { type ClassValue, clsx } from 'class-variance-authority';
+import { type ClassValue, cx } from 'class-variance-authority';
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+  return twMerge(cx(...inputs));
 }
