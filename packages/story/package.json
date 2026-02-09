@@ -4,7 +4,7 @@
   "description": "Story integration to Hanzo Docs.",
   "keywords": [],
   "license": "MIT",
-  "author": "Fuma Nama",
+  "author": "Hanzo AI",
   "repository": "github:hanzoai/docs",
   "files": [
     "css",

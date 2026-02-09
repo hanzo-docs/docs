@@ -9,7 +9,7 @@
   ],
   "homepage": "https://hanzoai.github.io/docs",
   "license": "MIT",
-  "author": "Fuma Nama",
+  "author": "Hanzo AI",
   "repository": "github:hanzoai/docs",
   "files": [
     "dist/*",
