@@ -1,5 +1,26 @@
 # fumadocs-typescript
 
+## 5.1.2
+
+### Patch Changes
+
+- c22f6ee: bump tsdown
+- Updated dependencies [c22f6ee]
+  - fumadocs-ui@16.5.2
+  - fumadocs-core@16.5.2
+
+## 5.1.0
+
+### Minor Changes
+
+- f6cecbf: Use Universal Shiki configuartion for Markdown renderer
+
+### Patch Changes
+
+- Updated dependencies [9ba1250]
+  - fumadocs-ui@17.0.0
+  - fumadocs-core@17.0.0
+
 ## 5.0.1
 
 ### Patch Changes

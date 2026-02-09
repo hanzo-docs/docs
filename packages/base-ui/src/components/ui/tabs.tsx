@@ -4,14 +4,14 @@ import {
   type ComponentProps,
   createContext,
   use,
-  useCallback,
+  useEffectEvent,
   useLayoutEffect,
   useMemo,
   useRef,
   useState,
 } from 'react';
 import { Tabs as Primitive } from '@base-ui/react/tabs';
-import { mergeRefs } from '@hanzo/docs-ui/merge-refs';
+import { mergeRefs } from '@/utils/merge-refs';
 
 type ChangeListener = (v: string) => void;
 const listeners = new Map<string, Set<ChangeListener>>();
@@ -66,7 +66,7 @@ export function Tabs({
       ? // eslint-disable-next-line react-hooks/rules-of-hooks -- not supposed to change controlled/uncontrolled
         useState(defaultValue)
       : // eslint-disable-next-line react-hooks/rules-of-hooks -- not supposed to change controlled/uncontrolled
-        [_value, useCallback((v: string) => _onValueChange?.(v), [_onValueChange])];
+        [_value, useEffectEvent((v: string) => _onValueChange?.(v))];
 
   useLayoutEffect(() => {
     if (!groupId) return;

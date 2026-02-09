@@ -10,12 +10,11 @@ import {
   useMemo,
   useRef,
 } from 'react';
-import { useEffectEvent } from '@hanzo/docs-core/utils/use-effect-event';
-import { cn } from '@hanzo/docs-ui/cn';
-import { useCopyButton } from '@hanzo/docs-ui/hooks/use-copy-button';
+import { cn } from '@/utils/cn';
+import { useCopyButton } from '@/utils/use-copy-button';
 import { buttonVariants } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { mergeRefs } from '@hanzo/docs-ui/merge-refs';
+import { mergeRefs } from '@/utils/merge-refs';
 
 export interface CodeBlockProps extends ComponentProps<'figure'> {
   /**
