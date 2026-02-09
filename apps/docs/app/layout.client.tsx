@@ -12,7 +12,8 @@ export function Body({ children }: { children: ReactNode }): React.ReactElement 
 }
 
 export function useMode(): string | undefined {
-  const { slug = [] } = useParams();
+  const params = useParams();
+  const slug = params?.slug ?? [];
   if (Array.isArray(slug)) return getSection(slug[0]);
 }
 
