@@ -358,7 +358,6 @@ export const registry: Registry = {
   dependencies: {
     '@hanzo/docs-core': null,
     '@hanzo/docs-base-ui': null,
-    '@hanzo/docs-base-ui': 'npm:@hanzo/docs-base-ui',
     react: null,
   },
 };
