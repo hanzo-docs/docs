@@ -35,6 +35,7 @@
     "feed": "^5.2.0",
     "@hanzo/docs": "workspace:*",
     "@hanzo/docs-core": "workspace:*",
+    "@hanzo/docs-ui": "workspace:*",
     "@hanzo/docs-docgen": "workspace:^",
     "@hanzo/docs-mdx": "workspace:*",
     "@hanzo/docs-openapi": "workspace:^",
