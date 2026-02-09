@@ -9,7 +9,7 @@ pnpm workspace monorepo with turbo. Two apps, 24 packages, 24 examples.
 ```
 ~/work/hanzo/docs/
 ├── apps/
-│   ├── docs/           # Main docs site (docs.hanzo.ai)
+│   ├── docs/           # Main docs site (hanzoai.github.io/docs)
 │   └── zap-docs/       # Zap protocol docs
 ├── packages/
 │   ├── core/           # @hanzo/docs-core - source loading, search, i18n
