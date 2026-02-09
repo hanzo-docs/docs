@@ -7,14 +7,14 @@ export function createMetadata(override: Metadata): Metadata {
     openGraph: {
       title: override.title ?? undefined,
       description: override.description ?? undefined,
-      url: 'https://docs.hanzo.ai',
+      url: 'https://hanzoai.github.io/docs',
       images: '/banner.png',
       siteName: 'Hanzo Docs',
       ...override.openGraph,
     },
     twitter: {
       card: 'summary_large_image',
-      creator: '@fuma_nama',
+      creator: '@hanzoai',
       title: override.title ?? undefined,
       description: override.description ?? undefined,
       images: '/banner.png',
@@ -25,7 +25,7 @@ export function createMetadata(override: Metadata): Metadata {
         'application/rss+xml': [
           {
             title: 'Hanzo Docs Blog',
-            url: 'https://docs.hanzo.ai/blog/rss.xml',
+            url: 'https://hanzoai.github.io/docs/blog/rss.xml',
           },
         ],
       },
@@ -44,6 +44,6 @@ export function getPageImage(page: Page) {
 }
 
 export const baseUrl =
-  process.env.NODE_ENV === 'development' || !process.env.VERCEL_PROJECT_PRODUCTION_URL
+  process.env.NODE_ENV === 'development'
     ? new URL('http://localhost:3000')
-    : new URL(`https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`);
+    : new URL('https://hanzoai.github.io/docs');
