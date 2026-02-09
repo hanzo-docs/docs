@@ -6,13 +6,13 @@
     ["@hanzo/docs-core", "@hanzo/docs-base-ui"],
     ["@hanzo/docs-create-app", "@hanzo/docs-create-app-versions"]
   ],
-  "access": "restricted",
-  "baseBranch": "dev",
+  "access": "public",
+  "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "bumpVersionsWithWorkspaceProtocolOnly": true,
   "privatePackages": {
     "version": true,
     "tag": false
   },
-  "ignore": ["docs", "fumapress", "example-fumapress", "example-*"]
+  "ignore": ["docs", "dev-docs", "zap-docs", "example-*"]
 }
