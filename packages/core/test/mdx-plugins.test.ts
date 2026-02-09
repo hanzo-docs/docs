@@ -110,7 +110,7 @@ test('Remark Image: `publicDir` with URL', async () => {
   const content = await fs.readFile(path.resolve(cwd, './fixtures/remark-image-public-dir.md'));
   const result = await remark()
     .use(remarkImage, {
-      publicDir: 'https://hanzo-docs.dev',
+      publicDir: 'https://fumadocs.dev',
       useImport: false,
     })
     .use(remarkMdx)
