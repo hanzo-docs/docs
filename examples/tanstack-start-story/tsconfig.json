@@ -17,7 +17,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "fumadocs-mdx:collections/*": [".source/*"]
+      "@hanzo/docs-mdx:collections/*": [".source/*"]
     },
     "noEmit": true
   }

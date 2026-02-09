@@ -80,7 +80,7 @@ export default function Page() {
               Getting Started
             </Link>
             <a
-              href="https://codesandbox.io/p/sandbox/github/fuma-nama/hanzo-docs-ui-template"
+              href="https://codesandbox.io/p/sandbox/github/hanzoai/docs-ui-template"
               target="_blank"
               rel="noreferrer noopener"
               className={cn(buttonVariants({ variant: 'secondary' }), 'max-sm:text-sm')}
@@ -485,11 +485,11 @@ function ForEngineers() {
         <div className="flex flex-row w-fit items-center gap-4 mb-6">
           {[
             {
-              href: 'https://github.com/fuma-nama/hanzo-docs-basehub',
+              href: 'https://github.com/hanzoai/docs-basehub',
               text: 'BaseHub CMS',
             },
             {
-              href: 'https://github.com/fuma-nama/hanzo-docs-sanity',
+              href: 'https://github.com/hanzoai/docs-sanity',
               text: 'Sanity',
             },
             {
@@ -652,7 +652,7 @@ function OpenSource() {
             Sponsors
           </Link>
           <a
-            href="https://github.com/fuma-nama/hanzo-docs/graphs/contributors"
+            href="https://github.com/hanzoai/docs/graphs/contributors"
             rel="noreferrer noopener"
             className={cn(buttonVariants({ variant: 'secondary' }))}
           >
@@ -720,7 +720,7 @@ function OpenSource() {
             Read docs
           </Link>
           <a
-            href="https://github.com/fuma-nama/hanzo-docs"
+            href="https://github.com/hanzoai/docs"
             rel="noreferrer noopener"
             className={cn(
               buttonVariants({

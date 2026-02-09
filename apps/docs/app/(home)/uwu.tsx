@@ -22,7 +22,7 @@ export function UwuHero() {
           Getting Started
         </Link>
         <a
-          href="https://stackblitz.com/~/github.com/fuma-nama/hanzo-docs-ui-template"
+          href="https://stackblitz.com/~/github.com/hanzoai/docs-ui-template"
           className={cn(
             buttonVariants({
               size: 'lg',

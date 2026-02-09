@@ -1,5 +1,5 @@
-import { configDefault } from 'fumadocs-core/highlight';
-import type { ResolvedShikiConfig } from 'fumadocs-core/highlight/config';
+import { configDefault } from '@hanzo/docs-core/highlight';
+import type { ResolvedShikiConfig } from '@hanzo/docs-core/highlight/config';
 
 export const shikiConfig: ResolvedShikiConfig = {
   ...configDefault,

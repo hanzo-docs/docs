@@ -1,6 +1,6 @@
 'use client';
 import { CodeBlock, type CodeBlockProps, Pre } from '@/components/codeblock';
-import { useShiki, type UseShikiOptions } from 'fumadocs-core/highlight/core/client';
+import { useShiki, type UseShikiOptions } from '@hanzo/docs-core/highlight/core/client';
 import { cn } from '@/utils/cn';
 import {
   type ComponentProps,

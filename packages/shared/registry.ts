@@ -1,4 +1,4 @@
-import type { Component, Reference, SourceReference } from '@fumadocs/cli/build';
+import type { Component, Reference, SourceReference } from '@hanzo/docs-cli/build';
 import path from 'node:path';
 
 /**
