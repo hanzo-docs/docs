@@ -1,0 +1,18 @@
+{
+  "title": "Hanzo Dev",
+  "description": "AI-powered coding assistant for your terminal",
+  "icon": "Terminal",
+  "defaultOpen": false,
+  "pages": [
+    "index",
+    "getting-started",
+    "usage",
+    "configuration",
+    "integrations",
+    "architecture",
+    "platform",
+    "reference",
+    "contributing",
+    "faq"
+  ]
+}
