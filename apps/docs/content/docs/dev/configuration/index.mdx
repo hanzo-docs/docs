@@ -1,0 +1,49 @@
+---
+title: Configuration
+description: Configure Hanzo Dev with config.toml, MCP servers, and notification hooks.
+index: true
+---
+
+## Configuration File
+
+Configuration is loaded from `~/.hanzo/config.toml` (legacy paths `~/.code/config.toml` and `~/.codex/config.toml` are also read).
+
+Override values on the command line with `-c`:
+
+```bash
+# Override model
+dev -c model=gpt-4.1
+
+# Override multiple values
+dev -c model=gpt-4.1 -c model_provider=openai
+
+# Use with subcommands
+dev exec -c model=gpt-4.1 "Your prompt"
+```
+
+## MCP Servers
+
+Connect to MCP servers:
+
+```toml
+[mcp_servers.server-name]
+command = "npx"
+args = ["-y", "mcp-server"]
+env = { "API_KEY" = "value" }
+```
+
+## Apps (Connectors)
+
+Use `$` in the composer to insert a connector. The `/apps` command lists available and installed apps.
+
+## Notifications
+
+Configure notification hooks for when the agent finishes a turn. Set up in the `[notify]` section of `config.toml`.
+
+## JSON Schema
+
+The generated JSON Schema for `config.toml` lives at `codex-rs/core/config.schema.json` in the source repository.
+
+## Notices
+
+Hanzo Dev stores "do not show again" flags for some UI prompts under the `[notice]` table.
