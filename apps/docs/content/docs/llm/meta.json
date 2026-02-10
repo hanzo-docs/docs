@@ -1,0 +1,6 @@
+{
+  "title": "LLM Gateway",
+  "description": "Unified proxy for 200+ LLM providers",
+  "icon": "Brain",
+  "pages": ["index"]
+}

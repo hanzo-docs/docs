@@ -1,0 +1,13 @@
+{
+  "title": "Getting Started",
+  "description": "Install and set up Hanzo Dev",
+  "icon": "Rocket",
+  "root": true,
+  "pages": [
+    "---Setup---",
+    "index",
+    "install",
+    "homebrew",
+    "authentication"
+  ]
+}

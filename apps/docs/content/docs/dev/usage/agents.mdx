@@ -1,0 +1,81 @@
+---
+title: Agents & Subagents
+description: Configure and orchestrate external CLI agents and multi-agent workflows.
+---
+
+Hanzo Dev can launch external CLI agents and orchestrate them in multi-agent subagent flows such as `/plan`, `/solve`, and `/code`.
+
+## Agent Configuration
+
+Configure agents in `config.toml`:
+
+```toml
+[[agents]]
+name = "code-gpt-5.2-codex"
+command = "coder"
+args = ["--foo", "bar"]
+args_read_only = ["-s", "read-only", "-a", "never", "exec", "--skip-git-repo-check"]
+args_write = ["-s", "workspace-write", "--dangerously-bypass-approvals-and-sandbox", "exec", "--skip-git-repo-check"]
+env = { CODE_FOO = "1" }
+read_only = false
+enabled = true
+description = "Frontline coding agent"
+instructions = "Preamble added to this agent's prompt"
+```
+
+### Fields
+
+| Field | Description |
+| --- | --- |
+| `name` | Slug/alias shown in pickers |
+| `command` | Executable path (defaults to name) |
+| `args` | Base arguments |
+| `args_read_only` | Override args for read-only mode |
+| `args_write` | Override args for write mode |
+| `env` | Environment variables |
+| `read_only` | Force read-only even if session allows writes |
+| `enabled` | Show/hide in pickers |
+| `description` | Agent description |
+| `instructions` | Preamble for agent prompt |
+
+### Built-in Defaults
+
+When no `[[agents]]` are configured, Hanzo Dev provides: `code-gpt-5.2`, `code-gpt-5.2-codex`, `claude-opus-4.5`, `gemini-3-pro`, `code-gpt-5.1-codex-mini`, `claude-sonnet-4.5`, `gemini-3-flash`, `claude-haiku-4.5`, `qwen-3-coder`.
+
+## Subagents
+
+Configure multi-agent slash commands:
+
+```toml
+[[subagents.commands]]
+name = "plan"
+read_only = true
+agents = ["code-gpt-5.2-codex", "claude-opus-4.5"]
+orchestrator_instructions = "Guidance for orchestrator before spawning agents"
+agent_instructions = "Preamble added to each spawned agent"
+```
+
+The orchestrator fans out agents, waits for results, and merges reasoning.
+
+## TUI Controls
+
+- `/agents` opens the settings overlay to the Agents section
+- Agent editor: create or edit agents (enable/disable, read-only, instructions)
+- Subagent editor: configure per-command agent lists for `/plan`, `/solve`, `/code`
+
+## AGENTS.md and Project Memory
+
+Hanzo Dev loads `AGENTS.md` files along the path (global, repo root, cwd) up to 32 KiB total. Contents become system/developer instructions on the first turn.
+
+## Headless Execution
+
+```bash
+# Stream JSONL events
+dev exec --json "your prompt"
+
+# Structured JSON output
+dev exec --output-schema schema.json --output-last-message out.json "your prompt"
+
+# Read-only by default; add --full-auto for edits
+dev exec --full-auto "your prompt"
+```
