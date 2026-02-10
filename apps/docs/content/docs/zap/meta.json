@@ -1,0 +1,15 @@
+{
+  "title": "ZAP Protocol",
+  "description": "Zero-Copy App Proto for AI agent communication",
+  "icon": "Zap",
+  "defaultOpen": false,
+  "pages": [
+    "index",
+    "overview",
+    "getting-started",
+    "schema",
+    "protocol",
+    "bindings",
+    "advanced"
+  ]
+}
