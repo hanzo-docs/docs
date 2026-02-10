@@ -1,3 +1,16 @@
 {
-  "pages": ["(framework)", "ui", "headless", "mdx", "cli"]
+  "pages": [
+    "(framework)",
+    "ui",
+    "headless",
+    "mdx",
+    "cli",
+    "---Products---",
+    "llm",
+    "mcp",
+    "dev",
+    "zap",
+    "---Platform---",
+    "services"
+  ]
 }
