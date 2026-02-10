@@ -60,9 +60,6 @@ var docs = defineDocs({
         shiki: shikiConfig
       };
       return applyMdxPreset({
-        remarkStructureOptions: {
-          types: [...remarkStructureDefaultOptions.types, "code"]
-        },
         rehypeCodeOptions: isLint ? false : {
           langs: ["ts", "js", "html", "tsx", "mdx"],
           inline: "tailing-curly-colon",
