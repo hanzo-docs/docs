@@ -2728,6 +2728,37 @@ importers:
         specifier: ^0.20.3
         version: 0.20.3(oxc-resolver@11.17.0)(typescript@5.9.3)
 
+  packages/org:
+    dependencies:
+      lucide-react:
+        specifier: ^0.563.0
+        version: 0.563.0(react@19.2.4)
+      react:
+        specifier: ^19.2.0
+        version: 19.2.4
+      react-dom:
+        specifier: ^19.2.0
+        version: 19.2.4(react@19.2.4)
+    devDependencies:
+      '@hanzo/docs-base-ui':
+        specifier: workspace:*
+        version: link:../base-ui
+      '@hanzo/docs-core':
+        specifier: workspace:*
+        version: link:../core
+      '@types/react':
+        specifier: ^19.2.13
+        version: 19.2.13
+      eslint-config-custom:
+        specifier: workspace:*
+        version: link:../eslint-config-custom
+      tsconfig:
+        specifier: workspace:*
+        version: link:../tsconfig
+      tsdown:
+        specifier: ^0.20.3
+        version: 0.20.3(oxc-resolver@11.17.0)(typescript@5.9.3)
+
   packages/press:
     dependencies:
       '@hanzo/docs-base-ui':
