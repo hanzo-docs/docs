@@ -1,48 +1,225 @@
 ---
-title: Hanzo Bot
-description: AI-powered personal assistant for any OS. WhatsApp, Telegram, Discord, iMessage gateway with full system access and privacy by default. Powered by Hanzo AI.
-index: true
+title: "Bot"
+description: "Top-level overview of Bot, features, and purpose"
 ---
 
-Hanzo Bot is an AI-powered personal assistant that runs on any OS and connects to
-WhatsApp, Telegram, Discord, iMessage, Signal, Slack, and more. Self-host for free
-or run on [Hanzo Cloud](https://cloud.hanzo.ai) with a **$5 free credit** on signup.
+> *Your AI team, deployed everywhere.*
 
-OpenClaw compatible — bring your existing configuration and skills.
+<p align="center">
+  <img src="whatsapp-bot.jpg" alt="Bot" width="420" />
+</p>
 
-## Start Here
+<p align="center">
+  <strong>Any OS + WhatsApp/Telegram/Discord/iMessage gateway for AI agents (Pi).</strong><br />
+  Plugins add Mattermost and more.
+  Send a message, get an agent response — from your pocket.
+</p>
 
-- [Installation](/docs/install) — Install Hanzo Bot in under a minute
-- [Getting Started](/docs/getting-started) — Zero to first message guide
-- [Core Concepts](/docs/concepts) — Architecture, agents, memory, sessions
+<p align="center">
+  <a href="https://github.com/hanzoai/bot">GitHub</a> ·
+  <a href="https://github.com/hanzoai/bot/releases">Releases</a> ·
+  <a href="/">Docs</a> ·
+  <a href="/start/bot">Bot assistant setup</a>
+</p>
 
-## Channels & Providers
+Bot bridges WhatsApp (via WhatsApp Web / Baileys), Telegram (Bot API / grammY), Discord (Bot API / channels.discord.js), and iMessage (imsg CLI) to coding agents like [Pi](https://github.com/badlogic/pi-mono). Plugins add Mattermost (Bot API + WebSocket) and more.
 
-- [Channels](/docs/channels) — WhatsApp, Telegram, Discord, iMessage, Signal, Slack, Matrix
-- [LLM Providers](/docs/providers) — OpenAI, Anthropic, Ollama, Qwen, OpenRouter, Bedrock
+## Start here
 
-## Build & Extend
+- **New install from zero:** [Getting Started](/start/getting-started)
+- **Guided setup (recommended):** [Wizard](/start/wizard) (`bot onboard`)
+- **Open the dashboard (local Gateway):** http://127.0.0.1:18789/ (or http://localhost:18789/)
 
-- [CLI Reference](/docs/cli) — 40+ commands for setup, config, messaging, and ops
-- [Skills & Tools](/docs/tools) — 743+ skills, browser automation, code execution
-- [Plugins](/docs/plugins) — Build and distribute plugin packages
-- [Automation](/docs/automation) — Cron jobs, webhooks, polling, Gmail Pub/Sub
+If the Gateway is running on the same computer, that link opens the browser Control UI
+immediately. If it fails, start the Gateway first: `bot gateway`.
 
-## Deploy & Operate
+## Dashboard (browser Control UI)
 
-- [Gateway](/docs/gateway) — WebSocket gateway, remote access, security
-- [Platforms](/docs/platforms) — macOS, Linux, Windows, iOS, Android, Docker, Fly.io
-- [Web Interfaces](/docs/web) — Dashboard, webchat, control UI
+The dashboard is the browser Control UI for chat, config, nodes, sessions, and more.
+Local default: http://127.0.0.1:18789/
+Remote access: [Web surfaces](/web) and [Tailscale](/gateway/tailscale)
 
-## Hanzo Cloud
+## How it works
 
-Don't want to self-host? Run Hanzo Bot on [Hanzo Cloud](https://cloud.hanzo.ai):
-- **$5 free credit** on signup
-- Managed infrastructure with automatic updates
-- OpenClaw compatible — import your existing config
-- **25% of compute costs paid back to OSS developers**
+```
+WhatsApp / Telegram / Discord / iMessage (+ plugins)
+        │
+        ▼
+  ┌───────────────────────────┐
+  │          Gateway          │  ws://127.0.0.1:18789 (loopback-only)
+  │     (single source)       │
+  │                           │  http://<gateway-host>:18793
+  │                           │    /__bot__/canvas/ (Canvas host)
+  └───────────┬───────────────┘
+              │
+              ├─ Pi agent (RPC)
+              ├─ CLI (bot …)
+              ├─ Chat UI (SwiftUI)
+              ├─ macOS app (Bot.app)
+              ├─ iOS node via Gateway WS + pairing
+              └─ Android node via Gateway WS + pairing
+```
 
-## Help
+Most operations flow through the **Gateway** (`bot gateway`), a single long-running process that owns channel connections and the WebSocket control plane.
 
-- [Troubleshooting](/docs/help) — Common issues and solutions
-- [Reference](/docs/reference) — RPC, templates, device models
+## Network model
+
+- **One Gateway per host (recommended)**: it is the only process allowed to own the WhatsApp Web session. If you need a rescue bot or strict isolation, run multiple gateways with isolated profiles and ports; see [Multiple gateways](/gateway/multiple-gateways).
+- **Loopback-first**: Gateway WS defaults to `ws://127.0.0.1:18789`.
+  - The wizard now generates a gateway token by default (even for loopback).
+  - For Tailnet access, run `bot gateway --bind tailnet --token ...` (token is required for non-loopback binds).
+- **Nodes**: connect to the Gateway WebSocket (LAN/tailnet/SSH as needed); legacy TCP bridge is deprecated/removed.
+- **Canvas host**: HTTP file server on `canvasHost.port` (default `18793`), serving `/__bot__/canvas/` for node WebViews; see [Gateway configuration](/gateway/configuration) (`canvasHost`).
+- **Remote use**: SSH tunnel or tailnet/VPN; see [Remote access](/gateway/remote) and [Discovery](/gateway/discovery).
+
+## Features (high level)
+
+- 📱 **WhatsApp Integration** — Uses Baileys for WhatsApp Web protocol
+- ✈️ **Telegram Bot** — DMs + groups via grammY
+- 🎮 **Discord Bot** — DMs + guild channels via channels.discord.js
+- 🧩 **Mattermost Bot (plugin)** — Bot token + WebSocket events
+- 💬 **iMessage** — Local imsg CLI integration (macOS)
+- 🤖 **Agent bridge** — Pi (RPC mode) with tool streaming
+- ⏱️ **Streaming + chunking** — Block streaming + Telegram draft streaming details ([/concepts/streaming](/concepts/streaming))
+- 🧠 **Multi-agent routing** — Route provider accounts/peers to isolated agents (workspace + per-agent sessions)
+- 🔐 **Subscription auth** — Anthropic (Claude Pro/Max) + OpenAI (ChatGPT/Codex) via OAuth
+- 💬 **Sessions** — Direct chats collapse into shared `main` (default); groups are isolated
+- 👥 **Group Chat Support** — Mention-based by default; owner can toggle `/activation always|mention`
+- 📎 **Media Support** — Send and receive images, audio, documents
+- 🎤 **Voice notes** — Optional transcription hook
+- 🖥️ **WebChat + macOS app** — Local UI + menu bar companion for ops and voice wake
+- 📱 **iOS node** — Pairs as a node and exposes a Canvas surface
+- 📱 **Android node** — Pairs as a node and exposes Canvas + Chat + Camera
+
+Note: legacy Claude/Codex/Gemini/Opencode paths have been removed; Pi is the only coding-agent path.
+
+## Quick start
+
+Runtime requirement: **Node >= 22**.
+
+```bash
+# Recommended: global install (npm/pnpm)
+npm install -g bot@latest
+# or: pnpm add -g bot@latest
+
+# Onboard + install the service (launchd/systemd user service)
+bot onboard --install-daemon
+
+# Pair WhatsApp Web (shows QR)
+bot channels login
+
+# Gateway runs via the service after onboarding; manual run is still possible:
+bot gateway --port 18789
+```
+
+Switching between npm and git installs later is easy: install the other flavor and run `bot doctor` to update the gateway service entrypoint.
+
+From source (development):
+
+```bash
+git clone https://github.com/hanzoai/bot.git
+cd bot
+pnpm install
+pnpm ui:build # auto-installs UI deps on first run
+pnpm build
+bot onboard --install-daemon
+```
+
+If you don't have a global install yet, run the onboarding step via `pnpm bot ...` from the repo.
+
+Multi-instance quickstart (optional):
+
+```bash
+BOT_CONFIG_PATH=~/.bot/a.json \
+BOT_STATE_DIR=~/.bot-a \
+bot gateway --port 19001
+```
+
+Send a test message (requires a running Gateway):
+
+```bash
+bot message send --target +15555550123 --message "Hello from Bot"
+```
+
+## Configuration (optional)
+
+Config lives at `~/.bot/bot.json`.
+
+- If you **do nothing**, Bot uses the bundled Pi binary in RPC mode with per-sender sessions.
+- If you want to lock it down, start with `channels.whatsapp.allowFrom` and (for groups) mention rules.
+
+Example:
+
+```json5
+{
+  channels: {
+    whatsapp: {
+      allowFrom: ["+15555550123"],
+      groups: { "*": { requireMention: true } }
+    }
+  },
+  messages: { groupChat: { mentionPatterns: ["@bot"] } }
+}
+```
+
+## Docs
+
+- Start here:
+  - [Docs hubs (all pages linked)](/start/hubs)
+  - [Help](/help) <- *common fixes + troubleshooting*
+  - [Configuration](/gateway/configuration)
+  - [Configuration examples](/gateway/configuration-examples)
+  - [Slash commands](/tools/slash-commands)
+  - [Multi-agent routing](/concepts/multi-agent)
+  - [Updating / rollback](/install/updating)
+  - [Pairing (DM + nodes)](/start/pairing)
+  - [Nix mode](/install/nix)
+  - [Bot assistant setup](/start/bot)
+  - [Skills](/tools/skills)
+  - [Skills config](/tools/skills-config)
+  - [Workspace templates](/reference/templates/AGENTS)
+  - [RPC adapters](/reference/rpc)
+  - [Gateway runbook](/gateway)
+  - [Nodes (iOS/Android)](/nodes)
+  - [Web surfaces (Control UI)](/web)
+  - [Discovery + transports](/gateway/discovery)
+  - [Remote access](/gateway/remote)
+- Providers and UX:
+  - [WebChat](/web/webchat)
+  - [Control UI (browser)](/web/control-ui)
+  - [Telegram](/channels/telegram)
+  - [Discord](/channels/discord)
+  - [Mattermost (plugin)](/channels/mattermost)
+  - [iMessage](/channels/imessage)
+  - [Groups](/concepts/groups)
+  - [WhatsApp group messages](/concepts/group-messages)
+  - [Media: images](/nodes/images)
+  - [Media: audio](/nodes/audio)
+- Companion apps:
+  - [macOS app](/platforms/macos)
+  - [iOS app](/platforms/ios)
+  - [Android app](/platforms/android)
+  - [Windows (WSL2)](/platforms/windows)
+  - [Linux app](/platforms/linux)
+- Ops and safety:
+  - [Sessions](/concepts/session)
+  - [Cron jobs](/automation/cron-jobs)
+  - [Webhooks](/automation/webhook)
+  - [Gmail hooks (Pub/Sub)](/automation/gmail-pubsub)
+  - [Security](/gateway/security)
+  - [Troubleshooting](/gateway/troubleshooting)
+
+## Credits
+
+- **Hanzo AI** ([@hanzoai](https://github.com/hanzoai)) — Techstars '17, AI infrastructure
+- **Peter Steinberger** ([@steipete](https://twitter.com/steipete)) — Creator
+- **Mario Zechner** ([@badlogicc](https://twitter.com/badlogicgames)) — Pi creator, security pen-tester
+
+## Core Contributors
+
+- **Maxim Vovshin** (@Hyaxia, 36747317+Hyaxia@users.noreply.github.com) — Blogwatcher skill
+- **Nacho Iacovino** (@nachoiacovino, nacho.iacovino@gmail.com) — Location parsing (Telegram + WhatsApp)
+
+## License
+
+MIT
