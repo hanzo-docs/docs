@@ -28,6 +28,8 @@ jobs:
           node-version: 20
           cache: pnpm
 
+      - uses: oven-sh/setup-bun@v2
+
       - run: pnpm install --frozen-lockfile
       - run: pnpm build --filter=bot-docs
 
