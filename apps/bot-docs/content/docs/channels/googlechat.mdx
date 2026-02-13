@@ -105,7 +105,7 @@ Use the public URL (without `:8443`) in the Google Chat app config.
 
 ### Option B: Reverse Proxy (Caddy)
 If you use a reverse proxy like Caddy, only proxy the specific path:
-```caddy
+```text
 your-domain.com {
     reverse_proxy /googlechat* localhost:18789
 }
