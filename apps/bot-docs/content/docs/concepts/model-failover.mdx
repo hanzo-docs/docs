@@ -3,6 +3,8 @@ title: "Model failover"
 description: "How Bot rotates auth profiles and falls back across models"
 ---
 
+# Model failover
+
 Bot handles failures in two stages:
 1) **Auth profile rotation** within the current provider.
 2) **Model fallback** to the next model in `agents.defaults.model.fallbacks`.
