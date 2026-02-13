@@ -3,6 +3,8 @@ title: "Running Bot.app with a Remote Gateway"
 description: "SSH tunnel setup for Bot.app connecting to a remote gateway"
 ---
 
+# Running Bot.app with a Remote Gateway
+
 Bot.app uses SSH tunneling to connect to a remote gateway. This guide shows you how to set it up.
 
 ## Overview
@@ -33,7 +35,7 @@ Bot.app uses SSH tunneling to connect to a remote gateway. This guide shows you 
 
 Edit `~/.ssh/config` and add:
 
-```ssh-config
+```ssh
 Host remote-gateway
     HostName <REMOTE_IP>          # e.g., 172.27.187.184
     User <REMOTE_USER>            # e.g., jefferson
