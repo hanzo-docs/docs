@@ -31,7 +31,7 @@ jobs:
       - uses: oven-sh/setup-bun@v2
 
       - run: pnpm install --frozen-lockfile
-      - run: pnpm build --filter=bot-docs
+      - run: npx turbo run build --filter=bot-docs
 
       - name: Log in to GHCR
         uses: docker/login-action@v3
