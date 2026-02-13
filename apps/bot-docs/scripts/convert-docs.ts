@@ -45,7 +45,9 @@ const REBRAND: [RegExp, string][] = [
   [/github\.com\/bot\/nix-bot/g, 'github.com/hanzoai/nix-bot'],
   [/github\.com\/bot\/bot-ansible/g, 'github.com/hanzoai/bot-ansible'],
   // Discord
-  [/channels\.discord\.gg\/bot/g, 'discord.gg/hanzo'],
+  [/channels\.discord\.gg\/bot/g, 'discord.gg/XthHQQj'],
+  [/discord\.gg\/hanzo\b/g, 'discord.gg/XthHQQj'],
+  [/discord\.gg\/clawd\b/g, 'discord.gg/XthHQQj'],
   // Domain
   [/hanzo\.bot\/install/g, 'hanzo.bot/install'],
   // Hanzo Cloud messaging

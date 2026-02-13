@@ -3,6 +3,8 @@ title: "`bot agents`"
 description: "CLI reference for `bot agents` (list/add/delete/set identity)"
 ---
 
+# `bot agents`
+
 Manage isolated agents (workspaces + auth + routing).
 
 Related:
@@ -44,7 +46,7 @@ bot agents set-identity --workspace ~/bot --from-identity
 Override fields explicitly:
 
 ```bash
-bot agents set-identity --agent main --name "Clawd" --emoji "🦞" --avatar avatars/bot.png
+bot agents set-identity --agent main --name "Hanzo" --emoji "🤖" --avatar avatars/bot.png
 ```
 
 Config sample:
@@ -56,9 +58,9 @@ Config sample:
       {
         id: "main",
         identity: {
-          name: "Clawd",
-          theme: "space lobster",
-          emoji: "🦞",
+          name: "Hanzo",
+          theme: "AI assistant",
+          emoji: "🤖",
           avatar: "avatars/bot.png"
         }
       }
