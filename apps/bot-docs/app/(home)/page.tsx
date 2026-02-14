@@ -96,7 +96,7 @@ const pricingTiers = [
 
 export default function Page() {
   return (
-    <main className="relative z-[1] max-w-[860px] mx-auto px-6 pt-16 pb-10">
+    <main className="relative z-[1] max-w-[860px] mx-auto px-4 sm:px-6 pt-12 sm:pt-16 pb-10 overflow-hidden">
       <div className="stars" />
       <div className="nebula" />
 
@@ -104,7 +104,7 @@ export default function Page() {
       <header className="text-center mb-16 animate-[fadeInUp_0.8s_ease-out]">
         <NinjaHero />
 
-        <h1 className={cn(headingVariants({ variant: 'h1' }), 'mb-4 leading-none font-bold')}>
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight mb-4 leading-[1.1]">
           <span className="bg-gradient-to-br from-fd-foreground via-brand to-[#00e5cc] bg-[length:200%_200%] bg-clip-text text-transparent animate-[gradientShift_6s_ease_infinite]">
             Your AI Team.
           </span>
@@ -116,7 +116,7 @@ export default function Page() {
           One bot. Every role. Every channel.
         </p>
 
-        <p className="text-lg text-fd-muted-foreground max-w-[680px] mx-auto leading-relaxed animate-[fadeInUp_0.8s_ease-out_0.3s_both]">
+        <p className="text-base sm:text-lg text-fd-muted-foreground max-w-[680px] mx-auto leading-relaxed animate-[fadeInUp_0.8s_ease-out_0.3s_both]">
           Stop hiring for every role. Hanzo Bot is a full-blown computer-using AI agent that runs locally
           on your Mac or deploys to Hanzo Cloud. It codes, reviews, designs, tests, writes docs,
           manages releases, and talks to your team on every chat platform.
