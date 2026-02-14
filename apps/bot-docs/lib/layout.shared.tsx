@@ -1,10 +1,25 @@
-import { BotIcon, BookOpenIcon } from 'lucide-react';
+import { BotIcon, BookOpenIcon, ZapIcon, PlugIcon, StarIcon } from 'lucide-react';
 import type { BaseLayoutProps, LinkItemType } from '@hanzo/docs/ui/layouts/shared';
 
 export const linkItems: LinkItemType[] = [
   {
+    icon: <ZapIcon />,
+    text: 'Skills',
+    url: '/skills',
+  },
+  {
+    icon: <PlugIcon />,
+    text: 'Integrations',
+    url: '/integrations',
+  },
+  {
+    icon: <StarIcon />,
+    text: 'Showcase',
+    url: '/showcase',
+  },
+  {
     icon: <BookOpenIcon />,
-    text: 'Documentation',
+    text: 'Docs',
     url: '/docs',
     active: 'nested-url',
   },
