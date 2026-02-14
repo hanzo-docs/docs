@@ -64,7 +64,7 @@ const pricingTiers = [
     period: '/mo per bot',
     desc: 'Full VM in Hanzo Cloud. Always on.',
     cta: 'Start Free Trial',
-    ctaHref: 'https://app.hanzo.bot',
+    ctaHref: 'https://app.hanzo.bot/auth/signup?plan=cloud',
     highlight: true,
     badge: 'Most Popular',
     features: [
@@ -82,7 +82,7 @@ const pricingTiers = [
     period: '/mo per bot',
     desc: 'Mac or Windows VM for native apps.',
     cta: 'Get Started',
-    ctaHref: 'https://app.hanzo.bot',
+    ctaHref: 'https://app.hanzo.bot/auth/signup?plan=cloud-pro',
     features: [
       'macOS or Windows desktop VM',
       'Run native desktop apps',
@@ -123,13 +123,13 @@ export default function Page() {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8 animate-[fadeInUp_0.8s_ease-out_0.45s_both]">
-          <a
-            href="#quickstart"
+          <Link
+            href="/get-started"
             className="inline-flex items-center justify-center gap-2 px-7 py-3.5 font-semibold text-[#050810] bg-gradient-to-br from-brand to-[#e03e3e] rounded-xl no-underline transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_40px_rgba(255,77,77,0.45)] shadow-[0_4px_24px_rgba(255,77,77,0.3)]"
           >
             <DownloadIcon className="w-5 h-5" />
             Get Started Free
-          </a>
+          </Link>
           <a
             href="https://app.hanzo.bot"
             target="_blank"
