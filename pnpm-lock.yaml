@@ -647,6 +647,61 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
 
+  apps/zen-docs:
+    dependencies:
+      '@hanzo/docs-base-ui':
+        specifier: workspace:*
+        version: link:../../packages/base-ui
+      '@hanzo/docs-core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@hanzo/docs-mdx':
+        specifier: workspace:*
+        version: link:../../packages/mdx
+      '@hanzo/docs-ui':
+        specifier: workspace:*
+        version: link:../../packages/radix-ui
+      lucide-react:
+        specifier: ^0.562.0
+        version: 0.562.0(react@19.2.4)
+      next:
+        specifier: 16.1.6
+        version: 16.1.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(babel-plugin-macros@3.1.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      react:
+        specifier: ^19.2.3
+        version: 19.2.4
+      react-dom:
+        specifier: ^19.2.3
+        version: 19.2.4(react@19.2.4)
+      tailwind-merge:
+        specifier: ^3.4.0
+        version: 3.4.0
+    devDependencies:
+      '@tailwindcss/postcss':
+        specifier: ^4.1.18
+        version: 4.1.18
+      '@types/mdx':
+        specifier: ^2.0.13
+        version: 2.0.13
+      '@types/node':
+        specifier: 25.0.5
+        version: 25.0.5
+      '@types/react':
+        specifier: ^19.2.8
+        version: 19.2.13
+      '@types/react-dom':
+        specifier: ^19.2.3
+        version: 19.2.3(@types/react@19.2.13)
+      postcss:
+        specifier: ^8.5.6
+        version: 8.5.6
+      tailwindcss:
+        specifier: ^4.1.18
+        version: 4.1.18
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+
   examples/astro:
     dependencies:
       '@astrojs/mdx':
@@ -19043,6 +19098,11 @@ snapshots:
     optionalDependencies:
       srvx: 0.10.1
 
+  crossws@0.4.4(srvx@0.11.2):
+    optionalDependencies:
+      srvx: 0.11.2
+    optional: true
+
   css-select@5.2.2:
     dependencies:
       boolbase: 1.0.0
@@ -20305,7 +20365,7 @@ snapshots:
       rou3: 0.7.12
       srvx: 0.10.1
     optionalDependencies:
-      crossws: 0.4.4(srvx@0.10.1)
+      crossws: 0.4.4(srvx@0.11.2)
 
   hachure-fill@0.5.2: {}
 
