@@ -12,9 +12,9 @@ import { NextProvider } from '@hanzo/docs/core/framework/next';
 export const metadata = createMetadata({
   title: {
     template: '%s | Hanzo Bot',
-    default: 'Hanzo Bot - AI-Powered Personal Assistant',
+    default: 'Hanzo Bot — Your AI Team in a Box',
   },
-  description: 'AI-powered personal assistant for any OS. WhatsApp, Telegram, Discord, iMessage gateway with full system access and privacy by default.',
+  description: 'One bot. Every role. Every channel. Full-blown computer-using AI agent that runs free on your Mac or deploys to the cloud starting at $5/mo.',
   metadataBase: baseUrl,
 });
 
