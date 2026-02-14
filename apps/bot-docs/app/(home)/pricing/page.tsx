@@ -106,7 +106,7 @@ const faqs = [
 
 export default function PricingPage() {
   return (
-    <main className="relative z-[1] max-w-[860px] mx-auto px-6 pt-16 pb-10">
+    <main className="relative z-[1] max-w-[860px] mx-auto px-4 sm:px-6 pt-12 sm:pt-16 pb-10 overflow-hidden">
       <div className="stars" />
       <div className="nebula" />
 
