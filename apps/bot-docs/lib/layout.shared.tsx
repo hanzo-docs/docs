@@ -1,4 +1,4 @@
-import { BookOpenIcon, ZapIcon, PlugIcon, StarIcon, DollarSignIcon } from 'lucide-react';
+import { BookOpenIcon, LayoutGridIcon, MonitorIcon, DollarSignIcon } from 'lucide-react';
 import type { BaseLayoutProps, LinkItemType } from '@hanzo/docs/ui/layouts/shared';
 
 const HanzoLogo = () => (
@@ -15,24 +15,19 @@ const HanzoLogo = () => (
 
 export const linkItems: LinkItemType[] = [
   {
-    icon: <ZapIcon />,
-    text: 'Skills',
-    url: '/skills',
+    icon: <LayoutGridIcon />,
+    text: 'Solutions',
+    url: '/solutions',
   },
   {
-    icon: <PlugIcon />,
-    text: 'Integrations',
-    url: '/integrations',
+    icon: <MonitorIcon />,
+    text: 'Platform',
+    url: '/platform',
   },
   {
     icon: <DollarSignIcon />,
     text: 'Pricing',
     url: '/pricing',
-  },
-  {
-    icon: <StarIcon />,
-    text: 'Showcase',
-    url: '/showcase',
   },
   {
     icon: <BookOpenIcon />,
