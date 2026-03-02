@@ -1,5 +1,12 @@
 # next-docs-ui
 
+## 16.6.6
+
+### Patch Changes
+
+- Updated dependencies [8b32533]
+  - @hanzo/docs-core@16.6.6
+
 ## 16.6.5
 
 ### Patch Changes

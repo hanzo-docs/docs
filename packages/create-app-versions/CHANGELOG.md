@@ -1,5 +1,13 @@
 # create-fumadocs-versions
 
+## 16.0.59
+
+### Patch Changes
+
+- Updated dependencies [8b32533]
+  - @hanzo/docs-core@16.6.6
+  - @hanzo/docs-ui@16.6.6
+
 ## 16.0.58
 
 ### Patch Changes

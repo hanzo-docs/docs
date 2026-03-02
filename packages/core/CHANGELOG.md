@@ -1,5 +1,11 @@
 # next-docs-zeta
 
+## 16.6.6
+
+### Patch Changes
+
+- 8b32533: use `mdast-util-to-markdown` for accurate stringification
+
 ## 16.6.5
 
 ### Patch Changes
