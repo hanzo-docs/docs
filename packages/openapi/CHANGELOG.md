@@ -1,5 +1,11 @@
 # @fuma-docs/openapi
 
+## 10.5.0
+
+### Minor Changes
+
+- 462e89d: Support `meta.json` file generation
+
 ## 10.4.1
 
 ### Patch Changes

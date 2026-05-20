@@ -1,5 +1,12 @@
 # @hanzo/docs
 
+## 16.4.3
+
+### Patch Changes
+
+- Updated dependencies [462e89d]
+  - @hanzo/docs-openapi@10.5.0
+
 ## 16.4.2
 
 ### Patch Changes
