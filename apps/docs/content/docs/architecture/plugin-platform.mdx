@@ -1,12 +1,12 @@
 ---
 title: Consensus-Backed Plugin Platform
-description: The architecture direction for Hanzo Cloud — plugins as the unit of deployment, a small consensus control plane over placement, and ZAP-native authoring. Specified in HIP-0116 (Draft).
+description: The architecture direction for Hanzo Cloud — plugins as the unit of deployment, a small consensus control plane over placement, and ZAP-native authoring. Specified in HIP-0125 (Draft).
 ---
 
 # Consensus-Backed Plugin Platform
 
 <Callout type="warn">
-This page describes a **design direction**, not a shipped feature. The runtime it describes is specified in **HIP-0116 (Draft)** and is **not yet built**. It is published so the design can be reviewed. For what runs today, see the product pages under [Platform & Services](/docs/services); this page is about where the platform is headed and why.
+This page describes a **design direction**, not a shipped feature. The runtime it describes is specified in **HIP-0125 (Draft)** and is **not yet built**. It is published so the design can be reviewed. For what runs today, see the product pages under [Platform & Services](/docs/services); this page is about where the platform is headed and why.
 </Callout>
 
 Hanzo Cloud today is many services, each its own repository, image, and deployment. The direction is to run them as **plugins** inside one cloud runtime, and to let a **small consensus control plane** decide where each plugin's write side lives. The goal is that a service author writes almost none of the hard parts — placement, failover, replication, high availability — and inherits them from the platform.
@@ -64,7 +64,7 @@ Within that topology:
 The payoff is the developer experience. Under HIP-0105 and HIP-0114, a plugin author implements one small interface and calls `cloud.Register`. In return the platform supplies placement, per-tenant scale, replication, per-connection pinning, and high availability — none of which the author writes.
 
 ```go
-// Proposed authoring model (HIP-0105 / HIP-0116) — illustrative, not yet available.
+// Proposed authoring model (HIP-0105 / HIP-0125) — illustrative, not yet available.
 // The author writes the handler; the platform supplies placement + replication + HA.
 func mount(deps cloud.Deps) http.Handler {
     db := deps.OpenShard("kms")     // the placement-assigned shard for this node
@@ -77,7 +77,7 @@ func init() { cloud.Register("kms", 500, mount) }
 The default wire is **ZAP** (Zero-Copy App Proto, HIP-0114) — the same high-performance, post-quantum transport documented in the [ZAP section](/docs/zap). Every plugin registered through `cloud.Register` speaks ZAP with no extra work, so cross-plugin and inter-node calls get zero-copy performance by default rather than as an opt-in.
 
 <Callout type="warn">
-The snippets above show the **proposed** shape of the API to illustrate the direction. They are not a tutorial for a runtime that exists today — there is no `cloud.Register` plugin runtime to deploy against yet. Treat them as design, pending ratification of HIP-0116.
+The snippets above show the **proposed** shape of the API to illustrate the direction. They are not a tutorial for a runtime that exists today — there is no `cloud.Register` plugin runtime to deploy against yet. Treat them as design, pending ratification of HIP-0125.
 </Callout>
 
 ## Where this is specified
@@ -86,7 +86,7 @@ The plugin platform is defined across a set of Hanzo Improvement Proposals. Stat
 
 | HIP | Title | Status |
 |-----|-------|--------|
-| HIP-0116 | Consensus-Backed Plugin-Placement Platform | Draft |
+| HIP-0125 | Consensus-Backed Plugin-Placement Platform | Draft |
 | HIP-0105 | In-Process Extension Runtime Standard | Draft |
 | HIP-0106 | Unified Hanzo Cloud Binary | Draft |
 | HIP-0107 | Streaming Replication over VFS | Draft |
