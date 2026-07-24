@@ -1,0 +1,61 @@
+# docs.hanzo.ai — the ONE canonical deploy, on Hanzo's native stack.
+#
+#   Hanzo Git (git.hanzo.ai) push  →  act_runner (in-cluster git-runner)
+#   →  BuildKit builds the Fumadocs export into hanzoai/static
+#   →  ghcr.io/hanzoai/docs:<sha>  →  patch App/docs  →  operator reconcile
+#   →  hanzocd (cd.hanzo.ai) observes  →  live at docs.hanzo.ai
+#
+# No GitHub builders, no Cloudflare Pages. `.github/workflows/*` is sync-only
+# (mirror to Hanzo Git); the real pipeline lives here (one and one way).
+name: deploy
+on:
+  push:
+    branches: [main]
+    paths: ['apps/docs/**', 'packages/**', 'pnpm-lock.yaml', '.hanzo/workflows/deploy.yml']
+
+jobs:
+  deploy:
+    runs-on: hanzo-linux-amd64          # the in-cluster act_runner bulk
+    steps:
+      - uses: actions/checkout@v4
+
+      # Build + push the serve image via in-cluster BuildKit (the platform CI
+      # fabric — same buildctl contract that builds every other Hanzo service).
+      #
+      # The NEXT_PUBLIC_* build-args are inlined into the static bundle at build
+      # time (a static export has no server to read runtime env). They are PUBLIC
+      # by design — the chat publishable key (pk-*, spend balance-gated at the
+      # gateway) and the read-only search key. The server secret HANZO_API_KEY is
+      # NEVER passed: the widget streams with the publishable key only.
+      - name: Build + push docs image
+        run: |
+          SHA="${GITHUB_SHA::8}"
+          buildctl-daemonless.sh build \
+            --frontend=dockerfile.v0 \
+            --opt context="${{ github.server_url }}/${{ github.repository }}.git#${GITHUB_SHA}" \
+            --opt filename=Dockerfile \
+            --opt platform=linux/amd64 \
+            --opt build-arg:NEXT_PUBLIC_HANZO_CHAT_KEY="${NEXT_PUBLIC_HANZO_CHAT_KEY}" \
+            --opt build-arg:NEXT_PUBLIC_HANZO_SEARCH_KEY="${NEXT_PUBLIC_HANZO_SEARCH_KEY}" \
+            --secret id=GIT_AUTH_TOKEN,env=GIT_AUTH_TOKEN \
+            --output "type=image,name=ghcr.io/hanzoai/docs:${SHA},push=true" \
+            --progress=plain
+        env:
+          GIT_AUTH_TOKEN: ${{ secrets.GIT_CLONE_TOKEN }}
+          # Publishable, client-side keys — settable without a code change. Empty
+          # is safe: the widget degrades to a "not configured" notice, the search
+          # box and 404 suggestions simply return nothing.
+          NEXT_PUBLIC_HANZO_CHAT_KEY: ${{ secrets.NEXT_PUBLIC_HANZO_CHAT_KEY }}
+          NEXT_PUBLIC_HANZO_SEARCH_KEY: ${{ secrets.NEXT_PUBLIC_HANZO_SEARCH_KEY }}
+
+      # Declare the immutable tag to the operator; hanzocd + operator do the rest.
+      - name: Deploy — declare tag to operator
+        run: |
+          kubectl -n hanzo patch app docs --type=merge \
+            -p "{\"spec\":{\"image\":{\"repository\":\"ghcr.io/hanzoai/docs\",\"tag\":\"${GITHUB_SHA::8}\"}}}"
+          kubectl -n hanzo rollout status deploy/docs --timeout=300s
+
+      # Re-index search + zen-coder-flash chat from the shipped content.
+      - name: Re-index docs corpus
+        continue-on-error: true
+        run: curl -fsS -X POST https://api.hanzo.ai/v1/index-docs -H 'Content-Type: application/json' -d "{\"site\":\"docs.hanzo.ai\",\"sha\":\"${GITHUB_SHA}\"}" || true

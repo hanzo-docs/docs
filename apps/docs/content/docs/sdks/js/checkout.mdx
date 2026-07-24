@@ -1,0 +1,97 @@
+---
+title: checkout.js
+description: A Stripe-like hosted checkout widget for any website — vanilla JS, React, or a single script tag. Creates checkout sessions against the Hanzo Commerce API.
+---
+
+# checkout.js
+
+A Stripe-like checkout widget for any website — works with vanilla JS, React, Vue, Svelte, and more. It composes the [Hanzo Commerce](/docs/sdks/js/commerce) API (`https://api.hanzo.ai/v1`) to create hosted checkout sessions and send customers to pay. The commerce client is bundled, so the widget ships self-contained.
+
+```bash
+npm install checkout.js
+```
+
+<Callout title="Publishable key">
+The widget authenticates with a **publishable key** (`pk_live_…` / `pk_test_…`), sent as the bearer credential — safe to embed in browser code. Pass an [`@hanzo/iam`](/docs/sdks/iam) access token instead (as `token`) to act on behalf of a signed-in user; it takes precedence over `apiKey`.
+</Callout>
+
+## Script tag — no build step
+
+```html
+<script src="https://unpkg.com/checkout.js"></script>
+<script>
+  HanzoCheckout.open({
+    apiKey: 'pk_live_…',
+    amount: 1999, // $19.99, in cents
+  })
+</script>
+```
+
+CDN: `https://unpkg.com/checkout.js` or `https://cdn.jsdelivr.net/npm/checkout.js`.
+
+## Vanilla JavaScript
+
+```ts
+import { createCheckout } from 'checkout.js/vanilla'
+
+const checkout = createCheckout({ apiKey: 'pk_live_…' })
+
+// Create a checkout session
+const session = await checkout.createSession({
+  lineItems: [{ name: 'T-Shirt', unitPrice: 2999, quantity: 2 }],
+  currency: 'USD',
+  successUrl: 'https://example.com/success',
+  cancelUrl: 'https://example.com/cancel',
+})
+
+// Send the customer to pay
+checkout.redirectToCheckout(session)
+```
+
+### `createCheckout(options)`
+
+```ts
+const checkout = createCheckout({
+  apiKey: 'pk_live_…',              // publishable key, sent as the bearer credential
+  token: iamAccessToken,            // optional IAM access token (takes precedence)
+  baseUrl: 'https://api.hanzo.ai',  // optional; defaults to the Hanzo Commerce API
+  currency: 'USD',                  // optional default currency
+  appearance: { theme: 'light', primaryColor: '#000' },
+})
+```
+
+| Method | Does |
+| --- | --- |
+| `createSession(params)` | Creates a checkout session from `lineItems` (`{ name, unitPrice, quantity }`), with optional `currency`, `successUrl`, `cancelUrl`. |
+| `redirectToCheckout(session)` | Redirects to the hosted checkout page. Accepts the session or its `id`. |
+| `openPopup(session)` | Opens checkout in a popup window. Accepts the session or its `id`. |
+
+## React
+
+```tsx
+import { CheckoutProvider, CheckoutForm } from 'checkout.js/react'
+
+function App() {
+  return (
+    <CheckoutProvider options={{ apiKey: 'pk_live_…' }}>
+      <CheckoutForm lineItems={[{ name: 'Pro Plan', unitPrice: 1999 }]} />
+    </CheckoutProvider>
+  )
+}
+```
+
+## Subpath exports
+
+| Import | Surface |
+| --- | --- |
+| `checkout.js` | Main entry. |
+| `checkout.js/vanilla` | `createCheckout` — the programmatic client. |
+| `checkout.js/react` | `CheckoutProvider`, `CheckoutForm`. |
+| `checkout.js/embed` | The embeddable widget / global (`HanzoCheckout`). |
+
+## Related
+
+- [`commerce.js`](/docs/sdks/js/commerce) — the API this widget calls
+- [`shop.js`](/docs/sdks/js/shop) — a full storefront that bundles this
+- [`coin.js`](/docs/sdks/js/coin) — crypto payments
+- [Commerce](/docs/commerce) · [Billing](/docs/billing)

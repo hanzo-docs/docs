@@ -5,6 +5,7 @@ import { createAiClient, type ChatCompletionMessage, type Tool } from '@hanzo/ai
 import type { z } from 'zod';
 import type { ProvideLinksToolSchema } from '@/lib/ai/qa-schema';
 import { chatEndpoint, chatKey, chatModel } from '@/lib/hanzo/client';
+import { retrieveDocs, type DocHit } from '@/lib/hanzo/retrieve';
 
 // Client-side chat for the docs AISearch widget. docs.hanzo.ai deploys as a
 // STATIC export (hanzoai/static) with no server, so the retired `/api/chat`
@@ -14,6 +15,12 @@ import { chatEndpoint, chatKey, chatModel } from '@/lib/hanzo/client';
 // server secret. It presents the exact surface the widget already consumes
 // (messages/status/sendMessage/regenerate/stop/setMessages), so the bespoke
 // provideLinks/sources UI is untouched.
+//
+// GROUNDING: before generating, we retrieve the most relevant doc pages for the
+// question from the native search index (retrieveDocs) and fold them into the
+// system turn, so answers are grounded in the shipped docs and cite real pages.
+// Retrieval hits Meilisearch (not the billed gateway), so it works even before
+// the chat wallet is funded; when it returns nothing, we answer ungrounded.
 
 export type ChatStatus = 'ready' | 'submitted' | 'streaming' | 'error';
 
@@ -93,12 +100,39 @@ function partsToText(parts: ChatPart[]): string {
     .trim();
 }
 
-function toCompletionMessages(history: ChatMessage[]): ChatCompletionMessage[] {
+// Fold the retrieved docs into the system turn. With context, the model is told
+// to ground strictly in it and cite; with none (index/key not live yet) it
+// answers from its own Hanzo knowledge under the base guardrails — degrade
+// gracefully, never crash.
+function buildSystem(context: string): string {
+  if (!context) return SYSTEM_PROMPT;
+  return (
+    SYSTEM_PROMPT +
+    '\n\nGround your answer in the Hanzo documentation context below and cite the ' +
+    'pages you use by calling provideLinks with their URLs. If the context does ' +
+    'not cover the question, say so plainly and point to the closest section.\n\n' +
+    '--- Hanzo documentation context ---\n' +
+    context +
+    '\n--- end context ---'
+  );
+}
+
+function toCompletionMessages(history: ChatMessage[], context: string): ChatCompletionMessage[] {
   const turns: ChatCompletionMessage[] = history
     .filter((m) => m.role !== 'system')
     .map((m) => ({ role: m.role as 'user' | 'assistant', content: partsToText(m.parts) }))
     .filter((m) => typeof m.content === 'string' && m.content.length > 0);
-  return [{ role: 'system', content: SYSTEM_PROMPT }, ...turns];
+  return [{ role: 'system', content: buildSystem(context) }, ...turns];
+}
+
+function contextFrom(hits: DocHit[]): string {
+  return hits.map((h, i) => `[${i + 1}] ${h.title} (${h.url})\n${h.content}`).join('\n\n');
+}
+
+// Retrieved pages become the citation fallback: if the model answers but forgets
+// to call provideLinks, we still show the sources we grounded on.
+function linksFrom(hits: DocHit[]): Links {
+  return hits.map((h, i) => ({ label: String(i + 1), url: h.url, title: h.title }));
 }
 
 let seq = 0;
@@ -150,17 +184,26 @@ export function useHanzoChat(): HanzoChat {
       let body = '';
       const toolArgs = new Map<number, { name: string; args: string }>();
 
-      const render = () => {
+      // `final` seeds the retrieved pages as citations when the model answered
+      // without calling provideLinks — so grounded answers always show sources.
+      const render = (fallback?: Links) => {
         const parts: ChatPart[] = [];
         if (body) parts.push({ type: 'text', text: body });
+        let hasLinks = false;
         for (const { name, args } of toolArgs.values()) {
           if (name !== 'provideLinks') continue;
           try {
             const parsed = JSON.parse(args) as { links: Links };
-            if (parsed?.links) parts.push({ type: 'tool-provideLinks', input: { links: parsed.links } });
+            if (parsed?.links?.length) {
+              parts.push({ type: 'tool-provideLinks', input: { links: parsed.links } });
+              hasLinks = true;
+            }
           } catch {
             // Arguments still streaming (incomplete JSON) — render once valid.
           }
+        }
+        if (!hasLinks && fallback?.length) {
+          parts.push({ type: 'tool-provideLinks', input: { links: fallback } });
         }
         commit([...history, { id: assistantId, role: 'assistant', parts }]);
       };
@@ -168,11 +211,27 @@ export function useHanzoChat(): HanzoChat {
       // Seed an empty assistant turn so the panel shows activity immediately.
       commit([...history, { id: assistantId, role: 'assistant', parts: [] }]);
 
+      // Ground on the native index: retrieve the top pages for the latest turn.
+      // Search on the user's TEXT only — the `[Current page: …]` client-context
+      // prefix that partsToText adds for the model would only pollute the query.
+      // Never fatal — retrieveDocs resolves to [] on any error (answer ungrounded).
+      const question = (history.at(-1)?.parts ?? [])
+        .map((p) => (p.type === 'text' ? p.text : ''))
+        .join(' ')
+        .trim();
+      const hits = await retrieveDocs(question, 8, controller.signal);
+      if (controller.signal.aborted) {
+        setStatus('ready');
+        return;
+      }
+      const context = contextFrom(hits);
+      const fallbackLinks = linksFrom(hits);
+
       try {
         const stream = await client.chat.completions.create(
           {
             model: chatModel,
-            messages: toCompletionMessages(history),
+            messages: toCompletionMessages(history, context),
             tools: [provideLinksTool],
             tool_choice: 'auto',
             stream: true,
@@ -192,7 +251,7 @@ export function useHanzoChat(): HanzoChat {
           }
           render();
         }
-        render();
+        render(fallbackLinks);
         setStatus('ready');
       } catch {
         if (controller.signal.aborted) {

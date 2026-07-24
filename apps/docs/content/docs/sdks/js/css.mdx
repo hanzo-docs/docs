@@ -1,0 +1,51 @@
+---
+title: "@hanzo/css"
+description: The Hanzo monochrome design system in Stylus — reset, design tokens, and Material-derived components. True-black, with red reserved for errors.
+---
+
+# @hanzo/css
+
+Hanzo's design system as plain CSS. It is a variation on Material, compiled from Stylus into one stylesheet: a reset, design tokens, and components, in a strict **monochrome** palette — true-black, with red reserved for errors only.
+
+```bash
+npm install @hanzo/css
+```
+
+## Include it
+
+The package ships a compiled stylesheet at its main entry, so you can import it directly in a bundler:
+
+```ts
+import '@hanzo/css'
+```
+
+Or reference the built CSS from a stylesheet / `<link>`:
+
+```css
+@import '@hanzo/css/dist/index.css';
+```
+
+## Compose in Stylus
+
+If your app builds Stylus, `@require` the source entry (or individual modules) to share tokens and mixins:
+
+```stylus
+@require '@hanzo/css/src/index'
+```
+
+The single entry point pulls in three layers:
+
+| Layer | What it provides |
+| --- | --- |
+| `material/theme` | Reset, design tokens, and Material components (buttons, cards, tables). |
+| `framework` | Site chrome — flex utilities, layout, header, footer, menus. |
+| `parallax/parallax` | Optional parallax scrolling. |
+
+<Callout title="Design language">
+The system is deliberately monochrome (true-black surfaces); **red appears only for errors**. This is the same visual language `dash.js` and `@hanzo/ui` render against — use `@hanzo/css` for classic server-rendered pages and site chrome, and `@hanzo/ui` / `dash.js` for the React component system.
+</Callout>
+
+## Related
+
+- [`dash.js`](/docs/sdks/js/dash) — the React dashboard kit
+- [`@hanzo/ui`](https://www.npmjs.com/package/@hanzo/ui) — the shadcn + Radix + Tailwind v4 component system

@@ -1,0 +1,135 @@
+---
+title: Quickstart / Embed
+description: Add AI chat, zero-config analytics, and commerce to any website with a single Hanzo publishable key — your own stack, no third-party scripts.
+---
+
+import { Cards, Card } from '@hanzo/docs-ui/components/card'
+
+# Quickstart / Embed
+
+Add AI, analytics, and commerce to any site with **one publishable key** and a few lines of JavaScript. Everything talks to `api.hanzo.ai/v1` — your own stack, no third-party analytics or payment scripts, and the AI defaults to `enso`.
+
+## 1. Get a publishable key
+
+Publishable keys are safe to embed in browser code — they carry a restricted scope and can only reach the browser-safe surface of the API. Create one in the [Hanzo console](https://console.hanzo.ai) (it comes from [Hanzo IAM](/docs/sdks/iam)):
+
+```
+pk_live_…   # production
+pk_test_…   # test mode
+```
+
+<Callout title="Publishable vs. access token">
+A **publishable key** (`pk_…`) is for the browser — checkout, forms, capture, and unauthenticated chat. An **IAM access token** (a bearer JWT from [`@hanzo/iam`](/docs/sdks/iam)) is for actions on behalf of a signed-in user — billing, wallet, account. The AI and commerce clients accept either.
+</Callout>
+
+## 2. Add AI chat
+
+The fastest path in React is the drop-in `<Chat/>` surface. It streams from `@hanzo/ai` and defaults to `enso`:
+
+```tsx tab="React (drop-in)"
+import { createAiClient, Chat } from '@hanzo/chat'
+
+const client = createAiClient({ token: 'pk_live_…' }) // or getToken: () => session.accessToken
+
+export function Assistant() {
+  return <Chat client={client} />
+}
+```
+
+No framework? The headless client is pure `fetch` — it runs anywhere:
+
+```ts tab="Vanilla (headless)"
+import { createAiClient } from '@hanzo/ai'
+
+const ai = createAiClient({ token: 'pk_live_…' }) // baseUrl defaults to https://api.hanzo.ai
+
+const stream = await ai.chat.completions.create({
+  model: 'enso',
+  messages: [{ role: 'user', content: 'Give me a one-line welcome.' }],
+  stream: true,
+})
+for await (const chunk of stream) {
+  document.querySelector('#out').textContent += chunk.choices[0]?.delta.content ?? ''
+}
+```
+
+See [`@hanzo/ai`](/docs/sdks/js/ai) for the full client and [`@hanzo/chat`](/docs/sdks/js/chat) for the UI.
+
+## 3. Add analytics — zero config
+
+`track.js` reads the semantic markup you already have — schema.org microdata (`[itemscope]`/`[itemprop]`) and JSON-LD (`<script type="application/ld+json">`) — and emits content events as sections scroll into view and get clicked. No manual event wiring:
+
+```ts
+import { Analytics, Annotate } from 'track.js'
+
+const analytics = new Analytics()
+analytics.initialize({ integrations: [{ type: 'native', token: 'pk_live_…' }] })
+
+// Observe every [itemscope] section + JSON-LD block on the page.
+Annotate(analytics)
+
+// You can still send explicit events:
+analytics.page('marketing', 'home')
+analytics.track('cta_clicked', { placement: 'hero' })
+```
+
+Events POST to `api.hanzo.ai/v1/analytics` (batched, `keepalive` fetch) with a `sendBeacon` flush to `/v1/tracker` on page unload. The ingest is Hanzo's own — it fans out server-side to your configured destinations. See [`track.js`](/docs/sdks/js/track) and [Analytics](/docs/analytics).
+
+## 4. Add commerce
+
+Take a payment with a hosted, Stripe-like checkout — one call, no backend:
+
+```html tab="Script tag"
+<script src="https://unpkg.com/checkout.js"></script>
+<script>
+  HanzoCheckout.open({
+    apiKey: 'pk_live_…',
+    amount: 1999, // $19.99, in cents
+  })
+</script>
+```
+
+```ts tab="Vanilla"
+import { createCheckout } from 'checkout.js/vanilla'
+
+const checkout = createCheckout({ apiKey: 'pk_live_…' })
+const session = await checkout.createSession({
+  lineItems: [{ name: 'Pro Plan', unitPrice: 1999, quantity: 1 }],
+  successUrl: 'https://example.com/thanks',
+})
+checkout.redirectToCheckout(session)
+```
+
+And capture leads or signups from any `<form>` — drop the script inside it and set your key:
+
+```html
+<form>
+  <script src="https://unpkg.com/form.js" data-key="pk_live_…"></script>
+  <input name="email" placeholder="you@example.com" />
+  <input name="name" placeholder="Your name" />
+  <button type="submit">Sign up</button>
+</form>
+```
+
+The serialized form POSTs to `api.hanzo.ai/v1/forms`. See [`checkout.js`](/docs/sdks/js/checkout) and [`form.js`](/docs/sdks/js/form).
+
+## Your own stack — no third-party
+
+Every embed on this page points at **one origin, `api.hanzo.ai`**, authenticated by **one publishable key**. There is no Google Tag Manager, no Stripe.js, no Segment. Behavioral events land in Hanzo's own analytics and product-insights planes ([analytics.hanzo.ai](/docs/analytics) and [insights.hanzo.ai](/docs/insights)); destination fan-out — Umami, PostHog, GA4, Meta — is configured **server-side**, so you never ship a vendor's tag or leak data to one from the client.
+
+## Next steps
+
+<Cards>
+  <Card title="hanzo.js overview" href="/docs/sdks/js">
+    The umbrella and the whole @hanzo/* family.
+  </Card>
+  <Card title="@hanzo/ai" href="/docs/sdks/js/ai">
+    Streaming, tools, threads, and the Anthropic messages API.
+  </Card>
+  <Card title="Authentication" href="/docs/sdks/iam">
+    Sign users in with OIDC + PKCE and mint tokens.
+  </Card>
+  <Card title="Analytics" href="/docs/analytics">
+    Where events go and how destinations fan out.
+  </Card>
+</Cards>

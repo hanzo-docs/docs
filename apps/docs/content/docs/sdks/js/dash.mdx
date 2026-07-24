@@ -1,0 +1,85 @@
+---
+title: dash.js
+description: The Hanzo Dashboard Kit — drop-in React building blocks (layout, sidebar, stat and chart cards, sortable data table) for admin consoles, composed on @hanzo/ui.
+---
+
+# dash.js
+
+The Hanzo Dashboard Kit — drop-in React building blocks for admin dashboards like `admin.hanzo.ai`, `cloud.hanzo.ai`, and `billing.hanzo.ai`. It is a thin, composable layer on top of [`@hanzo/ui`](https://www.npmjs.com/package/@hanzo/ui) (the canonical Hanzo shadcn + Radix + Tailwind v4 system): it composes `@hanzo/ui` primitives into the handful of shapes every console needs — a shell, a sidebar, KPI + chart cards, and a sortable table — styled with the monochrome true-black tokens. Red appears for errors only.
+
+```bash
+npm install dash.js @hanzo/ui react react-dom
+```
+
+<Callout title="Bring the @hanzo/ui theme">
+`@hanzo/ui`, `react`, and `react-dom` are peers. The host app must load `@hanzo/ui`'s Tailwind v4 theme — it supplies the oklch tokens `dash.js` styles against (`bg-background`, `border-border`, `text-muted-foreground`, `bg-accent`, `bg-destructive`).
+</Callout>
+
+## Quick start
+
+```tsx
+'use client'
+import { useState } from 'react'
+import { LayoutDashboard, CreditCard, Activity } from 'lucide-react'
+import { Button } from '@hanzo/ui/primitives'
+import {
+  DashboardLayout, Sidebar, SidebarNav,
+  PageHeader, StatCard, DataTable,
+  type NavItem, type Column,
+} from 'dash.js'
+
+const nav: NavItem[] = [
+  { key: 'overview', label: 'Overview', icon: LayoutDashboard },
+  { key: 'billing', label: 'Billing', icon: CreditCard, badge: 3 },
+]
+
+type Row = { name: string; spend: number }
+const columns: Column<Row>[] = [
+  { key: 'name', header: 'Key', sortable: true },
+  { key: 'spend', header: 'Spend', sortable: true, align: 'right' },
+]
+
+export default function Admin() {
+  const [active, setActive] = useState('overview')
+  return (
+    <DashboardLayout
+      sidebar={
+        <Sidebar header={<b>Hanzo Admin</b>}>
+          <SidebarNav items={nav} activeKey={active} onNavigate={(i) => setActive(i.key)} />
+        </Sidebar>
+      }
+      topbar={<Button size="sm">New key</Button>}
+    >
+      <PageHeader title="Overview" description="Usage & spend" actions={<Button size="sm">Export</Button>} />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <StatCard label="Requests (30d)" value="2.46M" delta={12.5} deltaLabel="vs last month" icon={Activity} />
+        <StatCard label="Spend (30d)" value="$8,664" delta={4.2} icon={CreditCard} />
+        <StatCard label="Error rate" value="1.8%" delta={-0.4} icon={Activity} error />
+      </div>
+      <DataTable columns={columns} data={[{ name: 'prod', spend: 4812 }]} getRowKey={(r) => r.name} />
+    </DashboardLayout>
+  )
+}
+```
+
+## Components
+
+Every component is presentational and host-agnostic — you inject data and routing. The interactive ones (`SidebarNav`, `DataTable`) use React state and handlers, so render them inside a `"use client"` boundary; the rest are pure and work in a server tree too.
+
+| Component | Purpose |
+| --- | --- |
+| `DashboardLayout` | The app shell: sidebar + topbar + content region. |
+| `Sidebar` / `SidebarNav` | The sidebar frame and its navigable item list (`NavItem[]`). |
+| `PageHeader` | Title, description, and an actions slot. |
+| `StatCard` | A KPI tile with value, delta, and icon (`error` flips it red). |
+| `ChartCard` | A titled card that wraps a chart. |
+| `DataTable` | A sortable table driven by `Column<T>[]`. |
+| `Toolbar` / `ToolbarSpacer` | A horizontal toolbar and a flex spacer. |
+
+Exported types include `NavItem`, `Column<T>`, `Align`, `SortDirection`, `SortState`, and each component's `*Props`.
+
+## Related
+
+- [`@hanzo/ui`](https://www.npmjs.com/package/@hanzo/ui) — the primitives dash.js composes
+- [`@hanzo/css`](/docs/sdks/js/css) — the design system in plain CSS
+- [Dashboards](/docs/dashboards)

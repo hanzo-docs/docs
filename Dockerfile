@@ -17,10 +17,30 @@ RUN apk add --no-cache git libstdc++ libgcc && corepack enable && corepack prepa
 WORKDIR /src
 COPY . .
 RUN pnpm install --frozen-lockfile
+
+# Publishable (NEXT_PUBLIC_*) build-time config. Next INLINES these into the
+# static bundle at `pnpm build`, so they MUST be set before the build RUN (not
+# at container runtime — a static export has no server to read env). They are
+# PUBLIC by design (they ship in the browser bundle): the chat publishable key
+# (pk-*, whose spend is balance-gated at the gateway) and the read-only search
+# key. NEVER pass the server secret HANZO_API_KEY here — the widget never uses it.
+# Declared after `pnpm install` so changing a key doesn't bust the install cache.
+ARG NEXT_PUBLIC_HANZO_CHAT_KEY=""
+ARG NEXT_PUBLIC_HANZO_CHAT_ENDPOINT="https://api.hanzo.ai"
+ARG NEXT_PUBLIC_HANZO_CHAT_MODEL="enso"
+ARG NEXT_PUBLIC_HANZO_SEARCH_KEY=""
+ARG NEXT_PUBLIC_HANZO_SEARCH_ENDPOINT="https://search.hanzo.ai"
+ARG NEXT_PUBLIC_HANZO_SEARCH_INDEX="app-docs-hanzo-ai-docs"
 ENV NEXT_EXPORT=1 \
     HANZO_DOCS_SYNC=0 \
     NEXT_TELEMETRY_DISABLED=1 \
-    NODE_OPTIONS=--max-old-space-size=24576
+    NODE_OPTIONS=--max-old-space-size=24576 \
+    NEXT_PUBLIC_HANZO_CHAT_KEY=$NEXT_PUBLIC_HANZO_CHAT_KEY \
+    NEXT_PUBLIC_HANZO_CHAT_ENDPOINT=$NEXT_PUBLIC_HANZO_CHAT_ENDPOINT \
+    NEXT_PUBLIC_HANZO_CHAT_MODEL=$NEXT_PUBLIC_HANZO_CHAT_MODEL \
+    NEXT_PUBLIC_HANZO_SEARCH_KEY=$NEXT_PUBLIC_HANZO_SEARCH_KEY \
+    NEXT_PUBLIC_HANZO_SEARCH_ENDPOINT=$NEXT_PUBLIC_HANZO_SEARCH_ENDPOINT \
+    NEXT_PUBLIC_HANZO_SEARCH_INDEX=$NEXT_PUBLIC_HANZO_SEARCH_INDEX
 RUN pnpm build --filter=docs
 
 FROM ghcr.io/hanzoai/static:0.4.1

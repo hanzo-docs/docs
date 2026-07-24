@@ -1,0 +1,153 @@
+---
+title: "@hanzo/chat"
+description: A small, composable React chat surface — the drop-in <Chat/> plus the headless useChat hook. Streams via @hanzo/ai and defaults to enso.
+---
+
+# @hanzo/chat
+
+The simple Hanzo chat UI — a small, composable React chat surface. It is the chat that powers **hanzo.chat** and the chat pane of **hanzo.app**. Two things in one package:
+
+- **`<Chat/>`** — a batteries-included surface: model picker, streaming transcript, composer. Drop it in and go.
+- **Pieces + hooks** — `MessageList`, `MessageBubble`, `Composer`, `ModelPicker`, `ConversationList`, and the headless `useChat` / `useConversations` hooks. Compose your own surface when you need control.
+
+All API and streaming lives in [`@hanzo/ai`](/docs/sdks/js/ai) — this package never re-implements it.
+
+## Install
+
+```bash
+npm install @hanzo/chat @hanzo/ai @hanzo/gui react react-dom
+```
+
+`@hanzo/ai`, `@hanzo/gui`, and `react` are peer dependencies.
+
+<Callout title="React 19 and @hanzo/gui">
+`@hanzo/chat` renders [`@hanzo/gui`](https://www.npmjs.com/package/@hanzo/gui) primitives (not Radix, Tailwind, or shadcn), so your app must be wrapped in a `GuiProvider` and have `react-native-web` available. The rendered components require **React ≥ 19**; the headless hooks (`useChat`, `useConversations`) work on React ≥ 18.
+</Callout>
+
+## Setup
+
+Wrap your app in a `GuiProvider` with your Gui config — the standard `@hanzo/gui` app setup:
+
+```tsx
+import { GuiProvider } from '@hanzo/gui'
+import config from './gui.config' // your createGui(...) config
+
+export function App({ children }: { children: React.ReactNode }) {
+  return <GuiProvider config={config} defaultTheme="dark">{children}</GuiProvider>
+}
+```
+
+## Drop-in `<Chat/>`
+
+`@hanzo/chat` re-exports `createAiClient` from `@hanzo/ai` for convenience:
+
+```tsx
+import { createAiClient, Chat } from '@hanzo/chat'
+
+const client = createAiClient({
+  // Defaults to https://api.hanzo.ai. Bearer token from @hanzo/iam.
+  getToken: () => session.accessToken,
+})
+
+export function ChatPage() {
+  return <Chat client={client} />
+}
+```
+
+That is the whole hanzo.chat surface: it defaults to the `enso` model — pick a model, type, watch it stream.
+
+### `<Chat/>` props
+
+| Prop | Type | Notes |
+| --- | --- | --- |
+| `client` | `AiClient` | **Required.** From `createAiClient(...)`. |
+| `model` | `string` | Initial model. Defaults to `enso`. |
+| `initialMessages` | `UiMessage[]` | Seed the thread. |
+| `options` | `CompletionOptions` | Forwarded to `chat.completions.create` (temperature, max_tokens, …). |
+| `hideModelPicker` | `boolean` | Hide the model selector. |
+| `placeholder` | `string` | Composer placeholder. |
+| `emptyState` | `ReactNode` | Rendered when the thread is empty. |
+
+## Compose it yourself
+
+`<Chat/>` is just `useChat` + the pieces. Wire them up directly for full control:
+
+```tsx
+import { createAiClient, useChat, MessageList, Composer, ModelPicker } from '@hanzo/chat'
+import { YStack } from '@hanzo/gui'
+import { useState } from 'react'
+
+const client = createAiClient({ getToken })
+
+function MyChat() {
+  const [model, setModel] = useState('enso')
+  const chat = useChat({ client, model, options: { temperature: 0.7 } })
+
+  return (
+    <YStack flex={1}>
+      <ModelPicker client={client} value={model} onChange={setModel} />
+      <MessageList messages={chat.messages} />
+      <Composer onSend={chat.send} onStop={chat.stop} busy={chat.isLoading} disabled={!model} />
+    </YStack>
+  )
+}
+```
+
+### `useChat(options)`
+
+```ts
+const chat = useChat({
+  client,               // required — AiClient from createAiClient(...)
+  model,                // optional — defaults to enso
+  initialMessages,      // optional — UiMessage[]
+  options,              // optional — CompletionOptions forwarded to the completion
+  onFinish,             // optional — (message) => void, once a turn finishes streaming
+  onError,              // optional — (error) => void
+})
+```
+
+Returns:
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `messages` | `UiMessage[]` | The thread. |
+| `status` | `ChatStatus` | Lifecycle status. |
+| `isLoading` | `boolean` | A turn is in flight. |
+| `error` | `Error \| null` | Last error, if `status === "error"`. |
+| `send` | `(text: string) => Promise<void>` | Send a user message and stream the reply. |
+| `stop` | `() => void` | Abort the in-flight stream (keeps partial text). |
+| `setMessages` | `(messages: UiMessage[]) => void` | Replace the thread (e.g. on conversation switch). |
+| `clear` | `() => void` | Clear the thread. |
+
+The exported constant `DEFAULT_MODEL` is `"enso"`.
+
+## Conversations
+
+`useConversations` binds the portable `@hanzo/ai` chat store — list, open, create, and delete threads that follow the user across surfaces:
+
+```tsx
+import { useConversations, ConversationList } from '@hanzo/chat'
+
+function Sidebar({ client, user }) {
+  const convos = useConversations({ client, user })
+
+  return (
+    <ConversationList
+      conversations={convos.conversations}
+      onSelect={async (chat) => {
+        const messages = await convos.loadMessages(chat)
+        /* hand `messages` to useChat via setMessages */
+      }}
+      onNew={() => convos.create('New chat')}
+      onDelete={convos.remove}
+      loading={convos.loading}
+    />
+  )
+}
+```
+
+## Related
+
+- [`@hanzo/ai`](/docs/sdks/js/ai) — the headless client underneath
+- [`@hanzo/agent`](/docs/sdks/js/agent) — the richer agent-run surface
+- [Hanzo Chat](/docs/chat) — the hosted product at chat.hanzo.ai

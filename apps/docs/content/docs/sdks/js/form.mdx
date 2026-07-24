@@ -1,0 +1,75 @@
+---
+title: form.js
+description: Automagic form validation and submission — drop a script tag inside any <form> and, with a publishable key, it POSTs the serialized form to api.hanzo.ai/v1/forms.
+---
+
+# form.js
+
+Automagic form validation and submission. Drop it inside a `<form>` and it wires itself to the surrounding fields, emits lifecycle events, and — with a Hanzo publishable key — submits the form to the Hanzo forms ingest for you.
+
+```bash
+npm install form.js
+```
+
+## Drop-in script tag
+
+Put the script **inside** the form you want it to manage, and set a key:
+
+```html
+<form>
+  <script src="https://unpkg.com/form.js" data-key="pk_live_…"></script>
+  <input name="email" placeholder="you@example.com" />
+  <input name="name" placeholder="Your name" />
+  <button type="submit">Sign up</button>
+</form>
+```
+
+With a key set, it serializes the form and POSTs it to the ingest:
+
+```http
+POST https://api.hanzo.ai/v1/forms
+Authorization: Bearer pk_live_…
+Content-Type: application/json
+
+{ "email": "ada@example.com", "metadata": { "name": "Ada" } }
+```
+
+The `email` field is detected by name; every other named field lands under `metadata`.
+
+### Script-tag options (all `data-*`)
+
+| Attribute | Purpose |
+| --- | --- |
+| `data-key` | Publishable key (`pk_live_…` / `pk_test_…`). |
+| `data-token` | `@hanzo/iam` access token (takes precedence over `data-key`). |
+| `data-endpoint` | Override the full submission URL. |
+| `data-host` | Override the API host (default `https://api.hanzo.ai`). |
+
+## Unmanaged mode
+
+Without a key, `form.js` is a thin controller around the surrounding form: it emits lifecycle events and hands control back to your page. Call `done()` from your `OnSubmit` listener to let the native form submission proceed.
+
+## Events
+
+`window.Inform` is an event emitter — listen with `Inform.on` / `Inform.once`:
+
+| Event | `Inform.Events` | Arguments |
+| --- | --- | --- |
+| `init-inform-script` | `InitScript` | the `<script>` element |
+| `init-inform-form` | `InitForm` | the `<form>` element |
+| `init-inform-inputs` | `InitInputs` | array of input/select nodes |
+| `init-inform-submits` | `InitSubmits` | array of submit buttons |
+| `inform-submit` | `OnSubmit` | unmanaged: `(done, event)`; managed: `(payload, event)` |
+| `inform-done` | `OnDone` | the submit event, or the API response (managed) |
+| `inform-error` | `OnError` | submission error (managed) |
+
+```ts
+Inform.on(Inform.Events.OnDone, (response) => {
+  console.log('submitted', response)
+})
+```
+
+## Related
+
+- [`track.js`](/docs/sdks/js/track) — analytics and semantic capture
+- [Analytics](/docs/analytics) · [Commerce](/docs/commerce)

@@ -1,0 +1,23 @@
+{
+  "title": "JavaScript SDK",
+  "description": "hanzo.js and the @hanzo/* packages — AI, commerce, analytics, forms, and dashboards.",
+  "icon": "Code",
+  "pages": [
+    "quickstart",
+    "---AI---",
+    "ai",
+    "chat",
+    "agent",
+    "---Commerce---",
+    "commerce",
+    "checkout",
+    "shop",
+    "coin",
+    "---Analytics & Capture---",
+    "track",
+    "form",
+    "---UI---",
+    "css",
+    "dash"
+  ]
+}

@@ -1,0 +1,109 @@
+---
+title: track.js
+description: Zero-config web analytics — identify users, track interactions, and capture semantic content automatically from schema.org microdata and JSON-LD, sent to api.hanzo.ai/v1/analytics.
+---
+
+# track.js
+
+An easy-to-use analytics library. Identify users and track interactions with Hanzo's first-party analytics ingest, and — with `Annotate` — capture semantic content automatically from the structured markup your pages already carry. It exposes four things: `Analytics`, `Annotate`, `Integration`, and `Integrations`.
+
+```bash
+npm install track.js
+```
+
+## Initialize
+
+Create an `Analytics` instance and initialize it with the **native** integration, which ships events to Hanzo's own ingest:
+
+```ts
+import { Analytics } from 'track.js'
+
+const analytics = new Analytics()
+analytics.initialize({
+  integrations: [
+    { type: 'native', token: 'pk_live_…' }, // publishable key or @hanzo/iam token
+  ],
+})
+```
+
+The native integration posts to:
+
+- `POST https://api.hanzo.ai/v1/analytics` — batched, `keepalive` fetch (carries `Authorization: Bearer <token>`)
+- `POST https://api.hanzo.ai/v1/tracker` — `sendBeacon` on page unload (tokenless; the server derives the tenant from the session cookie)
+
+The server stamps org/tenant from the validated session; the client only supplies its own visitor identity (an anonymous id, plus a user id after `identify`). Telemetry is fire-and-forget — it never throws into your page.
+
+### Native integration options
+
+| Option | Notes |
+| --- | --- |
+| `type` | `'native'` |
+| `token` (or `writeKey`) | Publishable key or IAM access token, sent as the bearer credential. |
+| `host` | API host. Defaults to `https://api.hanzo.ai`. |
+| `product` | Optional product tag stamped onto every event. |
+
+## Track, page, identify
+
+```ts
+analytics.page('marketing', 'home')                 // category, name
+analytics.track('cta_clicked', { placement: 'hero' })
+analytics.identify('alice', { plan: 'growth' })
+```
+
+Each call produces a wire event shaped like:
+
+```json
+{
+  "messageId": "…",
+  "type": "event",
+  "event": "cta_clicked",
+  "timestamp": "2026-01-01T00:00:00.000Z",
+  "distinctId": "…",
+  "anonymousId": "…",
+  "properties": { "placement": "hero" },
+  "library": "track.js"
+}
+```
+
+## Annotate — zero-config semantic capture
+
+`Annotate` walks the DOM for **schema.org microdata** (`[itemscope]` / `[itemprop]`) and **JSON-LD** (`<script type="application/ld+json">`), then emits first-party content events through your `Analytics` instance — no manual event wiring. Visibility is tracked with an `IntersectionObserver`.
+
+```ts
+import { Analytics, Annotate } from 'track.js'
+
+const analytics = new Analytics()
+analytics.initialize({ integrations: [{ type: 'native', token: 'pk_live_…' }] })
+
+Annotate(analytics)                       // observe the whole document
+// Annotate(analytics, { root, threshold: 0.5 })  // scope + visibility threshold
+```
+
+It emits three event types:
+
+| Event | When | Payload |
+| --- | --- | --- |
+| `content-schema` | Once on init, if the page has JSON-LD | `{ blocks }` — the parsed JSON-LD objects |
+| `content-view` | A `[itemscope]` section crosses the visibility threshold (once per section) | `{ selector, ...microdata }` |
+| `content-click` | A click lands inside a `[itemscope]` section | `{ selector, ...microdata }` |
+
+`microdata` is the section's `itemtype` (or `"WebsiteSection"`) plus its direct `[itemprop]` values. Because it reads the structured data you already publish for SEO, product and article pages are captured with zero extra tagging.
+
+<Callout title="What Annotate reads today">
+The current release (0.2.19) captures **schema.org microdata and JSON-LD**. It does not read framework-specific attributes (e.g. `data-slot`), and `Annotate` emits the `content-view` / `content-click` / `content-schema` vocabulary above — not GA4 ecommerce event names. Map to GA4/ecommerce events with explicit `analytics.track(...)` calls or a [destination](#destinations) if you need those names.
+</Callout>
+
+## Destinations
+
+The native integration sends everything to Hanzo's own ingest; **destination fan-out is configured server-side** — the client ships one payload to `api.hanzo.ai` and never loads a vendor tag. Behavioral events surface in Hanzo's analytics and product-insights planes:
+
+- [analytics.hanzo.ai](/docs/analytics) — privacy-first product analytics
+- [insights.hanzo.ai](/docs/insights) — the full behavioral engine (capture, autocapture, replay, flags)
+
+`track.js` also bundles legacy **client-side** integrations you can add to `initialize({ integrations: [...] })` — `google-analytics`, `facebook-pixel`, `bing`, `heap`, `adroll`, `google-adwords`, and `custom` — for teams that still fan out from the browser. Prefer the `native` integration and server-side fan-out for new work.
+
+## Related
+
+- [Analytics](/docs/analytics) — the analytics SDK family and where events go
+- [Insights](/docs/insights) — the behavioral analytics product
+- [`form.js`](/docs/sdks/js/form) — managed form capture

@@ -1,0 +1,116 @@
+---
+title: JavaScript SDK
+description: hanzo.js and the @hanzo/* packages — build AI, commerce, analytics, forms, and dashboards on Hanzo from the browser or Node, with one publishable key or IAM token.
+index: true
+---
+
+import { Cards, Card } from '@hanzo/docs-ui/components/card'
+
+# Build on Hanzo with JavaScript
+
+`hanzo.js` is the umbrella SDK for building on Hanzo from JavaScript or TypeScript. One install gives you the whole client surface, namespaced — or install the individual packages for a smaller footprint. Every package speaks the one Hanzo API at **`https://api.hanzo.ai/v1`**, authenticated with a Hanzo IAM access token or a publishable key, and the AI clients default to the **`enso`** model.
+
+<Callout title="No /api/ prefix, ever">
+Hanzo APIs live at `api.hanzo.ai/v1/...` — the clients join paths against that base and never insert an `/api/` segment. `enso` is the default model everywhere an AI call is made.
+</Callout>
+
+## Install the umbrella
+
+```bash tab="npm"
+npm install hanzo.js
+```
+
+```bash tab="pnpm"
+pnpm add hanzo.js
+```
+
+```bash tab="bun"
+bun add hanzo.js
+```
+
+`hanzo.js` re-exports five packages verbatim as namespaces:
+
+```ts
+import { ai, iam, commerce, checkout, track } from 'hanzo.js'
+
+// The AI client — defaults to https://api.hanzo.ai, model `enso`.
+const client = ai.createAiClient({ token: process.env.HANZO_TOKEN })
+
+const res = await client.chat.completions.create({
+  model: 'enso',
+  messages: [{ role: 'user', content: 'Explain MoE routing in one sentence.' }],
+})
+console.log(res.choices[0].message.content)
+```
+
+The umbrella bundles [`@hanzo/ai`](/docs/sdks/js/ai), [`@hanzo/iam`](/docs/sdks/iam), [`commerce.js`](/docs/sdks/js/commerce), [`checkout.js`](/docs/sdks/js/checkout), and [`track.js`](/docs/sdks/js/track). The UI surfaces (`@hanzo/chat`, `@hanzo/agent`, `shop.js`, `coin.js`, `dash.js`, `@hanzo/css`) are **separate installs** — pull them in only where you render UI.
+
+## The family
+
+<Cards>
+  <Card title="@hanzo/ai" href="/docs/sdks/js/ai">
+    Headless client. Chat completions (OpenAI-shaped), Anthropic messages, models, portable threads. Streaming. `enso` default.
+  </Card>
+  <Card title="@hanzo/chat" href="/docs/sdks/js/chat">
+    Drop-in React chat: `<Chat/>` plus the headless `useChat` hook. Streams via `@hanzo/ai`.
+  </Card>
+  <Card title="@hanzo/agent" href="/docs/sdks/js/agent">
+    Agent-run UI: transcript, tool calls, file diffs, task list. `useAgentRun` + `<AgentRun/>`.
+  </Card>
+  <Card title="commerce.js" href="/docs/sdks/js/commerce">
+    Billing/wallet client. Balances, tiers, usage, subscriptions → `/v1/billing`.
+  </Card>
+  <Card title="checkout.js" href="/docs/sdks/js/checkout">
+    Stripe-like hosted checkout widget. Vanilla, React, or a single script tag.
+  </Card>
+  <Card title="shop.js" href="/docs/sdks/js/shop">
+    A full storefront: commerce components + checkout, composed.
+  </Card>
+  <Card title="coin.js" href="/docs/sdks/js/coin">
+    Crypto payments. Stablecoins across Ethereum + L2s via viem, settled through commerce.
+  </Card>
+  <Card title="track.js" href="/docs/sdks/js/track">
+    Zero-config analytics. Reads schema.org microdata + JSON-LD, emits events → `/v1/analytics`.
+  </Card>
+  <Card title="form.js" href="/docs/sdks/js/form">
+    Managed form submit. Drop a script tag on any `<form>` → `/v1/forms`.
+  </Card>
+  <Card title="@hanzo/css" href="/docs/sdks/js/css">
+    The monochrome Stylus design system — reset, tokens, components.
+  </Card>
+  <Card title="dash.js" href="/docs/sdks/js/dash">
+    Dashboard kit on `@hanzo/ui`: layout, sidebar, stat/chart cards, data table.
+  </Card>
+  <Card title="@hanzo/iam" href="/docs/sdks/iam">
+    Auth: OIDC discovery, JWT validation, browser PKCE login, publishable keys.
+  </Card>
+</Cards>
+
+## Authentication
+
+Every Hanzo API call carries one of two credentials:
+
+| Credential | Looks like | Where it comes from | Use it for |
+| --- | --- | --- | --- |
+| **Publishable key** | `pk_live_…` / `pk_test_…` | Hanzo IAM / [console](https://console.hanzo.ai) | Browser widgets — checkout, forms, embedded capture. Safe to ship in client code; restricted scope. |
+| **IAM access token** | a bearer JWT | [`@hanzo/iam`](/docs/sdks/iam) after a user signs in (OIDC/PKCE) | Authenticated, user-scoped calls — AI, billing, wallet, account. |
+
+The AI and commerce clients accept either a static `token` or a lazy `getToken()` so rotating tokens are handled for you. See [Quickstart / Embed](/docs/sdks/js/quickstart) for the drop-in, publishable-key story, and [Authentication](/docs/authentication) for how sessions work across Hanzo.
+
+## Versions
+
+| Package | Version | Install |
+| --- | --- | --- |
+| `hanzo.js` | 2.6.0 | `npm i hanzo.js` |
+| `@hanzo/ai` | 0.2.2 | `npm i @hanzo/ai` |
+| `@hanzo/chat` | 1.0.1 | `npm i @hanzo/chat` |
+| `@hanzo/agent` | 0.2.0 | `npm i @hanzo/agent` |
+| `@hanzo/iam` | 0.13.8 | `npm i @hanzo/iam` |
+| `commerce.js` | 7.4.1 | `npm i commerce.js` |
+| `checkout.js` | 2.1.22 | `npm i checkout.js` |
+| `shop.js` | 3.0.31 | `npm i shop.js` |
+| `coin.js` | 1.0.27 | `npm i coin.js` |
+| `track.js` | 0.2.19 | `npm i track.js` |
+| `form.js` | 0.3.0 | `npm i form.js` |
+| `dash.js` | 4.0.1 | `npm i dash.js` |
+| `@hanzo/css` | 1.0.0 | `npm i @hanzo/css` |

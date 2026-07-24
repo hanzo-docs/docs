@@ -1,0 +1,196 @@
+---
+title: "@hanzo/ai"
+description: Headless TypeScript client for Hanzo AI — OpenAI-compatible chat completions, Anthropic messages, models, streaming, and portable threads. No UI, no DOM.
+---
+
+# @hanzo/ai
+
+The headless client for the Hanzo AI backend (`api.hanzo.ai`). Pure client and types — **no UI, no React, no DOM dependency** beyond the standard `fetch` / `ReadableStream` web APIs. It is the shared layer under `@hanzo/chat`, `@hanzo/agent`, hanzo.app, and the `hanzo-dev` CLI.
+
+- **OpenAI-compatible** chat completions (`/v1/chat/completions`), streaming or not
+- **Anthropic-compatible** messages (`/v1/messages`), streaming or not
+- **Models** catalog (`/v1/models`)
+- **Portable threads** — a cross-surface conversation store, so a chat started on one surface resumes on another
+- **Account** — the signed-in IAM identity
+
+```bash tab="npm"
+npm install @hanzo/ai
+```
+
+```bash tab="pnpm"
+pnpm add @hanzo/ai
+```
+
+## Create a client
+
+`createAiClient` returns a typed `AiClient`. Auth is a Hanzo IAM access token (e.g. from [`@hanzo/iam`](/docs/sdks/iam)) or a publishable key, sent as `Authorization: Bearer <token>`.
+
+```ts
+import { createAiClient } from '@hanzo/ai'
+
+const ai = createAiClient({
+  // baseUrl defaults to https://api.hanzo.ai (the Hanzo gateway).
+  token: process.env.HANZO_TOKEN,
+  // For rotating tokens, prefer a lazy source:
+  // getToken: async () => session.accessToken,
+})
+```
+
+`ClientConfig`:
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `baseUrl` | `string` | Defaults to `https://api.hanzo.ai`. Paths join as `/v1/...` — never an `/api/` prefix. |
+| `token` | `string` | Static IAM access token or publishable key. |
+| `getToken` | `() => string \| Promise<string>` | Lazy token source; preferred when tokens rotate. |
+| `fetch` | `typeof fetch` | Custom fetch (tests, non-global-fetch runtimes). |
+| `headers` | `Record<string, string>` | Extra headers on every request. |
+
+The client exposes `ai.chat`, `ai.messages`, `ai.models`, `ai.chats`, `ai.account`, and the shared `ai.http` transport.
+
+## Chat completions
+
+OpenAI-shaped. The default model is `enso`.
+
+```ts
+const res = await ai.chat.completions.create({
+  model: 'enso',
+  messages: [{ role: 'user', content: 'Explain MoE routing in one sentence.' }],
+})
+console.log(res.choices[0].message.content)
+```
+
+### Streaming
+
+Pass `stream: true` and iterate. Each chunk carries an incremental `delta`:
+
+```ts
+const stream = await ai.chat.completions.create({
+  model: 'enso',
+  messages: [{ role: 'user', content: 'Write a haiku about Go.' }],
+  stream: true,
+})
+for await (const chunk of stream) {
+  process.stdout.write(chunk.choices[0]?.delta.content ?? '')
+}
+```
+
+### Tool calling
+
+Pass `tools` / `tool_choice` — they are forwarded to the provider:
+
+```ts
+const res = await ai.chat.completions.create({
+  model: 'enso',
+  messages: [{ role: 'user', content: "What's the weather in Tokyo?" }],
+  tools: [
+    {
+      type: 'function',
+      function: {
+        name: 'get_weather',
+        description: 'Get the current weather for a location',
+        parameters: {
+          type: 'object',
+          properties: { location: { type: 'string' } },
+          required: ['location'],
+        },
+      },
+    },
+  ],
+  tool_choice: 'auto',
+})
+
+for (const call of res.choices[0].message.tool_calls ?? []) {
+  const args = JSON.parse(call.function.arguments)
+  console.log(call.function.name, args)
+}
+```
+
+## Messages (Anthropic-compatible)
+
+```ts
+const msg = await ai.messages.create({
+  model: 'enso',
+  max_tokens: 512,
+  system: 'You are concise.',
+  messages: [{ role: 'user', content: 'Summarize the CAP theorem.' }],
+})
+```
+
+Streaming yields Anthropic SSE events:
+
+```ts
+const events = await ai.messages.create({ model: 'enso', max_tokens: 512, messages, stream: true })
+for await (const ev of events) {
+  if (ev.type === 'content_block_delta') process.stdout.write(ev.delta.text)
+}
+```
+
+## Models
+
+```ts
+const models = await ai.models.list() // Model[]
+```
+
+## Portable threads
+
+A `Chat` is a durable thread keyed by `"owner/name"`; its turns are `Message`s. This is the store that lets a conversation move between surfaces.
+
+```ts
+await ai.chats.create({ owner: 'hanzo', name: 'thread-1', user: 'alice', type: 'AI' })
+
+await ai.chats.messages.append({
+  owner: 'hanzo',
+  name: 'msg-1',
+  chat: 'thread-1',
+  author: 'alice',
+  text: 'Hello',
+})
+
+const thread = await ai.chats.get('hanzo/thread-1')
+const turns = await ai.chats.messages.list({ chat: 'thread-1' })
+```
+
+## Account
+
+```ts
+const me = await ai.account.get()
+```
+
+## Feedback
+
+`sendFeedback` emits a **content-free** router-training signal, keyed only on the gateway response id (the `chatcmpl-…` / `msg_…` the routing ledger keys on). The payload can only ever be `{ requestId, signal, rating? }` — no prompt, response, or file can transit it. It is fire-and-forget: it never throws and is a silent no-op on failure. Requests go to `{baseUrl}/v1/feedback`.
+
+```ts
+import { sendFeedback } from '@hanzo/ai'
+
+sendFeedback({ requestId: 'chatcmpl-abc', signal: 'up' }, { token })
+
+// A 1–3 rating is the only signal that carries a value:
+sendFeedback({ requestId: 'chatcmpl-abc', signal: 'rating', rating: 3 }, { token })
+```
+
+Signals: `up` · `down` · `regenerate` · `switch` · `abandon` · `accept` · `revert` · `rating` · `dismiss`. The input is a discriminated union, so attaching a `rating` to any non-`rating` signal is a type error.
+
+## Errors
+
+Every failure is a subclass of `HanzoAIError`:
+
+- `APIError` — a non-2xx response (or a CRUD envelope with status `"error"`); carries `status` and `body`.
+- `AuthError` — no token was available when a request required authentication.
+
+```ts
+import { APIError } from '@hanzo/ai'
+
+try {
+  await ai.chat.completions.create({ model: 'enso', messages })
+} catch (err) {
+  if (err instanceof APIError) console.error(err.status, err.body)
+}
+```
+
+## Related
+
+- [`@hanzo/chat`](/docs/sdks/js/chat) — the React chat UI built on this client
+- [`@hanzo/agent`](/docs/sdks/js/agent) — the agent-run UI built on this client
+- [LLM Gateway](/docs/llm) · [Models](/docs/services/models)

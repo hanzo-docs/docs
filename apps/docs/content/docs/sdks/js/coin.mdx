@@ -1,0 +1,114 @@
+---
+title: coin.js
+description: Drop-in crypto payments for Hanzo — accept stablecoins (USDC, USDT, DAI, PYUSD) and native coins across Ethereum and the major L2s, composed from commerce.js and viem.
+---
+
+# coin.js
+
+Drop-in crypto payments for Hanzo. Accept stablecoins (USDC, USDT, DAI, PYUSD) and native coins across Ethereum and the major L2s with a tight, composable API. It composes two things and is honest about the split:
+
+- **[`commerce.js`](/docs/sdks/js/commerce)** — the Hanzo Commerce API client (`https://api.hanzo.ai`). Issues deposit addresses, holds the credit balance, saves crypto payment methods. This is the **server** side.
+- **[viem](https://viem.sh)** — connects an injected EIP-1193 wallet and broadcasts transfers. This is the **client / wallet** side.
+
+`payWithCrypto` stitches them into one call.
+
+```bash
+npm install coin.js
+# React surface is optional: react is an optional peer (>=19)
+```
+
+## Quick start
+
+```ts
+import { createCoinPayment } from 'coin.js'
+
+const coin = createCoinPayment({
+  token: iamToken,        // @hanzo/iam access token or publishable key
+  userId: 'hanzo/alice',  // required for deposit-address / credit-balance calls
+  chain: 'base',
+  currency: 'usdc',
+})
+
+// Client-side: connect the user's browser wallet (viem / window.ethereum)
+const { address, chainId } = await coin.connectWallet()
+
+// Quote $25 → USDC, get a Hanzo deposit address, and broadcast the transfer.
+const payment = await coin.payWithCrypto({ amountUsd: 25, send: true })
+console.log(payment.txHash, payment.uri)
+```
+
+Or return just a **payment request** (address + scannable EIP-681 URI) and let the user pay however they like — omit `send`:
+
+```ts
+const req = await coin.payWithCrypto({ amountUsd: 25 })
+// send req.amount req.currency to req.address  (req.uri is a wallet-scannable URI)
+```
+
+## Configuration
+
+```ts
+type CoinPaymentConfig = {
+  token?: string        // IAM token / publishable key → Bearer on commerce calls
+  userId?: string       // Hanzo user id, e.g. "hanzo/alice"
+  baseUrl?: string      // default https://api.hanzo.ai
+  chain?: string        // default 'ethereum'
+  currency?: Currency   // default 'usdc'
+  commerce?: Commerce   // inject an existing commerce.js client (shared auth)
+  provider?: EIP1193Provider // default window.ethereum
+  rpcUrls?: Record<string, string> // per-chain RPC override, keyed by slug
+}
+```
+
+## Wallet — client-side (viem, no call to Hanzo)
+
+| Method | Does |
+| --- | --- |
+| `connectWallet()` | Prompt the injected wallet, return `{ address, chainId }`. |
+| `getAddress()` | The authorized address, or `null`. |
+| `getBalance({ chain?, address? })` | On-chain **native** balance of the wallet. |
+| `quote({ amountUsd, currency? })` | Client-side price quote (stablecoins peg 1:1). |
+| `send({ to, amount, currency, chain? })` | Broadcast a native or ERC-20 transfer. |
+
+## Commerce — server-side (`api.hanzo.ai` via commerce.js)
+
+| Method | Endpoint |
+| --- | --- |
+| `getCreditBalance(currency?)` | `GET /v1/billing/balance` |
+| `getDepositAddress({ chain? })` | `POST /api/wallet/account` |
+| `saveWallet({ customerId, chain?, address?, label? })` | `POST /v1/billing/payment-methods` (type `crypto`) |
+
+## Pay — composes the two
+
+```ts
+coin.payWithCrypto({
+  amountUsd: 25,
+  currency: 'usdc',   // default from config
+  chain: 'base',      // default from config
+  send: true,         // also broadcast from the connected wallet
+  amount: '0.01',     // explicit token amount (required for non-stablecoins in v1)
+  rate: 2500,         // explicit USD/token when supplying a non-stablecoin amount
+})
+```
+
+Returns a `CryptoPayment`:
+
+```ts
+{ address, chain, currency, amountUsd, amount, decimals, uri, qrCode?, txHash?, status }
+```
+
+The full `commerce.js` surface (subscriptions, checkout, coupons, top-ups…) is available on `coin.commerce`.
+
+## React
+
+```tsx
+import { CoinButton, useCoinPayment } from 'coin.js/react'
+
+// One line: connect wallet + pay on click.
+;<CoinButton config={{ token, userId: 'hanzo/alice', chain: 'base' }} amountUsd={25} />
+```
+
+## Related
+
+- [`commerce.js`](/docs/sdks/js/commerce) — the server side of coin.js
+- [`checkout.js`](/docs/sdks/js/checkout) — card checkout
+- [Billing](/docs/billing) · [Commerce](/docs/commerce)

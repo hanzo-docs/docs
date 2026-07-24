@@ -1,37 +1,122 @@
 ---
 title: IAM SDK
-description: TypeScript SDK for Hanzo IAM — authentication, organizations, billing, and React bindings.
+description: TypeScript SDK for Hanzo IAM — OIDC discovery, JWT validation, OAuth2 PKCE browser login, organizations, billing, and React bindings.
 ---
 
 # @hanzo/iam
 
-TypeScript SDK for Hanzo IAM (Identity & Access Management). Provides OIDC auth, JWT validation, OAuth2 PKCE browser flows, org/project switching, billing, and React bindings.
+TypeScript SDK for [Hanzo IAM](https://iam.hanzo.ai) — identity & access management. It gives you server-side JWT validation, an OAuth2 client, browser PKCE login flows, billing, and React bindings, all zero-config via OIDC discovery.
+
+- **JWT validation** — OIDC discovery + JWKS signature verification (via [jose](https://github.com/panva/jose))
+- **OAuth2 PKCE** — browser login (redirect, popup, silent signin)
+- **API client** — users, organizations, OIDC discovery, token exchange
+- **Billing types** — `Subscription`, `Plan`, `Pricing`, `Payment`, `UsageRecord` (the IAM billing data model, from `@hanzo/iam/types`)
+- **Zero config** — auto-discovers endpoints via `.well-known/openid-configuration`
 
 ```bash
 npm install @hanzo/iam
 ```
 
-## Entry Points
+## Entry points
 
-| Import Path | Description |
-|---|---|
-| `@hanzo/iam` | Core client, JWT validation, types |
-| `@hanzo/iam/react` | React provider and hooks (`IamProvider`, `useIam`, `useOrganizations`) |
-| `@hanzo/iam/browser` | Browser PKCE SDK (standalone, no React) |
-| `@hanzo/iam/billing` | Billing client (subscriptions, plans, pricing) |
-| `@hanzo/iam/auth` | JWT validation only |
-| `@hanzo/iam/types` | Type definitions only |
+| Import path | What it is |
+| --- | --- |
+| `@hanzo/iam` | Core client + JWT validation (Node), browser client (browser). |
+| `@hanzo/iam/browser` | Browser PKCE SDK (`IAM`), standalone, no React. |
+| `@hanzo/iam/react` | React provider + hooks (`IamProvider`, `useIam`, `useIamToken`, `useOrganizations`, `OrgProjectSwitcher`). |
+| `@hanzo/iam/auth` | JWT validation only (`validateToken`). |
+| `@hanzo/iam/types` | Type definitions only (incl. the billing model: `Subscription`, `Plan`, `Pricing`, …). |
+| `@hanzo/iam/nextauth` · `/passport` · `/betterauth` | Adapters for NextAuth, Passport, and Better Auth. |
+| `@hanzo/iam/validation` | Shared validators (phone, email, …). |
 
-## Documentation
+## Server: validate a token
 
-Full SDK documentation lives in the IAM repository:
+```ts
+import { validateToken } from '@hanzo/iam'
 
-- [Overview & Quick Start](https://github.com/hanzo-js/iam/blob/main/docs/sdk/README.mdx)
-- [Authentication](https://github.com/hanzo-js/iam/blob/main/docs/sdk/authentication.mdx) — JWT validation, PKCE flows, token management
-- [React Bindings](https://github.com/hanzo-js/iam/blob/main/docs/sdk/react.mdx) — IamProvider, useIam, useOrganizations, useIamToken
-- [Billing](https://github.com/hanzo-js/iam/blob/main/docs/sdk/billing.mdx) — Subscriptions, plans, pricing, payments
+const result = await validateToken(accessToken, {
+  serverUrl: 'https://iam.hanzo.ai',
+  clientId: 'my-app',
+})
+
+if (result.ok) {
+  console.log(result.userId, result.email, result.owner) // owner = the org claim
+} else {
+  console.error(result.reason)
+}
+```
+
+## Server: OAuth2 client
+
+```ts
+import { IamClient } from '@hanzo/iam'
+
+const client = new IamClient({
+  serverUrl: 'https://iam.hanzo.ai',
+  clientId: 'my-app',
+  clientSecret: process.env.IAM_CLIENT_SECRET,
+})
+
+const authUrl = await client.getAuthorizationUrl({
+  redirectUri: 'https://myapp.com/callback',
+  state: 'random-state',
+})
+
+const tokens = await client.exchangeCode({ code: 'auth-code', redirectUri: 'https://myapp.com/callback' })
+const user = await client.getUserInfo(tokens.access_token)
+```
+
+## Browser: PKCE login (SPA)
+
+```ts
+import { IAM } from '@hanzo/iam/browser'
+
+const iam = new IAM({ serverUrl: 'https://iam.hanzo.ai', clientId: 'my-spa' })
+
+await iam.signinRedirect()          // start PKCE redirect to /v1/iam/oauth/authorize
+const token = await iam.handleCallback() // exchange code at /v1/iam/oauth/access_token
+const user = await iam.getUser()    // userinfo
+await iam.logout()                  // RP-initiated logout
+```
+
+`IAM` also offers `signinPopup()`, `signinSilent()`, `getUserInfo()`, and `refreshAccessToken()`. Flows run against the IAM OAuth2 endpoints under `/v1/iam/oauth/*`.
+
+## React bindings
+
+```tsx
+import { IamProvider, useIam, useIamToken, useOrganizations } from '@hanzo/iam/react'
+
+function App({ children }) {
+  return (
+    <IamProvider serverUrl="https://iam.hanzo.ai" clientId="my-spa">
+      {children}
+    </IamProvider>
+  )
+}
+
+function Profile() {
+  const { user, login, logout } = useIam()
+  const { token } = useIamToken()
+  const orgs = useOrganizations()
+  // ...
+}
+```
+
+## Billing & usage types
+
+The billing data model ships as types from `@hanzo/iam/types` — `Subscription`, `Plan`, `Pricing`, `Payment`, `Order`, `UsageRecord`, and `UsageSummary`. Fetch the records from IAM's billing REST API (the OAuth2 access token from the flows above authorizes the request) or manage them in the [console](https://console.hanzo.ai).
+
+```ts
+import type { Subscription, Plan, UsageSummary } from '@hanzo/iam/types'
+```
+
+## Publishable keys
+
+IAM also issues the **publishable keys** (`pk_live_…` / `pk_test_…`) that browser widgets use to reach the API safely — the ones [`checkout.js`](/docs/sdks/js/checkout), [`form.js`](/docs/sdks/js/form), and [`track.js`](/docs/sdks/js/track) accept. Create them in the [console](https://console.hanzo.ai). See the [Quickstart / Embed](/docs/sdks/js/quickstart) story for how they compose with the rest of the JavaScript SDK.
 
 ## Related
 
-- [IAM Server](https://github.com/hanzoai/iam) -- The Hanzo IAM service
-- [IAM JS SDK](https://github.com/hanzo-js/iam) — Source code
+- [Authentication](/docs/authentication) — how SSO, OIDC, and sessions work across Hanzo
+- [IAM](/docs/iam) · [Organizations](/docs/organizations)
+- [JavaScript SDK](/docs/sdks/js) — the full `@hanzo/*` family
+- Source: [`hanzo-js/iam`](https://github.com/hanzo-js/iam) · Server: [`hanzoai/iam`](https://github.com/hanzoai/iam)

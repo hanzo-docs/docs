@@ -11,7 +11,7 @@
 // Rendered inline in the docs (never a link-out). Same lazy-island + fd-token
 // pattern as <ModelsCatalog/>.
 import { useEffect, useMemo, useState } from 'react';
-import { Search, Plug, Boxes, ArrowUpRight, Github, Slack, Chrome, MessageCircle } from 'lucide-react';
+import { Search, Plug, Boxes, ArrowUpRight, GitBranch, Hash, Globe, MessageCircle } from 'lucide-react';
 
 const MCP_REGISTRY = 'https://registry.modelcontextprotocol.io/v0/servers?limit=100';
 
@@ -26,7 +26,7 @@ const NATIVE: Native[] = [
   { id: 'discord', label: 'Discord', method: 'OAuth2', blurb: 'Servers, channels, messages.' },
   { id: 'x', label: 'X', method: 'OAuth2', blurb: 'Post, read, and search on X.' },
 ];
-const NATIVE_ICON: Record<string, typeof Github> = { github: Github, slack: Slack, google: Chrome, discord: MessageCircle };
+const NATIVE_ICON: Record<string, typeof MessageCircle> = { github: GitBranch, slack: Hash, google: Globe, discord: MessageCircle };
 
 type McpServer = { name: string; title?: string; description?: string; remotes?: { type: string }[]; packages?: { registryType: string }[] };
 type RegItem = { server: McpServer };

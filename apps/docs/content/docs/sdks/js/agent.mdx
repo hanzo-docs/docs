@@ -1,0 +1,89 @@
+---
+title: "@hanzo/agent"
+description: The agent-run UI surface for Hanzo AI — a conversation/agent view with tool calls, file and diff panels, a task list, reasoning, and a composer.
+---
+
+# @hanzo/agent
+
+The cowork/code agentic UI surface for Hanzo AI — a conversation/agent-run view with **tool calls, file & diff panels, a task list, reasoning, and the composer**. The richer counterpart to a plain chat surface; it powers hanzo.app's cowork/code experience and the Hanzo desktop app.
+
+Like [`@hanzo/chat`](/docs/sdks/js/chat), it is built on [`@hanzo/gui`](https://www.npmjs.com/package/@hanzo/gui) (v7, Tamagui — Radix-free) and streams through [`@hanzo/ai`](/docs/sdks/js/ai); it never re-implements API calls.
+
+## Install
+
+```bash
+npm install @hanzo/agent @hanzo/ai @hanzo/gui react
+```
+
+`@hanzo/ai`, `@hanzo/gui`, and `react` are peer dependencies — the host app provides them (and the `@hanzo/gui` theme/provider).
+
+## Quick start
+
+```tsx
+import { createAiClient } from '@hanzo/ai'
+import { AgentRun, useAgentRun } from '@hanzo/agent'
+
+const client = createAiClient({ getToken: () => session.accessToken })
+
+export function Cowork() {
+  const { state, send, stop } = useAgentRun({
+    client,
+    model: 'enso',
+    system: 'You are a coding agent.',
+    tools: [
+      {
+        type: 'function',
+        function: {
+          name: 'read_file',
+          description: 'Read a file from the workspace.',
+          parameters: {
+            type: 'object',
+            properties: { path: { type: 'string' } },
+            required: ['path'],
+          },
+        },
+      },
+    ],
+  })
+
+  return <AgentRun run={state} onSend={send} onStop={stop} />
+}
+```
+
+`useAgentRun` owns the presented run state, streams `chat.completion.chunk` deltas (text plus incremental `tool_calls`) into turns, and exposes `send` / `stop`. `AgentRun` is a **pure view**, so you can also drive it from your own state.
+
+## Components
+
+`AgentRun` composes these; each is exported and usable on its own:
+
+| Component | Purpose |
+| --- | --- |
+| `AgentRun` | Task panel + transcript + composer. The full surface. |
+| `MessageList` / `MessageBubble` | The scrollable transcript and a single turn. |
+| `Composer` | Growing text area + Send (Enter submits, Shift+Enter newline). |
+| `TaskList` | The agent's plan / checklist with per-item status. |
+| `ToolCall` / `ToolCallList` | A tool invocation: name + status, expandable args/result. |
+| `FilePanel` / `FilePanelList` | A file the agent touched (diff or contents). |
+| `FileDiff` | Unified-diff renderer with +/- coloring. |
+| `CodeBlock` | Monospace code surface with optional gutter and header. |
+| `Reasoning` | Collapsible chain-of-thought. |
+| `Disclosure` | The expand/collapse primitive the others build on. |
+| `StatusDot` / `StatusBadge` | Run-status indicators. |
+
+## Model
+
+The presented state is plain data, derived from `@hanzo/ai`'s wire types:
+
+- `AgentRunState` — `{ turns, tasks?, running }`
+- `AgentTurn` — a user or assistant turn: `text`, `reasoning`, `tools`, `files`, `error`, `status`
+- `ToolInvocation` — `{ id, name, arguments, result?, status }`
+- `FileChange` — `{ path, kind, diff?, contents?, language?, additions?, deletions? }`
+- `Task` — `{ id, title, status }`
+
+`toolInvocationFromCall(toolCall)` maps an `@hanzo/ai` `ToolCall` to a pending `ToolInvocation`.
+
+## Related
+
+- [`@hanzo/ai`](/docs/sdks/js/ai) — the headless client underneath
+- [`@hanzo/chat`](/docs/sdks/js/chat) — the plain chat surface
+- [Agents](/docs/agents) · [MCP](/docs/mcp)

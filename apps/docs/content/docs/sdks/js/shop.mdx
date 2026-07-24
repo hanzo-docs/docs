@@ -1,0 +1,66 @@
+---
+title: shop.js
+description: A complete e-commerce shop solution — product cards, cart, and checkout components composed from @hanzo/commerce and checkout.js.
+---
+
+# shop.js
+
+A complete e-commerce shop solution. `shop.js` combines [`@hanzo/commerce`](/docs/sdks/js/commerce) and [`checkout.js`](/docs/sdks/js/checkout) into one package of React components for a full shopping experience — product listing, cart, and checkout.
+
+```bash
+npm install shop.js
+```
+
+## Quick start
+
+```tsx
+import {
+  // Commerce components
+  ProductCard,
+  AddToCartWidget,
+  CartPanel,
+  // Checkout components + client
+  CheckoutProvider,
+  CheckoutForm,
+  createCheckout,
+} from 'shop.js'
+
+function Shop({ products }) {
+  return (
+    <CheckoutProvider options={{ apiKey: 'pk_live_…' }}>
+      <div className="products">
+        {products.map((product) => (
+          <ProductCard key={product.id} product={product}>
+            <AddToCartWidget sku={product.sku} />
+          </ProductCard>
+        ))}
+      </div>
+
+      <CartPanel />
+      <CheckoutForm />
+    </CheckoutProvider>
+  )
+}
+```
+
+## What's included
+
+**From `@hanzo/commerce`:** `ProductCard`, `AddToCartWidget`, `CartPanel`, `CarouselBuyCard`, `PaymentStepForm`, `ShippingStepForm`, `Icons`.
+
+**From `checkout.js`:** `CheckoutProvider`, `CheckoutForm`, `useCheckout`, `createCheckout`, `HanzoCheckout`.
+
+## Subpath exports
+
+```ts
+// Cart-only components
+import { CartPanel, AddToCartWidget } from 'shop.js/cart'
+
+// Checkout-only components
+import { CheckoutProvider, CheckoutForm, useCheckout } from 'shop.js/checkout'
+```
+
+## Related
+
+- [`commerce.js`](/docs/sdks/js/commerce) · [`checkout.js`](/docs/sdks/js/checkout) — the two packages it composes
+- [`coin.js`](/docs/sdks/js/coin) — add crypto payments
+- [Commerce](/docs/commerce)

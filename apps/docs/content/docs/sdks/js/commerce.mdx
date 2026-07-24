@@ -1,0 +1,82 @@
+---
+title: commerce.js
+description: The Hanzo Commerce API client — balances, tiers, usage metering, subscriptions, checkout, coupons, referrals, and crypto top-ups. Vanilla JS/TS, no framework.
+---
+
+# commerce.js
+
+The Hanzo Commerce API client — billing, subscriptions, payments, and usage tracking. Vanilla JS/TS, no framework dependencies; it runs in the browser, Node.js, and edge runtimes. `commerce.js` is a thin, unscoped re-export of [`@hanzo/commerce`](https://www.npmjs.com/package/@hanzo/commerce)'s `client` entrypoint, so you can use the commerce client without scoped imports.
+
+```bash
+npm install commerce.js
+```
+
+## Quick start
+
+```ts
+import { Commerce } from 'commerce.js'
+
+const commerce = new Commerce({
+  baseUrl: 'https://api.hanzo.ai', // default
+  token: accessToken,              // @hanzo/iam access token
+})
+
+// Billing
+const balance = await commerce.getBalance('hanzo/alice')
+const tier = await commerce.getTier('hanzo/alice')
+
+// Usage metering
+await commerce.addUsageRecord({ user: 'hanzo/alice', currency: 'usd', amount: 12 })
+
+// Subscriptions
+await commerce.subscribe({ planId: 'growth', userId: 'hanzo/alice' })
+```
+
+## Client
+
+`Commerce` talks to the Hanzo API at `https://api.hanzo.ai` (override with `baseUrl`). Requests authenticate with an [`@hanzo/iam`](/docs/sdks/iam) access token passed as `token`, or refreshed later via `commerce.setToken(...)`. Billing and usage endpoints live under `/v1/billing/*`; checkout, coupons, referrals, and affiliates under their own `/v1/*` groups.
+
+Covered surface: balances & tiers, usage records, deposits & credits, plans, subscriptions, checkout sessions, payment methods, card tokenization, coupons, referrals, affiliates, and wallet/crypto top-ups.
+
+## Subpath exports
+
+```ts
+import { Commerce, CommerceApiError } from 'commerce.js'         // main
+import { Commerce } from 'commerce.js/billing'                   // billing alias
+import type { Balance, Subscription, Plan } from 'commerce.js/types'
+```
+
+## Types
+
+```ts
+import type {
+  CommerceClientConfig,
+  Balance,
+  Transaction,
+  Subscription,
+  Plan,
+  Payment,
+  UsageRecord,
+} from 'commerce.js/types'
+```
+
+## Errors
+
+Failed requests throw `CommerceApiError`, which carries the HTTP `status`:
+
+```ts
+import { Commerce, CommerceApiError } from 'commerce.js'
+
+try {
+  await commerce.getBalance('hanzo/alice')
+} catch (err) {
+  if (err instanceof CommerceApiError) console.error(err.status)
+}
+```
+
+## Related
+
+- [`checkout.js`](/docs/sdks/js/checkout) — the hosted checkout widget on top of this API
+- [`coin.js`](/docs/sdks/js/coin) — crypto payments settled through commerce
+- [`shop.js`](/docs/sdks/js/shop) — commerce + checkout components, composed
+- [Billing](/docs/billing) · [Commerce](/docs/commerce)
