@@ -1,0 +1,48 @@
+# docs.hanzo.ai — the ONE canonical deploy, on Hanzo's native stack.
+#
+#   Hanzo Git (git.hanzo.ai) push  →  act_runner (in-cluster git-runner)
+#   →  BuildKit builds the Fumadocs export into hanzoai/static
+#   →  ghcr.io/hanzoai/docs:<sha>  →  patch App/docs  →  operator reconcile
+#   →  hanzocd (cd.hanzo.ai) observes  →  live at docs.hanzo.ai
+#
+# No GitHub builders, no Cloudflare Pages. `.github/workflows/*` is sync-only
+# (mirror to Hanzo Git); the real pipeline lives here (one and one way).
+name: deploy
+on:
+  push:
+    branches: [main]
+    paths: ['apps/docs/**', 'packages/**', 'pnpm-lock.yaml', '.hanzo/workflows/deploy.yml']
+
+jobs:
+  deploy:
+    runs-on: hanzo-build-linux-amd64          # the in-cluster act_runner bulk
+    steps:
+      - uses: actions/checkout@v4
+
+      # Build + push the serve image via in-cluster BuildKit (the platform CI
+      # fabric — same buildctl contract that builds every other Hanzo service).
+      - name: Build + push docs image
+        run: |
+          SHA="${GITHUB_SHA::8}"
+          buildctl-daemonless.sh build \
+            --frontend=dockerfile.v0 \
+            --opt context="${{ github.server_url }}/${{ github.repository }}.git#${GITHUB_SHA}" \
+            --opt filename=Dockerfile \
+            --opt platform=linux/amd64 \
+            --secret id=GIT_AUTH_TOKEN,env=GIT_AUTH_TOKEN \
+            --output "type=image,name=ghcr.io/hanzoai/docs:${SHA},push=true" \
+            --progress=plain
+        env:
+          GIT_AUTH_TOKEN: ${{ secrets.GIT_CLONE_TOKEN }}
+
+      # Declare the immutable tag to the operator; hanzocd + operator do the rest.
+      - name: Deploy — declare tag to operator
+        run: |
+          kubectl -n hanzo patch app docs --type=merge \
+            -p "{\"spec\":{\"image\":{\"repository\":\"ghcr.io/hanzoai/docs\",\"tag\":\"${GITHUB_SHA::8}\"}}}"
+          kubectl -n hanzo rollout status deploy/docs --timeout=300s
+
+      # Re-index search + zen-coder-flash chat from the shipped content.
+      - name: Re-index docs corpus
+        continue-on-error: true
+        run: curl -fsS -X POST https://api.hanzo.ai/v1/index-docs -H 'Content-Type: application/json' -d "{\"site\":\"docs.hanzo.ai\",\"sha\":\"${GITHUB_SHA}\"}" || true
