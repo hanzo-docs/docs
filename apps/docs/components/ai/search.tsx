@@ -27,6 +27,22 @@ const Context = createContext<{
   chat: HanzoChat;
 } | null>(null);
 
+// Citation URLs come from UNTRUSTED model output (the provideLinks tool, parsed by
+// a deliberately loose schema), so a model could emit `javascript:`/`data:`/`vbscript:`.
+// Render a link only when its href is an absolute http(s) URL or a site-relative
+// path ('/…'); drop anything else. This is the render-time scheme allowlist.
+function isSafeHref(url: string | null | undefined): boolean {
+  if (!url) return false;
+  const u = url.trim();
+  if (u.startsWith('/') && !u.startsWith('//')) return true; // site-relative
+  try {
+    const { protocol } = new URL(u, 'https://docs.hanzo.ai');
+    return protocol === 'https:' || protocol === 'http:';
+  } catch {
+    return false;
+  }
+}
+
 export function AISearchPanelHeader({ className, ...props }: ComponentProps<'div'>) {
   const { setOpen } = useAISearchContext();
 
@@ -273,6 +289,9 @@ function Message({ message, ...props }: { message: ChatMessage } & ComponentProp
     }
   }
 
+  // Only ever render citations whose href passes the scheme allowlist.
+  const safeLinks = (links ?? []).filter((item) => isSafeHref(item?.url));
+
   return (
     <div onClick={(e) => e.stopPropagation()} {...props}>
       <p
@@ -286,9 +305,9 @@ function Message({ message, ...props }: { message: ChatMessage } & ComponentProp
       <div className="prose text-sm">
         <Markdown text={markdown} />
       </div>
-      {links && links.length > 0 && (
+      {safeLinks.length > 0 && (
         <div className="mt-2 flex flex-row flex-wrap items-center gap-1">
-          {links.map((item, i) => (
+          {safeLinks.map((item, i) => (
             <Link
               key={i}
               href={item.url}

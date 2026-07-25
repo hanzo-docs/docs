@@ -23,19 +23,32 @@ export const indexEndpoint =
 export const chatEndpoint =
   process.env.NEXT_PUBLIC_HANZO_CHAT_ENDPOINT ?? 'https://api.hanzo.ai';
 
-// Publishable key (pk-*) for the hanzo-docs org, scoped to chat. Ships in the
-// client bundle BY DESIGN (NEXT_PUBLIC) — never a server secret. Answering is
-// balance-gated: the hanzo-docs org wallet must be funded for the gateway to bill.
+// WIDGET key (hz_*) for the hanzo-docs org, scoped to chat. Ships in the client
+// bundle BY DESIGN (NEXT_PUBLIC) — client-safe and readable, NEVER a server secret
+// (hk-/sk-) and NOT an ingest publishable key (pk-, which the gateway rejects for
+// completions). The gateway binds this key server-side to its owner org
+// (WIDGET_KEY_OWNERS), an enso-only model allowlist (WIDGET_KEY_MODELS), a per-org
+// rate limit, and the org's prepaid balance — so a leaked key is capped, never an
+// open bill. Answering is balance-gated: the hanzo-docs org wallet must be funded
+// for the gateway to bill.
 export const chatKey = process.env.NEXT_PUBLIC_HANZO_CHAT_KEY ?? '';
 
-// Generation model on the gateway. `enso` is the Hanzo docs assistant model.
+// Generation model on the gateway. `enso` is the Hanzo docs assistant model; the
+// docs widget key is bound to it (and only it) server-side via WIDGET_KEY_MODELS.
 export const chatModel = process.env.NEXT_PUBLIC_HANZO_CHAT_MODEL ?? 'enso';
 
+// Public, read-only search key for retrieval grounding — like an Algolia
+// search-only key: it ships in the static bundle BY DESIGN and can only READ the
+// index (never write, never bill inference). The default is the hanzo-docs
+// Meilisearch public search key (the active `meilisearch` backend). The cloud
+// backend has NO baked-in key: absent NEXT_PUBLIC_HANZO_SEARCH_KEY it resolves to
+// '' and retrieveDocs degrades to no-retrieval (fail-secure) rather than firing a
+// request with a placeholder credential.
 export const publishableKey =
   process.env.NEXT_PUBLIC_HANZO_SEARCH_KEY ??
   (searchBackend === 'meilisearch'
     ? '2d99c3ab7551b807c9b8c132f663eba7e27e765a511907d9a566799497c7fd42'
-    : 'pk-hanzo-docs-search-2026');
+    : '');
 
 export const adminKey =
   process.env.HANZO_SEARCH_ADMIN_KEY ?? '';

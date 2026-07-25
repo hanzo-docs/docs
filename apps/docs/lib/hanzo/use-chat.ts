@@ -11,7 +11,7 @@ import { retrieveDocs, type DocHit } from '@/lib/hanzo/retrieve';
 // STATIC export (hanzoai/static) with no server, so the retired `/api/chat`
 // route can never run in prod. This hook streams straight from the Hanzo
 // gateway (`POST {chatEndpoint}/v1/chat/completions`, model `enso`) using our
-// own headless SDK (@hanzo/ai `createAiClient`) with a PUBLISHABLE key — never a
+// own headless SDK (@hanzo/ai `createAiClient`) with a WIDGET key (hz_) — never a
 // server secret. It presents the exact surface the widget already consumes
 // (messages/status/sendMessage/regenerate/stop/setMessages), so the bespoke
 // provideLinks/sources UI is untouched.
@@ -167,7 +167,7 @@ export function useHanzoChat(): HanzoChat {
             parts: [
               {
                 type: 'text',
-                text: 'AI chat is not configured yet. Set `NEXT_PUBLIC_HANZO_CHAT_KEY` to a Hanzo publishable key.',
+                text: 'AI chat is not configured yet. Set `NEXT_PUBLIC_HANZO_CHAT_KEY` to a Hanzo widget key (hz_).',
               },
             ],
           },
