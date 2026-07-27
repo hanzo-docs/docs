@@ -97,7 +97,7 @@ func (c *ApiController) Signin() {
     /page?access_token=<The access token>
     ```
 
-    Demo site example: `https://iam.hanzo.ai/api/get-global-providers?access_token=eyJhbGciOiJSUzI1NiIs`
+    Demo site example: `https://iam.hanzo.ai/v1/iam/get-global-providers?access_token=eyJhbGciOiJSUzI1NiIs`
 
 2. **Bearer header:**
 
@@ -189,12 +189,12 @@ Create a key pair on the user’s account settings page.
     /page?accessKey=<The user's access key>&accessSecret=<the user's access secret>"
     ```
 
-Example: `https://iam.hanzo.ai/api/get-global-providers?accessKey=...&accessSecret=...`
+Example: `https://iam.hanzo.ai/v1/iam/get-global-providers?accessKey=...&accessSecret=...`
 
 ![User Api Key](/img/basic/user_api_key.png)
 
 ```bash
-curl --location 'http://iam.hanzo.ai/api/user?accessKey=b86db9dc-6bd7-4997-935c-af480dd2c796&accessSecret=79911517-fc36-4093-b115-65a9741f6b14'
+curl --location 'http://iam.hanzo.ai/v1/iam/user?accessKey=b86db9dc-6bd7-4997-935c-af480dd2c796&accessSecret=79911517-fc36-4093-b115-65a9741f6b14'
 
 ### 4. Username and password
 

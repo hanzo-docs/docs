@@ -181,7 +181,7 @@ curl -X POST "https://iam.hanzo.ai/v1/iam/add-application" \
   }'
 
 # Update user balance (billing integration)
-curl -X POST "https://iam.hanzo.ai/api/update-user" \
+curl -X POST "https://iam.hanzo.ai/v1/iam/update-user" \
   -H "Authorization: Bearer ${ADMIN_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -445,7 +445,7 @@ make build-prod   # Build and push production image
 | OAuth Metadata | `/.well-known/oauth-authorization-server` | GET |
 | JWKS | `/.well-known/jwks` | GET |
 
-### Admin REST API (`/api/`)
+### Admin REST API (`/v1/iam/`)
 
 | Resource | Endpoints |
 |----------|-----------|
