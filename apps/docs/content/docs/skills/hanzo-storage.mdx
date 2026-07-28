@@ -1,31 +1,33 @@
 ---
 title: "Hanzo Storage - S3-Compatible Object Storage"
-description: "Hanzo Storage is a high-performance, S3-compatible object storage server for AI workloads. It is a fork of MinIO, rebranded and optimized for the Hanzo ecosystem. Written in Go. Live in production ..."
+description: "Hanzo Storage is a high-performance, S3-compatible object storage server for AI workloads. It is a fork of SeaweedFS, rebranded and optimized for the Hanzo ecosystem. Written in Go. Live in production ..."
 ---
 
 ## Overview
 
-Hanzo Storage is a **high-performance, S3-compatible object storage server** for AI workloads. It is a fork of MinIO, rebranded and optimized for the Hanzo ecosystem. Written in Go. Live in production on Hanzo K8s clusters.
+Hanzo Storage is a **high-performance, S3-compatible object storage server** for AI workloads. It is a fork of SeaweedFS, rebranded and optimized for the Hanzo ecosystem. Written in Go. Live in production on Hanzo K8s clusters.
 
 ### Why Hanzo Storage?
 
 - **S3 API Compatible**: Drop-in replacement for Amazon S3; works with any S3 client or SDK
 - **Built for AI**: Optimized for large model artifacts, training datasets, and data pipelines
-- **Erasure Coding**: Configurable data redundancy across drives and nodes
+- **Replication**: Configurable per-volume replication across racks and data centres
 - **Server-Side Encryption**: SSE-S3 and SSE-KMS for data at rest and in transit
 - **Multi-Tenancy**: Isolated namespaces and access boundaries for teams and services
-- **Web Console**: Hanzo-branded console UI (`hanzoai/storage-console` fork)
+- **Admin UI + shell**: both ship in the repo (`s3/admin`, `s3/shell`) — no separate console service
 
 ### Tech Stack
 
-- **Language**: Go (module: `github.com/minio/minio`)
+- **Language**: Go (module: `github.com/hanzoai/s3`)
 - **Go Version**: 1.26
-- **Console**: `github.com/hanzoai/storage-console` v1.7.7-hanzo.1
-- **License**: AGPL v3
+- **Components**: master (`:9333`), volume (`:8080`), filer (`:8888`), S3 gateway (`:9000`)
+- **License**: Apache-2.0
 
 ### OSS Base
 
-Fork of [MinIO](https://github.com/minio/minio). Repo: `hanzoai/s3` (GitHub name is `s3`, branded as "Hanzo Storage").
+Fork of [SeaweedFS](https://github.com/seaweedfs/seaweedfs) (Apache-2.0). Repo: `hanzoai/s3` (GitHub name is `s3`, branded as "Hanzo Storage").
+
+It REPLACED an earlier MinIO fork, which is gone. Anything still naming MinIO, `storage-console` or an AGPL licence for this service is describing a stack we no longer run.
 
 ## When to use
 
@@ -46,13 +48,14 @@ Fork of [MinIO](https://github.com/minio/minio). Repo: `hanzoai/s3` (GitHub name
 | Item | Value |
 |------|-------|
 | Repo | `github.com/hanzoai/s3` |
-| Module | `github.com/minio/minio` (upstream path retained) |
+| Module | `github.com/hanzoai/s3` |
 | Go Version | 1.26 |
-| License | AGPL v3 |
+| License | Apache-2.0 |
 | API Port | 9000 |
-| Console Port | 9001 |
+| Filer Port | 8888 |
+| Master Port | 9333 |
 | Docker Image | `ghcr.io/hanzoai/s3:latest` |
-| Console Fork | `github.com/hanzoai/storage-console` |
+| Admin UI | in-repo (`s3/admin`) |
 | Dockerfile | `Dockerfile.hanzo` (production) |
 
 ## One-file quickstart
@@ -74,15 +77,17 @@ go build -o hanzo-storage .
 ./hanzo-storage server /data --console-address :9001
 ```
 
-### Verify with S3 client (mc)
+### Verify
+
+The filer speaks plain HTTP, so curl is a complete client — nothing to install:
 
 ```bash
-mc alias set hanzo http://localhost:9000 minioadmin minioadmin
-mc admin info hanzo
-mc mb hanzo/my-bucket
-mc cp ~/data/model.safetensors hanzo/my-bucket/
-mc ls hanzo/my-bucket/
+curl -F file=@model.safetensors http://localhost:8888/buckets/my-bucket/
+curl http://localhost:8888/buckets/my-bucket/model.safetensors -o out.bin
+curl -H 'Accept: application/json' http://localhost:8888/buckets/my-bucket/
 ```
+
+Or the AWS CLI against the S3 gateway on `:9000` (`--endpoint-url`, path-style).
 
 ### Docker Compose
 
@@ -92,12 +97,12 @@ services:
   storage:
     image: ghcr.io/hanzoai/s3:latest
     ports:
-      - "9000:9000"
-      - "9001:9001"
-    command: server /data --console-address :9001
+      - "9000:9000"   # S3 gateway
+      - "8888:8888"   # filer
+    command: server -dir=/data -s3
     environment:
-      MINIO_ROOT_USER: "${S3_ROOT_USER}"
-      MINIO_ROOT_PASSWORD: "${S3_ROOT_PASSWORD}"
+      S3_ROOT_USER: "${S3_ROOT_USER}"
+      S3_ROOT_PASSWORD: "${S3_ROOT_PASSWORD}"
     volumes:
       - storage-data:/data
 
@@ -125,13 +130,20 @@ volumes:
 
 Any S3-compatible SDK works. Purpose-built SDKs:
 
+Use the standard AWS SDKs — they are what the rest of the estate uses (43 repos on `aws-sdk-go-v2` alone), so there is one S3 client to know, not two:
+
 | Language | Package |
 |----------|---------|
-| Go | `github.com/minio/minio-go/v7` |
-| JavaScript / TypeScript | `minio` (npm) |
-| Python | `minio` (pip) |
+| Go | `github.com/aws/aws-sdk-go-v2/service/s3` |
+| JavaScript / TypeScript | `@aws-sdk/client-s3` |
+| Python | `boto3` |
 
-Standard AWS SDKs (`aws-sdk-go`, `boto3`, `@aws-sdk/client-s3`) also work without modification.
+Point them at the gateway with a custom endpoint and path-style addressing:
+`BaseEndpoint = http://s3.hanzo.svc:9000`, `UsePathStyle = true`.
+
+Set `RequestChecksumCalculation` to `WhenRequired`. Since aws-sdk-go-v2's s3 v1.73 the
+default sends CRC32 as an unsigned streaming trailer, which the SDK refuses to send
+over plain HTTP — and the in-cluster gateway is plain HTTP.
 
 ### Key Internal Packages
 
@@ -170,9 +182,8 @@ S3_KMS_SECRET_KEY_FILE=kms_master_key
 S3_CONFIG_ENV_FILE=config.env
 MC_CONFIG_DIR=/tmp/.mc
 
-# Standard MinIO env vars also supported
-MINIO_ROOT_USER=minioadmin
-MINIO_ROOT_PASSWORD=minioadmin
+S3_ROOT_USER=
+S3_ROOT_PASSWORD=
 ```
 
 ### Key Features
@@ -189,10 +200,10 @@ MINIO_ROOT_PASSWORD=minioadmin
 
 | Issue | Cause | Solution |
 |-------|-------|----------|
-| Default credentials | Using `minioadmin:minioadmin` | Set `MINIO_ROOT_USER` and `MINIO_ROOT_PASSWORD` |
+| Default credentials | Running with the built-in defaults | Set `S3_ROOT_USER` and `S3_ROOT_PASSWORD` |
 | Console not loading | Console address not set | Add `--console-address :9001` |
 | Build fails | Go version mismatch | Requires Go 1.24+ |
-| Module path confusion | Module is `github.com/minio/minio` | Upstream module path retained for SDK compat |
+| Stale MinIO references | Docs or config naming MinIO, `mc`, `storage-console` or AGPL | That fork is gone; the module is `github.com/hanzoai/s3` and the licence is Apache-2.0 |
 
 ## Related Skills
 
