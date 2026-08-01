@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse as parseYaml } from 'yaml';
-import { loadDocument, type Document, type Operation } from './openapi-doc';
+import { loadDocument, opHref, type Document, type Operation } from './openapi-doc';
 import { SDKS, cli, http, mcp } from './openapi-surfaces';
 import { MCP_DOOR, loadMcpTools } from './sync-mcp-tools';
 import type { CliCommand } from './sync-cli-commands';
@@ -119,9 +119,10 @@ function doorNotice(doc: Document): string[] {
  * so the journey shows what the call actually accepts.
  */
 function signature(op: Operation): string[] {
+  const body = Object.entries<any>(op.body?.schema?.properties ?? {});
   const rows = [
     ...op.parameters.map((p) => [p.name, p.in, p.required, p.description] as const),
-    ...Object.entries<any>(op.body?.schema?.properties ?? {})
+    ...body
       .slice(0, 12)
       .map(
         ([n, s]) =>
@@ -141,6 +142,11 @@ function signature(op: Operation): string[] {
       ([n, where, req, desc]) =>
         `| \`${n}\` | ${where} | ${req ? 'yes' : '—'} | ${text(String(desc).slice(0, 110))} |`,
     ),
+    '',
+    // A journey shows the shape of a call; the reference states all of it. Say
+    // which this is, and where the rest of it lives, rather than letting a
+    // truncated table read as the whole signature.
+    `Top-level fields${body.length > 12 ? ` — 12 of ${body.length}` : ''}; nested fields, types, defaults, enum values and every declared status are on the [operation page](${opHref(op)}).`,
     '',
   ];
 }
@@ -224,7 +230,7 @@ function renderFlow(
   for (const op of ops) {
     L.push(`## ${text(op.summary || op.name)}`);
     L.push('');
-    L.push(`\`${op.method.toUpperCase()} ${op.path}\` · [reference →](/docs/openapi/${op.product})`);
+    L.push(`\`${op.method.toUpperCase()} ${op.path}\` · [reference →](${opHref(op)})`);
     L.push('');
     if (op.description) {
       L.push(prose(op.description));
