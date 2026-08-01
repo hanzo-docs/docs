@@ -27,7 +27,6 @@ import {
 } from '@hanzo/docs-base-ui/layouts/docs/page';
 import { NotFound } from '@/components/layouts/not-found';
 import { MdxErrorBoundary } from '@/components/mdx-error-boundary';
-import { getSuggestions } from './suggestions';
 import { PathUtils } from '@hanzo/docs-core/source';
 
 function PreviewRenderer({ preview }: { preview: string }): ReactNode {
@@ -46,11 +45,7 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   const page = source.getPage(params.slug);
 
   if (!page)
-    return (
-      <NotFound
-        getSuggestions={async () => (params.slug ? getSuggestions(params.slug.join(' ')) : [])}
-      />
-    );
+    return <NotFound pathname={`/docs/${(params.slug ?? []).join('/')}`} />;
 
   if (page.type === 'openapi') {
     const { APIPage } = await import('@/components/api-page');

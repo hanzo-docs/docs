@@ -15,6 +15,10 @@
 #                    from the vendored tools/list answer. It is the largest
 #                    section in the site and the easiest to lose whole: drop the
 #                    generator from pre-build and every other page still builds.
+#   404.html        the page every unknown URL lands on, which searches the
+#                   corpus for what was asked for. It is served by the image's
+#                   -404 flag, so an export without it degrades to the file
+#                   server's bare "not found" and nothing else changes.
 #   v1/search       the search corpus, written by app/v1/search/route.ts. The
 #                   dialog fetches this one file and searches it in the browser;
 #                   without it every query on the site returns nothing, and
@@ -24,4 +28,5 @@ docs/services/index.html
 docs/studio/index.html
 docs/mcp-tools/index.html
 docs/mcp-tools/all-tools/index.html
+404.html
 v1/search

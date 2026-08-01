@@ -1,19 +1,6 @@
-export const searchBackend =
-  (process.env.NEXT_PUBLIC_HANZO_SEARCH_BACKEND as 'cloud' | 'meilisearch' | undefined) ??
-  'meilisearch';
-
-export const searchEndpoint =
-  process.env.NEXT_PUBLIC_HANZO_SEARCH_ENDPOINT ??
-  (searchBackend === 'meilisearch'
-    ? 'https://search.hanzo.ai'
-    : 'https://api.hanzo.ai/v1/search-docs');
-
-export const searchIndex =
-  process.env.NEXT_PUBLIC_HANZO_SEARCH_INDEX ?? 'app-docs-hanzo-ai-docs';
-
-export const indexEndpoint =
-  process.env.HANZO_SEARCH_INDEX_ENDPOINT ??
-  'https://api.hanzo.ai/v1/index-docs';
+// Hanzo Cloud, as the browser reaches it. Search is NOT here: the docs are a
+// static export and carry their own corpus (app/v1/search), so nothing on this
+// site queries a search service or holds a key for one.
 
 // Gateway BASE the docs chat widget streams from, CLIENT-SIDE. The @hanzo/ai
 // client appends `/v1/chat/completions` itself (never an `/api/` prefix), so
@@ -30,12 +17,3 @@ export const chatKey = process.env.NEXT_PUBLIC_HANZO_CHAT_KEY ?? '';
 
 // Generation model on the gateway. `enso` is the Hanzo docs assistant model.
 export const chatModel = process.env.NEXT_PUBLIC_HANZO_CHAT_MODEL ?? 'enso';
-
-export const publishableKey =
-  process.env.NEXT_PUBLIC_HANZO_SEARCH_KEY ??
-  (searchBackend === 'meilisearch'
-    ? '2d99c3ab7551b807c9b8c132f663eba7e27e765a511907d9a566799497c7fd42'
-    : 'pk-hanzo-docs-search-2026');
-
-export const adminKey =
-  process.env.HANZO_SEARCH_ADMIN_KEY ?? '';

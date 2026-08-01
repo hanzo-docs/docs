@@ -23,6 +23,10 @@ import { useTreeContext } from '@hanzo/docs-base-ui/contexts/tree';
 import type { Item, Node } from '@hanzo/docs/core/page-tree';
 import { useRouter } from 'next/navigation';
 
+// Every filter is a tag the corpus carries (app/v1/search/route.ts tags each
+// page with its section), so no filter can come back empty because the tag was
+// never written. `services` is also where the sections without a filter of
+// their own land — it is the default in getSection.
 const items = [
   {
     name: 'All',
@@ -30,7 +34,7 @@ const items = [
   },
   {
     name: 'Services',
-    description: 'Hanzo Cloud services documentation',
+    description: 'Cloud services, the CLI, MCP tools, guides',
     value: 'services',
   },
   {
@@ -40,12 +44,17 @@ const items = [
   },
   {
     name: 'API',
-    description: 'OpenAPI reference for all services',
+    description: 'One reference page per product, from the document',
     value: 'openapi',
   },
   {
+    name: 'Commerce',
+    description: 'Storefront, checkout, payments, payouts',
+    value: 'commerce',
+  },
+  {
     name: 'Products',
-    description: 'Zen LM, Chat, MCP, Dev, ZAP',
+    description: 'Chat, Dev, ZAP',
     value: 'products',
   },
 ];

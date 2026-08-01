@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import {
   createDocument,
   search,
+  type Doc,
   type SharedDocument,
 } from '@hanzo/docs-core/search/flexsearch';
 import { GENERATED } from './check-endpoints';
@@ -46,11 +47,25 @@ const HEADING = /^#{1,6} .*$/gm;
 /** `like_this` — the identifiers a reference page is written in: fields, enum values, flags. */
 const IDENTIFIER = /`([a-z][a-z0-9_.-]{4,})`/g;
 
+/**
+ * How many candidate terms a page is allowed to offer. The rarest of a dozen is
+ * already rare; reading more costs time and finds nothing better.
+ */
+const CANDIDATES = 12;
+
+/**
+ * Enough hits to tell rare terms apart. A term at this ceiling is a word the
+ * whole corpus uses — `limit` is a real word, and no page is "the limit page".
+ */
+const CEILING = 500;
+
 interface Probe {
   /** Page the term was taken out of. */
   url: string;
   /** Term that appears in that page's body and not in its title or headings. */
   term: string;
+  /** Corpus documents that term reaches. 1 means it belongs to this page alone. */
+  hits: number;
 }
 
 function walk(dir: string, out: string[] = []): string[] {
@@ -71,28 +86,64 @@ function pageUrl(file: string): string {
 }
 
 /**
- * A term the page's BODY carries and its title and headings do not.
+ * The terms a page's BODY carries that its title and headings do not.
  *
  * A term from a heading proves nothing this build needs proving: headings were
- * searchable even while the body was not. Prefer a term with an underscore —
- * `max_memory_mb` belongs to one page, `string` belongs to all of them.
+ * searchable even while the bodies were not. What is left is what a reference
+ * page is made of — field names, enum values, flags.
  */
-function bodyTerm(file: string): string | undefined {
+function bodyTerms(file: string): string[] {
   const src = fs.readFileSync(file, 'utf8');
   const front = src.match(FRONTMATTER)?.[0] ?? '';
   const body = src.slice(front.length);
   const headings = (body.match(HEADING) ?? []).join('\n');
   const excluded = `${front}\n${headings}`.toLowerCase();
 
-  const candidates: string[] = [];
+  const terms = new Set<string>();
   for (const m of body.matchAll(IDENTIFIER)) {
     const term = m[1];
     if (excluded.includes(term.toLowerCase())) continue;
-    if (term.includes('_')) return term;
-    candidates.push(term);
+    terms.add(term);
+    if (terms.size === CANDIDATES) break;
   }
 
-  return candidates.sort((a, b) => b.length - a.length)[0];
+  return [...terms];
+}
+
+/** Documents the index hands back for a term, counted, capped at the ceiling. */
+async function reach(index: ReturnType<typeof createDocument>, term: string): Promise<number> {
+  const found = await index.searchAsync(term, { index: 'content', limit: CEILING });
+  return found.length === 0 ? 0 : found[0].result.length;
+}
+
+/**
+ * The rarest thing a page says.
+ *
+ * Rarity is measured against the corpus itself rather than guessed from the
+ * shape of the word, because it decides what "found" can mean: a term two
+ * documents carry proves the page is reachable by it, and `limit` — which every
+ * page uses — proves only that some page mentions limits. It also bounds the
+ * search that follows, so the check reads every document the term reaches
+ * instead of the first screenful.
+ */
+async function rarest(
+  index: ReturnType<typeof createDocument>,
+  file: string,
+  url: string,
+): Promise<Probe | undefined> {
+  let best: Probe | undefined;
+
+  for (const term of bodyTerms(file)) {
+    const hits = await reach(index, term);
+    // Zero is the answer this whole script exists to catch: a word printed on
+    // the page that the index has never heard of. Nothing is rarer, and nothing
+    // is more wrong — stop here and let it fail.
+    if (hits === 0) return { url, term, hits };
+    if (!best || hits < best.hits) best = { url, term, hits };
+    if (best.hits === 1) break;
+  }
+
+  return best;
 }
 
 function readCorpus(): SharedDocument[] {
@@ -124,11 +175,12 @@ async function main() {
   const docs = readCorpus();
 
   const index = createDocument();
-  for (const doc of docs) index.add(doc.id, doc as never);
+  for (const doc of docs) index.add(doc.id, doc as Doc);
 
   const pages = new Set(docs.filter((d) => d.type === 'page').map((d) => d.url));
 
   let checked = 0;
+  let alone = 0;
   const missing: string[] = [];
   const unsearchable: Probe[] = [];
 
@@ -144,21 +196,23 @@ async function main() {
         continue;
       }
 
-      const term = bodyTerm(file);
-      if (term) probes.push({ url, term });
+      const probe = await rarest(index, file, url);
+      if (probe) probes.push(probe);
     }
 
     for (const probe of probes) {
-      const results = await search(index, probe.term, undefined, 200);
-      const hit = results.some(
-        (r) => r.url === probe.url || r.url.startsWith(`${probe.url}#`),
-      );
+      // Read every document the term reaches, not the first screenful: with the
+      // limit set past its reach, absence from these results is absence from the
+      // index, and never a page that ranked 201st.
+      const results = await search(index, probe.term, undefined, probe.hits + 5);
+      const hit = results.some((r) => r.url === probe.url || r.url.startsWith(`${probe.url}#`));
       if (!hit) unsearchable.push(probe);
+      if (probe.hits === 1) alone++;
       checked++;
     }
 
     console.log(
-      `[search] ${dir}: ${files.length} generated pages, ${probes.length} searched for a term only their body carries`,
+      `[search] ${dir}: ${files.length} generated pages, ${probes.length} searched for the rarest term their body carries`,
     );
   }
 
@@ -174,13 +228,16 @@ async function main() {
   }
 
   if (unsearchable.length > 0) {
-    for (const p of unsearchable.slice(0, 20)) console.error(`  ${p.url}: "${p.term}" finds nothing`);
+    for (const p of unsearchable.slice(0, 20))
+      console.error(`  ${p.url}: "${p.term}" reaches ${p.hits} documents, none of them this page`);
     throw new Error(
       `${unsearchable.length} of ${checked} generated pages cannot be found by text they alone carry`,
     );
   }
 
-  console.log(`[search] ${checked} generated pages found by their own body text — search works`);
+  console.log(
+    `[search] ${checked} generated pages found by their own body text — ${alone} by a term no other page in the corpus carries. Search works.`,
+  );
 }
 
 await main().catch((e) => {

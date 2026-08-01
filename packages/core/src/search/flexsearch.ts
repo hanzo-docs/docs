@@ -14,6 +14,7 @@ export { buildIndexDefault } from './server/build-index';
 // Re-exported so a build can index an exported corpus exactly the way a browser
 // does — a check that indexes it some other way proves something else.
 export { createDocument, search } from './flexsearch/utils';
+export type { Doc } from './flexsearch/utils';
 export type { SharedDocument } from './server/build-doc';
 
 export type Index = SharedIndex;

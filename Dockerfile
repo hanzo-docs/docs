@@ -50,4 +50,6 @@ FROM ghcr.io/hanzoai/static:v0.5.1
 ARG APP=docs
 COPY --from=build /src/apps/${APP}/out /public
 EXPOSE 3000
-ENTRYPOINT ["/static", "-port", "3000", "-root", "/public"]
+# -404: the export's own 404 page, which searches the corpus for the URL that
+# was asked for. Without it a missing page is the server's bare "not found".
+ENTRYPOINT ["/static", "-port", "3000", "-root", "/public", "-404", "404.html"]
