@@ -5,13 +5,15 @@ import { fileURLToPath } from 'node:url';
 // The MCP door's tool list, taken from the MCP door.
 //
 // `POST https://api.hanzo.ai/v1/mcp` speaks JSON-RPC 2.0 and answers
-// `tools/list` with the tools this fleet actually exposes — 730 of the
-// document's ~2,400 operations, not all of them. So "is there an MCP tool for
-// this operation?" is a question only the door can answer, and the docs ask it
-// rather than assuming.
+// `tools/list` with the tools this fleet actually exposes — 834 of them against
+// this document's 2,454 operations, not all of them, and not only them. So "is
+// there an MCP tool for this operation?" is a question only the door can
+// answer, and the docs ask it rather than assuming.
 //
 // The NAME rule is verified against that answer: a tool is its operationId with
-// the `<product>_` prefix removed (729/730 exact; see mcp-tools.json meta).
+// the `<product>_` prefix removed. 797 of the 834 resolve to an operation in
+// the pinned document that way; the remaining 37 name routes this revision does
+// not carry, so the door runs ahead of the pin.
 //
 // Snapshot, like the document and the CLI table: fetched when reachable, and
 // the committed copy when not, so a builder with no egress still renders a

@@ -313,14 +313,15 @@ const py = (v: any): string =>
 
 /**
  * The MCP door names a tool for the operation's `operationId` with the
- * `<product>_` prefix removed — `ai_createChatCompletion` is `createChatCompletion`.
- * That rule is not assumed: it reproduces 729 of the 730 names the live door
- * returns for `tools/list`.
+ * `<product>_` prefix removed — `cloud_adminAIMetrics` is `adminAIMetrics`.
+ * That rule is not assumed: it resolves 797 of the 834 names the live door
+ * returns for `tools/list` onto operations in the pinned document.
  *
- * The door exposes a SUBSET of the document (730 of ~2,400 operations), so
- * whether a given operation has a tool is a question only the door answers. We
- * look it up in the vendored list and return null when it is absent, rather
- * than printing a call that would come back "unknown tool".
+ * The door serves a SUBSET of the document and is not confined to it (834 tools
+ * against 2,454 operations; 803 of those operations have one), so whether a
+ * given operation has a tool is a question only the door answers. We look it up
+ * in the vendored list and return null when it is absent, rather than printing
+ * a call that would come back "unknown tool".
  *
  * A `tools/call` carries every argument in ONE FLAT object — neither path nor
  * query binds — so there is no path/query/body split to model here.
