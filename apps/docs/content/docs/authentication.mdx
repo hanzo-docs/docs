@@ -214,6 +214,8 @@ The JWT `owner` claim is the organization slug. Scope every database query to it
 
 Behind the API gateway (`api.hanzo.ai`), the gateway validates the token, strips any client-supplied identity headers, and re-injects `X-Org-Id` (from `owner`), `X-User-Id` (from `sub`), and `X-User-Email` (from `email`). Services behind the gateway trust those headers and do not re-parse the JWT. A service that talks to IAM directly uses `validateToken` as shown above. These are the only two patterns.
 
+[Auth](/docs/architecture/auth) is the full picture on the other side of that boundary: every header the edge mints, the difference between the effective org and the home org, how a project narrows within one, and how to read a 401 against a 403.
+
 ## Security
 
 - PKCE `S256` is mandatory for all flows. Implicit grant is not supported.

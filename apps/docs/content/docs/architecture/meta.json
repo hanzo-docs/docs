@@ -6,6 +6,9 @@
     "index",
     "philosophy",
     "algebra",
+    "registry",
+    "transport",
+    "auth",
     "plugin-platform"
   ]
 }

@@ -1,0 +1,284 @@
+---
+title: Auth
+description: What a token proves, how an org and a project scope it, what X-Org-Id means and why you can never send it, and how a 401 differs from a 403 on this platform.
+icon: KeyRound
+---
+
+import { Cards, Card } from '@hanzo/docs-ui/components/card'
+import { Callout } from '@hanzo/docs-ui/components/callout'
+
+# Auth
+
+Every request to Hanzo answers three questions, and they are three questions —
+never one.
+
+| Question | Answered by | Where |
+|---|---|---|
+| **Who** is calling? | a credential you present | the `Authorization` header |
+| **For whom** is the call? | an org, and optionally a project, derived from that credential | never from anything you send |
+| **May they** do this? | the operation's own rule | inside the handler |
+
+Getting a credential is covered in [Authentication](/docs/authentication) (sign-in)
+and [API Keys](/docs/api-keys) (which key type). Deciding what a principal may do
+is [Authz](/docs/authz). This page is the part in between — **what your credential
+turns into by the time a handler sees it**, and how to read the answer when it
+says no.
+
+<Callout type="info">
+**The one rule.** Identity is *minted at the edge from a validated credential and
+nothing else.* Every identity header a client sends is deleted on arrival, before
+anything reads it. You cannot state who you are; you can only prove it.
+</Callout>
+
+## The chain
+
+<Mermaid chart={`
+flowchart LR
+  CRED["Your credential — an API key or an IAM token"]
+  EDGE["The edge: strip, validate, mint"]
+  HDRS["Identity headers — server-written, trusted"]
+  HAND["The handler"]
+  CRED --> EDGE --> HDRS --> HAND
+  HAND --> POLICY["Authz — may this principal do this?"]
+`} />
+
+1. **You present a credential.** One bearer token, on one host. The same
+   credential works across every Hanzo service — see [API](/docs/api).
+2. **The edge deletes every identity header on the request**, unconditionally,
+   whether or not you sent one. Nothing a client wrote survives as identity.
+3. **The edge validates the credential** and re-injects identity headers from the
+   validated claims — and only from those.
+4. **The handler reads the headers**, never the token. Services behind the edge do
+   not re-validate the credential; re-running that per subsystem would be wasteful
+   and would risk two subsystems validating differently.
+
+## What a token carries
+
+An IAM token's claims are what the identity headers are made from. The first two
+decide scope, and they are the ones worth knowing:
+
+| Claim | Becomes | Means |
+|---|---|---|
+| `owner` | `X-User-Owner`, and — for an ordinary principal — `X-Org-Id` too | the principal's **home org**: the identity and billing anchor |
+| `project` | `X-Project-Id` | the project in scope, when it is not the default one |
+| `sub` | `X-User-Id` | the stable user identifier every attribution keys on |
+| `billing_account` | `X-Billing-Account-Id` | who pays, when IAM could attribute it |
+
+A machine credential — an `hk-`/`sk-` API key — is not a member of anything, so
+IAM mints no membership claim for it. Its org is resolved from the IAM user row
+the key belongs to. That resolution happens only inside the code path that already
+authenticated the key; it can be neither carried in a token nor supplied by a
+caller.
+
+## What reaches a handler
+
+These are the headers the edge writes and a service may trust. They are also
+exactly the set that travels when one Hanzo service calls another, so a handler
+decides the same way however it was reached.
+
+| Header | Type | Means |
+|---|---|---|
+| `X-Org-Id` | string | the **effective** org — the tenant this request acts on |
+| `X-Project-Id` | string | a project **within** that org; **absent means the default project** |
+| `X-User-Id` | string | the acting user |
+| `X-User-Name` | string | the minted display name — what a billing subject or an audit line should show |
+| `X-User-Email` | string | the acting user's email |
+| `X-User-Owner` | string | the **home** org — where the principal belongs, distinct from where they are acting |
+| `X-User-IsAdmin` | `"true"`, or absent | platform administrator |
+| `X-User-IsOrgAdmin` | `"true"`, or absent | administers **their own** org — not the platform |
+| `X-Request-Id` | string | ties both hops of a call together in the logs |
+
+An empty field means the edge said nothing. **Treat empty as unauthenticated,
+never as permitted.**
+
+Two more travel as *sub-scopes* — narrowings within an org rather than identity:
+`X-App-Id` and `X-Billing-Account-Id`. Like the rest, any client copy is deleted on
+arrival; unlike the rest, they are attribution hints and are not an isolation
+boundary.
+
+## X-Org-Id, precisely
+
+This is the header people ask about, so here is exactly what it is and what it is
+not.
+
+**It is the effective org: the tenant this request acts on.** For an ordinary
+principal it is pinned to their home org, and a client cannot widen it. A platform
+administrator may act on another org, and `X-Org-Id` is how that request says so —
+which is why it is distinct from `X-User-Owner`, the home org that identity and
+billing anchor to. Collapsing the two would make "holds an org" read as
+"administers it".
+
+**It is not an input.** You never send it. It appears as a declared request
+parameter on **0 of the 2,454 operations** in the API document, because there is
+nothing for a caller to fill in.
+
+It is also **not**, on its own, proof of a tenant. A non-empty `X-Org-Id` with no
+validated user beside it is a statement a caller made about itself — and that
+value would go on to become a storage key and a ledger key. So the check a
+service makes before treating the org as a key is three conditions, not one, and
+it lives in the framework rather than in each service:
+
+| Refused when | Because |
+|---|---|
+| there is no validated user | the org that rode along is the caller's own assertion |
+| the org is empty | there is no tenant to act for |
+| the org is longer than 128 characters | malformed or hostile, and it is about to be a key |
+
+The org is used **verbatim** apart from surrounding whitespace — never
+lower-cased, never truncated. Folding would collapse distinct owners (`acme`,
+`ACME`, and a 32-character prefix) into one bucket, which is itself a cross-tenant
+break. An org containing a whitespace, control or format character is refused
+outright rather than trimmed, for the same reason.
+
+### Prove it yourself
+
+Two requests, identical but for a forged header, both with no credential:
+
+```bash
+curl -s -o /dev/null -w '%{http_code}\n' \
+  https://api.hanzo.ai/v1/agents/sessions
+
+curl -s -o /dev/null -w '%{http_code}\n' \
+  -H 'X-Org-Id: some-other-org' \
+  https://api.hanzo.ai/v1/agents/sessions
+```
+
+Both answer `403`, with the same body — `{"status":403,"error":"X-Org-Id required"}`.
+The forged header was deleted before anything read it, so the request that
+supplied an org and the request that supplied nothing are the same request. That
+is the whole trust boundary, demonstrable in two lines.
+
+## Project
+
+A project is a **narrowing within an org**, never a way out of one.
+
+- It is written from the validated `project` claim, exactly as the org is written
+  from `owner` — a raw client copy is never a source.
+- It is checked non-foreign to the effective org: a project registered to a
+  *different* org is dropped rather than honoured.
+- **Absent means the default project.** The header is present if and only if a
+  non-default project is in scope, so "no header" and "the default" are the same
+  thing on both sides of a call.
+
+Project-scoped credentials are the other half of this: an `hk-` key belongs to one
+project and can only reach resources in it, while an org-level `sk-` key operates
+across the projects of one org. See [API Keys](/docs/api-keys) for the key types
+and [Organizations](/docs/organizations) for the org and project model itself.
+
+## Two admin scopes, never one
+
+`X-User-IsOrgAdmin` says a person administers **their own** org.
+`X-User-IsAdmin` says platform administrator. Reading one for the other is a
+privilege escalation, so they are separate headers and a cross-tenant surface
+gates on the platform scope alone — membership of a reserved org, established from
+the validated claims, never inferred from an org-admin bit.
+
+## 401, 403, 404
+
+The intended rule is the ordinary one:
+
+| Status | Means | What to do |
+|---|---|---|
+| **401** | no usable principal — nothing was presented, or what was presented could not be validated | get a credential, or refresh it |
+| **403** | a principal exists but may not do this — wrong scope, wrong org, not an admin | do not retry; the credential is fine and the permission is not |
+| **404** | either the route is not served, or the resource exists in **another tenant** | check the path; if it is right, you are looking at someone else's record |
+| **429** | rate limited | back off |
+| **402** | out of credits | see [Billing](/docs/billing) |
+
+Two consequences of that table are worth stating outright.
+
+**A cross-tenant read is a 404, not a 403.** An id belonging to another org
+answers exactly like an id that does not exist. That is deliberate: a 403 would
+confirm the record exists, and cross-tenant *existence* is itself information. It
+also means no tenant can steer, read or write another's resources — it is
+impossible rather than merely refused.
+
+**A 403 proves a route exists.** Auth runs before the handler, so a mounted route
+refuses with 401 or 403 while an unmounted one answers 404 or 405. A 404 *body*
+proves nothing on its own, since a live handler says "not found" too — but the
+status plus the shape does: an unmounted path answers in plain text and never
+reaches the JSON error handler.
+
+And a corollary that has caught people: **probe the method the document declares.**
+A POST-only route also 404s on GET. `GET /v1/authz/check` is a 404 while
+`POST /v1/authz/check` refuses with an auth status — one verb is never a liveness
+probe.
+
+### Reproduce all of it
+
+Every one of these is a request with **no credential at all**, against the live
+API:
+
+| Request | Answers | Body |
+|---|---|---|
+| `GET /v1/models` | `200` | the model catalog — a genuinely public route |
+| `GET /v1/iam/users` | `401` | `{"status":401,"error":"authentication required"}` |
+| `GET /v1/billing/balance` | `401` | `{"status":401,"error":"sign in to view billing"}` |
+| `GET /v1/agents/sessions` | `403` | `{"status":403,"error":"X-Org-Id required"}` |
+| `GET /v1/admin/audit` | `403` | `{"status":403,"error":"SuperAdmin required"}` |
+| `GET /v1/tools` | `403` | `{"status":403,"error":"a validated principal is required"}` |
+| `GET /v1/kms/secrets` | `403` | `{"status":403,"error":"authentication required"}` |
+| `POST /v1/authz/check` | `401` | `{"status":401,"error":"missing X-Org-Id"}` |
+| `GET /v1/authz/check` | `404` | `not found` — the method, not the auth |
+| `GET /v1/definitely-not-a-route` | `404` | `404 page not found` — plain text, never reached the handler |
+
+The error body is uniform where a handler produced it: `status`, an optional
+machine-readable `code`, and `error`. Match on `code` where one is present;
+`error` is prose and may be reworded. Product-specific catalogues list their own
+codes — for example [Index's](/docs/errors).
+
+<Callout type="warn">
+**Do not branch on 401 versus 403 to decide whether to re-authenticate.** The
+table above is measured, and it shows the platform is not yet uniform here: the
+same missing thing answers `403 "X-Org-Id required"` on one subsystem and
+`401 "missing X-Org-Id"` on another, and one route answers `403` with the words
+"authentication required". The distinction is being made consistent; until it is,
+treat **401 and 403 together** as "this request had no usable principal for this
+route", and distinguish them by the *message* and the operation, not by the status
+alone. This is a known gap, stated rather than papered over.
+</Callout>
+
+## Between our own services
+
+Two questions, two authorities, and neither is answered by the caller.
+
+**Who the request is for** travels as the identity headers above. A service
+forwards them unchanged — that is propagation, not minting, and a service cannot
+mint one. The whole set travels, never a subset: forwarding part of it once meant
+the same handler decided differently depending on whether it was reached over REST
+or over a service call, silently, in the direction that bills or admits the wrong
+principal.
+
+A background job with no inbound request forwards **nothing**, so an unattributed
+call looks unattributed. When such a job legitimately acts for a tenant it says so
+explicitly, and an inbound request always wins over what it stated — so a stated
+identity can fill a gap but can never launder one.
+
+**What is calling** is the kernel's reading of the peer process on a unix socket.
+The peer never sends it, so there is nothing to forge — which is why a
+service-to-service call over a socket needs no credential of its own. An argv
+flag, an environment variable or a shared secret would all be things a caller says
+about itself. Where the host cannot attest a peer (over tcp, or on a platform that
+does not report it), the answer is "unknown" and the correct reading is to fail
+closed — never to read an unattested peer as a privileged one.
+
+## Where these facts come from
+
+| Fact | Source of record |
+|---|---|
+| The header set, the tenancy check, the 128-character bound, verbatim orgs, propagation vs minting, the peer credential | `zap-proto/zip` — [LLM.md](https://github.com/zap-proto/zip), `caller.go`, `tenant.go`, `authorize.go` |
+| Strip-then-mint, effective org vs home org, the project claim and its default-means-absent rule, the two admin scopes | [hanzoai/cloud](https://github.com/hanzoai/cloud) identity middleware; [hanzoai/gateway](https://github.com/hanzoai/gateway) `middleware/` |
+| `X-Org-Id` appearing on 0 of 2,454 operations | counted over the pinned API document this site builds from |
+| Cross-tenant reads answering 404 | the session and control handlers in [hanzoai/cloud](https://github.com/hanzoai/cloud), which state the rule in their own prose |
+| "403 proves the route exists", and the method-probe corollary | [hanzoai/openapi](https://github.com/hanzoai/openapi) `flows.yaml`, where every documented flow was probed against the live API |
+| Every status in the reproduce table | probed against `api.hanzo.ai` with no credential, at authoring time |
+| Token issuance, OIDC endpoints, key types | [Authentication](/docs/authentication), [API Keys](/docs/api-keys) |
+
+## Read on
+
+<Cards>
+  <Card title="Authentication" href="/docs/authentication" description="How to get a token — OIDC, PKCE, and the one SDK." />
+  <Card title="API Keys" href="/docs/api-keys" description="The key types, their scopes, and rotation." />
+  <Card title="Authz" href="/docs/authz" description="The policy engine that decides what a principal may do." />
+  <Card title="Transport" href="/docs/architecture/transport" description="The wires this identity travels over, and how a caller is attested on each." />
+</Cards>

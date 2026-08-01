@@ -27,6 +27,16 @@ The 67 capabilities are grouped into the **eight movements** of the capability m
 
 A few products still run as standalone applications on their own domains — for example [Sign](/docs/services/sign) (`esign.hanzo.ai`), [Dataroom](/docs/services/dataroom) (`dataroom.hanzo.ai`), and [Cap Table](/docs/services/captable) (`captable.hanzo.ai`) — authenticating through Hanzo IAM. These are the remaining standalone apps, being absorbed into the one runtime rather than the intended end state.
 
+## How it holds together
+
+Three ideas make the rest of this reference cohere, and all three are shipped. Read them in this order if you are new: what is declared, how it travels, and who is calling.
+
+<Cards>
+  <Card title="The One Registry" href="/docs/architecture/registry" description="A typed op is the single thing anyone authors. REST, the OpenAPI document, the SDKs, the CLI and the MCP tools are all projected from it." />
+  <Card title="Transport" href="/docs/architecture/transport" description="ZAP is the primary wire and HTTP a secondary view of the same routes. Local is a unix socket, remote is HTTPS — measured, and with an end condition." />
+  <Card title="Auth" href="/docs/architecture/auth" description="What a token proves, how an org and a project scope it, why you can never send X-Org-Id, and when a 401 differs from a 403." />
+</Cards>
+
 ## Direction
 
 The platform is converging on one model for running these services: a **consensus-backed plugin platform**, where each service is a *plugin* registered into a single cloud runtime, and a small consensus control plane decides where each plugin's writers live. This is a design direction — specified as a draft proposal, not yet a shipped runtime.

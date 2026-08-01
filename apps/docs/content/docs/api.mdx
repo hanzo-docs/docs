@@ -58,12 +58,19 @@ curl https://api.hanzo.ai/v1/models \
   -H "Authorization: Bearer hk-..."
 ```
 
-Responses are JSON. Errors use standard HTTP status codes -- `401` for a bad or missing key, `403` when authenticated but forbidden, `429` when rate-limited, `402` when out of credits.
+Responses are JSON. Errors use standard HTTP status codes -- `401` for a bad or missing key, `403` when authenticated but forbidden, `429` when rate-limited, `402` when out of credits. [Auth](/docs/architecture/auth) explains what each one means here, and how to reproduce them.
+
+## Why every surface agrees
+
+This REST API, the [SDKs](/docs/sdks), the [CLI](/docs/cli) and the [MCP tools](/docs/mcp) are not four integrations kept in step -- they are four projections of one declaration. See [The One Registry](/docs/architecture/registry).
 
 ## Related
 
 - [API Keys](/docs/api-keys) -- create and manage `hk-` credentials
 - [Authentication](/docs/authentication) -- OAuth 2.0 + OIDC for user tokens
+- [Auth](/docs/architecture/auth) -- what a token proves, how org and project scope it, 401 vs 403
+- [The One Registry](/docs/architecture/registry) -- the one declaration every surface is projected from
+- [Transport](/docs/architecture/transport) -- ZAP and HTTP, and which wire a call takes
 - [Gateway](/docs/gateway) -- the entry point every request passes through
 - [OpenAPI](/docs/openapi) -- machine-readable specs and generated references
 - [SDKs](/docs/sdks) -- Python, TypeScript, Go, and Rust clients

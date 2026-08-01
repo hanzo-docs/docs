@@ -1,0 +1,233 @@
+---
+title: The One Registry
+description: A typed op is the single thing anyone declares. The REST route, the OpenAPI document, the SDKs, the CLI, the MCP tools and the service-to-service call plane are all projected from it — which is why they cannot disagree.
+icon: GitBranch
+---
+
+import { Cards, Card } from '@hanzo/docs-ui/components/card'
+import { Callout } from '@hanzo/docs-ui/components/callout'
+
+# The One Registry
+
+Hanzo has one API. There are five ways to call it and two ways to read it, and
+none of the seven is an integration kept in step by discipline — every one is
+**a projection of a single declaration**, derived mechanically from the same
+value.
+
+This page is the idea the rest of the reference stands on. Once you know that a
+[curl](/docs/api), an [SDK](/docs/sdks) call, a [`hanzo`](/docs/cli) command and an
+[MCP tool](/docs/mcp) are the *same operation* wearing different clothes, every
+other page reads differently: the reference is not a description of the API, it
+*is* the API, rendered.
+
+<Callout type="info">
+**One thing is authored: the typed op.** Everything a caller touches is derived
+from it. If two surfaces ever disagreed about an operation, one of them would
+have to have been written by hand — and none of them is.
+</Callout>
+
+## The shape of it
+
+<Mermaid chart={`
+flowchart TD
+  DECL["A typed op — one declaration in one file"]
+  REG[["The registry: every op the app declared"]]
+  DECL --> REG
+  REG --> REST["REST route"]
+  REG --> DOC["OpenAPI 3.1 document"]
+  REG --> MCP["MCP tool"]
+  REG --> CLI["CLI command"]
+  REG --> CALL["Service-to-service call"]
+  DOC --> SDK["Published SDKs — one per language"]
+  DOC --> SITE["This reference"]
+`} />
+
+Five projections come straight off the registry. Two more — the SDKs and the pages
+you are reading — are projected from the OpenAPI document, which is itself a
+projection. Nothing in that graph is hand-maintained.
+
+## What a declaration is
+
+A service declares an operation by naming what goes in and what comes out. The
+framework the fleet serves on — [zip](https://github.com/zap-proto/zip) — takes
+that as one call:
+
+```go
+// The doc comment is not decoration: it becomes the operation's prose on
+// every surface below.
+zip.Get(v1, "/v1/things/:id", getThing)
+zip.Post(v1, "/v1/things", createThing, zip.WithStatus(201))
+```
+
+The input type, the output type, the method, the path and the success status are
+the whole contract. That is what gets registered, and it is registered in exactly
+one place in the framework, so there is no second way to enter the system.
+
+### Everything a declaration can say
+
+| Declared with | Says | Read by |
+|---|---|---|
+| `zip.Get` / `Post` / `Put` / `Patch` / `Delete` | the method, the path, the input type and the output type | every projection |
+| the handler's **doc comment** | the operation's prose | the document, the CLI help, the MCP tool description |
+| the input type's **field comments** | each field's prose | the document's schemas, the MCP `inputSchema` |
+| `validate:"required"` on a field | that the field is required | the document, the SDKs, the CLI flags |
+| `zip.WithStatus(code)` | the status a success answers with | the document's response, and therefore the SDKs |
+| `zip.WithSummary` | a one-line summary, where no doc comment exists | the document, the CLI, MCP |
+| `zip.WithTags` | which product the operation groups under | the document, and this site's page layout |
+| `zip.WithOperationID` | the operation's name | the document, the tool, the command and the call target — every projection that addresses by name |
+
+That is the whole vocabulary. A detail that is not in it is not part of the
+contract, and a projection cannot show what was never declared — which is why a
+handler that reached around the framework to set its own status once left the
+document, every SDK and the wire disagreeing about the same operation.
+
+## The five projections
+
+| Projection | Who consumes it | Addressed by |
+|---|---|---|
+| **REST route** | browsers, any HTTP client, the public edge | method + path |
+| **OpenAPI 3.1 document** | humans, the published SDKs, this site | `operationId` |
+| **MCP tool** | agents | tool name |
+| **CLI command** | operators, scripts | `hanzo <product> <command>` |
+| **Service-to-service call** | other Hanzo services | `operationId` |
+
+They agree because of three shared pieces, each of which exists once:
+
+- **One name.** A single rule turns a declaration into its identifier, and all
+  five read it. Renaming an operation renames its document entry, its tool, its
+  command and its call target together, because they are the same string.
+- **One handler core.** Every projection funnels through the same
+  decode → validate → authorize → run sequence. The encoding belongs to the
+  transport; the *behaviour* belongs to the op, so a call over MCP and a call over
+  REST cannot take different branches.
+- **One schema derivation.** One function turns an input type into JSON Schema,
+  and everything that needs to know what a value is reads it: the document's
+  request and response schemas, its path and query parameter types, the MCP tool's
+  `inputSchema`, and the CLI's flag kinds. A flag spelled from a Go type and the
+  same flag spelled from that type's published schema are equal by construction.
+
+### One sentence, written once
+
+The prose you read on an operation was written next to the code, in the handler's
+doc comment, and lifted from there. The document, the CLI's help and the MCP
+tool's description are three readers of that one comment. This is why a Hanzo
+operation's description reads the same in your terminal, in your agent's tool
+list, and on this site: there is nothing to keep in sync.
+
+The failure this design prevents has happened, and it is instructive. The MCP
+projection once read only the optional explicit summary rather than the doc
+comment, so an operation documented the ordinary way projected into a tool with an
+**empty description over a schema whose fields said nothing** — invisible, because
+the same operation carried hundreds of characters of prose in the document.
+Measured on the cloud binary: all 164 tools had an empty description before that
+was corrected, and all 164 had one after, across 324 documented fields.
+
+## From the document onward
+
+The OpenAPI document is where the projection graph leaves the running service.
+
+- **The SDKs** are generated from it, one per language, from a single pinned
+  generator version and a single matrix of per-language settings. No SDK repo
+  holds a second copy of the spec or a second copy of the invocation. See
+  [SDKs](/docs/sdks).
+- **The CLI** folds the document's method and path into a subcommand tree at build
+  time. There is no `hanzo api` passthrough and no raw-path escape hatch: every
+  capability is a real subcommand, or it is not in the CLI. See [CLI](/docs/cli).
+- **This reference** is generated from the document on every build — one page per
+  product, each operation's prose and schema straight out of it. Nothing on those
+  pages was typed by a person.
+
+## Try it: one operation, four ways
+
+Ask one projection what it holds, and you are asking the registry. The MCP door
+answers JSON-RPC over the same `/v1` host everything else uses:
+
+```bash
+curl -s https://api.hanzo.ai/v1/mcp \
+  -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' \
+  | jq '.result.tools | length'
+```
+
+Every name that comes back is an `operationId` with its product prefix removed —
+the same operation you can `curl` directly, drive with `hanzo`, or call from an
+SDK. Nothing about the tool was written for the tool.
+
+The [Start](/docs/start/hello) flows show that four ways at once. Six journeys —
+`hello`, `chat`, `money`, `store`, `agent`, `tools` — are each rendered as raw
+HTTP, an SDK call, a CLI command and an MCP tool, side by side, all four generated
+from the same operations. Every Hanzo SDK ships the same six under
+`examples/<flow>/`, in the same order and under the same names, and each repo's CI
+is required to compile or import them — so an example that stopped working is a
+failed build, not a page nobody re-ran.
+
+<Cards>
+  <Card title="Hello" href="/docs/start/hello" description="The smallest round trip, in four surfaces." />
+  <Card title="Chat" href="/docs/start/chat" description="Inference, in four surfaces." />
+  <Card title="Tools" href="/docs/start/tools" description="The agent surface, in four surfaces." />
+  <Card title="Full reference" href="/docs/openapi" description="Every product, every operation, generated from the document." />
+</Cards>
+
+## What opting out costs
+
+A service can always register a plain route instead of a typed op. That route
+serves traffic perfectly and registers **no operation** — so it appears in none of
+the five projections. It cannot be documented, called by an agent, driven from a
+script, or reached by another service by name.
+
+That is the honest reason a capability sometimes exists in the product and not in
+this reference. Converting a route to a typed op is what turns the other four
+interfaces on, and nothing else does.
+
+There is one exception by construction: streaming and protocol-upgrade endpoints
+(server-sent events, WebSocket) cannot be typed, because a typed op is one decode,
+one call, one serialize — which is not what a stream is. Those stay plain routes
+deliberately.
+
+## Where the surface stands today
+
+Measured from the artifacts this site builds from, so every number is checkable:
+
+| Reading | Count | Measured from |
+|---|---:|---|
+| Operations in the document | 2,454 | the pinned `hanzo.yaml` snapshot |
+| Products (one reference page each) | 133 | the same document, by the product rule |
+| Operations carrying prose | 1,278 | the same document, `description` non-empty |
+| Operations with a CLI command | 1,392 | the CLI's own committed command table |
+| Tools the MCP door serves | ~830 | the door's own `tools/list` answer, asked on every build |
+
+Three things that table says out loud:
+
+1. **The projections are not yet uniform.** A little over half the document's
+   operations reach the CLI, and roughly a third match a tool the door serves.
+   Those gaps are the typed-op migration, not a policy: a projection covers an
+   operation exactly when the operation was declared as a typed op.
+2. **Nobody guesses at coverage.** Whether a given operation has a tool is a
+   question only the MCP door can answer, and whether it has a command is a
+   question only the CLI can answer, so the build asks each of them rather than
+   re-deriving the rule and drifting from it.
+3. **One of these numbers is approximate on purpose.** The first four are counted
+   from pinned inputs and move only when the pin does. The tool count is a live
+   reading — two consecutive asks while this page was being written returned 834
+   and 833 — so writing it down to the unit would be writing down a number that
+   was already false. Ask the door, do not quote this page.
+
+## Where these facts come from
+
+| Fact | Source of record |
+|---|---|
+| The registry, its five projections, the one name rule, the one handler core, the one schema derivation | `zap-proto/zip` — [LLM.md](https://github.com/zap-proto/zip) and `typed.go`, `openapi.go`, `mcp.go`, `cli.go`, `call.go` |
+| The doc-comment lift, and the 164-tool measurement | `zap-proto/zip` `cmd/zipdoc`, measured against the Hanzo cloud binary |
+| The CLI's build-time fold, and the absence of a passthrough verb | [hanzoai/cli](https://github.com/hanzoai/cli) `LLM.md` and its generated command table |
+| The SDK matrix and the pinned generator | [hanzoai/openapi](https://github.com/hanzoai/openapi) `sdks.yaml` |
+| The six flows and their operation lists | [hanzoai/openapi](https://github.com/hanzoai/openapi) `flows.yaml` |
+| Every count in the table above | this site's own build inputs, counted at authoring time |
+
+## Read on
+
+<Cards>
+  <Card title="Transport" href="/docs/architecture/transport" description="The other half: one handler, served on ZAP and on HTTP, chosen by the address." />
+  <Card title="Auth" href="/docs/architecture/auth" description="What a token proves, how org and project scope it, and when you get a 401 rather than a 403." />
+  <Card title="The Platform Algebra" href="/docs/architecture/algebra" description="The primitives every product composes — the structural companion to this page." />
+  <Card title="Engineering Philosophy" href="/docs/architecture/philosophy" description="One contract, many bindings, a wire between languages." />
+</Cards>
