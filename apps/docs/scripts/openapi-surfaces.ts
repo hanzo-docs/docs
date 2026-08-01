@@ -48,8 +48,13 @@ export const snakeId = (id: string): string =>
     .replace(/([A-Z]+)([A-Z][a-z])/g, '$1_$2')
     .toLowerCase();
 
-/** A readable stand-in for a path/query value, derived from the parameter. */
-export function placeholder(p: Param): string {
+/**
+ * A value THE DOCUMENT supplies for a parameter — its example, its default, its
+ * first enum member, or the literal its type implies. Null when the document
+ * supplies none, which is a different fact from "the value is empty" and is why
+ * this is separate from `placeholder` below.
+ */
+export function sampleValue(p: Param): string | null {
   const t = p.schema?.type;
   if (t === 'integer' || t === 'number') return '1';
   if (t === 'boolean') return 'true';
@@ -57,14 +62,23 @@ export function placeholder(p: Param): string {
   if (ex != null && typeof ex !== 'object') return String(ex);
   const first = p.schema?.enum?.[0];
   if (first != null) return String(first);
-  return `<${p.name}>`;
+  return null;
 }
 
-/** Fill `{id}` segments so the printed URL is a real one. */
+/** A readable stand-in for a value in a command or an argument object. */
+export const placeholder = (p: Param): string => sampleValue(p) ?? `<${p.name}>`;
+
+/**
+ * Fill `{id}` segments so the printed URL is a real one — and where the
+ * document supplies no value, keep ITS OWN `{id}` template. `<id>` is a fine
+ * stand-in in a shell argument and is not a legal URL path segment: printing it
+ * gave a curl nobody could paste, and left the endpoint gate reading the URL as
+ * the bare prefix `/v1/`.
+ */
 export const concretePath = (op: Operation): string =>
-  op.path.replace(/\{([^}]+)\}/g, (_m, name) => {
+  op.path.replace(/\{([^}]+)\}/g, (template, name) => {
     const p = op.parameters.find((x) => x.name === name && x.in === 'path');
-    return p ? placeholder(p) : `<${name}>`;
+    return (p && sampleValue(p)) ?? template;
   });
 
 const requiredQuery = (op: Operation): Param[] =>
