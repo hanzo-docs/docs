@@ -29,6 +29,15 @@ export interface Body {
   schema: any;
 }
 
+export interface Response {
+  /** `200`, `404`, `2XX`, `default` — verbatim from the document. */
+  status: string;
+  description: string;
+  /** First declared media type, absent when the response carries no content. */
+  contentType?: string;
+  schema?: any;
+}
+
 export interface Operation {
   /** Product this page groups the operation under: its tag, else `/v1/<seg>`. */
   product: string;
@@ -48,8 +57,16 @@ export interface Operation {
   description: string;
   parameters: Param[];
   body?: Body;
-  /** Success response schema, `$ref`s resolved one level. */
-  success?: { status: string; description: string; schema?: any };
+  /**
+   * EVERY declared response, success and failure alike, ordered numerically
+   * with `default` last. The reference enumerates what an operation can answer
+   * with; picking only the 2xx out of the document threw the other half away.
+   */
+  responses: Response[];
+  /** The first 2xx of `responses` — the same value, not a second reading. */
+  success?: Response;
+  /** Everything in `responses` that is not a 2xx. */
+  errors: Response[];
   deprecated: boolean;
 }
 
@@ -99,6 +116,21 @@ export function deref(raw: any, node: any, depth = 0): any {
 const titleCase = (name: string): string =>
   /^[a-z]/.test(name) ? name[0].toUpperCase() + name.slice(1) : name;
 
+/**
+ * Is this declared status a success? ONE predicate, because "the 2xx" is a
+ * question three sections of the reference ask and they must not answer it
+ * differently: the document writes `200`, `201`, `204` and the range `2XX`.
+ */
+export const isSuccess = (status: string): boolean => /^2/i.test(status);
+
+/** Numeric statuses ascending, ranges at the head of their hundred, `default` last. */
+const statusOrder = (status: string): number => {
+  if (/^\d{3}$/.test(status)) return Number(status);
+  const range = status.match(/^(\d)XX$/i);
+  if (range) return Number(range[1]) * 100;
+  return 1000;
+};
+
 const firstSentence = (s: string): string => {
   const t = String(s ?? '').replace(/\s+/g, ' ').trim();
   const m = t.match(/^(.{0,220}?[.!?])(\s|$)/);
@@ -121,6 +153,35 @@ function resolveProduct(id: string, path: string, known: (s: string) => boolean)
   if (seg[0] === 'v1' && seg[1] && known(seg[1])) return seg[1];
   return prefix || null;
 }
+
+/** `createChatCompletion` -> `create-chat-completion`; `ApiController.Get` -> `api-controller-get`. */
+const kebab = (s: string): string =>
+  s
+    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+    .replace(/([A-Z]+)([A-Z][a-z])/g, '$1-$2')
+    .replace(/[^A-Za-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .toLowerCase();
+
+/**
+ * THE OPERATION'S ADDRESS, in exactly one place.
+ *
+ * A page per operation needs a slug, and an operation's identity is its
+ * operationId. Most ids read `<product>_<name>` and are grouped under that same
+ * product, so repeating the prefix would say `machines` twice in one URL. Where
+ * the id's prefix is NOT the product it groups under, that prefix is exactly
+ * what tells two operations apart — `cloud_unbindMachineAgent` and
+ * `visor_unbindMachineAgent` are both grouped under `machines` by path, are
+ * different routes (`DELETE /v1/machines/{id}/agent` and
+ * `DELETE /v1/machines/{id}/agent-binding`), and end in the same three words — so it
+ * stays. Same distinction `name` draws, applied to the URL, which is why it is
+ * decided here and not in a generator.
+ */
+export const opSlug = (op: Operation): string =>
+  kebab(op.id.startsWith(`${op.product}_`) ? op.id.slice(op.product.length + 1) : op.id);
+
+/** Where the reference page for an operation lives. */
+export const opHref = (op: Operation): string => `/docs/openapi/${op.product}/${opSlug(op)}`;
 
 /**
  * Product slugs are lowercase (`webhooks`, `pubsub`) because they come from an
@@ -206,9 +267,19 @@ export function loadDocument(file: string): Document {
           }
         : undefined;
 
-      const okStatus = Object.keys(op.responses ?? {}).find((s) => s.startsWith('2'));
-      const okRaw = okStatus ? deref(raw, op.responses[okStatus]) : undefined;
-      const okCt = okRaw?.content ? Object.keys(okRaw.content)[0] : undefined;
+      const responses: Response[] = Object.entries<any>(op.responses ?? {})
+        .map(([status, r0]) => {
+          const r = deref(raw, r0);
+          const ct = r?.content ? Object.keys(r.content)[0] : undefined;
+          return {
+            status,
+            description: String(r?.description ?? '').trim(),
+            contentType: ct,
+            schema: ct ? deref(raw, r.content[ct]?.schema) : undefined,
+          };
+        })
+        .sort((a, b) => statusOrder(a.status) - statusOrder(b.status));
+      const success = responses.find((r) => isSuccess(r.status));
 
       const resolved: Operation = {
         product: product_ ?? '',
@@ -226,13 +297,9 @@ export function loadDocument(file: string): Document {
         description: String(op.description ?? '').trim(),
         parameters,
         body,
-        success: okStatus
-          ? {
-              status: okStatus,
-              description: String(okRaw?.description ?? '').trim(),
-              schema: okCt ? deref(raw, okRaw.content[okCt]?.schema) : undefined,
-            }
-          : undefined,
+        responses,
+        success,
+        errors: responses.filter((r) => !isSuccess(r.status)),
         deprecated: Boolean(op.deprecated),
       };
 
