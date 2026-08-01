@@ -1,6 +1,54 @@
 import { createI18nSearchAPI, createSearchAPI, type ExportedData } from '@/search/server';
 import { expect, test } from 'vitest';
 import { structure } from '@/mdx-plugins';
+import {
+  createDocument,
+  flexsearch,
+  search,
+  type ExportedData as StaticExport,
+} from '@/search/flexsearch';
+
+// A page whose facts live in its body, not its headings — which is every
+// generated reference page: the heading names the operation, the body is the
+// fields, types and defaults someone is actually searching for.
+const REFERENCE = {
+  id: '/docs/openapi/kv',
+  title: 'Kv',
+  url: '/docs/openapi/kv',
+  structuredData: structure(`## Update cluster
+
+Set \`max_memory_mb\` to resize the cluster.
+
+Set \`eviction_policy\` to choose what it drops first.
+`),
+};
+
+test('a static export carries page bodies, and finds a page by them', async () => {
+  const api = flexsearch({ indexes: [REFERENCE] });
+  const exported = (await api.export()) as Extract<StaticExport, { type: 'default' }>;
+
+  // One document for the page, one for the section — not one per paragraph.
+  expect(exported.docs.map((d) => [d.type, d.url])).toEqual([
+    ['page', '/docs/openapi/kv'],
+    ['heading', '/docs/openapi/kv#update-cluster'],
+  ]);
+
+  const section = exported.docs[1].content;
+  expect(section).toContain('Update cluster');
+  expect(section).toContain('max_memory_mb');
+  expect(section).toContain('eviction_policy');
+
+  // What a browser does with that file: index it, then search it.
+  const index = createDocument();
+  for (const doc of exported.docs) index.add(doc.id, doc);
+
+  const results = await search(index, 'eviction_policy');
+  expect(results.map((r) => r.url)).toContain('/docs/openapi/kv#update-cluster');
+
+  // The words a reader types are the start of a word, not all of it.
+  expect(await search(index, 'eviction_pol')).not.toHaveLength(0);
+  expect(await search(index, 'pterodactyl')).toHaveLength(0);
+});
 
 test('Search API', async () => {
   const api = createSearchAPI('simple', {
@@ -52,7 +100,9 @@ something`,
 
   expect(await api.search('Page')).toHaveLength(2);
   expect(await api.search('something')).toHaveLength(4);
-  expect(await api.search('', { tag: 'my-tag' })).toHaveLength(3);
+  // Two documents per page here, not three: `something` is the body of the
+  // `Hello World` section, so it is indexed as part of that section.
+  expect(await api.search('', { tag: 'my-tag' })).toHaveLength(2);
 
   expect(await api.search('Hello')).toMatchInlineSnapshot(`
     [
@@ -65,7 +115,8 @@ something`,
       },
       {
         "breadcrumbs": undefined,
-        "content": "<mark>Hello</mark> World",
+        "content": "<mark>Hello</mark> World
+    something",
         "id": "1-0",
         "type": "heading",
         "url": "/#hello-world",

@@ -1,27 +1,22 @@
 import type { SearchClient } from '../client';
 import type { ExportedData } from '../flexsearch';
+import type { SharedDocument } from '../server/build-doc';
 import type { Document } from 'flexsearch';
 import { createDocument, search, type Doc } from '../flexsearch/utils';
 
 export interface FlexsearchStaticOptions {
   /**
-   * @defaultValue `/api/search`
+   * @defaultValue `/v1/search`
    */
   from?: string;
   locale?: string;
   tag?: string | string[];
 }
 
-function initDocument(data: Record<string, string>) {
-  const document = createDocument();
-  for (const [k, v] of Object.entries(data)) document.import(k, v);
-  return document;
-}
-
 const cacheMap = new Map<string, Promise<Map<string, Document<Doc>>>>();
 
 export function flexsearchStaticClient(options: FlexsearchStaticOptions = {}): SearchClient {
-  const { from = '/api/search', locale = '', tag } = options;
+  const { from = '/v1/search', locale = '', tag } = options;
 
   let dbs = cacheMap.get(from);
   if (!dbs && typeof window !== 'undefined') {
@@ -45,21 +40,33 @@ async function init(from: string) {
 
   if (!res.ok)
     throw new Error(
-      `failed to fetch exported search indexes from ${from}, make sure the search database is exported and available for client.`,
+      `failed to fetch the exported search corpus from ${from}, make sure the build exports it and the host serves it.`,
     );
 
   const data = (await res.json()) as ExportedData;
   const dbs = new Map<string, Document<Doc>>();
 
   if (data.type === 'i18n') {
-    for (const [locale, map] of Object.entries(data.raw)) {
-      dbs.set(locale, initDocument(map));
+    for (const [locale, docs] of Object.entries(data.docs)) {
+      dbs.set(locale, await indexDocuments(docs));
     }
 
     return dbs;
-  } else {
-    dbs.set('', initDocument(data.raw));
   }
 
+  dbs.set('', await indexDocuments(data.docs));
   return dbs;
+}
+
+async function indexDocuments(docs: SharedDocument[]) {
+  const index = createDocument();
+
+  for (let i = 0; i < docs.length; i++) {
+    index.add(docs[i].id, docs[i] as Doc);
+    // Indexing a corpus is seconds of work. Yield often enough that the page
+    // keeps painting and the dialog keeps taking keystrokes while it runs.
+    if (i % 500 === 499) await new Promise((resolve) => setTimeout(resolve, 0));
+  }
+
+  return index;
 }

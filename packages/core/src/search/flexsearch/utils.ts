@@ -56,7 +56,9 @@ export async function search(
     for (const item of items) {
       out.push({
         id: item.id,
-        content: highlighter.highlightMarkdown(item.content),
+        // A section can be a whole reference table; a result row shows the part
+        // that matched, not the section.
+        content: highlighter.highlightExcerpt(item.content),
         breadcrumbs: item.breadcrumbs,
         type: item.type,
         url: item.url,
@@ -67,9 +69,16 @@ export async function search(
   return out;
 }
 
+/**
+ * The ONE index shape. A build and a browser both call this, so the tokenizer a
+ * query is cut with is always the tokenizer the documents were cut with.
+ *
+ * `forward` indexes every prefix of every word, which is what search-as-you-type
+ * needs; `full` would also match inside words, at several times the memory.
+ */
 export function createDocument(options?: DocumentOptions<Doc>) {
   return new Search.Document<Doc>({
-    tokenize: 'full',
+    tokenize: 'forward',
     ...options,
     document: {
       id: 'id',

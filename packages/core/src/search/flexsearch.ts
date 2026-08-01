@@ -2,7 +2,7 @@ import type { SearchAPI, SearchServer } from './server';
 import Search, { type DocumentOptions } from 'flexsearch';
 import { createEndpoint } from './server/endpoint';
 import { buildBreadcrumbs, buildIndexDefault, type SharedIndex } from './server/build-index';
-import { buildDocuments } from './server/build-doc';
+import { buildDocuments, type SharedDocument } from './server/build-doc';
 import type { LoaderConfig, LoaderOutput } from '@/source';
 import type { Awaitable } from '@/types';
 import type { I18nConfig } from '@/i18n';
@@ -11,6 +11,10 @@ import { createDocument, search, type Doc } from './flexsearch/utils';
 // Re-exported so apps can wrap the default page->index builder (e.g. to attach
 // a `tag` for filtered client-side search) instead of reimplementing it.
 export { buildIndexDefault } from './server/build-index';
+// Re-exported so a build can index an exported corpus exactly the way a browser
+// does — a check that indexes it some other way proves something else.
+export { createDocument, search } from './flexsearch/utils';
+export type { SharedDocument } from './server/build-doc';
 
 export type Index = SharedIndex;
 export interface IndexWithLocale extends Index {
@@ -22,14 +26,24 @@ export interface Options {
   document?: DocumentOptions<Doc>;
 }
 
+/**
+ * What a build hands the browser: the CORPUS, not a serialized index.
+ *
+ * A serialized index is an inverted map plus a copy of every document, so it
+ * runs several times the size of the text it came from — on the Hanzo docs
+ * corpus, 54MB of index for 13MB of documents, and the host serves it
+ * uncompressed. The browser can rebuild the index from the documents in about
+ * two seconds, so the documents are what ships. It is also the corpus itself:
+ * one artifact, readable by anything that wants these pages as data.
+ */
 export type ExportedData =
   | {
       type: 'default';
-      raw: Record<string, string>;
+      docs: SharedDocument[];
     }
   | {
       type: 'i18n';
-      raw: Record<string, Record<string, string>>;
+      docs: Record<string, SharedDocument[]>;
     };
 
 export interface I18nOptions extends Omit<Options, 'indexes'> {
@@ -43,32 +57,29 @@ export interface I18nOptions extends Omit<Options, 'indexes'> {
 }
 
 function server(options: Options): SearchServer {
-  function initIndex(indexes: Index[]) {
+  function init(indexes: Index[]) {
+    const docs = buildDocuments(indexes);
     const index = createDocument(options.document);
 
-    for (const doc of buildDocuments(indexes)) {
+    for (const doc of docs) {
       index.add(doc.id, doc as Doc);
     }
 
-    return index;
+    return { docs, index };
   }
 
-  const indexPromise =
+  const initialized =
     typeof options.indexes === 'function'
-      ? Promise.resolve(options.indexes()).then(initIndex)
-      : initIndex(options.indexes);
+      ? Promise.resolve(options.indexes()).then(init)
+      : init(options.indexes);
 
   return {
     async export(): Promise<ExportedData> {
-      const index = await indexPromise;
-      const raw: Record<string, string> = {};
-      index.export((key, data) => {
-        raw[key] = data;
-      });
-      return { type: 'default', raw };
+      return { type: 'default', docs: (await initialized).docs };
     },
     async search(query, searchOptions) {
-      return search(await indexPromise, query, searchOptions?.tag, searchOptions?.limit);
+      const { index } = await initialized;
+      return search(index, query, searchOptions?.tag, searchOptions?.limit);
     },
   };
 }
@@ -114,12 +125,12 @@ function serverI18n(options: I18nOptions): SearchServer {
       const map = await get;
       const entries = Array.from(map.entries()).map(async ([k, v]) => {
         const data = (await v.export()) as Extract<ExportedData, { type: 'default' }>;
-        return [k, data.raw];
+        return [k, data.docs];
       });
 
       return {
         type: 'i18n',
-        raw: Object.fromEntries(await Promise.all(entries)),
+        docs: Object.fromEntries(await Promise.all(entries)),
       };
     },
     async search(query, searchOptions) {

@@ -304,6 +304,28 @@ pnpm build --filter @hanzo/docs-ui
 
 Build tool: `tsdown` (all packages except `hanzo-docs` wrapper which uses `tsup`).
 
+## Search
+
+docs.hanzo.ai is a static export on a file server: there is no request the site
+can answer, so the pages travel with it.
+
+- `apps/docs/app/v1/search/route.ts` writes the **corpus** — every page, every
+  section, as data — to `/v1/search` at build time. The dialog
+  (`components/layouts/search.tsx`, `type: 'flexsearch-static'`) fetches that
+  one file, indexes it in the browser and searches locally. No key, no service.
+- The corpus, not a prebuilt index: an index over these pages is 54MB to the
+  corpus's 13MB, and the host serves neither compressed.
+- `packages/core/src/search/server/build-doc.ts` is the ONE projection from
+  pages to searchable documents — one document per section, its heading plus
+  its body. Both the exported corpus and the server handler index what it
+  returns.
+- `apps/docs/scripts/post-build.ts` is the gate: it indexes the exported file
+  the way a browser does, takes terms out of the generated reference pages that
+  those pages' own bodies carry, and requires the index to hand each page back.
+  It fails the build. An export whose search does not work is not a release.
+  `apps/docs/export.require` additionally names `v1/search`, so the Dockerfile's
+  export gate catches a corpus that never reached the image.
+
 ## Compatibility
 
 - Next.js 15-16+ with App Router

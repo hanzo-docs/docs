@@ -55,7 +55,7 @@ export default function CustomSearchDialog(props: SharedProps) {
   const [tag, setTag] = useState<string | undefined>();
   const { search, setSearch, query } = useDocsSearch({
     type: 'flexsearch-static',
-    from: '/api/search',
+    from: '/v1/search',
     tag,
   });
   const { full } = useTreeContext();
@@ -155,13 +155,10 @@ export default function CustomSearchDialog(props: SharedProps) {
               })}
             </PopoverContent>
           </Popover>
-          <a
-            href="https://hanzo.ai"
-            rel="noreferrer noopener"
-            className="text-xs text-nowrap text-fd-muted-foreground"
-          >
-            Powered by Hanzo Search
-          </a>
+          {/* What it is, not who made it: the whole corpus is in this tab. */}
+          <span className="text-xs text-nowrap text-fd-muted-foreground">
+            Searching in your browser
+          </span>
         </SearchDialogFooter>
       </SearchDialogContent>
     </SearchDialog>

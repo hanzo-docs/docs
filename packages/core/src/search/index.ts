@@ -47,6 +47,13 @@ const processor = remark();
 export function createContentHighlighter(query: string | RegExp) {
   const regex = typeof query === 'string' ? buildRegexFromQuery(query) : query;
 
+  function highlightMarkdown(content: string): string {
+    if (!regex) return content;
+    const tree = processor.parse(content);
+    highlightInTree(tree, regex);
+    return processor.stringify(tree).trim();
+  }
+
   return {
     /**
      * @deprecated use `highlightMarkdown()` instead.
@@ -87,13 +94,31 @@ export function createContentHighlighter(query: string | RegExp) {
     /**
      * @param content - Markdown, it assumes the content is already sanitized & safe, no escape is performed.
      */
-    highlightMarkdown(content: string): string {
-      if (!regex) return content;
-      const tree = processor.parse(content);
-      highlightInTree(tree, regex);
-      return processor.stringify(tree).trim();
+    highlightMarkdown,
+    /**
+     * Like `highlightMarkdown`, over a window around the first match.
+     *
+     * A search result stands for a whole section, and a section can be a page's
+     * entire reference table. A row shows what matched.
+     *
+     * @param content - Markdown, it assumes the content is already sanitized & safe, no escape is performed.
+     */
+    highlightExcerpt(content: string, radius = 140): string {
+      return highlightMarkdown(excerpt(content, regex, radius));
     },
   };
+}
+
+function excerpt(content: string, regex: RegExp | null, radius: number): string {
+  if (content.length <= radius * 2) return content;
+
+  const at = regex ? content.search(regex) : -1;
+  if (at < 0) return `${content.slice(0, radius * 2).trimEnd()}…`;
+
+  const start = Math.max(0, at - radius);
+  const end = Math.min(content.length, at + radius);
+
+  return `${start > 0 ? '…' : ''}${content.slice(start, end).trim()}${end < content.length ? '…' : ''}`;
 }
 
 function highlightInTree(tree: Root, regex: RegExp) {
