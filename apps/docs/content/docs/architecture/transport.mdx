@@ -1,0 +1,212 @@
+---
+title: Transport
+description: ZAP is the fleet's primary wire and HTTP is a secondary view of the same routes. Local is ZAP over a unix socket, remote is HTTPS — what that means, what it measures, and which one your call takes.
+icon: Cable
+---
+
+import { Cards, Card } from '@hanzo/docs-ui/components/card'
+import { Callout } from '@hanzo/docs-ui/components/callout'
+
+# Transport
+
+A Hanzo service declares its routes once and serves them on any number of wires.
+The wire is **a value — the address you listen on** — not a second copy of the
+service. One handler, one set of middleware, one authorizer, one error format,
+whichever wire a request arrives over.
+
+**ZAP is the primary transport. HTTP is a secondary view of the same routes**,
+kept because third parties cannot speak ZAP. Nothing is written twice to make
+that true: both are readings of one registered route table. For the protocol
+itself — schema language, wire format, language bindings — see
+[ZAP Protocol](/docs/zap). This page is about the *fleet's* use of it.
+
+<Callout type="info">
+**The rule, in one line.** Local is ZAP over a unix socket. Remote is HTTPS,
+until the ZAP transport carries its own session crypto. Both directions ride the
+same client seam, so when that lands they move together — there is no second wire
+to migrate.
+</Callout>
+
+## Which wire your call takes
+
+You almost never choose this. It falls out of *where* you are calling.
+
+| You are | Reaching | Wire | Why |
+|---|---|---|---|
+| An external client — curl, an [SDK](/docs/sdks), a browser | `api.hanzo.ai` | **HTTPS** | TLS terminates at the edge, and the public surface is HTTP so anything can speak it |
+| The [`hanzo` CLI](/docs/cli), signed in to the cloud | `api.hanzo.ai` | **HTTPS** | there is no ZAP client that can safely cross an untrusted network yet — see [the exception](#the-exception-and-when-it-ends) |
+| The `hanzo` CLI, on a machine running the cloud locally | the local host | **ZAP over a unix socket** | first party, same machine, no network in between |
+| The `hanzo` CLI on Windows, locally | the local host | **HTTP over loopback** | Windows has no unix socket to speak ZAP over |
+| One Hanzo service | another Hanzo service, in another process | **ZAP over a unix socket** | the socket's peer credential attests the caller, so no token has to be minted |
+| One Hanzo subsystem | another in the same binary | **no wire at all** | they exchange typed values directly; JSON and framing are edge concerns |
+| Anything | a service that only serves HTTP | **HTTP** | the address says so |
+
+The decision is made by the address, in one place, and no caller writes protocol
+code to express it.
+
+## The address is the protocol
+
+A service listens by naming addresses. The scheme selects the wire; the address
+shape selects the plumbing.
+
+```go
+app.Listen(":9653")                   // ZAP over tcp — a bare address is ZAP
+app.Listen("/run/hanzo/app.sock")     // ZAP over a unix socket — a path is a socket
+app.Listen(":9653", "http://:8080")   // both, one handler, one call
+app.Listen("http://:8080")            // HTTP only
+```
+
+### Every scheme that exists
+
+| Scheme | Can serve | Can dial | Default port when dialing | Notes |
+|---|---|---|---|---|
+| `zap` | yes | yes | — (address carries it) | **the default**: an address with no scheme is ZAP |
+| `http` | yes | yes | 80 | the secondary view of the same routes |
+| `https` | **no** | yes | 443 | dial-only by design: terminating TLS is the ingress's job, so nothing in the fleet serves `https` directly |
+
+A fourth protocol is one registration call and changes neither the listen API nor
+the mount API. There is no `zapuds` scheme, because the scheme names the
+*protocol* and the address names *where it is spoken*: a path is a unix socket, a
+`host:port` is tcp. One wire, one scheme.
+
+### Where a local socket lives
+
+Service-to-service calls address a peer by name, and the name *is* the address —
+there is no registry and no discovery service:
+
+```
+socket path  =  <runtime dir>/<service name>.sock
+```
+
+| Runtime dir, in precedence order | When it applies |
+|---|---|
+| `$ZIP_RUNTIME_DIR` | set explicitly — always wins, and moves the whole fleet at once |
+| `$XDG_RUNTIME_DIR/zip` | a development machine, with nothing configured |
+| `/run/zip` | the system default |
+
+The directory is created `0700` if it is missing, so serving at the canonical path
+works on a fresh host. An existing directory keeps its own mode — a deployment
+that needs a socket shared across users creates the directory itself and points
+`ZIP_RUNTIME_DIR` at it.
+
+The [CLI](/docs/cli)'s local cloud follows the same rule with its own path: the
+host's socket is `host.zap.sock` under the platform data directory
+(`~/.local/share/hanzo/host/` on Linux, `~/Library/Application Support/hanzo/host/`
+on macOS), alongside its pid and log.
+
+## What it measures
+
+Published so nobody has to guess, and so nobody adopts ZAP locally for the wrong
+reason.
+
+| Comparison | ZAP | HTTP | Difference |
+|---|---:|---:|---:|
+| End to end, steady state — ZAP over a unix socket vs HTTP over loopback | ~66 µs | ~98 µs | ~32 µs |
+| The wire alone, both over tcp | ~91 µs | ~100 µs | ~9 µs |
+
+Mean over 3,000 requests, measured by the CLI against a local cloud host.
+
+<Callout type="warn">
+**~32 µs is not the reason.** A CLI process takes 10–20 ms to start, so the wire
+difference is invisible to a person. The reason to run one wire is that it is
+**one wire and one contract** — the same routes, the same middleware, the same
+authorizer, the same errors — not speed.
+</Callout>
+
+## The exception, and when it ends
+
+Remote calls are HTTPS. That is a deliberate exception to "ZAP is primary", and it
+has an end condition rather than a preference behind it.
+
+Today's ZAP-over-HTTP layer has **no session crypto**: its transport reserves a
+post-quantum key exchange (X-Wing — X25519 plus ML-KEM-768) for a later version,
+and until that ships TLS still has to terminate at the ingress. Pointing today's
+ZAP at a remote peer would put a developer's prompts and code on the wire in
+cleartext.
+
+So the rule is not "ZAP is for local things". It is: **remote stays HTTPS until
+the ZAP transport carries its own session crypto**, at which point the local and
+remote paths converge on one wire, through the same client seam both already use.
+
+| ZAP-over-HTTP capability | Status |
+|---|---|
+| Request method, target, headers, body | shipped |
+| Response status, reason, headers, body | shipped |
+| Multi-value headers, trailers | shipped |
+| Compatibility with ordinary HTTP handlers and clients | shipped |
+| Length-prefixed framing over tcp | shipped |
+| 64 MiB maximum frame, configurable | shipped |
+| Streaming bodies | not yet |
+| Client connection pool / keep-alive | not yet |
+| The full transport, with the post-quantum handshake | not yet |
+| Bidirectional / pubsub sub-protocol | separate sub-protocol, not yet implemented |
+
+## Writing a client
+
+You do not need one to use Hanzo — the [public API](/docs/api) is HTTPS and every
+[SDK](/docs/sdks) speaks it. This section is for someone implementing ZAP against
+a Hanzo service directly.
+
+Each message is one frame:
+
+```
++-----------+-------------------------+
+| u32       |  ZAP frame              |
+| length    |  (schema-defined)       |
++-----------+-------------------------+
+```
+
+Four details bite every reimplementation, and all four are decided by the encoder,
+not negotiable:
+
+| Detail | The rule |
+|---|---|
+| Endianness | the 4-byte length prefix is **big**-endian; everything inside the frame is **little**-endian |
+| Slot offsets | a slot's relative offset is measured **from the slot's own position**, not from the frame start |
+| Null | a relative offset of `0` means **null**, whatever the length word says |
+| Empty | an empty field is a zeroed slot, **not** a zero-length entry |
+
+The schema is the source of truth for what is on the wire; marshalling in any
+language follows from it. Field layout is derived from the declared type — fields
+take slots in declaration order, each aligned to its own width — which gives the
+compatibility rule directly: **append fields at the end, and only at the end.**
+Reordering, inserting or retyping a field changes the wire.
+
+## Verifying it yourself
+
+The claim "the local cloud call opens no TCP socket" is checkable, and this is how
+its authors check it:
+
+```bash
+strace -e trace=connect hanzo authz health
+```
+
+Against a local host that shows two `connect(AF_UNIX, …/host.zap.sock)` calls —
+the health probe and the call itself — and no `AF_INET` for either.
+
+Two things will still appear on an strace, and neither is the cloud call:
+
+- The host is told to bind loopback TCP as well, because it always listens on
+  both wires. The cloud path never dials it.
+- The CLI's telemetry sends one best-effort event to `/v1/event` over ordinary
+  HTTP, fire-and-forget, once per invocation. Set `HANZO_DO_NOT_TRACK` to silence
+  it.
+
+## Where these facts come from
+
+| Fact | Source of record |
+|---|---|
+| ZAP primary, HTTP secondary; the scheme registry, the default scheme, the address-shape rule | `zap-proto/zip` — [LLM.md](https://github.com/zap-proto/zip) and `transport.go` |
+| The socket-path scheme and its runtime-dir precedence | `zap-proto/zip` `call.go` |
+| Local ZAP / remote HTTPS, the measurements, the strace, the Windows exception, the four wire details | [hanzoai/cli](https://github.com/hanzoai/cli) `LLM.md` and `src/commands/host.rs`, `src/zap.rs` |
+| The frame layout, the capability table, the X-Wing handshake | [zap-proto/http](https://github.com/zap-proto/http) |
+| The protocol itself | [ZAP Protocol](/docs/zap) |
+
+## Read on
+
+<Cards>
+  <Card title="The One Registry" href="/docs/architecture/registry" description="Why the routes are the same on both wires: one declaration, every surface projected from it." />
+  <Card title="Auth" href="/docs/architecture/auth" description="How a caller is identified over each wire — a minted token at the edge, a peer credential on a socket." />
+  <Card title="ZAP Protocol" href="/docs/zap" description="The protocol itself — schema language, wire format, eleven language bindings." />
+  <Card title="Architecture" href="/docs/architecture" description="How the one binary is built, and where it is going." />
+</Cards>
