@@ -5,7 +5,7 @@ description: "Unified proxy that routes requests to 100+ LLM providers through a
 
 ## Overview
 
-Hanzo LLM Gateway is a **unified proxy** that routes requests to 100+ LLM providers through a single OpenAI-compatible API. Fork of LiteLLM with Hanzo routing, cost tracking, and provider fallback. Powers `api.hanzo.ai/v1`.
+Hanzo LLM Gateway is a **unified proxy** that routes requests to 100+ LLM providers through a single OpenAI-compatible API. Point any OpenAI SDK at it, change the model string, and the gateway handles routing, fallback chains, retries across providers, and per-request cost attribution. Powers `api.hanzo.ai/v1`.
 
 ### Why Hanzo LLM Gateway?
 
@@ -15,9 +15,9 @@ Hanzo LLM Gateway is a **unified proxy** that routes requests to 100+ LLM provid
 - **Self-hostable**: Run your own gateway with custom provider keys
 - **Rate limit handling**: Automatic retry with provider rotation
 
-### OSS Base
+### Repo
 
-Fork of **LiteLLM** proxy. Repo: `github.com/hanzoai/llm`.
+`github.com/hanzoai/llm` — Hanzo Router. Python.
 
 ## When to use
 
