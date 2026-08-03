@@ -116,7 +116,6 @@
     "hanzo-platform",
     "hanzo-relay",
     "hanzo-repl",
-    "hanzo-runtime",
     "hanzo-skill",
     "hanzo-stack",
     "hanzo-terraform",

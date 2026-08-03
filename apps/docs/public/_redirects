@@ -71,3 +71,11 @@
 # on-ramp; deploy lives under the platform/paas services docs).
 /docs/startups     /docs/getting-started      301
 /docs/deploy       /docs/services/paas        301
+
+# hanzoai/runtime retired (archived 2026-08). It was an AGPL fork of
+# daytonaio/daytona (unmaintained upstream, no LICENSE at HEAD) and had zero
+# dependents: nothing deployed it, no lockfile resolved its SDKs, and
+# runtime.hanzo.ai only ever resolved via the *.hanzo.ai wildcard. Sandboxed
+# execution for AI workloads is Hanzo Visor.
+/docs/skills/hanzo-runtime        /docs/services/visor   301
+/docs/projects/hanzoai/runtime    /docs/services/visor   301
