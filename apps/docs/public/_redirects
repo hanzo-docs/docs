@@ -71,3 +71,7 @@
 # on-ramp; deploy lives under the platform/paas services docs).
 /docs/startups     /docs/getting-started      301
 /docs/deploy       /docs/services/paas        301
+
+# hanzoai/candle never existed — the page described an "intended fork" that was
+# never created. The real ML SDK is hanzoai/ml (crate `hanzo-ml`).
+/docs/skills/hanzo-candle  /docs/skills/hanzo-ml    301
