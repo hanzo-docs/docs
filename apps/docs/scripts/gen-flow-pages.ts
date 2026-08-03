@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse as parseYaml } from 'yaml';
-import { loadDocument, type Document, type Operation } from './openapi-doc';
+import { DOCUMENT, loadDocument, type Document, type Operation } from './openapi-doc';
 import { SDKS, cli, http, mcp } from './openapi-surfaces';
 import { MCP_DOOR, loadMcpTools } from './sync-mcp-tools';
 import type { CliCommand } from './sync-cli-commands';
@@ -22,7 +22,6 @@ import { fence, prose, text } from './mdx';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = path.resolve(SCRIPT_DIR, '..');
-const DOCUMENT = path.join(APP_ROOT, 'openapi-specs/hanzo.yaml');
 const FLOWS = path.join(APP_ROOT, 'openapi-specs/flows.yaml');
 const CLI_TABLE = path.join(APP_ROOT, 'openapi-specs/cli-commands.json');
 const OUT_DIR = path.join(APP_ROOT, 'content/docs/start');

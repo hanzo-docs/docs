@@ -131,21 +131,79 @@ at docs.hanzo.ai/docs/contributing/docs-architecture). Summary:
      `hanzo-docs/<team>` content repo mounted as a **git submodule** at
      `content/docs/<team>/`. Exemplar: `hanzo-docs/studio-docs` → `content/docs/studio/`.
   2. **Generated** (never hand-written, `.gitignore`d) → API reference from
-     `hanzoai/openapi` via `scripts/sync-openapi.sh` + `scripts/gen-openapi-pages.ts`
-     (source-derived: add a service spec, it appears next build); SDK reference
-     from the ZAP SDK generator into `content/docs/sdks/<lang>/`.
+     **hanzoai/cloud's `openapi.yaml`**, at the ref the repo-root `.spec-lock`
+     names, via `scripts/sync-openapi.sh` + `scripts/gen-openapi-pages.ts`
+     (source-derived in the strong sense: cloud emits that document from its own
+     routers and gates the emission against them, so a page cannot describe a
+     route the binary does not serve); SDK reference from the ZAP SDK generator
+     into `content/docs/sdks/<lang>/`.
   3. **Ported** (upstream OSS, mirrored with attribution, `.gitignore`d) →
      `scripts/sync-project-docs.ts` into `content/docs/projects/<upstream>/`.
      Port, don't re-author. Carry upstream LICENSE + NOTICE. GPL stays GPL.
 - **Repos:** `hanzo-docs/docs` = framework + hub (canonical; `hanzoai/docs`
   redirects here). `hanzo-docs/<team>` = authored content only, NO framework.
-  `hanzoai/openapi` = the API source of truth. All docs live in the `hanzo-docs`
+  `hanzoai/cloud` = the API source of truth (it EMITS the document; nobody
+  writes it). All docs live in the `hanzo-docs`
   org: the hub at `hanzo-docs/docs`, each team's content at `hanzo-docs/<team>`.
 - **Standalone vs hub:** default is a hub section. Standalone deploy only if ALL
   of: ≈150+ pages or fast OSS-upstream churn, independent versioning, direct
   audience. Standalone runs its own copy of this framework; the hub links out,
   never copies.
 - **Serving:** `ghcr.io/hanzoai/docs` behind hanzoai/ingress for docs.hanzo.ai.
+
+### The API reference reads ONE document, and it is not the master
+
+`.spec-lock` at the repo root names it — repo, path, ref, sha256, the same four
+lines hanzoai/ci writes into every client repo. `sync-openapi.sh` fetches that
+exact ref and refuses bytes whose digest does not match, so a moved tag fails
+the build instead of silently re-rendering. `scripts/openapi-doc.ts` exports
+`DOCUMENT` and is the only place the path is written; the six scripts that read
+it import that constant, which is what makes "the only reader" a fact. Before,
+each of them declared its own copy of `openapi-specs/hanzo.yaml`.
+
+It read `hanzoai/openapi` `hanzo.yaml` — hand-merged, and a SECOND AUTHORITY ON
+WHAT EXISTS. Measured against cloud@v1.801.383, the master carried 185
+operations cloud's document does not, and probing all 185 at api.hanzo.ai with
+each one's OWN verb plus a nonsense-sibling control decided only 19 of them: 164
+were unfalfisiable, because a door under `/v1/bot`, `/v1/dns`, `/v1/vector` or
+`/v1/search` answers the real path and the invented one with the same code. The
+reference had a page for each.
+
+**BEFORE / AFTER, same generator, measured:**
+
+| | master @152c584a (16 commits behind its own main) | cloud @v1.801.383 |
+|---|---|---|
+| product pages | 133 | **185** |
+| operations rendered | 2462 | 2306 |
+| operations carrying prose | 1891 (76.8%) | **2257 (97.9%)** |
+| products with the owning package's synopsis | 128 | **173** |
+| pages for products cloud does not serve | 3 (`do`, `edge`, `visor`) | **0** |
+| live products with no page | 55 | **0** |
+
+Fewer operations and 366 MORE of them documented: the master's extra 156 were
+mostly things no probe could show exist, and the document's prose is the
+handler's own doc comment rather than a sentence somebody wrote here.
+
+`check-endpoints.ts` now measures authored prose against the real router: 590
+pages checked, **0 unknown endpoints in the generated trees** (the build-failing
+class), 64 in authored guides (reported — `/v1/paas/*`, `/v1/gpu/*`,
+`/v1/mpc/wallets`, `/v1/memories/search` and friends, each a guide teaching a
+route cloud does not serve).
+
+`public/openapi/hanzo.yaml` — the published copy at docs.hanzo.ai — keeps its
+name and its URL. It is the Hanzo API document; only its SOURCE changed. The
+in-repo snapshot is `openapi-specs/cloud.yaml`, named for where it comes from,
+because the old name could be confused with a hand-authored master and was.
+
+**Two upstream gaps this surfaced, both stated rather than papered over:**
+- `flows.yaml`'s six journeys named operationIds the document does not have —
+  eight were the master's `cloud_` prefix, three were real (`bot_authMe`,
+  `gateway_createChatCompletion`, `mcp_rpc`). Fixed in hanzoai/openapi, whose
+  own `test_flows.py` was RED on origin/main and unnoticed.
+- `bun ./scripts/pre-build.ts` fails on this box with `Export named
+  'writeRegistry' not found in module @hanzo/docs-cli@1.3.2` — a dependency
+  mismatch in `scripts/build-registry.ts`, which is untouched by this change and
+  fails identically on origin/main.
   The nine sibling hosts below are still CF Pages `hanzo-docs` (token from KMS,
   never hard-coded). No nginx/caddy.
 

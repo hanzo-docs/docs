@@ -1,16 +1,34 @@
 import fs from 'node:fs';
+import path from 'node:path';
 import { parse as parseYaml } from 'yaml';
 
 // THE DOCUMENT.
 //
-// hanzoai/openapi `hanzo.yaml` is the one description of the Hanzo API. The
-// reference, the flow pages, the SDKs, the CLI and the MCP tools are all
-// PROJECTIONS of it. Nothing about the API is written twice: if a page states
-// an endpoint's behaviour, that prose came from here.
+// hanzoai/cloud's `openapi.yaml`, at the ref the repo-root `.spec-lock` names,
+// is the one description of the Hanzo API. cloud emits it by projecting its own
+// routers and gates the emission against them, so it cannot describe a route
+// the binary does not serve. The reference, the flow pages, the SDKs, the CLI
+// and the MCP tools are all PROJECTIONS of it. Nothing about the API is written
+// twice: if a page states an endpoint's behaviour, that prose came from the
+// handler's doc comment and travelled here through the emission.
 //
-// This module is the only reader. It resolves the document into products and
-// operations; every generator downstream consumes those values and never
-// re-parses YAML or re-invents the product rule.
+// It is NOT hanzoai/openapi's `hanzo.yaml`, which is hand-merged and was a
+// SECOND AUTHORITY ON WHAT EXISTS: measured against cloud@v1.801.383 it carried
+// 185 operations cloud does not serve, 164 of which no probe could tell apart
+// from an invented path, and each of them rendered a reference page.
+//
+// This module is the only reader — and now the only place the document's PATH
+// is written, so "the only reader" is a fact rather than a wish. Six scripts
+// each declared their own copy of it; changing the source meant changing six
+// constants, and one of them would have been missed.
+
+/**
+ * THE DOCUMENT, on disk. Written by scripts/sync-openapi.sh, which fetches it
+ * at the pinned ref and refuses bytes that do not match the lock's digest.
+ * Named for its SOURCE: `cloud.yaml` cannot be confused with a hand-authored
+ * master, and the previous name could.
+ */
+export const DOCUMENT = path.join(import.meta.dirname, '../openapi-specs/cloud.yaml');
 
 export const METHODS = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options'] as const;
 export type Method = (typeof METHODS)[number];

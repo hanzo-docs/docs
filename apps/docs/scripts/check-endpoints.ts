@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { loadDocument } from './openapi-doc';
+import { DOCUMENT, loadDocument } from './openapi-doc';
 
 // No page may state an endpoint the document does not have.
 //
@@ -15,7 +15,6 @@ import { loadDocument } from './openapi-doc';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = path.resolve(SCRIPT_DIR, '..');
-const DOCUMENT = path.join(APP_ROOT, 'openapi-specs/hanzo.yaml');
 const CONTENT = path.join(APP_ROOT, 'content/docs');
 
 // Ported upstream docs describe other people's APIs; they are mirrored, not

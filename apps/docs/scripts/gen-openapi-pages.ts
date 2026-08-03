@@ -2,7 +2,7 @@ import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { loadDocument, type Document, type Operation, type Product } from './openapi-doc';
+import { DOCUMENT, loadDocument, type Document, type Operation, type Product } from './openapi-doc';
 import { code, firstSentence, prose, text, yamlString } from './mdx';
 
 // The API reference, generated from THE document.
@@ -20,7 +20,6 @@ import { code, firstSentence, prose, text, yamlString } from './mdx';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = path.resolve(SCRIPT_DIR, '..');
-const DOCUMENT = path.join(APP_ROOT, 'openapi-specs/hanzo.yaml');
 const OUT_DIR = path.join(APP_ROOT, 'content/docs/openapi');
 const SERVICES_DIR = path.join(APP_ROOT, 'content/docs/services');
 const PUBLIC_COPY = path.join(APP_ROOT, 'public/openapi/hanzo.yaml');

@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { loadDocument, type Document, type Operation } from './openapi-doc';
+import { DOCUMENT, loadDocument, type Document, type Operation } from './openapi-doc';
 import { toolOperations } from './openapi-surfaces';
 import { load, MCP_DOOR, type McpCatalog, type McpTool } from './sync-mcp-tools';
 import { code, fence, firstSentence, prose, text, yamlString } from './mdx';
@@ -25,7 +25,6 @@ import { code, fence, firstSentence, prose, text, yamlString } from './mdx';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = path.resolve(SCRIPT_DIR, '..');
-const DOCUMENT = path.join(APP_ROOT, 'openapi-specs/hanzo.yaml');
 /**
  * The commit the document was pinned at.
  *
@@ -37,7 +36,9 @@ const DOCUMENT = path.join(APP_ROOT, 'openapi-specs/hanzo.yaml');
  */
 const DOCUMENT_PIN = (() => {
   try {
-    return fs.readFileSync(path.join(APP_ROOT, 'openapi-specs/hanzo.pin'), 'utf8').trim().slice(0, 9);
+    // The release this reference describes, from the one pin: `.spec-lock`.
+    const lock = fs.readFileSync(path.join(APP_ROOT, '../../.spec-lock'), 'utf8');
+    return (lock.match(/^ref=(.+)$/m)?.[1] ?? '').trim().slice(0, 12);
   } catch {
     return '';
   }

@@ -1,53 +1,63 @@
 #!/bin/bash
-# Fetch THE document: hanzoai/openapi `hanzo.yaml`.
+# Fetch THE document: hanzoai/cloud `openapi.yaml`, at the ref `.spec-lock` names.
 #
-# One file, pinned to one commit. openapi-specs/hanzo.pin names the revision the
-# reference is built from, so a docs build is reproducible and a spec change is
-# a reviewable one-line bump rather than a 2 MB diff arriving by surprise.
+# NOT hanzoai/openapi's `hanzo.yaml`. cloud emits its document by projecting its
+# own routers, and gates the emission by regenerating from source and failing on
+# any diff, so it cannot describe a route the binary does not serve. The master
+# is hand-merged from authored per-service specs and it is a SECOND AUTHORITY ON
+# WHAT EXISTS — measured against cloud@v1.801.383 it carried 185 operations
+# cloud does not serve, and 164 of those could not be told apart from an
+# invented path by any probe (a door under /v1/bot, /v1/dns, /v1/vector or
+# /v1/search answers the real path and a nonsense sibling with the same code).
+# Every one of them rendered a reference page teaching an endpoint.
 #
-# hanzoai/openapi is a PRIVATE repo, so the raw fetch needs a token
-# (GITHUB_TOKEN / GH_TOKEN, or `gh auth token` locally). Three sources, tried in
-# order, all yielding the same bytes:
+# ONE PIN, at the repo root, in the fleet's one spelling: `.spec-lock` names the
+# repo, the path, the ref and the sha256 — the same four lines hanzoai/ci writes
+# into every client repo, so "which document is this a projection of" has one
+# answer and one format everywhere. A spec change is a reviewable four-line bump
+# rather than a 3 MB diff arriving by surprise.
 #
-#   1. the pinned raw URL, when a token is available
-#   2. a sibling checkout at ../../../openapi, for offline work
+# hanzoai/cloud is PRIVATE, so raw.githubusercontent.com answers 404 rather than
+# 403 and an anonymous miss cannot be told from a deleted file. Three sources,
+# tried in order, all yielding the same bytes:
+#
+#   1. the contents API at the pinned ref, with a token
+#   2. a sibling hanzoai/cloud checkout, for offline work
 #   3. the committed snapshot already in openapi-specs/
 #
-# Falling through to (3) is normal and safe: the snapshot IS the pinned
-# revision, committed so a builder with no credentials still renders the full
-# reference. What is never allowed is an empty result — the generator raises if
-# the document is missing.
+# Falling through to (3) is normal and safe: the snapshot IS the pinned ref, and
+# its digest is checked against the lock, so a builder with no credentials still
+# renders the full reference and still cannot render a DIFFERENT one. What is
+# never allowed is an empty result — the generator raises if the document is
+# missing.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 APP_DIR="$SCRIPT_DIR/.."
+REPO_ROOT="$(cd "$APP_DIR/../.." && pwd)"
 SPECS_DIR="$APP_DIR/openapi-specs"
-PIN_FILE="$SPECS_DIR/hanzo.pin"
-DOCUMENT="$SPECS_DIR/hanzo.yaml"
+LOCK="$REPO_ROOT/.spec-lock"
+DOCUMENT="$SPECS_DIR/cloud.yaml"
 # flows.yaml names the six canonical journeys as operationIds, in call order.
-# Upstream owns it: the SDKs ship the same six as `examples/<flow>/`, and the
-# docs' four-surface pages are one more projection of the same list.
-FLOWS="$SPECS_DIR/flows.yaml"
 # sdks.yaml is the SDK matrix — the package names the docs print must be the
-# ones the generator actually publishes under.
-SDKS="$SPECS_DIR/sdks.yaml"
-
+# ones the generator actually publishes under. NEITHER IS THE API DOCUMENT, so
+# both still come from hanzoai/openapi, and neither can smuggle an endpoint in:
+# an operationId in flows.yaml the pinned document does not carry fails
+# gen-flow-pages, which is the gate that makes reading them from main safe.
 mkdir -p "$SPECS_DIR"
 
-# Fetch one file from the pinned revision. $1 = repo-relative path, $2 = dest.
-fetch_pinned() {
-  [ -n "${TOKEN:-}" ] || return 1
-  curl -fsSL -H "Authorization: Bearer $TOKEN" \
-    "https://raw.githubusercontent.com/hanzoai/openapi/$PIN/$1" -o "$2" 2>/dev/null
-}
-
-if [ ! -f "$PIN_FILE" ]; then
-  echo "[openapi] no $PIN_FILE — nothing to pin to; keeping the committed snapshot"
+if [ ! -f "$LOCK" ]; then
+  echo "[openapi] no $LOCK — nothing to pin to; keeping the committed snapshot"
   exit 0
 fi
-PIN="$(tr -d '[:space:]' < "$PIN_FILE")"
+lock() { sed -n "s/^$1=//p" "$LOCK"; }
+REPO="$(lock repo)";      REPO="${REPO:-hanzoai/cloud}"
+IN_REPO="$(lock path)";   IN_REPO="${IN_REPO:-openapi.yaml}"
+REF="$(lock ref)"
+WANT="$(lock sha256)"
+: "${REF:?[openapi] $LOCK has no ref=}"
 
-TOKEN="${GITHUB_TOKEN:-${GH_TOKEN:-}}"
+TOKEN="${GITHUB_TOKEN:-${GH_TOKEN:-${SPEC_TOKEN:-}}}"
 if [ -z "$TOKEN" ] && command -v gh >/dev/null 2>&1; then
   TOKEN="$(gh auth token 2>/dev/null || true)"
 fi
@@ -55,32 +65,46 @@ fi
 tmp="$(mktemp)"
 trap 'rm -f "$tmp"' EXIT
 
-if fetch_pinned hanzo.yaml "$tmp"; then
+# A pinned ref whose bytes moved means someone moved a tag, and no amount of
+# rendering makes that safe. The same refusal hanzoai/ci and every SDK call site
+# make, so a docs build and a client build cannot disagree about what they read.
+verify() {
+  [ -n "$WANT" ] || return 0
+  got="$(sha256sum "$1" | cut -d' ' -f1)"
+  [ "$got" = "$WANT" ] && return 0
+  echo "[openapi] ERROR: $2 hashes to $got, but .spec-lock says $WANT" >&2
+  return 1
+}
+
+if [ -n "${TOKEN:-}" ] && curl -fsSL -H "Authorization: Bearer $TOKEN" \
+     -H 'Accept: application/vnd.github.raw' \
+     "https://api.github.com/repos/$REPO/contents/$IN_REPO?ref=$REF" -o "$tmp" 2>/dev/null; then
+  verify "$tmp" "$REPO@$REF:$IN_REPO"
   install -m 0644 "$tmp" "$DOCUMENT"
-  got=hanzo.yaml
-  for extra in flows.yaml sdks.yaml; do
-    if fetch_pinned "$extra" "$tmp"; then
-      install -m 0644 "$tmp" "$SPECS_DIR/$extra"
-      got="$got + $extra"
-    fi
-  done
-  echo "[openapi] fetched $got @ ${PIN:0:9} ($(wc -c < "$DOCUMENT") bytes)"
-  exit 0
+  echo "[openapi] fetched $REPO@$REF:$IN_REPO ($(wc -c < "$DOCUMENT") bytes)"
+else
+  SIBLING="$APP_DIR/../../../cloud/$IN_REPO"
+  if [ -f "$SIBLING" ] && verify "$SIBLING" "$SIBLING"; then
+    install -m 0644 "$SIBLING" "$DOCUMENT"
+    echo "[openapi] using the sibling hanzoai/cloud checkout ($(wc -c < "$DOCUMENT") bytes) — ref is $REF"
+  elif [ -f "$DOCUMENT" ]; then
+    verify "$DOCUMENT" "$DOCUMENT"
+    echo "[openapi] no token and no sibling checkout; building from the committed snapshot @ $REF"
+  else
+    echo "[openapi] ERROR: $REPO@$REF:$IN_REPO is unavailable from every source" >&2
+    exit 1
+  fi
 fi
 
-SIBLING_DIR="$APP_DIR/../../../openapi"
-if [ -f "$SIBLING_DIR/hanzo.yaml" ]; then
-  install -m 0644 "$SIBLING_DIR/hanzo.yaml" "$DOCUMENT"
-  [ -f "$SIBLING_DIR/flows.yaml" ] && install -m 0644 "$SIBLING_DIR/flows.yaml" "$FLOWS"
-  [ -f "$SIBLING_DIR/sdks.yaml" ] && install -m 0644 "$SIBLING_DIR/sdks.yaml" "$SDKS"
-  echo "[openapi] using the sibling checkout ($(wc -c < "$DOCUMENT") bytes) — pin is ${PIN:0:9}"
-  exit 0
-fi
-
-if [ -f "$DOCUMENT" ]; then
-  echo "[openapi] no token and no sibling checkout; building from the committed snapshot @ ${PIN:0:9}"
-  exit 0
-fi
-
-echo "[openapi] ERROR: hanzo.yaml is unavailable from every source" >&2
-exit 1
+# Best-effort by design: flows.yaml and sdks.yaml are upstream DATA about
+# journeys and packages, not claims about the API, and the committed copies are
+# current. A miss here is silence, not a failure.
+for extra in flows.yaml sdks.yaml; do
+  [ -n "${TOKEN:-}" ] || continue
+  if curl -fsSL -H "Authorization: Bearer $TOKEN" \
+       -H 'Accept: application/vnd.github.raw' \
+       "https://api.github.com/repos/hanzoai/openapi/contents/$extra?ref=main" -o "$tmp" 2>/dev/null; then
+    install -m 0644 "$tmp" "$SPECS_DIR/$extra"
+    echo "[openapi] fetched hanzoai/openapi@main:$extra"
+  fi
+done
