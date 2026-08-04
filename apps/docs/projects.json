@@ -1,58 +1,118 @@
 {
-  "generatedAt": "2026-03-11T05:04:20.293Z",
+  "generatedAt": "2026-08-04T07:51:31.252Z",
   "orgs": [
     "hanzoai"
   ],
   "projects": [
     {
       "org": "hanzoai",
-      "repo": ".github",
-      "slug": ".github",
-      "name": ".Github",
-      "description": "Hanzo organization profile",
+      "repo": "2d-techdemos",
+      "slug": "2d-techdemos",
+      "name": "2d Techdemos",
+      "description": "Tech Demos for Unity 2D Features",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/.github",
-      "route": "/docs/projects/hanzoai/.github"
+      "repoUrl": "https://github.com/hanzoai/2d-techdemos",
+      "route": "/docs/projects/hanzoai/2d-techdemos"
     },
     {
       "org": "hanzoai",
-      "repo": "agent",
-      "slug": "agent",
-      "name": "Agent",
-      "description": "Multi-agent SDK with OpenAI-compatible API",
+      "repo": "account",
+      "slug": "account",
+      "name": "Account",
+      "description": null,
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/agent",
-      "route": "/docs/projects/hanzoai/agent"
+      "repoUrl": "https://github.com/hanzoai/account",
+      "route": "/docs/projects/hanzoai/account"
     },
     {
       "org": "hanzoai",
-      "repo": "analytics",
-      "slug": "analytics",
-      "name": "Analytics",
-      "description": "Hanzo Analytics - Privacy-focused web analytics platform",
+      "repo": "account-sdk",
+      "slug": "account-sdk",
+      "name": "Account Sdk",
+      "description": null,
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/analytics",
-      "route": "/docs/projects/hanzoai/analytics"
+      "repoUrl": "https://github.com/hanzoai/account-sdk",
+      "route": "/docs/projects/hanzoai/account-sdk"
     },
     {
       "org": "hanzoai",
-      "repo": "ANE",
-      "slug": "ANE",
-      "name": "ANE",
-      "description": "Training neural networks on Apple Neural Engine via reverse-engineered private APIs",
+      "repo": "ai",
+      "slug": "ai",
+      "name": "Ai",
+      "description": "Hanzo AI — LLM control plane, RAG, and model hub. Native Go routing for 66+ models over an OpenAI-compatible /v1 API; mounts as the 'ai' subsystem inside hanzoai/cloud.",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/ANE",
-      "route": "/docs/projects/hanzoai/ANE"
+      "repoUrl": "https://github.com/hanzoai/ai",
+      "route": "/docs/projects/hanzoai/ai"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "alis",
+      "slug": "alis",
+      "name": "Alis",
+      "description": "Open-source Unreal Engine survival game and modular game architecture reference - plugin-based C++ core, data-driven workflows.",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/alis",
+      "route": "/docs/projects/hanzoai/alis"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "aml",
+      "slug": "aml",
+      "name": "Aml",
+      "description": "Hanzo AML — white-label AML/CFT monitoring over the luxfi/aml engine",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/aml",
+      "route": "/docs/projects/hanzoai/aml"
     },
     {
       "org": "hanzoai",
       "repo": "app",
       "slug": "app",
       "name": "App",
-      "description": "Hanzo AI - AI-powered web development platform with natural language prompts",
+      "description": "Hanzo App — AI web & app builder on Hanzo Cloud (MIT, derived from DeepSite)",
       "archived": false,
       "repoUrl": "https://github.com/hanzoai/app",
       "route": "/docs/projects/hanzoai/app"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "arc",
+      "slug": "arc",
+      "name": "Arc",
+      "description": "DEPRECATED — arcd, the GitHub-Actions runner controller. Superseded by act_runner on native CI (git.hanzo.ai). See universe/docs/architecture/runners-act-migration.md.",
+      "archived": true,
+      "repoUrl": "https://github.com/hanzoai/arc",
+      "route": "/docs/projects/hanzoai/arc"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "Argus",
+      "slug": "Argus",
+      "name": "Argus",
+      "description": "An RTS made in Unreal Engine",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/Argus",
+      "route": "/docs/projects/hanzoai/Argus"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "authz",
+      "slug": "authz",
+      "name": "Authz",
+      "description": "Hanzo Authz — access control library for Go: ACL, RBAC, ABAC policy enforcement",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/authz",
+      "route": "/docs/projects/hanzoai/authz"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "autoprefixer",
+      "slug": "autoprefixer",
+      "name": "Autoprefixer",
+      "description": " Parse CSS and add vendor prefixes to rules by Can I Use",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/autoprefixer",
+      "route": "/docs/projects/hanzoai/autoprefixer"
     },
     {
       "org": "hanzoai",
@@ -66,43 +126,183 @@
     },
     {
       "org": "hanzoai",
+      "repo": "azure-sdk-for-js",
+      "slug": "azure-sdk-for-js",
+      "name": "Azure Sdk For Js",
+      "description": "This repository is for active development of the Azure SDK for JavaScript (NodeJS & Browser). For consumers of the SDK we recommend visiting our public developer docs at https://docs.microsoft.com/javascript/azure/ or our versioned developer docs at https://azure.github.io/azure-sdk-for-js. ",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/azure-sdk-for-js",
+      "route": "/docs/projects/hanzoai/azure-sdk-for-js"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "babel",
+      "slug": "babel",
+      "name": "Babel",
+      "description": "🐠 Babel is a compiler for writing next generation JavaScript.",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/babel",
+      "route": "/docs/projects/hanzoai/babel"
+    },
+    {
+      "org": "hanzoai",
       "repo": "base",
       "slug": "base",
       "name": "Base",
-      "description": "Hanzo Base - Backend-as-a-Service with realtime and auth",
+      "description": "Hanzo Base — multi-tenant SQLite backend with polyglot in-process extension runtimes and age-encrypted WAL replication; the storage substrate of the Hanzo cloud.",
       "archived": false,
       "repoUrl": "https://github.com/hanzoai/base",
       "route": "/docs/projects/hanzoai/base"
     },
     {
       "org": "hanzoai",
-      "repo": "billing",
-      "slug": "billing",
-      "name": "Billing",
-      "description": "Billing portal for Hanzo — manage balance, subscriptions, payments, invoices",
+      "repo": "bcrypt.js",
+      "slug": "bcrypt.js",
+      "name": "Bcrypt.Js",
+      "description": "Optimized bcrypt in JavaScript with zero dependencies, with TypeScript support.",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/billing",
-      "route": "/docs/projects/hanzoai/billing"
+      "repoUrl": "https://github.com/hanzoai/bcrypt.js",
+      "route": "/docs/projects/hanzoai/bcrypt.js"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "beego",
+      "slug": "beego",
+      "name": "Beego",
+      "description": "Hanzo fork of beego v2 — prometheus/client_golang stripped, luxfi/metric backend (0 prom/grpc)",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/beego",
+      "route": "/docs/projects/hanzoai/beego"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "better-sqlite3",
+      "slug": "better-sqlite3",
+      "name": "Better Sqlite3",
+      "description": "The fastest and simplest library for SQLite3 in Node.js.",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/better-sqlite3",
+      "route": "/docs/projects/hanzoai/better-sqlite3"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "better-sqlite3-multiple-ciphers",
+      "slug": "better-sqlite3-multiple-ciphers",
+      "name": "Better Sqlite3 Multiple Ciphers",
+      "description": "better-sqlite3 with multiple-cipher encryption support 🔒",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/better-sqlite3-multiple-ciphers",
+      "route": "/docs/projects/hanzoai/better-sqlite3-multiple-ciphers"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "BoatAttack",
+      "slug": "BoatAttack",
+      "name": "BoatAttack",
+      "description": "Demo Project using the Universal RP from Unity3D",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/BoatAttack",
+      "route": "/docs/projects/hanzoai/BoatAttack"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "Bomber",
+      "slug": "Bomber",
+      "name": "Bomber",
+      "description": "Complete Steam multiplayer game with Game Feature Plugins modding in UE5.7",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/Bomber",
+      "route": "/docs/projects/hanzoai/Bomber"
     },
     {
       "org": "hanzoai",
       "repo": "bot",
       "slug": "bot",
       "name": "Bot",
-      "description": "🥷 Autonomous AI team in a box. Every role, every channel, every platform.",
+      "description": "Hanzo Bot — personal AI assistant across your messaging channels (WhatsApp, Telegram, Slack, Discord, Signal, iMessage, and more)",
       "archived": false,
       "repoUrl": "https://github.com/hanzoai/bot",
       "route": "/docs/projects/hanzoai/bot"
     },
     {
       "org": "hanzoai",
-      "repo": "browser-extension",
-      "slug": "browser-extension",
-      "name": "Browser Extension",
-      "description": "DEPRECATED — moved to hanzoai/extension (packages/browser/)",
-      "archived": true,
-      "repoUrl": "https://github.com/hanzoai/browser-extension",
-      "route": "/docs/projects/hanzoai/browser-extension"
+      "repo": "bufferutil",
+      "slug": "bufferutil",
+      "name": "Bufferutil",
+      "description": "WebSocket buffer utils",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/bufferutil",
+      "route": "/docs/projects/hanzoai/bufferutil"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "build-demo",
+      "slug": "build-demo",
+      "name": "Build Demo",
+      "description": "Proof that hanzo.app builds any project: a Go binary and an npm package from one hanzo.yml, no Dockerfile.",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/build-demo",
+      "route": "/docs/projects/hanzoai/build-demo"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "builder",
+      "slug": "builder",
+      "name": "Builder",
+      "description": null,
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/builder",
+      "route": "/docs/projects/hanzoai/builder"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "cal",
+      "slug": "cal",
+      "name": "Cal",
+      "description": "cal.hanzo.ai — Cal Booker (debranded @hanzo/calendar) on native Hanzo Base /v1/calendar",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/cal",
+      "route": "/docs/projects/hanzoai/cal"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "calendar",
+      "slug": "calendar",
+      "name": "Calendar",
+      "description": "Scheduling infrastructure for absolutely everyone.",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/calendar",
+      "route": "/docs/projects/hanzoai/calendar"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "cc",
+      "slug": "cc",
+      "name": "Cc",
+      "description": "Customize Claude Code's system prompts, create custom toolsets, input pattern highlighters, themes/thinking verbs/spinners, customize input box & user message styling, support AGENTS.md, unlock private/unreleased features, and much more.  Supports both native/npm installs on all platforms.",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/cc",
+      "route": "/docs/projects/hanzoai/cc"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "cd",
+      "slug": "cd",
+      "name": "Cd",
+      "description": "Declarative Continuous Deployment for Kubernetes",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/cd",
+      "route": "/docs/projects/hanzoai/cd"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "ch-go",
+      "slug": "ch-go",
+      "name": "Ch Go",
+      "description": "Hanzo fork of ClickHouse/ch-go with DD-sketch quantile support for o11y metrics (module path kept github.com/ClickHouse/ch-go for drop-in replace)",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/ch-go",
+      "route": "/docs/projects/hanzoai/ch-go"
     },
     {
       "org": "hanzoai",
@@ -126,80 +326,150 @@
     },
     {
       "org": "hanzoai",
+      "repo": "ci",
+      "slug": "ci",
+      "name": "Ci",
+      "description": "Reusable CI/CD: build/test/deploy any repo from its hanzo.yml on arc",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/ci",
+      "route": "/docs/projects/hanzoai/ci"
+    },
+    {
+      "org": "hanzoai",
       "repo": "cli",
       "slug": "cli",
       "name": "Cli",
-      "description": "AI engineer in your terminal — deploy, manage, interact",
+      "description": "The Hanzo CLI — an AI coding agent and every product of the Hanzo cloud, in one Rust binary. curl -fsSL https://hanzo.sh | sh",
       "archived": false,
       "repoUrl": "https://github.com/hanzoai/cli",
       "route": "/docs/projects/hanzoai/cli"
     },
     {
       "org": "hanzoai",
-      "repo": "cloud",
-      "slug": "cloud",
-      "name": "Cloud",
-      "description": "Unified AI infrastructure and MCP management platform",
+      "repo": "clickhouse-go",
+      "slug": "clickhouse-go",
+      "name": "Clickhouse Go",
+      "description": "Hanzo fork of ClickHouse/clickhouse-go v2 with DD-sketch support for o11y metrics (module path kept for drop-in replace)",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/cloud",
-      "route": "/docs/projects/hanzoai/cloud"
+      "repoUrl": "https://github.com/hanzoai/clickhouse-go",
+      "route": "/docs/projects/hanzoai/clickhouse-go"
     },
     {
       "org": "hanzoai",
-      "repo": "code",
-      "slug": "code",
-      "name": "Code",
-      "description": "Open source AI code editor — any model, full data control",
+      "repo": "clickhouse-go-mock",
+      "slug": "clickhouse-go-mock",
+      "name": "Clickhouse Go Mock",
+      "description": null,
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/code",
-      "route": "/docs/projects/hanzoai/code"
+      "repoUrl": "https://github.com/hanzoai/clickhouse-go-mock",
+      "route": "/docs/projects/hanzoai/clickhouse-go-mock"
     },
     {
       "org": "hanzoai",
-      "repo": "commerce",
-      "slug": "commerce",
-      "name": "Commerce",
-      "description": "Hanzo Commerce - AI-powered e-commerce platform",
+      "repo": "cms",
+      "slug": "cms",
+      "name": "Cms",
+      "description": "Hanzo CMS — brand-neutral white-label headless CMS (Payload fork) on Base/SQLite, SeaweedFS S3, and IAM SSO. All packages under @hanzo/cms scope.",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/commerce",
-      "route": "/docs/projects/hanzoai/commerce"
+      "repoUrl": "https://github.com/hanzoai/cms",
+      "route": "/docs/projects/hanzoai/cms"
     },
     {
       "org": "hanzoai",
-      "repo": "community",
-      "slug": "community",
-      "name": "Community",
-      "description": "Hanzo Community — Discord, forums, events, and more",
+      "repo": "com.unity.multiplayer.samples.coop",
+      "slug": "com.unity.multiplayer.samples.coop",
+      "name": "Com.Unity.Multiplayer.Samples.Coop",
+      "description": "A small-scale cooperative game sample built on the new, Unity networking framework to teach developers about creating a similar multiplayer game.",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/community",
-      "route": "/docs/projects/hanzoai/community"
+      "repoUrl": "https://github.com/hanzoai/com.unity.multiplayer.samples.coop",
+      "route": "/docs/projects/hanzoai/com.unity.multiplayer.samples.coop"
     },
     {
       "org": "hanzoai",
-      "repo": "console",
-      "slug": "console",
-      "name": "Console",
-      "description": "Unified LLM dev environment — debug, fine-tune, monitor",
+      "repo": "cookie",
+      "slug": "cookie",
+      "name": "Cookie",
+      "description": "HTTP server cookie parsing and serialization",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/console",
-      "route": "/docs/projects/hanzoai/console"
+      "repoUrl": "https://github.com/hanzoai/cookie",
+      "route": "/docs/projects/hanzoai/cookie"
     },
     {
       "org": "hanzoai",
-      "repo": "cx",
-      "slug": "cx",
-      "name": "Cx",
-      "description": "Open-source live-chat, email support, omni-channel desk. An alternative to Intercom, Zendesk, Salesforce Service Cloud etc. 🔥💬",
+      "repo": "cookie-parser",
+      "slug": "cookie-parser",
+      "name": "Cookie Parser",
+      "description": "Parse HTTP request cookies",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/cx",
-      "route": "/docs/projects/hanzoai/cx"
+      "repoUrl": "https://github.com/hanzoai/cookie-parser",
+      "route": "/docs/projects/hanzoai/cookie-parser"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "core-js",
+      "slug": "core-js",
+      "name": "Core Js",
+      "description": "Standard Library",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/core-js",
+      "route": "/docs/projects/hanzoai/core-js"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "core-networkmanagement",
+      "slug": "core-networkmanagement",
+      "name": "Core Networkmanagement",
+      "description": "Networkmanager built with coreDNS and coreDHCP with web gui",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/core-networkmanagement",
+      "route": "/docs/projects/hanzoai/core-networkmanagement"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "crawl",
+      "slug": "crawl",
+      "name": "Crawl",
+      "description": "Hanzo Crawl — LLM-ready web crawling for the Hanzo stack. Forked from unclecode/crawl4ai (Apache-2.0).",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/crawl",
+      "route": "/docs/projects/hanzoai/crawl"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "cross-env",
+      "slug": "cross-env",
+      "name": "Cross Env",
+      "description": "🔀 Cross platform setting of environment scripts",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/cross-env",
+      "route": "/docs/projects/hanzoai/cross-env"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "csqlite",
+      "slug": "csqlite",
+      "name": "Csqlite",
+      "description": "Self-contained cgo SQLite bindings for Go's database/sql, vendored in-tree",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/csqlite",
+      "route": "/docs/projects/hanzoai/csqlite"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "dart-sdk",
+      "slug": "dart-sdk",
+      "name": "Dart Sdk",
+      "description": "Hanzo Dart/Flutter SDKs — landing. Real code → hanzo-dart/hanzoai (platform API) and hanzo-dart/base.",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/dart-sdk",
+      "route": "/docs/projects/hanzoai/dart-sdk"
     },
     {
       "org": "hanzoai",
       "repo": "dataroom",
       "slug": "dataroom",
       "name": "Dataroom",
-      "description": "Papermark is the open-source DocSend alternative with built-in analytics and custom domains.",
+      "description": "Hanzo Dataroom — secure document sharing with built-in analytics and custom domains.",
       "archived": false,
       "repoUrl": "https://github.com/hanzoai/dataroom",
       "route": "/docs/projects/hanzoai/dataroom"
@@ -209,90 +479,200 @@
       "repo": "datastore",
       "slug": "datastore",
       "name": "Datastore",
-      "description": "Hanzo Datastore - Real-time analytics database for AI workloads",
+      "description": "Hanzo Datastore — open-source column-oriented OLAP database for real-time analytics; S3/S-Chain storage separation, ZAP transport, Quasar coordination.",
       "archived": false,
       "repoUrl": "https://github.com/hanzoai/datastore",
       "route": "/docs/projects/hanzoai/datastore"
     },
     {
       "org": "hanzoai",
-      "repo": "datastore-go",
-      "slug": "datastore-go",
-      "name": "Datastore Go",
-      "description": "Hanzo Datastore Go - Go client library for Hanzo Datastore",
+      "repo": "datastore-orm",
+      "slug": "datastore-orm",
+      "name": "Datastore Orm",
+      "description": "A Python library for working with the ClickHouse database (https://clickhouse.yandex/)",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/datastore-go",
-      "route": "/docs/projects/hanzoai/datastore-go"
+      "repoUrl": "https://github.com/hanzoai/datastore-orm",
+      "route": "/docs/projects/hanzoai/datastore-orm"
     },
     {
       "org": "hanzoai",
-      "repo": "desktop",
-      "slug": "desktop",
-      "name": "Desktop",
-      "description": "Hanzo Desktop",
+      "repo": "decimal",
+      "slug": "decimal",
+      "name": "Decimal",
+      "description": "Exact big.Int fixed-point decimal for Go — no precision ceiling, no float",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/desktop",
-      "route": "/docs/projects/hanzoai/desktop"
+      "repoUrl": "https://github.com/hanzoai/decimal",
+      "route": "/docs/projects/hanzoai/decimal"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "deepspec",
+      "slug": "deepspec",
+      "name": "Deepspec",
+      "description": "DeepSpec (DSpark/DFlash/Eagle3 draft training) + Hanzo V4 pipeline — fork of deepseek-ai/DeepSpec",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/deepspec",
+      "route": "/docs/projects/hanzoai/deepspec"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "design",
+      "slug": "design",
+      "name": "Design",
+      "description": "Hanzo Design System — monochrome, dark-default tokens + components + brand assets",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/design",
+      "route": "/docs/projects/hanzoai/design"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "Detox",
+      "slug": "Detox",
+      "name": "Detox",
+      "description": "Gray box end-to-end testing and automation framework for mobile apps",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/Detox",
+      "route": "/docs/projects/hanzoai/Detox"
     },
     {
       "org": "hanzoai",
       "repo": "dev",
       "slug": "dev",
       "name": "Dev",
-      "description": "AI coding agent in your terminal",
+      "description": "Hanzo Dev — fast, local AI coding agent for your terminal (Rust CLI, powered by Hanzo AI; Apache-2.0).",
       "archived": false,
       "repoUrl": "https://github.com/hanzoai/dev",
       "route": "/docs/projects/hanzoai/dev"
     },
     {
       "org": "hanzoai",
-      "repo": "identity",
-      "slug": "did",
-      "name": "Did",
-      "description": "Hanzo Identity",
+      "repo": "doctype",
+      "slug": "doctype",
+      "name": "Doctype",
+      "description": "DocType — metadata-driven schema primitive in pure Go (Frappe DocType core, no Python runtime)",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/identity",
-      "route": "/docs/projects/hanzoai/did"
+      "repoUrl": "https://github.com/hanzoai/doctype",
+      "route": "/docs/projects/hanzoai/doctype"
     },
     {
       "org": "hanzoai",
-      "repo": "dns",
-      "slug": "dns",
-      "name": "Dns",
-      "description": "Hanzo DNS — CoreDNS fork with Hanzo plugins for programmable DNS infrastructure",
+      "repo": "DOMPurify",
+      "slug": "DOMPurify",
+      "name": "DOMPurify",
+      "description": "DOMPurify - a DOM-only, super-fast, uber-tolerant XSS sanitizer for HTML, MathML and SVG. DOMPurify works with a secure default, but offers a lot of configurability and hooks. Demo:",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/dns",
-      "route": "/docs/projects/hanzoai/dns"
+      "repoUrl": "https://github.com/hanzoai/DOMPurify",
+      "route": "/docs/projects/hanzoai/DOMPurify"
     },
     {
       "org": "hanzoai",
-      "repo": "dns-old",
-      "slug": "dns-old",
-      "name": "Dns Old",
-      "description": "Programmable DNS infrastructure for service discovery",
-      "archived": true,
-      "repoUrl": "https://github.com/hanzoai/dns-old",
-      "route": "/docs/projects/hanzoai/dns-old"
+      "repo": "DOTSSample",
+      "slug": "DOTSSample",
+      "name": "DOTSSample",
+      "description": "A third person, multiplayer sample project. Built with Unity and using the new Data Oriented Tech Stack (DOTS).",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/DOTSSample",
+      "route": "/docs/projects/hanzoai/DOTSSample"
     },
     {
       "org": "hanzoai",
-      "repo": "edge",
-      "slug": "edge",
-      "name": "Edge",
-      "description": "Hanzo Edge — On-device AI inference for mobile, web, and embedded (built on Hanzo ML)",
+      "repo": "ECS-Network-Racing-Sample",
+      "slug": "ECS-Network-Racing-Sample",
+      "name": "ECS Network Racing Sample",
+      "description": "ECS multiplayer racing sample to showcase using Unity Entities and netcode with best practices",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/edge",
-      "route": "/docs/projects/hanzoai/edge"
+      "repoUrl": "https://github.com/hanzoai/ECS-Network-Racing-Sample",
+      "route": "/docs/projects/hanzoai/ECS-Network-Racing-Sample"
     },
     {
       "org": "hanzoai",
-      "repo": "engine",
-      "slug": "engine",
-      "name": "Engine",
-      "description": "Hanzo AI native inference engine - Rust-based LLM & embedding engine for foundational models",
+      "repo": "elliptic",
+      "slug": "elliptic",
+      "name": "Elliptic",
+      "description": "Fast Elliptic Curve Cryptography in plain javascript",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/engine",
-      "route": "/docs/projects/hanzoai/engine"
+      "repoUrl": "https://github.com/hanzoai/elliptic",
+      "route": "/docs/projects/hanzoai/elliptic"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "EpicSurvivalGame",
+      "slug": "EpicSurvivalGame",
+      "name": "EpicSurvivalGame",
+      "description": "Third-person Survival Game for Unreal Engine (Sample Project)",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/EpicSurvivalGame",
+      "route": "/docs/projects/hanzoai/EpicSurvivalGame"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "es5-ext",
+      "slug": "es5-ext",
+      "name": "Es5 Ext",
+      "description": "ECMAScript extensions (with respect to upcoming ECMAScript features)",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/es5-ext",
+      "route": "/docs/projects/hanzoai/es5-ext"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "esbuild",
+      "slug": "esbuild",
+      "name": "Esbuild",
+      "description": "An extremely fast bundler for the web",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/esbuild",
+      "route": "/docs/projects/hanzoai/esbuild"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "esign",
+      "slug": "esign",
+      "name": "Esign",
+      "description": "Hanzo eSign — open-source electronic document signing.",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/esign",
+      "route": "/docs/projects/hanzoai/esign"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "eslint",
+      "slug": "eslint",
+      "name": "Eslint",
+      "description": "Find and fix problems in your JavaScript code.",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/eslint",
+      "route": "/docs/projects/hanzoai/eslint"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "eval",
+      "slug": "eval",
+      "name": "Eval",
+      "description": "Expression evaluator (Go) forked from casbin/govaluate v1.3.0; package renamed to eval.",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/eval",
+      "route": "/docs/projects/hanzoai/eval"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "expr",
+      "slug": "expr",
+      "name": "Expr",
+      "description": "Expression language and expression evaluation for Go",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/expr",
+      "route": "/docs/projects/hanzoai/expr"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "express",
+      "slug": "express",
+      "name": "Express",
+      "description": "Fast, unopinionated, minimalist web framework for node.",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/express",
+      "route": "/docs/projects/hanzoai/express"
     },
     {
       "org": "hanzoai",
@@ -306,240 +686,310 @@
     },
     {
       "org": "hanzoai",
-      "repo": "flatcc",
-      "slug": "flatcc",
-      "name": "Flatcc",
-      "description": "FlatBuffers Compiler and Library in C for C",
+      "repo": "finance",
+      "slug": "finance",
+      "name": "Finance",
+      "description": "Hanzo native financial core — one double-entry ledger on Base, unified binary, Formance ported native, Rust via FFI",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/flatcc",
-      "route": "/docs/projects/hanzoai/flatcc"
+      "repoUrl": "https://github.com/hanzoai/finance",
+      "route": "/docs/projects/hanzoai/finance"
     },
     {
       "org": "hanzoai",
-      "repo": "langflow",
-      "slug": "flow",
-      "name": "Flow",
-      "description": "Archived: Langflow fork (moved to hanzoai/studio for ComfyUI)",
-      "archived": true,
-      "repoUrl": "https://github.com/hanzoai/langflow",
-      "route": "/docs/projects/hanzoai/flow"
+      "repo": "firebase-js-sdk",
+      "slug": "firebase-js-sdk",
+      "name": "Firebase Js Sdk",
+      "description": "Firebase Javascript SDK",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/firebase-js-sdk",
+      "route": "/docs/projects/hanzoai/firebase-js-sdk"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "flags",
+      "slug": "flags",
+      "name": "Flags",
+      "description": "Feature flags + A/B for the Hanzo platform — one native engine (cloud /v1/flags), SDKs for Go, Python, TypeScript, Rust, C FFI",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/flags",
+      "route": "/docs/projects/hanzoai/flags"
     },
     {
       "org": "hanzoai",
       "repo": "forum",
       "slug": "forum",
       "name": "Forum",
-      "description": "A platform for community discussion. Free, open, simple.",
+      "description": "Tracking fork of Discourse, kept for a future Hanzo community forum. Nothing Hanzo-specific built on it yet.",
       "archived": false,
       "repoUrl": "https://github.com/hanzoai/forum",
       "route": "/docs/projects/hanzoai/forum"
     },
     {
       "org": "hanzoai",
-      "repo": "gateway",
-      "slug": "gateway",
-      "name": "Gateway",
-      "description": "Unified LLM gateway — 100+ providers, load balancing, caching",
+      "repo": "FPSSample",
+      "slug": "FPSSample",
+      "name": "FPSSample",
+      "description": "A first person multiplayer shooter example project in Unity",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/gateway",
-      "route": "/docs/projects/hanzoai/gateway"
+      "repoUrl": "https://github.com/hanzoai/FPSSample",
+      "route": "/docs/projects/hanzoai/FPSSample"
     },
     {
       "org": "hanzoai",
-      "repo": "go-sdk",
-      "slug": "go-sdk",
-      "name": "Go Sdk",
-      "description": "Hanzo Go SDK",
+      "repo": "frames",
+      "slug": "frames",
+      "name": "Frames",
+      "description": "Write HTML. Render video. Built for agents.",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/go-sdk",
-      "route": "/docs/projects/hanzoai/go-sdk"
+      "repoUrl": "https://github.com/hanzoai/frames",
+      "route": "/docs/projects/hanzoai/frames"
     },
     {
       "org": "hanzoai",
-      "repo": "golangci-lint-action",
-      "slug": "golangci-lint-action",
-      "name": "Golangci Lint Action",
-      "description": "Official GitHub Action for golangci-lint from its authors",
+      "repo": "framework",
+      "slug": "framework",
+      "name": "Framework",
+      "description": "Hanzo Framework — the Go DocType engine: store, hooks, modules, permissions. Foundation for CMS/ERP/CRM/Helpdesk.",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/golangci-lint-action",
-      "route": "/docs/projects/hanzoai/golangci-lint-action"
+      "repoUrl": "https://github.com/hanzoai/framework",
+      "route": "/docs/projects/hanzoai/framework"
     },
     {
       "org": "hanzoai",
-      "repo": "guard",
-      "slug": "guard",
-      "name": "Guard",
-      "description": "Hanzo Guard - LLM I/O sanitization layer, to securely access local and cloud AI.",
+      "repo": "fsevents",
+      "slug": "fsevents",
+      "name": "Fsevents",
+      "description": "Native access to MacOS FSEvents in Node.js",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/guard",
-      "route": "/docs/projects/hanzoai/guard"
+      "repoUrl": "https://github.com/hanzoai/fsevents",
+      "route": "/docs/projects/hanzoai/fsevents"
     },
     {
       "org": "hanzoai",
-      "repo": "hanzo-go",
-      "slug": "hanzo-go",
-      "name": "Hanzo Go",
-      "description": "Golang client for Hanzo APIs",
+      "repo": "GASDocumentation",
+      "slug": "GASDocumentation",
+      "name": "GASDocumentation",
+      "description": "My understanding of Unreal Engine 5's GameplayAbilitySystem plugin with a simple multiplayer sample project.",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/hanzo-go",
-      "route": "/docs/projects/hanzoai/hanzo-go"
+      "repoUrl": "https://github.com/hanzoai/GASDocumentation",
+      "route": "/docs/projects/hanzoai/GASDocumentation"
     },
     {
       "org": "hanzoai",
-      "repo": "hanzo-php",
-      "slug": "hanzo-php",
-      "name": "Hanzo Php",
-      "description": "Hanzo PHP SDK.",
+      "repo": "GASShooter",
+      "slug": "GASShooter",
+      "name": "GASShooter",
+      "description": "Advanced FPS/TPS Sample Project for Unreal Engine 4's GameplayAbilitySystem plugin",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/hanzo-php",
-      "route": "/docs/projects/hanzoai/hanzo-php"
+      "repoUrl": "https://github.com/hanzoai/GASShooter",
+      "route": "/docs/projects/hanzoai/GASShooter"
     },
     {
       "org": "hanzoai",
-      "repo": "hanzo.industries",
-      "slug": "hanzo.industries",
-      "name": "Hanzo.Industries",
+      "repo": "git",
+      "slug": "git",
+      "name": "Git",
+      "description": "Hanzo Git. Painless self-hosted all-in-one software development service, including Git hosting, code review, team collaboration, package registry and CI/CD",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/git",
+      "route": "/docs/projects/hanzoai/git"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "go-cosyvoice",
+      "slug": "go-cosyvoice",
+      "name": "Go Cosyvoice",
       "description": null,
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/hanzo.industries",
-      "route": "/docs/projects/hanzoai/hanzo.industries"
+      "repoUrl": "https://github.com/hanzoai/go-cosyvoice",
+      "route": "/docs/projects/hanzoai/go-cosyvoice"
     },
     {
       "org": "hanzoai",
-      "repo": "hanzo.network",
-      "slug": "hanzo.network",
-      "name": "Hanzo.Network",
-      "description": "Hanzo Network - Decentralized AI Compute Marketplace",
+      "repo": "go-fuse",
+      "slug": "go-fuse",
+      "name": "Go Fuse",
+      "description": "FUSE bindings for Go",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/hanzo.network",
-      "route": "/docs/projects/hanzoai/hanzo.network"
+      "repoUrl": "https://github.com/hanzoai/go-fuse",
+      "route": "/docs/projects/hanzoai/go-fuse"
     },
     {
       "org": "hanzoai",
-      "repo": "help-site",
-      "slug": "help-site",
-      "name": "Help Site",
-      "description": "Hanzo Help — Guides, docs, and support for Hanzo AI products",
+      "repo": "go-libs",
+      "slug": "go-libs",
+      "name": "Go Libs",
+      "description": "Hanzo fork of formancehq/go-libs — shared Go libraries (module github.com/hanzoai/go-libs)",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/help-site",
-      "route": "/docs/projects/hanzoai/help-site"
+      "repoUrl": "https://github.com/hanzoai/go-libs",
+      "route": "/docs/projects/hanzoai/go-libs"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "go-openai-realtime",
+      "slug": "go-openai-realtime",
+      "name": "Go Openai Realtime",
+      "description": null,
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/go-openai-realtime",
+      "route": "/docs/projects/hanzoai/go-openai-realtime"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "goa",
+      "slug": "goa",
+      "name": "Goa",
+      "description": "Pure-Go polyglot embedding: run Go, JS/TS (goja), Python (gpython), Rust/WASM (wazero) as goroutines in one static binary. Unifies Hanzo cloud services.",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/goa",
+      "route": "/docs/projects/hanzoai/goa"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "goexif",
+      "slug": "goexif",
+      "name": "Goexif",
+      "description": "EXIF decoder for Go — Hanzo fork of goexif (BSD-2-Clause). Module: github.com/hanzoai/goexif",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/goexif",
+      "route": "/docs/projects/hanzoai/goexif"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "govaluate",
+      "slug": "govaluate",
+      "name": "Govaluate",
+      "description": null,
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/govaluate",
+      "route": "/docs/projects/hanzoai/govaluate"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "ha",
+      "slug": "ha",
+      "name": "Ha",
+      "description": "Single-writer election over a live membership set (HRW/Rendezvous) — Hanzo's HA coordination primitive. No coordinator, lock service, Postgres, or Redis.",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/ha",
+      "route": "/docs/projects/hanzoai/ha"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "handlebars.js",
+      "slug": "handlebars.js",
+      "name": "Handlebars.Js",
+      "description": "Minimal templating on steroids.",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/handlebars.js",
+      "route": "/docs/projects/hanzoai/handlebars.js"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "helpdesk",
+      "slug": "helpdesk",
+      "name": "Helpdesk",
+      "description": "Hanzo Help Center — Frappe Helpdesk fork (Base/SQLite, IAM SSO). Second Frappe app proving one-Frappe-core → all-Frappe-apps.",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/helpdesk",
+      "route": "/docs/projects/hanzoai/helpdesk"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "helper",
+      "slug": "helper",
+      "name": "Helper",
+      "description": "Hanzo helper CLI: configure Claude Code, Claude Desktop, and Codex to use Hanzo AI",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/helper",
+      "route": "/docs/projects/hanzoai/helper"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "homebrew",
+      "slug": "homebrew",
+      "name": "Homebrew",
+      "description": "Hanzo unified Homebrew tap — all hanzoai formulae (brew tap hanzoai/homebrew)",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/homebrew",
+      "route": "/docs/projects/hanzoai/homebrew"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "homebrew-tap",
+      "slug": "homebrew-tap",
+      "name": "Homebrew Tap",
+      "description": "Homebrew formulae for Hanzo AI tools",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/homebrew-tap",
+      "route": "/docs/projects/hanzoai/homebrew-tap"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "husky",
+      "slug": "husky",
+      "name": "Husky",
+      "description": "Git hooks made easy 🐶 woof!",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/husky",
+      "route": "/docs/projects/hanzoai/husky"
     },
     {
       "org": "hanzoai",
       "repo": "iam",
       "slug": "iam",
       "name": "Iam",
-      "description": "Identity and access management",
+      "description": "Hanzo IAM v2 — proprietary identity service on zap-proto/zip + hanzoai/orm + hanzoai/base. Clean-room, original work.",
       "archived": false,
       "repoUrl": "https://github.com/hanzoai/iam",
       "route": "/docs/projects/hanzoai/iam"
     },
     {
       "org": "hanzoai",
-      "repo": "iam-python-sdk",
-      "slug": "iam-python-sdk",
-      "name": "Iam Python Sdk",
-      "description": "Python client SDK for Hanzo IAM",
-      "archived": false,
-      "repoUrl": "https://github.com/hanzoai/iam-python-sdk",
-      "route": "/docs/projects/hanzoai/iam-python-sdk"
-    },
-    {
-      "org": "hanzoai",
-      "repo": "id",
-      "slug": "id",
-      "name": "Id",
-      "description": "Hosted login pages for Hanzo IAM - configurable per organization",
-      "archived": false,
-      "repoUrl": "https://github.com/hanzoai/id",
-      "route": "/docs/projects/hanzoai/id"
-    },
-    {
-      "org": "hanzoai",
-      "repo": "id-static",
-      "slug": "id-static",
-      "name": "Id Static",
-      "description": "Static HTML login page with PKCE — zero deps, publishable key only, deploy anywhere",
-      "archived": false,
-      "repoUrl": "https://github.com/hanzoai/id-static",
-      "route": "/docs/projects/hanzoai/id-static"
-    },
-    {
-      "org": "hanzoai",
-      "repo": "ide-extension",
-      "slug": "ide-extension",
-      "name": "Ide Extension",
-      "description": "DEPRECATED — moved to hanzoai/extension (packages/vscode/ + packages/jetbrains/)",
+      "repo": "iam-v1",
+      "slug": "iam-v1",
+      "name": "Iam V1",
+      "description": "RETIRED — superseded by the clean hanzoai/iam (zip-native + hanzoai/orm). Casdoor/Beego fork, no longer in any graph. See hanzoai/iam.",
       "archived": true,
-      "repoUrl": "https://github.com/hanzoai/ide-extension",
-      "route": "/docs/projects/hanzoai/ide-extension"
+      "repoUrl": "https://github.com/hanzoai/iam-v1",
+      "route": "/docs/projects/hanzoai/iam-v1"
     },
     {
       "org": "hanzoai",
-      "repo": "infi.clickhouse_orm",
-      "slug": "infi.clickhouse_orm",
-      "name": "Infi.Clickhouse Orm",
-      "description": "A Python library for working with the ClickHouse database (https://clickhouse.yandex/)",
+      "repo": "icons",
+      "slug": "icons",
+      "name": "Icons",
+      "description": "🥨 Lobe Icons - Brings AI/LLM brand logos to your React & React Native apps — static SVG/PNG/WebP, no dependencies.",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/infi.clickhouse_orm",
-      "route": "/docs/projects/hanzoai/infi.clickhouse_orm"
-    },
-    {
-      "org": "hanzoai",
-      "repo": "ingress",
-      "slug": "ingress",
-      "name": "Ingress",
-      "description": "Hanzo Ingress - Cloud-native reverse proxy and load balancer (Traefik fork)",
-      "archived": false,
-      "repoUrl": "https://github.com/hanzoai/ingress",
-      "route": "/docs/projects/hanzoai/ingress"
+      "repoUrl": "https://github.com/hanzoai/icons",
+      "route": "/docs/projects/hanzoai/icons"
     },
     {
       "org": "hanzoai",
       "repo": "insights",
       "slug": "insights",
       "name": "Insights",
-      "description": "Product analytics and feature flags",
+      "description": "Hanzo Insights — product analytics and feature flags.",
       "archived": false,
       "repoUrl": "https://github.com/hanzoai/insights",
       "route": "/docs/projects/hanzoai/insights"
     },
     {
       "org": "hanzoai",
-      "repo": "insights-go",
-      "slug": "insights-go",
-      "name": "Insights Go",
-      "description": "Hanzo Insights Go SDK - Go client for Hanzo Insights",
+      "repo": "insights-icons",
+      "slug": "insights-icons",
+      "name": "Insights Icons",
+      "description": "Product icon set for Hanzo Insights",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/insights-go",
-      "route": "/docs/projects/hanzoai/insights-go"
-    },
-    {
-      "org": "hanzoai",
-      "repo": "insights-js",
-      "slug": "insights-js",
-      "name": "Insights Js",
-      "description": "Hanzo Insights JS SDK — @hanzo/insights browser/node/react packages",
-      "archived": false,
-      "repoUrl": "https://github.com/hanzoai/insights-js",
-      "route": "/docs/projects/hanzoai/insights-js"
-    },
-    {
-      "org": "hanzoai",
-      "repo": "insights-node",
-      "slug": "insights-node",
-      "name": "Insights Node",
-      "description": "Hanzo Insights Node.js SDK (deprecated — use @hanzo/insights-node from hanzoai/insights-js)",
-      "archived": false,
-      "repoUrl": "https://github.com/hanzoai/insights-node",
-      "route": "/docs/projects/hanzoai/insights-node"
+      "repoUrl": "https://github.com/hanzoai/insights-icons",
+      "route": "/docs/projects/hanzoai/insights-icons"
     },
     {
       "org": "hanzoai",
       "repo": "insights-python",
       "slug": "insights-python",
       "name": "Insights Python",
-      "description": "Send usage data from your Python code to Hanzo Insights.",
+      "description": "Send usage data from your Python code to PostHog.",
       "archived": false,
       "repoUrl": "https://github.com/hanzoai/insights-python",
       "route": "/docs/projects/hanzoai/insights-python"
@@ -549,7 +999,7 @@
       "repo": "insights-rs",
       "slug": "insights-rs",
       "name": "Insights Rs",
-      "description": "Hanzo Insights Rust SDK",
+      "description": "Official PostHog Rust SDK",
       "archived": false,
       "repoUrl": "https://github.com/hanzoai/insights-rs",
       "route": "/docs/projects/hanzoai/insights-rs"
@@ -559,50 +1009,70 @@
       "repo": "java-sdk",
       "slug": "java-sdk",
       "name": "Java Sdk",
-      "description": "Hanzo AI Java SDK.",
+      "description": "Hanzo Cloud SDK for Java — the full /v1 cloud surface as a typed client (ai.hanzo:sdk). Generated from the Hanzo OpenAPI spec.",
       "archived": false,
       "repoUrl": "https://github.com/hanzoai/java-sdk",
       "route": "/docs/projects/hanzoai/java-sdk"
     },
     {
       "org": "hanzoai",
+      "repo": "jest",
+      "slug": "jest",
+      "name": "Jest",
+      "description": "Delightful JavaScript Testing.",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/jest",
+      "route": "/docs/projects/hanzoai/jest"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "jose",
+      "slug": "jose",
+      "name": "Jose",
+      "description": "JWA, JWS, JWE, JWT, JWK, JWKS for Node.js, Browser, Cloudflare Workers, Deno, Bun, and other Web-interoperable runtimes",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/jose",
+      "route": "/docs/projects/hanzoai/jose"
+    },
+    {
+      "org": "hanzoai",
       "repo": "js-sdk",
       "slug": "js-sdk",
       "name": "Js Sdk",
-      "description": "Hanzo TypeScript/JavaScript SDK",
+      "description": "Hanzo AI SDK for TypeScript/JavaScript — agents, cloud, inference.",
       "archived": false,
       "repoUrl": "https://github.com/hanzoai/js-sdk",
       "route": "/docs/projects/hanzoai/js-sdk"
     },
     {
       "org": "hanzoai",
-      "repo": "kms",
-      "slug": "kms",
-      "name": "Kms",
-      "description": "Hanzo KMS - Enterprise secrets management and encryption platform",
+      "repo": "kafka",
+      "slug": "kafka",
+      "name": "Kafka",
+      "description": "Hanzo Kafka — Kafka wire protocol gateway for Hanzo PubSub (NATS JetStream)",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/kms",
-      "route": "/docs/projects/hanzoai/kms"
+      "repoUrl": "https://github.com/hanzoai/kafka",
+      "route": "/docs/projects/hanzoai/kafka"
     },
     {
       "org": "hanzoai",
-      "repo": "kms-operator",
-      "slug": "kms-operator",
-      "name": "Kms Operator",
-      "description": "Kubernetes operator for KMS secret management",
-      "archived": false,
-      "repoUrl": "https://github.com/hanzoai/kms-operator",
-      "route": "/docs/projects/hanzoai/kms-operator"
+      "repo": "kms-v1",
+      "slug": "kms-v1",
+      "name": "Kms V1",
+      "description": "DEPRECATED — canonical KMS is luxfi/kms (ghcr.io/luxfi/kms). Archived for history; sdk/go v1.1.1 remains resolvable.",
+      "archived": true,
+      "repoUrl": "https://github.com/hanzoai/kms-v1",
+      "route": "/docs/projects/hanzoai/kms-v1"
     },
     {
       "org": "hanzoai",
-      "repo": "kotlin-sdk",
-      "slug": "kotlin-sdk",
-      "name": "Kotlin Sdk",
-      "description": "Hanzo AI Kotlin SDK.",
+      "repo": "krakend-otel",
+      "slug": "krakend-otel",
+      "name": "Krakend Otel",
+      "description": null,
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/kotlin-sdk",
-      "route": "/docs/projects/hanzoai/kotlin-sdk"
+      "repoUrl": "https://github.com/hanzoai/krakend-otel",
+      "route": "/docs/projects/hanzoai/krakend-otel"
     },
     {
       "org": "hanzoai",
@@ -616,33 +1086,23 @@
     },
     {
       "org": "hanzoai",
-      "repo": "kv-client",
-      "slug": "kv-client",
-      "name": "Kv Client",
-      "description": null,
+      "repo": "lint-staged",
+      "slug": "lint-staged",
+      "name": "Lint Staged",
+      "description": "🚫💩 — Run tasks like formatters and linters against staged git files",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/kv-client",
-      "route": "/docs/projects/hanzoai/kv-client"
+      "repoUrl": "https://github.com/hanzoai/lint-staged",
+      "route": "/docs/projects/hanzoai/lint-staged"
     },
     {
       "org": "hanzoai",
-      "repo": "kv-go",
-      "slug": "kv-go",
-      "name": "Kv Go",
-      "description": "Hanzo KV Go SDK - Go client for Hanzo KV (Redis/Valkey compatible)",
+      "repo": "mail",
+      "slug": "mail",
+      "name": "Mail",
+      "description": "Hanzo Mail. Self-hosted mail server (SMTP, IMAP, webmail, DKIM/SPF/DMARC). Fork of mjl-/mox, MIT.",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/kv-go",
-      "route": "/docs/projects/hanzoai/kv-go"
-    },
-    {
-      "org": "hanzoai",
-      "repo": "ledger",
-      "slug": "ledger",
-      "name": "Ledger",
-      "description": "Hanzo Ledger — programmable double-entry ledger for fintech",
-      "archived": false,
-      "repoUrl": "https://github.com/hanzoai/ledger",
-      "route": "/docs/projects/hanzoai/ledger"
+      "repoUrl": "https://github.com/hanzoai/mail",
+      "route": "/docs/projects/hanzoai/mail"
     },
     {
       "org": "hanzoai",
@@ -656,31 +1116,31 @@
     },
     {
       "org": "hanzoai",
-      "repo": "mcp-gateway",
-      "slug": "mcp-gateway",
-      "name": "Mcp Gateway",
-      "description": "MCP Gateway - Model Context Protocol over zero-trust networking",
+      "repo": "Megacity-2019",
+      "slug": "Megacity-2019",
+      "name": "Megacity 2019",
+      "description": "Megacity is a sample showcasing streaming a large scale environment. It also contains an action-packed, multiplayer shooter mode. It leverages the power of Netcode for Entities for an immersive, multiplayer experience that can support 64+ players simultaneously.",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/mcp-gateway",
-      "route": "/docs/projects/hanzoai/mcp-gateway"
+      "repoUrl": "https://github.com/hanzoai/Megacity-2019",
+      "route": "/docs/projects/hanzoai/Megacity-2019"
     },
     {
       "org": "hanzoai",
-      "repo": "memory",
-      "slug": "memory",
-      "name": "Memory",
-      "description": "Hanzo Memory API server for local development.",
+      "repo": "megacity-metro",
+      "slug": "megacity-metro",
+      "name": "Megacity Metro",
+      "description": "Megacity-Metro: a thrilling shooter game, using Netcode for Entities for a multiplayer experience supporting 128+ players. Latest DOTS packages and Unity Gaming Services elevate the user experience, demonstrating how to craft engaging multiplayer games.",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/memory",
-      "route": "/docs/projects/hanzoai/memory"
+      "repoUrl": "https://github.com/hanzoai/megacity-metro",
+      "route": "/docs/projects/hanzoai/megacity-metro"
     },
     {
       "org": "hanzoai",
       "repo": "metrics",
       "slug": "metrics",
       "name": "Metrics",
-      "description": "High-performance time-series metrics database",
-      "archived": false,
+      "description": "[ARCHIVED] Superseded by hanzoai/o11y — one subsystem serves metrics, logs and traces at /v1/o11y/*",
+      "archived": true,
       "repoUrl": "https://github.com/hanzoai/metrics",
       "route": "/docs/projects/hanzoai/metrics"
     },
@@ -699,90 +1159,170 @@
       "repo": "ml",
       "slug": "ml",
       "name": "Ml",
-      "description": null,
+      "description": "Hanzo ML — fast multi-backend (CPU/CUDA/Metal/ROCm/Vulkan) tensor & ML framework for Rust with quantization; the compute core of the Hanzo stack.",
       "archived": false,
       "repoUrl": "https://github.com/hanzoai/ml",
       "route": "/docs/projects/hanzoai/ml"
     },
     {
       "org": "hanzoai",
-      "repo": "mpc",
-      "slug": "mpc",
-      "name": "Mpc",
-      "description": "Hanzo MPC - Threshold Signing Service (CGGMP21, FROST, LSS)",
+      "repo": "mock",
+      "slug": "mock",
+      "name": "Mock",
+      "description": "Hanzo datastore-native mock (fork of clickhouse-go-mock) — Datastore API for hanzoai/otel-collector tests",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/mpc",
-      "route": "/docs/projects/hanzoai/mpc"
+      "repoUrl": "https://github.com/hanzoai/mock",
+      "route": "/docs/projects/hanzoai/mock"
     },
     {
       "org": "hanzoai",
-      "repo": "mq",
-      "slug": "mq",
-      "name": "Mq",
-      "description": "BullMQ - Message Queue and Batch processing for NodeJS, Python, Elixir and PHP based on Redis",
+      "repo": "money",
+      "slug": "money",
+      "name": "Money",
+      "description": "Exact money (Amount+Currency) for Go on big.Int decimal — fiat + 18-dec crypto, no ceiling",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/mq",
-      "route": "/docs/projects/hanzoai/mq"
+      "repoUrl": "https://github.com/hanzoai/money",
+      "route": "/docs/projects/hanzoai/money"
     },
     {
       "org": "hanzoai",
-      "repo": "nchain",
-      "slug": "nchain",
-      "name": "Nchain",
-      "description": "Composable blockchain node infrastructure operator — deploy and scale any blockchain on Kubernetes",
+      "repo": "mongodb-memory-server",
+      "slug": "mongodb-memory-server",
+      "name": "Mongodb Memory Server",
+      "description": "Manage & spin up mongodb server binaries with zero(or slight) configuration for tests.",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/nchain",
-      "route": "/docs/projects/hanzoai/nchain"
+      "repoUrl": "https://github.com/hanzoai/mongodb-memory-server",
+      "route": "/docs/projects/hanzoai/mongodb-memory-server"
     },
     {
       "org": "hanzoai",
-      "repo": "node",
-      "slug": "node",
-      "name": "Node",
-      "description": "Hanzo Network node for decentralized AI compute",
+      "repo": "msw",
+      "slug": "msw",
+      "name": "Msw",
+      "description": "Industry standard API mocking for JavaScript.",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/node",
-      "route": "/docs/projects/hanzoai/node"
+      "repoUrl": "https://github.com/hanzoai/msw",
+      "route": "/docs/projects/hanzoai/msw"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "next.js",
+      "slug": "next.js",
+      "name": "Next.Js",
+      "description": "The React Framework",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/next.js",
+      "route": "/docs/projects/hanzoai/next.js"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "node-dtrace-provider",
+      "slug": "node-dtrace-provider",
+      "name": "Node Dtrace Provider",
+      "description": "Native DTrace probes for node.js apps",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/node-dtrace-provider",
+      "route": "/docs/projects/hanzoai/node-dtrace-provider"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "node-jsonwebtoken",
+      "slug": "node-jsonwebtoken",
+      "name": "Node Jsonwebtoken",
+      "description": "JsonWebToken implementation for node.js http://self-issued.info/docs/draft-ietf-oauth-json-web-token.html",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/node-jsonwebtoken",
+      "route": "/docs/projects/hanzoai/node-jsonwebtoken"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "node-jwks-rsa",
+      "slug": "node-jwks-rsa",
+      "name": "Node Jwks Rsa",
+      "description": "A library to retrieve RSA public keys from a JWKS (JSON Web Key Set) endpoint.",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/node-jwks-rsa",
+      "route": "/docs/projects/hanzoai/node-jwks-rsa"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "nodejs",
+      "slug": "nodejs",
+      "name": "Nodejs",
+      "description": "Canonical Node 24 + sqlite3 base image for all Hanzo Node services",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/nodejs",
+      "route": "/docs/projects/hanzoai/nodejs"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "notify",
+      "slug": "notify",
+      "name": "Notify",
+      "description": "A dead simple Go library for sending notifications to various messaging services.",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/notify",
+      "route": "/docs/projects/hanzoai/notify"
     },
     {
       "org": "hanzoai",
       "repo": "numscript",
       "slug": "numscript",
       "name": "Numscript",
-      "description": "Numscript — DSL for modeling complex financial transactions",
-      "archived": false,
+      "description": "Hanzo fork of formancehq/numscript — Numscript DSL interpreter (module github.com/hanzoai/numscript)",
+      "archived": true,
       "repoUrl": "https://github.com/hanzoai/numscript",
       "route": "/docs/projects/hanzoai/numscript"
     },
     {
       "org": "hanzoai",
-      "repo": "openapi",
-      "slug": "openapi",
-      "name": "Openapi",
-      "description": "🧬 OpenAPI 3.1 definition for the Hanzo APIs.",
+      "repo": "o11y",
+      "slug": "o11y",
+      "name": "O11y",
+      "description": "Hanzo o11y — OpenTelemetry-native observability (metrics, traces, logs) for the Hanzo platform, backed by Hanzo Datastore.",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/openapi",
-      "route": "/docs/projects/hanzoai/openapi"
+      "repoUrl": "https://github.com/hanzoai/o11y",
+      "route": "/docs/projects/hanzoai/o11y"
     },
     {
       "org": "hanzoai",
-      "repo": "operative",
-      "slug": "operative",
-      "name": "Operative",
-      "description": "Autonomous computer use agent for Claude",
+      "repo": "o11y-foundry",
+      "slug": "o11y-foundry",
+      "name": "O11y Foundry",
+      "description": "Foundry is a centralized hub for SigNoz installation configurations and deployments: integrations for install. Select yours, configure, and run SigNoz.",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/operative",
-      "route": "/docs/projects/hanzoai/operative"
+      "repoUrl": "https://github.com/hanzoai/o11y-foundry",
+      "route": "/docs/projects/hanzoai/o11y-foundry"
     },
     {
       "org": "hanzoai",
-      "repo": "operator",
-      "slug": "operator",
-      "name": "Operator",
-      "description": "Kubernetes operator for Hanzo Gateway and Ingress management",
+      "repo": "open-project-1",
+      "slug": "open-project-1",
+      "name": "Open Project 1",
+      "description": "Unity Open Project #1: Chop Chop",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/operator",
-      "route": "/docs/projects/hanzoai/operator"
+      "repoUrl": "https://github.com/hanzoai/open-project-1",
+      "route": "/docs/projects/hanzoai/open-project-1"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "opencode-openai-codex-auth",
+      "slug": "opencode-openai-codex-auth",
+      "name": "Opencode Openai Codex Auth",
+      "description": "Fork of numman-ali/opencode-openai-codex-auth",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/opencode-openai-codex-auth",
+      "route": "/docs/projects/hanzoai/opencode-openai-codex-auth"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "openid-client",
+      "slug": "openid-client",
+      "name": "Openid Client",
+      "description": "OAuth 2 / OpenID Connect Client API for JavaScript Runtimes",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/openid-client",
+      "route": "/docs/projects/hanzoai/openid-client"
     },
     {
       "org": "hanzoai",
@@ -796,33 +1336,193 @@
     },
     {
       "org": "hanzoai",
-      "repo": "paas",
-      "slug": "paas",
-      "name": "Paas",
-      "description": "Hanzo Platform - Kubernetes-native CI/CD ",
+      "repo": "otel-collector",
+      "slug": "otel-collector",
+      "name": "Otel Collector",
+      "description": "Hanzo O11y Otel Collector — Hanzo's OpenTelemetry Collector distro: ZAP-native + OTLP ingest into hanzoai/datastore",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/paas",
-      "route": "/docs/projects/hanzoai/paas"
+      "repoUrl": "https://github.com/hanzoai/otel-collector",
+      "route": "/docs/projects/hanzoai/otel-collector"
     },
     {
       "org": "hanzoai",
-      "repo": "payments",
-      "slug": "payments",
-      "name": "Payments",
-      "description": "Hanzo Payments — open-source payment orchestration switch, 50+ processors, smart routing",
+      "repo": "paas-demo",
+      "slug": "paas-demo",
+      "name": "Paas Demo",
+      "description": "Demo — proves the Hanzo native PaaS: built from git by in-cluster BuildKit, calls api.hanzo.ai/v1/chat per request.",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/payments",
-      "route": "/docs/projects/hanzoai/payments"
+      "repoUrl": "https://github.com/hanzoai/paas-demo",
+      "route": "/docs/projects/hanzoai/paas-demo"
     },
     {
       "org": "hanzoai",
-      "repo": "platform",
-      "slug": "platform",
-      "name": "Platform",
-      "description": "PaaS platform for deploying AI applications",
+      "repo": "pack",
+      "slug": "pack",
+      "name": "Pack",
+      "description": "Zero-config BuildKit gateway frontend for the Hanzo build fabric",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/platform",
-      "route": "/docs/projects/hanzoai/platform"
+      "repoUrl": "https://github.com/hanzoai/pack",
+      "route": "/docs/projects/hanzoai/pack"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "passport",
+      "slug": "passport",
+      "name": "Passport",
+      "description": "Simple, unobtrusive authentication for Node.js.",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/passport",
+      "route": "/docs/projects/hanzoai/passport"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "passport-apple",
+      "slug": "passport-apple",
+      "name": "Passport Apple",
+      "description": "Passport strategy for Sign in with Apple",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/passport-apple",
+      "route": "/docs/projects/hanzoai/passport-apple"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "passport-discord",
+      "slug": "passport-discord",
+      "name": "Passport Discord",
+      "description": "Passport strategy for authentication with Discord (discordapp.com)",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/passport-discord",
+      "route": "/docs/projects/hanzoai/passport-discord"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "passport-facebook",
+      "slug": "passport-facebook",
+      "name": "Passport Facebook",
+      "description": "Facebook authentication strategy for Passport and Node.js.",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/passport-facebook",
+      "route": "/docs/projects/hanzoai/passport-facebook"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "passport-github",
+      "slug": "passport-github",
+      "name": "Passport Github",
+      "description": "GitHub authentication strategy for Passport and Node.js.",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/passport-github",
+      "route": "/docs/projects/hanzoai/passport-github"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "passport-google-oauth2",
+      "slug": "passport-google-oauth2",
+      "name": "Passport Google Oauth2",
+      "description": "Google authentication strategy for Passport and Node.js.",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/passport-google-oauth2",
+      "route": "/docs/projects/hanzoai/passport-google-oauth2"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "passport-jwt",
+      "slug": "passport-jwt",
+      "name": "Passport Jwt",
+      "description": "Passport authentication using JSON Web Tokens",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/passport-jwt",
+      "route": "/docs/projects/hanzoai/passport-jwt"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "passport-ldapauth",
+      "slug": "passport-ldapauth",
+      "name": "Passport Ldapauth",
+      "description": "LDAP authentication strategy for Passport",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/passport-ldapauth",
+      "route": "/docs/projects/hanzoai/passport-ldapauth"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "passport-local",
+      "slug": "passport-local",
+      "name": "Passport Local",
+      "description": "Username and password authentication strategy for Passport and Node.js.",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/passport-local",
+      "route": "/docs/projects/hanzoai/passport-local"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "passport-saml",
+      "slug": "passport-saml",
+      "name": "Passport Saml",
+      "description": "SAML 2.0 authentication with Passport",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/passport-saml",
+      "route": "/docs/projects/hanzoai/passport-saml"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "playwright",
+      "slug": "playwright",
+      "name": "Playwright",
+      "description": "Playwright is a framework for Web Testing and Automation. It allows testing Chromium, Firefox and WebKit with a single API. ",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/playwright",
+      "route": "/docs/projects/hanzoai/playwright"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "postcss",
+      "slug": "postcss",
+      "name": "Postcss",
+      "description": "Transforming styles with JS plugins",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/postcss",
+      "route": "/docs/projects/hanzoai/postcss"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "prettier",
+      "slug": "prettier",
+      "name": "Prettier",
+      "description": "Prettier is an opinionated code formatter.",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/prettier",
+      "route": "/docs/projects/hanzoai/prettier"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "ProjectTinySamples",
+      "slug": "ProjectTinySamples",
+      "name": "ProjectTinySamples",
+      "description": "Samples for Project Tiny",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/ProjectTinySamples",
+      "route": "/docs/projects/hanzoai/ProjectTinySamples"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "protobuf.js",
+      "slug": "protobuf.js",
+      "name": "Protobuf.Js",
+      "description": "Protocol Buffers for JavaScript and TypeScript. Fast, conformant, and versatile. No protoc required.",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/protobuf.js",
+      "route": "/docs/projects/hanzoai/protobuf.js"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "psrpc",
+      "slug": "psrpc",
+      "name": "Psrpc",
+      "description": "PSRPC for Hanzo LiveKit — fork of livekit/psrpc retargeted at github.com/hanzokv/go",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/psrpc",
+      "route": "/docs/projects/hanzoai/psrpc"
     },
     {
       "org": "hanzoai",
@@ -846,143 +1546,213 @@
     },
     {
       "org": "hanzoai",
-      "repo": "pymssql",
-      "slug": "pymssql",
-      "name": "Pymssql",
-      "description": "Official home for the pymssql source code.",
+      "repo": "puppeteer",
+      "slug": "puppeteer",
+      "name": "Puppeteer",
+      "description": "JavaScript API for Chrome and Firefox",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/pymssql",
-      "route": "/docs/projects/hanzoai/pymssql"
+      "repoUrl": "https://github.com/hanzoai/puppeteer",
+      "route": "/docs/projects/hanzoai/puppeteer"
     },
     {
       "org": "hanzoai",
       "repo": "python-sdk",
       "slug": "python-sdk",
       "name": "Python Sdk",
-      "description": "Hanzo Python SDK — LLM gateway, agents, and AI cloud",
+      "description": "Hanzo AI SDK for Python — the complete toolkit: agents, MCP tools, memory, inference, network, cloud, IAM/KMS. Hanzo's most complete SDK.",
       "archived": false,
       "repoUrl": "https://github.com/hanzoai/python-sdk",
       "route": "/docs/projects/hanzoai/python-sdk"
     },
     {
       "org": "hanzoai",
-      "repo": "queues",
-      "slug": "queues",
-      "name": "Queues",
-      "description": "High-throughput distributed work queues",
+      "repo": "quickjs-emscripten",
+      "slug": "quickjs-emscripten",
+      "name": "Quickjs Emscripten",
+      "description": "Safely execute untrusted Javascript in your Javascript, and execute synchronous code that uses async functions",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/queues",
-      "route": "/docs/projects/hanzoai/queues"
+      "repoUrl": "https://github.com/hanzoai/quickjs-emscripten",
+      "route": "/docs/projects/hanzoai/quickjs-emscripten"
     },
     {
       "org": "hanzoai",
-      "repo": "reconciliation",
-      "slug": "reconciliation",
-      "name": "Reconciliation",
-      "description": "Hanzo Reconciliation — auto-match ledger transactions against payment provider data",
+      "repo": "react",
+      "slug": "react",
+      "name": "React",
+      "description": "The library for web and native user interfaces.",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/reconciliation",
-      "route": "/docs/projects/hanzoai/reconciliation"
+      "repoUrl": "https://github.com/hanzoai/react",
+      "route": "/docs/projects/hanzoai/react"
     },
     {
       "org": "hanzoai",
-      "repo": "registry",
-      "slug": "registry",
-      "name": "Registry",
-      "description": "Docker container registry with Hanzo IAM token authentication",
+      "repo": "RedRunner",
+      "slug": "RedRunner",
+      "name": "RedRunner",
+      "description": "Red Runner, Awesome Platformer Game.",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/registry",
-      "route": "/docs/projects/hanzoai/registry"
+      "repoUrl": "https://github.com/hanzoai/RedRunner",
+      "route": "/docs/projects/hanzoai/RedRunner"
     },
     {
       "org": "hanzoai",
-      "repo": "remove-refusals",
-      "slug": "remove-refusals",
-      "name": "Remove Refusals",
-      "description": "Implements harmful/harmless refusal removal using pure HF Transformers",
+      "repo": "research",
+      "slug": "research",
+      "name": "Research",
+      "description": "Hanzo Research SDK (Go) — zero-config /v1/research self-logging client: structure runs as falsifiable tests (hypothesis → verdict), byte-compatible with the Python/Rust/C++ SDKs, universal open kinds",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/remove-refusals",
-      "route": "/docs/projects/hanzoai/remove-refusals"
+      "repoUrl": "https://github.com/hanzoai/research",
+      "route": "/docs/projects/hanzoai/research"
     },
     {
       "org": "hanzoai",
-      "repo": "rrweb",
-      "slug": "rrweb",
-      "name": "Rrweb",
-      "description": "a complete copy of rrweb allowing us to vary CI",
+      "repo": "ROCm",
+      "slug": "ROCm",
+      "name": "ROCm",
+      "description": "Hanzo downstream of AMD ROCm (MIT), manifest pinned to rocm-7.2.0 for gfx builds",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/rrweb",
-      "route": "/docs/projects/hanzoai/rrweb"
+      "repoUrl": "https://github.com/hanzoai/ROCm",
+      "route": "/docs/projects/hanzoai/ROCm"
     },
     {
       "org": "hanzoai",
-      "repo": "ruby-sdk",
-      "slug": "ruby-sdk",
-      "name": "Ruby Sdk",
-      "description": "Hanzo AI Ruby SDK.",
+      "repo": "rocm-rs",
+      "slug": "rocm-rs",
+      "name": "Rocm Rs",
+      "description": "Hanzo fork of rocm-rs — cross-platform (Linux + Windows/MSVC) ROCm bindings for gfx1151: portable enum/status types, edition-2024 unsafe blocks, gated amdgcn GPU-sort kernel.",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/ruby-sdk",
-      "route": "/docs/projects/hanzoai/ruby-sdk"
+      "repoUrl": "https://github.com/hanzoai/rocm-rs",
+      "route": "/docs/projects/hanzoai/rocm-rs"
     },
     {
       "org": "hanzoai",
-      "repo": "rust-sdk",
-      "slug": "rust-sdk",
-      "name": "Rust Sdk",
-      "description": "Hanzo Rust SDK with crypto and DID support",
+      "repo": "runtime",
+      "slug": "runtime",
+      "name": "Runtime",
+      "description": null,
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/rust-sdk",
-      "route": "/docs/projects/hanzoai/rust-sdk"
+      "repoUrl": "https://github.com/hanzoai/runtime",
+      "route": "/docs/projects/hanzoai/runtime"
     },
     {
       "org": "hanzoai",
       "repo": "s3",
       "slug": "s3",
       "name": "S3",
-      "description": "Hanzo Space — S3-compatible object storage for AI infrastructure",
+      "description": "Hanzo S3 — S3-compatible distributed object storage",
       "archived": false,
       "repoUrl": "https://github.com/hanzoai/s3",
       "route": "/docs/projects/hanzoai/s3"
     },
     {
       "org": "hanzoai",
-      "repo": "search",
-      "slug": "search",
-      "name": "Search",
-      "description": "AI-powered search with generative UI",
+      "repo": "s3-cli",
+      "slug": "s3-cli",
+      "name": "S3 Cli",
+      "description": "Hanzo S3-compatible storage CLI",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/search",
-      "route": "/docs/projects/hanzoai/search"
+      "repoUrl": "https://github.com/hanzoai/s3-cli",
+      "route": "/docs/projects/hanzoai/s3-cli"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "s3-csi",
+      "slug": "s3-csi",
+      "name": "S3 Csi",
+      "description": "ZAP-native CSI driver for the Hanzo filer (hanzoai/s3). No protobuf.",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/s3-csi",
+      "route": "/docs/projects/hanzoai/s3-csi"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "s3-go",
+      "slug": "s3-go",
+      "name": "S3 Go",
+      "description": "Hanzo S3 Go client — S3-compatible storage SDK",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/s3-go",
+      "route": "/docs/projects/hanzoai/s3-go"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "scarf-js",
+      "slug": "scarf-js",
+      "name": "Scarf Js",
+      "description": "Installation analytics for your npm package",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/scarf-js",
+      "route": "/docs/projects/hanzoai/scarf-js"
     },
     {
       "org": "hanzoai",
       "repo": "search-go",
       "slug": "search-go",
       "name": "Search Go",
-      "description": "Hanzo Search Go SDK - Go client for Hanzo Search (Meilisearch)",
+      "description": "Go client for Hanzo Index.",
       "archived": false,
       "repoUrl": "https://github.com/hanzoai/search-go",
       "route": "/docs/projects/hanzoai/search-go"
     },
     {
       "org": "hanzoai",
-      "repo": "sign",
-      "slug": "sign",
-      "name": "Sign",
-      "description": "The Open Source DocuSign Alternative.",
+      "repo": "session",
+      "slug": "session",
+      "name": "Session",
+      "description": "Simple session middleware for Express",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/sign",
-      "route": "/docs/projects/hanzoai/sign"
+      "repoUrl": "https://github.com/hanzoai/session",
+      "route": "/docs/projects/hanzoai/session"
     },
     {
       "org": "hanzoai",
-      "repo": "skill",
-      "slug": "skill",
-      "name": "Skill",
-      "description": "Install and manage AI agent skills — npx @hanzo/skill add org/skills",
+      "repo": "shadcn",
+      "slug": "shadcn",
+      "name": "Shadcn",
+      "description": "The shadcn-compatible React surface extracted from @hanzo/ui. Radix behaviour, Tailwind styling, standard shadcn tokens. @hanzo/ui renders on @hanzo/gui now; this is where its shadcn components went.",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/skill",
-      "route": "/docs/projects/hanzoai/skill"
+      "repoUrl": "https://github.com/hanzoai/shadcn",
+      "route": "/docs/projects/hanzoai/shadcn"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "sharp",
+      "slug": "sharp",
+      "name": "Sharp",
+      "description": "High performance Node.js image processing, the fastest module to resize JPEG, PNG, WebP, AVIF and TIFF images. Uses the libvips library.",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/sharp",
+      "route": "/docs/projects/hanzoai/sharp"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "signoz",
+      "slug": "signoz",
+      "name": "Signoz",
+      "description": "[ARCHIVED] Duplicate fork — hanzoai/o11y is the one Hanzo SigNoz fork (6,563 commits, deployed). This held upstream SigNoz + exactly 1 Hanzo commit and 0 fleet references.",
+      "archived": true,
+      "repoUrl": "https://github.com/hanzoai/signoz",
+      "route": "/docs/projects/hanzoai/signoz"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "signoz-otel-collector",
+      "slug": "signoz-otel-collector",
+      "name": "Signoz Otel Collector",
+      "description": "SigNoz distro for OpenTelemetry Collector",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/signoz-otel-collector",
+      "route": "/docs/projects/hanzoai/signoz-otel-collector"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "social",
+      "slug": "social",
+      "name": "Social",
+      "description": "📨 Hanzo Social — agentic social media scheduling 🤖",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/social",
+      "route": "/docs/projects/hanzoai/social"
     },
     {
       "org": "hanzoai",
@@ -996,33 +1766,43 @@
     },
     {
       "org": "hanzoai",
-      "repo": "sql-vector",
-      "slug": "sql-vector",
-      "name": "Sql Vector",
-      "description": "PostgreSQL with vector extension for AI/ML workloads",
+      "repo": "sqlcipher",
+      "slug": "sqlcipher",
+      "name": "Sqlcipher",
+      "description": "Pure-Go SQLCipher 4 page format — codec, KDF, per-page HMAC. Byte-compatible with SQLCipher 4.",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/sql-vector",
-      "route": "/docs/projects/hanzoai/sql-vector"
+      "repoUrl": "https://github.com/hanzoai/sqlcipher",
+      "route": "/docs/projects/hanzoai/sqlcipher"
     },
     {
       "org": "hanzoai",
-      "repo": "status",
-      "slug": "status",
-      "name": "Status",
-      "description": "White-labelable status monitoring page",
+      "repo": "sqlite",
+      "slug": "sqlite",
+      "name": "Sqlite",
+      "description": "Hanzo SQLite",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/status",
-      "route": "/docs/projects/hanzoai/status"
+      "repoUrl": "https://github.com/hanzoai/sqlite",
+      "route": "/docs/projects/hanzoai/sqlite"
     },
     {
       "org": "hanzoai",
-      "repo": "stream",
-      "slug": "stream",
-      "name": "Stream",
-      "description": "Hanzo Kafka — Kafka wire protocol gateway for Hanzo PubSub (NATS JetStream)",
+      "repo": "sqlite-vec",
+      "slug": "sqlite-vec",
+      "name": "Sqlite Vec",
+      "description": "A vector search SQLite extension that runs anywhere!",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/stream",
-      "route": "/docs/projects/hanzoai/stream"
+      "repoUrl": "https://github.com/hanzoai/sqlite-vec",
+      "route": "/docs/projects/hanzoai/sqlite-vec"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "sqlite3",
+      "slug": "sqlite3",
+      "name": "Sqlite3",
+      "description": "Go bindings to SQLite using wasm2go",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/sqlite3",
+      "route": "/docs/projects/hanzoai/sqlite3"
     },
     {
       "org": "hanzoai",
@@ -1036,53 +1816,113 @@
     },
     {
       "org": "hanzoai",
-      "repo": "telemetry",
-      "slug": "telemetry",
-      "name": "Telemetry",
-      "description": "Unified observability collector for traces, logs, and metrics",
+      "repo": "studio-ui",
+      "slug": "studio-ui",
+      "name": "Studio Ui",
+      "description": "Hanzo Studio frontend",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/telemetry",
-      "route": "/docs/projects/hanzoai/telemetry"
+      "repoUrl": "https://github.com/hanzoai/studio-ui",
+      "route": "/docs/projects/hanzoai/studio-ui"
     },
     {
       "org": "hanzoai",
-      "repo": "telemetry-go",
-      "slug": "telemetry-go",
-      "name": "Telemetry Go",
-      "description": "Hanzo Telemetry Go SDK - OpenTelemetry Go SDK for traces/metrics/logs",
+      "repo": "svelte",
+      "slug": "svelte",
+      "name": "Svelte",
+      "description": "@hanzo/svelte — the Svelte 5 backend for Hanzo UI. Extracted from @hanzo/ui so the core library stays single-stack; same components, same tokens.",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/telemetry-go",
-      "route": "/docs/projects/hanzoai/telemetry-go"
+      "repoUrl": "https://github.com/hanzoai/svelte",
+      "route": "/docs/projects/hanzoai/svelte"
     },
     {
       "org": "hanzoai",
-      "repo": "trace-js",
-      "slug": "trace-js",
-      "name": "Trace Js",
-      "description": "🪢 trace JS/TS SDKs - Instrument your LLM app and get detailed tracing/observability. Works with any LLM or framework",
+      "repo": "swc",
+      "slug": "swc",
+      "name": "Swc",
+      "description": "Rust-based platform for the Web",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/trace-js",
-      "route": "/docs/projects/hanzoai/trace-js"
+      "repoUrl": "https://github.com/hanzoai/swc",
+      "route": "/docs/projects/hanzoai/swc"
     },
     {
       "org": "hanzoai",
-      "repo": "treasury",
-      "slug": "treasury",
-      "name": "Treasury",
-      "description": "Hanzo Treasury — programmable financial ledger, reconciliation, wallets, and payment orchestration",
+      "repo": "swift-sdk",
+      "slug": "swift-sdk",
+      "name": "Swift Sdk",
+      "description": "Hanzo Swift SDK — landing. Real code → hanzo-swift/sdk (SwiftPM, generated from the Hanzo OpenAPI spec).",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/treasury",
-      "route": "/docs/projects/hanzoai/treasury"
+      "repoUrl": "https://github.com/hanzoai/swift-sdk",
+      "route": "/docs/projects/hanzoai/swift-sdk"
     },
     {
       "org": "hanzoai",
-      "repo": "tunnel",
-      "slug": "tunnel",
-      "name": "Tunnel",
-      "description": "Secure tunnels for localhost and private services",
+      "repo": "tabs",
+      "slug": "tabs",
+      "name": "Tabs",
+      "description": "Keep tabs on your agents — a browser terminal workspace for the machines you have linked",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/tunnel",
-      "route": "/docs/projects/hanzoai/tunnel"
+      "repoUrl": "https://github.com/hanzoai/tabs",
+      "route": "/docs/projects/hanzoai/tabs"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "tailwindcss",
+      "slug": "tailwindcss",
+      "name": "Tailwindcss",
+      "description": "A utility-first CSS framework for rapid UI development.",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/tailwindcss",
+      "route": "/docs/projects/hanzoai/tailwindcss"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "tailwindcss-typography",
+      "slug": "tailwindcss-typography",
+      "name": "Tailwindcss Typography",
+      "description": "Beautiful typographic defaults for HTML you don't control.",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/tailwindcss-typography",
+      "route": "/docs/projects/hanzoai/tailwindcss-typography"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "themes",
+      "slug": "themes",
+      "name": "Themes",
+      "description": "Hanzo theme presets for coding harnesses — Claude Code, Codex, hanzo dev (native theme formats)",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/themes",
+      "route": "/docs/projects/hanzoai/themes"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "ts-node",
+      "slug": "ts-node",
+      "name": "Ts Node",
+      "description": "TypeScript execution and REPL for node.js",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/ts-node",
+      "route": "/docs/projects/hanzoai/ts-node"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "turborepo",
+      "slug": "turborepo",
+      "name": "Turborepo",
+      "description": "Build system optimized for JavaScript and TypeScript, written in Rust",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/turborepo",
+      "route": "/docs/projects/hanzoai/turborepo"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "TypeScript",
+      "slug": "TypeScript",
+      "name": "TypeScript",
+      "description": "TypeScript is a superset of JavaScript that compiles to clean JavaScript output.",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/TypeScript",
+      "route": "/docs/projects/hanzoai/TypeScript"
     },
     {
       "org": "hanzoai",
@@ -1096,53 +1936,153 @@
     },
     {
       "org": "hanzoai",
-      "repo": "vector",
-      "slug": "vector",
-      "name": "Vector",
-      "description": "High-performance vector database for AI embeddings",
+      "repo": "UIToolkitUnityRoyaleRuntimeDemo",
+      "slug": "UIToolkitUnityRoyaleRuntimeDemo",
+      "name": "UIToolkitUnityRoyaleRuntimeDemo",
+      "description": "This is a sample project to introduce the use of UI Toolkit in Runtime",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/vector",
-      "route": "/docs/projects/hanzoai/vector"
+      "repoUrl": "https://github.com/hanzoai/UIToolkitUnityRoyaleRuntimeDemo",
+      "route": "/docs/projects/hanzoai/UIToolkitUnityRoyaleRuntimeDemo"
     },
     {
       "org": "hanzoai",
-      "repo": "vector-go",
-      "slug": "vector-go",
-      "name": "Vector Go",
-      "description": "Hanzo Vector Go SDK - Go client for Hanzo Vector (Qdrant)",
+      "repo": "unrs-resolver",
+      "slug": "unrs-resolver",
+      "name": "Unrs Resolver",
+      "description": "Rust port of webpack/enhanced-resolve with PNP support",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/vector-go",
-      "route": "/docs/projects/hanzoai/vector-go"
+      "repoUrl": "https://github.com/hanzoai/unrs-resolver",
+      "route": "/docs/projects/hanzoai/unrs-resolver"
     },
     {
       "org": "hanzoai",
-      "repo": "visor",
-      "slug": "visor",
-      "name": "Visor",
-      "description": "Hanzo Visor - Cloud infrastructure and VM management",
+      "repo": "usage",
+      "slug": "usage",
+      "name": "Usage",
+      "description": "Show usage stats for OpenAI Codex and Claude Code, without having to login.",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/visor",
-      "route": "/docs/projects/hanzoai/visor"
+      "repoUrl": "https://github.com/hanzoai/usage",
+      "route": "/docs/projects/hanzoai/usage"
     },
     {
       "org": "hanzoai",
-      "repo": "zt",
-      "slug": "zt",
-      "name": "Zt",
-      "description": "Hanzo Zero Trust - controller, router, tunnel, CLI",
+      "repo": "utf-8-validate",
+      "slug": "utf-8-validate",
+      "name": "Utf 8 Validate",
+      "description": "Check if a buffer contains valid UTF-8",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/zt",
-      "route": "/docs/projects/hanzoai/zt"
+      "repoUrl": "https://github.com/hanzoai/utf-8-validate",
+      "route": "/docs/projects/hanzoai/utf-8-validate"
     },
     {
       "org": "hanzoai",
-      "repo": "zt-console",
-      "slug": "zt-console",
-      "name": "Zt Console",
-      "description": "Hanzo ZT Console - web management UI for Hanzo Zero Trust",
+      "repo": "uuid",
+      "slug": "uuid",
+      "name": "Uuid",
+      "description": "Generate RFC-compliant UUIDs in JavaScript",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/zt-console",
-      "route": "/docs/projects/hanzoai/zt-console"
+      "repoUrl": "https://github.com/hanzoai/uuid",
+      "route": "/docs/projects/hanzoai/uuid"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "vfs",
+      "slug": "vfs",
+      "name": "Vfs",
+      "description": "S3-backed virtual block filesystem with PQ encryption — unlimited write storage for stateful services",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/vfs",
+      "route": "/docs/projects/hanzoai/vfs"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "viem",
+      "slug": "viem",
+      "name": "Viem",
+      "description": "TypeScript Interface for Ethereum",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/viem",
+      "route": "/docs/projects/hanzoai/viem"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "vite",
+      "slug": "vite",
+      "name": "Vite",
+      "description": "Next generation frontend tooling. It's fast!",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/vite",
+      "route": "/docs/projects/hanzoai/vite"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "vitest",
+      "slug": "vitest",
+      "name": "Vitest",
+      "description": "Next generation testing framework powered by Vite.",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/vitest",
+      "route": "/docs/projects/hanzoai/vitest"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "wagmi",
+      "slug": "wagmi",
+      "name": "Wagmi",
+      "description": "Reactive primitives for Ethereum apps",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/wagmi",
+      "route": "/docs/projects/hanzoai/wagmi"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "workbox",
+      "slug": "workbox",
+      "name": "Workbox",
+      "description": "📦 Workbox: JavaScript libraries for Progressive Web Apps",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/workbox",
+      "route": "/docs/projects/hanzoai/workbox"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "world",
+      "slug": "world",
+      "name": "World",
+      "description": "Hanzo World — real-time global intelligence dashboard: AI-powered news, markets, geopolitical and infrastructure monitoring in one view.",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/world",
+      "route": "/docs/projects/hanzoai/world"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "xorm",
+      "slug": "xorm",
+      "name": "Xorm",
+      "description": "Hanzo xorm — a simple and powerful ORM for Go (fork of xorm, BSD-3-Clause)",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/xorm",
+      "route": "/docs/projects/hanzoai/xorm"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "zen-dub",
+      "slug": "zen-dub",
+      "name": "Zen Dub",
+      "description": "Zen Dub - Real-time high-quality lip-sync model",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/zen-dub",
+      "route": "/docs/projects/hanzoai/zen-dub"
+    },
+    {
+      "org": "hanzoai",
+      "repo": "zod",
+      "slug": "zod",
+      "name": "Zod",
+      "description": "TypeScript-first schema validation with static type inference",
+      "archived": false,
+      "repoUrl": "https://github.com/hanzoai/zod",
+      "route": "/docs/projects/hanzoai/zod"
     }
   ]
 }
