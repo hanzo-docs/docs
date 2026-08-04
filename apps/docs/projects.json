@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-04T07:51:31.252Z",
+  "generatedAt": "2026-08-04T08:21:21.883Z",
   "orgs": [
     "hanzoai"
   ],
@@ -953,16 +953,6 @@
       "archived": true,
       "repoUrl": "https://github.com/hanzoai/iam-v1",
       "route": "/docs/projects/hanzoai/iam-v1"
-    },
-    {
-      "org": "hanzoai",
-      "repo": "icons",
-      "slug": "icons",
-      "name": "Icons",
-      "description": "🥨 Lobe Icons - Brings AI/LLM brand logos to your React & React Native apps — static SVG/PNG/WebP, no dependencies.",
-      "archived": false,
-      "repoUrl": "https://github.com/hanzoai/icons",
-      "route": "/docs/projects/hanzoai/icons"
     },
     {
       "org": "hanzoai",
