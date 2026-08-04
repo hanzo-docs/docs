@@ -9,7 +9,7 @@ import {
 } from '@/ui/components/accordion';
 import { Tab, Tabs } from '@hanzo/docs-base-ui/components/tabs';
 import { sample } from 'openapi-sampler';
-import type { ReactNode } from 'react';
+import { useMemo, type ReactNode } from 'react';
 import { I18nLabel } from '@/ui/client/i18n';
 
 export interface ResponseTab {
