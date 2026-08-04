@@ -41,7 +41,6 @@
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "shadcn": "^4.8.2",
-    "tailwindcss": "^4.3.0",
     "tsconfig": "workspace:*",
     "tsdown": "0.22.0"
   },
