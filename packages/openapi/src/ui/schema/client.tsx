@@ -28,7 +28,7 @@ import {
   CollapsibleTrigger,
 } from '@hanzo/docs-ui/components/ui/collapsible';
 import { buttonVariants } from '@hanzo/docs-ui/components/ui/button';
-import { ChevronDown, FilterIcon } from 'lucide-react';
+import { CheckIcon, ChevronDown, FilterIcon, LinkIcon } from 'lucide-react';
 import { Badge } from '@/ui/components/method-label';
 import { Popover, PopoverContent, PopoverTrigger } from '@hanzo/docs-ui/components/ui/popover';
 import { cn } from '@/utils/cn';

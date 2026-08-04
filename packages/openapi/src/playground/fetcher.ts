@@ -85,7 +85,7 @@ export function createBrowserFetcher(
           return {
             status: 400,
             type: 'text',
-            data: `[Hanzo Docs] No adapter for ${options.bodyMediaType}, you need to specify one from 'createOpenAPI()'.`,
+            data: `[Hanzo Docs] No adapter for ${data.bodyMediaType}, you need to specify one from 'createOpenAPI()'.`,
           };
 
         if (data.bodyMediaType !== 'multipart/form-data') {
