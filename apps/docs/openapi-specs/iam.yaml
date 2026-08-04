@@ -1524,8 +1524,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/object.Webhook'
-      security:
-      - test_apiKey: []
       summary: Api Controller Get Webhooks
   /v1/iam/enforce/batch:
     post:

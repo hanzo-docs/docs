@@ -112,10 +112,20 @@ export function parseSecurities(
   const security = method.security ?? dereferenced.security ?? [];
   if (security.length === 0) return result;
 
+  // A requirement may name a scheme the document never declares — invalid
+  // OpenAPI, but real: iam.yaml requires `test_apiKey` and declares only
+  // `BearerAuth`. Every consumer of this list reads `schemes[entry.id]`
+  // without checking, so one such name used to be a TypeError that took the
+  // whole site's export down. Drop the entry here, once, and the requirement
+  // with it if that empties it.
+  const declared = dereferenced.components?.securitySchemes ?? {};
+
   for (const map of security) {
     const list: SecurityEntry[] = [];
 
     for (const [key, scopes] of Object.entries(map)) {
+      if (!(key in declared)) continue;
+
       list.push({
         id: key,
         scopes,
