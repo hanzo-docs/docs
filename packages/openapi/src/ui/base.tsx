@@ -2,6 +2,11 @@
 import Slugger from 'github-slugger';
 import type { Awaitable, MethodInformation, RenderContext } from '@/types';
 import { parseSecurities, type NoReference } from '@/utils/schema';
+import { pickSchema } from '@/utils/schema/pick';
+import { encodeInternalRef } from '@/utils/schema/ref';
+import { compile } from '@fumari/json-schema-ts';
+import type { ExampleRequestItem } from '@/ui/operation/get-example-requests';
+import type { RequestTabsRenderContext } from '@/ui/operation/request-tabs';
 import type { DereferencedDocument } from '@/utils/document/dereference';
 import { defaultAdapters, MediaAdapter } from '@/requests/media/adapter';
 import type { FC, HTMLAttributes, ReactNode } from 'react';
@@ -243,10 +248,6 @@ export function createAPIPage(
       .use(rehypeReact);
   }
 
-  function renderPlaygroundProviderDefault({ children }: { children: ReactNode }) {
-    return <PlaygroundAuthProvider>{children}</PlaygroundAuthProvider>;
-  }
-
   function renderPlaygroundDefault({ path, method, ctx }: APIPlaygroundProps) {
     return (
       <ctx.clientBoundary.PlaygroundClient
@@ -271,14 +272,29 @@ export function createAPIPage(
     }
 
     const slugger = new Slugger();
-    const { ApiProvider, PlaygroundClient, SchemaUI, ServerProvider, UsageTab, UsageTabsSelector } =
-      await import('@/ui/client/boundary.lazy');
+    const {
+      ApiProvider,
+      PlaygroundAuthProvider,
+      PlaygroundClient,
+      SchemaUI,
+      ServerProvider,
+      UsageTab,
+      UsageTabsSelector,
+    } = await import('@/ui/client/boundary.lazy');
+
+    // Defined here, where the boundary is in scope. This is a server module:
+    // it reaches client components only through the lazy boundary, the same
+    // way `renderPlaygroundDefault` reaches `PlaygroundClient`.
+    const renderPlaygroundProviderDefault = ({ children }: { children: ReactNode }) => (
+      <PlaygroundAuthProvider>{children}</PlaygroundAuthProvider>
+    );
 
     const ctx: RenderContext = {
       schema: processed,
       proxyUrl: server.options.proxyUrl,
       clientBoundary: {
         ApiProvider,
+        PlaygroundAuthProvider,
         PlaygroundClient,
         SchemaUI,
         ServerProvider,
