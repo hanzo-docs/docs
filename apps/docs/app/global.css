@@ -189,13 +189,6 @@ footer[data-hanzo-shell] {
   background: var(--color-neutral-950) !important;
 }
 
-/* The shell's column headings are 45% white, which cleared AA only on the blue
-   ground and only just (4.52:1). On a neutral one they land at 4.48:1, so they
-   move up with it — a heading should not be fainter than the links under it. */
-footer[data-hanzo-shell] nav > div:first-child {
-  color: rgb(255 255 255 / 0.7) !important;
-}
-
 @keyframes circuit_1 {
   0% {
     transform: translateY(-20px);

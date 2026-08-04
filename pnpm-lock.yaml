@@ -651,8 +651,8 @@ importers:
         specifier: ^1.0.5
         version: 1.0.5(react@19.2.8)
       '@hanzogui/shell':
-        specifier: ^7.6.3
-        version: 7.6.3(@hanzo/iam@0.21.6(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: ^8.0.5
+        version: 8.0.5(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@llmgateway/ai-sdk-provider':
         specifier: ^3.8.0
         version: 3.8.0(ai@6.0.191(zod@4.4.3))(zod@4.4.3)
@@ -7716,10 +7716,9 @@ packages:
     resolution: {integrity: sha512-UcqqwnYNTTP8hnOQsV985XZhkkOetKxBWZti245T5M2PY0iUtQaPH2VTcOCRYmhjl/c9ZIq5Jj8OHW93SIs2cA==}
     deprecated: moved to @hanzoteam/workbench
 
-  '@hanzogui/shell@7.6.3':
-    resolution: {integrity: sha512-fcMO119cWRz2fnAzMFU1tCdT552brKDVmOJjcdz1bEZWcqGMHrxoob+1d23YnMeB2EEgZZcq/EqUCaL1hfYn2g==}
+  '@hanzogui/shell@8.0.5':
+    resolution: {integrity: sha512-WcB2qto/2cvjgj2qWspxJAj3vYyiuawzE/dGS+jvXXgL0pF2NeKlujL6/Ov0PrTVFGck7okx9katCpuGyl0kxQ==}
     peerDependencies:
-      '@hanzo/iam': ^0.13.1
       react: '*'
       react-dom: '*'
 
@@ -22037,9 +22036,8 @@ snapshots:
       '@hanzo/ui': 0.6.21
       '@hanzo/view': 0.6.18
 
-  '@hanzogui/shell@7.6.3(@hanzo/iam@0.21.6(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@hanzogui/shell@8.0.5(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
-      '@hanzo/iam': 0.21.6(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
 

@@ -33,7 +33,7 @@
     "@hanzo/docs-ui": "workspace:*",
     "@hanzo/iam": "^0.21.6",
     "@hanzo/logo": "^1.0.5",
-    "@hanzogui/shell": "^7.6.3",
+    "@hanzogui/shell": "^8.0.5",
     "@llmgateway/ai-sdk-provider": "^3.8.0",
     "@openrouter/ai-sdk-provider": "^2.9.0",
     "@orama/core": "^1.2.19",

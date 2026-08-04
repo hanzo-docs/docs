@@ -51,7 +51,7 @@ export function baseOptions(): BaseLayoutProps {
               the wordmark, so without it the header is ambiguous the moment a reader
               arrives from search. It sits at the wordmark and not in the nav row
               because it is an identity, not a destination. */}
-          <span className="max-md:hidden rounded border border-fd-border px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-fd-muted-foreground">
+          <span className="max-md:hidden rounded border border-fd-border px-1.5 py-0.5 text-[11px] font-medium text-fd-muted-foreground">
             Docs
           </span>
         </>
