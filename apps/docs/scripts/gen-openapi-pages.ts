@@ -137,8 +137,13 @@ export async function genOpenapiPages(): Promise<void> {
 
     const L: string[] = [];
     L.push('---');
-    L.push(`title: ${title}`);
-    L.push(`description: ${JSON.stringify(lead || `REST API reference for ${title}.`).slice(1, -1)}`);
+    // Quoted scalars. `JSON.stringify(...).slice(1, -1)` used to drop the
+    // quotes and leave the escapes, which turned any description containing
+    // ": " into a second mapping entry — the frontmatter then failed to parse
+    // and the page lost its title and description both. JSON string syntax is
+    // valid YAML double-quoted syntax, so keeping the quotes is the whole fix.
+    L.push(`title: ${JSON.stringify(title)}`);
+    L.push(`description: ${JSON.stringify(lead || `REST API reference for ${title}.`)}`);
     L.push('---');
     L.push('');
     if (lead) L.push(lead);

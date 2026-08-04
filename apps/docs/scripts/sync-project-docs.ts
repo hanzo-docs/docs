@@ -561,7 +561,7 @@ function buildOrgIndex(org: string, projects: RepoRecord[]) {
     .map((project) => `- [${project.name}](${project.route})${project.archived ? ' (archived)' : ''}`)
     .join('\n');
 
-  return `---\ntitle: ${escapeYaml(org)}\ndescription: Projects in the ${escapeYaml(org)} organization.\n---\n\n# ${org}\n\n${lines || 'No projects found.'}`;
+  return `---\ntitle: ${escapeYaml(org)}\ndescription: ${escapeYaml(`Projects in the ${org} organization.`)}\n---\n\n# ${org}\n\n${lines || 'No projects found.'}`;
 }
 
 function writeJson(filePath: string, data: unknown, dryRun: boolean) {
@@ -575,6 +575,15 @@ function humanize(input: string) {
     .replace(/\b\w/g, (value) => value.toUpperCase());
 }
 
+// Emit a YAML scalar, quotes included.
+//
+// The previous form wrote `\:` into an UNQUOTED scalar. YAML has no backslash
+// escapes outside double quotes, so `description: Archived\: Langflow fork`
+// still parses `Archived\` as a mapping key — the frontmatter block fails to
+// parse and the loader falls back to defaults, dropping the title AND the
+// description for that page. A single-quoted scalar is literal end to end, so
+// `:`, `#`, emoji and leading indicators all survive; the only escape it needs
+// is a doubled `'`.
 function escapeYaml(input: string) {
-  return input.replace(/:/g, '\\:');
+  return `'${input.replace(/'/g, "''")}'`;
 }
