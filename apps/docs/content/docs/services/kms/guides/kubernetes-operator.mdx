@@ -24,7 +24,6 @@ Before we begin, make sure your environment is ready
     - Ensure you have access to a running cluster and connect with kubectl
 3. PostgreSQL Cluster (for KMSDynamicSecret)
     - Ensure you have a running database that you have access to
-4. Clone [kms-guides-source-code](https://github.com/hanzoai/kms/kms-guides-source-code) repository
 5. Access to a Hanzo KMS instance (cloud or self-hosted)
 
 ## Step-By-Step Guide
@@ -74,10 +73,10 @@ The operator uses a [Machine Identity](https://kms.hanzo.ai/docs/documentation/p
   </Step>
   <Step title="Set Up RBAC, Service Accounts, and Create Tokens">
 
-Now we will be interacting with the local repository you cloned earlier. Make sure you are in the directory that contains the yaml configurations. Assuming you are in your root user directory: 
+The manifests for this step are given in full below. Create a working directory for them and make sure you are in it before running the `kubectl apply` commands:
 
 ```console 
-cd kms-guides-source-code/kubernetes-operator-demo
+mkdir -p kubernetes-operator-demo && cd kubernetes-operator-demo
 ```
 
 1. Create the ```kms-token-reviewer``` service account. This Manifest creates a **service account** that the Hanzo KMS Operator uses to authenticate with Kubernetes for token reviews. It allows Hanzo KMS to validate Kubernetes tokens securely during the Machine Identity authentication process. 

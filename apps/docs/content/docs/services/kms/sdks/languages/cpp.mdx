@@ -6,6 +6,10 @@ icon: "/images/sdks/languages/cpp.svg"
 
 If you're working with C++, the official Hanzo KMS C++ SDK package is the easiest way to fetch and work with secrets for your application.
 
+<Warning>
+  The C++ SDK is not published yet — there is no repository for CMake to fetch, so the `FetchContent_Declare` below cannot resolve as written. This page documents the intended interface. Until the library ships, call the [KMS API](/docs/services/kms) directly with cURL, which is what the SDK wraps.
+</Warning>
+
 ## Compatible with C++ 17 and later
 The Hanzo KMS C++ SDK is compatible with C++ 17 capable compilers. This implies GCC 8 or newer, and clang 3.8 or newer. Earlier versions of C++ are unsupported.
 
@@ -30,7 +34,7 @@ include(FetchContent)
 
 FetchContent_Declare(
   kms
-  GIT_REPOSITORY https://github.com/hanzoai/kms/kms-cpp-sdk.git
+  GIT_REPOSITORY <url-of-the-C++-SDK-once-published>
   GIT_TAG 1.0.0 # Replace with the desired version
 )
 
@@ -58,7 +62,7 @@ make
 
 Below you'll find an example that uses the Hanzo KMS SDK to fetch a secret with the key `API_KEY` using [Machine Identity Universal Auth](https://kms.hanzo.ai/docs/documentation/platform/identities/universal-auth)
 
-More examples can be found in the [/examples](https://github.com/hanzoai/kms/kms-cpp-sdk/tree/main/examples) folder.
+More examples can be found in the `examples/` folder of the SDK source tree.
 
 ```cpp
 #include <iostream>

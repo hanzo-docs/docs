@@ -15,7 +15,7 @@ Hanzo KMS is the key management service for the Hanzo platform. It stores secret
 | **API prefix** | `/v1/kms` |
 | **Auth** | Machine-identity login → bearer JWT (verified against [Hanzo IAM](/docs/services/iam)) |
 | **K8s sync** | `KMSSecret` CRD via the kms-operator |
-| **Source** | [github.com/hanzoai/kms](https://github.com/hanzoai/kms) |
+| **Source** | [github.com/luxfi/kms](https://github.com/luxfi/kms) — embedded in-process in the Hanzo cloud binary |
 
 <Callout>
 Hanzo KMS exposes a single surface under `/v1/kms`. Secrets are addressed by **org / path / name** with the environment as a query parameter. There is no plaintext-secret-in-config anywhere — workloads authenticate with a machine identity and read values at runtime.

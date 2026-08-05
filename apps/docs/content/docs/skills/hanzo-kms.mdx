@@ -17,7 +17,8 @@ Hanzo KMS is the **centralized secret management platform** for the Hanzo ecosys
 
 ### Implementation
 
-TypeScript/Node.js backend. Repo: `hanzoai/kms`. Implements nine Vault-style
+Go backend. The server is [`luxfi/kms`](https://github.com/luxfi/kms), embedded
+in-process in the unified Hanzo cloud binary. It implements nine Vault-style
 subsystems, so a team already fluent in HashiCorp Vault concepts will find the
 same primitives here.
 
@@ -55,10 +56,10 @@ same primitives here.
 | API | `https://kms.hanzo.ai/api/v1` |
 | Auth | Universal Auth (client ID + secret) |
 | K8s CRD | `KMSSecret` |
-| Go SDK | `github.com/hanzoai/kms-go-sdk` |
+| Go SDK | `github.com/hanzoai/kms/sdk/go` |
 | Node SDK | `@hanzo/kms-node-sdk` |
 | Python SDK | `hanzo-kms` (pip) |
-| Repo | `github.com/hanzoai/kms` |
+| Repo | `github.com/luxfi/kms` |
 
 ## One-file quickstart
 
@@ -80,7 +81,7 @@ curl -s https://kms.hanzo.ai/api/v1/secrets \
 ### Go SDK
 
 ```go
-import kms "github.com/hanzoai/kms-go-sdk"
+import kms "github.com/hanzoai/kms/sdk/go"
 
 client := kms.NewClient(kms.Config{
     SiteURL:      "https://kms.hanzo.ai",

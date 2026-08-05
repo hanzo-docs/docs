@@ -1,5 +1,13 @@
 ---
 title: "Apache Airflow"
 description: "Learn how to use Hanzo KMS as your custom secrets backend in Apache Airflow."
-url: "https://github.com/hanzoai/kms/airflow-provider-kms?tab=readme-ov-file#airflow-kms-provider"
 ---
+
+Airflow resolves connections and variables through a pluggable secrets backend. Hanzo KMS can serve that role, but **Hanzo does not publish an Airflow provider package** — there is no `airflow-provider-kms` to install.
+
+Until one ships, wire Airflow to KMS one of two ways:
+
+- **Custom secrets backend** — subclass `airflow.secrets.BaseSecretsBackend` and implement `get_conn_value` / `get_variable` on top of the [Python SDK](/sdks/languages/python). Point `AIRFLOW__SECRETS__BACKEND` at your class.
+- **Inject at start-up** — fetch the secrets your DAGs need with the [KMS CLI](/cli/overview) and hand them to the scheduler and workers as environment variables. This keeps Airflow itself unaware of KMS.
+
+Both approaches authenticate with a [machine identity](/documentation/platform/identities/machine-identities).

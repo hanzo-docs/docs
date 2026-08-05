@@ -1,5 +1,14 @@
 ---
 title: "Kubernetes Encryption with KMS"
 sidebarTitle: "Kubernetes Encryption"
-url: "https://github.com/hanzoai/kms/k8-kms-plugin"
+description: "How Hanzo KMS relates to encrypting Kubernetes Secrets at rest."
 ---
+
+Kubernetes can encrypt `Secret` objects at rest by delegating envelope encryption to an external provider over the KMS v2 socket. **Hanzo does not publish a Kubernetes KMS provider plugin**, so KMS is not wired into the API server's `EncryptionConfiguration`.
+
+What Hanzo KMS does instead is remove the reason to keep long-lived secrets in etcd at all:
+
+- **`KMSSecret` CRD** — the kms-operator reconciles a namespaced `KMSSecret` into a native `Secret`, pulling the value from KMS and refreshing it on rotation. See [Kubernetes integration](/integrations/platforms/kubernetes/overview).
+- **Read at run time** — workloads authenticate with a [machine identity](/documentation/platform/identities/machine-identities) and read values directly over the KMS API, so nothing is persisted to the cluster.
+
+Secrets held in KMS are encrypted at rest under a per-organization root key regardless of how the cluster is configured.

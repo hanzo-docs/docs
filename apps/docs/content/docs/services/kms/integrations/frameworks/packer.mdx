@@ -5,6 +5,10 @@ description: "Learn how to fetch secrets from Hanzo KMS with Packer using a data
 
 This guide demonstrates how to use the Hanzo KMS Packer plugin to fetch secret data using a data source. The Packer plugin supports both [Hanzo KMS Cloud](https://app.kms.hanzo.ai) and [self-hosted instances of Hanzo KMS](https://kms.hanzo.ai/docs/self-hosting/overview).
 
+<Warning>
+  Hanzo does not currently publish a Packer plugin, so `packer init` cannot resolve the source below. This page documents the intended configuration; until the plugin ships, fetch secrets in a shell provisioner using the [KMS CLI](/cli/overview) or a direct call to the [KMS API](/docs/services/kms).
+</Warning>
+
 ## Prerequisites
 
 Before you begin, make sure you have:
@@ -87,9 +91,8 @@ build {
 }
 ```
 
-The `local.secrets` object maps secret keys to [secret objects](https://github.com/hanzoai/kms/packer-plugin-kms/blob/main/docs/datasources/secrets.md#secret-object).
+The `local.secrets` object maps secret keys to secret objects, each carrying the secret's key and value.
 
 See also:
-- [Packer Plugin Repository Example](https://github.com/hanzoai/kms/packer-plugin-kms/blob/main/example/build.pkr.hcl)
-- [Packer Plugin Repository Docs](https://github.com/hanzoai/kms/packer-plugin-kms/tree/main/docs)
+- [KMS CLI](/cli/overview) - fetch secrets from a shell provisioner today
 - [Machine Identity setup guide](/documentation/platform/identities/machine-identities)

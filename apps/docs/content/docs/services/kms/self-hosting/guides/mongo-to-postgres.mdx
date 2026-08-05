@@ -3,8 +3,11 @@ title: "Migrate Mongo to Postgres"
 description: "Learn how to migrate Hanzo KMS from MongoDB to PostgreSQL."
 ---
 
-This guide will provide step by step instructions on migrating your Hanzo KMS instance running on MongoDB to the newly released PostgreSQL version of Hanzo KMS.
-The newly released Postgres version of Hanzo KMS is the only version of Hanzo KMS that will receive feature updates and patches going forward. 
+This guide will provide step by step instructions on migrating your Hanzo KMS instance running on MongoDB to the PostgreSQL version of Hanzo KMS.
+
+<Warning>
+  This guide applies only to the legacy Node.js KMS deployment, which is archived at [hanzoai/kms-v1](https://github.com/hanzoai/kms-v1). Current Hanzo KMS is the Go server [luxfi/kms](https://github.com/luxfi/kms) and never used MongoDB — if you are running it, no migration applies. The migration script and the `backend/` tree referenced below live only in the archived repository.
+</Warning>
 
 <Tip>
   If you have a small set of secrets, we recommend you to download the secrets and upload them to your new instance of Hanzo KMS instead of running the migration script.
@@ -101,10 +104,10 @@ By having a running local instance of the production database, we will significa
 Once started, the migration script will transform MongoDB data into an equivalent PostgreSQL format.
 
 <Steps>
-  <Step title="Clone Hanzo KMS Repository">
-    Clone the Hanzo KMS MongoDB repository.
+  <Step title="Clone the archived Hanzo KMS repository">
+    The migration script ships in the archived v1 repository. Clone it, then check out the last MongoDB-capable release tag.
     ```
-    git clone -b kms/v0.46.11-postgres https://github.com/hanzoai/kms/kms.git
+    git clone https://github.com/hanzoai/kms-v1.git
     ```
   </Step>
   <Step title="Install dependencies for backend">

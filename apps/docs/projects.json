@@ -581,7 +581,7 @@
       "name": "Kms",
       "description": "Hanzo KMS - Enterprise secrets management and encryption platform",
       "archived": false,
-      "repoUrl": "https://github.com/hanzoai/kms",
+      "repoUrl": "https://github.com/luxfi/kms",
       "route": "/docs/projects/hanzoai/kms"
     },
     {

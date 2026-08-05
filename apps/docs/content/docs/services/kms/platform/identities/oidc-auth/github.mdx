@@ -129,7 +129,7 @@ In the following steps, we explore how to create and use identities to access th
 
         - Using `getIDToken()` from the Github Actions toolkit.
 
-        Below is an example of how a Github workflow can be configured to fetch secrets from Hanzo KMS using the [KMS Secrets Action](https://github.com/hanzoai/kms/secrets-action) with OIDC Auth.
+        Below is an example of how a Github workflow can be configured to fetch secrets from Hanzo KMS. Hanzo publishes no GitHub Action for this — the login and read are plain HTTPS calls in a `run:` step.
         ```yaml
         name: Manual workflow
 
@@ -143,19 +143,25 @@ In the following steps, we explore how to create and use identities to access th
             build:
                 runs-on: ubuntu-latest
                 steps:
-                    - uses: Hanzo KMS/secrets-action@v1.0.7
-                    with:
-                        method: "oidc"
-                        env-slug: "dev"
-                        project-slug: "ggggg-9-des"
-                        identity-id: "6b579c00-5c85-4b44-aabe-f8a
-        ...
+                    - name: Fetch secrets from Hanzo KMS
+                      env:
+                        KMS_CLIENT_ID: ${{ secrets.KMS_CLIENT_ID }}
+                        KMS_CLIENT_SECRET: ${{ secrets.KMS_CLIENT_SECRET }}
+                      run: |
+                        TOKEN=$(curl -sS -X POST https://api.hanzo.ai/v1/kms/auth/login \
+                          -H 'Content-Type: application/json' \
+                          -d "{\"clientId\":\"$KMS_CLIENT_ID\",\"clientSecret\":\"$KMS_CLIENT_SECRET\"}" \
+                          | jq -r .accessToken)
+                        VALUE=$(curl -sS "https://api.hanzo.ai/v1/kms/orgs/my-org/secrets/MY_SECRET?env=dev" \
+                          -H "Authorization: Bearer $TOKEN" | jq -r .secret.value)
+                        echo "::add-mask::$VALUE"
+                        echo "MY_SECRET=$VALUE" >> "$GITHUB_ENV"
         ```
 
         Preceding steps can then use the secret values injected onto the workflow's environment.
 
         <Tip>
-            We recommend using [KMS Secrets Action](https://github.com/hanzoai/kms/secrets-action) to authenticate with Hanzo KMS using OIDC Auth as it handles the authentication process including the fetching of identity tokens for you.
+            The login call returns a short-lived access token. Mask each fetched value with `::add-mask::` before writing it to `$GITHUB_ENV` so it is redacted from the workflow logs.
         </Tip>
 
         <Note>

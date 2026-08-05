@@ -65,7 +65,7 @@ With two nodes, the failure of a single node can result in a loss of quorum and 
 
 ## Docker Deployment Stack Overview
 
-The [Docker stack file](https://github.com/hanzoai/kms/kms/tree/main/docker-swarm) used in this guide defines the services and their configurations for deploying Hanzo KMS in a highly available manner. The main components of this stack are as follows.
+The Docker stack file used in this guide defines the services and their configurations for deploying Hanzo KMS in a highly available manner. Hanzo does not publish a ready-made Swarm bundle — build the stack from the single-node [`compose.yml`](https://github.com/luxfi/kms/blob/main/compose.yml) in the KMS repository and add the HA pieces described below. The main components of this stack are as follows.
 
 1. **HAProxy**: The HAProxy service is configured to expose ports for accessing PostgreSQL (5433 for the master, 5434 for replicas), Redis master (6379), and the Hanzo KMS backend (8080). It uses a config file (`haproxy.cfg`) to define the load balancing and health check rules.
 
@@ -126,9 +126,11 @@ The [Docker stack file](https://github.com/hanzoai/kms/kms/tree/main/docker-swar
 
   <Step title="Copy deployment assets to manager node">
   Copy the Docker stack YAML file, HAProxy configuration file and example `.env` file to the manager node. Ensure that all 3 files are placed in the same file directory.
-  - [Docker stack file](https://github.com/hanzoai/kms/kms/blob/main/docker-swarm/stack.yaml) (rename to kms-stack.yaml)
-  - [HA configuration file](https://github.com/hanzoai/kms/kms/blob/main/docker-swarm/haproxy.cfg) (rename to haproxy.cfg)
-  - [Example .env file](https://github.com/hanzoai/kms/kms/blob/main/docker-swarm/.env-example) (rename to .env)
+
+  Hanzo does not publish these three assets as a downloadable bundle — author them from the components listed above:
+  - `kms-stack.yaml` — the service definitions, derived from [`compose.yml`](https://github.com/luxfi/kms/blob/main/compose.yml) plus the etcd and replica services described in the stack overview
+  - `haproxy.cfg` — the load-balancing and health-check rules for PostgreSQL (5433/5434), Redis (6379) and the KMS backend (8080)
+  - `.env` — the settings enumerated in [`config.yaml`](https://github.com/luxfi/kms/blob/main/config.yaml)
   </Step>
 
   <Step title="Deploy stack">

@@ -10,7 +10,11 @@ description: "How to inject secrets from Hanzo KMS into GitHub Actions workflows
 
 ## Concept
 
-The [KMS Secrets Action](https://github.com/hanzoai/kms/secrets-action) enables GitHub Actions workflows to fetch secrets from Hanzo KMS at runtime using [OpenID Connect (OIDC)](/documentation/platform/identities/oidc-auth/github) authentication with [machine identities](/documentation/platform/identities/machine-identities).
+GitHub Actions workflows fetch secrets from Hanzo KMS at runtime by authenticating a [machine identity](/documentation/platform/identities/machine-identities) against the KMS auth endpoint and reading the values they need over HTTPS.
+
+<Note>
+  Hanzo does not publish a GitHub Action for this. The KMS API is a plain HTTPS surface, so a `run:` step with `curl` is the whole integration — there is no action to install, pin, or keep up to date.
+</Note>
 
 Instead of storing long-lived credentials in GitHub Secrets, workflows authenticate to Hanzo KMS using short-lived OIDC tokens issued by GitHub. This eliminates the need for static API keys or tokens while providing fine-grained access control based on repository, workflow, and execution context.
 
@@ -51,7 +55,7 @@ sequenceDiagram
 ```
 
 <Note>
-  In GitHub Actions, the [KMS Secrets Action](https://github.com/hanzoai/kms/secrets-action) handles steps 1-2 and 5, automatically fetching secrets after authentication and injecting them as environment variables into your workflow.
+  In GitHub Actions, a single `run:` step handles steps 1-2 and 5 — logging in, fetching the secrets, and writing them into `$GITHUB_ENV` for the rest of the job.
 </Note>
 
 ## Workflow
@@ -60,7 +64,7 @@ A typical workflow for using Hanzo KMS with GitHub Actions consists of the follo
 
 1. Create a [machine identity](/documentation/platform/identities/machine-identities) in Hanzo KMS with OIDC authentication configured for your GitHub repository and workflow context.
 2. Add the machine identity to your Hanzo KMS project with appropriate permissions to access the required secrets.
-3. Configure your GitHub Actions workflow to use the [KMS Secrets Action](https://github.com/hanzoai/kms/secrets-action) with OIDC authentication.
+3. Configure your GitHub Actions workflow to log in to Hanzo KMS and fetch the secrets it needs.
 4. The workflow authenticates using GitHub's OIDC token, fetches secrets from Hanzo KMS, and exposes them as environment variables for the duration of the job.
 
 ## How It Works
@@ -73,7 +77,7 @@ At a high level, the flow looks like this:
    When a workflow starts, GitHub issues a short-lived OIDC token containing identity claims about the repository, workflow, and execution context.
 
 2. **Workflow Presents Its Identity**  
-   The [KMS Secrets Action](https://github.com/hanzoai/kms/secrets-action) sends this token to Hanzo KMS as proof of the workflow’s identity.
+   The workflow sends this token to Hanzo KMS as proof of its identity.
 
 3. **Hanzo KMS Verifies Trust**  
    Hanzo KMS validates the token signature using GitHub’s OIDC provider and checks the token’s subject, audience, and claims against the configured [machine identity](/documentation/platform/identities/machine-identities).
@@ -195,12 +199,23 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Fetch secrets from Hanzo KMS
-        uses: Hanzo KMS/secrets-action@v1.0.9
-        with:
-          method: "oidc"
-          identity-id: "your-identity-id-here"  # From Step 4
-          project-slug: "your-project-slug"      # Your Hanzo KMS project slug
-          env-slug: "dev"                        # Your environment slug
+        env:
+          KMS_CLIENT_ID: ${{ secrets.KMS_CLIENT_ID }}
+          KMS_CLIENT_SECRET: ${{ secrets.KMS_CLIENT_SECRET }}
+          KMS_ORG: your-org-slug
+          KMS_ENV: dev
+        run: |
+          TOKEN=$(curl -sS -X POST https://api.hanzo.ai/v1/kms/auth/login \
+            -H 'Content-Type: application/json' \
+            -d "{\"clientId\":\"$KMS_CLIENT_ID\",\"clientSecret\":\"$KMS_CLIENT_SECRET\"}" \
+            | jq -r .accessToken)
+
+          for NAME in DOCKER_USERNAME DOCKER_PASSWORD; do
+            VALUE=$(curl -sS "https://api.hanzo.ai/v1/kms/orgs/$KMS_ORG/secrets/$NAME?env=$KMS_ENV" \
+              -H "Authorization: Bearer $TOKEN" | jq -r .secret.value)
+            echo "::add-mask::$VALUE"
+            echo "$NAME=$VALUE" >> "$GITHUB_ENV"
+          done
 
       - name: Login to Docker Registry
         run: |
@@ -216,27 +231,25 @@ jobs:
 
 **Permissions Block**: The `id-token: write` permission is **required** for OIDC authentication. Without it, GitHub won't issue an OIDC token for the workflow run.
 
-**KMS Secrets Action**: The [KMS Secrets Action](https://github.com/hanzoai/kms/secrets-action) step handles:
+**Fetch step**: The `Fetch secrets from Hanzo KMS` step handles:
 - Requesting the OIDC token from GitHub
 - Authenticating with Hanzo KMS using OIDC
 - Fetching secrets for the specified project and environment
 - Injecting secrets as environment variables
 
-**Action Parameters**:
-- `method: "oidc"` - Specifies OIDC authentication
-- `identity-id` - The machine identity ID from Hanzo KMS (safe to commit)
-- `project-slug` - Your Hanzo KMS project slug (found in project settings)
-- `env-slug` - The environment to fetch secrets from (e.g., `dev`, `staging`, `prod`)
+**Step inputs**:
+- `KMS_CLIENT_ID` / `KMS_CLIENT_SECRET` - The machine identity's credentials, stored as GitHub repository secrets. These are the only two values GitHub needs to hold; everything else is read from KMS at run time.
+- `KMS_ORG` - Your organization slug. It must match the `owner` claim on the token, so it is a public identifier and safe to commit.
+- `KMS_ENV` - The environment to fetch secrets from (e.g., `dev`, `staging`, `prod`).
 
 <Note>
-This workflow uses OIDC authentication with short-lived tokens. The `identity-id` is a public identifier that can be safely committed to your repository. 
-Authentication occurs at runtime using GitHub's OIDC token, eliminating the need to store long-lived credentials.
+The login call returns a short-lived access token that lives only for the duration of the job. `::add-mask::` registers each fetched value with the runner so it is redacted from the logs before it reaches `$GITHUB_ENV`.
 </Note>
 
 
 ### Using Secrets in Workflows
 
-After the KMS Secrets Action completes, secrets are available as environment variables for subsequent steps in the job. Reference them using standard environment variable syntax:
+After the fetch step completes, secrets are available as environment variables for subsequent steps in the job. Reference them using standard environment variable syntax:
 
 ```yaml
 - name: Run tests with database connection
@@ -259,8 +272,8 @@ If authentication fails, check:
 2. **Subject Match**: Verify the Subject in your machine identity matches the repository and context
 3. **Audience Match**: Confirm the Audience matches your GitHub organization
 4. **Identity Scope**: Ensure the identity has access to the project and environment you're requesting
-5. **Project Slug**: Verify the `project-slug` matches your Hanzo KMS project slug exactly. You can find this in your project settings.
-6. **Environment Slug**: Confirm the `env-slug` matches the exact environment name in Hanzo KMS (e.g., `dev`, `staging`, `prod`). Environment slugs are case-sensitive and must match exactly.
+5. **Org Slug**: Verify `KMS_ORG` matches the `owner` claim on the machine identity's token exactly. A token can only read secrets under its own org.
+6. **Environment**: Confirm `KMS_ENV` matches the exact environment name in Hanzo KMS (e.g., `dev`, `staging`, `prod`). Environments are case-sensitive and must match exactly. Omitting `env` silently reads the `default` environment.
 
 ### Debugging OIDC Tokens
 
@@ -285,4 +298,4 @@ If you prefer to **push secrets from Hanzo KMS to GitHub** (one-way sync), use [
 - [OIDC Auth for GitHub Actions](/documentation/platform/identities/oidc-auth/github) - Detailed OIDC configuration guide
 - [Machine Identities Overview](/documentation/platform/identities/machine-identities) - Understanding machine identities
 - [GitHub Secret Syncs](../secret-syncs/github) - Syncing secrets to GitHub
-- [KMS Secrets Action](https://github.com/hanzoai/kms/secrets-action) - Official GitHub Action repository
+- [Hanzo KMS API reference](/docs/services/kms) - Auth and secret-read endpoints used above
