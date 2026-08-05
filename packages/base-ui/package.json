@@ -130,6 +130,7 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",
+    "shared": "workspace:*",
     "@hanzo/docs-tailwind": "workspace:*",
     "class-variance-authority": "^0.7.1",
     "lucide-react": "^1.17.0",

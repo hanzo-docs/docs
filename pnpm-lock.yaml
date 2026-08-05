@@ -3811,6 +3811,9 @@ importers:
       scroll-into-view-if-needed:
         specifier: ^3.1.0
         version: 3.1.0
+      shared:
+        specifier: workspace:*
+        version: link:../shared
       shiki:
         specifier: ^4.1.0
         version: 4.1.0
@@ -5215,6 +5218,9 @@ importers:
       scroll-into-view-if-needed:
         specifier: ^3.1.0
         version: 3.1.0
+      shared:
+        specifier: workspace:*
+        version: link:../shared
       shiki:
         specifier: ^4.1.0
         version: 4.1.0
