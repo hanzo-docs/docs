@@ -47,6 +47,42 @@ if [ ! -f "$PIN_FILE" ]; then
 fi
 PIN="$(tr -d '[:space:]' < "$PIN_FILE")"
 
+# THE PIN MUST NOT TRAIL, and nothing else asks.
+#
+# Every source below yields the pinned revision, so a stale pin is invisible
+# here by construction: the fetch succeeds, the snapshot matches, the build is
+# green, and docs.hanzo.ai describes a release that shipped weeks ago. The pin
+# went 27 commits and one whole architecture behind that way — hanzoai/openapi
+# replaced a hand-merged union with a derivation from cloud's own emission, and
+# the reference kept rendering ~170 operations no binary answers for.
+#
+# hanzoai/openapi lives on git.hanzo.ai. The pinned fetch below still names
+# raw.githubusercontent.com, which 404s for every caller since the repo left
+# GitHub, so that path is dead and this check is deliberately NOT pointed at it.
+#
+# NO VERDICT when the remote cannot be reached — not a failure. The forge is
+# private and a builder without a key is the normal case, and a gate that fails
+# on someone else's outage (or on an ordinary contributor's laptop) is a gate
+# somebody switches off. It only speaks when it actually knows.
+UPSTREAM=ssh://git@git.hanzo.ai/hanzoai/openapi.git
+# `|| true` is load-bearing: this file runs under `set -euo pipefail`, so an
+# unreachable forge makes the pipeline non-zero and the ASSIGNMENT itself kills
+# the script — exit 128, before the empty-answer branch below can say anything.
+# Measured: the no-verdict path failed the build outright, which is the one
+# outcome the design forbids.
+head="$(GIT_TERMINAL_PROMPT=0 \
+        GIT_SSH_COMMAND='ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=accept-new' \
+        git ls-remote "$UPSTREAM" main 2>/dev/null | cut -f1 || true)"
+if [ -z "$head" ]; then
+  echo "[openapi] $UPSTREAM did not answer — no verdict on whether ${PIN:0:9} is current"
+elif [ "$head" != "$PIN" ]; then
+  echo "[openapi] ERROR: hanzo.pin is ${PIN:0:9}; hanzoai/openapi main is ${head:0:9}." >&2
+  echo "[openapi]        Every API page would describe an older release than the one deployed." >&2
+  echo "[openapi]        Fix: printf '%s\\n' $head > $PIN_FILE" >&2
+  echo "[openapi]        then refresh the snapshot beside it so the two cannot disagree." >&2
+  exit 1
+fi
+
 TOKEN="${GITHUB_TOKEN:-${GH_TOKEN:-}}"
 if [ -z "$TOKEN" ] && command -v gh >/dev/null 2>&1; then
   TOKEN="$(gh auth token 2>/dev/null || true)"
