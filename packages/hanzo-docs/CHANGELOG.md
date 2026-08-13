@@ -1,5 +1,12 @@
 # @hanzo/docs
 
+## 16.4.5
+
+### Patch Changes
+
+- Updated dependencies [a85e19f]
+  - @hanzo/docs-mdx@15.1.0
+
 ## 16.4.2
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @hanzo/docs-create-app-versions
 
+## 16.0.120
+
+### Patch Changes
+
+- Updated dependencies [a85e19f]
+  - @hanzo/docs-mdx@15.1.0
+
 ## 16.0.80
 
 ### Patch Changes
