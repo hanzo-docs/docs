@@ -1,6 +1,6 @@
 ---
 title: Observability
-description: Health checks, metrics, alerts, logs, and service maps via ClickHouse, Loki, and Grafana.
+description: Health checks, metrics, alerts, logs, and service maps via Datastore, Loki, and Grafana.
 ---
 
 Native observability for all blockchain infrastructure using the same stack as Hanzo console.
@@ -9,10 +9,10 @@ Native observability for all blockchain infrastructure using the same stack as H
 
 | Component | Backend | Purpose |
 |-----------|---------|---------|
-| Traces | OTEL Collector → ClickHouse | Distributed tracing |
-| Metrics | ClickHouse `api_usage` table | RPS, latency percentiles, error rate |
+| Traces | OTEL Collector → Datastore | Distributed tracing |
+| Metrics | Datastore `api_usage` table | RPS, latency percentiles, error rate |
 | Logs | Loki + Promtail | Container log aggregation with LogQL |
-| Dashboards | Grafana + ClickHouse plugin | Visual monitoring |
+| Dashboards | Grafana + Datastore plugin | Visual monitoring |
 | Alerts | PrometheusRule CRDs | Threshold-based alerting |
 
 ## Endpoints
