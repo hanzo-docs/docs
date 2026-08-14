@@ -24,7 +24,7 @@ This guide configures Hanzo IAM as the authorization server for an MCP server: a
 
 The Agent category with MCP type optimizes the application for programmatic access and enables custom scope configuration.
 
-**Reference**: See [Application Categories](../application/categories.md) for more details on Agent vs Default applications.
+**Reference**: See [Application Categories](../application/categories) for more details on Agent vs Default applications.
 
 ### Step 2: Configure Redirect URIs
 
@@ -273,7 +273,7 @@ When a client sends a request with a Bearer token, your server must validate it 
 5. **Check the `exp` claim** to ensure the token hasn't expired
 6. **Extract scopes** from the `scope` claim (space-separated string)
 
-See [Third-party Integration](./third-party-integration.md) for complete code examples in Python, Node.js, and Go.
+See [Third-party Integration](./third-party-integration) for complete code examples in Python, Node.js, and Go.
 
 ### Step 4: Enforce Scopes in Tool Handlers
 
