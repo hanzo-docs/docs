@@ -4,10 +4,12 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-// `octokit` is lazy-imported inside createOctokit() so bun doesn't try
-// to resolve the @octokit/plugin-retry pnpm symlink at top-level when
-// the sync step is disabled (HANZO_DOCS_SYNC=0). The build pre-step
-// short-circuits before createOctokit() runs in that case.
+// Refreshes the committed snapshot under content/docs/projects/ from each org
+// repo's own docs. It is NOT part of the build: run `pnpm --filter docs
+// sync:projects`, read the diff, commit it. What ships is what a person read.
+//
+// `octokit` is lazy-imported inside createOctokit() so bun only resolves the
+// @octokit/plugin-retry pnpm symlink when a sync actually runs.
 type Octokit = any;
 
 const SCRIPT_PATH = fileURLToPath(import.meta.url);
@@ -164,9 +166,8 @@ function ensureDir(dir: string, dryRun: boolean) {
 
 async function createOctokit(): Promise<Octokit> {
   const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || process.env.GH_PAT;
-  // Dynamic import so the octokit dep tree only loads when the sync
-  // step is actually running. Avoids a bun-vs-pnpm-symlink ENOENT at
-  // top-level import time during local builds with HANZO_DOCS_SYNC=0.
+  // Dynamic import so the octokit dep tree only loads on a real sync. Avoids a
+  // bun-vs-pnpm-symlink ENOENT at top-level import time.
   const { Octokit } = await import('octokit');
   return new Octokit({ auth: token || undefined });
 }
@@ -404,7 +405,7 @@ async function fetchDocsFromRemote({
 function writeFallbackDocs(destDir: string, org: string, repo: { name: string; description: string | null; html_url: string }, dryRun: boolean) {
   const title = humanize(repo.name);
   const description = repo.description ?? `Documentation for ${title}.`;
-  const content = `---\ntitle: ${escapeYaml(title)}\ndescription: ${escapeYaml(description)}\n---\n\n# ${title}\n\nDocs are not available yet for this project.\n\n- Repository: ${repo.html_url}\n- Org: ${org}\n\nIf this repo has docs in a non-standard location, add a \`hanzo.docs.json\` file with \`docsPath\` in the repo root.`;
+  const content = `---\ntitle: ${yaml(title)}\ndescription: ${yaml(description)}\n---\n\n# ${title}\n\nDocs are not available yet for this project.\n\n- Repository: ${repo.html_url}\n- Org: ${org}\n\nIf this repo has docs in a non-standard location, add a \`hanzo.docs.json\` file with \`docsPath\` in the repo root.`;
 
   if (dryRun) return;
   fs.mkdirSync(destDir, { recursive: true });
@@ -430,7 +431,7 @@ function ensureBaseMeta(destDir: string, repoName: string, description: string |
   const indexPath = path.join(destDir, 'index.mdx');
   if (!fs.existsSync(indexPath)) {
     const title = humanize(repoName);
-    const body = `---\ntitle: ${escapeYaml(title)}\ndescription: ${escapeYaml(description ?? `Documentation for ${title}.`)}\n---\n\n# ${title}\n\nDocumentation imported from repository content.`;
+    const body = `---\ntitle: ${yaml(title)}\ndescription: ${yaml(description ?? `Documentation for ${title}.`)}\n---\n\n# ${title}\n\nDocumentation imported from repository content.`;
     fs.writeFileSync(indexPath, body, 'utf8');
   }
 }
@@ -561,7 +562,7 @@ function buildOrgIndex(org: string, projects: RepoRecord[]) {
     .map((project) => `- [${project.name}](${project.route})${project.archived ? ' (archived)' : ''}`)
     .join('\n');
 
-  return `---\ntitle: ${escapeYaml(org)}\ndescription: Projects in the ${escapeYaml(org)} organization.\n---\n\n# ${org}\n\n${lines || 'No projects found.'}`;
+  return `---\ntitle: ${yaml(org)}\ndescription: ${yaml(`Projects in the ${org} organization.`)}\n---\n\n# ${org}\n\n${lines || 'No projects found.'}`;
 }
 
 function writeJson(filePath: string, data: unknown, dryRun: boolean) {
@@ -575,6 +576,13 @@ function humanize(input: string) {
     .replace(/\b\w/g, (value) => value.toUpperCase());
 }
 
-function escapeYaml(input: string) {
-  return input.replace(/:/g, '\\:');
+// A YAML double-quoted scalar. Frontmatter carries arbitrary repo descriptions —
+// colons, quotes, emoji, brackets — and the previous `\:` is not a YAML escape at
+// all: the parser rejected the mapping, the loader fell back to defaults, and the
+// page shipped with no title and no description while every check stayed green.
+function yaml(value: string) {
+  return `"${value
+    .replace(/\s*\n\s*/g, ' ')
+    .replace(/\\/g, '\\\\')
+    .replace(/"/g, '\\"')}"`;
 }

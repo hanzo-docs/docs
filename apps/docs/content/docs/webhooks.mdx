@@ -5,6 +5,8 @@ description: Deliver any platform event to your own HTTPS endpoints -- signed, r
 
 # Webhooks
 
+> **API reference** · [Webhooks →](/docs/openapi/webhooks) — every endpoint, generated from the OpenAPI spec.
+
 Webhooks push platform events to your own HTTPS endpoints as they happen. You register an endpoint, choose which event subjects it receives, and Hanzo delivers each matching event with a signed, retried POST. Every service that publishes to the platform event bus is deliverable this way -- one registry, one delivery contract, for all global events.
 
 There is one place for this: `api.hanzo.ai/v1/webhooks`. (Webhooks are a first-class resource, not nested under any single service.)

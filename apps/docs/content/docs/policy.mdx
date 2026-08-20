@@ -1,0 +1,137 @@
+---
+title: Policy and approvals
+description: Let a call wait for a person — write ordered clauses that allow, deny or hold an operation, and answer the ones that are held.
+---
+
+# Policy and approvals
+
+Some calls should not happen because a key was valid. Issuing a card, sending
+mail to a customer, buying a domain, signing something: the credential says the
+caller may act, and what is still missing is that somebody meant it.
+
+Two products answer that, and they are two halves of one idea:
+
+- **Policy** is the clauses. A tenant writes them, in order, and binds a subject
+  to one exact revision of them.
+- **Approvals** is where a held call waits. A person reads it, approves or denies
+  it, and the call that was frozen is the call that runs.
+
+> **API reference** · [Policy →](/docs/openapi/policy) — every endpoint, generated from the OpenAPI spec.
+
+> **API reference** · [Approvals →](/docs/openapi/approvals) — every endpoint, generated from the OpenAPI spec.
+
+Every address, argument and answer below lives in those two references, which are
+generated from the same declarations that serve the calls. This page is the part
+a reference cannot carry: what the two are for, and how they compose.
+
+## Three effects, and the third one is the point
+
+A clause earns an operation one of three effects — **allow**, **deny** or
+**approve** — and there is no fourth.
+
+Allow and deny are the ordinary two. **Approve** is the one that makes this
+worth having: the call does not run and does not fail. It is *held*. The API
+answers `202 Accepted` with a handle, the arguments are frozen exactly as they
+were validated, and nothing happens until a person answers.
+
+That is why an agent can be given a real credential. The dangerous half of what
+it might do is not forbidden and not trusted — it is queued.
+
+## What the caller sees
+
+A held call answers `202`, which is a success status. A client that only asks
+"did this fail?" would read a hold as a completed call and carry straight on with
+nothing in its hands.
+
+So the [TypeScript client](/docs/sdks/typescript) gives a gated call an answer
+with two shapes — **done**, which carries the value, and **held**, which carries
+the handle — and they share no field between them. A caller has to say which one
+it got before it can reach anything, so a hold cannot be read as a success by
+accident.
+
+From the handle, a caller can wait for the answer rather than poll for it; that
+is what the wait operation in the approvals reference is for.
+
+## Clauses are read, not run
+
+A clause is a pattern and an effect. The pattern is a literal operation id — the
+same token the reference, the CLI, the tools and the SDK methods all call that
+operation by — or a prefix ending in a wildcard segment. There is no expression
+language, no regular expression and no script: a clause is a fact a person can
+read out loud, and a revision does exactly what its lines say, top to bottom.
+
+Order is the only precedence. The first clause whose pattern matches decides, and
+a wildcard above a literal wins because the author put it there — nothing ranks
+patterns behind the author's back. **An operation no clause matches is denied**:
+a policy states what a subject may do, so silence is not permission.
+
+## A revision is a value
+
+Writing a policy that already exists does not edit it. It mints the next number
+and leaves every earlier revision exactly as it was, and a subject is bound to
+one **exact** revision — never to "the latest", because then publishing a
+revision would silently change what governs someone.
+
+That immutability is what makes an audit answerable. A decision names the
+revision and the line that made it, in one spelling — `mail@3#2` — that a binding
+uses, an approval freezes and a reader can go and look up months later.
+
+## Governance is opt in, and then total
+
+A subject nobody has bound is not decided here at all. They are outside this
+authority's reach, not inside an empty policy that would refuse everything.
+
+Once bound, they are governed completely — and if the revision that governs them
+cannot be read, their calls are **denied**, because "governed by something I
+cannot read" is not permission.
+
+## Approving is a human act
+
+Two refusals make an approval an approval, and neither of them is a clause a
+tenant can write:
+
+- A credential **acting for** somebody may read the queue and may wait on it. It
+  may not answer it.
+- Whoever raised a hold may not be the one who clears it. One refusal for both,
+  so it holds for an operator and for a customer alike.
+
+An approval that can be granted by whoever wanted it is not an approval.
+
+## What is frozen, and what a person reads
+
+The hold keeps the operation: who asked, what was asked for, the arguments as the
+API validated them, and the digest they hashed to. Approving replays *those*
+arguments — the ones the approver read — and there is nowhere in the approve call
+to send a different set. Exactly once: a second approve reads the first one's
+answer and runs nothing.
+
+The arguments themselves are not part of any answer. A person reads a redacted
+brief instead: the field names, the values needed to judge, and a
+[KMS](/docs/services/kms) path where a credential would be. A secret is never a
+value in a hold — a hold whose arguments carry one is refused rather than written
+down.
+
+## Who decides who
+
+Policy decides **what may run**. It does not decide who you are, mint anything,
+hold a session, or know a scope vocabulary of its own — that is
+[IAM](/docs/iam)'s job alone, and policy reads the tenant, subject and actor IAM
+minted.
+
+Nor is it [Authz](/docs/authz), which is the other question and the older one:
+authz asks whether a subject may act on a **resource** and answers allow or deny.
+Policy asks whether a subject may run an **operation**, and can answer *hold*.
+
+## Every surface, from one declaration
+
+An operation is declared once, next to the code that serves it, and the REST
+route, the OpenAPI entry, the tool the MCP door answers to, the CLI subcommand
+and the method in every SDK are all projections of that one declaration. So each
+entry in the two references above prints its own operation id, its SDK method
+and — where the CLI and the door already carry it — the command and the tool
+name, all resolved from that id rather than typed on this page.
+
+Which is also why a clause's pattern is an operation id: the name a clause is
+written against is the name the API publishes, so a clause and an operation cannot
+drift apart.
+
