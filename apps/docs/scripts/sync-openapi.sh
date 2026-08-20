@@ -71,16 +71,26 @@ fi
 # and installing that silently rebuilt the whole reference from an older release
 # while `.spec-lock` still claimed the pinned one. So it is digest-checked like
 # any other source, and a mismatch falls through to the committed snapshot.
-SIBLING="$APP_DIR/../../../cloud/openapi.yaml"
-if [ -f "$SIBLING" ]; then
-  got="$(sha256sum "$SIBLING" | cut -d' ' -f1)"
+#
+# There is more than one place a checkout of cloud lands — beside this repo, or in
+# the org folder next door — and naming only one of them made this lane DEAD
+# rather than absent: the named path held a checkout with no `openapi.yaml` at
+# all, so every offline build fell through to the snapshot and said nothing. The
+# lane therefore looks in each and lets the DIGEST decide, which is the only
+# question that was ever being asked. A path is not a source of truth here; the
+# lock is.
+for sibling in \
+  "$APP_DIR/../../../cloud/openapi.yaml" \
+  "$APP_DIR/../../../../hanzo-inc/cloud/openapi.yaml"; do
+  [ -f "$sibling" ] || continue
+  got="$(sha256sum "$sibling" | cut -d' ' -f1)"
   if [ -z "$WANT" ] || [ "$got" = "$WANT" ]; then
-    install -m 0644 "$SIBLING" "$DOCUMENT"
+    install -m 0644 "$sibling" "$DOCUMENT"
     echo "[openapi] using the sibling hanzoai/cloud checkout ($(wc -c < "$DOCUMENT") bytes) @ $REF"
     exit 0
   fi
-  echo "[openapi] the sibling checkout is not at $REF ($got) — keeping the committed snapshot"
-fi
+  echo "[openapi] $sibling is not at $REF ($got)"
+done
 
 if [ -f "$DOCUMENT" ]; then
   echo "[openapi] building from the committed snapshot @ $REF"

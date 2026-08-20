@@ -12,6 +12,7 @@
     "pricing",
     "embeddings",
     "agents",
+    "policy",
     "prompts",
     "[SquareTerminal][CLI](/docs/services/platform/getting-started/cli)",
     "sdks",

@@ -14,8 +14,10 @@
 # Built by the platform-native fabric (POST /v1/runner → buildkit Job with this
 # repo as the git context) and deployed as the docs-landing Service CR at
 # docs.hanzo.ai. Mirrors the pnpm recipe the retired GitHub workflow ran:
-# NEXT_EXPORT=1 (output:'export'), HANZO_DOCS_SYNC=0 (committed project-docs +
-# openapi snapshots — the in-cluster re-sync is incomplete by design).
+# NEXT_EXPORT=1 (output:'export'). Ported project docs and the openapi specs are
+# committed snapshots that the build reads and never refetches, here or anywhere
+# — this stage used to say so with HANZO_DOCS_SYNC=0, which meant the image and
+# a person's `pnpm --filter docs build` compiled different sites.
 # build:pre runs `bun ./scripts/*.ts` (gen-services-nav, pre-build). node:alpine has
 # no bun, so the build stage produced an empty export → an empty /public → 404s.
 # Bring the musl bun binary in from the official image.
@@ -48,7 +50,6 @@ COPY --from=pruner /src/out/full/ ./
 # and the export gate below runs one. Copied explicitly so the gate still holds.
 COPY --from=pruner /src/scripts/ ./scripts/
 ENV NEXT_EXPORT=1 \
-    HANZO_DOCS_SYNC=0 \
     NEXT_TELEMETRY_DISABLED=1 \
     NODE_OPTIONS=--max-old-space-size=24576
 ARG APP=docs

@@ -5,7 +5,7 @@ import { parse as parseYaml } from 'yaml';
 import { DOCUMENT, loadDocument, secretKey, type Document, type Operation } from './openapi-doc';
 import { SDKS, cli, http, mcp } from './openapi-surfaces';
 import { MCP_DOOR, loadMcpTools } from './sync-mcp-tools';
-import type { CliCommand } from './sync-cli-commands';
+import { loadCliCommands, type CliCommand } from './sync-cli-commands';
 import { fence, prose, text } from './mdx';
 
 // SIX FLOWS, FOUR SURFACES.
@@ -23,7 +23,6 @@ import { fence, prose, text } from './mdx';
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = path.resolve(SCRIPT_DIR, '..');
 const FLOWS = path.join(APP_ROOT, 'openapi-specs/flows.yaml');
-const CLI_TABLE = path.join(APP_ROOT, 'openapi-specs/cli-commands.json');
 const OUT_DIR = path.join(APP_ROOT, 'content/docs/start');
 
 /**
@@ -272,12 +271,7 @@ export async function genFlowPages(): Promise<void> {
   const doc = loadDocument(DOCUMENT);
   const flows = readFlows(FLOWS);
   const tools = loadMcpTools();
-  const table = new Map<string, CliCommand>(
-    (fs.existsSync(CLI_TABLE)
-      ? (JSON.parse(fs.readFileSync(CLI_TABLE, 'utf8')) as CliCommand[])
-      : []
-    ).map((c) => [c.key, c]),
-  );
+  const table = loadCliCommands();
 
   fs.rmSync(OUT_DIR, { recursive: true, force: true });
   fs.mkdirSync(OUT_DIR, { recursive: true });

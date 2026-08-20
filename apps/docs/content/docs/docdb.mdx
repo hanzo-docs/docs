@@ -11,15 +11,11 @@ Hanzo DocDB is a managed document database that speaks the MongoDB wire protocol
 
 Each database is a logical resource scoped to your organization and created through the control plane.
 
-```bash
-curl -X POST https://api.hanzo.ai/v1/docdb \
-  -H "Authorization: Bearer sk-..." \
-  -H "X-Org-Id: org_a1b2c3" \
-  -H "Content-Type: application/json" \
-  -d '{ "name": "app" }'
-```
-
-The response returns a MongoDB connection string (`mongodb://...`).
+Provisioning is one call, and this page does not restate it. Its address, its
+request body and the answer it returns are in the
+[Instances API reference](/docs/openapi/instances), which is generated from the
+same declaration that serves the call — so it cannot drift from what the API
+actually does, and a curl copied from here could.
 
 ## Connect
 

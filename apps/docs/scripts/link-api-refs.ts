@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { DOCUMENT, loadDocument } from './openapi-doc';
+import { guideFile } from './guide';
 
 // Cross-link the human guides to their API reference (the other half of the
 // bidirectional link — gen-openapi-pages.ts links reference -> guide). For every
@@ -9,8 +10,19 @@ import { DOCUMENT, loadDocument } from './openapi-doc';
 // "API reference" callout near the top of the guide.
 //
 // Source-derived (iterates THE DOCUMENT, not a hardcoded list) and idempotent,
-// so it is safe to re-run. It edits committed guide MDX in place — run it,
-// review, commit.
+// so it is safe to re-run. It edits committed guide MDX in place.
+//
+// IT RUNS IN THE BUILD, which is the only way the link can be trusted. It used
+// to be a script a person remembered to run: not in package.json, not in
+// pre-build, referenced from nowhere in the repo. So the reference→guide half of
+// the link was generated on every build and the guide→reference half was
+// whatever somebody last swept by hand, and only one of the two could be stale.
+// Both halves are now the same pass over the same document, so a product that
+// arrives, moves or leaves changes both in the same build.
+//
+// Where a product's guide lives is scripts/guide.ts's question — the same
+// resolver the reference pages link DOWN through, so the two directions cannot
+// disagree about which page is the guide.
 //
 // RECONCILES, not appends. It used to only ever add, which meant a callout
 // outlived the product it pointed at: when `db` was renamed `sql` the generated
@@ -23,28 +35,6 @@ import { DOCUMENT, loadDocument } from './openapi-doc';
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = path.resolve(SCRIPT_DIR, '..');
 const CONTENT = path.join(APP_ROOT, 'content/docs');
-
-// Products whose guide lives at a top-level page rather than /docs/services/<svc>.
-const GUIDE_FILE_OVERRIDES: Record<string, string> = {
-  ai: 'llm.mdx',
-  app: 'apps/index.mdx',
-  evals: 'experiments.mdx',
-};
-
-function guideFile(svc: string): string | null {
-  if (GUIDE_FILE_OVERRIDES[svc]) {
-    const f = path.join(CONTENT, GUIDE_FILE_OVERRIDES[svc]);
-    return fs.existsSync(f) ? f : null;
-  }
-  // `services/index.mdx` is the section landing. Matching it for the product
-  // named `index` would staple the Index reference onto the whole catalogue.
-  if (svc === 'index') return null;
-  const flat = path.join(CONTENT, 'services', `${svc}.mdx`);
-  if (fs.existsSync(flat)) return flat;
-  const dir = path.join(CONTENT, 'services', svc, 'index.mdx');
-  if (fs.existsSync(dir)) return dir;
-  return null;
-}
 
 /** The callout this script writes, and the only shape it will remove. */
 const CALLOUT = /^> \*\*API reference\*\* · \[[^\]]*\]\(\/docs\/openapi\/([a-z0-9-]+)\)[^\n]*\n?/gm;
@@ -111,7 +101,7 @@ function prune(products: Set<string>): number {
   return dropped;
 }
 
-function main(): void {
+export function linkApiRefs(): void {
   const specs = DOC.products.map((p) => p.name);
   const dropped = prune(new Set(specs));
 
@@ -139,4 +129,3 @@ function main(): void {
   console.log(`[link-api-refs] dropped ${dropped}, linked ${linked}, already-linked ${already}, no-guide ${missing.length}${missing.length ? ` (${missing.join(', ')})` : ''}`);
 }
 
-main();

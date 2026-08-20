@@ -5,7 +5,11 @@ description: Fine-grained authorization policies and access checks for Hanzo Clo
 
 # Authz
 
+> **API reference** · [Authz →](/docs/openapi/authz) — every endpoint, generated from the OpenAPI spec.
+
 Hanzo Authz answers one question, fast: is this subject allowed to perform this action on this resource? Where [IAM](/docs/iam) establishes **who** you are, Authz decides **what** you may do. It is a policy engine, not an identity store.
+
+The question it asks is about a **resource**, and its answer is allow or deny. If yours is about an **operation** — may this API call run, and should a person sign it off first — that is [Policy and approvals](/docs/policy), which can also answer *hold*.
 
 ## Policies and Models
 

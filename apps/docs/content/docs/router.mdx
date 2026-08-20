@@ -6,6 +6,8 @@ description: Ask for model "auto" and let policy pick — per-task model prefere
 
 # Router
 
+> **API reference** · [Router →](/docs/openapi/router) — every endpoint, generated from the OpenAPI spec.
+
 Send `"model": "auto"` and the router picks a model per request instead of you
 pinning one. What it may pick is your org's policy: an ordered preference per
 task, an allowlist, a hard cost ceiling, and a dial between cheapest and best.

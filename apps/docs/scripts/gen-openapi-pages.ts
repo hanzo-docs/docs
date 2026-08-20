@@ -13,6 +13,10 @@ import {
   type Product,
 } from './openapi-doc';
 import { code, firstSentence, prose, text, yamlString } from './mdx';
+import { guideHref } from './guide';
+import { camelId, cli, mcp, pascalTag } from './openapi-surfaces';
+import { loadCliCommands, type CliCommand } from './sync-cli-commands';
+import { loadMcpTools } from './sync-mcp-tools';
 
 // The API reference, generated from THE document.
 //
@@ -36,7 +40,6 @@ import { code, firstSentence, prose, text, yamlString } from './mdx';
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = path.resolve(SCRIPT_DIR, '..');
 const OUT_DIR = path.join(APP_ROOT, 'content/docs/openapi');
-const SERVICES_DIR = path.join(APP_ROOT, 'content/docs/services');
 const PUBLIC_COPY = path.join(APP_ROOT, 'public/openapi/openapi.yaml');
 
 // Where the operator surface is rendered, and why it is not a repo.
@@ -53,30 +56,9 @@ const PUBLIC_COPY = path.join(APP_ROOT, 'public/openapi/openapi.yaml');
 // nothing the public build reads or ships in the meantime.
 const INTERNAL_DIR = path.join(APP_ROOT, 'internal/openapi');
 
-// A few products document their concepts under a slug that differs from the
-// product name. Everything else resolves by looking for a guide on disk.
-const GUIDE_OVERRIDES: Record<string, string> = {
-  ai: '/docs/llm',
-  app: '/docs/services/paas',
-  evals: '/docs/experiments',
-};
-
-function guideHref(svc: string): string | null {
-  if (GUIDE_OVERRIDES[svc]) return GUIDE_OVERRIDES[svc];
-  // `services/index.mdx` is the SECTION LANDING, not a guide for a product
-  // called "index". The document does serve a product named index (full-text
-  // search), and matching it here pointed the Index reference at the whole
-  // services catalogue — via /docs/services/index, which is not even a route:
-  // the file renders at /docs/services.
-  if (svc === 'index') return null;
-  if (
-    fs.existsSync(path.join(SERVICES_DIR, `${svc}.mdx`)) ||
-    fs.existsSync(path.join(SERVICES_DIR, svc, 'index.mdx'))
-  ) {
-    return `/docs/services/${svc}`;
-  }
-  return null;
-}
+// Where a product's guide lives is scripts/guide.ts's question, and it is asked
+// there by both directions of the link — see that file for why the rule cannot
+// live here.
 
 // ------------------------------------------------------------------ schema
 
@@ -150,7 +132,39 @@ function leadProse(op: Operation): string {
   return flat(description).startsWith(summary) ? description : `${summary}\n\n${description}`;
 }
 
-function renderProduct(p: Product, doc: Document): string {
+/**
+ * WHAT ELSE THIS ONE OPERATION IS CALLED — the other three projections of the
+ * same declaration, printed under it.
+ *
+ * Nothing here is a lookup table of names. The operation id IS the CLI's join
+ * key, IS the tool name the door answers to, and IS what the client generators
+ * fold into a method — so all three are asked for by the id and each says
+ * nothing when the surface does not carry that operation, rather than printing a
+ * command that would not run or a tool that is not served.
+ *
+ * The SDK symbol is the TypeScript one because it is the shortest spelling of a
+ * name every language folds the same id into. The page's own nav already points
+ * at the flow pages, which render all five languages in full.
+ */
+function surfaces(op: Operation, doc: Document, s: Surfaces): string[] {
+  const command = cli(op, doc, s.cli);
+  const tool = mcp(op, doc, s.tools);
+  const parts = [
+    `**Operation** \`${code(op.id)}\``,
+    ...(command ? [`**CLI** \`${code(command.split('\n')[0].replace(/ \\$/, '').trim())}\``] : []),
+    `**SDK** \`${code(`${pascalTag(op.tag)}Api.${camelId(op.id)}()`)}\``,
+    ...(tool ? [`**Tool** \`${code(tool.tool)}\``] : []),
+  ];
+  return ['', parts.join(' · '), ''];
+}
+
+/** The two projections that are looked up rather than derived: read once, passed down. */
+interface Surfaces {
+  cli: Map<string, CliCommand>;
+  tools: Map<string, { name: string }>;
+}
+
+function renderProduct(p: Product, doc: Document, s: Surfaces): string {
   const guide = guideHref(p.name);
   const L: string[] = [];
 
@@ -224,6 +238,7 @@ function renderProduct(p: Product, doc: Document): string {
       }
       L.push(...paramTable(op));
       L.push(...bodyTable(op));
+      L.push(...surfaces(op, doc, s));
       L.push('');
     }
   }
@@ -294,7 +309,7 @@ function renderIndex(products: Product[], doc: Document): string {
 }
 
 /** One reference: a page per product, an index, and the section's nav. */
-function writePages(dir: string, products: Product[], doc: Document): void {
+function writePages(dir: string, products: Product[], doc: Document, s: Surfaces): void {
   fs.rmSync(dir, { recursive: true, force: true });
   fs.mkdirSync(dir, { recursive: true });
 
@@ -309,7 +324,7 @@ function writePages(dir: string, products: Product[], doc: Document): void {
   for (const p of products) {
     const f = pageFile(p.name);
     fs.mkdirSync(path.dirname(f), { recursive: true });
-    fs.writeFileSync(f, renderProduct(p, doc));
+    fs.writeFileSync(f, renderProduct(p, doc, s));
   }
   fs.writeFileSync(path.join(dir, 'index.mdx'), renderIndex(products, doc));
 
@@ -365,12 +380,13 @@ export async function genOpenapiPages(
     );
   }
 
-  writePages(out, doc.products, doc);
+  const s: Surfaces = { cli: loadCliCommands(), tools: loadMcpTools() };
+  writePages(out, doc.products, doc, s);
 
   // The operator surface is rendered too, just not here. 86 endpoints our own
   // people run on are worth a page each; what they are not worth is being on
   // docs.hanzo.ai. See INTERNAL_DIR for where they go and why it is not a repo.
-  if (doc.internal.length) writePages(internalOut, doc.internal, doc);
+  if (doc.internal.length) writePages(internalOut, doc.internal, doc, s);
 
   // The interactive reference at /reference reads the same document, so the
   // document it reads is the published one. Copying the source whole — which is

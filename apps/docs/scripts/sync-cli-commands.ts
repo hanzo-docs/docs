@@ -105,6 +105,19 @@ export async function syncCliCommands(): Promise<void> {
   );
 }
 
+/**
+ * The command table, keyed the way an operation asks for it — `METHOD /path`.
+ *
+ * Every reader wants the same map and none of them may build its own: the table
+ * is written here, so the way to read it is here too. Missing is not an error —
+ * a page then says an operation has no command instead of inventing one.
+ */
+export function loadCliCommands(): Map<string, CliCommand> {
+  if (!fs.existsSync(OUT)) return new Map();
+  const rows = JSON.parse(fs.readFileSync(OUT, 'utf8')) as CliCommand[];
+  return new Map(rows.map((c) => [c.key, c]));
+}
+
 if (import.meta.main) {
   syncCliCommands().catch((e) => {
     console.error('[cli] failed', e);

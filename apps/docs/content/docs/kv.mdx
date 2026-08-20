@@ -11,15 +11,11 @@ Hanzo KV is a managed, Redis/Valkey-compatible key-value store for caching, queu
 
 An instance is a logical namespace in the shared Hanzo KV backend, scoped to your organization.
 
-```bash
-curl -X POST https://api.hanzo.ai/v1/kv \
-  -H "Authorization: Bearer sk-..." \
-  -H "X-Org-Id: org_a1b2c3" \
-  -H "Content-Type: application/json" \
-  -d '{ "name": "cache", "eviction": "allkeys-lru" }'
-```
-
-The response returns the host, port, and password for the instance. TLS is enabled by default.
+Provisioning is one call, and this page does not restate it. Its address, its
+request body and the answer it returns are in the
+[Instances API reference](/docs/openapi/instances), which is generated from the
+same declaration that serves the call — so it cannot drift from what the API
+actually does, and a curl copied from here could.
 
 ## Connect
 
