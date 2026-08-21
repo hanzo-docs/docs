@@ -1,6 +1,6 @@
 {
   "name": "@hanzo/docs-create-versions",
-  "version": "16.0.119",
+  "version": "16.0.120",
   "private": true,
   "description": "Used to track dependency versions in @hanzo/create-docs",
   "dependencies": {

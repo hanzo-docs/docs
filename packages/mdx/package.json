@@ -1,6 +1,6 @@
 {
   "name": "@hanzo/docs-mdx",
-  "version": "15.0.10",
+  "version": "15.1.0",
   "description": "The built-in source for Hanzo Docs",
   "keywords": [
     "Docs",
