@@ -1,17 +1,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import {
-  DOCUMENT,
-  isInternal,
-  loadDocument,
-  release,
-  secretKey,
-  type Document,
-  type Operation,
-} from './openapi-doc';
+import { isInternal, loadDocument, type Document, type Operation } from './openapi-doc';
 import { toolOperations } from './openapi-surfaces';
-import { load, MCP_DOOR, ops as doorOps, readOp, type McpCatalog, type McpTool } from './sync-mcp-tools';
+import { load, MCP_DOOR, type McpCatalog, type McpTool } from './sync-mcp-tools';
 import { code, fence, firstSentence, prose, text, yamlString } from './mdx';
 
 // THE MCP REFERENCE, generated from the door.
@@ -23,7 +15,7 @@ import { code, fence, firstSentence, prose, text, yamlString } from './mdx';
 // `tools/call` envelope built from that same schema.
 //
 // Nothing here is written about a tool. Every sentence on a tool page came off
-// the wire in `tools/list`, exactly as the API reference comes off the document.
+// the wire in `tools/list`, exactly as the API reference comes off hanzo.yaml.
 // The one authored page is `index.mdx`, which explains what the door IS and how
 // to point a client at it — a concept, not a signature.
 //
@@ -33,15 +25,24 @@ import { code, fence, firstSentence, prose, text, yamlString } from './mdx';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = path.resolve(SCRIPT_DIR, '..');
-// This reference joins a LIVE door against a PINNED document, so the two can
-// legitimately disagree — a route the door has renamed since the pin resolves
-// to no operation. Pages that report such a tool name the release, so the
-// reader can tell "the document does not describe this" from "the copy we hold
-// does not describe this yet". The release is `.spec-lock`'s, the cloud commit
-// the document was taken at; it used to be a pin on the projection this
-// reference stopped reading.
-const rel = release();
-const pinned = rel ? ` (pinned at \`${rel}\`)` : '';
+const DOCUMENT = path.join(APP_ROOT, 'openapi-specs/hanzo.yaml');
+/**
+ * The commit the document was pinned at.
+ *
+ * This reference joins a LIVE door against a PINNED document, so the two can
+ * legitimately disagree — a route the door has renamed since the pin resolves
+ * to no operation. Pages that report such a tool name the pin, so the reader
+ * can tell "the document does not describe this" from "the copy we hold does
+ * not describe this yet".
+ */
+const DOCUMENT_PIN = (() => {
+  try {
+    return fs.readFileSync(path.join(APP_ROOT, 'openapi-specs/hanzo.pin'), 'utf8').trim().slice(0, 9);
+  } catch {
+    return '';
+  }
+})();
+const pinned = DOCUMENT_PIN ? ` (pinned at \`${DOCUMENT_PIN}\`)` : '';
 const OUT_DIR = path.join(APP_ROOT, 'content/docs/mcp-tools');
 
 /** The client command that registers the door, over its streamable HTTP transport. */
@@ -49,29 +50,6 @@ const ADD_COMMAND = `claude mcp add --transport http hanzo-cloud ${MCP_DOOR}`;
 
 /** Slugs this section spends on its own pages, so no product folder may take them. */
 const RESERVED = new Set(['index', 'all-tools']);
-
-/** Slugs a product folder spends on its own files, so no tool page may take them. */
-const RESERVED_PAGE = new Set(['index', 'meta']);
-
-/**
- * What a name is published as when it is one a container has already spent.
- * Two halves of one rule: the RESERVED sets say which slugs are taken, this says
- * what to publish instead — so the next collision is a line of data, not a
- * change to the code below.
- *
- * `index` is both a product and the tool that covers it, and `index` is what a
- * section and a folder each call their own landing page. It manages indexes
- * (`/v1/index/indexes`), so the plural is the product's own noun and not a
- * suffix invented to dodge the clash.
- */
-const SLUG = new Map([['index', 'indexes']]);
-
-/** The slug a product or tool is published under. */
-export const slugOf = (name: string): string => SLUG.get(name) ?? name;
-
-/** The one place that knows the shape of a URL in this section. */
-const productHref = (product: string): string => `/docs/mcp-tools/${slugOf(product)}`;
-const toolHref = (product: string, tool: string): string => `${productHref(product)}/${slugOf(tool)}`;
 
 // ------------------------------------------------------------------ schema
 
@@ -263,12 +241,7 @@ function fieldTable(fields: Field[]): string[] {
  * would imply the answer is "none". Both are computed from the schemas in hand,
  * so the sentence narrows on its own the day the door starts publishing more.
  */
-function sourceNotice(
-  schema: any,
-  fields: Field[],
-  ops: Operation[] | undefined,
-  con: Map<string, Constraint>,
-): string[] {
+function sourceNotice(schema: any, fields: Field[], ops: Operation[] | undefined): string[] {
   if (!fields.length) return [];
   const props: Record<string, any> = schema?.properties ?? {};
   const doorHas = (k: string) => Object.values(props).some((p: any) => p?.[k] !== undefined);
@@ -292,29 +265,14 @@ function sourceNotice(
     );
     return L;
   }
-  // Whether the document contributed anything HERE, rather than whether it could.
-  // A subsystem tool's own fields are `op` and `input`; the operations declare
-  // the fields that go INSIDE `input`, so their names do not meet and every
-  // column on such a page is the door's. Claiming otherwise credited routes for
-  // a Required column they had no part in.
-  const joined = fields.some((f) => con.has(f.name));
   const routes = ops.map((o) => `\`${o.method.toUpperCase()} ${code(o.path)}\``);
-  if (!joined) {
-    L.push(
-      `\`tools/list\` declares ${conjoin(doorSays)} for each field and nothing further, and every column ` +
-        "above is the door's own. This tool takes an operation name and that operation's arguments, so what " +
-        'the document constrains is what goes inside `input`, field by field, on the operation you name — ' +
-        'ask `describe` for that. A `—` means the door does not constrain the field.',
-    );
-    return L;
-  }
   L.push(
     `\`tools/list\` declares ${conjoin(doorSays)} for each field and nothing further. ` +
       (filled.length
         ? `The ${conjoin(filled)} column${filled.length > 1 ? 's are' : ' is'} taken from ` +
           (routes.length === 1
             ? `${routes[0]}, the operation this tool dispatches to — the same declaration the REST API validates against. `
-            : `${conjoin(routes)} — the ${routes.length} operations the document names for this tool — and carries only what they agree on. `)
+            : `${conjoin(routes)} — the ${routes.length} operations the document names for this tool — and carries only what they agree on, since the door does not say which of them it dispatches to. `)
         : '') +
       `A \`—\` means neither the door nor ${routes.length === 1 ? 'that operation' : 'those operations'} constrains the field.`,
   );
@@ -458,12 +416,6 @@ export function callEnvelope(
   for (const name of minimal ? required : declared) {
     args[name] = sample(schema.properties![name], name, defs, con.get(name), invented, name);
   }
-  // A subsystem tool's `op` is the one argument the door itself enumerates, and
-  // the sample above never looked there — so the call a reader was invited to
-  // paste said `"op": "<op>"`, which the door answers `unknown tool: <op>` to.
-  // Print an operation the door names, and a READ, so the invitation is safe.
-  const read = readOp(tool);
-  if (read && read !== tool.name && 'op' in args) args.op = read;
   const body = JSON.stringify(
     { jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: tool.name, arguments: args } },
     null,
@@ -477,53 +429,22 @@ const curl = (body: string): string =>
 
 // ------------------------------------------------------------------- pages
 
-/**
- * The product a tool is filed under, and the slug of its folder.
- *
- * A tool RESOLVES to an operation and still has no product when the operation
- * is one the document serves outside `/v1/<product>` — `POST /collaborator/rpc/
- * {documentid}` is idded `post_collaborator_rpc_by_documentid`, whose prefix is
- * the verb, so the product rule refuses it rather than minting a product called
- * Post. Reading "has an operation" as "has a product" wrote that page to the
- * section's root instead of a folder: on disk, in no product, linked from no
- * index, and invisible to every count that walks the folders.
- */
-/**
- * The product a tool belongs under: the one MOST of its operations belong to.
- *
- * This took the FIRST operation's product, which was exact while a tool was one
- * operation. A subsystem tool is many, and they do not all share a product —
- * `provisioning` reaches kv, sql, s3 and vector — so the first one alphabetically
- * decided the whole tool's home. The mode is the honest answer, and ties break on
- * the name so the choice is stable between builds.
- */
-function productOf(ops: Operation[] | undefined): string {
-  if (!ops?.length) return 'unmapped';
-  const n = new Map<string, number>();
-  for (const o of ops) n.set(o.product, (n.get(o.product) ?? 0) + 1);
-  return [...n.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0][0] || 'unmapped';
-}
+/** The product a tool is filed under, and the slug of its folder. */
+const productOf = (ops: Operation[] | undefined): string => (ops?.length ? ops[0].product : 'unmapped');
 
 /**
  * The tools this reference publishes: the door's answer, less the operator
  * surface.
  *
- * A tool whose operations are ALL internal is internal. Without this the
- * /v1/admin routes were printed in full on 78 tool pages, again in the catalogue
- * and again in the section nav — the same leak the REST reference had, through a
- * different door. The door still answers them to whoever is authorised to call
- * them; what changes is only what docs.hanzo.ai publishes.
- *
- * `some` was right while a tool was one operation and is wrong now that a tool is
- * a subsystem: one operator operation among thirty would have withdrawn the whole
- * subsystem's page. `every` withholds exactly the tool that is nothing but the
- * operator surface — which on this door is the one named `admin`, all 56 of it.
+ * A tool is one call on one operation, so a tool whose operation is internal is
+ * internal. Without this the /v1/admin routes were printed in full on 78 tool
+ * pages, again in the catalogue and again in the section nav — the same leak the
+ * REST reference had, through a different door. The door still answers them to
+ * whoever is authorised to call them; what changes is only what docs.hanzo.ai
+ * publishes.
  */
 export function published(cat: McpCatalog, mapped: Map<string, Operation[]>): McpTool[] {
-  return cat.tools.filter((t) => {
-    const ops = mapped.get(t.name) ?? [];
-    return !ops.length || !ops.every(isInternal);
-  });
+  return cat.tools.filter((t) => !(mapped.get(t.name) ?? []).some(isInternal));
 }
 
 // `meta.count` is what the DOOR answered and stays that; `tools.length` is what
@@ -534,7 +455,7 @@ const provenance = (cat: McpCatalog): string =>
   (cat.meta.count > cat.tools.length
     ? `, of which ${cat.tools.length} are documented here (the operator surface is not published)`
     : '') +
-  '.';
+  (cat.meta.source === 'snapshot' ? ' (this build read the vendored copy; the door was unreachable).' : '.');
 
 function renderTool(tool: McpTool, ops: Operation[] | undefined, cat: McpCatalog, doc: Document): string {
   const schema = tool.inputSchema ?? {};
@@ -591,7 +512,7 @@ function renderTool(tool: McpTool, ops: Operation[] | undefined, cat: McpCatalog
     );
   } else {
     L.push(...fieldTable(fields));
-    L.push(...sourceNotice(schema, fields, ops, con));
+    L.push(...sourceNotice(schema, fields, ops));
   }
   // The gap, stated where a reader would otherwise be misled into an empty
   // object: the operation cannot run without these, and the door never names
@@ -657,24 +578,11 @@ function renderTool(tool: McpTool, ops: Operation[] | undefined, cat: McpCatalog
         'on this page comes from `tools/list`; there is no REST reference to link to until the two agree.',
     );
   } else {
-    // What the tool reaches, and what this page can name. The door dispatches a
-    // whole subsystem — `agents` reaches 25 operations — and names most of them
-    // with its own verb (`list_agents` for `get_agents`), which is not derivable
-    // from the document; only `describe` resolves those. So the table below is
-    // the ones the door names EXACTLY as the document ids them, and the sentence
-    // says how many it is out of. Before the door regrouped, a tool WAS one
-    // operation, and this said "the document uses this name for N operations and
-    // the door does not say which it dispatches to" — a sentence about a name
-    // collision, printed on a page about a subsystem, where it is simply untrue.
-    const reachable = doorOps(tool).length;
-    if (reachable > ops.length) {
+    if (ops.length > 1) {
       L.push(
-        `\`${code(tool.name)}\` dispatches to ${reachable} operations. ${ops.length} of them the door names exactly as the document ids ` +
-          `${ops.length === 1 ? 'it' : 'them'}, and ${ops.length === 1 ? 'that one is' : 'those are'} below; for the rest the door has its own verb, which \`describe\` resolves.`,
+        `The document uses this name for ${ops.length} operations and the door does not say which it ` +
+          'dispatches to. Both are listed.',
       );
-      L.push('');
-    } else if (ops.length > 1) {
-      L.push(`\`${code(tool.name)}\` dispatches to ${ops.length} operations.`);
       L.push('');
     }
     L.push('| Operation | Route | Product | Summary |');
@@ -730,7 +638,7 @@ function renderProductIndex(product: string, tools: McpTool[], cat: McpCatalog, 
     const ops = mapped.get(t.name);
     const req = fieldsOf(t.inputSchema ?? {}, constraintsOf(ops)).filter((f) => f.required);
     L.push(
-      `| [\`${code(t.name)}\`](${toolHref(product, t.name)}) | ${
+      `| [\`${code(t.name)}\`](/docs/mcp-tools/${product}/${t.name}) | ${
         ops?.length ? `\`${ops[0].method.toUpperCase()} ${code(ops[0].path)}\`` : '—'
       } | ${Object.keys(t.inputSchema?.properties ?? {}).length} | ${
         req.length ? req.map((f) => `\`${code(f.name)}\``).join(', ') : '—'
@@ -773,7 +681,7 @@ function renderCatalog(groups: Map<string, McpTool[]>, cat: McpCatalog, mapped: 
   L.push('|---|---|---|');
   for (const p of products) {
     L.push(
-      `| [${text(p)}](${productHref(p)}) | ${groups.get(p)!.length} | ${
+      `| [${text(p)}](/docs/mcp-tools/${p}) | ${groups.get(p)!.length} | ${
         p === 'unmapped' ? 'not described by the OpenAPI document' : `[API reference](/docs/openapi/${p})`
       } |`,
     );
@@ -787,7 +695,7 @@ function renderCatalog(groups: Map<string, McpTool[]>, cat: McpCatalog, mapped: 
     for (const t of groups.get(p)!) {
       const ops = mapped.get(t.name);
       L.push(
-        `| [\`${code(t.name)}\`](${toolHref(p, t.name)}) | ${
+        `| [\`${code(t.name)}\`](/docs/mcp-tools/${p}/${t.name}) | ${
           ops?.length ? `\`${ops[0].method.toUpperCase()} ${code(ops[0].path)}\`` : '—'
         } | ${text(firstSentence(t.description, 110))} |`,
       );
@@ -879,7 +787,7 @@ function renderIndex(cat: McpCatalog, doc: Document, groups: Map<string, McpTool
   L.push(
     ...fence(
       'bash',
-      `export HANZO_API_KEY=${secretKey(doc).prefix}...\ncurl -X POST ${cat.door} \\\n  -H "Authorization: Bearer $HANZO_API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'`,
+      `export HANZO_API_KEY=hk-...\ncurl -X POST ${cat.door} \\\n  -H "Authorization: Bearer $HANZO_API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'`,
     ),
   );
   L.push('');
@@ -1035,19 +943,17 @@ export async function genMcpPages(outDir: string = OUT_DIR): Promise<{ pages: nu
   // URL, and one would silently win. `catalog` is a real product in the
   // document, which is why the tool listing is not called that. Fail loudly if
   // a future product takes one of the two names this section reserves.
-  const clash = [...ordered.keys()].filter((p) => RESERVED.has(slugOf(p)));
+  const clash = [...ordered.keys()].filter((p) => RESERVED.has(p));
   if (clash.length) {
     throw new Error(
-      `[mcp-ref] product ${clash.join(', ')} still resolves to a slug this section reserves — give it one in SLUG`,
+      `[mcp-ref] product ${clash.join(', ')} collides with this section's own page — rename the page, not the product`,
     );
   }
   // Same hazard one level down: a tool named `index` would be written over its
   // own product's index page, and the folder would lose a tool without a word.
-  const shadow = cat.tools.filter((t) => RESERVED_PAGE.has(slugOf(t.name)));
+  const shadow = cat.tools.filter((t) => t.name === 'index' || t.name === 'meta');
   if (shadow.length) {
-    throw new Error(
-      `[mcp-ref] tool ${shadow.map((t) => t.name).join(', ')} still resolves to a slug its folder reserves — give it one in SLUG`,
-    );
+    throw new Error(`[mcp-ref] tool ${shadow.map((t) => t.name).join(', ')} would overwrite a folder page`);
   }
 
   fs.rmSync(outDir, { recursive: true, force: true });
@@ -1055,16 +961,16 @@ export async function genMcpPages(outDir: string = OUT_DIR): Promise<{ pages: nu
 
   let pages = 0;
   for (const [product, tools] of ordered) {
-    const dir = path.join(outDir, slugOf(product));
+    const dir = path.join(outDir, product);
     fs.mkdirSync(dir, { recursive: true });
     for (const t of tools) {
-      fs.writeFileSync(path.join(dir, `${slugOf(t.name)}.mdx`), renderTool(t, mapped.get(t.name), cat, doc));
+      fs.writeFileSync(path.join(dir, `${t.name}.mdx`), renderTool(t, mapped.get(t.name), cat, doc));
       pages++;
     }
     fs.writeFileSync(path.join(dir, 'index.mdx'), renderProductIndex(product, tools, cat, mapped));
     fs.writeFileSync(
       path.join(dir, 'meta.json'),
-      JSON.stringify({ title: slugOf(product), pages: ['index', ...tools.map((t) => slugOf(t.name))] }, null, 2) + '\n',
+      JSON.stringify({ title: product, pages: ['index', ...tools.map((t) => t.name)] }, null, 2) + '\n',
     );
     pages++;
   }
@@ -1078,7 +984,7 @@ export async function genMcpPages(outDir: string = OUT_DIR): Promise<{ pages: nu
         title: 'Cloud MCP',
         description: `The ${cat.tools.length} tools documented here, generated from tools/list.`,
         icon: 'Plug',
-        pages: ['index', 'all-tools', ...[...ordered.keys()].map(slugOf)],
+        pages: ['index', 'all-tools', ...ordered.keys()],
       },
       null,
       2,
@@ -1088,7 +994,7 @@ export async function genMcpPages(outDir: string = OUT_DIR): Promise<{ pages: nu
   // Every tool got a page, and every page is reachable from the catalogue: the
   // two properties this reference claims, checked rather than asserted.
   const written = new Set<string>();
-  for (const [product, tools] of ordered) for (const t of tools) written.add(`${slugOf(product)}/${slugOf(t.name)}`);
+  for (const [product, tools] of ordered) for (const t of tools) written.add(`${product}/${t.name}`);
   if (written.size !== cat.tools.length) {
     throw new Error(
       `[mcp-ref] ${cat.tools.length} tools collapsed onto ${written.size} pages — two tools share a path`,
@@ -1103,10 +1009,10 @@ export async function genMcpPages(outDir: string = OUT_DIR): Promise<{ pages: nu
   const withArgs = cat.tools.filter((t) => Object.keys(t.inputSchema?.properties ?? {}).length).length;
   console.log(
     `[mcp-ref] ${pages + 2} pages — ${cat.tools.length} tools across ${ordered.size} products, ` +
-      `${withArgs} declaring arguments, ${cat.tools.length - unmapped} filed under a product` +
-      (unmapped ? `, ${unmapped} under none — the document gives their route no product` : ''),
+      `${withArgs} declaring arguments, ${cat.tools.length - unmapped} mapped to an operation` +
+      (unmapped ? `, ${unmapped} the document does not describe` : ''),
   );
-  console.log(`[mcp-ref] tool list captured ${cat.meta.captured}, 0 orphans`);
+  console.log(`[mcp-ref] tool list captured ${cat.meta.captured} (${cat.meta.source}), 0 orphans`);
   return { pages: pages + 2, tools: cat.tools.length, unmapped };
 }
 

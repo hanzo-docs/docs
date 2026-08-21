@@ -1,0 +1,14 @@
+{
+  "title": "Storage",
+  "description": "Storage provider integrations",
+  "pages": [
+    "overview",
+    "amazon-s3",
+    "google-cloudstorage",
+    "azure",
+    "aliyun-oss",
+    "tencentCloudCOS",
+    "synology-nas",
+    "localFileSystem"
+  ]
+}

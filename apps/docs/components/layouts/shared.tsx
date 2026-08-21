@@ -21,7 +21,7 @@ export const linkItems: LinkItemType[] = [
   },
   {
     text: 'CLI',
-    url: '/docs/cli',
+    url: '/docs/services/platform/getting-started/cli',
     active: 'nested-url',
   },
   {

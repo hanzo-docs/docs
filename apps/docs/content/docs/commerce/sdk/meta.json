@@ -1,0 +1,10 @@
+{
+  "title": "SDK Reference",
+  "pages": [
+    "auth",
+    "admin",
+    "store",
+    "errors",
+    "types"
+  ]
+}

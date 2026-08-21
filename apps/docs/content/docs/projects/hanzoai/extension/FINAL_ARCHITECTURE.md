@@ -109,7 +109,7 @@ Global memory across all AI interactions:
 
 ### 2. Cost Optimization
 - Use local models to reduce API costs
-- Zen1 for most tasks
+- Hanzo Zen1 for most tasks
 - Cloud APIs only when needed
 
 ### 3. Unified Experience

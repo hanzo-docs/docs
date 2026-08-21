@@ -52,7 +52,7 @@ curl https://api.hanzo.ai/v1/chat/completions \
 ```python
 from hanzoai import Hanzo
 
-client = Hanzo(api_key="sk-your-api-key")
+client = Hanzo(api_key="hk-your-api-key")
 
 response = client.chat.completions.create(
     model="zen5",
@@ -90,7 +90,7 @@ across vendors, though — `zen5` and `enso` exist only here.
 ├─────────────────────────────────────────────────────────────┤
 │                                                             │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────────┐  │
-│  │ React Client │  │ Node.js API  │  │    DocumentDB    │  │
+│  │ React Client │  │ Node.js API  │  │    MongoDB       │  │
 │  │              │  │              │  │                  │  │
 │  │ - Chat UI    │  │ - REST API   │  │ - Messages       │  │
 │  │ - Model Sel  │  │ - WebSocket  │  │ - Conversations  │  │
@@ -104,7 +104,7 @@ across vendors, though — `zen5` and `enso` exist only here.
 │  └─────────────────────────────────────────────────────┘    │
 │                                                             │
 │  ┌─────────────────────────────────────────────────────┐    │
-│  │  Search       │  KV     │  S3     │  RAG API       │    │
+│  │  Search       │  Redis  │  S3     │  RAG API       │    │
 │  └─────────────────────────────────────────────────────┘    │
 │                                                             │
 └─────────────────────────────────────────────────────────────┘

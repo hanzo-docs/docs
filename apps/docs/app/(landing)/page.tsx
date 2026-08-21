@@ -70,7 +70,7 @@ const domains = [
     name: 'Commerce',
     desc: 'Turn usage into money — meter it, price it, bill it, reward it. Commerce, Billing, Marketplace, Referrals.',
     icon: ShoppingCart,
-    href: '/docs/openapi/commerce',
+    href: '/docs/commerce',
     tag: 'Commerce',
   },
   {
@@ -238,16 +238,16 @@ export default function Page() {
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
             <CodeBlock
               code={`# Install the Hanzo CLI
-curl -fsSL hanzo.sh | sh
+curl hanzo.sh | sh
 
-# Sign in (opens a browser)
-hanzo auth login
+# Log in (opens browser for OAuth)
+hanzo login
 
 # You're ready — try some things:
-hanzo "explain quantum computing"
+hanzo chat "Explain quantum computing"
 hanzo models list
-hanzo projects list
-hanzo projects deploy my-app`}
+hanzo keys create my-project
+hanzo deploy ./my-app`}
               lang="bash"
               wrapper={{ title: 'Terminal' }}
             />

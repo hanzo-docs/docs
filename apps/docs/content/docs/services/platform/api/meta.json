@@ -1,0 +1,10 @@
+{
+  "title": "API Reference",
+  "pages": [
+    "authentication",
+    "organizations",
+    "clusters",
+    "containers",
+    "vms"
+  ]
+}

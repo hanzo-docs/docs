@@ -236,11 +236,7 @@ function SidebarContent({ ref: refProp, className, children, ...props }: Compone
               data-collapsed={collapsed}
               data-hovered={collapsed && hovered}
               className={cn(
-                // No cross-axis alignment: the column IS --fd-sidebar-width now,
-                // so the nav fills it. `items-end` used to push the nav to the
-                // inner edge of a column that grew with the viewport, which is
-                // what left a widening empty strip inside the rail's own card.
-                'absolute flex flex-col w-full inset-s-0 inset-y-0 bg-fd-card text-sm border-e duration-250 *:w-(--fd-sidebar-width)',
+                'absolute flex flex-col w-full inset-s-0 inset-y-0 items-end bg-fd-card text-sm border-e duration-250 *:w-(--fd-sidebar-width)',
                 collapsed && [
                   'inset-y-2 rounded-xl transition-transform border w-(--fd-sidebar-width)',
                   hovered
@@ -261,12 +257,7 @@ function SidebarContent({ ref: refProp, className, children, ...props }: Compone
           <div
             data-sidebar-panel=""
             className={cn(
-              // Above the header (z-30), not under it. This floats at inset-s-4
-              // and is 66px wide, so it reaches x=82; the header's grid column
-              // starts where the leading gutter ends, which on a collapsed rail
-              // is x=60. At z-10 the header's blurred ground painted over the
-              // last 22px and cut the search trigger in half.
-              'fixed flex top-[calc(--spacing(4)+var(--fd-docs-row-3))] inset-s-4 shadow-lg transition-opacity rounded-xl p-0.5 border bg-fd-muted text-fd-muted-foreground z-40',
+              'fixed flex top-[calc(--spacing(4)+var(--fd-docs-row-3))] inset-s-4 shadow-lg transition-opacity rounded-xl p-0.5 border bg-fd-muted text-fd-muted-foreground z-10',
               (!collapsed || hovered) && 'pointer-events-none opacity-0',
             )}
           >
@@ -476,7 +467,7 @@ function SidebarTabsDropdown({
           <ChevronsUpDown className="shrink-0 ms-auto size-4 text-fd-muted-foreground" />
         </PopoverTrigger>
       )}
-      <PopoverContent className="flex flex-col gap-1 w-(--anchor-width) p-1 fd-scroll-container">
+      <PopoverContent className="flex flex-col gap-1 w-(--radix-popover-trigger-width) p-1 fd-scroll-container">
         {tabs.map((item) => {
           const isActive = selected && item.url === selected.url;
           if (!isActive && item.unlisted) return;
@@ -488,11 +479,11 @@ function SidebarTabsDropdown({
               onClick={onClick}
               {...item.props}
               className={cn(
-                'flex items-center justify-start text-start gap-2 rounded-lg p-1.5 hover:bg-fd-accent hover:text-fd-accent-foreground',
+                'flex items-center gap-2 rounded-lg p-1.5 hover:bg-fd-accent hover:text-fd-accent-foreground',
                 item.props?.className,
               )}
             >
-              <div className="shrink-0 size-9 md:mb-auto md:size-5">{item.icon}</div>
+              <div className="shrink-0 size-9 md:mb-auto md:size-5 empty:hidden">{item.icon}</div>
               <div>
                 <p className="text-sm font-medium leading-none">{item.title}</p>
                 <p className="text-[0.8125rem] text-fd-muted-foreground mt-1 empty:hidden">

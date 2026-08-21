@@ -6,7 +6,6 @@
 
 - Updated dependencies [a85e19f]
 - Updated dependencies [2dc0a7c]
-- Updated dependencies [d495b38]
   - @hanzo/docs-mdx@15.1.0
   - @zenlm/models@1.0.1
 

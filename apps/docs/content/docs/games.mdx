@@ -79,7 +79,7 @@ hanzo dev "write tests for the collision logic and run them"
 <Tab value="Against the API">
 
 If you want the model directly, it is one POST. Any language, any framework —
-the [request shape](/docs/openapi) is the widely-implemented chat-completions
+the [request shape](/docs/api) is the widely-implemented chat-completions
 format, so a client you already have works by changing the base URL and the key.
 
 Mint a key at [console.hanzo.ai](https://console.hanzo.ai) (see
@@ -87,7 +87,7 @@ Mint a key at [console.hanzo.ai](https://console.hanzo.ai) (see
 
 ```bash
 curl https://api.hanzo.ai/v1/chat/completions \
-  -H "Authorization: Bearer sk-..." \
+  -H "Authorization: Bearer hk-..." \
   -H "Content-Type: application/json" \
   -d '{
     "model": "enso",
@@ -103,7 +103,7 @@ Write the response to `snake.html` and open it. The same thing in Python:
 ```python
 from hanzoai import Hanzo
 
-client = Hanzo(api_key="sk-...")
+client = Hanzo(api_key="hk-...")
 
 game = client.chat.completions.create(
     model="enso",
@@ -113,7 +113,7 @@ game = client.chat.completions.create(
 open("snake.html", "w").write(game.choices[0].message.content)
 ```
 
-`model` is the only thing to change to try [another model](/docs/openapi/ai) — the
+`model` is the only thing to change to try [another model](/docs/models) — the
 request shape does not move.
 
 </Tab>

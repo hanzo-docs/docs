@@ -1,0 +1,10 @@
+{
+  "title": "Storefront Development",
+  "pages": [
+    "products",
+    "cart",
+    "checkout",
+    "customers",
+    "regions"
+  ]
+}

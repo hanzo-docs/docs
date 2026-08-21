@@ -1,0 +1,25 @@
+{
+  "title": "Commerce",
+  "pages": [
+    "---[Rocket]Getting Started---",
+    "index",
+    "quickstart",
+    "---[Package]Products---",
+    "products",
+    "inventory",
+    "subscriptions",
+    "---[ClipboardList]Orders---",
+    "orders",
+    "customers",
+    "---[CreditCard]Payments---",
+    "payments",
+    "webhooks",
+    "---[Megaphone]Marketing---",
+    "promotions",
+    "---[Store]Store---",
+    "storefront",
+    "---[BookOpen]Reference---",
+    "api",
+    "configuration"
+  ]
+}

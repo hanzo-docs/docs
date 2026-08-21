@@ -5,7 +5,7 @@ import { Callout } from '@hanzo/docs-base-ui/components/callout';
 import { TypeTable } from '@hanzo/docs-base-ui/components/type-table';
 import * as Preview from '@/components/preview';
 import { createMetadata } from '@/lib/metadata';
-import { getPageMarkdownUrl, source } from '@/lib/source';
+import { source } from '@/lib/source';
 import { Wrapper } from '@/components/preview/wrapper';
 import { Mermaid } from '@/components/mdx/mermaid';
 import { PageFeedback, PageFeedbackBlock } from '@/components/feedback';
@@ -52,6 +52,29 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
       />
     );
 
+  if (page.type === 'openapi') {
+    const { APIPage } = await import('@/components/api-page');
+    if (!APIPage) {
+      return (
+        <DocsPage full>
+          <h1 className="text-[1.75em] font-semibold">{page.data.title}</h1>
+          <DocsBody>
+            <p className="text-fd-muted-foreground">API reference is not available during static export.</p>
+          </DocsBody>
+        </DocsPage>
+      );
+    }
+    return (
+      <DocsPage full>
+        <h1 className="text-[1.75em] font-semibold">{page.data.title}</h1>
+
+        <DocsBody>
+          <APIPage {...page.data.getAPIPageProps()} />
+        </DocsBody>
+      </DocsPage>
+    );
+  }
+
   const { body: Mdx, toc, lastModified } = await page.data.load();
 
   return (
@@ -64,9 +87,9 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
       <h1 className="text-[1.75em] font-semibold">{page.data.title}</h1>
       <p className="text-lg text-fd-muted-foreground mb-2">{page.data.description}</p>
       <div className="flex flex-row flex-wrap gap-2 items-center border-b pb-6">
-        <MarkdownCopyButton markdownUrl={getPageMarkdownUrl(page).url} />
+        <MarkdownCopyButton markdownUrl={`${page.url}.mdx`} />
         <ViewOptionsPopover
-          markdownUrl={getPageMarkdownUrl(page).url}
+          markdownUrl={`${page.url}.mdx`}
           githubUrl={`https://github.com/${owner}/${repo}/blob/dev/apps/docs/content/docs/${page.path}`}
         />
       </div>

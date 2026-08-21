@@ -213,11 +213,7 @@ function SidebarContent({ ref: refProp, className, children, ...props }: Compone
               data-collapsed={collapsed}
               data-hovered={collapsed && hovered}
               className={cn(
-                // No cross-axis alignment: the column IS --fd-sidebar-width now,
-                // so the nav fills it. `items-end` used to push the nav to the
-                // inner edge of a column that grew with the viewport, which is
-                // what left a widening empty strip inside the rail's own card.
-                'absolute flex flex-col w-full inset-s-0 inset-y-0 bg-fd-card text-sm border-e duration-250 *:w-(--fd-sidebar-width)',
+                'absolute flex flex-col w-full inset-s-0 inset-y-0 items-end bg-fd-card text-sm border-e duration-250 *:w-(--fd-sidebar-width)',
                 collapsed && [
                   'inset-y-2 rounded-xl transition-transform border w-(--fd-sidebar-width)',
                   hovered
@@ -450,11 +446,11 @@ function SidebarTabsDropdown({
               onClick={onClick}
               {...item.props}
               className={cn(
-                'flex items-center justify-start text-start gap-2 rounded-lg p-1.5 hover:bg-fd-accent hover:text-fd-accent-foreground',
+                'flex items-center gap-2 rounded-lg p-1.5 hover:bg-fd-accent hover:text-fd-accent-foreground',
                 item.props?.className,
               )}
             >
-              <div className="shrink-0 size-9 md:mb-auto md:size-5">{item.icon}</div>
+              <div className="shrink-0 size-9 md:mb-auto md:size-5 empty:hidden">{item.icon}</div>
               <div>
                 <p className="text-sm font-medium leading-none">{item.title}</p>
                 <p className="text-[0.8125rem] text-fd-muted-foreground mt-1 empty:hidden">

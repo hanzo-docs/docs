@@ -1,0 +1,11 @@
+{
+  "title": "Hanzo KMS",
+  "description": "Key Management Service",
+  "pages": [
+    "index",
+    "getting-started",
+    "universal-auth",
+    "service-integration",
+    "kmssecret-crd"
+  ]
+}

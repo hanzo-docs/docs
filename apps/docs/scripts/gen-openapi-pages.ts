@@ -4,38 +4,22 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { stringify as stringifyYaml } from 'yaml';
 import {
-  DOCUMENT,
   loadDocument,
-  opHref,
-  opSlug,
   publicDocument,
-  secretKey,
   type Document,
   type Operation,
   type Product,
 } from './openapi-doc';
-import { fields, type Field } from './openapi-schema';
-import { door, firstCall, runnable, surfaces, type Door } from './openapi-surfaces';
-import { load as loadDoor } from './sync-mcp-tools';
-import { loadCliTable, type CliCommand } from './sync-cli-commands';
-import { loadCorpus, type Corpus, type Hip } from './sync-hips';
-import { domains, icon } from './capabilities';
 import { code, firstSentence, prose, text, yamlString } from './mdx';
 
 // The API reference, generated from THE document.
 //
-// hanzoai/cloud's `openapi.yaml` describes every Hanzo endpoint once, and it is
-// the same document the SDKs, the CLI and the MCP tools are projections of. This
-// script renders one page per product tag: the tag's description — the owning
-// package's doc synopsis — is the product's intro, and each operation's entry is
-// its own prose and schema out of the document. Nothing here is authored; if a
-// sentence about an endpoint appears on docs.hanzo.ai, it was written next to
-// the code and travelled here unaltered.
-//
-// Every count on every page is the document's own — `p.operations.length`, never
-// a literal — so a number here cannot disagree with the API. What it CAN
-// disagree with is the release, and that is what `openapi-specs/.spec-lock`
-// pins.
+// hanzoai/openapi `hanzo.yaml` describes every Hanzo endpoint once. This script
+// renders one page per product tag: the tag's description — the owning package's
+// doc synopsis — is the product's intro, and each operation's entry is its own
+// prose and schema out of the document. Nothing here is authored; if a sentence
+// about an endpoint appears on docs.hanzo.ai, it was written next to the code
+// and travelled here through hanzo.yaml.
 //
 // Static MDX, not the runtime <APIPage>: the site ships as a static export
 // (NEXT_EXPORT=1), which disables the interactive loader (lib/openapi/index.ts).
@@ -43,11 +27,10 @@ import { code, firstSentence, prose, text, yamlString } from './mdx';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = path.resolve(SCRIPT_DIR, '..');
+const DOCUMENT = path.join(APP_ROOT, 'openapi-specs/hanzo.yaml');
 const OUT_DIR = path.join(APP_ROOT, 'content/docs/openapi');
-// Served at /openapi/<name>, under the name the lock gives the document, so the
-// bytes a reader downloads and the bytes the pages were built from are one file
-// with one name.
-const PUBLIC_COPY = path.join(APP_ROOT, 'public/openapi', path.basename(DOCUMENT));
+const SERVICES_DIR = path.join(APP_ROOT, 'content/docs/services');
+const PUBLIC_COPY = path.join(APP_ROOT, 'public/openapi/hanzo.yaml');
 
 // Where the operator surface is rendered, and why it is not a repo.
 //
@@ -63,15 +46,30 @@ const PUBLIC_COPY = path.join(APP_ROOT, 'public/openapi', path.basename(DOCUMENT
 // nothing the public build reads or ships in the meantime.
 const INTERNAL_DIR = path.join(APP_ROOT, 'internal/openapi');
 
-// A capability's page IS its guide.
-//
-// This used to look for a hand-written page under `content/docs/services/<name>`
-// and link to it as "Guide & examples", with three overrides where the authored
-// slug differed from the product name. That surface is gone: 454 pages
-// describing capabilities in prose written beside no code, which is the copy the
-// generated page replaces rather than links to. What a reader wanted from it —
-// what the capability is, what it costs, what it publishes — is the HIP, and it
-// is now ON this page.
+// A few products document their concepts under a slug that differs from the
+// product name. Everything else resolves by looking for a guide on disk.
+const GUIDE_OVERRIDES: Record<string, string> = {
+  ai: '/docs/llm',
+  app: '/docs/services/paas',
+  evals: '/docs/experiments',
+};
+
+function guideHref(svc: string): string | null {
+  if (GUIDE_OVERRIDES[svc]) return GUIDE_OVERRIDES[svc];
+  // `services/index.mdx` is the SECTION LANDING, not a guide for a product
+  // called "index". The document does serve a product named index (full-text
+  // search), and matching it here pointed the Index reference at the whole
+  // services catalogue — via /docs/services/index, which is not even a route:
+  // the file renders at /docs/services.
+  if (svc === 'index') return null;
+  if (
+    fs.existsSync(path.join(SERVICES_DIR, `${svc}.mdx`)) ||
+    fs.existsSync(path.join(SERVICES_DIR, svc, 'index.mdx'))
+  ) {
+    return `/docs/services/${svc}`;
+  }
+  return null;
+}
 
 // ------------------------------------------------------------------ schema
 
@@ -85,130 +83,42 @@ const typeOf = (schema: any): string => {
   return t || (schema.properties ? 'object' : '');
 };
 
-/**
- * WHAT A CALLER SENDS, in one table.
- *
- * A path parameter, a query parameter, a header and a body field are the same
- * thing to a reader — a value they must supply — differing only in where it
- * rides on the wire, which is one column. Two tables asked the reader to hold
- * that split in their head and to check both before concluding a field does not
- * exist; one table, sorted by where it rides, answers in one look.
- *
- * Body fields are enumerated at every depth by openapi-schema, so a nested one
- * is a row named `messages[].role` rather than a row named `messages` that
- * hides four more. Nothing is capped: a reference that stops at forty fields
- * sends the reader to the raw document, which is the page's whole reason to
- * exist. The count is printed above the table, so the size is known before the
- * scroll.
- */
-function requestRows(op: Operation, raw: any): string[] {
-  const order: Record<string, number> = { path: 0, query: 1, header: 2, cookie: 3 };
-  const rows = [...op.parameters]
-    .sort((a, b) => (order[a.in] ?? 9) - (order[b.in] ?? 9))
+function bodyTable(op: Operation): string[] {
+  const s = op.body?.schema;
+  const props = s?.properties;
+  if (!props || !Object.keys(props).length) return [];
+  const required = new Set<string>(Array.isArray(s.required) ? s.required : []);
+  const names = Object.keys(props);
+  const rows = names
+    .slice(0, 40)
+    .map(
+      (name) =>
+        `| \`${code(name)}\` | ${text(typeOf(props[name]))} | ${
+          required.has(name) ? 'yes' : '—'
+        } | ${text(firstSentence(props[name]?.description ?? '', 120))} |`,
+    );
+  return [
+    '',
+    `**Request body** — \`${op.body!.contentType}\`${op.body!.required ? ' (required)' : ''}`,
+    '',
+    '| Field | Type | Required | Description |',
+    '|---|---|---|---|',
+    ...rows,
+    ...(names.length > 40 ? [`| … | | | ${names.length - 40} more fields in the schema |`] : []),
+  ];
+}
+
+function paramTable(op: Operation): string[] {
+  if (!op.parameters.length) return [];
+  const rows = op.parameters
+    .slice(0, 30)
     .map(
       (p) =>
         `| \`${code(p.name)}\` | ${p.in} | ${text(typeOf(p.schema))} | ${
           p.required ? 'yes' : '—'
-        } | ${text(firstSentence(p.description, 160))} |`,
+        } | ${text(firstSentence(p.description, 120))} |`,
     );
-
-  if (op.body?.schema) {
-    for (const f of fields(raw, op.body.schema)) rows.push(fieldRow(f, 'body'));
-  }
-  return rows;
-}
-
-/** One field of an enumerated schema as a table row. */
-function fieldRow(f: Field, where: string): string {
-  const notes = [
-    f.default ? `Default \`${code(f.default)}\`.` : '',
-    f.enum.length ? `One of ${f.enum.map((e) => `\`${code(e)}\``).join(', ')}.` : '',
-    text(firstSentence(f.description, 160)),
-  ]
-    .filter(Boolean)
-    .join(' ');
-  return `| \`${code(f.name)}\` | ${where} | ${text(f.type)} | ${f.required ? 'yes' : '—'} | ${notes} |`;
-}
-
-function request(op: Operation, raw: any): string[] {
-  const rows = requestRows(op, raw);
-  if (!rows.length) {
-    // A GET with nothing declared genuinely takes nothing. A POST with nothing
-    // declared is a hole in the DOCUMENT — the handler reads a body the
-    // emission does not describe — and saying "the credential is the whole
-    // request" there would teach a call that fails. State which of the two it
-    // is; the reader can then reach for `describe` instead of guessing.
-    const reads = op.method === 'get' || op.method === 'head' || op.method === 'delete';
-    return [
-      '## Request',
-      '',
-      reads
-        ? `\`${op.method.toUpperCase()} ${code(op.path)}\` takes no parameters and no body — the credential is the whole request.`
-        : `The document declares no body for \`${op.method.toUpperCase()} ${code(op.path)}\`. The handler is typed in cloud but its shape is not yet emitted, so the fields are not listed here — ask the MCP door's \`describe\` for \`${code(op.id)}\`, which answers from the running route.`,
-      '',
-    ];
-  }
-  return [
-    '## Request',
-    '',
-    `${rows.length} field${rows.length === 1 ? '' : 's'}${
-      op.body ? `, body \`${op.body.contentType}\`${op.body.required ? ' (required)' : ''}` : ''
-    }.`,
-    '',
-    '| Field | In | Type | Required | Description |',
-    '|---|---|---|---|---|',
-    ...rows,
-    '',
-  ];
-}
-
-/**
- * EVERY DECLARED RESPONSE, success and failure in one list.
- *
- * A status code says which kind a response is; splitting them into a "response"
- * section and an "errors" section states that twice and leaves the errors
- * section empty on the 1,539 of 1,562 operations that declare no failure body.
- * A section that is almost always a referral to another page is not a section.
- */
-function response(op: Operation, raw: any, doc: Document): string[] {
-  const declared: Array<[string, any]> = Object.entries(
-    (doc.raw.paths?.[op.path]?.[op.method]?.responses ?? {}) as Record<string, any>,
-  ).sort(([a], [b]) => a.localeCompare(b));
-
-  const L: string[] = ['## Response', ''];
-  if (!declared.length) {
-    L.push(
-      'The document declares no response body for this operation. It answers `200` on success and the platform error shape on failure — see [Errors](/docs/errors).',
-    );
-    L.push('');
-    return L;
-  }
-
-  L.push('| Status | Body | Meaning |');
-  L.push('|---|---|---|');
-  for (const [status, r] of declared) {
-    const schema = Object.values((r?.content ?? {}) as Record<string, any>)[0]?.schema;
-    L.push(
-      `| \`${code(status)}\` | ${schema ? text(typeOf(schema)) : '—'} | ${text(
-        firstSentence(r?.description ?? '', 160),
-      )} |`,
-    );
-  }
-  L.push('');
-
-  const ok = op.success?.schema ? fields(raw, op.success.schema) : [];
-  if (ok.length) {
-    L.push(`\`${code(op.success!.status)}\` body — ${ok.length} field${ok.length === 1 ? '' : 's'}.`);
-    L.push('');
-    L.push('| Field | In | Type | Always | Description |');
-    L.push('|---|---|---|---|---|');
-    for (const f of ok) L.push(fieldRow(f, 'body'));
-    L.push('');
-  }
-
-  L.push('Failure carries the platform error shape — see [Errors](/docs/errors).');
-  L.push('');
-  return L;
+  return ['', '| Parameter | In | Type | Required | Description |', '|---|---|---|---|---|', ...rows];
 }
 
 // ------------------------------------------------------------------- pages
@@ -233,223 +143,8 @@ function leadProse(op: Operation): string {
   return flat(description).startsWith(summary) ? description : `${summary}\n\n${description}`;
 }
 
-/**
- * WHERE A PRODUCT TEACHES ITS FIRST CALL.
- *
- * A product page opened with a synopsis and 2,300 words of reference, and no
- * reader could find the one line that starts them. So each page now opens with
- * the same four things, in the same order, for all 188 of them: what it is, the
- * credential, the first call on four surfaces, and what comes back.
- *
- * Nothing here is authored. The sentence is the owning package's synopsis, the
- * call is `firstCall()`'s choice out of the document, and the four surfaces are
- * the same renderer the flow pages use. 184 hand-written quickstarts would be
- * 184 pages to re-check every time a route moves; this one cannot fall behind
- * the document because it IS the document.
- */
-function quickstart(p: Product, doc: Document, table: Map<string, CliCommand>, d: Door): string[] {
-  const op = firstCall(p);
-  const L: string[] = [];
-
-  L.push('## Quickstart');
-  L.push('');
-  L.push('```bash');
-  L.push(`export HANZO_API_KEY=${secretKey(doc).prefix}...   # console.hanzo.ai → API keys`);
-  L.push('```');
-  L.push('');
-  L.push(
-    runnable(op)
-      ? `Then the first call — a read that needs nothing but the key. \`${op.method.toUpperCase()} ${code(op.path)}\`, operation \`${op.id}\`:`
-      : // Said plainly rather than papered over: this product's front door takes
-        // arguments, and a sample that pretended otherwise would fail on the
-        // reader's first attempt instead of on ours.
-        `Then the first call. This one takes arguments — the placeholders are yours to fill. \`${op.method.toUpperCase()} ${code(op.path)}\`, operation \`${op.id}\`:`,
-  );
-  L.push('');
-  L.push(...surfaces(op, doc, table, d));
-  L.push('');
-
-  const shape = returns(op);
-  if (shape) {
-    L.push(shape);
-    L.push('');
-  }
-  return L;
-}
-
-/** What comes back, named from the document's own success response. */
-function returns(op: Operation): string {
-  const s = op.success;
-  if (!s) return '';
-  const named = typeOf(s.schema);
-  const said = firstSentence(s.description, 140);
-  if (!named && !said) return '';
-  return `Answers \`${s.status}\`${named ? ` with \`${text(named)}\`` : ''}${said ? ` — ${text(said)}` : ''}.`;
-}
-
-/**
- * THE PAGE TITLE A READER SEARCHES FOR.
- *
- * `METHOD /path` is what a reader arrives holding and is unique on every page,
- * so it is the heading and the table-of-contents entry. It is a poor <title>:
- * nobody searches for a slash. The summary — the first sentence of the owning
- * Go doc comment — carries the words they actually type, so that is the title,
- * with the address underneath in the one place it belongs. Where two operations
- * in a product open with the same sentence, the address disambiguates, because
- * two pages with one title is a page a search engine picks between at random.
- */
-function opTitle(op: Operation, taken: Set<string>): string {
-  const address = `${op.method.toUpperCase()} ${op.path}`;
-  const summary = firstSentence(op.summary.replace(/\s+/g, ' ').trim(), 80);
-  if (!summary) return address;
-  const key = summary.toLowerCase();
-  return taken.has(key) ? `${summary} — ${address}` : summary;
-}
-
-/**
- * ONE OPERATION, ITS OWN PAGE.
- *
- * The product page carried every operation, so `ai` ran to 2,030 lines and the
- * one route a reader came for was somewhere inside it — unlinkable, and
- * competing with 207 siblings for the same URL. A page per operation gives each
- * one an address to send someone, a title to find it by, and room to state the
- * whole request and the whole response rather than the first forty fields.
- *
- * Four parts, in the order a caller needs them: what it is and what it costs to
- * call, what it does, what you send, what comes back, and then the same call on
- * all four surfaces. Nothing here is authored — every sentence is the document's.
- */
-function renderOperation(
-  op: Operation,
-  p: Product,
-  doc: Document,
-  table: Map<string, CliCommand>,
-  d: Door,
-  taken: Set<string>,
-): string {
-  const L: string[] = [];
-  const address = `${op.method.toUpperCase()} ${op.path}`;
-
-  L.push('---');
-  L.push(`title: ${yamlString(opTitle(op, taken))}`);
-  L.push(
-    `description: ${yamlString(
-      firstSentence(op.description || op.summary, 155) || `${address} on ${doc.server}.`,
-    )}`,
-  );
-  L.push('---');
-  L.push('');
-  L.push("import { Tab, Tabs } from '@hanzo/docs-base-ui/components/tabs'");
-  L.push('');
-  L.push(`\`${code(address)}\``);
-  L.push('');
-  if (op.deprecated) {
-    L.push('**Deprecated.** It still answers; a caller writing new code should not reach for it.');
-    L.push('');
-  }
-  L.push(`> [${text(p.title)} →](/docs/openapi/${p.name}) · [All API references →](/docs/openapi) · [Six flows, four surfaces →](/docs/start)`);
-  L.push('');
-  L.push('| | |');
-  L.push('|---|---|');
-  L.push(`| **Address** | \`${code(doc.server + op.path)}\` |`);
-  L.push(`| **Method** | \`${op.method.toUpperCase()}\` |`);
-  L.push(`| **Operation** | \`${code(op.id)}\` |`);
-  L.push(`| **Auth** | \`Authorization: Bearer $HANZO_API_KEY\` |`);
-  L.push('');
-
-  // The title IS the summary, so the body starts at the description. Printing
-  // the summary again under a heading that already says it is the same sentence
-  // twice — which is what `leadProse` exists to avoid on the product page,
-  // where the heading is the address instead.
-  const lead = op.description.trim() || op.summary.trim();
-  if (lead) {
-    L.push(prose(lead));
-    L.push('');
-  }
-
-  L.push(...request(op, doc.raw));
-  L.push(...response(op, doc.raw, doc));
-
-  L.push('## Examples');
-  L.push('');
-  L.push(...surfaces(op, doc, table, d));
-  L.push('');
-  L.push('---');
-  L.push('');
-  L.push(`[${text(p.title)} API](/docs/openapi/${p.name}) · [All Hanzo APIs](/docs/openapi) · [Interactive reference](/reference)`);
-  L.push('');
-  return L.join('\n');
-}
-
-/**
- * WHAT THE CAPABILITY IS, from the capability's own HIP.
- *
- * The reference below states what it SERVES. This states what it is: the store
- * it owns, how a request becomes a tenant, what it meters, what it publishes.
- * HIP-0139 makes that text part of shipping a capability, so it exists in one
- * place and is rendered here rather than re-told.
- *
- * The HIP's own `##` sections become `###`, so the page keeps one spine and the
- * specification nests under it. The Abstract leads WITHOUT a heading — it is the
- * definition, and a reader who arrived at a page called KMS does not need a
- * heading to be told the first paragraph says what KMS is. References and
- * Copyright are the HIP's bookkeeping about itself, not the capability's
- * specification, and are left in the HIP.
- */
-const HIP_BOOKKEEPING = new Set(['references', 'copyright']);
-
-function specification(name: string, hips: Corpus): string[] {
-  const hip: Hip | undefined = hips.capabilities[name];
-  const L: string[] = ['## Specification', ''];
-
-  // A capability with no HIP says so, and says it in one line. Padding the gap
-  // with a paragraph of generated prose would make an unwritten specification
-  // look like a written one, which is the one thing a reader must not conclude.
-  if (!hip) {
-    L.push(
-      `Specification pending — no HIP in [hanzoai/hips](https://github.com/hanzoai/hips) ` +
-        `declares \`capability: ${name}\` yet. What this capability serves is below, ` +
-        'from the API document; what it is — the store it owns, how it meters, what it ' +
-        'publishes — is written as a HIP under HIP-0139.',
-    );
-    L.push('');
-    return L;
-  }
-
-  const url =
-    `https://github.com/hanzoai/hips/blob/${hips.pin}/HIPs/${hip.file}`;
-  L.push(
-    `> **HIP-${text(hip.hip)} · ${text(hip.title)}** — ${text(hip.status)} · ` +
-      `[read the specification →](${url})`,
-  );
-  L.push('');
-  for (const sec of hip.sections) {
-    if (HIP_BOOKKEEPING.has(sec.heading.toLowerCase())) continue;
-    const lead = sec.heading.toLowerCase() === 'abstract';
-    if (!lead) {
-      L.push(`### ${text(sec.heading)}`);
-      L.push('');
-    }
-    // Everything the author nested moves down one level with its parent, and
-    // the prose is escaped for MDX. A HIP is markdown written for a markdown
-    // reader, so it is free to contain `{host}` and `<name>` in running text;
-    // MDX reads the first as an expression and the second as a component, and
-    // the admission page died prerendering with `host is not defined`. `prose`
-    // leaves fenced blocks and code spans alone, so examples still read as
-    // written.
-    L.push(prose(sec.body.replace(/^(#{3,5})\s/gm, (_m, h) => `${h}# `)));
-    L.push('');
-  }
-  return L;
-}
-
-function renderProduct(
-  p: Product,
-  doc: Document,
-  table: Map<string, CliCommand>,
-  d: Door,
-  hips: Corpus,
-): string {
+function renderProduct(p: Product, doc: Document): string {
+  const guide = guideHref(p.name);
   const L: string[] = [];
 
   // The product's intro IS the tag description — the owning package's synopsis.
@@ -466,8 +161,6 @@ function renderProduct(
   );
   L.push('---');
   L.push('');
-  L.push("import { Tab, Tabs } from '@hanzo/docs-base-ui/components/tabs'");
-  L.push('');
   L.push(
     synopsis
       ? prose(synopsis)
@@ -476,6 +169,7 @@ function renderProduct(
   L.push('');
 
   const nav = [
+    ...(guide ? [`[Guide & examples →](${guide})`] : []),
     '[All API references →](/docs/openapi)',
     '[Six flows, four surfaces →](/docs/start)',
   ];
@@ -488,40 +182,50 @@ function renderProduct(
   L.push(`| **Auth** | \`Authorization: Bearer $HANZO_API_KEY\` |`);
   L.push('');
 
-  L.push(...specification(p.name, hips));
-
-  L.push(...quickstart(p, doc, table, d));
-
-  // THE CAPABILITY PAGE IS AN INDEX, NOT A COPY.
-  //
-  // It used to carry every operation's prose and tables, which made `ai` 2,030
-  // lines and gave 208 routes one shared URL. Each operation now has its own
-  // page, so printing the prose again here would publish the same sentences at
-  // two addresses — the reader picks the wrong one and a search engine picks
-  // for them. What belongs here is the part a page of its own cannot give: the
-  // whole capability at a glance, in the order the document declares it.
-  //
-  // One table, never sub-sections. A capability's operations all carry one tag
-  // — its own name, which is what selected them — so a heading above the table
-  // could only repeat the page title.
-  L.push('## Endpoints');
-  L.push('');
-  L.push('| Endpoint | What it does |');
-  L.push('|---|---|');
+  const sections = new Map<string, Operation[]>();
   for (const op of p.operations) {
-    const said = firstSentence(op.summary || op.description, 150);
-    L.push(
-      `| [\`${op.method.toUpperCase()} ${code(op.path)}\`](${opHref(op)}) | ${
-        op.deprecated ? '**Deprecated.** ' : ''
-      }${text(said)} |`,
-    );
+    if (!sections.has(op.tag)) sections.set(op.tag, []);
+    sections.get(op.tag)!.push(op);
   }
-  L.push('');
+
+  for (const [tag, ops] of [...sections.entries()].sort((a, b) => a[0].localeCompare(b[0]))) {
+    L.push(`## ${text(tag)}`);
+    L.push('');
+    for (const op of ops) {
+      // The heading IS the endpoint.
+      //
+      // It was the summary, which is the first sentence of a Go doc comment —
+      // a sentence, not a label: 417 characters at its longest, and colliding
+      // 63 times across the document because neighbouring operations open the
+      // same way. The right rail is built from these headings, so the contents
+      // rendered as a column of wrapped paragraphs whose duplicate anchors
+      // landed on the wrong section. `METHOD /path` is the string a reader
+      // arrives holding, is unique on every page (measured: zero collisions),
+      // and is short enough to scan down — 41 characters at p90. It costs no
+      // room either: the same string was already printed on its own line
+      // directly underneath, and that is the line this replaces.
+      L.push(`### \`${op.method.toUpperCase()} ${code(op.path)}\``);
+      L.push('');
+      if (op.deprecated) {
+        L.push('**Deprecated.**');
+        L.push('');
+      }
+      const lead = leadProse(op);
+      if (lead) {
+        L.push(prose(lead));
+        L.push('');
+      }
+      L.push(...paramTable(op));
+      L.push(...bodyTable(op));
+      L.push('');
+    }
+  }
 
   L.push('---');
   L.push('');
   L.push(
     [
+      ...(guide ? [`[${text(p.title)} guide](${guide})`] : []),
       '[All Hanzo APIs](/docs/openapi)',
       '[Interactive reference](/reference)',
     ].join(' · '),
@@ -553,9 +257,7 @@ function renderIndex(products: Product[], doc: Document): string {
   L.push('');
   L.push('## Authentication');
   L.push('');
-  L.push(
-    `Every product accepts the same bearer credential — a Hanzo IAM JWT or a \`${secretKey(doc).prefix}\` secret key.`,
-  );
+  L.push('Every product accepts the same bearer credential — a Hanzo IAM JWT or an `hk-` API key.');
   L.push('');
   L.push('```bash');
   L.push(`curl -H "Authorization: Bearer $HANZO_API_KEY" ${doc.server}/v1/models`);
@@ -563,18 +265,6 @@ function renderIndex(products: Product[], doc: Document): string {
   L.push('');
   L.push(
     'Get a key at [console.hanzo.ai](https://console.hanzo.ai). New here? [Six flows, four surfaces](/docs/start) walks the same journeys as CLI, SDK, HTTP and MCP.',
-  );
-  L.push('');
-  L.push('## Start anywhere');
-  L.push('');
-  // The claim is counted, not asserted: `runnable` is the same predicate the
-  // pages are generated through, so this number cannot disagree with them.
-  const ready = products.filter((p) => runnable(firstCall(p))).length;
-  L.push(
-    `Every product page opens with a **Quickstart**: what the product is, in its own words, and its first call ` +
-      `shown as the CLI, an SDK, raw HTTP and an MCP tool. For ${ready} of the ${products.length} that first call is a read ` +
-      `that needs nothing but the key — paste it and it answers. The other ${products.length - ready} take an argument, ` +
-      'and say so rather than printing a sample that cannot run.',
   );
   L.push('');
   L.push('## Products');
@@ -595,41 +285,7 @@ function renderIndex(products: Product[], doc: Document): string {
 }
 
 /** One reference: a page per product, an index, and the section's nav. */
-/**
- * THE SIDEBAR: nine domains, capabilities in the order the taxonomy writes them.
- *
- * 116 names in one alphabetical list is the arrangement that carries no
- * information — `admission` above `ai`, `zt` beside nothing — and it is the one
- * arrangement nobody chose. `capabilities.yaml` is where the choice was made, so
- * the sidebar reads it: domains as separators, capabilities in file order
- * beneath their own.
- *
- * `check-capabilities` proves the two sets are the same set, in both directions,
- * before this runs. So there is no fallback bucket here and no need for one: a
- * capability that is not grouped fails the build, rather than landing in an
- * "Other" heading nobody meant to create.
- */
-function sidebar(products: Product[]): string[] {
-  const have = new Set(products.map((p) => p.name));
-  const out: string[] = [];
-  for (const d of domains()) {
-    const names = d.tags.filter((t) => have.has(t));
-    if (!names.length) continue;
-    const mark = icon(d.id);
-    out.push(`---${mark ? `[${mark}]` : ''}${d.title}---`);
-    out.push(...names);
-  }
-  return out;
-}
-
-function writePages(
-  dir: string,
-  products: Product[],
-  doc: Document,
-  table: Map<string, CliCommand>,
-  d: Door,
-  hips: Corpus,
-): void {
+function writePages(dir: string, products: Product[], doc: Document): void {
   fs.rmSync(dir, { recursive: true, force: true });
   fs.mkdirSync(dir, { recursive: true });
 
@@ -638,69 +294,36 @@ function writePages(
   // a different URL but the same filename, and writing it flat silently
   // destroyed one or the other. A folder index resolves it: `index/index.mdx`
   // serves /docs/openapi/index and leaves /docs/openapi alone.
-  // Every product is a FOLDER — `<product>/index.mdx` beside one page per
-  // operation. It used to be a flat `<product>.mdx`, with `index` special-cased
-  // because Hanzo Index wants /docs/openapi/index and that is the same filename
-  // as this folder's own page. One shape for all of them retires the special
-  // case: the folder index serves the product, and no product can collide with
-  // the section.
-  let ops = 0;
+  const pageFile = (slug: string) =>
+    slug === 'index' ? path.join(dir, slug, 'index.mdx') : path.join(dir, `${slug}.mdx`);
+
   for (const p of products) {
-    const folder = path.join(dir, p.name);
-    fs.mkdirSync(folder, { recursive: true });
-    fs.writeFileSync(path.join(folder, 'index.mdx'), renderProduct(p, doc, table, d, hips));
-
-    // Summaries that repeat inside one product get the address appended, so no
-    // two pages here carry the same title.
-    const seen = new Set<string>();
-    const dup = new Set<string>();
-    for (const op of p.operations) {
-      const k = firstSentence(op.summary.replace(/\s+/g, ' ').trim(), 80).toLowerCase();
-      if (k && seen.has(k)) dup.add(k);
-      if (k) seen.add(k);
-    }
-
-    const slugs = new Set<string>();
-    for (const op of p.operations) {
-      const slug = opSlug(op);
-      if (slugs.has(slug)) {
-        throw new Error(
-          `[openapi] ${p.name}: "${op.id}" and an earlier operation both address "${slug}" — the slug rule in openapi-doc.ts must separate them`,
-        );
-      }
-      slugs.add(slug);
-      fs.writeFileSync(
-        path.join(folder, `${slug}.mdx`),
-        renderOperation(op, p, doc, table, d, dup),
-      );
-      ops++;
-    }
-
-    // The operations are routed but NOT in the sidebar: 2,344 leaves under 179
-    // products is a tree nobody navigates. The product page's endpoint table is
-    // their index, and it is the better one — it states what each call does.
-    fs.writeFileSync(
-      path.join(folder, 'meta.json'),
-      JSON.stringify({ title: p.title, description: firstSentence(p.description, 160), pages: ['index'] }, null, 2) +
-        '\n',
-    );
+    const f = pageFile(p.name);
+    fs.mkdirSync(path.dirname(f), { recursive: true });
+    fs.writeFileSync(f, renderProduct(p, doc));
   }
   fs.writeFileSync(path.join(dir, 'index.mdx'), renderIndex(products, doc));
 
+  // Every product got its own page, or the build is lying about its coverage.
+  const written = new Set(products.map((p) => pageFile(p.name)));
+  if (written.size !== products.length) {
+    throw new Error(
+      `[openapi] ${products.length} products collapsed onto ${written.size} files — two slugs share a path`,
+    );
+  }
   fs.writeFileSync(
     path.join(dir, 'meta.json'),
     JSON.stringify(
       {
         title: 'API Reference',
         description:
-          'REST API reference for every Hanzo capability, generated from the OpenAPI document.',
-        pages: ['index', ...sidebar(products)],
+          'REST API reference for every Hanzo product, generated from the OpenAPI document.',
+        pages: ['index', ...products.map((p) => p.name)],
       },
       null,
       2,
     ) + '\n',
   );
-  console.log(`[openapi] ${products.length} products, ${ops} operation pages -> ${path.relative(APP_ROOT, dir)}`);
 }
 
 // -------------------------------------------------------------------- main
@@ -711,43 +334,6 @@ function syncDocument(): void {
   } catch (e) {
     console.warn('[openapi] sync failed; building from the committed snapshot', e);
   }
-}
-
-/**
- * THE SECTION SWITCHER'S DATA, generated with the pages it points at.
- *
- * The switcher in the docs chrome carried a hand-written list of 50 services
- * with hand-written routes into `content/docs/services/`. That is a second
- * catalogue of the estate, kept true by memory, on every page of the site — and
- * when the section it pointed at was deleted, all 50 routes died at once with
- * nothing to notice.
- *
- * It is the same projection as the sidebar: nine domains, their capabilities,
- * their pages. Emitted as TypeScript into `generated/`, beside the key-types
- * fragment, for the same reason — a client component cannot read the document at
- * runtime, so the build hands it the answer.
- */
-function writeSections(products: Product[]): void {
-  const by = new Map(products.map((p) => [p.name, p]));
-  const groups = domains()
-    .map((d) => ({
-      label: d.title,
-      items: d.tags
-        .filter((t) => by.has(t))
-        .map((t) => ({ name: by.get(t)!.title, route: `/docs/openapi/${t}` })),
-    }))
-    .filter((g) => g.items.length > 0);
-
-  const file = path.join(APP_ROOT, 'generated/sections.ts');
-  fs.mkdirSync(path.dirname(file), { recursive: true });
-  fs.writeFileSync(
-    file,
-    '// Generated by scripts/gen-openapi-pages.ts from the pinned document and\n' +
-      '// openapi-specs/capabilities.yaml. Do not edit.\n\n' +
-      'export interface DocSection {\n  name: string;\n  route: string;\n}\n\n' +
-      'export interface SectionGroup {\n  label: string;\n  items: DocSection[];\n}\n\n' +
-      `export const SECTIONS: SectionGroup[] = ${JSON.stringify(groups, null, 2)};\n`,
-  );
 }
 
 export async function genOpenapiPages(
@@ -770,20 +356,12 @@ export async function genOpenapiPages(
     );
   }
 
-  // The quickstart's CLI and MCP columns are the CLI's own table and the door's
-  // own answer, read here once and handed down — the same two artefacts the flow
-  // pages read, through the same two functions.
-  const table = loadCliTable();
-  const d = door(loadDoor().tools);
-  const hips = loadCorpus();
-
-  writePages(out, doc.products, doc, table, d, hips);
-  if (out === OUT_DIR) writeSections(doc.products);
+  writePages(out, doc.products, doc);
 
   // The operator surface is rendered too, just not here. 86 endpoints our own
   // people run on are worth a page each; what they are not worth is being on
   // docs.hanzo.ai. See INTERNAL_DIR for where they go and why it is not a repo.
-  if (doc.internal.length) writePages(internalOut, doc.internal, doc, table, d, hips);
+  if (doc.internal.length) writePages(internalOut, doc.internal, doc);
 
   // The interactive reference at /reference reads the same document, so the
   // document it reads is the published one. Copying the source whole — which is
@@ -814,7 +392,7 @@ export async function genOpenapiPages(
     `[openapi] ${withSynopsis} products carry the owning package's synopsis; ` +
       `${doc.undeclared.size} are served but declare no tag ` +
       `(${doc.products.filter((p) => doc.undeclared.has(p.name)).reduce((n, p) => n + p.operations.length, 0)} operations) ` +
-      `— those want a tag in hanzoai/cloud`,
+      `— those want a tag in hanzoai/openapi`,
   );
 }
 

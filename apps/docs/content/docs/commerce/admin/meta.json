@@ -1,0 +1,10 @@
+{
+  "title": "Admin Dashboard",
+  "pages": [
+    "setup",
+    "products",
+    "orders",
+    "customers",
+    "settings"
+  ]
+}

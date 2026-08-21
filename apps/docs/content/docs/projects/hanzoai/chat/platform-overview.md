@@ -178,7 +178,7 @@ docker compose -f compose.dev.yml up
 ## 🤝 Community & Support
 
 - **GitHub**: [github.com/hanzoai](https://github.com/hanzoai)
-- **Discord**: [Join our community](https://discord.gg/CJCyAsm9Vr)
+- **Discord**: [Join our community](https://discord.gg/hanzoai)
 - **Documentation**: [docs.hanzo.ai](https://docs.hanzo.ai)
 
 ## 🎯 Use Cases

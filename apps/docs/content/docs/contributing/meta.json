@@ -2,9 +2,5 @@
   "title": "Contributing",
   "description": "How Hanzo docs are built, sourced, and joined into docs.hanzo.ai",
   "icon": "GitPullRequest",
-  "pages": [
-    "docs-architecture",
-    "authoring-cli",
-    "preview"
-  ]
+  "pages": ["docs-architecture"]
 }

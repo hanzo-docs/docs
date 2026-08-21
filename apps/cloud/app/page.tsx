@@ -48,7 +48,7 @@ const features = [
     icon: BarChart3Icon,
     title: 'Usage Analytics',
     description:
-      'Real-time token usage, cost tracking, and performance metrics. Per-model, per-team breakdowns with Datastore-powered dashboards.',
+      'Real-time token usage, cost tracking, and performance metrics. Per-model, per-team breakdowns with ClickHouse-powered dashboards.',
   },
   {
     icon: UsersIcon,
@@ -66,20 +66,20 @@ const features = [
     icon: ShieldCheckIcon,
     title: 'Security & Compliance',
     description:
-      'End-to-end encryption, audit logs, and SOC 2 Type II controls. PII redaction and content filtering built in.',
+      'End-to-end encryption, audit logs, and SOC 2 compliance. PII redaction and content filtering built in.',
   },
   {
     icon: ZapIcon,
     title: 'Rate Limiting & Caching',
     description:
-      'Intelligent response caching with KV. Global and per-key rate limits. Automatic retry with exponential backoff.',
+      'Intelligent response caching with Redis. Global and per-key rate limits. Automatic retry with exponential backoff.',
   },
 ];
 
 const stats = [
   { value: 'enso + Zen', label: 'First-Party Models' },
   { value: '<50ms', label: 'Added Latency' },
-  { value: 'Multi-region', label: 'Automated failover' },
+  { value: '99.9%', label: 'Uptime SLA' },
   { value: '5000', label: 'Req/s Capacity' },
 ];
 
@@ -287,7 +287,7 @@ export default function Page() {
                   {
                     icon: BarChart3Icon,
                     path: 'Analytics Pipeline',
-                    desc: 'Langfuse → Datastore → Dashboards',
+                    desc: 'Langfuse → ClickHouse → Dashboards',
                   },
                 ].map((step, i) => (
                   <div

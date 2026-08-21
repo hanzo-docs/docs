@@ -8,11 +8,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const url = (path: string): string => new URL(path, baseUrl).toString();
   const items = await Promise.all(
     source.getPages().map(async (page) => {
-      // Every page, with no type excluded. This skipped `openapi` pages, which
-      // was correct while a second source mounted the reference as its own page
-      // type -- and it is what kept the whole API reference out of the sitemap.
-      // There is one source now, so the filter could only ever remove pages that
-      // should be listed.
+      if (page.type === 'openapi') return;
       const { lastModified } = await page.data.load();
 
       return {

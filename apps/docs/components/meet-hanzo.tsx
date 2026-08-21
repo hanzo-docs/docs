@@ -19,8 +19,8 @@ import { MeetHanzoMenu } from '@hanzogui/shell';
 // ecosystem link. Passed to MeetHanzoMenu's `resolveHref` (opt-in; a no-op on
 // shell versions before that prop exists, so it's safe to ship ahead).
 const DOCS_HREFS: Record<string, string> = {
-  models: '/docs/openapi/ai',
-  enso: '/docs/openapi/ai',
+  models: '/docs/services/models',
+  enso: '/docs/services/models',
   agents: '/docs/agents',
   mcp: '/docs/mcp',
   gateway: '/docs/llm',
@@ -32,10 +32,12 @@ const DOCS_HREFS: Record<string, string> = {
  * `compact` collapses the trigger to its icon below `lg`.
  *
  * The docs header is a fixed 56px row that also carries search, Sign In and Get API
- * Key. Below `lg` a text label does not fit beside them: Get API Key wraps and spills
- * out of the bar at 834, and clips off the right edge at 768 (measured). So the label
- * earns its space by breakpoint. The accessible name stays "Hanzo" at every width —
- * only the glyph changes, so nothing is lost to a screen reader or a keyboard user.
+ * Key. Swapping a ~34px icon for the ~83-120px "Meet Hanzo" label overflowed it: at
+ * 834 Get API Key wrapped to four lines and spilled out of the bar, and at 768 it was
+ * clipped off the right edge entirely (measured). The label is worth its width where
+ * there is room and costs the header where there is not, so it earns its space by
+ * breakpoint. The accessible name stays "Meet Hanzo" at every width — only the glyph
+ * changes, so nothing is lost to a screen reader or a keyboard user.
  */
 export function MeetHanzo({ compact = false }: { compact?: boolean }) {
   const [open, setOpen] = useState(false);
@@ -49,13 +51,13 @@ export function MeetHanzo({ compact = false }: { compact?: boolean }) {
         aria-expanded={open}
         aria-controls={panelId}
         onClick={() => setOpen((v) => !v)}
-        aria-label="Hanzo"
+        aria-label="Meet Hanzo"
         className={`inline-flex shrink-0 items-center gap-1 rounded-full text-sm font-medium text-fd-muted-foreground transition-colors hover:bg-fd-accent hover:text-fd-accent-foreground ${
           compact ? 'size-9 justify-center lg:size-auto lg:px-3 lg:py-1.5' : 'px-3 py-1.5'
         }`}
       >
         {compact && <LayoutGrid className="size-4 lg:hidden" aria-hidden />}
-        <span className={compact ? 'hidden lg:inline' : undefined}>Hanzo</span>
+        <span className={compact ? 'hidden lg:inline' : undefined}>Meet Hanzo</span>
         <ChevronDown
           aria-hidden
           className={`size-3.5 transition-transform duration-200 ${open ? 'rotate-180' : ''} ${

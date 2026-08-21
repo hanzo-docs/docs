@@ -189,7 +189,7 @@ Hanzo AI provides the complete toolkit for AI-driven development:
 
 ### Enterprise Features
 - **SSO Integration**: SAML, OAuth, LDAP
-- **Compliance**: SOC 2 Type II controls; certification scoped per engagement
+- **Compliance**: SOC2, HIPAA ready
 - **White-labeling**: Custom branding
 - **Private deployment**: On-premise options
 
@@ -313,6 +313,6 @@ team:
 
 🚀 [Sign up at iam.hanzo.ai](https://iam.hanzo.ai) to get started
 
-💬 Join our community: [discord.gg/CJCyAsm9Vr](https://discord.gg/CJCyAsm9Vr)
+💬 Join our community: [discord.gg/hanzoai](https://discord.gg/hanzoai)
 
 📚 Documentation: [docs.hanzo.ai](https://docs.hanzo.ai)

@@ -138,7 +138,7 @@ dev enhance "your feature request"
 - Access controls
 
 ### Security & Compliance
-- SOC 2 Type II controls
+- SOC2 compliant
 - End-to-end encryption
 - Audit logs
 - SSO/SAML support

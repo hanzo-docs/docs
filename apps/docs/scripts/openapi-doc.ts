@@ -1,11 +1,9 @@
 import fs from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { parse as parseYaml } from 'yaml';
 
 // THE DOCUMENT.
 //
-// hanzoai/cloud `openapi.yaml` is the one description of the Hanzo API. The
+// hanzoai/openapi `hanzo.yaml` is the one description of the Hanzo API. The
 // reference, the flow pages, the SDKs, the CLI and the MCP tools are all
 // PROJECTIONS of it. Nothing about the API is written twice: if a page states
 // an endpoint's behaviour, that prose came from here.
@@ -13,44 +11,6 @@ import { parse as parseYaml } from 'yaml';
 // This module is the only reader. It resolves the document into products and
 // operations; every generator downstream consumes those values and never
 // re-parses YAML or re-invents the product rule.
-
-/**
- * Where the document is, and the release it is at — read from here, never
- * spelled again.
- *
- * Seven callers each carried their own `openapi-specs/<name>.yaml` literal.
- * When the reference stopped rendering hanzoai/openapi's projection and started
- * rendering cloud's document, one of those seven was edited; the other six kept
- * naming a file that no longer exists, and the build's own guard — "no page may
- * state an endpoint the document does not have" — was among them, so it threw
- * ENOENT instead of checking anything. A path that is a value has one place to
- * change; a path repeated is six chances to miss one.
- */
-const SPECS = path.join(path.dirname(fileURLToPath(import.meta.url)), '../openapi-specs');
-
-const lock = (field: string): string => {
-  try {
-    const text = fs.readFileSync(path.join(SPECS, '.spec-lock'), 'utf8');
-    return (text.match(new RegExp(`^${field}=(.+)$`, 'm'))?.[1] ?? '').trim();
-  } catch {
-    return '';
-  }
-};
-
-/**
- * The lock names WHICH document, so the snapshot is called what it is.
- *
- * cloud emits two: `openapi.yaml`, everything the fleet serves, and
- * `public.yaml`, the customer contract. The lock's `path=` chose between them
- * for the fetch while the local copy stayed named `openapi.yaml` whatever it
- * held — a file whose name contradicts its contents, in the one place a reader
- * checks which document a page was built from. The name is read from the same
- * line the fetch reads, so there is one answer and no way to have two.
- */
-export const DOCUMENT = path.join(SPECS, lock('path') || 'openapi.yaml');
-
-/** The cloud release the document was taken at, from `.spec-lock`. */
-export const release = (): string => lock('ref').slice(0, 9);
 
 export const METHODS = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options'] as const;
 export type Method = (typeof METHODS)[number];
@@ -70,7 +30,7 @@ export interface Body {
 }
 
 export interface Operation {
-  /** The capability that serves this operation — its tag. See `capabilityOf`. */
+  /** Product this page groups the operation under: its tag, else `/v1/<seg>`. */
   product: string;
   /** Full operationId, e.g. `get_v1_tools`. */
   id: string;
@@ -79,6 +39,8 @@ export interface Operation {
    * itself — see the note where it is computed.
    */
   name: string;
+  /** The operation's own tag — a section heading within its product. */
+  tag: string;
   method: Method;
   path: string;
   summary: string;
@@ -103,34 +65,12 @@ export interface Product {
   operations: Operation[];
 }
 
-/**
- * One class of API key, as the document states it at `/v1/keys`.
- *
- * The class name is the product's own noun — it is the literal a caller sends
- * as `{"type": …}` — and the prefix is what a key of that class is spelled
- * with. `publishable` is not a judgement made here; it is the class the product
- * NAMES publishable, which is the same word cloud's `PublishablePrefix` is
- * named after.
- */
-export interface KeyType {
-  /** The class as a caller names it: `secret`, `publishable`. */
-  name: string;
-  /** The spelling a key of this class carries: `sk-`, `pk-`. */
-  prefix: string;
-  /** What the document says the class is, verbatim from inside the parens. */
-  note: string;
-  /** True for the class the product calls publishable — the browser-safe one. */
-  publishable: boolean;
-}
-
 export interface Document {
   title: string;
   version: string;
   description: string;
   server: string;
   securitySchemes: Record<string, any>;
-  /** Every class of API key the document says `/v1/keys` mints — see keyTypes. */
-  keys: KeyType[];
   /** Products docs.hanzo.ai publishes. Excludes `internal` — see isInternal. */
   products: Product[];
   /** The operator surface, grouped the same way. Never published publicly. */
@@ -171,59 +111,10 @@ export interface Document {
  * so until it does, the one exception is spelled out here with its reason.
  */
 const INTERNAL_PRODUCT = 'admin';
-
-/**
- * Named by ROUTE, not by operationId.
- *
- * This was `get_v1_commerce_admin_catalog`, and cloud then dropped the default
- * version from its ids — `_v1_` left 2011 of them in one release. The exception
- * stopped matching, and the one operation the estate holds back for carrying
- * upstream cost and margin went back to being published, quietly, on the next
- * pin bump. A route is the thing that exists; an id is a naming convention over
- * it, and conventions move.
- */
-const INTERNAL_ROUTES = new Set(['get /v1/commerce/admin/catalog']);
+const INTERNAL_IDS = new Set(['get_v1_commerce_admin_catalog']);
 
 export const isInternal = (op: Operation): boolean =>
-  op.product === INTERNAL_PRODUCT || INTERNAL_ROUTES.has(`${op.method} ${op.path}`);
-
-/**
- * WHERE AN OPERATION'S PAGE LIVES: its operationId, whole.
- *
- * The id is unique across the document — cloud mints one per route — so this
- * rule cannot collide, and it needs to know nothing about the capability the
- * page sits under.
- *
- * It used to drop the capability infix, so `get_ads_campaigns_by_id` under
- * `ads` became `get-campaigns-by-id`, on the reasoning that the URL already
- * spells `ads` once. That reasoning quietly assumed the id CONTAINS the
- * capability, which was true only while the capability was being derived from
- * the id. It is now the tag — the app that OWNS the route, which is not always
- * the word the address starts with — and the two differ on 485 of 2,284
- * operations. Dropping a segment that means something else merged `post_messages`
- * and `post_ai_messages` onto one page under `ai`, which is a lost page, not a
- * tidier URL.
- */
-export const opSlug = (op: Operation): string =>
-  op.id
-    .replace(/_/g, '-')
-    .replace(/[^a-zA-Z0-9-]/g, '')
-    .replace(/-{2,}/g, '-')
-    .toLowerCase();
-
-/** The operation's own page, under its product. */
-export const opHref = (op: Operation): string => `/docs/openapi/${op.product}/${opSlug(op)}`;
-
-/**
- * The key a server presents: the one class that is NOT publishable.
- *
- * Every generated page that shows a curl or an env var shows this one, and each
- * used to spell it as a literal — three copies of a value the document states,
- * which is how three generated pages came to teach a prefix cloud has never
- * minted. Asking the document is one expression and cannot drift.
- */
-export const secretKey = (doc: Document): KeyType =>
-  doc.keys.find((k) => !k.publishable) ?? doc.keys[0];
+  op.product === INTERNAL_PRODUCT || INTERNAL_IDS.has(op.id);
 
 /**
  * The document with the operator surface taken out, for publishing.
@@ -247,7 +138,7 @@ export function publicDocument(doc: Document): any {
   const published = new Set(doc.products.map((p) => p.name));
   const gone = new Set(doc.internal.map((p) => p.name).filter((n) => !published.has(n)));
   if (Array.isArray(raw.tags)) {
-    raw.tags = raw.tags.filter((t: any) => !gone.has(String(t?.name ?? '')));
+    raw.tags = raw.tags.filter((t: any) => !gone.has(squash(String(t?.name ?? ''))));
   }
   return raw;
 }
@@ -265,157 +156,9 @@ export function deref(raw: any, node: any, depth = 0): any {
   return deref(raw, cur, depth + 1);
 }
 
-/**
- * The classes of API key, read out of the document rather than restated.
- *
- * The key resource is one endpoint and the class is a field on it.
- * Its Go source spells each class beside its prefix — `"secret" (sk-, …)`,
- * `"publishable" (pk-, …)` — zipdoc lifts those doc comments into this
- * document, and this reads them back. So a page saying `sk-` is saying what the
- * handler says, one hop away, instead of what someone remembered.
- *
- * The pairs are read from EVERY description the key resource carries and the
- * readings must AGREE. Two doc comments state them today — the `type` field a
- * caller sends and the `type` field they read back — written in different words
- * at different places in cloud. Requiring agreement means a rename that lands in
- * one of them and not the other stops the build here rather than publishing two
- * answers.
- *
- * Refusing is the whole point of the exercise: an empty or contradictory reading
- * throws, because a docs build that quietly published no key types would be the
- * same failure — a reader who cannot learn which credential to ask for — wearing
- * a green checkmark.
- */
-const KEY_CLASS = /"?\b([a-z][a-z-]{2,20})"?\s*\((([a-z]{2,6})-)([,)][^)]*)?\)/g;
-
-/**
- * WHERE THE KEY RESOURCE IS: found, not spelled.
- *
- * This read `/v1/keys` literally, and cloud folded the address under the
- * capability that owns it — `/v1/account/keys` — so the whole build stopped on
- * a document that states the key classes perfectly well, one segment over. An
- * address is not an identity; that is the same lesson the capability rule
- * learned, and this was the last place still spelling one.
- *
- * The resource is identified by what it IS: a collection called `keys`, at the
- * root or one capability deep, whose own prose names the classes. Candidates are
- * read in order and the first that names a publishable class and at least two
- * classes wins — which is a property of the answer, so a neighbour like
- * `/v1/o11y/gateway/ingestion_keys` cannot be mistaken for it.
- */
-const KEY_RESOURCE = /^\/v1\/(?:[a-z0-9-]+\/)?keys$/;
-
-export function keyTypes(raw: any): KeyType[] {
-  const candidates = Object.keys(raw?.paths ?? {}).filter((p) => KEY_RESOURCE.test(p)).sort();
-  if (!candidates.length) {
-    // Every generated page prints a bearer credential, so none of them can be
-    // written without knowing how one is spelled. Stopping here is the honest
-    // failure; the alternative is a whole site of curls with a blank key.
-    throw new Error('the document serves no `keys` collection — no page can state how a key is spelled');
-  }
-  for (const at of candidates) {
-    const found = readKeyTypes(raw, raw.paths[at]);
-    if (found.length >= 2 && found.some((k) => k.publishable)) return found;
-  }
-  throw new Error(
-    `none of ${candidates.join(', ')} names a publishable key class and a second one — ` +
-      'the document stopped stating them, so no page can',
-  );
-}
-
-function readKeyTypes(raw: any, item: any): KeyType[] {
-  if (!item) return [];
-
-  // Every sentence the key resource carries: its operations, their parameters,
-  // and the schemas they send and return. Naming one schema would tie this to a
-  // Go type name; walking what the path item reaches ties it to the resource.
-  const said: string[] = [];
-  const collect = (node: any, depth = 0) => {
-    if (!node || typeof node !== 'object' || depth > 6) return;
-    const d = deref(raw, node, 0);
-    if (typeof d?.description === 'string') said.push(d.description);
-    for (const v of Object.values(d)) if (v && typeof v === 'object') collect(v, depth + 1);
-  };
-  collect(item);
-
-  // class -> prefix, and every reading of a class must give the same prefix.
-  const seen = new Map<string, KeyType>();
-  for (const text of said) {
-    for (const m of text.replace(/\s+/g, ' ').matchAll(KEY_CLASS)) {
-      const name = m[1];
-      const prefix = `${m[3]}-`;
-      const note = (m[4] ?? '').replace(/^[,)]\s*/, '').trim();
-      const prior = seen.get(name);
-      if (prior && prior.prefix !== prefix) {
-        throw new Error(
-          `the document spells the ${name} key both ${prior.prefix} and ${prefix} — cloud says it two ways`,
-        );
-      }
-      // Keep the longest note: the same pair is stated tersely in one place and
-      // with its reason in another, and the reason is the half worth publishing.
-      if (!prior || note.length > prior.note.length) {
-        seen.set(name, { name, prefix, note, publishable: name === 'publishable' });
-      }
-    }
-  }
-
-  // Publishable last: a reader meets the default before the exception.
-  // Whether this is ENOUGH — two classes, one of them publishable — is the
-  // caller's question, because it is what decides which candidate is the key
-  // resource at all.
-  return [...seen.values()].sort((a, b) => Number(a.publishable) - Number(b.publishable));
-}
-
-/**
- * HOW A PRODUCT'S NAME IS WRITTEN.
- *
- * Capitalising the first letter is right for a word (`agents` -> `Agents`) and
- * wrong for an initialism: it published `Kms`, `Iam`, `Ai`, `Mq` and `O11y` as
- * the titles of the five products most often searched for by their initials.
- * Whether a name is a word or an initialism is not a property of its letters,
- * so it cannot be derived — it has to be stated.
- *
- * Its real home is the document: an OpenAPI tag may carry `x-displayName`, and
- * none of hanzo.yaml's 182 tags does. Until cloud writes them there, this is
- * the one place that knows, and every generator reads it through `Product.title`
- * rather than spelling a name of its own.
- */
-const WRITTEN: Record<string, string> = {
-  ai: 'AI',
-  api: 'API',
-  cli: 'CLI',
-  crm: 'CRM',
-  csrf: 'CSRF',
-  dns: 'DNS',
-  gpus: 'GPUs',
-  iam: 'IAM',
-  k8s: 'K8s',
-  kb: 'KB',
-  kms: 'KMS',
-  kv: 'KV',
-  llm: 'LLM',
-  mcp: 'MCP',
-  ml: 'ML',
-  mpc: 'MPC',
-  mq: 'MQ',
-  o11y: 'O11y',
-  rag: 'RAG',
-  rpc: 'RPC',
-  s3: 'S3',
-  sbom: 'SBOM',
-  sdk: 'SDK',
-  seo: 'SEO',
-  seso: 'SESO',
-  sql: 'SQL',
-  ssh: 'SSH',
-  x402: 'x402',
-  zt: 'ZT',
-};
-
-/** `agents` -> `Agents`; `kms` -> `KMS`; `Roles & Permissions` passes through. */
+/** `agents` -> `Agents`; `Roles & Permissions` and `MFA` pass through. */
 const titleCase = (name: string): string =>
-  WRITTEN[name.toLowerCase()] ??
-  (/^[a-z]/.test(name) ? name[0].toUpperCase() + name.slice(1) : name);
+  /^[a-z]/.test(name) ? name[0].toUpperCase() + name.slice(1) : name;
 
 const firstSentence = (s: string): string => {
   const t = String(s ?? '').replace(/\s+/g, ' ').trim();
@@ -424,30 +167,30 @@ const firstSentence = (s: string): string => {
 };
 
 /**
- * The capability rule: THE TAG.
+ * The product rule, in exactly one place.
  *
- * An operation's tag is the capability that serves it — the app, one word, the
- * same word that names its Go package, its plugin binary, its client class, its
- * tool, its command group, its page and its HIP (HIP-0139). cloud states it
- * twice, as the tag and as `x-app`, and the two agree on all 2,284 operations.
- *
- * This used to be derived instead: the operationId's first segment, else the
- * `/v1/<seg>` path segment. Both are guesses about an ADDRESS, and an address is
- * not an owner — an app may answer at a route not named for it, which cloud
- * tracks in its own `openapi/misfiled.txt`. Measured on this document the guess
- * disagrees with the owner on 485 of 2,284 operations: 385 resolved to nothing
- * and were dropped from the site entirely, the rest filed under a neighbour's
- * name. The id branch never even fired — every id reads `<verb>_<app>_<rest>`,
- * so its first segment is `get` or `post`, which is why a rule had to be written
- * saying an HTTP method is not a product.
- *
- * Reading the tag deletes all of that: no parsing, no fallback, no verb
- * exception, no squash-matching a slug to a prose-cased name. A capability with
- * no page is now impossible, because the page is keyed by the thing the document
- * groups by.
+ * Every operation in the document is `<product>_<name>`, and every prefix is a
+ * top-level tag carrying that product's synopsis. Where an operationId is
+ * malformed we fall back to the `/v1/<product>` path segment rather than
+ * inventing a product — and if neither resolves, the operation is reported as
+ * unresolved instead of being silently dropped.
  */
-const capabilityOf = (op: any): string =>
-  (Array.isArray(op?.tags) && typeof op.tags[0] === 'string' ? op.tags[0] : '').trim();
+function resolveProduct(id: string, path: string, known: (s: string) => boolean): string | null {
+  const prefix = id.includes('_') ? id.slice(0, id.indexOf('_')) : '';
+  if (prefix && known(prefix)) return prefix;
+  const seg = path.split('/').filter(Boolean);
+  if (seg[0] === 'v1' && seg[1] && known(seg[1])) return seg[1];
+  return prefix || null;
+}
+
+/**
+ * Product slugs are lowercase (`webhooks`, `pubsub`) because they come from an
+ * operationId prefix or a path segment; tag names are prose-cased (`Webhooks`,
+ * `Pub/Sub`). Matching them exactly stranded 16 packages' synopses on tags no
+ * page was keyed by. Compare on the squashed form so the prose finds its page,
+ * while the slug — and therefore the URL — stays the lowercase one.
+ */
+const squash = (s: string): string => s.toLowerCase().replace(/[^a-z0-9]/g, '');
 
 export function loadDocument(file: string): Document {
   const raw = parseYaml(fs.readFileSync(file, 'utf8'));
@@ -457,16 +200,23 @@ export function loadDocument(file: string): Document {
   const undeclared = new Set<string>();
 
   const tags: any[] = Array.isArray(raw.tags) ? raw.tags : [];
-  // ONE index. The tag name IS the slug — cloud emits capability names, which
-  // are single lowercase words by construction (HIP-0139) — so there is nothing
-  // to normalise and no second spelling for a page to be keyed by.
+  // TWO indexes, deliberately not one. Resolution matches tag names EXACTLY;
+  // squash-matching there would let the woven document's `cloud_` prefix claim
+  // a `Cloud` tag and swallow every path-derived product with it (132 products
+  // collapsed to 29). Squashing is only for finding a slug's prose.
   const tagByName = new Map<string, any>(tags.map((t) => [t.name, t]));
+  const tagBySquash = new Map<string, any>();
+  for (const t of tags) if (!tagBySquash.has(squash(t.name))) tagBySquash.set(squash(t.name), t);
+  const known = (s: string) => tagByName.has(s);
 
+  // Products are created on demand, keyed by SLUG. Pre-seeding one per tag
+  // would mint a second page for every tag whose name only squash-matches a
+  // slug (`Webhooks` beside `webhooks`).
   const byName = new Map<string, Product>();
   const product = (slug: string): Product => {
     let p = byName.get(slug);
     if (p) return p;
-    const t = tagByName.get(slug);
+    const t = tagByName.get(slug) ?? tagBySquash.get(squash(slug));
     if (!t) undeclared.add(slug);
     p = {
       name: slug,
@@ -494,7 +244,7 @@ export function loadDocument(file: string): Document {
       if (!op || typeof op !== 'object') continue;
 
       const id = String(op.operationId ?? '');
-      const product_ = capabilityOf(op);
+      const product_ = resolveProduct(id, path, known);
 
       const parameters: Param[] = [...shared, ...(op.parameters ?? [])]
         .map((p) => deref(raw, p))
@@ -522,7 +272,7 @@ export function loadDocument(file: string): Document {
       const okCt = okRaw?.content ? Object.keys(okRaw.content)[0] : undefined;
 
       const resolved: Operation = {
-        product: product_,
+        product: product_ ?? '',
         id,
         // The door's tool name IS the operationId. It was the id minus its own
         // first segment while hanzoai/openapi prefixed every id with the spec it
@@ -531,6 +281,7 @@ export function loadDocument(file: string): Document {
         // against the door's own tools/list: 802 of 833 names are the
         // operationId exactly, where stripping a segment resolves 89.
         name: id,
+        tag: (Array.isArray(op.tags) && op.tags[0]) || product_ || 'General',
         method,
         path,
         summary: String(op.summary ?? '').replace(/\s+/g, ' ').trim(),
@@ -572,7 +323,6 @@ export function loadDocument(file: string): Document {
     description: firstSentence(info.description ?? ''),
     server: raw.servers?.[0]?.url ?? 'https://api.hanzo.ai',
     securitySchemes: raw.components?.securitySchemes ?? {},
-    keys: keyTypes(raw),
     // Only products the document actually serves operations for. A tag with no
     // operations is not a product page — it is a tag we have not filled in yet.
     //
