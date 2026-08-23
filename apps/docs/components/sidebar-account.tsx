@@ -152,36 +152,34 @@ function Account({ user, onSignOut }: { user: DocsUser; onSignOut: () => void })
 }
 
 /**
- * The same control, in the top bar, for the two states where the rail is not
- * showing it: a collapsed rail on desktop, and mobile, where the rail is a
- * drawer behind a button. Without it "Get an API key" simply vanishes on the
- * front page and on every phone.
+ * The top bar's half of the same account, and ONLY for someone who has one.
  *
- * It is deliberately the SHORT label. The bar is a fixed 56px row and the full
- * phrase is the widest thing on the page — it is what reflowed to three lines
- * and spilled out of the bar between 768 and 805px, which is why the long form
- * lives in a column and this one does not.
+ * Getting a key is asked once, at the foot of the rail, under Sign in — the free
+ * step first, the commitment last. This used to ask a second time from the top
+ * bar whenever the rail was a drawer, so a phone showed the pill above the page
+ * title AND the full phrase inside the drawer: two buttons, two labels ("API
+ * key" and "Get an API key"), one action. A reader cannot tell whether those are
+ * the same door, and the answer to "where do I get a key" stopped being a place.
+ *
+ * The signed-IN avatar stays, because it is not the same question. It says who
+ * you are and opens the console; it is the only account affordance a collapsed
+ * rail has, and it duplicates nothing.
+ *
+ * The cost is real and taken deliberately: on a phone the CTA now lives one tap
+ * inside the drawer. That is the price of the answer being one place, and the
+ * rail is the place, because that is where it is on every desktop.
  */
 export function NavAccount() {
   const [user] = useDocsUser()
-
-  if (user)
-    return (
-      <a
-        href="https://console.hanzo.ai"
-        title={user.name || user.email || 'Account'}
-        className="grid size-7 place-items-center rounded-full bg-fd-primary text-xs font-medium text-fd-primary-foreground"
-      >
-        {(user.name || user.email || 'A').slice(0, 1).toUpperCase()}
-      </a>
-    )
+  if (!user) return null
 
   return (
     <a
       href="https://console.hanzo.ai"
-      className="rounded-lg bg-fd-primary px-2.5 py-1.5 text-sm font-medium text-fd-primary-foreground whitespace-nowrap transition-colors hover:opacity-90"
+      title={user.name || user.email || 'Account'}
+      className="grid size-7 place-items-center rounded-full bg-fd-primary text-xs font-medium text-fd-primary-foreground"
     >
-      API key
+      {(user.name || user.email || 'A').slice(0, 1).toUpperCase()}
     </a>
   )
 }
