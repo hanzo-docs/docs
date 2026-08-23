@@ -1,29 +1,34 @@
 <!--
-  Favicon framing. The mark's geometry is untouched — it is the shared brand mark,
-  drawn identically by the header. Only the viewBox that frames it moved.
+  The brand mark, and nothing around it — byte-for-byte the geometry hanzo.ai
+  serves at /favicon.svg, so the tab for docs.hanzo.ai and the tab for hanzo.ai
+  are the same picture.
 
-  It was viewBox="0 0 67 67" while the mark occupies x 4..53.6 and y 4..54, so the
-  padding was 4 on the left and top but ~13 on the right and bottom. At 16px in a
-  tab that reads as a lopsided glyph pushed into one corner.
+  What this replaces was the mark inside a filled, rounded black tile. Two things
+  were wrong with that and only one of them is visible at a glance. The tile is
+  not part of the mark — no other Hanzo surface draws one — so docs sat in a row
+  of tabs looking like a different company. And a baked tile cannot answer the
+  theme: white-on-black is legible on a dark tab strip and a heavy blot on a light
+  one, where every sibling tab is showing a light mark.
 
-  The size 67 was already right and is kept: measured against the shipped icon.png
-  (256px, mark bbox 32..222 on both axes) the mark is 74% of the canvas, and
-  50 / 0.746 = 67. Only the ORIGIN moves. The mark centres on (28.8, 29), so
-  shifting the box to (-4.7, -4.5) puts 8.7 and 8.5 units of padding on all four
-  sides — the same 13% the PNG has.
+  The `style` block is what fixes the second half. `prefers-color-scheme` inside
+  an SVG referenced by `<link rel="icon">` is evaluated against the BROWSER's
+  theme, so the glyph is #000 on a light tab strip and #fff on a dark one, with no
+  second file and no tile to hide behind. The viewBox is 0 0 67 67 with the mark
+  filling it — the framing IS the mark's own bounding box, which is why it needs
+  no padding decision.
 
-  rx matches the PNG's rounded corner, which this file was missing entirely: the
-  SVG and the PNG were two different shapes.
+  There is no icon.png beside this. Next emits a `<link>` for every icon
+  convention it finds, so an opaque 256px PNG next to this file is a second answer
+  to the same question that some browsers prefer — which is how the tile survived
+  a change to the SVG. apple-icon.png stays: iOS composites its tile on an opaque
+  ground and draws its own rounded corners, so an opaque source is correct there
+  and only there.
 -->
-<svg viewBox="-4.7 -4.5 67 67" xmlns="http://www.w3.org/2000/svg">
-  <rect x="-4.7" y="-4.5" width="67" height="67" rx="10.5" fill="#000000"/>
-  <g>
-    <path d="M17 54V36.1H4V54H17Z" fill="#ffffff"/>
-    <path d="M4 36.1L17 37.6V36.1H4Z" fill="#DDDDDD" opacity="0.7"/>
-    <path d="M53.6 17.4H17.2L4 36.1H40.3L53.6 17.4Z" fill="#ffffff"/>
-    <path d="M17 4H4V17.4H17V4Z" fill="#ffffff"/>
-    <path d="M53.6 4H40.4V17.4H53.6V4Z" fill="#ffffff"/>
-    <path d="M53.6 17.4L40.4 15.7V17.4H53.6Z" fill="#DDDDDD" opacity="0.7"/>
-    <path d="M53.6 54V36.1H40.4V54H53.6Z" fill="#ffffff"/>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 67 67" role="img" aria-label="Hanzo">
+<style>path{fill:#000}@media (prefers-color-scheme:dark){path{fill:#fff}}</style>
+<path d="M22.21 67V44.6369H0V67H22.21Z"/>
+<path d="M66.7038 22.3184H22.2534L0.0878906 44.6367H44.4634L66.7038 22.3184Z"/>
+<path d="M22.21 0H0V22.3184H22.21V0Z"/>
+<path d="M66.7198 0H44.5098V22.3184H66.7198V0Z"/>
+<path d="M66.7198 67V44.6369H44.5098V67H66.7198Z"/>
 </svg>
