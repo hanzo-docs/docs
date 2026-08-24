@@ -1,3 +1,14 @@
+@import '@hanzo/font/css';
 @import 'tailwindcss';
 @import '@hanzo/docs-base-ui/css/neutral.css';
 @import '@hanzo/docs-base-ui/css/preset.css';
+
+/* Zen is the family. The import above declares the faces and publishes
+   --font-zen-sans / --font-zen-mono; they are spelled HERE and nowhere else,
+   bound to the --font-sans / --font-mono pair every rule and every font-*
+   utility already reads — so the next face swap is these two lines, not a sweep.
+   Unlayered, so it outranks Tailwind's own @layer theme defaults. */
+:root {
+  --font-sans: var(--font-zen-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-zen-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+}
