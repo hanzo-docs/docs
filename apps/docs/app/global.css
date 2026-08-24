@@ -1,3 +1,4 @@
+@import '@hanzo/font/css';
 @import 'tailwindcss';
 @import '@hanzo/docs-base-ui/css/neutral.css';
 @import '@hanzo/docs-base-ui/css/preset.css';
@@ -5,6 +6,16 @@
 @import '@hanzo/docs-openapi/css/preset.css';
 @import '@hanzo/docs-story/css/preset.css';
 @plugin 'tailwindcss-animate';
+
+/* Zen is the family. The import above declares the faces and publishes
+   --font-zen-sans / --font-zen-mono; they are spelled HERE and nowhere else,
+   bound to the --font-sans / --font-mono pair every rule and every font-*
+   utility already reads — so the next face swap is these two lines, not a sweep.
+   Unlayered, so it outranks Tailwind's own @layer theme defaults. */
+:root {
+  --font-sans: var(--font-zen-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-zen-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+}
 
 @theme {
   --spacing-page: 1436px;
@@ -177,7 +188,7 @@ body {
 
 /* @hanzogui/shell paints the shared pre-footer CTA and the ecosystem footer
    with INLINE styles, so only !important reaches them. Two seams to close:
-   the page is Geist and they shipped the system stack, and the footer ground
+   the page is Zen and they shipped the system stack, and the footer ground
    was #0b0b0f — blue-tinted where the page is neutral. Ground stays dark in
    both themes because the shell's own text colour is a fixed white. */
 [data-hanzo-shell],

@@ -10,8 +10,13 @@ import { sanitizeMdx } from './sanitize-mdx';
 import { linkApiRefs } from './link-api-refs';
 import { checkEndpoints, report } from './check-endpoints';
 import { checkKeys, report as reportKeys } from './check-keys';
+import { syncReferenceFonts } from './sync-reference-fonts';
 
 async function main() {
+  // The static reference page's two faces, out of @hanzo/font. First, because it
+  // touches nothing else and a missing face is the one failure a reader sees.
+  syncReferenceFonts();
+
   // The document first, then its projections: the reference (one page per
   // product), the six flows (each shown four ways), and the MCP reference (one
   // page per tool). Flows need both the document and the CLI's command table,

@@ -432,8 +432,8 @@ The font tokens are a bit special and are created with `createFont`:
 ```tsx
 import { isWeb } from '@hanzo/gui'
 
-const interFont = createFont({
-  family: isWeb ? 'Inter, Helvetica, Arial, sans-serif' : 'Inter',
+const zenFont = createFont({
+  family: isWeb ? 'Zen, ui-sans-serif, system-ui, sans-serif' : 'Zen',
   size: {
     1: 12,
     2: 14,
@@ -457,10 +457,10 @@ const interFont = createFont({
 
   // because android handles fonts differently, you need to map the weight
   // to the actual name of the font in the font-file
-  // you can get the name with `otfinfo`: otfinfo --family Inter.ttf
+  // you can get the name with `otfinfo`: otfinfo --family Zen.ttf
   face: {
-    400: { normal: 'Inter', italic: 'Inter-Italic' },
-    500: { normal: 'InterBold', italic: 'InterBold-Italic' },
+    400: { normal: 'Zen', italic: 'Zen-Italic' },
+    500: { normal: 'ZenBold', italic: 'ZenBold-Italic' },
   },
 })
 ```

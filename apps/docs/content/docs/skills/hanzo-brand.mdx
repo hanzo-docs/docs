@@ -94,10 +94,15 @@ import { HanzoLogo, HanzoMark } from "@hanzo/logo"
 
 | Context | Font | Weight |
 |---------|------|--------|
-| Headings | Inter | 600 (Semibold) |
-| Body | Inter | 400 (Regular) |
-| Code | JetBrains Mono | 400 |
-| Marketing | Inter | 700 (Bold) |
+| Headings | Zen | 600 (Semibold) |
+| Body | Zen | 400 (Regular) |
+| Code | Zen Mono | 400 |
+| Marketing | Zen | 700 (Bold) |
+
+Zen is the Hanzo family and ships as [`@hanzo/font`](https://www.npmjs.com/package/@hanzo/font).
+Mount it once at the top of your root stylesheet with `@import '@hanzo/font/css'`,
+which declares the faces and publishes `--font-zen-sans` / `--font-zen-mono`; bind
+those to whatever `--font-sans` / `--font-mono` pair your token sheet already reads.
 
 ## Brand Policy: No Upstream References
 

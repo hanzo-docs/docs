@@ -47,6 +47,9 @@ importers:
       '@hanzo/docs-mdx':
         specifier: workspace:*
         version: link:../../packages/mdx
+      '@hanzo/font':
+        specifier: ^1.8.8
+        version: 1.8.8(next@16.2.12(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
       '@hanzo/mdx-runtime':
         specifier: workspace:*
         version: link:../../packages/mdx-runtime
@@ -138,6 +141,9 @@ importers:
       '@hanzo/docs-mdx':
         specifier: workspace:*
         version: link:../../packages/mdx
+      '@hanzo/font':
+        specifier: ^1.8.8
+        version: 1.8.8(next@16.2.12(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
       '@hanzo/mdx-runtime':
         specifier: workspace:*
         version: link:../../packages/mdx-runtime
@@ -238,6 +244,9 @@ importers:
       '@hanzo/docs-mdx':
         specifier: workspace:*
         version: link:../../packages/mdx
+      '@hanzo/font':
+        specifier: ^1.8.8
+        version: 1.8.8(next@16.2.12(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
       '@hanzo/logo':
         specifier: ^1.0.14
         version: 1.0.14(react@19.2.8)
@@ -344,6 +353,9 @@ importers:
 
   apps/cloud:
     dependencies:
+      '@hanzo/font':
+        specifier: ^1.8.8
+        version: 1.8.8(next@16.2.12(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -402,6 +414,9 @@ importers:
       '@hanzo/docs-mdx':
         specifier: workspace:*
         version: link:../../packages/mdx
+      '@hanzo/font':
+        specifier: ^1.8.8
+        version: 1.8.8(next@16.2.12(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
       '@hanzo/mdx-runtime':
         specifier: workspace:*
         version: link:../../packages/mdx-runtime
@@ -496,6 +511,9 @@ importers:
       '@hanzo/docs-mdx':
         specifier: workspace:*
         version: link:../../packages/mdx
+      '@hanzo/font':
+        specifier: ^1.8.8
+        version: 1.8.8(next@16.2.12(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
       '@hanzo/mdx-runtime':
         specifier: workspace:*
         version: link:../../packages/mdx-runtime
@@ -626,6 +644,9 @@ importers:
       '@hanzo/docs-ui':
         specifier: workspace:*
         version: link:../../packages/radix-ui
+      '@hanzo/font':
+        specifier: ^1.8.8
+        version: 1.8.8(next@16.2.12(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
       '@hanzo/iam':
         specifier: ^0.21.6
         version: 0.21.6(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -849,6 +870,9 @@ importers:
       '@hanzo/docs-mdx':
         specifier: workspace:*
         version: link:../../packages/mdx
+      '@hanzo/font':
+        specifier: ^1.8.8
+        version: 1.8.8(next@16.2.12(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
       '@hanzo/logo':
         specifier: ^1.0.14
         version: 1.0.14(react@19.2.8)
@@ -958,6 +982,9 @@ importers:
       '@hanzo/docs-analytics':
         specifier: workspace:*
         version: link:../../packages/analytics
+      '@hanzo/font':
+        specifier: ^1.8.8
+        version: 1.8.8(next@16.2.12(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -1013,6 +1040,9 @@ importers:
       '@hanzo/docs-mdx':
         specifier: workspace:*
         version: link:../../packages/mdx
+      '@hanzo/font':
+        specifier: ^1.8.8
+        version: 1.8.8(next@16.2.12(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
       '@hanzo/mdx-runtime':
         specifier: workspace:*
         version: link:../../packages/mdx-runtime
@@ -1171,6 +1201,9 @@ importers:
       '@hanzo/docs-mdx':
         specifier: workspace:*
         version: link:../../packages/mdx
+      '@hanzo/font':
+        specifier: ^1.8.8
+        version: 1.8.8(next@16.2.12(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
       '@hanzo/logo':
         specifier: ^1.0.14
         version: 1.0.14(react@19.2.8)
@@ -1292,6 +1325,9 @@ importers:
       '@hanzo/docs-mdx':
         specifier: workspace:*
         version: link:../../packages/mdx
+      '@hanzo/font':
+        specifier: ^1.8.8
+        version: 1.8.8(next@16.2.12(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
       '@hanzo/mdx-runtime':
         specifier: workspace:*
         version: link:../../packages/mdx-runtime
@@ -1459,6 +1495,9 @@ importers:
       '@hanzo/docs-mdx':
         specifier: workspace:*
         version: link:../../packages/mdx
+      '@hanzo/font':
+        specifier: ^1.8.8
+        version: 1.8.8(next@16.2.12(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
       '@hanzo/logo':
         specifier: ^1.0.14
         version: 1.0.14(react@19.2.8)
@@ -1577,6 +1616,9 @@ importers:
       '@hanzo/docs-mdx':
         specifier: workspace:*
         version: link:../../packages/mdx
+      '@hanzo/font':
+        specifier: ^1.8.8
+        version: 1.8.8(next@16.2.12(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
       '@hanzo/mdx-runtime':
         specifier: workspace:*
         version: link:../../packages/mdx-runtime
@@ -1671,6 +1713,9 @@ importers:
       '@hanzo/docs-mdx':
         specifier: workspace:*
         version: link:../../packages/mdx
+      '@hanzo/font':
+        specifier: ^1.8.8
+        version: 1.8.8(next@16.2.12(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
       '@hanzo/mdx-runtime':
         specifier: workspace:*
         version: link:../../packages/mdx-runtime
@@ -1756,6 +1801,9 @@ importers:
       '@hanzo/docs-analytics':
         specifier: workspace:*
         version: link:../../packages/analytics
+      '@hanzo/font':
+        specifier: ^1.8.8
+        version: 1.8.8(next@16.2.12(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -1814,6 +1862,9 @@ importers:
       '@hanzo/docs-mdx':
         specifier: workspace:*
         version: link:../../packages/mdx
+      '@hanzo/font':
+        specifier: ^1.8.8
+        version: 1.8.8(next@16.2.12(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
       '@hanzo/logo':
         specifier: ^1.0.14
         version: 1.0.14(react@19.2.8)
@@ -1993,6 +2044,9 @@ importers:
       '@hanzo/docs-mdx':
         specifier: workspace:*
         version: link:../../packages/mdx
+      '@hanzo/font':
+        specifier: ^1.8.8
+        version: 1.8.8(next@16.2.12(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
       '@hanzo/mdx-runtime':
         specifier: workspace:*
         version: link:../../packages/mdx-runtime
@@ -2127,6 +2181,9 @@ importers:
       '@hanzo/docs-mdx':
         specifier: workspace:*
         version: link:../../packages/mdx
+      '@hanzo/font':
+        specifier: ^1.8.8
+        version: 1.8.8(next@16.2.6(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))
       lucide-react:
         specifier: ^1.17.0
         version: 1.17.0(react@19.2.6)
@@ -2182,6 +2239,9 @@ importers:
       '@hanzo/docs-ui':
         specifier: workspace:*
         version: link:../../packages/radix-ui
+      '@hanzo/font':
+        specifier: ^1.8.8
+        version: 1.8.8(next@16.1.6(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))
       next:
         specifier: 16.1.6
         version: 16.1.6(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -2231,6 +2291,9 @@ importers:
       '@hanzo/docs-ui':
         specifier: workspace:*
         version: link:../../packages/radix-ui
+      '@hanzo/font':
+        specifier: ^1.8.8
+        version: 1.8.8(next@16.1.6(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))
       '@orama/tokenizers':
         specifier: ^3.1.18
         version: 3.1.18
@@ -2268,6 +2331,9 @@ importers:
       '@hanzo/docs-core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@hanzo/font':
+        specifier: ^1.8.8
+        version: 1.8.8(next@16.2.6(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))
       github-slugger:
         specifier: ^2.0.0
         version: 2.0.0
@@ -2320,6 +2386,9 @@ importers:
       '@hanzo/docs-ui':
         specifier: workspace:*
         version: link:../../packages/radix-ui
+      '@hanzo/font':
+        specifier: ^1.8.8
+        version: 1.8.8(next@16.2.6(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))
       lucide-react:
         specifier: ^1.17.0
         version: 1.17.0(react@19.2.6)
@@ -2372,6 +2441,9 @@ importers:
       '@hanzo/docs-ui':
         specifier: workspace:*
         version: link:../../packages/radix-ui
+      '@hanzo/font':
+        specifier: ^1.8.8
+        version: 1.8.8(next@16.2.6(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))
       lucide-react:
         specifier: ^1.17.0
         version: 1.17.0(react@19.2.6)
@@ -2427,6 +2499,9 @@ importers:
       '@hanzo/docs-ui':
         specifier: workspace:*
         version: link:../../packages/radix-ui
+      '@hanzo/font':
+        specifier: ^1.8.8
+        version: 1.8.8(next@16.1.6(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))
       next:
         specifier: 16.1.6
         version: 16.1.6(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -2470,6 +2545,9 @@ importers:
       '@hanzo/docs-ui':
         specifier: workspace:*
         version: link:../../packages/radix-ui
+      '@hanzo/font':
+        specifier: ^1.8.8
+        version: 1.8.8(next@16.2.6(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))
       '@orama/orama':
         specifier: ^3.1.18
         version: 3.1.18
@@ -2534,6 +2612,9 @@ importers:
       '@hanzo/docs-ui':
         specifier: workspace:*
         version: link:../../packages/radix-ui
+      '@hanzo/font':
+        specifier: ^1.8.8
+        version: 1.8.8(next@16.1.6(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))
       next:
         specifier: 16.1.6
         version: 16.1.6(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -2583,6 +2664,9 @@ importers:
       '@hanzo/docs-ui':
         specifier: workspace:*
         version: link:../../packages/radix-ui
+      '@hanzo/font':
+        specifier: ^1.8.8
+        version: 1.8.8(next@16.1.6(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))
       next:
         specifier: 16.1.6
         version: 16.1.6(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -2632,6 +2716,9 @@ importers:
       '@hanzo/docs-core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@hanzo/font':
+        specifier: ^1.8.8
+        version: 1.8.8(next@16.0.10(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))
       gray-matter:
         specifier: ^4.0.3
         version: 4.0.3
@@ -2693,6 +2780,9 @@ importers:
       '@hanzo/docs-ui':
         specifier: workspace:*
         version: link:../../packages/radix-ui
+      '@hanzo/font':
+        specifier: ^1.8.8
+        version: 1.8.8(next@16.1.6(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))
       next:
         specifier: 16.1.6
         version: 16.1.6(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -2739,6 +2829,9 @@ importers:
       '@hanzo/docs-ui':
         specifier: workspace:*
         version: link:../../packages/radix-ui
+      '@hanzo/font':
+        specifier: ^1.8.8
+        version: 1.8.8(next@16.2.12(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))
       '@react-router/node':
         specifier: ^7.13.2
         version: 7.15.1(react-router@7.15.1(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(typescript@6.0.3)
@@ -2809,6 +2902,9 @@ importers:
       '@hanzo/docs-ui':
         specifier: workspace:*
         version: link:../../packages/radix-ui
+      '@hanzo/font':
+        specifier: ^1.8.8
+        version: 1.8.8(next@16.2.12(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))
       '@orama/tokenizers':
         specifier: ^3.1.18
         version: 3.1.18
@@ -2873,6 +2969,9 @@ importers:
       '@hanzo/docs-ui':
         specifier: workspace:*
         version: link:../../packages/radix-ui
+      '@hanzo/font':
+        specifier: ^1.8.8
+        version: 1.8.8(next@16.2.12(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))
       '@react-router/node':
         specifier: ^7.15.1
         version: 7.15.1(react-router@7.15.1(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(typescript@6.0.3)
@@ -2934,6 +3033,9 @@ importers:
       '@hanzo/docs-ui':
         specifier: workspace:*
         version: link:../../packages/radix-ui
+      '@hanzo/font':
+        specifier: ^1.8.8
+        version: 1.8.8(next@16.2.12(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))
       '@react-router/node':
         specifier: ^7.15.1
         version: 7.15.1(react-router@7.15.1(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(typescript@6.0.3)
@@ -2998,6 +3100,9 @@ importers:
       '@hanzo/docs-ui':
         specifier: workspace:*
         version: link:../../packages/radix-ui
+      '@hanzo/font':
+        specifier: ^1.8.8
+        version: 1.8.8(next@16.2.12(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))
       '@orama/orama':
         specifier: ^3.1.18
         version: 3.1.18
@@ -3324,6 +3429,9 @@ importers:
       '@hanzo/docs-ui':
         specifier: workspace:*
         version: link:../../packages/radix-ui
+      '@hanzo/font':
+        specifier: ^1.8.8
+        version: 1.8.8(next@16.2.12(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))
       '@tanstack/react-router':
         specifier: 1.170.8
         version: 1.170.8(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -3991,7 +4099,7 @@ importers:
         version: 1.0.0
       next:
         specifier: 16.2.12
-        version: 16.2.12(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+        version: 16.2.12(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       npm-to-yarn:
         specifier: ^3.0.1
         version: 3.0.1
@@ -7387,6 +7495,11 @@ packages:
     peerDependenciesMeta:
       react:
         optional: true
+
+  '@hanzo/font@1.8.8':
+    resolution: {integrity: sha512-vaitCiXnbI91kgZ0gfS4BpFnpGMVnEe6y4jF06uMlFlxO0uwfgfVbGadicGfUg9tLE19FdW4ptfBfyxoUTODJA==}
+    peerDependencies:
+      next: '>=13.2.0'
 
   '@hanzo/gui@8.0.1':
     resolution: {integrity: sha512-C1fIhNp/4VXxbIeOunBOJ4q4M7epk6bupBpFI4oABDrYVnvWdRAxo9ylQTbbm8hDZhYbmQjq9GjcOtywUeX35w==}
@@ -21506,6 +21619,26 @@ snapshots:
     optionalDependencies:
       react: 19.2.6
 
+  '@hanzo/font@1.8.8(next@16.0.10(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))':
+    dependencies:
+      next: 16.0.10(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+
+  '@hanzo/font@1.8.8(next@16.1.6(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))':
+    dependencies:
+      next: 16.1.6(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+
+  '@hanzo/font@1.8.8(next@16.2.12(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))':
+    dependencies:
+      next: 16.2.12(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+
+  '@hanzo/font@1.8.8(next@16.2.12(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))':
+    dependencies:
+      next: 16.2.12(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+
+  '@hanzo/font@1.8.8(next@16.2.6(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))':
+    dependencies:
+      next: 16.2.6(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+
   '@hanzo/gui@8.0.1(react-dom@19.2.6(react@19.2.6))(react-native@0.86.2(@babel/core@7.29.7)(@react-native/metro-config@0.86.2(@babel/core@7.29.7))(@types/react@19.2.18)(react@19.2.6))(react@19.2.6)':
     dependencies:
       '@hanzogui/accordion': 8.0.1(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -25353,9 +25486,7 @@ snapshots:
       metro-runtime: 0.84.4
     transitivePeerDependencies:
       - '@babel/core'
-      - bufferutil
       - supports-color
-      - utf-8-validate
 
   '@react-native/normalize-color@2.1.0': {}
 
@@ -32810,6 +32941,32 @@ snapshots:
       - '@babel/core'
       - babel-plugin-macros
 
+  next@16.2.12(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6):
+    dependencies:
+      '@next/env': 16.2.12
+      '@swc/helpers': 0.5.15
+      baseline-browser-mapping: 2.10.32
+      caniuse-lite: 1.0.30001793
+      postcss: 8.4.31
+      react: 19.2.6
+      react-dom: 19.2.6(react@19.2.6)
+      styled-jsx: 5.1.6(@babel/core@7.29.7)(react@19.2.6)
+    optionalDependencies:
+      '@next/swc-darwin-arm64': 16.2.12
+      '@next/swc-darwin-x64': 16.2.12
+      '@next/swc-linux-arm64-gnu': 16.2.12
+      '@next/swc-linux-arm64-musl': 16.2.12
+      '@next/swc-linux-x64-gnu': 16.2.12
+      '@next/swc-linux-x64-musl': 16.2.12
+      '@next/swc-win32-arm64-msvc': 16.2.12
+      '@next/swc-win32-x64-msvc': 16.2.12
+      '@opentelemetry/api': 1.9.1
+      babel-plugin-react-compiler: 1.0.0
+      sharp: 0.34.5
+    transitivePeerDependencies:
+      - '@babel/core'
+      - babel-plugin-macros
+
   next@16.2.12(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.8))(react@19.2.8):
     dependencies:
       '@next/env': 16.2.12
@@ -32846,32 +33003,6 @@ snapshots:
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
       styled-jsx: 5.1.6(@babel/core@7.29.7)(react@19.2.8)
-    optionalDependencies:
-      '@next/swc-darwin-arm64': 16.2.12
-      '@next/swc-darwin-x64': 16.2.12
-      '@next/swc-linux-arm64-gnu': 16.2.12
-      '@next/swc-linux-arm64-musl': 16.2.12
-      '@next/swc-linux-x64-gnu': 16.2.12
-      '@next/swc-linux-x64-musl': 16.2.12
-      '@next/swc-win32-arm64-msvc': 16.2.12
-      '@next/swc-win32-x64-msvc': 16.2.12
-      '@opentelemetry/api': 1.9.1
-      babel-plugin-react-compiler: 1.0.0
-      sharp: 0.34.5
-    transitivePeerDependencies:
-      - '@babel/core'
-      - babel-plugin-macros
-
-  next@16.2.12(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6):
-    dependencies:
-      '@next/env': 16.2.12
-      '@swc/helpers': 0.5.15
-      baseline-browser-mapping: 2.10.32
-      caniuse-lite: 1.0.30001793
-      postcss: 8.4.31
-      react: 19.2.6
-      react-dom: 19.2.6(react@19.2.6)
-      styled-jsx: 5.1.6(@babel/core@7.29.7)(react@19.2.6)
     optionalDependencies:
       '@next/swc-darwin-arm64': 16.2.12
       '@next/swc-darwin-x64': 16.2.12

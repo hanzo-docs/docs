@@ -26,6 +26,11 @@ public/registry
 # at build time — one document, one copy in git.
 public/openapi/
 
+# The static reference page's two Zen faces, copied out of @hanzo/font by
+# scripts/sync-reference-fonts.ts on every build. Same rule as the document
+# above: an asset derived from a source we already track gets no second copy.
+public/reference/fonts/
+
 # The operator surface: one page per /v1/admin operation, generated beside the
 # public reference and deliberately NOT under content/, so nothing routes it.
 # Ignored because this repository is public — see INTERNAL_DIR in

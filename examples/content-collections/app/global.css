@@ -1,0 +1,23 @@
+@import '@hanzo/font/css';
+/* Zen is the family. The import above declares the faces and publishes
+   --font-zen-sans / --font-zen-mono; they are spelled HERE and nowhere else,
+   bound to the --font-sans / --font-mono pair.
+
+   This example carries no Tailwind, and the docs framework's own sheet names no
+   family at all, so nothing else would ever set one — hence the two element
+   rules below. They are what the old generated font class did on <html>. */
+:root {
+  --font-sans: var(--font-zen-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-zen-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+html {
+  font-family: var(--font-sans);
+}
+
+code,
+pre,
+kbd,
+samp {
+  font-family: var(--font-mono);
+}

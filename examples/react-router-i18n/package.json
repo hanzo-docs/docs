@@ -13,12 +13,13 @@
     "types:check": "react-router typegen && @hanzo/docs-mdx && tsc --noEmit"
   },
   "dependencies": {
-    "@orama/tokenizers": "^3.1.18",
-    "@react-router/node": "^7.15.1",
-    "@react-router/serve": "^7.15.1",
     "@hanzo/docs-core": "workspace:*",
     "@hanzo/docs-mdx": "workspace:*",
     "@hanzo/docs-ui": "workspace:*",
+    "@hanzo/font": "^1.8.8",
+    "@orama/tokenizers": "^3.1.18",
+    "@react-router/node": "^7.15.1",
+    "@react-router/serve": "^7.15.1",
     "isbot": "^5.1.40",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",

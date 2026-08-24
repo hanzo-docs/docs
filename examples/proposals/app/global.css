@@ -3,15 +3,21 @@
  * Base styles for improvement proposals sites (LPs, HIPs, ZIPs)
  */
 
+@import '@hanzo/font/css';
 @import "tailwindcss";
 
 @plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
 
+/* Zen is the family. The import above declares the faces and publishes
+   --font-zen-sans / --font-zen-mono; they are spelled HERE and nowhere else,
+   bound to the --font-sans / --font-mono pair every rule and every font-*
+   utility already reads. This theme is `inline`, so the values land in the
+   utilities directly and a later :root would not reach them — bind in place. */
 @theme inline {
-  --font-sans: var(--font-inter), system-ui, sans-serif;
-  --font-mono: ui-monospace, monospace;
+  --font-sans: var(--font-zen-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-zen-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
   --radius: 0.5rem;
 }
 

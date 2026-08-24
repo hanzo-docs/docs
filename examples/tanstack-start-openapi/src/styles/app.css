@@ -1,12 +1,26 @@
-@import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&display=swap');
+/* The faces. This sheet is linked by URL (`app.css?url` in routes/__root.tsx),
+   so it is the app's root stylesheet and the right place to declare them. It
+   replaced a third-party @import that fetched the family over the network on
+   every load; these bytes are the package's own and Vite serves them with us. */
+@import '@hanzo/font/css';
 @import 'tailwindcss';
 @import '@hanzo/docs-ui/css/neutral.css';
 @import '@hanzo/docs-ui/css/preset.css';
 @import '@hanzo/docs-openapi/css/preset.css';
 
-@theme {
-  --default-font-family: 'Geist';
-  --default-mono-font-family: 'Geist Mono';
+/* Zen is the family. The import above declares the faces and publishes
+   --font-zen-sans / --font-zen-mono; they are spelled HERE and nowhere else,
+   bound to the --font-sans / --font-mono pair every rule and every font-*
+   utility already reads — so the next face swap is these two lines, not a sweep.
+   Unlayered, so it outranks Tailwind's own @layer theme defaults. */
+:root {
+  --font-sans: var(--font-zen-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-zen-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+@theme inline {
+  --default-font-family: var(--font-sans);
+  --default-mono-font-family: var(--font-mono);
 }
 
 html {
