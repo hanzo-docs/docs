@@ -71,7 +71,7 @@
   },
   "peerDependencies": {
     "@types/react": "*",
-    "@hanzo/docs-core": "^15.0.0 || ^16.0.0",
+    "@hanzo/docs-core": ">=17.0.1",
     "react": "*",
     "react-dom": "*"
   },

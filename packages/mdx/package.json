@@ -95,7 +95,7 @@
     "@types/mdast": "*",
     "@types/mdx": "*",
     "@types/react": "*",
-    "@hanzo/docs-core": "^16.7.0",
+    "@hanzo/docs-core": ">=17.0.1",
     "mdast-util-directive": "*",
     "next": "^15.3.0 || ^16.0.0",
     "react": "^19.2.0",

@@ -78,7 +78,7 @@
     "@types/hast": "*",
     "@types/mdx": "*",
     "@types/react": "*",
-    "@hanzo/docs-core": "^16.8.0",
+    "@hanzo/docs-core": ">=17.0.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "unified": "*"

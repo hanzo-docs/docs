@@ -65,7 +65,7 @@
     "@types/estree": "*",
     "@types/hast": "*",
     "@types/mdast": "*",
-    "@hanzo/docs-core": "^15.7.2 || ^16.0.0",
+    "@hanzo/docs-core": ">=17.0.1",
     "mdast-util-mdx": "*"
   },
   "peerDependenciesMeta": {

@@ -58,8 +58,8 @@
   },
   "peerDependencies": {
     "@types/react": "*",
-    "@hanzo/docs-core": "15.x.x || 16.x.x",
-    "@hanzo/docs-ui": "15.x.x || 16.x.x",
+    "@hanzo/docs-core": ">=17.0.1",
+    "@hanzo/docs-ui": ">=17.0.5",
     "react": "19.x.x"
   },
   "peerDependenciesMeta": {

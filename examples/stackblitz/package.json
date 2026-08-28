@@ -11,9 +11,9 @@
   },
   "dependencies": {
     "@takumi-rs/image-response": "^1.2.1",
-    "@hanzo/docs-core": "16.9.3",
-    "@hanzo/docs-mdx": "15.0.10",
-    "@hanzo/docs-ui": "16.9.3",
+    "@hanzo/docs-core": "catalog:",
+    "@hanzo/docs-mdx": "catalog:",
+    "@hanzo/docs-ui": "catalog:",
     "lucide-react": "^1.16.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",

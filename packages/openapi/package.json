@@ -86,8 +86,8 @@
   "peerDependencies": {
     "@scalar/api-client-react": "^2.0.20",
     "@types/react": "*",
-    "@hanzo/docs-core": "^16.9.0",
-    "@hanzo/docs-ui": "^16.9.0",
+    "@hanzo/docs-core": ">=17.0.1",
+    "@hanzo/docs-ui": ">=17.0.5",
     "json-schema-typed": "*",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
