@@ -11,3 +11,21 @@ allowBuilds:
   protobufjs: false
   sharp: false
   vue-demi: false
+
+catalog:
+  '@hanzo/ai': 0.6.7
+  '@hanzo/brand': 1.4.8
+  '@hanzo/design': 0.5.24
+  '@hanzo/docs': 17.0.4
+  '@hanzo/docs-core': 17.0.1
+  '@hanzo/docs-mdx': 15.0.10
+  '@hanzo/docs-openapi': 11.0.0
+  '@hanzo/docs-ui': 17.0.5
+  '@hanzo/event': 0.3.37
+  '@hanzo/font': 1.9.2
+  '@hanzo/gui': 8.3.0
+  '@hanzo/iam': 0.21.17
+  '@hanzo/logo': 1.0.26
+  '@hanzo/mdx': 14.2.6
+  '@hanzo/products': 0.2.6
+  '@hanzo/ui': 8.25.0

@@ -9,10 +9,10 @@
     "start": "next start"
   },
   "dependencies": {
-    "@hanzogui/shell": "^7.6.3",
     "@hanzo/brand": "^1.4.1",
     "@hanzo/docs-analytics": "workspace:*",
-    "@hanzo/font": "^1.9.2",
+    "@hanzo/font": "catalog:",
+    "@hanzogui/shell": "^7.6.3",
     "class-variance-authority": "^0.7.1",
     "lucide-react": "^0.562.0",
     "next": "16.2.12",

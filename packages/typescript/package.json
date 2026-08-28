@@ -69,8 +69,8 @@
     "@types/hast": "*",
     "@types/mdast": "*",
     "@types/react": "*",
-    "@hanzo/docs-core": "^16.7.0",
-    "@hanzo/docs-ui": "^16.7.0",
+    "@hanzo/docs-core": ">=17.0.1",
+    "@hanzo/docs-ui": ">=17.0.5",
     "react": "*",
     "shiki": "*",
     "typescript": "*"

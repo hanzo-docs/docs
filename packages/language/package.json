@@ -40,9 +40,9 @@
   },
   "peerDependencies": {
     "@hanzo/docs-story": "*",
-    "@hanzo/docs-core": "*",
-    "@hanzo/docs-openapi": "*",
-    "@hanzo/docs-ui": "*"
+    "@hanzo/docs-core": ">=17.0.1",
+    "@hanzo/docs-openapi": ">=11.0.0",
+    "@hanzo/docs-ui": ">=17.0.5"
   },
   "peerDependenciesMeta": {
     "@hanzo/docs-story": {

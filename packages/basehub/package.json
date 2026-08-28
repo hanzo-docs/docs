@@ -43,7 +43,7 @@
   "peerDependencies": {
     "@types/react": "*",
     "basehub": "9.x.x",
-    "@hanzo/docs-core": "^16.8.0",
+    "@hanzo/docs-core": ">=17.0.1",
     "react": "^19.2.0"
   },
   "peerDependenciesMeta": {

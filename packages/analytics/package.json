@@ -1,7 +1,7 @@
 {
   "name": "@hanzo/docs-analytics",
   "version": "0.1.0",
-  "description": "The ONE telemetry drop-in for every Hanzo docs site — @hanzo/event to POST /v1/event.",
+  "description": "The ONE telemetry drop-in for every Hanzo docs site \u2014 @hanzo/event to POST /v1/event.",
   "private": true,
   "license": "MIT",
   "author": "Hanzo AI",
@@ -23,7 +23,7 @@
     "types:check": "tsc --noEmit"
   },
   "dependencies": {
-    "@hanzo/event": "^0.3.36"
+    "@hanzo/event": "catalog:"
   },
   "devDependencies": {
     "@types/node": "^25.9.1",

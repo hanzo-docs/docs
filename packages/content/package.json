@@ -40,6 +40,6 @@
   },
   "peerDependencies": {
     "fuma-content": "^1.2.3",
-    "@hanzo/docs-core": "^16.6.17"
+    "@hanzo/docs-core": ">=17.0.1"
   }
 }
