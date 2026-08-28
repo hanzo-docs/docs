@@ -29,3 +29,7 @@ catalog:
   '@hanzo/mdx': 14.2.6
   '@hanzo/products': 0.2.6
   '@hanzo/ui': 8.25.0
+
+minimumReleaseAgeExclude:
+  - '@hanzo/font@1.9.2'
+  - '@hanzo/ui@8.25.0'
