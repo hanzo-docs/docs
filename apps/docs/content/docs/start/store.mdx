@@ -1,0 +1,323 @@
+---
+title: "Store"
+description: "KV round-trip — create a store, read it back, delete it."
+---
+
+import { Tab, Tabs } from '@hanzo/docs-base-ui/components/tabs'
+
+**KV round-trip — create a store, read it back, delete it.**
+
+> The delete belongs in the language's finally/defer, so a failed read still cleans up instead of leaving the store for the next run to collide with. This is the provisioning plane — create a KV STORE, read it, drop it — at its served address, /v1/provisioning/kv. The bare /v1/kv spellings are the legacy dialect the binary itself tags compat, and the publication drops a compat operation by that declaration — so the day this file named them it would have named ids the published document does not have, which is exactly what test_flows.py went red on. Probed at api.hanzo.ai: GET /v1/provisioning/kv answers 403 while /v1/provisioning/kv-zzq9 answers 404, which is the existence proof this file requires (auth runs before the handler; only a mounted route can refuse).
+
+## CreateKV launches your org's OWN key-value instance and answers with its `kv://` connection string.
+
+`POST /v1/provisioning/kv` · [reference →](/docs/openapi/provisioning)
+
+CreateKV launches your org's OWN key-value instance and answers with its `kv://`
+connection string.
+
+The instance is yours alone — a deployment in your own tenant namespace, so its
+admin credential is naturally scoped to you and no other tenant shares the
+process. Off-cluster this fails closed with 503 rather than handing back a
+shared one.
+
+| Parameter | In | Required | Description |
+|---|---|---|---|
+| `instance` | body | — | Instance binds a DEDICATED add-on to the app instance whose &lt;instance&gt;-addons Secret receives the &lt;KIND&gt;_URL ( |
+| `name` | body | — | Name is the org-unique slug for the new resource, matching ^[a-z0-9]([a-z0-9-]&#123;0,38&#125;[a-z0-9])?$. Every physica |
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+`hanzo` has no subcommand for this operation — the CLI serves only what cloud's live route table confirms. Use HTTP or an SDK.
+</Tab>
+<Tab value="SDK">
+<Tabs items={['.ts', '.py', '.go', '.rs', '.java']}>
+<Tab value=".ts">
+```ts
+import { Configuration, ProvisioningApi } from 'hanzoai';
+
+const api = new ProvisioningApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data } = await api.postProvisioningKv({ instance: "<instance>", name: "<name>" });
+```
+</Tab>
+<Tab value=".py">
+```python
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import ProvisioningApi
+
+client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
+result = ProvisioningApi(client).post_provisioning_kv(instance="<instance>", name="<name>")
+```
+</Tab>
+<Tab value=".go">
+```go
+cfg := cloud.NewConfiguration()
+cfg.AddDefaultHeader("Authorization", "Bearer "+os.Getenv("HANZO_API_KEY"))
+client := cloud.NewAPIClient(cfg)
+
+resp, _, err := client.ProvisioningAPI.PostProvisioningKv(context.Background()).Execute()
+if err != nil {
+	return err
+}
+```
+</Tab>
+<Tab value=".rs">
+```rust
+use hanzo_cloud::apis::{configuration::Configuration, provisioning_api};
+
+let mut cfg = Configuration::new();
+cfg.bearer_access_token = std::env::var("HANZO_API_KEY").ok();
+
+let result = provisioning_api::post_provisioning_kv(&cfg, Default::default()).await?;
+```
+</Tab>
+<Tab value=".java">
+```java
+import ai.hanzo.cloud.ApiClient;
+import ai.hanzo.cloud.api.ProvisioningApi;
+
+ApiClient client = new ApiClient();
+client.setRequestInterceptor(b -> b.header("Authorization", "Bearer " + System.getenv("HANZO_API_KEY")));
+
+var result = new ProvisioningApi(client).postProvisioningKv();
+```
+</Tab>
+</Tabs>
+
+The method above is the one at the current release of the document. `hanzoai@8.5.89` (npm) and `hanzoai@8.5.89` (PyPI) were generated from an earlier release, where this operation carried a different id, so it spells the method differently — regenerating the clients is what makes the two agree. [SDKs →](/docs/sdks)
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -X POST https://api.hanzo.ai/v1/provisioning/kv \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+       "instance": "<instance>",
+       "name": "<name>"
+     }'
+```
+</Tab>
+<Tab value="MCP">
+MCP reaches **provisioning** through the `provisioning` tool, which names its 28 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
+
+```bash
+curl -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+       "jsonrpc": "2.0",
+       "id": 1,
+       "method": "tools/call",
+       "params": {
+         "name": "describe",
+         "arguments": {
+           "op": "get_search"
+         }
+       }
+     }'
+```
+</Tab>
+</Tabs>
+
+## GetKV returns one Hanzo KV store's metadata.
+
+`GET /v1/provisioning/kv/{name}` · [reference →](/docs/openapi/provisioning)
+
+GetKV returns one Hanzo KV store's metadata. It carries the store's status,
+its instance address and the Valkey user it authenticates as ("default", the
+only user a requirepass instance has) — never the password. A still-booting
+instance reads "provisioning", reconciled from the operator's live view.
+
+| Parameter | In | Required | Description |
+|---|---|---|---|
+| `name` | path | yes | Name is the resource's org-unique slug, from the path. Lower-cased and trimmed before lookup, exactly as it wa |
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+`hanzo` has no subcommand for this operation — the CLI serves only what cloud's live route table confirms. Use HTTP or an SDK.
+</Tab>
+<Tab value="SDK">
+<Tabs items={['.ts', '.py', '.go', '.rs', '.java']}>
+<Tab value=".ts">
+```ts
+import { Configuration, ProvisioningApi } from 'hanzoai';
+
+const api = new ProvisioningApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data } = await api.getProvisioningKvByName({ name: 'name' });
+```
+</Tab>
+<Tab value=".py">
+```python
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import ProvisioningApi
+
+client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
+result = ProvisioningApi(client).get_provisioning_kv_by_name(name='name')
+```
+</Tab>
+<Tab value=".go">
+```go
+cfg := cloud.NewConfiguration()
+cfg.AddDefaultHeader("Authorization", "Bearer "+os.Getenv("HANZO_API_KEY"))
+client := cloud.NewAPIClient(cfg)
+
+resp, _, err := client.ProvisioningAPI.GetProvisioningKvByName(context.Background()).Execute()
+if err != nil {
+	return err
+}
+```
+</Tab>
+<Tab value=".rs">
+```rust
+use hanzo_cloud::apis::{configuration::Configuration, provisioning_api};
+
+let mut cfg = Configuration::new();
+cfg.bearer_access_token = std::env::var("HANZO_API_KEY").ok();
+
+let result = provisioning_api::get_provisioning_kv_by_name(&cfg, Default::default()).await?;
+```
+</Tab>
+<Tab value=".java">
+```java
+import ai.hanzo.cloud.ApiClient;
+import ai.hanzo.cloud.api.ProvisioningApi;
+
+ApiClient client = new ApiClient();
+client.setRequestInterceptor(b -> b.header("Authorization", "Bearer " + System.getenv("HANZO_API_KEY")));
+
+var result = new ProvisioningApi(client).getProvisioningKvByName();
+```
+</Tab>
+</Tabs>
+
+The method above is the one at the current release of the document. `hanzoai@8.5.89` (npm) and `hanzoai@8.5.89` (PyPI) were generated from an earlier release, where this operation carried a different id, so it spells the method differently — regenerating the clients is what makes the two agree. [SDKs →](/docs/sdks)
+</Tab>
+<Tab value="HTTP">
+```bash
+curl https://api.hanzo.ai/v1/provisioning/kv/<name> \
+  -H "Authorization: Bearer $HANZO_API_KEY"
+```
+</Tab>
+<Tab value="MCP">
+MCP reaches **provisioning** through the `provisioning` tool, which names its 28 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
+
+```bash
+curl -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+       "jsonrpc": "2.0",
+       "id": 1,
+       "method": "tools/call",
+       "params": {
+         "name": "describe",
+         "arguments": {
+           "op": "get_search"
+         }
+       }
+     }'
+```
+</Tab>
+</Tabs>
+
+## DropKV deprovisions one Hanzo KV store.
+
+`DELETE /v1/provisioning/kv/{name}` · [reference →](/docs/openapi/provisioning)
+
+DropKV deprovisions one Hanzo KV store. It reverts any app instance bound to
+it back to Base BEFORE tearing down the org's dedicated Valkey instance, then
+deletes the sealed credential and removes the metadata row. Answers 204 with
+no body; a second call is a 404.
+
+| Parameter | In | Required | Description |
+|---|---|---|---|
+| `name` | path | yes | Name is the resource's org-unique slug, from the path. Lower-cased and trimmed before lookup, exactly as it wa |
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+`hanzo` has no subcommand for this operation — the CLI serves only what cloud's live route table confirms. Use HTTP or an SDK.
+</Tab>
+<Tab value="SDK">
+<Tabs items={['.ts', '.py', '.go', '.rs', '.java']}>
+<Tab value=".ts">
+```ts
+import { Configuration, ProvisioningApi } from 'hanzoai';
+
+const api = new ProvisioningApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data } = await api.deleteProvisioningKvByName({ name: 'name' });
+```
+</Tab>
+<Tab value=".py">
+```python
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import ProvisioningApi
+
+client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
+result = ProvisioningApi(client).delete_provisioning_kv_by_name(name='name')
+```
+</Tab>
+<Tab value=".go">
+```go
+cfg := cloud.NewConfiguration()
+cfg.AddDefaultHeader("Authorization", "Bearer "+os.Getenv("HANZO_API_KEY"))
+client := cloud.NewAPIClient(cfg)
+
+resp, _, err := client.ProvisioningAPI.DeleteProvisioningKvByName(context.Background()).Execute()
+if err != nil {
+	return err
+}
+```
+</Tab>
+<Tab value=".rs">
+```rust
+use hanzo_cloud::apis::{configuration::Configuration, provisioning_api};
+
+let mut cfg = Configuration::new();
+cfg.bearer_access_token = std::env::var("HANZO_API_KEY").ok();
+
+let result = provisioning_api::delete_provisioning_kv_by_name(&cfg, Default::default()).await?;
+```
+</Tab>
+<Tab value=".java">
+```java
+import ai.hanzo.cloud.ApiClient;
+import ai.hanzo.cloud.api.ProvisioningApi;
+
+ApiClient client = new ApiClient();
+client.setRequestInterceptor(b -> b.header("Authorization", "Bearer " + System.getenv("HANZO_API_KEY")));
+
+var result = new ProvisioningApi(client).deleteProvisioningKvByName();
+```
+</Tab>
+</Tabs>
+
+The method above is the one at the current release of the document. `hanzoai@8.5.89` (npm) and `hanzoai@8.5.89` (PyPI) were generated from an earlier release, where this operation carried a different id, so it spells the method differently — regenerating the clients is what makes the two agree. [SDKs →](/docs/sdks)
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -X DELETE https://api.hanzo.ai/v1/provisioning/kv/<name> \
+  -H "Authorization: Bearer $HANZO_API_KEY"
+```
+</Tab>
+<Tab value="MCP">
+MCP reaches **provisioning** through the `provisioning` tool, which names its 28 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
+
+```bash
+curl -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+       "jsonrpc": "2.0",
+       "id": 1,
+       "method": "tools/call",
+       "params": {
+         "name": "describe",
+         "arguments": {
+           "op": "get_search"
+         }
+       }
+     }'
+```
+</Tab>
+</Tabs>
+
+---
+
+Every command, call and tool above is generated from the same OpenAPI document that generates the SDKs themselves — the four surfaces are projections of one doc comment, so they cannot disagree.

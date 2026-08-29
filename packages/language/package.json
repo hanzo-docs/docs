@@ -35,8 +35,8 @@
     "@hanzo/docs-openapi": "workspace:*",
     "@hanzo/docs-ui": "workspace:*",
     "tsconfig": "workspace:*",
-    "tsdown": "0.22.0",
-    "typescript": "^6.0.3"
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
   },
   "peerDependencies": {
     "@hanzo/docs-story": "*",

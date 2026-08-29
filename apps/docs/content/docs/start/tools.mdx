@@ -1,0 +1,121 @@
+---
+title: "Tools"
+description: "List the MCP tools this key can reach."
+---
+
+import { Tab, Tabs } from '@hanzo/docs-base-ui/components/tabs'
+
+**List the MCP tools this key can reach.**
+
+> GET /v1/tools is the catalogue read: every tool the caller's org and project can reach, from every source, each flagged with whether it is activated. Assert the count is greater than zero and print three names.
+
+This flow named `mcp_rpc` (POST /v1/mcp, the JSON-RPC endpoint) until the document became the only authority on what exists. That endpoint IS live — POST /v1/mcp answers 200 with the tool list while POST /v1/mcp-zzq9 answers 404, so the address is real and the control refutes nothing — but cloud's emission does not declare it, so it has no operationId and no generated method. An example may not reach for an address the document does not carry: that is a hand-rolled HTTP call inside a generated client, the exact drift these SDKs exist to prevent. `POST /v1/mcp` returns here the release cloud declares it (LLM.md, "Handed to hanzo-inc/cloud").
+
+Note for whoever writes that declaration: JSON-RPC reports failure INSIDE a 200, so a client reads `error` before `result` and `result.isError` before `result.content`. The same endpoint with method=tools/call runs one.
+
+## Lists every tool the caller's org and project can reach, from every source, each flagged with whether it is activated.
+
+`GET /v1/tools` · [reference →](/docs/openapi/tools)
+
+Lists every tool the caller's org and project can reach, from every
+source, each flagged with whether it is activated. This is the discovery
+surface: one flat set of names spanning connector actions, user functions,
+zap-service routes, agents, skills and the org's own external MCP servers,
+deduplicated by name so the highest-precedence source wins a collision. It
+lists; it does not call — dispatch is POST /v1/tools/call.
+
+| Parameter | In | Required | Description |
+|---|---|---|---|
+| `source` | query | — | Source keeps only tools from one source — connector, function, zap-service, agent, skill or mcp. Empty keeps e |
+| `activated` | query | — | Activated keeps only the tools activated for the caller's org and project, and only when it is exactly the str |
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo tools get
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['.ts', '.py', '.go', '.rs', '.java']}>
+<Tab value=".ts">
+```ts
+import { Configuration, ToolsApi } from 'hanzoai';
+
+const api = new ToolsApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data } = await api.getTools();
+```
+</Tab>
+<Tab value=".py">
+```python
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import ToolsApi
+
+client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
+result = ToolsApi(client).get_tools()
+```
+</Tab>
+<Tab value=".go">
+```go
+cfg := cloud.NewConfiguration()
+cfg.AddDefaultHeader("Authorization", "Bearer "+os.Getenv("HANZO_API_KEY"))
+client := cloud.NewAPIClient(cfg)
+
+resp, _, err := client.ToolsAPI.GetTools(context.Background()).Execute()
+if err != nil {
+	return err
+}
+```
+</Tab>
+<Tab value=".rs">
+```rust
+use hanzo_cloud::apis::{configuration::Configuration, tools_api};
+
+let mut cfg = Configuration::new();
+cfg.bearer_access_token = std::env::var("HANZO_API_KEY").ok();
+
+let result = tools_api::get_tools(&cfg, Default::default()).await?;
+```
+</Tab>
+<Tab value=".java">
+```java
+import ai.hanzo.cloud.ApiClient;
+import ai.hanzo.cloud.api.ToolsApi;
+
+ApiClient client = new ApiClient();
+client.setRequestInterceptor(b -> b.header("Authorization", "Bearer " + System.getenv("HANZO_API_KEY")));
+
+var result = new ToolsApi(client).getTools();
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl https://api.hanzo.ai/v1/tools \
+  -H "Authorization: Bearer $HANZO_API_KEY"
+```
+</Tab>
+<Tab value="MCP">
+MCP reaches **tools** through the `tools` tool, which names its 19 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
+
+```bash
+curl -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+       "jsonrpc": "2.0",
+       "id": 1,
+       "method": "tools/call",
+       "params": {
+         "name": "describe",
+         "arguments": {
+           "op": "list_mcp_servers"
+         }
+       }
+     }'
+```
+</Tab>
+</Tabs>
+
+---
+
+Every command, call and tool above is generated from the same OpenAPI document that generates the SDKs themselves — the four surfaces are projections of one doc comment, so they cannot disagree.

@@ -3,12 +3,12 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "fuma-cli": "^0.1.1",
-    "tinyglobby": "^0.2.16"
+    "fuma-cli": "catalog:",
+    "tinyglobby": "catalog:"
   },
   "devDependencies": {
     "@hanzo/docs-cli": "workspace:*",
-    "@types/node": "^25.5.0",
+    "@types/node": "catalog:",
     "tsconfig": "workspace:*"
   }
 }

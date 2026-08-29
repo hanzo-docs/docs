@@ -1,6 +1,6 @@
 {
   "name": "hanzo-docs",
-  "description": "Hanzo Docs — the documentation framework and hub for the Hanzo ecosystem (docs.hanzo.ai).",
+  "description": "Hanzo Docs \u2014 the documentation framework and hub for the Hanzo ecosystem (docs.hanzo.ai).",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -17,14 +17,14 @@
     "version": "changeset version && node scripts/update-stackblitz-versions.mjs && pnpm install --lockfile-only"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.31.0",
-    "concurrently": "^10.0.0",
-    "oxfmt": "^0.52.0",
-    "oxlint": "^1.67.0",
-    "rimraf": "^6.1.3",
-    "turbo": "2.9.15",
-    "typescript": "^6.0.3",
-    "vitest": "^4.1.7"
+    "@changesets/cli": "catalog:",
+    "concurrently": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "rimraf": "catalog:",
+    "turbo": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   },
   "engines": {
     "node": ">= 24.14.0"

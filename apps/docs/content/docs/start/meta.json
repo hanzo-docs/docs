@@ -1,0 +1,12 @@
+{
+  "title": "Start",
+  "description": "One task per page, each written as CLI, SDK, HTTP and MCP.",
+  "pages": [
+    "hello",
+    "chat",
+    "money",
+    "store",
+    "agent",
+    "tools"
+  ]
+}

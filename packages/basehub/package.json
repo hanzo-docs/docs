@@ -29,22 +29,22 @@
     "types:check": "tsc --noEmit"
   },
   "devDependencies": {
-    "@types/node": "25.9.1",
-    "@types/react": "^19.2.18",
-    "basehub": "^9.5.3",
-    "fuma-cli": "^0.1.1",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "basehub": "catalog:",
+    "fuma-cli": "catalog:",
     "@hanzo/docs-core": "workspace:*",
     "@hanzo/docs-ui": "workspace:*",
-    "react": "^19.2.8",
+    "react": "catalog:",
     "tsconfig": "workspace:*",
-    "tsdown": "0.22.0",
-    "typescript": "^6.0.3"
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
   },
   "peerDependencies": {
-    "@types/react": "*",
-    "basehub": "9.x.x",
+    "@types/react": ">=19.2.18",
+    "basehub": ">=9",
     "@hanzo/docs-core": ">=17.0.1",
-    "react": "^19.2.0"
+    "react": ">=19.2.8"
   },
   "peerDependenciesMeta": {
     "@types/react": {

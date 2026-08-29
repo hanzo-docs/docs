@@ -43,37 +43,37 @@
     "types:check": "tsc --noEmit"
   },
   "dependencies": {
-    "github-slugger": "^2.0.0",
-    "js-yaml": "^4.1.1",
-    "remark-math": "^6.0.0",
-    "remark-mdx": "^3.1.1",
-    "remark-parse": "^11.0.0",
-    "remark-stringify": "^11.0.0",
-    "tailwind-merge": "^3.6.0",
-    "tinyglobby": "^0.2.16",
-    "unified": "^11.0.5",
-    "unist-util-visit": "^5.1.0",
-    "vfile": "^6.0.3",
-    "zod": "^4.4.3"
+    "github-slugger": "catalog:",
+    "js-yaml": "catalog:",
+    "remark-math": "catalog:",
+    "remark-mdx": "catalog:",
+    "remark-parse": "catalog:",
+    "remark-stringify": "catalog:",
+    "tailwind-merge": "catalog:",
+    "tinyglobby": "catalog:",
+    "unified": "catalog:",
+    "unist-util-visit": "catalog:",
+    "vfile": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
-    "@types/estree": "^1.0.9",
-    "@types/js-yaml": "^4.0.9",
-    "@types/mdast": "^4.0.4",
-    "@types/node": "25.9.1",
-    "@types/react": "^19.2.18",
-    "@types/react-dom": "^19.2.4",
+    "@types/estree": "catalog:",
+    "@types/js-yaml": "catalog:",
+    "@types/mdast": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
     "@hanzo/docs-core": "workspace:*",
-    "mdast-util-mdx": "^3.0.0",
+    "mdast-util-mdx": "catalog:",
     "tsconfig": "workspace:*",
-    "tsdown": "0.22.0",
-    "typescript": "^6.0.3"
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
   },
   "peerDependencies": {
-    "@types/react": "*",
+    "@types/react": ">=19.2.18",
     "@hanzo/docs-core": ">=17.0.1",
-    "react": "*",
-    "react-dom": "*"
+    "react": ">=19.2.8",
+    "react-dom": ">=19.2.8"
   },
   "peerDependenciesMeta": {
     "@types/react": {

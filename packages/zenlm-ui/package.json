@@ -1,8 +1,16 @@
 {
   "name": "@zenlm/ui",
   "version": "1.0.6",
-  "description": "React components for the Zen LM model library — model cards, tables, and browsable catalog",
-  "keywords": ["ai", "llm", "models", "zen", "hanzo", "react", "components"],
+  "description": "React components for the Zen LM model library \u2014 model cards, tables, and browsable catalog",
+  "keywords": [
+    "ai",
+    "llm",
+    "models",
+    "zen",
+    "hanzo",
+    "react",
+    "components"
+  ],
   "license": "MIT",
   "author": "Hanzo AI",
   "homepage": "https://zenlm.org",
@@ -22,25 +30,29 @@
       "require": "./dist/index.cjs"
     }
   },
-  "files": ["dist", "README.md"],
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
-    "react": "^18.0.0 || ^19.0.0",
-    "react-dom": "^18.0.0 || ^19.0.0"
+    "react": ">=19.2.8",
+    "react-dom": ">=19.2.8"
   },
   "dependencies": {
-    "@zenlm/models": "^1.0.2",
-    "lucide-react": "^0.400.0"
+    "@zenlm/models": "catalog:",
+    "lucide-react": "catalog:",
+    "@hanzo/ui": "catalog:"
   },
   "devDependencies": {
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
-    "glob": "^11.0.0",
-    "tsup": "^8.0.0",
-    "typescript": "^5.0.0"
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "glob": "catalog:",
+    "tsup": "catalog:",
+    "typescript": "catalog:"
   }
 }

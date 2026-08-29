@@ -41,22 +41,22 @@
     "sync": "node ./scripts/sync.ts"
   },
   "dependencies": {
-    "@clack/prompts": "^1.4.0",
-    "@commander-js/extra-typings": "^14.0.0",
+    "@clack/prompts": "catalog:",
+    "@commander-js/extra-typings": "catalog:",
     "@hanzo/docs-cli": "workspace:*",
-    "commander": "^14.0.3",
-    "fuma-cli": "^0.1.1",
-    "picocolors": "^1.1.1",
-    "tinyexec": "^1.2.2",
-    "ts-morph": "^28.0.0"
+    "commander": "catalog:",
+    "fuma-cli": "catalog:",
+    "picocolors": "catalog:",
+    "tinyexec": "catalog:",
+    "ts-morph": "catalog:"
   },
   "devDependencies": {
-    "@types/cross-spawn": "^6.0.6",
-    "@types/node": "25.9.1",
-    "tinyglobby": "^0.2.16",
+    "@types/cross-spawn": "catalog:",
+    "@types/node": "catalog:",
+    "tinyglobby": "catalog:",
     "tsconfig": "workspace:*",
-    "tsdown": "0.22.0",
-    "typescript": "^6.0.3"
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
   },
   "engines": {
     "node": ">=18.17.0"

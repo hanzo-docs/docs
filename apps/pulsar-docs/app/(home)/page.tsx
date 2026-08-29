@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { ArrowRight, ExternalLink, Github, BookOpen } from 'lucide-react';
+import { ArrowRight, ExternalLink, BookOpen } from 'lucide-react'
+import { Github } from '@hanzo/ui/brands';
 
 export default function HomePage() {
   return (

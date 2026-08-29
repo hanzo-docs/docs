@@ -13,17 +13,17 @@
     "@hanzo/docs-core": "workspace:*",
     "@hanzo/docs-ui": "workspace:*",
     "@hanzo/font": "catalog:",
-    "next": "16.1.6",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4"
+    "next": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:"
   },
   "devDependencies": {
-    "@content-collections/core": "^0.15.1",
-    "@content-collections/mdx": "^0.2.2",
-    "@content-collections/next": "^0.2.11",
-    "@types/mdx": "^2.0.13",
-    "@types/react": "^19.2.15",
-    "@types/react-dom": "^19.2.3",
-    "typescript": "^6.0.3"
+    "@content-collections/core": "catalog:",
+    "@content-collections/mdx": "catalog:",
+    "@content-collections/next": "catalog:",
+    "@types/mdx": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "typescript": "catalog:"
   }
 }

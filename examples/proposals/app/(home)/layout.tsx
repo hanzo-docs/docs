@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import Link from 'next/link';
-import { Github, MessageSquare, BookOpen } from 'lucide-react';
+import { MessageSquare, BookOpen } from 'lucide-react'
+import { Github } from '@hanzo/ui/brands';
 import { brand } from '../../lib/config';
 
 export default function HomeLayout({ children }: { children: ReactNode }) {
