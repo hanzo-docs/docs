@@ -1,6 +1,7 @@
 'use client'
 
-import { MessageSquare, Github, FileText, ExternalLink } from 'lucide-react'
+import { MessageSquare, FileText, ExternalLink } from 'lucide-react'
+import { Github } from '@hanzo/ui/brands'
 import type { ZenModelLike } from './types'
 
 /** HuggingFace logo SVG — uses currentColor for theming. */

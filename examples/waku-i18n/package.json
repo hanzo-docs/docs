@@ -10,23 +10,23 @@
     "types:check": "@hanzo/docs-mdx && tsc --noEmit"
   },
   "dependencies": {
-    "@orama/tokenizers": "^3.1.18",
+    "@orama/tokenizers": "catalog:",
     "@hanzo/docs-core": "workspace:*",
     "@hanzo/docs-mdx": "workspace:*",
     "@hanzo/docs-base-ui": "workspace:*",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4",
-    "react-server-dom-webpack": "^19.2.4",
-    "waku": "1.0.0-alpha.6"
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-server-dom-webpack": "catalog:",
+    "waku": "catalog:"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "^4.3.0",
-    "@types/mdx": "^2.0.13",
-    "@types/node": "^25.9.1",
-    "@types/react": "^19.2.15",
-    "@types/react-dom": "^19.2.3",
-    "tailwindcss": "^4.3.0",
-    "typescript": "^6.0.3",
-    "vite": "^8.0.14"
+    "@tailwindcss/vite": "catalog:",
+    "@types/mdx": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "tailwindcss": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:"
   }
 }

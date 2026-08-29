@@ -15,24 +15,25 @@
     "@hanzo/docs-core": "workspace:*",
     "@hanzo/docs-mdx": "workspace:*",
     "@hanzo/docs-base-ui": "workspace:*",
-    "katex": "^0.16.11",
-    "lucide-react": "^0.562.0",
-    "next": "16.2.12",
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8",
-    "rehype-katex": "^7.0.1",
-    "remark-math": "^6.0.0",
-    "tailwind-merge": "^3.4.0",
-    "zod": "^4.3.6"
+    "katex": "catalog:",
+    "lucide-react": "catalog:",
+    "next": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "rehype-katex": "catalog:",
+    "remark-math": "catalog:",
+    "tailwind-merge": "catalog:",
+    "zod": "catalog:",
+    "@hanzo/ui": "catalog:"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.1.18",
-    "@types/mdx": "^2.0.13",
-    "@types/node": "25.0.5",
-    "@types/react": "^19.2.18",
-    "@types/react-dom": "^19.2.4",
-    "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.18",
-    "typescript": "^6.0.3"
+    "@tailwindcss/postcss": "catalog:",
+    "@types/mdx": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "postcss": "catalog:",
+    "tailwindcss": "catalog:",
+    "typescript": "catalog:"
   }
 }

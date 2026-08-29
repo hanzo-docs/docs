@@ -1,0 +1,343 @@
+---
+title: "Agent"
+description: "Create an agent, run it, read the run back."
+---
+
+import { Tab, Tabs } from '@hanzo/docs-base-ui/components/tabs'
+
+**Create an agent, run it, read the run back.**
+
+> `ref` accepts the public id (agent_...) OR the org-unique name, which is why run and read can both use the name just created without waiting for an id. Names are org-unique, so an example must not hardcode one. The last step is the RUN list, not the agent read: a run is asynchronous, so the example polls it until the run it started is terminal.
+
+## Defines an agent in the caller's org: a model, a system prompt (instructions) and a set of tool names.
+
+`POST /v1/agents` · [reference →](/docs/openapi/agents)
+
+Defines an agent in the caller's org: a model, a system prompt
+(instructions) and a set of tool names. The name must be unique in the org and
+match ^[A-Za-z0-9][A-Za-z0-9._-]&#123;0,63&#125;$. An omitted model takes the
+deployment's configured default; a named one is checked against the gateway's
+served catalog, so a model this deployment never serves is refused here rather
+than failing at run time. A long-running agent must carry a 5-field cron
+schedule (the scheduler would otherwise never fire it) and counts against a
+per-org cap on scheduled agents.
+
+| Parameter | In | Required | Description |
+|---|---|---|---|
+| `computeRef` | body | — | ComputeRef optionally binds this bot to a visor machine. Opaque here, bounded at 256 characters, and not resol |
+| `description` | body | — | Description is the one line published as the description of the `agent_&lt;name&gt;` tool, which is how another agen |
+| `executionMode` | body | — | ExecutionMode is one-shot or long-running. Empty takes one-shot, which runs only when something POSTs to it. l |
+| `instructions` | body | — | Instructions is the system prompt, up to 32 KiB, stored verbatim. This is what the model reads; Description is |
+| `model` | body | — | Model names the model to run on. Omit it to take the deployment's configured default; name one and it is check |
+| `name` | body | — | Name is the agent's org-unique handle and the only required field. It must match ^[A-Za-z0-9][A-Za-z0-9._-]&#123;0, |
+| `schedule` | body | — | Schedule is the 5-field cron a long-running agent fires on, parsed here so a bad expression is a 400 and not a |
+| `serviceAccountId` | body | — | ServiceAccountID optionally names the IAM agent service account (&lt;org&gt;-&lt;agent&gt;) a scheduled run should be bill |
+| `tools` | body | — | Tools are the tool names this agent may call. Omitted or empty grants NONE — that default is the agent's autho |
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo agents create
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['.ts', '.py', '.go', '.rs', '.java']}>
+<Tab value=".ts">
+```ts
+import { Configuration, AgentsApi } from 'hanzoai';
+
+const api = new AgentsApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data } = await api.postAgents({ computeRef: "<computeRef>", description: "<description>" });
+```
+</Tab>
+<Tab value=".py">
+```python
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import AgentsApi
+
+client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
+result = AgentsApi(client).post_agents(compute_ref="<computeRef>", description="<description>")
+```
+</Tab>
+<Tab value=".go">
+```go
+cfg := cloud.NewConfiguration()
+cfg.AddDefaultHeader("Authorization", "Bearer "+os.Getenv("HANZO_API_KEY"))
+client := cloud.NewAPIClient(cfg)
+
+resp, _, err := client.AgentsAPI.PostAgents(context.Background()).Execute()
+if err != nil {
+	return err
+}
+```
+</Tab>
+<Tab value=".rs">
+```rust
+use hanzo_cloud::apis::{configuration::Configuration, agents_api};
+
+let mut cfg = Configuration::new();
+cfg.bearer_access_token = std::env::var("HANZO_API_KEY").ok();
+
+let result = agents_api::post_agents(&cfg, Default::default()).await?;
+```
+</Tab>
+<Tab value=".java">
+```java
+import ai.hanzo.cloud.ApiClient;
+import ai.hanzo.cloud.api.AgentsApi;
+
+ApiClient client = new ApiClient();
+client.setRequestInterceptor(b -> b.header("Authorization", "Bearer " + System.getenv("HANZO_API_KEY")));
+
+var result = new AgentsApi(client).postAgents();
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -X POST https://api.hanzo.ai/v1/agents \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+       "computeRef": "<computeRef>",
+       "description": "<description>"
+     }'
+```
+</Tab>
+<Tab value="MCP">
+Tool `agents`, op `post_agents` — POST the JSON-RPC envelope to `https://api.hanzo.ai/v1/mcp`.
+
+```bash
+curl -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+       "jsonrpc": "2.0",
+       "id": 1,
+       "method": "tools/call",
+       "params": {
+         "name": "agents",
+         "arguments": {
+           "op": "post_agents",
+           "input": {
+             "computeRef": "<computeRef>",
+             "description": "<description>"
+           }
+         }
+       }
+     }'
+```
+</Tab>
+</Tabs>
+
+## Run one of your org's agents and get the recorded run back.
+
+`POST /v1/agents/{ref}/run` · [reference →](/docs/openapi/agents)
+
+Composes the agent's stored instructions with the caller's `input`, executes one real chat completion through the same in-process AI client the rest of the console uses, and answers with the run that was recorded: its id, status, model, output, duration and error. Every run this returns reflects an execution that actually happened — a model failure is recorded and reported, never hidden and never fabricated. A transient upstream failure (429, 5xx, empty choices) is retried up to three times with jittered backoff, and a configured failover model is tried before the run is called an error.
+
+`ref` is the agent's public `agent_…` id or its org-unique name; either resolves the same agent, and it must belong to the caller's org, so an agent in another tenant is a 404 exactly like one that does not exist. A validated principal is required and the check is made twice on purpose: this route MOVES MONEY, so the debit's principal requirement is asserted where the money moves rather than inherited from the tenant lookup.
+
+The org's balance is authorized BEFORE any inference, so an unfunded tenant gets 402 and no free compute, and a billing plane that cannot answer gets 503 rather than a free run. The flat per-run fee is an operator knob; setting it to zero makes runs free and removes the balance gate with them. Only a SUCCESSFUL run is billed, attributed to the model actually used — a failover run bills the model it fell over to, not the one it started on. A deployment with no inference wired answers 503 before any of this.
+
+THE RULE A READER GETS WRONG: a failed run is a 502 whose body is the RUN, not an error envelope. The execution happened, the run was persisted to this agent's history, and its `error` field is the product — so a client that treats every non-2xx as an opaque failure throws away the only account of what went wrong. Each run also opens a root session in the live session registry, best-effort: a bookkeeping failure there never fails the run, because the run and its billing already happened.
+
+| Parameter | In | Required | Description |
+|---|---|---|---|
+| `ref` | path | yes |  |
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo agents run <ref>
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['.ts', '.py', '.go', '.rs', '.java']}>
+<Tab value=".ts">
+```ts
+import { Configuration, AgentsApi } from 'hanzoai';
+
+const api = new AgentsApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data } = await api.postAgentsByRefRun({ ref: 'ref' });
+```
+</Tab>
+<Tab value=".py">
+```python
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import AgentsApi
+
+client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
+result = AgentsApi(client).post_agents_by_ref_run(ref='ref')
+```
+</Tab>
+<Tab value=".go">
+```go
+cfg := cloud.NewConfiguration()
+cfg.AddDefaultHeader("Authorization", "Bearer "+os.Getenv("HANZO_API_KEY"))
+client := cloud.NewAPIClient(cfg)
+
+resp, _, err := client.AgentsAPI.PostAgentsByRefRun(context.Background()).Execute()
+if err != nil {
+	return err
+}
+```
+</Tab>
+<Tab value=".rs">
+```rust
+use hanzo_cloud::apis::{configuration::Configuration, agents_api};
+
+let mut cfg = Configuration::new();
+cfg.bearer_access_token = std::env::var("HANZO_API_KEY").ok();
+
+let result = agents_api::post_agents_by_ref_run(&cfg, Default::default()).await?;
+```
+</Tab>
+<Tab value=".java">
+```java
+import ai.hanzo.cloud.ApiClient;
+import ai.hanzo.cloud.api.AgentsApi;
+
+ApiClient client = new ApiClient();
+client.setRequestInterceptor(b -> b.header("Authorization", "Bearer " + System.getenv("HANZO_API_KEY")));
+
+var result = new AgentsApi(client).postAgentsByRefRun();
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -X POST https://api.hanzo.ai/v1/agents/<ref>/run \
+  -H "Authorization: Bearer $HANZO_API_KEY"
+```
+</Tab>
+<Tab value="MCP">
+MCP reaches **agents** through the `agents` tool, which names its 36 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
+
+```bash
+curl -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+       "jsonrpc": "2.0",
+       "id": 1,
+       "method": "tools/call",
+       "params": {
+         "name": "describe",
+         "arguments": {
+           "op": "list_agent_conversations"
+         }
+       }
+     }'
+```
+</Tab>
+</Tabs>
+
+## Returns one agent's execution history, newest first — each run's input, its output or its error, and how long it took.
+
+`GET /v1/agents/{ref}/runs` · [reference →](/docs/openapi/agents)
+
+Returns one agent's execution history, newest first — each run's
+input, its output or its error, and how long it took. Every row is a run that
+actually happened.
+
+| Parameter | In | Required | Description |
+|---|---|---|---|
+| `ref` | path | yes | Ref is the agent's public id or its org-unique name, from the path. |
+| `limit` | query | — | Limit caps how many runs come back, newest first. Absent, zero or out of range (1..200) reads as 50. |
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo agents runs <ref>
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['.ts', '.py', '.go', '.rs', '.java']}>
+<Tab value=".ts">
+```ts
+import { Configuration, AgentsApi } from 'hanzoai';
+
+const api = new AgentsApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data } = await api.getAgentsByRefRuns({ ref: 'ref' });
+```
+</Tab>
+<Tab value=".py">
+```python
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import AgentsApi
+
+client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
+result = AgentsApi(client).get_agents_by_ref_runs(ref='ref')
+```
+</Tab>
+<Tab value=".go">
+```go
+cfg := cloud.NewConfiguration()
+cfg.AddDefaultHeader("Authorization", "Bearer "+os.Getenv("HANZO_API_KEY"))
+client := cloud.NewAPIClient(cfg)
+
+resp, _, err := client.AgentsAPI.GetAgentsByRefRuns(context.Background()).Execute()
+if err != nil {
+	return err
+}
+```
+</Tab>
+<Tab value=".rs">
+```rust
+use hanzo_cloud::apis::{configuration::Configuration, agents_api};
+
+let mut cfg = Configuration::new();
+cfg.bearer_access_token = std::env::var("HANZO_API_KEY").ok();
+
+let result = agents_api::get_agents_by_ref_runs(&cfg, Default::default()).await?;
+```
+</Tab>
+<Tab value=".java">
+```java
+import ai.hanzo.cloud.ApiClient;
+import ai.hanzo.cloud.api.AgentsApi;
+
+ApiClient client = new ApiClient();
+client.setRequestInterceptor(b -> b.header("Authorization", "Bearer " + System.getenv("HANZO_API_KEY")));
+
+var result = new AgentsApi(client).getAgentsByRefRuns();
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl https://api.hanzo.ai/v1/agents/<ref>/runs \
+  -H "Authorization: Bearer $HANZO_API_KEY"
+```
+</Tab>
+<Tab value="MCP">
+Tool `agents`, op `get_agents_by_ref_runs` — POST the JSON-RPC envelope to `https://api.hanzo.ai/v1/mcp`.
+
+```bash
+curl -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+       "jsonrpc": "2.0",
+       "id": 1,
+       "method": "tools/call",
+       "params": {
+         "name": "agents",
+         "arguments": {
+           "op": "get_agents_by_ref_runs",
+           "input": {
+             "ref": "<ref>"
+           }
+         }
+       }
+     }'
+```
+</Tab>
+</Tabs>
+
+---
+
+Every command, call and tool above is generated from the same OpenAPI document that generates the SDKs themselves — the four surfaces are projections of one doc comment, so they cannot disagree.

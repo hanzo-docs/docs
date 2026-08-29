@@ -1,11 +1,6 @@
 import Link from 'next/link';
-import {
-  BarChart2, Play, Flag, FlaskConical, MessageSquare, Brain,
-  ArrowRight, Terminal, BookOpen, Github, ExternalLink,
-  Shield, Database, Server, Zap, Lock, Globe,
-  Activity, CheckCircle, Code, Clock, Gauge,
-  Radio, Cpu, Bot, Package,
-} from 'lucide-react';
+import { BarChart2, Play, Flag, FlaskConical, MessageSquare, Brain, ArrowRight, Terminal, BookOpen, ExternalLink, Shield, Database, Server, Zap, Lock, Globe, Activity, CheckCircle, Code, Clock, Gauge, Radio, Cpu, Bot, Package } from 'lucide-react'
+import { Github } from '@hanzo/ui/brands';
 
 /* ─────────────────────────────────────────────────────────── */
 /*  LANDING PAGE  — matches cloud/flow docs pattern           */

@@ -1,0 +1,111 @@
+---
+title: "Chat"
+description: "One completion."
+---
+
+import { Tab, Tabs } from '@hanzo/docs-base-ui/components/tabs'
+
+**One completion.**
+
+> POST /v1/chat/completions, the gateway's own inference route. The id lost its `v1` when the default version left the operationId; the address did not move.
+
+The document states that address and NOT its shape — no requestBody and no responses — so a generated method takes no prompt and hands back an opaque body. No language can ship this as an example that runs, and python, typescript and go each ship five. The flow keeps its place here because the operation is served: the day cloud's handler declares its In and Out types, the sixth example returns everywhere at once with nothing left to decide.
+
+Non-streaming when it does. Streaming is a different transport (SSE) that the generated clients return as an opaque body, so demonstrating it here would teach the wrong shape. Print choices[0].message.content.
+
+## Implements the OpenAI-compatible chat completions API
+
+`POST /v1/chat/completions` · [reference →](/docs/openapi/ai)
+
+Implements the OpenAI-compatible chat completions API
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo chat completions
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['.ts', '.py', '.go', '.rs', '.java']}>
+<Tab value=".ts">
+```ts
+import { Configuration, AiApi } from 'hanzoai';
+
+const api = new AiApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data } = await api.postChatCompletions();
+```
+</Tab>
+<Tab value=".py">
+```python
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import AiApi
+
+client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
+result = AiApi(client).post_chat_completions()
+```
+</Tab>
+<Tab value=".go">
+```go
+cfg := cloud.NewConfiguration()
+cfg.AddDefaultHeader("Authorization", "Bearer "+os.Getenv("HANZO_API_KEY"))
+client := cloud.NewAPIClient(cfg)
+
+resp, _, err := client.AiAPI.PostChatCompletions(context.Background()).Execute()
+if err != nil {
+	return err
+}
+```
+</Tab>
+<Tab value=".rs">
+```rust
+use hanzo_cloud::apis::{configuration::Configuration, ai_api};
+
+let mut cfg = Configuration::new();
+cfg.bearer_access_token = std::env::var("HANZO_API_KEY").ok();
+
+let result = ai_api::post_chat_completions(&cfg, Default::default()).await?;
+```
+</Tab>
+<Tab value=".java">
+```java
+import ai.hanzo.cloud.ApiClient;
+import ai.hanzo.cloud.api.AiApi;
+
+ApiClient client = new ApiClient();
+client.setRequestInterceptor(b -> b.header("Authorization", "Bearer " + System.getenv("HANZO_API_KEY")));
+
+var result = new AiApi(client).postChatCompletions();
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -X POST https://api.hanzo.ai/v1/chat/completions \
+  -H "Authorization: Bearer $HANZO_API_KEY"
+```
+</Tab>
+<Tab value="MCP">
+MCP reaches **ai** through the `ai` tool, which names its 294 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
+
+```bash
+curl -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+       "jsonrpc": "2.0",
+       "id": 1,
+       "method": "tools/call",
+       "params": {
+         "name": "describe",
+         "arguments": {
+           "op": "list_models"
+         }
+       }
+     }'
+```
+</Tab>
+</Tabs>
+
+---
+
+Every command, call and tool above is generated from the same OpenAPI document that generates the SDKs themselves — the four surfaces are projections of one doc comment, so they cannot disagree.

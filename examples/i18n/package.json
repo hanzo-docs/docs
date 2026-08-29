@@ -15,15 +15,15 @@
     "@hanzo/docs-mdx": "workspace:*",
     "@hanzo/docs-ui": "workspace:*",
     "@hanzo/font": "catalog:",
-    "@orama/tokenizers": "^3.1.18",
-    "next": "16.1.6",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4"
+    "@orama/tokenizers": "catalog:",
+    "next": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:"
   },
   "devDependencies": {
-    "@types/mdx": "^2.0.13",
-    "@types/react": "^19.2.15",
-    "@types/react-dom": "^19.2.3",
-    "typescript": "^6.0.3"
+    "@types/mdx": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "typescript": "catalog:"
   }
 }

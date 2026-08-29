@@ -2,27 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import {
-  Search,
-  FileText,
-  Github,
-  MessageSquare,
-  ArrowRight,
-  Hash,
-  BookOpen,
-  Layers,
-  Lock,
-  Coins,
-  Vote,
-  Rocket,
-  FlaskConical,
-  X,
-  Command,
-  ExternalLink,
-  Brain,
-  Network,
-  Bot,
-} from 'lucide-react';
+import { Search, FileText, MessageSquare, ArrowRight, Hash, BookOpen, Layers, Lock, Coins, Vote, Rocket, FlaskConical, Command, ExternalLink, Brain, Network, Bot } from 'lucide-react'
+import { Github, X } from '@hanzo/ui/brands';
 import type { BrandConfig, ProposalCategory } from '../lib/brand';
 
 interface SearchResult {

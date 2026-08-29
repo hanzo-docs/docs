@@ -1,0 +1,236 @@
+---
+title: "Hello"
+description: "Identity — prove the key works and print who it belongs to."
+---
+
+import { Tab, Tabs } from '@hanzo/docs-base-ui/components/tabs'
+
+**Identity — prove the key works and print who it belongs to.**
+
+> Verified with a nonsense-sibling control: GET /v1/account/keys answers 403 &#123;"code":"forbidden","error":"sign in to manage API keys"&#125; with NO key and with a bogus one, while GET /v1/account/keys-zzq9 answers 404 — so the 403 is this route refusing, not a wildcard route. With a real key it returns the caller's own keys. An SDK's hello must be the call that says no.
+
+Both halves are what makes the flow readable: an unreachable gateway and a rejected credential both end in "no", and only the open call separates them.
+
+This replaces bot_authMe (GET /v1/bot/auth/me), which no longer resolves: cloud relays all of /v1/bot through one `app.All("/v1/bot/*")`, so the document has `/v1/bot/{wildcard1}` and no operation named that address. The old id existed only in bot/openapi.yaml, and a hand-authored id vanishes with the hand-authored spec — which is exactly why an id here must come from the served document.
+
+## Returns the list of available models from the routing table.
+
+`GET /v1/models` · [reference →](/docs/openapi/ai)
+
+Returns the list of available models from the routing table.
+
+PUBLIC BY DESIGN, AND IT DOES NOT AUTHENTICATE — that is the whole contract, so it
+is stated here rather than left to be inferred. The catalogue is the same for
+everyone (listAvailableModels takes no principal), docs.hanzo.ai fetches it from
+the browser, and every policy layer around it already says so out loud: the authz
+filter lists "models" as public, filter_balance refuses to gate it (a 402 here was
+a console-wide outage), the rate limiter excludes it, and cloud's spend.Reachable
+carries /v1/models/ as "the model catalog the shell reads for discovery".
+
+SO THE Authorization HEADER IS NOT AN ADMISSION CHECK HERE. It is read for ONE
+thing — annotating gated SKUs with the caller's own access standing — and
+annotation degrades to nothing when there is no verified principal.
+
+It used to hold a "require authentication" gate that authenticated nobody: it
+rejected an ABSENT credential and a MALFORMED one, then accepted any string that
+merely looked like a key. `Bearer sk-` followed by 36 zeroes returned 200 in
+production; so did a JWT three days expired. It was a shape check wearing an auth
+check's clothes, and its cost was diagnostic: /v1/models is the natural "is my auth
+working?" probe, and answering 200 to a dead credential sent people debugging the
+wrong system. A public endpoint must not appear to validate. Either check the
+credential or ignore it — this one ignores it, deliberately and visibly.
+
+Removing that gate discloses nothing new: the catalogue was already reachable by
+anyone willing to type three characters, so there is no confidentiality delta, only
+an honesty one.
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo models list
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['.ts', '.py', '.go', '.rs', '.java']}>
+<Tab value=".ts">
+```ts
+import { Configuration, AiApi } from 'hanzoai';
+
+const api = new AiApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data } = await api.getModels();
+```
+</Tab>
+<Tab value=".py">
+```python
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import AiApi
+
+client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
+result = AiApi(client).get_models()
+```
+</Tab>
+<Tab value=".go">
+```go
+cfg := cloud.NewConfiguration()
+cfg.AddDefaultHeader("Authorization", "Bearer "+os.Getenv("HANZO_API_KEY"))
+client := cloud.NewAPIClient(cfg)
+
+resp, _, err := client.AiAPI.GetModels(context.Background()).Execute()
+if err != nil {
+	return err
+}
+```
+</Tab>
+<Tab value=".rs">
+```rust
+use hanzo_cloud::apis::{configuration::Configuration, ai_api};
+
+let mut cfg = Configuration::new();
+cfg.bearer_access_token = std::env::var("HANZO_API_KEY").ok();
+
+let result = ai_api::get_models(&cfg, Default::default()).await?;
+```
+</Tab>
+<Tab value=".java">
+```java
+import ai.hanzo.cloud.ApiClient;
+import ai.hanzo.cloud.api.AiApi;
+
+ApiClient client = new ApiClient();
+client.setRequestInterceptor(b -> b.header("Authorization", "Bearer " + System.getenv("HANZO_API_KEY")));
+
+var result = new AiApi(client).getModels();
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl https://api.hanzo.ai/v1/models \
+  -H "Authorization: Bearer $HANZO_API_KEY"
+```
+</Tab>
+<Tab value="MCP">
+MCP reaches **ai** through the `ai` tool, which names its 294 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
+
+```bash
+curl -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+       "jsonrpc": "2.0",
+       "id": 1,
+       "method": "tools/call",
+       "params": {
+         "name": "describe",
+         "arguments": {
+           "op": "list_models"
+         }
+       }
+     }'
+```
+</Tab>
+</Tabs>
+
+## Returns the caller's own API keys — every type they hold, read AUTHORITATIVELY from IAM rather than from the session claim, which lags a key minted moments ago.
+
+`GET /v1/account/keys` · [reference →](/docs/openapi/account)
+
+Returns the caller's own API keys — every type they hold, read
+AUTHORITATIVELY from IAM rather than from the session claim, which lags a key
+minted moments ago. No secret material comes back: a secret key is represented
+by its prefix, and only a publishable key (public by construction) carries its
+full value.
+
+A transient IAM read failure reports an empty set rather than a 5xx, so the
+page shows the honest empty state and never a fabricated key.
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+`hanzo` has no subcommand for this operation — the CLI serves only what cloud's live route table confirms. Use HTTP or an SDK.
+</Tab>
+<Tab value="SDK">
+<Tabs items={['.ts', '.py', '.go', '.rs', '.java']}>
+<Tab value=".ts">
+```ts
+import { Configuration, AccountApi } from 'hanzoai';
+
+const api = new AccountApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data } = await api.getAccountKeys();
+```
+</Tab>
+<Tab value=".py">
+```python
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import AccountApi
+
+client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
+result = AccountApi(client).get_account_keys()
+```
+</Tab>
+<Tab value=".go">
+```go
+cfg := cloud.NewConfiguration()
+cfg.AddDefaultHeader("Authorization", "Bearer "+os.Getenv("HANZO_API_KEY"))
+client := cloud.NewAPIClient(cfg)
+
+resp, _, err := client.AccountAPI.GetAccountKeys(context.Background()).Execute()
+if err != nil {
+	return err
+}
+```
+</Tab>
+<Tab value=".rs">
+```rust
+use hanzo_cloud::apis::{configuration::Configuration, account_api};
+
+let mut cfg = Configuration::new();
+cfg.bearer_access_token = std::env::var("HANZO_API_KEY").ok();
+
+let result = account_api::get_account_keys(&cfg, Default::default()).await?;
+```
+</Tab>
+<Tab value=".java">
+```java
+import ai.hanzo.cloud.ApiClient;
+import ai.hanzo.cloud.api.AccountApi;
+
+ApiClient client = new ApiClient();
+client.setRequestInterceptor(b -> b.header("Authorization", "Bearer " + System.getenv("HANZO_API_KEY")));
+
+var result = new AccountApi(client).getAccountKeys();
+```
+</Tab>
+</Tabs>
+
+The method above is the one at the current release of the document. `hanzoai@8.5.89` (npm) and `hanzoai@8.5.89` (PyPI) were generated from an earlier release, where this operation carried a different id, so it spells the method differently — regenerating the clients is what makes the two agree. [SDKs →](/docs/sdks)
+</Tab>
+<Tab value="HTTP">
+```bash
+curl https://api.hanzo.ai/v1/account/keys \
+  -H "Authorization: Bearer $HANZO_API_KEY"
+```
+</Tab>
+<Tab value="MCP">
+MCP reaches **account** through the `account` tool, which names its 8 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
+
+```bash
+curl -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+       "jsonrpc": "2.0",
+       "id": 1,
+       "method": "tools/call",
+       "params": {
+         "name": "describe",
+         "arguments": {
+           "op": "get_appearance"
+         }
+       }
+     }'
+```
+</Tab>
+</Tabs>
+
+---
+
+Every command, call and tool above is generated from the same OpenAPI document that generates the SDKs themselves — the four surfaces are projections of one doc comment, so they cannot disagree.

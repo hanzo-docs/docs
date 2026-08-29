@@ -34,23 +34,23 @@
     "types:check": "tsc --noEmit"
   },
   "dependencies": {
-    "epub-gen-memory": "^1.1.2",
-    "rehype-stringify": "^10.0.1",
-    "remark": "^15.0.1",
-    "remark-gfm": "^4.0.1",
-    "remark-rehype": "^11.1.2",
-    "unified": "^11.0.5",
-    "unist-util-visit": "^5.1.0"
+    "epub-gen-memory": "catalog:",
+    "rehype-stringify": "catalog:",
+    "remark": "catalog:",
+    "remark-gfm": "catalog:",
+    "remark-rehype": "catalog:",
+    "unified": "catalog:",
+    "unist-util-visit": "catalog:"
   },
   "devDependencies": {
-    "@types/mdast": "^4.0.4",
-    "@types/node": "25.5.0",
+    "@types/mdast": "catalog:",
+    "@types/node": "catalog:",
     "@hanzo/docs-core": "workspace:*",
-    "rimraf": "^6.0.0",
+    "rimraf": "catalog:",
     "tsconfig": "workspace:*",
-    "tsdown": "0.22.0",
-    "typescript": "^6.0.3",
-    "vfile": "^6.0.3"
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vfile": "catalog:"
   },
   "peerDependencies": {
     "@hanzo/docs-core": ">=17.0.1"

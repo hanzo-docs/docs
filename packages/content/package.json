@@ -29,17 +29,17 @@
     "types:check": "tsc --noEmit"
   },
   "dependencies": {
-    "@standard-schema/spec": "^1.1.0"
+    "@standard-schema/spec": "catalog:"
   },
   "devDependencies": {
-    "@types/node": "^25.5.0",
-    "fuma-content": "^1.2.3",
+    "@types/node": "catalog:",
+    "fuma-content": "catalog:",
     "@hanzo/docs-core": "workspace:*",
     "tsconfig": "workspace:*",
-    "tsdown": "0.22.0"
+    "tsdown": "catalog:"
   },
   "peerDependencies": {
-    "fuma-content": "^1.2.3",
+    "fuma-content": ">=1",
     "@hanzo/docs-core": ">=17.0.1"
   }
 }

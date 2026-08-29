@@ -44,29 +44,29 @@
     "types:check": "tsc --noEmit"
   },
   "dependencies": {
-    "@radix-ui/react-popover": "^1.1.15",
-    "@shikijs/twoslash": "^4.1.0",
-    "mdast-util-from-markdown": "^2.0.3",
-    "mdast-util-gfm": "^3.1.0",
-    "mdast-util-to-hast": "^13.2.1",
-    "shiki": "^4.1.0",
-    "tailwind-merge": "^3.6.0",
-    "twoslash": "^0.3.8"
+    "@radix-ui/react-popover": "catalog:",
+    "@shikijs/twoslash": "catalog:",
+    "mdast-util-from-markdown": "catalog:",
+    "mdast-util-gfm": "catalog:",
+    "mdast-util-to-hast": "catalog:",
+    "shiki": "catalog:",
+    "tailwind-merge": "catalog:",
+    "twoslash": "catalog:"
   },
   "devDependencies": {
-    "@types/hast": "^3.0.4",
-    "@types/mdast": "^4.0.4",
-    "@types/node": "25.5.0",
-    "@types/react": "^19.2.18",
+    "@types/hast": "catalog:",
+    "@types/mdast": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
     "@hanzo/docs-ui": "workspace:*",
     "tsconfig": "workspace:*",
-    "tsdown": "0.22.0",
-    "typescript": "^6.0.3"
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
   },
   "peerDependencies": {
-    "@types/react": "*",
+    "@types/react": ">=19.2.18",
     "@hanzo/docs-ui": ">=17.0.5",
-    "react": "18.x.x || 19.x.x"
+    "react": ">=19.2.8"
   },
   "peerDependenciesMeta": {
     "@types/react": {

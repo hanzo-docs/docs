@@ -1,0 +1,54 @@
+---
+title: Start
+description: "One task per page, each written four ways: a CLI command, an SDK call, an HTTP request and an MCP tool."
+icon: Rocket
+---
+
+import { Cards, Card } from '@hanzo/docs-base-ui/components/card'
+
+# Start
+
+One key authenticates every request. `sk-` keys resolve to a user and belong on a server; `pk-` keys resolve only to an organisation and are safe in a browser.
+
+```bash
+export HANZO_API_KEY=sk-...     # console.hanzo.ai
+hanzo auth login                # or sign in through Hanzo IAM
+```
+
+## Four surfaces, one contract
+
+The CLI, the SDKs, the HTTP API and the MCP tools are generated from the same OpenAPI document. A command, a method, a path and a tool that do the same thing are the same operation under four names, so what you learn on one surface holds on the others.
+
+| Surface | Address |
+| --- | --- |
+| CLI | `hanzo <capability> <verb>` |
+| SDK | a method per operation, in your language |
+| HTTP | `https://api.hanzo.ai/v1/<capability>` |
+| MCP | one tool per capability, dispatched by operation |
+
+## Tasks
+
+Each page below does one thing, and does it on all four surfaces.
+
+<Cards>
+  <Card title="Hello" href="/docs/start/hello">
+    Identity — prove the key works and print who it belongs to.
+  </Card>
+  <Card title="Chat" href="/docs/start/chat">
+    One completion.
+  </Card>
+  <Card title="Money" href="/docs/start/money">
+    Balance, then the usage that moved it.
+  </Card>
+  <Card title="Store" href="/docs/start/store">
+    KV round-trip — create a store, read it back, delete it.
+  </Card>
+  <Card title="Agent" href="/docs/start/agent">
+    Create an agent, run it, read the run back.
+  </Card>
+  <Card title="Tools" href="/docs/start/tools">
+    List the MCP tools this key can reach.
+  </Card>
+</Cards>
+
+Every capability the API serves is in the [reference](/docs/openapi), and the same key reaches all of it.

@@ -373,24 +373,24 @@
     "@hanzo/docs-content-collections": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^25.0.10",
-    "tsup": "^8.5.1",
-    "typescript": "^6.0.3"
+    "@types/node": "catalog:",
+    "tsup": "catalog:",
+    "typescript": "catalog:"
   },
   "peerDependencies": {
     "@hanzo/mdx": ">=14.2.6",
-    "@hanzo/ui": ">=8.25.0",
-    "@orama/core": "1.x.x",
-    "@oramacloud/client": "2.x.x",
-    "@tanstack/react-router": "1.x.x",
-    "algoliasearch": "5.x.x",
-    "lucide-react": "*",
-    "next": ">=15.0.0",
-    "react": "^18.0.0 || ^19.0.0",
-    "react-dom": "^18.0.0 || ^19.0.0",
-    "react-router": "7.x.x",
-    "waku": "^0.26.0 || ^0.27.0",
-    "zod": ">=3.0.0"
+    "@hanzo/ui": ">=8.27.0",
+    "@orama/core": ">=1",
+    "@oramacloud/client": ">=2",
+    "@tanstack/react-router": ">=1",
+    "algoliasearch": ">=5",
+    "lucide-react": ">=1",
+    "next": ">=16.3.3",
+    "react": ">=19.2.8",
+    "react-dom": ">=19.2.8",
+    "react-router": ">=8",
+    "waku": ">=1",
+    "zod": ">=4"
   },
   "peerDependenciesMeta": {
     "@hanzo/mdx": {

@@ -30,31 +30,31 @@
     "types:check": "tsc --noEmit"
   },
   "dependencies": {
-    "@portabletext/react": "^6.2.0"
+    "@portabletext/react": "catalog:"
   },
   "devDependencies": {
-    "@sanity/client": "^7.22.1",
-    "@sanity/types": "^5.27.0",
-    "@types/node": "25.9.1",
-    "@types/react": "^19.2.18",
-    "fuma-cli": "^0.1.1",
+    "@sanity/client": "catalog:",
+    "@sanity/types": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "fuma-cli": "catalog:",
     "@hanzo/docs-core": "workspace:*",
     "@hanzo/docs-ui": "workspace:*",
-    "next-sanity": "^13.0.6",
-    "react": "^19.2.8",
-    "sanity": "^5.27.0",
+    "next-sanity": "catalog:",
+    "react": "catalog:",
+    "sanity": "catalog:",
     "tsconfig": "workspace:*",
-    "tsdown": "0.22.0",
-    "typescript": "^6.0.3"
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
   },
   "peerDependencies": {
-    "@sanity/client": "^7.22.0",
-    "@sanity/types": "*",
-    "@types/react": "*",
+    "@sanity/client": ">=8",
+    "@sanity/types": ">=6",
+    "@types/react": ">=19.2.18",
     "@hanzo/docs-core": ">=17.0.1",
-    "next-sanity": "^12.4.0",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "next-sanity": ">=13",
+    "react": ">=19.2.8",
+    "react-dom": ">=19.2.8"
   },
   "peerDependenciesMeta": {
     "@sanity/types": {

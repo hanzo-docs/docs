@@ -48,21 +48,21 @@
     "types:check": "tsc --noEmit"
   },
   "dependencies": {
-    "lucide-react": "^0.563.0"
+    "lucide-react": "catalog:"
   },
   "devDependencies": {
     "@hanzo/docs-base-ui": "workspace:*",
     "@hanzo/docs-core": "workspace:*",
-    "@types/react": "^19.2.18",
+    "@types/react": "catalog:",
     "tsconfig": "workspace:*",
-    "tsdown": "^0.20.3"
+    "tsdown": "catalog:"
   },
   "peerDependencies": {
     "@hanzo/docs-base-ui": "workspace:*",
     "@hanzo/docs-core": "workspace:*",
-    "@types/react": "*",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "@types/react": ">=19.2.18",
+    "react": ">=19.2.8",
+    "react-dom": ">=19.2.8"
   },
   "peerDependenciesMeta": {
     "@types/react": {
