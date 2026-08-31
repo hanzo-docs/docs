@@ -1,10 +1,10 @@
 ---
 title: Migrate
-description: 39 vendors, each mapped to the Hanzo capability that answers it — how to start, nouns, the call before and after, and what does not carry.
+description: 40 vendors, each mapped to the Hanzo capability that answers it — how to start, nouns, the call before and after, and what does not carry.
 icon: ArrowRightLeft
 ---
 
-39 guides, one per vendor. Each one starts with the shortest path to a working
+40 guides, one per vendor. Each one starts with the shortest path to a working
 call, names the capability that answers the vendor, maps their nouns onto ours,
 shows the same call both ways, and says plainly what you lose.
 
@@ -56,6 +56,7 @@ below are read from the API document this site is built from.
 | From | What it does | Capability |
 |---|---|---|
 | [OpenAI platform](/docs/guides/migrate/openai) | Models, assistants and the platform around them | `/v1/ai` (272) · `/v1/agents` (37) |
+| [NVIDIA NeMo](/docs/guides/migrate/nemo) | Nemotron, NIM, Relay, Guardrails, Evaluator and the agent toolkit | `/v1/ai` (272) · `/v1/o11y` (381) · `/v1/eval` (16) |
 | [Replicate](/docs/guides/migrate/replicate) | Running a model under a name | `/v1/ml` (7) · `/v1/ai` (272) |
 | [Modal](/docs/guides/migrate/modal) | Serverless GPU functions, sandboxes and jobs | `/v1/functions` (11) · `/v1/sandbox` (19) |
 | [LangSmith](/docs/guides/migrate/langsmith) | LLM tracing, datasets and evaluations | `/v1/o11y` (381) · `/v1/eval` (16) |

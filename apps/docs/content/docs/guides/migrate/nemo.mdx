@@ -1,0 +1,279 @@
+---
+title: NVIDIA NeMo
+description: NeMo is a suite of libraries and microservices for the model and agent lifecycle. The served parts map to /v1/ai (272) for Nemotron and NIM, /v1/o11y (381) for Relay's telemetry, /v1/eval (16) and /v1/benchmark (9) for Evaluator, and /v1/agents (37) for the Agent Toolkit; the data and training libraries keep running, pointed at the same host.
+---
+
+NeMo is not one product. It is a set of libraries and containers that between
+them cover a model's life: open models (Nemotron), data curation and synthesis
+(Curator, Data Designer, Anonymizer, Safe Synthesizer), post-training (RL, Gym,
+Customizer, Megatron-Bridge), evaluation (Evaluator, Auditor), runtime safety
+(Guardrails), inference (NIM) and agent telemetry (Relay, Agent Toolkit). Some of
+those are services you run; some are libraries you import. The split matters
+here, because the two halves migrate differently.
+
+The services have a capability that answers them. `/v1/ai` (272 operations)
+serves the models at the addresses a NIM or `integrate.api.nvidia.com` client
+already calls, and every call it serves is already a `gen_ai` trace in `/v1/o11y`
+(381), which is the half of Relay that records. `/v1/eval` (16) and
+`/v1/benchmark` (9) are Evaluator's two modes; `/v1/agents` (37) is the Agent
+Toolkit's workflow with its tools resolved from `/v1/tools` (19).
+
+The libraries have no counterpart and need none. Curator, Data Designer,
+Anonymizer, Safe Synthesizer and NeMo RL take an OpenAI-compatible provider and
+your own GPUs; they keep both, and the provider becomes `api.hanzo.ai`. Nothing on
+this page asks you to stop using a NeMo library that works.
+
+## Start here
+
+Mint a key, point the client that called Nemotron at a different host, then run
+a benchmark against what it now calls.
+
+```bash
+# 1. mint a key — sk- belongs on a server, pk- is safe in a browser
+curl -sS -X POST https://api.hanzo.ai/v1/account/keys \
+  -H "Authorization: Bearer $HANZO_SESSION" \
+  -H 'Content-Type: application/json' \
+  -d '{"type":"secret"}'
+
+# 2. the call a NIM client already makes, at a different host and model id
+curl -sS -X POST https://api.hanzo.ai/v1/chat/completions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '{"model":"zen5","messages":[{"role":"user","content":"summarise Q3"}]}'
+
+# 3. Evaluator's benchmark mode, as an admission rather than a local run
+curl -sS -X POST https://api.hanzo.ai/v1/benchmark/runs \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '{"model":"zen5","benchmarks":["mmlu","gsm8k"]}'
+```
+
+Step 2 is the request your code already sends. NIM and the NVIDIA API are
+OpenAI-shaped, so the body is unchanged and the edit is the base URL, the key and
+the model name; `GET /v1/models` publishes the names, `zen5` among them. Step 3
+answers 202 with a receipt, and the numbers appear on
+`GET /v1/benchmark/leaderboard` as the harness completes them — the same
+benchmarks `nel eval run --bench` would run on your machine, run for you.
+
+### Core capabilities
+
+| Capability | What it does | Operations |
+|---|---|---|
+| `/v1/ai` | Models, the router, files, fine-tuning jobs and their deployment | 272 |
+| `/v1/o11y` | Traces, LLM observations, sessions, scores and review queues | 381 |
+| `/v1/eval` | Datasets, stored judges and judged runs | 16 |
+| `/v1/benchmark` | The public benchmark catalog, runs against a model or your endpoint, the leaderboard | 9 |
+| `/v1/agents` | An agent, its runs and its live sessions | 37 |
+| `/v1/sandbox` | A leased computer for code and tool environments | 19 |
+
+## Nouns
+
+Five tables, one per NeMo concern.
+
+### Models and inference
+
+| NeMo | Hanzo |
+|---|---|
+| Nemotron, called through `integrate.api.nvidia.com/v1` | `zen5`, `zen5-pro`, `zen5-coder`, `zen5-flash`, `zen5-mini` at `POST /v1/chat/completions` — 14 Zen models among the 432 that `GET /v1/models` lists |
+| NIM container serving `/v1/chat/completions` on your GPU | The same address, served. No container to pull; the model is a name in the catalogue |
+| NIM embedding and reranker microservices | `POST /v1/embeddings` with `zen-embedding`, `POST /v1/rerank` with `zen-rerank` |
+| Nemotron content-safety model | `zen-guard`, a 128K-context safety classifier, called like any other model |
+| Switchyard, the proxy that translates OpenAI and Anthropic wire formats | `POST /v1/messages` and `POST /v1/messages/count_tokens` sit beside the OpenAI routes on one host; no proxy in between |
+| Switchyard's routing algorithms across backends | `PUT /v1/ai/router/policy`, or the model name `router:general`, with the ledger at `GET /v1/ai/router/history` |
+| `NVIDIA_API_KEY` | `sk-…` from `POST /v1/account/keys`; the org is a claim inside it |
+
+### Telemetry and control
+
+Relay does two things: it emits OpenTelemetry GenAI spans for LLM and tool
+calls, and it runs middleware around them. The first is already done for every
+call `/v1/ai` serves. The second is a property of the agent definition.
+
+| NeMo | Hanzo |
+|---|---|
+| Relay wrapping an app-owned LLM call so it emits a `gen_ai` span | Nothing. A call served by `/v1/ai` is recorded because it was served; `GET /v1/o11y/llm/observations` has the model, tokens, cost and latency |
+| Relay's OTLP exporter and `plugins.toml` endpoint block | An ingestion key from `POST /v1/o11y/gateway/ingestion_keys` for an exporter you keep; a span you write yourself goes to `POST /v1/metrics/traces/write` with its `gen_ai.*` attributes |
+| Relay scope — one agent run, its nested tool and LLM calls | A trace. `GET /v1/o11y/llm/traces` lists them; `POST /v1/o11y/traces/{traceId}/waterfall` draws one |
+| Relay session across a coding-agent run | `GET /v1/o11y/llm/sessions` — spans grouped by `session.id` |
+| Trajectory export (ATIF) | `GET /v1/eval/traces`, one per model call an evaluation made, narrowed by `runName` |
+| Relay middleware: redaction, policy, allow or deny before execution | The agent's `tools` list — names resolved from `GET /v1/tools` at run time, and omitting one denies it; `zen-guard` on input or output where a content decision is needed |
+| `nemo-relay run -- claude` observing a local coding agent | `POST /v1/agents/coding` runs the coding agent on this side of the API, and `GET /v1/agents/sessions/stream` is the live event feed |
+| Agent Toolkit workflow YAML: `llms`, `functions`, `workflow` | `POST /v1/agents` carrying `model`, `instructions` and `tools`; `POST /v1/agents/{ref}/run` runs it and answers the finished run |
+| Agent Toolkit function | A name from `GET /v1/tools`, dispatched with `POST /v1/tools/call`; your own goes in as an MCP server at `POST /v1/tools/mcp/servers` |
+| Agent Toolkit evaluation and profiling of a workflow | `GET /v1/agents/runs` for every run in the org, `GET /v1/agents/metrics` for the aggregate |
+
+### Guardrails
+
+| NeMo | Hanzo |
+|---|---|
+| `config.yml` naming a `content_safety` model and the rails that call it | `zen-guard`, called at `POST /v1/chat/completions` on the input, the output or both. The classification is the response |
+| Colang flows — dialog rails, topical rails, scripted turns | Instructions on the agent, and its `tools` allowlist. There is no rails language; see below |
+| Self-check input and output rails using the main model | A second call to the same model with your check as the prompt, which is what the rail did |
+| Jailbreak detection heuristics | `zen-guard` reports the jailbreak category with the rest |
+| Rail execution logged per turn | The same trace as the call: each check is one more observation on it |
+
+### Evaluation
+
+| NeMo | Hanzo |
+|---|---|
+| `nel eval run --bench mmlu --model-url … --model-id …` | `POST /v1/benchmark/runs` with `model`, or with `endpoint` for a model this side does not host; `GET /v1/benchmark/catalog` lists the ids it accepts |
+| Benchmark results in `./eval_results/` | `GET /v1/benchmark/leaderboard`, and `GET /v1/benchmark/history` for one model over time |
+| Two models compared in a report | `GET /v1/benchmark/compare` — paired on the items both completed, with an exact-McNemar p |
+| Custom dataset with an LLM-as-judge | `POST /v1/eval/datasets`, items at `POST /v1/eval/datasets/{name}/items`, then `POST /v1/eval/runs` with a `judge` — it calls the model, records the trace, calls the judge and answers the summary |
+| A judge configuration reused across runs | `POST /v1/eval/evaluators` — judge model, criteria, the score name it files under |
+| Per-item scores | `GET /v1/eval/scores`, narrowed by `runName`, `name` or `traceId` |
+| Interceptor proxy recording requests during an eval | `GET /v1/eval/traces` — the eval already recorded them |
+| NeMo Gym environment: dataset, harness, verifier, at scale | Dataset and judge are `/v1/eval`; the sandbox an environment needs is `POST /v1/sandbox/lease` then `POST /v1/sandbox/run`, which answers exit code, stdout and stderr as data. Rollouts for RL training stay in Gym |
+| Auditor (garak) probing for jailbreaks, leakage and injection | No counterpart. garak's `openai.OpenAICompatible` generator takes a `uri`; give it `https://api.hanzo.ai/v1/` and the model name |
+
+### Data and training
+
+| NeMo | Hanzo |
+|---|---|
+| Curator, Data Designer, Anonymizer, Safe Synthesizer | The same libraries. Each takes an OpenAI-compatible provider; `endpoint="https://api.hanzo.ai/v1"`, `provider_type="openai"` |
+| Data Designer's LLM-as-judge columns, Anonymizer's LLM substitutions | Metered and traced like any other call on your key |
+| Customizer, the hosted fine-tuning microservice | `POST /v1/ai/finetune/jobs`; `GET /v1/ai/finetune/presets` is the catalogue of base model, method and task with a recommended configuration for each |
+| Serving the fine-tuned result as a NIM | `POST /v1/ai/finetune/deploy` — serves the checkpoints and registers the result as a routable model name on `/v1/chat/completions` |
+| NeMo RL, Megatron-Bridge, Automodel on your cluster | Your cluster, unchanged. `GET /v1/visor/gpus` is one row per accelerator your org holds here; `GET /v1/visor/compute/sizes` lists what can be launched |
+| A prompt kept in a NeMo recipe | `POST /v1/prompt` — a repeated name appends a version |
+
+## The call
+
+One guarded, observed inference in NeMo is three components: a NIM serving the
+model, Guardrails in front of it with a `config.yml`, and Relay around the client
+so the call is a span.
+
+```yaml
+# config.yml — Guardrails
+models:
+  - type: main
+    engine: nim
+    model: meta/llama-3.3-70b-instruct
+  - type: content_safety
+    engine: nim
+    model: nvidia/llama-3.1-nemoguard-8b-content-safety
+rails:
+  input:
+    flows: [content safety check input $model=content_safety]
+  output:
+    flows: [content safety check output $model=content_safety]
+```
+
+```bash
+# the client, wrapped so Relay emits the gen_ai span
+nemo-relay run -- python app.py     # app.py calls http://localhost:8000/v1 through the rails
+```
+
+Hanzo. The safety check is a model call, the inference is a model call, and both
+are traces because they were served:
+
+```bash
+curl -sS -X POST https://api.hanzo.ai/v1/chat/completions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '{"model":"zen-guard","messages":[{"role":"user","content":"summarise Q3"}]}'
+
+curl -sS -X POST https://api.hanzo.ai/v1/chat/completions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '{"model":"zen5","messages":[{"role":"user","content":"summarise Q3"}]}'
+
+curl -sS "https://api.hanzo.ai/v1/o11y/llm/traces?limit=20" \
+  -H "Authorization: Bearer $HANZO_API_KEY"
+```
+
+The third command is a read. Nothing was instrumented and no exporter was
+configured; the two calls are in the trace list because the model was served on
+this side of the request. Where the check should block, your code reads the
+classifier's answer and does not make the second call — which is what the input
+rail did, with the decision in a flow file instead of in the caller.
+
+Evaluation separates the same way. Evaluator on your machine:
+
+```bash
+export NVIDIA_API_KEY=…
+nel eval run --bench mmlu \
+  --model-url https://integrate.api.nvidia.com/v1 \
+  --model-id nvidia/nemotron-3-super-120b-a12b \
+  --api-key $NVIDIA_API_KEY --repeats 3 --max-problems 100
+nel eval report ./eval_results/ -f markdown -o report.md
+```
+
+Here, for the standard benchmarks, an admission and a read:
+
+```bash
+curl -sS -X POST https://api.hanzo.ai/v1/benchmark/runs \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H 'Content-Type: application/json' \
+  -d '{"model":"zen5","benchmarks":["mmlu"]}'
+
+curl -sS "https://api.hanzo.ai/v1/benchmark/leaderboard" \
+  -H "Authorization: Bearer $HANZO_API_KEY"
+```
+
+And for your own graded set, three commands from nothing to a scored run:
+
+```bash
+curl -sS -X POST https://api.hanzo.ai/v1/eval/datasets \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H 'Content-Type: application/json' \
+  -d '{"name":"support-qa","description":"answers we grade each release against"}'
+
+curl -sS -X POST https://api.hanzo.ai/v1/eval/datasets/support-qa/items \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H 'Content-Type: application/json' \
+  -d '{"id":"rotate-key","input":{"question":"how do I rotate a key?"},
+       "expectedOutput":{"answer":"mint a new one, deploy it, revoke the old one"}}'
+
+curl -sS -X POST https://api.hanzo.ai/v1/eval/runs \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H 'Content-Type: application/json' \
+  -d '{"dataset":"support-qa","model":"zen5","runName":"rc-41",
+       "judge":{"model":"zen5-mini","criteria":"the answer names the right steps","name":"correctness"}}'
+```
+
+Attempts on the benchmark plane are append-only and keyed by benchmark, item and
+model, so re-queuing a run you already made is close to free, and a benchmark id
+outside the catalog is a 422 naming it rather than a partial run. The eval run is
+synchronous: it answers `items`, `scored`, `avgScore` and one row per example,
+and a run where nothing scored is a 502 rather than a 200 with an empty table.
+
+## What does not carry
+
+**No rails language.** Colang describes dialog as flows — what the bot may talk
+about, what it says when asked to go elsewhere, how a multi-turn exchange should
+proceed — and Guardrails executes them around every turn. Nothing here
+interprets a flow file. Content decisions are a `zen-guard` call whose answer
+your code acts on; topical and conversational control is the agent's
+`instructions`; what it may do is its `tools` list. A Colang configuration doing
+substantive dialog control is rewritten as those three, not ported.
+
+**No data curation, synthesis or anonymization service.** There is no address
+that deduplicates a corpus, samples a synthetic table under a schema, or rewrites
+PII in a dataset. Curator, Data Designer, Anonymizer and Safe Synthesizer remain
+the tools for that work and run where they ran; the change is the provider
+block. `zen-guard` classifies a prompt at request time and does not touch
+training data.
+
+**Fine-tuning is a job; RL is not.** `POST /v1/ai/finetune/jobs` submits a
+training job with a base model, a method and a dataset, and
+`POST /v1/ai/finetune/deploy` serves the result under a model name. That is
+Customizer's shape. It is not NeMo RL: there is no rollout loop, no
+environment server, no reward model in the request, and no Gym. Reinforcement
+learning stays in NeMo on your own accelerators, and its output — a checkpoint —
+is what you serve.
+
+**No NIM to pull.** Inference here is served, not shipped as a container, so
+there is no image whose version you pin and no GPU you size for it. The
+open-source engine behind the Zen models,
+[hanzoai/engine](https://github.com/hanzoai/engine), runs the same `/v1` surface
+on your own hardware if you need one, but it is a project and not an address on
+this API.
+
+**No red-teaming harness.** Auditor is garak with NVIDIA's probe set: it
+generates attacks, runs them, and scores what got through. There is no
+capability that generates attacks. `zen-guard` is the classifier that sits on
+the other side of that test. Point garak's `openai.OpenAICompatible` generator at
+`https://api.hanzo.ai/v1/` and it measures the same thing it measured before.
+
+**Relay's runtime events have no bus.** Relay emits scope lifecycle events —
+started, tool called, model called, ended — that plugins subscribe to in
+process. What exists here is the trace after the fact and the session stream
+during an agent run at `GET /v1/agents/sessions/stream`. A plugin that acted on
+a Relay event before the call proceeded has no hook to attach to; the decision
+moves into the agent definition or into your caller.
