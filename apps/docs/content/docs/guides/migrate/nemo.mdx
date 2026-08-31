@@ -95,8 +95,8 @@ call `/v1/ai` serves. The second is a property of the agent definition.
 | Relay scope — one agent run, its nested tool and LLM calls | A trace. `GET /v1/o11y/llm/traces` lists them; `POST /v1/o11y/traces/{traceId}/waterfall` draws one |
 | Relay session across a coding-agent run | `GET /v1/o11y/llm/sessions` — spans grouped by `session.id` |
 | Trajectory export (ATIF) | `GET /v1/eval/traces`, one per model call an evaluation made, narrowed by `runName` |
-| Relay middleware: redaction, policy, allow or deny before execution | The agent's `tools` list — names resolved from `GET /v1/tools` at run time, and omitting one denies it; `zen-guard` on input or output where a content decision is needed |
-| `nemo-relay run -- claude` observing a local coding agent | `POST /v1/agents/coding` runs the coding agent on this side of the API, and `GET /v1/agents/sessions/stream` is the live event feed |
+| Relay middleware: redaction, policy, allow or deny before execution | [Hanzo Guard](https://github.com/hanzoai/guard) at the same three boundaries — `guard-proxy` in front of the model host, `guard-wrap` around a local agent, `guard-mcp` in front of a tool server — redacting PII and scoring injection before the call proceeds; and the agent's `tools` list, names resolved from `GET /v1/tools` at run time, omitting one denies it |
+| `nemo-relay run -- claude` observing a local coding agent | `guard-wrap claude` wraps the same process locally; hosted, `POST /v1/agents/coding` runs the coding agent on this side of the API and `GET /v1/agents/sessions/stream` is the live event feed |
 | Agent Toolkit workflow YAML: `llms`, `functions`, `workflow` | `POST /v1/agents` carrying `model`, `instructions` and `tools`; `POST /v1/agents/{ref}/run` runs it and answers the finished run |
 | Agent Toolkit function | A name from `GET /v1/tools`, dispatched with `POST /v1/tools/call`; your own goes in as an MCP server at `POST /v1/tools/mcp/servers` |
 | Agent Toolkit evaluation and profiling of a workflow | `GET /v1/agents/runs` for every run in the org, `GET /v1/agents/metrics` for the aggregate |
@@ -105,11 +105,12 @@ call `/v1/ai` serves. The second is a property of the agent definition.
 
 | NeMo | Hanzo |
 |---|---|
-| `config.yml` naming a `content_safety` model and the rails that call it | `zen-guard`, called at `POST /v1/chat/completions` on the input, the output or both. The classification is the response |
+| `config.yml` naming a `content_safety` model and the rails that call it | `guard-proxy --upstream https://api.hanzo.ai --port 8080` with `OPENAI_BASE_URL` pointed at it: PII redaction, injection scoring, content classification by `zen-guard`, rate limiting and audit, on the input and the output. Or `zen-guard` called directly at `POST /v1/chat/completions`; the classification is the response |
+| NeMo Guardrails as a Python library in your process | `hanzo-guard` as a Rust crate — `cargo install hanzo-guard --features full` (0.1.4 on crates.io): `sanitize_input` and `sanitize_output` in your own service |
 | Colang flows — dialog rails, topical rails, scripted turns | Instructions on the agent, and its `tools` allowlist. There is no rails language; see below |
 | Self-check input and output rails using the main model | A second call to the same model with your check as the prompt, which is what the rail did |
-| Jailbreak detection heuristics | `zen-guard` reports the jailbreak category with the rest |
-| Rail execution logged per turn | The same trace as the call: each check is one more observation on it |
+| Jailbreak detection heuristics | Guard's injection stage — weighted patterns and a confidence threshold, about 20 µs and no model call; `zen-guard` for the classifier's verdict on top |
+| Rail execution logged per turn | Guard's JSONL audit trail — content hashes, never content, per request; and the same trace as the call, where each check is one more observation on it |
 
 ### Evaluation
 
@@ -185,7 +186,10 @@ The third command is a read. Nothing was instrumented and no exporter was
 configured; the two calls are in the trace list because the model was served on
 this side of the request. Where the check should block, your code reads the
 classifier's answer and does not make the second call — which is what the input
-rail did, with the decision in a flow file instead of in the caller.
+rail did, with the decision in a flow file instead of in the caller. With
+`guard-proxy --upstream https://api.hanzo.ai --port 8080` in front and
+`OPENAI_BASE_URL=http://localhost:8080`, the PII, injection and content stages
+run on both calls and the caller does not change.
 
 Evaluation separates the same way. Evaluator on your machine:
 
@@ -238,10 +242,11 @@ and a run where nothing scored is a 502 rather than a 200 with an empty table.
 **No rails language.** Colang describes dialog as flows — what the bot may talk
 about, what it says when asked to go elsewhere, how a multi-turn exchange should
 proceed — and Guardrails executes them around every turn. Nothing here
-interprets a flow file. Content decisions are a `zen-guard` call whose answer
-your code acts on; topical and conversational control is the agent's
-`instructions`; what it may do is its `tools` list. A Colang configuration doing
-substantive dialog control is rewritten as those three, not ported.
+interprets a flow file. Input and output decisions are Guard's fixed stages,
+or a `zen-guard` call whose answer your code acts on; topical and conversational
+control is the agent's `instructions`; what it may do is its `tools` list. A
+Colang configuration doing substantive dialog control is rewritten as those
+three, not ported.
 
 **No data curation, synthesis or anonymization service.** There is no address
 that deduplicates a corpus, samples a synthetic table under a schema, or rewrites
@@ -269,7 +274,9 @@ this API.
 generates attacks, runs them, and scores what got through. There is no
 capability that generates attacks. `zen-guard` is the classifier that sits on
 the other side of that test. Point garak's `openai.OpenAICompatible` generator at
-`https://api.hanzo.ai/v1/` and it measures the same thing it measured before.
+`https://api.hanzo.ai/v1/` and it measures the same thing it measured before;
+point it at a `guard-proxy` in front of that host and the difference between the
+two runs is what Guard's stages caught.
 
 **Relay's runtime events have no bus.** Relay emits scope lifecycle events —
 started, tool called, model called, ended — that plugins subscribe to in
