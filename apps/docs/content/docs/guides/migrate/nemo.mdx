@@ -130,7 +130,8 @@ call `/v1/ai` serves. The second is a property of the agent definition.
 
 | NeMo | Hanzo |
 |---|---|
-| Curator, Data Designer, Anonymizer, Safe Synthesizer | The same libraries. Each takes an OpenAI-compatible provider; `endpoint="https://api.hanzo.ai/v1"`, `provider_type="openai"` |
+| Data Designer: samplers, LLM columns, validators, judge, preview | `gym synth design.yml --preview 5` — the same column kinds in one YAML, rows streamed to jsonl or parquet, any OpenAI-compatible endpoint |
+| Curator, Anonymizer, Safe Synthesizer | The same libraries. Each takes an OpenAI-compatible provider; `endpoint="https://api.hanzo.ai/v1"`, `provider_type="openai"` |
 | Data Designer's LLM-as-judge columns, Anonymizer's LLM substitutions | Metered and traced like any other call on your key |
 | Customizer, the hosted fine-tuning microservice | `POST /v1/ai/finetune/jobs`; `GET /v1/ai/finetune/presets` is the catalogue of base model, method and task with a recommended configuration for each |
 | Serving the fine-tuned result as a NIM | `POST /v1/ai/finetune/deploy` — serves the checkpoints and registers the result as a routable model name on `/v1/chat/completions` |
@@ -248,12 +249,14 @@ control is the agent's `instructions`; what it may do is its `tools` list. A
 Colang configuration doing substantive dialog control is rewritten as those
 three, not ported.
 
-**No data curation, synthesis or anonymization service.** There is no address
-that deduplicates a corpus, samples a synthetic table under a schema, or rewrites
-PII in a dataset. Curator, Data Designer, Anonymizer and Safe Synthesizer remain
-the tools for that work and run where they ran; the change is the provider
-block. `zen-guard` classifies a prompt at request time and does not touch
-training data.
+**No data curation or anonymization service.** There is no address that
+deduplicates a corpus or rewrites PII in a dataset. Curator, Anonymizer and
+Safe Synthesizer remain the tools for that work and run where they ran; the
+change is the provider block. Synthesis is `gym synth`, a binary rather than an
+address: it covers Data Designer's sampler, expression and LLM columns,
+validators and judge, and leaves out the persona samplers, code and SQL
+validators, and MCP tool columns. `zen-guard` classifies a prompt at request
+time and does not touch training data.
 
 **Hosted fine-tuning is a job; RL is a binary you run.** `POST /v1/ai/finetune/jobs`
 submits a training job with a base model, a method and a dataset, and
