@@ -134,7 +134,7 @@ call `/v1/ai` serves. The second is a property of the agent definition.
 | Data Designer's LLM-as-judge columns, Anonymizer's LLM substitutions | Metered and traced like any other call on your key |
 | Customizer, the hosted fine-tuning microservice | `POST /v1/ai/finetune/jobs`; `GET /v1/ai/finetune/presets` is the catalogue of base model, method and task with a recommended configuration for each |
 | Serving the fine-tuned result as a NIM | `POST /v1/ai/finetune/deploy` — serves the checkpoints and registers the result as a routable model name on `/v1/chat/completions` |
-| NeMo RL, Megatron-Bridge, Automodel on your cluster | Your cluster, unchanged. `GET /v1/visor/gpus` is one row per accelerator your org holds here; `GET /v1/visor/compute/sizes` lists what can be launched |
+| NeMo RL, Megatron-Bridge, Automodel on your cluster | [hanzoai/gym](https://github.com/hanzoai/gym) — LoRA SFT and GRPO in Rust, one binary for CUDA and Metal, Axolotl-shaped configs, PEFT adapters out. Full fine-tuning and multi-node stay with NeMo on your cluster; `GET /v1/visor/gpus` is one row per accelerator your org holds here |
 | A prompt kept in a NeMo recipe | `POST /v1/prompt` — a repeated name appends a version |
 
 ## The call
@@ -255,13 +255,16 @@ the tools for that work and run where they ran; the change is the provider
 block. `zen-guard` classifies a prompt at request time and does not touch
 training data.
 
-**Fine-tuning is a job; RL is not.** `POST /v1/ai/finetune/jobs` submits a
-training job with a base model, a method and a dataset, and
+**Hosted fine-tuning is a job; RL is a binary you run.** `POST /v1/ai/finetune/jobs`
+submits a training job with a base model, a method and a dataset, and
 `POST /v1/ai/finetune/deploy` serves the result under a model name. That is
-Customizer's shape. It is not NeMo RL: there is no rollout loop, no
-environment server, no reward model in the request, and no Gym. Reinforcement
-learning stays in NeMo on your own accelerators, and its output — a checkpoint —
-is what you serve.
+Customizer's shape, and it has no rollout loop. GRPO is
+[hanzoai/gym](https://github.com/hanzoai/gym): `rl: grpo` in an Axolotl-shaped
+config, verifiers named under `trl.reward_funcs` (`exact_match`,
+`numeric_match`, `format:`, `length:`, `http:`), LoRA on Qwen3 or Llama, on
+your own CUDA or Metal accelerators. It is single-node and LoRA-only; NeMo RL's
+multi-node full-parameter runs stay in NeMo, and either way the output is an
+adapter or checkpoint that `/v1/ai/finetune/deploy` or Engine serves.
 
 **No NIM to pull.** Inference here is served, not shipped as a container, so
 there is no image whose version you pin and no GPU you size for it. The
