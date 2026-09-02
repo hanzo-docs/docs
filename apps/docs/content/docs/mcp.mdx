@@ -42,15 +42,18 @@ Sign in once (`hanzo auth login`) and the `hanzo` cloud tool + your connectors a
 
 ## The tool index
 
-Every tool the platform can expose is indexed at `GET api.hanzo.ai/v1/tools` (authenticated). Today that's **1,468 tools** across five sources — the unified server presents them through the compact action-routed surface above:
+Every tool the platform can expose is indexed at `GET api.hanzo.ai/v1/tools` (authenticated). The unified server presents them through the compact action-routed surface above. A tool's `source` is one of six values, and the order below is also the [precedence order](/docs/extend#precedence--who-wins-a-name-collision) — the lowest wins a name collision:
 
 | Source | What it is |
 |--------|-----------|
-| `builtin` | Core local tools (fs, exec, git, code, …) |
-| `skill` | Packaged skills |
 | `connector` | Linked cloud integrations (GitHub, Slack, Google, Discord, X, …) |
-| `agent` | Agent entry points |
 | `function` | User-defined functions |
+| `zap-service` | First-party cloud service routes |
+| `agent` | Agent entry points |
+| `skill` | Packaged skills — listing only, never called |
+| `mcp` | Tools on your org's own registered MCP servers |
+
+Adding a source of your own is [Extend](/docs/extend).
 
 ---
 

@@ -5,6 +5,7 @@
     "---Build with---",
     "mcp",
     "mcp-tools",
+    "extend",
     "openapi",
     "sdks",
     "cli",
