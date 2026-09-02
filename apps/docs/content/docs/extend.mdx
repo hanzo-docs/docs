@@ -1,0 +1,370 @@
+---
+title: Extend
+description: Add a tool to Hanzo three ways — a Go provider inside the fleet, your own MCP server, or an auto connector. The contract all three land on, and how to choose.
+icon: Blocks
+---
+
+# Extend
+
+Everything an agent can call is a **tool**, and every tool comes from a
+**source**. There are six sources and one contract, so adding a capability to
+Hanzo is always the same shape: implement the contract, declare which source you
+are, and the tool plane does discovery, precedence, activation, pricing,
+metering and audit for you.
+
+Three of those sources are open to you:
+
+| | **Go provider** | **MCP server** | **auto connector** |
+|---|---|---|---|
+| What you write | a Go type with three methods | a JSON-RPC endpoint | a Go `Connector` with actions |
+| Language | Go | any | Go |
+| Runs in-process | yes, in the subsystem that registers it | no — your own host | yes, in the `auto` subsystem |
+| Who hosts it | Hanzo | **you** | Hanzo |
+| How it ships | a change in `hanzoai/cloud` | a URL you register at runtime | a change in `hanzoai/cloud` |
+| Dispatchable | your choice | yes | yes |
+| Usable as a flow step | no | no | **yes** |
+| Durable execution | no — one call | no — one call | yes, inside a flow |
+| Credentials | your subsystem's own | one header, sealed in KMS | per-org, through integrations |
+| Source tag | you choose | `mcp` — ranks **last** | `connector` — ranks **first** |
+| Tool name | yours | `<server-id>_<tool>` | `<connector>_<action>` |
+
+Pick the MCP server if you are not writing Go, or if the capability is yours to
+operate. Pick an auto connector if the capability should also be usable as a
+step inside a workflow. Pick a Go provider for a first-party cloud service that
+is neither.
+
+<Callout type="info">
+This page is about **what runs today**. The consensus-placed plugin runtime —
+`cloud.Register`, per-node placement — is a separate, unshipped design direction
+described in [Consensus-Backed Plugin Platform](/docs/architecture/plugin-platform)
+and specified in HIP-0125 (Draft). Nothing below depends on it.
+</Callout>
+
+## The contract
+
+One interface, in `apps/tools/tool.go:162`:
+
+```go
+type Provider interface {
+	Source() Source
+	List(ctx context.Context, scope Scope) ([]Tool, error)
+	Dispatch(ctx context.Context, p Principal, name string, args map[string]any) (any, error)
+}
+```
+
+`Scope` is the `(org, project)` a listing is resolved for. `Principal` is the
+**validated** caller a dispatch runs as — org, project, user, owner, admin flag.
+Neither is ever read from something the caller wrote: identity is settled on
+ingress, before a provider sees it. A provider therefore cannot name a tenant,
+which is what stops a tool plane from becoming a cross-tenant write.
+
+Each entry you return is a `Tool` (`apps/tools/tool.go:96`):
+
+| Field | JSON | Meaning |
+|---|---|---|
+| `Name` | `name` | the id in one flat, fleet-wide namespace |
+| `Source` | `source` | which of the six sources you are |
+| `Description` | `description` | the prose a model reads to decide to call it |
+| `Schema` | `inputSchema` | JSON Schema of the arguments — the MCP `inputSchema` |
+| `Price` | `price` | declared per-call cost; absent means free |
+| `Dispatchable` | `dispatchable` | whether the tool can be **called** at all |
+| `Activated` | `activated` | filled by the registry; providers leave it zero |
+
+### Precedence — who wins a name collision
+
+Two sources may offer the same tool name. The **lowest rank wins**, in both the
+listing (which one you see) and the dispatch (which one runs). The table is at
+`apps/tools/tool.go:62`:
+
+| Rank | Source | What it is |
+|---|---|---|
+| 1 | `connector` | a connector action from auto |
+| 2 | `function` | a user-defined function |
+| 3 | `zap-service` | a first-party cloud service route |
+| 4 | `agent` | an org agent, callable as a tool |
+| 5 | `skill` | agent skill metadata — **not callable** |
+| 6 | `mcp` | a tool on an org's own external MCP server |
+
+The order is the point: an org's external MCP server ranks last, so **nothing
+you register from outside can ever shadow a first-party tool**. An unknown
+source sorts after all six.
+
+### Activation gates everything
+
+A registered tool is discoverable but not callable. `Registry.Dispatch`
+(`apps/tools/registry.go:231`) resolves by precedence, then refuses anything not
+activated for the caller's `(org, project)` — `403`, before your code runs. Switch
+one on with `PUT /v1/tools/activation`, or `hanzo tools activation replace`.
+
+```bash
+hanzo tools get                                   # everything reachable, each flagged activated
+hanzo tools get --source mcp                      # one source only
+hanzo tools activation replace --activate weather_forecast
+hanzo tools get --activated true                  # only what is callable now
+hanzo tools call --name weather_forecast --arguments '{"city":"Kyoto"}'
+```
+
+Both filters compare against the literal string `"true"`, so `--activated 1` is
+false.
+
+## A Go provider
+
+Implement the three methods, return your source tag, and register once from your
+subsystem's `Use`. This compiles against `hanzoai/cloud` and is the whole thing:
+
+```go
+package weather
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+
+	"github.com/hanzoai/cloud"
+	"github.com/hanzoai/cloud/apps/tools"
+)
+
+type weatherProvider struct{}
+
+var forecastSchema = json.RawMessage(`{
+  "type": "object",
+  "properties": {"city": {"type": "string", "description": "city to forecast"}},
+  "required": ["city"]
+}`)
+
+func (weatherProvider) Source() tools.Source { return tools.SourceZAPService }
+
+func (weatherProvider) List(_ context.Context, scope tools.Scope) ([]tools.Tool, error) {
+	if scope.Org == "" {
+		return nil, nil
+	}
+	return []tools.Tool{{
+		Name:         "weather_forecast",
+		Source:       tools.SourceZAPService,
+		Description:  "Tomorrow's forecast for a city.",
+		Schema:       forecastSchema,
+		Dispatchable: true,
+	}}, nil
+}
+
+func (weatherProvider) Dispatch(ctx context.Context, p tools.Principal, name string, args map[string]any) (any, error) {
+	if name != "weather_forecast" {
+		return nil, tools.ErrUnknownTool
+	}
+	city, _ := args["city"].(string)
+	if city == "" {
+		return nil, fmt.Errorf("city is required")
+	}
+	return map[string]any{"city": city, "high": 21, "org": p.Org}, nil
+}
+
+func Use(app cloud.Router, deps cloud.Deps) error {
+	tools.Register(weatherProvider{})
+	return nil
+}
+```
+
+`SourceZAPService` is the tag for a first-party cloud service route exposed as a
+tool; `apps/todo/toolprovider.go` is the shipped example of one. Return
+`tools.ErrUnknownTool` for a name you do not own, and
+`tools.ErrNotDispatchable` if you only list.
+
+Four things the plane does that you must not do yourself:
+
+- **Scope is not an argument.** `Scope` and `Principal` already carry the
+  validated tenant. A `project` field in your arguments is a key inside that
+  tenant, never the tenant.
+- **Activation, pricing, metering and audit** are the registry's and the HTTP
+  layer's. Your provider owns only the list and the run.
+- **A provider that errors is skipped** (`registry.go:167`). One failing source
+  never blanks the whole plane — so a broken `List` makes your tools silently
+  absent, not the API broken.
+- **Registration order does not matter** across ranks, but for two providers
+  sharing one source the first registered wins a name collision.
+
+<Callout type="warn">
+**A plugin is a process.** The fused monolith is gone: each subsystem ships as
+its own binary and the host starts it on the first request that reaches it
+(`cmd/cloud/main.go`). `tools.Register` writes to a **process-wide** registry
+(`apps/tools/registry.go:70`), so a provider is on `GET /v1/tools` exactly when
+its subsystem and the tools plane are in the same process. That is true of a
+local or single-app binary, and of the two providers the tools plane registers
+itself (`apps/tools/tools.go:90`). It is a fact about the deployment, not about
+your code — `apps/agents/tools.go:27` writes out the same boundary.
+</Callout>
+
+Develop against a local binary, where the process question does not arise.
+
+## An MCP server
+
+Register a URL. Your server's tools join the org's tool plane under the `mcp`
+source, prefixed with the server id so two servers' `search` cannot collide.
+
+```bash
+hanzo tools mcp servers create --name "Acme" --url "https://mcp.acme.com/rpc"
+```
+
+A server that needs a credential takes two more fields: `authHeader`, the request
+header to inject into, and `secret`, the value. The CLI has no `--secret` flag
+today, so a credentialed registration goes over HTTP:
+
+```bash
+curl -sS https://api.hanzo.ai/v1/tools/mcp/servers \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Acme",
+    "url": "https://mcp.acme.com/rpc",
+    "authHeader": "Authorization",
+    "secret": "Bearer sk-acme-…"
+  }'
+```
+
+The secret value is sealed in KMS under a per-org ref. The stored row keeps only
+the URL, the header **name** to inject it into, and a has-secret flag; the value
+is never listed and never returned by any route. With no KMS configured, a
+registration carrying a secret is refused rather than stored in the clear.
+
+Passing `listing` instead of `url` enables an entry from the public catalogue
+(`GET /v1/tools/catalog`) — the same record either way, with `source` recording
+which it was. A listing that ships only a runnable package and publishes no
+streamable-http endpoint is refused: there is nothing to reach.
+
+### What your server must answer
+
+Measured from the client in `apps/tools/external_mcp.go:476`, because a
+spec-compliant server can still fail against it:
+
+- **Plain JSON-RPC 2.0 over one HTTP POST** to the URL you registered. The
+  request carries `Content-Type: application/json` and
+  `Accept: application/json` — **not** `text/event-stream`. A server that only
+  answers SSE, or that refuses this `Accept`, will not list.
+- **No `initialize` handshake.** `tools/list` is the first call. A server that
+  requires a session will not list.
+- Answer `{"jsonrpc":"2.0","result":{"tools":[…]}}`. A JSON-RPC `error` object
+  fails the call — it is never read as an empty success.
+- Non-2xx fails. Responses are capped at **4 MiB**. Redirects are not followed,
+  because your credential rides an arbitrary header name.
+- **Public hosts only.** Loopback, private, link-local and cloud-metadata
+  addresses are refused at registration and again at dial time, on the resolved
+  address, so DNS rebinding does not get through. There is no tunnel for
+  localhost: expose the server, or use one of the other two paths.
+
+Listings are cached per `(org, server, url)` for **one minute**
+(`external_mcp.go:345`), so a tool you add appears within a minute rather than
+instantly. Re-pointing a server at a new URL invalidates immediately.
+
+A server that errors is skipped, and the rest of the org's servers still list.
+
+Hosting an MCP server, and pointing an MCP **client** at Hanzo, are both covered
+in [MCP](/docs/mcp) — this section is only about making yours a source on the
+tool plane.
+
+## An auto connector
+
+`auto` is workflows that run themselves: an org authors a flow — a trigger and a
+tree of connector actions — and Hanzo runs it durably at `/v1/auto` and keeps the
+run history. `auto.hanzo.ai` is served by Hanzo Cloud; the standalone
+`hanzoai/auto` engine (the Go rewrite with the Vite builder embedded through
+`go:embed`) is its lineage, not a second deployment. There is one automations
+surface.
+
+The unit you add is a **connector**: a named capability provider with actions.
+Register it from `init()` in `apps/auto`:
+
+```go
+func init() {
+	register(&Connector{
+		Name:        "waitlist",
+		DisplayName: "Hanzo Waitlist",
+		AuthType:    "none",
+		AuthReq:     false,
+		Actions: map[string]*Action{
+			"award_points": {
+				Name:        "award_points",
+				DisplayName: "Award Points",
+				Description: "Credit waitlist points for a verified event.",
+				Props: []PropSpec{
+					{Name: "waitlist", Type: "string", Required: true, Description: "Waitlist slug."},
+					{Name: "source", Type: "string", Required: true, Description: "Award source."},
+					{Name: "points", Type: "number", Description: "Explicit amount."},
+				},
+				Run: runWaitlistAward,
+			},
+		},
+	})
+}
+```
+
+`Run` has the signature `func(ctx context.Context, rc RunContext) (any, error)`.
+`RunContext` (`apps/auto/connector.go:26`) carries the validated `Org`, the
+`Input` map, `PrevOutputs` from earlier steps in the flow, and a `Token` function
+that reaches a per-org credential — connectors never touch KMS directly.
+
+A duplicate connector name panics at init, deliberately: two connectors owning
+one name would make credential and tool routing ambiguous.
+
+**One declaration, three surfaces.** Writing that connector gets you, with no
+further work:
+
+- an entry in the catalogue at `GET /v1/auto/connectors`;
+- a **step** any flow can use, run durably and retried on failure
+  (`apps/auto/engine.go:90`), with the run recorded;
+- a **tool** named `<connector>_<action>`, at the top of the precedence order.
+  `Props` becomes the JSON Schema — the one `PropSpec` → schema mapping, so the
+  catalogue card and the tool's `inputSchema` cannot disagree.
+
+That third one is what makes auto an extension path and not just a product. Both
+the flow step (`engine.go:176`) and the tool dispatch
+(`apps/auto/toolprovider.go`) resolve through the same `lookupAction` and call
+the same `Run`, so there is no second dispatch path to keep in sync.
+
+Flows, versions, runs, triggers and the inbound hook sink are the `/v1/auto`
+API — see [the reference](/docs/openapi/auto) and
+[Workflows](/docs/concepts/workflows) for how auto relates to flow, tasks and
+agents.
+
+## Two traps
+
+Both of these have shipped as client bugs. The code reads correctly in each
+case, which is exactly why they are worth stating.
+
+<Callout type="warn">
+**Skills are list-only, by design.** Every skill entry sets
+`Dispatchable: false` — `apps/skills/toolprovider.go:43` for the brand catalogue
+and `apps/tools/skillstore.go:206` for an org's own — and `Dispatch` returns
+`ErrNotDispatchable`, which the API answers as **422**. A skill is discovery and
+activation metadata attached to an agent; it is never called.
+
+So a client that filters `GET /v1/tools` on `dispatchable` renders an **empty
+Skills list**, always. Filter on `?source=skill` instead, or read
+`GET /v1/tools/skills`, which is the narrowed listing that exists for this.
+</Callout>
+
+<Callout type="warn">
+**`GET /v1/tools/plugins` hides what is switched off.** It reports the
+deployment's mounted subsystems, and by default only the **running** ones —
+`apps/tools/registries.go:248` skips any subsystem whose `enabled` is false
+unless the query carries `all`. Pass `?all=true` to get the configured-but-off
+ones too.
+
+A toggle built without it has an unreachable off state: switching a subsystem
+off removes it from the list, so nothing is left to switch back on. The value is
+compared to the literal string `"true"` — `?all=1` and `?all` are both false.
+</Callout>
+
+Note that "plugin" there means **mounted code that extends the deployment's own
+surface**, not a tool an agent calls. It is an inventory, not a tool source.
+
+## Where this is specified
+
+The contract lives in `hanzoai/cloud`; this page is how to use it. The design
+direction for placing subsystems as independently scheduled plugins is
+HIP-0125 (Draft) — track it at [hips.hanzo.ai](https://hips.hanzo.ai).
+
+<Cards>
+  <Card title="Tool plane reference" href="/docs/openapi/tools" description="Every /v1/tools operation, generated from the document the binary emits." />
+  <Card title="MCP" href="/docs/mcp" description="Point a client at Hanzo, or have Hanzo host your MCP server." />
+  <Card title="Automations" href="/docs/openapi/auto" description="Flows, versions, runs and triggers — the /v1/auto surface." />
+  <Card title="Plugin platform" href="/docs/architecture/plugin-platform" description="The unshipped HIP-0125 direction: plugins as the unit of placement." />
+</Cards>

@@ -6,12 +6,16 @@ description: The architecture direction for Hanzo Cloud — plugins as the unit 
 # Consensus-Backed Plugin Platform
 
 <Callout type="warn">
-This page describes a **design direction**, not a shipped feature. The runtime it describes is specified in **HIP-0125 (Draft)**. Foundational pieces exist — the Quasar post-quantum BFT consensus engine is implemented, and the seven-voter placement ceremony has been built and tested — but they are deliberately kept **out of the live serving path**: placement does not yet decide where traffic goes, and there is no `cloud.Register` plugin runtime to deploy against. It is published so the design can be reviewed. For what runs today, see the product pages under [Platform & Services](/docs/openapi); this page is about where the platform is headed and why.
+This page describes a **design direction**, not a shipped feature. The runtime it describes is specified in **HIP-0125 (Draft)**. Foundational pieces exist — the Quasar post-quantum BFT consensus engine is implemented, and the seven-voter placement ceremony has been built and tested — but they are deliberately kept **out of the live serving path**: placement does not yet decide where traffic goes, and there is no `cloud.Register` plugin runtime to deploy against. It is published so the design can be reviewed. This page is about where the platform is headed and why.
+
+**If you came here to build something, you want [Extend](/docs/extend)** — the shipped extension contract, with the three ways to add a tool today. For the rest of what runs, see the product pages under [Platform & Services](/docs/openapi).
 </Callout>
 
-Hanzo Cloud is **one Go binary**. Every subsystem — IAM, KMS, ingress, billing, MPC, observability, agents, and the rest — is compiled natively into it and served under a single `/v1` surface described by the document the binary emits, [hanzoai/cloud](https://github.com/hanzoai/cloud)'s `openapi.yaml`. Routing and ingress are themselves native subsystems, so the design point is that **the one binary is the entry point** — not a stack of gateway and ingress tiers layered in front of it. This is already substantially shipped: the unified binary (HIP-0106) collapsed the former per-service fleet into this one process.
+Hanzo Cloud is **one contract**. Every subsystem — IAM, KMS, ingress, billing, MPC, observability, agents, and the rest — is written in Go against the same request tier and served under a single `/v1` surface described by the document the binary emits, [hanzoai/cloud](https://github.com/hanzoai/cloud)'s `openapi.yaml`. Routing and ingress are themselves native subsystems, so the design point is that **one entry point answers everything** — not a stack of gateway and ingress tiers layered in front of it.
 
-What the plugin platform adds is the **next** step, and it is *not* a re-layering: the one binary stays one binary. Each native subsystem becomes a **placed plugin** so that nodes **specialize** — the same binary runs on every node, but each node runs a dynamic *subset* of the plugins rather than all of them — with a **small consensus control plane** deciding where each plugin's write side lives. The goal is that a subsystem author writes almost none of the hard parts — placement, failover, replication, high availability — and inherits them from the platform.
+How that surface is *packaged* has already moved once. HIP-0106 collapsed the former per-service fleet into a single fused binary; that binary is now gone in turn, and the shipped shape is a light host that mounts each subsystem as **its own process**, started on the first request that reaches it (`cmd/cloud/main.go`). The host knows where each app lives and what path it answers, never what the app does, so a subsystem changing rebuilds only itself.
+
+What the plugin platform adds is the **next** step, and it is *not* a re-layering: one entry point stays one entry point. Each subsystem becomes a **placed plugin** so that nodes **specialize** — every node can serve any subsystem, but each runs a dynamic *subset* of them rather than all — with a **small consensus control plane** deciding where each plugin's write side lives. The goal is that a subsystem author writes almost none of the hard parts — placement, failover, replication, high availability — and inherits them from the platform.
 
 The design rests on one principle: **consensus orders decisions, not bytes.**
 
@@ -28,7 +32,7 @@ func init() {
 
 A plugin is the unit the platform places and scales. The `cloud` binary loads a set of registered plugins; **nodes specialize** by running a dynamic subset of them rather than every node running everything. That makes the runtime one deployable artifact whose behavior on each node is data — the placement decision — rather than a per-service build.
 
-Existing subsystems — KMS, IAM, ingress, billing, MPC, observability — are **already native parts of the one binary** today. What they are **not yet** is independently *placed*: right now every node that runs `cloud` runs all of them. The plugin model makes each subsystem a unit the control plane can place, so nodes specialize instead of every node running everything.
+Existing subsystems — KMS, IAM, ingress, billing, MPC, observability — already ship as **separate processes** behind one host, and are already started on demand rather than all at once. What they are **not yet** is independently *placed*: which node runs which subsystem is not a decision anything makes, and there is no writer lease behind it. The plugin model makes each subsystem a unit the control plane can place, so nodes specialize instead of every node running everything.
 
 ## Consensus orders decisions, not bytes
 
