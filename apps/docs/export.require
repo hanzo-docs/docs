@@ -15,11 +15,17 @@
 #                    from the vendored tools/list answer. It is the largest
 #                    section in the site and the easiest to lose whole: drop the
 #                    generator from pre-build and every other page still builds.
+#   docs/projects/   the committed snapshot of upstream OSS docs. It was once
+#                    gitignored AND compiled, so a builder that skipped the sync
+#                    shipped a different set of pages than a person's build made,
+#                    and neither count was wrong on its face.
 docs/openapi/index.html
 docs/openapi/kms/index.html
 docs/studio/index.html
 docs/mcp-tools/index.html
 docs/mcp-tools/all-tools/index.html
+docs/projects/index.html
+docs/projects/hanzoai/index.html
 #
 #   llms-full.txt    the whole corpus in one fetch, and llms.mdx/ the per-page
 #   llms.mdx/        markdown twin every page's Copy Markdown / View Markdown /
