@@ -1,15 +1,16 @@
 {
   "title": "SDKs",
-  "description": "Official Hanzo SDKs for Python, TypeScript, Go, Rust, C++, Swift, and Kotlin",
+  "description": "One generated client per language for the whole /v1 surface, plus the hand-written AI, per-service and identity libraries.",
   "icon": "Code",
   "pages": [
-    "python",
     "typescript",
+    "python",
     "go",
     "rust",
-    "cpp",
     "swift",
     "kotlin",
+    "java",
+    "cpp",
     "iam",
     "---[Database]Data collection---",
     "ast"

@@ -79,29 +79,31 @@ hanzo models list
 ```
 </Tab>
 <Tab value="SDK">
-<Tabs items={['.ts', '.py', '.go', '.rs', '.swift', '.kt']}>
+<Tabs items={['.ts', '.py', '.go', '.rs']}>
 <Tab value=".ts">
 ```bash
-npm i hanzo
+npm i hanzoai
 ```
 
-```ts
-import { Hanzo } from 'hanzo'
+```typescript
+import { AiApi, Configuration } from 'hanzoai'
 
-const hanzo = new Hanzo({ apiKey: process.env.HANZO_API_KEY })
-const models = await hanzo.models.list()
+const ai = new AiApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }))
+const { data } = await ai.getModels()
 ```
 </Tab>
 <Tab value=".py">
 ```bash
-pip install hanzo
+pip install hanzoai
 ```
 
 ```python
-from hanzo import Hanzo
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import AiApi
 
-hanzo = Hanzo(api_key=os.environ["HANZO_API_KEY"])
-models = hanzo.models.list()
+client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
+models = AiApi(client).get_models()
 ```
 </Tab>
 <Tab value=".go">
@@ -110,39 +112,37 @@ go get github.com/hanzoai/go-sdk
 ```
 
 ```go
-client := hanzo.NewClient(hanzo.WithAPIKey(os.Getenv("HANZO_API_KEY")))
-models, err := client.Models.List(ctx)
+cfg := hanzoai.NewConfiguration()
+cfg.AddDefaultHeader("Authorization", "Bearer "+os.Getenv("HANZO_API_KEY"))
+client := hanzoai.NewAPIClient(cfg)
+
+models, _, err := client.ModelsAPI.AiListModels(context.Background()).Execute()
 ```
 </Tab>
 <Tab value=".rs">
 ```bash
-cargo add hanzo
+cargo add hanzo-client
 ```
 
 ```rust
-let hanzo = hanzo::Client::from_env()?;
-let models = hanzo.models().list().await?;
-```
-</Tab>
-<Tab value=".swift">
-```swift
-// Package.swift: .package(url: "https://github.com/hanzoai/swift-sdk", from: "1.0.0")
-let hanzo = Hanzo(apiKey: ProcessInfo.processInfo.environment["HANZO_API_KEY"]!)
-let models = try await hanzo.models.list()
-```
-</Tab>
-<Tab value=".kt">
-```kotlin
-// build.gradle.kts: implementation("ai.hanzo:sdk:latest.release")
-val hanzo = Hanzo(apiKey = System.getenv("HANZO_API_KEY"))
-val models = hanzo.models.list()
+use hanzo_client::apis::{ai_api, configuration::Configuration};
+
+let mut cfg = Configuration::new();
+cfg.bearer_access_token = std::env::var("HANZO_API_KEY").ok();
+
+let models = ai_api::get_models(&cfg).await?;
 ```
 </Tab>
 </Tabs>
 
-Every one of these is generated from the same description of the API, so the
-method names line up across languages. [C++](/docs/sdks/cpp) is the one still
-landing.
+Each client is generated from the same description of the API, so the class and
+the method both follow from the operation rather than from a hand-written
+wrapper — and each carries every `/v1` capability, not just this one. The client
+is regenerated per language on its own release schedule, so a method name here
+can be a release behind the one the [reference](/docs/openapi) prints; the
+reference says so on the operation when it is. [Java, Kotlin, Swift and
+C++](/docs/sdks) are at earlier stages — that page says exactly which are on a
+registry today.
 </Tab>
 <Tab value="HTTP">
 ```bash
@@ -167,8 +167,9 @@ Those are one API seen from four places, and the tabs above are the whole
 difference. Pick the one you will write in:
 
 - **[CLI](/docs/cli)** — every capability as a command group, one page each.
-- **[SDKs](/docs/sdks)** — Python, TypeScript, Go, Rust, C++, Swift and Kotlin,
-  generated from the same description the CLI and the tools are.
+- **[SDKs](/docs/sdks)** — TypeScript, Python, Go and Rust on a registry today;
+  Java, Kotlin, Swift and C++ behind them. Generated from the same description
+  the CLI and the tools are.
 - **[MCP](/docs/mcp)** — one endpoint an agent connects to; [the tools](/docs/mcp-tools)
   are listed one per capability.
 
@@ -214,3 +215,18 @@ means and what it needs.
 - **[Capabilities](/docs/openapi)** — all of them, grouped. Each page says what
   the capability is, how to reach it from all four surfaces, and links its
   specification.
+
+## When something does not answer
+
+The CLI describes itself, so the fastest answer is usually local:
+
+```bash
+hanzo --help              # every capability as a command group
+hanzo billing --help      # and every command inside one
+```
+
+Support is a capability like any other, which means you can reach it from the
+same key you just exported — `hanzo help articles list` reads the knowledge
+base, `hanzo help tickets` opens a ticket, and both are `/v1/help` if you would
+rather call them over HTTP. [Errors](/docs/errors) explains what a status code
+from `api.hanzo.ai` means before you open one.

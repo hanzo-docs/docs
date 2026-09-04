@@ -1,69 +1,94 @@
 ---
-title: C++ SDK
-description: The Hanzo C++ Cloud SDK — native client via CMake. Coming soon.
+title: C++
+description: A native client over every /v1 service, taken from a tag with CMake. C++17, cpprestsdk, generated from the API's own document.
 ---
 
 import { Callout } from '@hanzo/docs-base-ui/components/callout'
 
-# C++ SDK
+# C++
 
-A native **Cloud SDK** for C++ — header + compiled library, wired through CMake.
-Built for embedded targets, game engines, and high-performance services.
+One typed client over every `/v1` capability, generated from the document
+`hanzoai/cloud` emits at the commit the repository's `.spec-lock` names. Nothing
+under `include/` or `src/` is hand-written.
 
-<Callout title="Coming soon">
-`find_package(hanzo)` is in active development. The source lives in the
-per-language org [hanzo-cpp](https://github.com/hanzo-cpp). Until it ships, reach
-the Open AI Cloud from C++ with any HTTP client against `https://api.hanzo.ai/v1`
-(OpenAI-compatible).
+<Callout title="No registry, so it comes from a tag">
+C++ has no package registry, so a consumer pins a tag or a commit rather than a
+version range. Both forms below are supported by `GIT_TAG`.
 </Callout>
 
-## Install (planned)
+## Install
 
-```cmake
-find_package(hanzo REQUIRED)
-target_link_libraries(my_app PRIVATE hanzo::hanzo)
-```
+Requires C++17, CMake 3.20+, and cpprestsdk with Boost and OpenSSL
+(`apt install libcpprest-dev libboost-dev libssl-dev`).
 
-Or via FetchContent from the org while it stabilizes:
+Fetch it as part of your build:
 
 ```cmake
 include(FetchContent)
 FetchContent_Declare(
   hanzo
-  GIT_REPOSITORY https://github.com/hanzo-cpp/sdk
-  GIT_TAG        main
+  GIT_REPOSITORY https://github.com/hanzo-cpp/sdk.git
+  GIT_TAG        v8.5.156
 )
 FetchContent_MakeAvailable(hanzo)
+
+add_executable(app main.cpp)
+target_link_libraries(app PRIVATE hanzo::hanzo)
 ```
 
-## Quick start (planned)
+Or install it once and resolve it as a package:
+
+```bash
+cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local
+cmake --build build -j"$(nproc)" --target install
+```
+
+```cmake
+find_package(hanzo CONFIG REQUIRED)
+target_link_libraries(app PRIVATE hanzo::hanzo)
+```
+
+## The shape
+
+A configuration, a client, and one class per capability:
 
 ```cpp
-#include <hanzo/client.hpp>
+#include <cstdlib>
+#include <iostream>
+
+#include "hanzo/ApiClient.h"
+#include "hanzo/ApiConfiguration.h"
+#include "hanzo/ApiException.h"
+#include "hanzo/api/AskApi.h"
 
 int main() {
-    hanzo::Client client{std::getenv("HANZO_API_KEY")};
+    const char* key = std::getenv("HANZO_API_KEY");
+    if (key == nullptr) {
+        std::cerr << "HANZO_API_KEY is not set" << std::endl;
+        return 1;
+    }
 
-    auto response = client.chat().completions().create({
-        .model = "zen5",
-        .messages = {{"user", "Explain quantum computing"}},
-    });
+    auto config = std::make_shared<hanzo::api::ApiConfiguration>();
+    config->setBaseUrl(U("https://api.hanzo.ai"));
+    config->getDefaultHeaders()[U("Authorization")] =
+        U("Bearer ") + utility::conversions::to_string_t(key);
 
-    std::cout << response.choices[0].message.content << "\n";
+    hanzo::api::AskApi ask(std::make_shared<hanzo::api::ApiClient>(config));
+
+    auto question = std::make_shared<hanzo::model::WebQuestion>();
+    question->setQ(U("What are the three laws of thermodynamics?"));
+
+    auto report = ask.researchWeb(question).get();
+    std::cout << utility::conversions::to_utf8string(report->getAnswer()) << std::endl;
 }
 ```
 
-## Meanwhile — raw HTTP
-
-```bash
-curl https://api.hanzo.ai/v1/chat/completions \
-  -H "Authorization: Bearer $HANZO_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"model":"zen5","messages":[{"role":"user","content":"Hello"}]}'
-```
+Every call returns a `pplx::task`, so `.get()` blocks and `.then()` composes.
+Failures arrive as `hanzo::api::ApiException`. The class is the capability and
+the method is the operation — the [reference](/docs/openapi) prints the pair per
+operation, and [Authentication](/docs/api-keys) covers the key in that header.
 
 ## Resources
 
-- **Cloud SDK** — org [hanzo-cpp](https://github.com/hanzo-cpp) · [hanzo-cpp/sdk](https://github.com/hanzo-cpp/sdk)
-- **Umbrella** — [hanzoai/sdk](https://github.com/hanzoai/sdk)
-- **API reference** — [every `/v1` endpoint →](/reference)
+- Source — [hanzo-cpp/sdk](https://github.com/hanzo-cpp/sdk)
+- [Every `/v1` operation →](/docs/openapi)

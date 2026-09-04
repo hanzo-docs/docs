@@ -134,7 +134,7 @@ reference](/docs/openapi/openapi), generated from the same source as this page.
 All Hanzo APIs take the key in the `Authorization` header with the `Bearer`
 scheme:
 
-```
+```text
 Authorization: Bearer sk-your-key
 ```
 
@@ -153,29 +153,50 @@ same key works across all of them:
 
 ### SDK configuration
 
-All official SDKs accept the key as a constructor parameter:
+Every [SDK](/docs/sdks) takes the key where it takes any bearer token, and each
+already points at `https://api.hanzo.ai`:
 
-```python
-# Python
-from hanzoai import Hanzo
-client = Hanzo(api_key="sk-your-key")
+```typescript tab="TypeScript"
+import { AiApi, Configuration } from 'hanzoai'
+
+const config = new Configuration({ accessToken: process.env.HANZO_API_KEY })
+const ai = new AiApi(config)
 ```
+
+```python tab="Python"
+import os
+from hanzoai.cloud import ApiClient, Configuration
+
+client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
+```
+
+```go tab="Go"
+cfg := hanzoai.NewConfiguration()
+cfg.AddDefaultHeader("Authorization", "Bearer "+os.Getenv("HANZO_API_KEY"))
+client := hanzoai.NewAPIClient(cfg)
+```
+
+```rust tab="Rust"
+let mut cfg = hanzo_client::apis::configuration::Configuration::new();
+cfg.bearer_access_token = std::env::var("HANZO_API_KEY").ok();
+```
+
+```java tab="Java"
+ApiClient client = new ApiClient();
+client.setBearerToken(System.getenv("HANZO_API_KEY"));
+```
+
+`@hanzo/ai` is the exception worth knowing, and it is an exception on purpose:
+it names the field after the key type, so which key you are holding is a fact
+the compiler checks rather than a comment.
 
 ```typescript
-// TypeScript
-import Hanzo from '@hanzo/ai'
-const client = new Hanzo({ apiKey: 'sk-your-key' })
+new Hanzo({ secretKey: process.env.HANZO_API_KEY })   // a server
+new Hanzo({ publishableKey: 'pk-...' })               // a browser bundle
 ```
 
-```go
-// Go
-import "github.com/hanzoai/go-sdk"
-client := hanzo.NewClient(hanzo.WithAPIKey("sk-your-key"))
-```
-
-Each client defaults to `https://api.hanzo.ai/v1`. A third-party HTTP client
-written against the chat-completions shape works too — point its base URL there
-and give it the same key.
+A third-party HTTP client written against the chat-completions shape works too —
+point its base URL at `https://api.hanzo.ai/v1` and give it the same key.
 
 ## Spend and usage
 
