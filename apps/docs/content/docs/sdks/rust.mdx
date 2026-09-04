@@ -1,83 +1,60 @@
 ---
-title: Rust SDK
-description: The Hanzo Rust Cloud SDK — async Tokio client. Coming soon on crates.io; usable today as a git dependency.
+title: Rust
+description: cargo add hanzo-client — the generated async client for every /v1 capability. The separate hanzo crate is the umbrella over the wider Rust stack.
 ---
 
 import { Callout } from '@hanzo/docs-base-ui/components/callout'
 
-# Rust SDK
+# Rust
 
-The Rust **Cloud SDK** is an async Tokio client for the Open AI Cloud (`/v1/*`).
+Two crates, and they are not versions of each other:
 
-<Callout title="Coming soon">
-`cargo add hanzo` is not yet published to crates.io. The source is complete and
-usable **today** as a git dependency — see below. This page will switch to the
-crates.io install the moment it lands.
-</Callout>
+| Crate | Install | What it is |
+|---|---|---|
+| `hanzo-client` | `cargo add hanzo-client` | The generated client for every `/v1` capability. Async, `reqwest`. |
+| `hanzo` | `cargo add hanzo` | The umbrella over the Rust stack — crypto, DID, MCP, agents, embeddings — behind feature flags. |
 
-## Install
-
-Once published (GA):
+For calling the API, you want `hanzo-client`. The library name is
+`hanzo_client`, so that is what you `use`.
 
 ```bash
-cargo add hanzo
-```
-
-Today, depend on it directly from the per-language org:
-
-```toml
-# Cargo.toml
-[dependencies]
-hanzo = "0.2"
-tokio = { version = "1", features = ["full"] }
-```
-
-Set your key:
-
-```bash
+cargo add hanzo-client tokio --features tokio/full
 export HANZO_API_KEY="sk-..."   # from console.hanzo.ai
 ```
 
-## Quick start
+## The shape
+
+A `Configuration` value passed to free functions, grouped in a module per
+capability:
 
 ```rust
-use hanzo::Client;
+use hanzo_client::apis::{ai_api, configuration::Configuration};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    let client = Client::from_env()?; // reads HANZO_API_KEY
+    let mut cfg = Configuration::new();
+    cfg.bearer_access_token = std::env::var("HANZO_API_KEY").ok();
 
-    let response = client
-        .chat()
-        .completions()
-        .create("zen5", "Explain quantum computing")
-        .await?;
-
-    println!("{}", response.choices[0].message.content);
+    ai_api::get_models(&cfg).await?;
     Ok(())
 }
 ```
 
-## Streaming
+`Configuration::new()` already points at `https://api.hanzo.ai`; set
+`base_path` to reach a gateway you run yourself. The module is the capability
+and the function is the operation, both derived from the document — the
+[reference](/docs/openapi) prints the pair per operation.
 
-```rust
-use futures::StreamExt;
-
-let mut stream = client
-    .chat()
-    .completions()
-    .stream("zen5-coder", "Write a haiku about AI")
-    .await?;
-
-while let Some(chunk) = stream.next().await {
-    if let Some(delta) = chunk?.choices.first().and_then(|c| c.delta.content.as_deref()) {
-        print!("{delta}");
-    }
-}
-```
+<Callout title="Where a return type is `()`">
+A few operations decode to `()` because the document states the route's address
+without stating its response shape. `get_models` is one of them. The request is
+still made and the status still checked; there is simply nothing typed to hand
+back until the schema is published.
+</Callout>
 
 ## Resources
 
-- **Cloud SDK** — [`hanzo` on crates.io](https://crates.io/crates/hanzo)
-- **Umbrella** — [hanzoai/sdk](https://github.com/hanzoai/sdk)
-- **API reference** — [every `/v1` endpoint →](/reference)
+- [`hanzo-client` on crates.io](https://crates.io/crates/hanzo-client) ·
+  [`hanzo` on crates.io](https://crates.io/crates/hanzo)
+- Source — [hanzo-rs/sdk](https://github.com/hanzo-rs/sdk)
+- [Every `/v1` operation →](/docs/openapi)

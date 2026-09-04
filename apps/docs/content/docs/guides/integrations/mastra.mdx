@@ -9,7 +9,7 @@ Mastra has no provider factory for this. The address is a field of the agent's `
 npm i @mastra/core
 ```
 
-```ts
+```typescript
 import { Agent } from "@mastra/core/agent";
 
 export const agent = new Agent({
@@ -32,7 +32,7 @@ Two things the docs are explicit about. `url` must be the base URL of the OpenAI
 
 `MCPClient` comes from `@mastra/mcp`. The URL is a `url` key holding a `URL` object, per named server.
 
-```ts
+```typescript
 import { MCPClient } from '@mastra/mcp';
 
 export const mcp = new MCPClient({

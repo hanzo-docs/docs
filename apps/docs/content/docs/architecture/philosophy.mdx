@@ -84,7 +84,7 @@ are fused.
 Distribution is a single derivation tree. The one contract generates the language
 bindings and the wire types; the clients are thin frontends over a shared core.
 
-```
+```text
 openapi.yaml          the ONE contract — /v1 over HTTP + ZAP
    │  generate ↓
  go-sdk · rust-sdk · js-sdk        language bindings (derived)
