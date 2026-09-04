@@ -28,7 +28,7 @@ the result in. A nil `Keys`, or one that resolves nothing, verifies nothing.
 
 From there, `Claims` carries the caller's identity, org memberships and app grants;
 `ParsePath` and `VerbOf` turn a request into the pair the grant calculus decides on.
-`IsAPIKey` distinguishes an `hk-` key from a JWT.
+`IsAPIKey` distinguishes an `sk-` key from a JWT.
 
 Only the algorithms IAM's signer produces are accepted — RSA and EC, plus ML-DSA-65 for a
 post-quantum certificate. `none` and HMAC are rejected.
