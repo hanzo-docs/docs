@@ -8,7 +8,6 @@ import { genPricingPage } from './gen-pricing-page';
 import { genKeyTypes } from './gen-key-types';
 import { syncCliCommands } from './sync-cli-commands';
 import { syncSdkClients } from './sync-sdk-clients';
-import { syncProjectDocs } from './sync-project-docs';
 import { sanitizeMdx } from './sanitize-mdx';
 import { syncHips } from './sync-hips';
 import { checkCapabilities, report as reportCapabilities } from './check-capabilities';
@@ -59,14 +58,21 @@ async function main() {
   // reads /v1/pricing, so it neither needs nor blocks the three above.
   await genPricingPage();
 
-  const tasks = [buildRegistry()];
-  if (process.env.HANZO_DOCS_SYNC !== '0') {
-    tasks.push(syncProjectDocs());
-  }
-  await Promise.all(tasks);
-  // After sync + generation, neutralise parser-breaking constructs in ported
-  // docs (angle-bracket autolinks, mis-nested JSX wrappers) so every page
-  // compiles instead of falling back to the error boundary.
+  await buildRegistry();
+  // Ported project docs are NOT fetched here. They are a committed snapshot
+  // (content/docs/projects/, tracked), refreshed on purpose by
+  // `pnpm --filter docs sync:projects` and read in a diff before it ships. A
+  // build that re-mirrored 360 upstream repos compiled pages no reviewer had
+  // seen: one of them imported `@site/...`, which no alias resolves, and 54
+  // unresolved specifiers failed the whole build. The builder never ran that
+  // path — so the command a person runs and the command that ships the site
+  // disagreed about what the site even contains.
+  //
+  // Neutralise parser-breaking constructs in ported docs (angle-bracket
+  // autolinks, mis-nested JSX wrappers) so every page compiles instead of
+  // falling back to the error boundary. It is idempotent: on a fresh checkout
+  // it changes nothing, and after a refresh its edits are part of the diff you
+  // commit.
   sanitizeMdx();
 
   // The capability set is one set: what the document serves, what the taxonomy
