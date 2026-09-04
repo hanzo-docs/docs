@@ -12,7 +12,7 @@ The architecture separates full nodes (`hanzod`) from light nodes (agents):
 - **N light agents per system**: Fast local agents connecting to hanzod via ZAP
 - **Global mesh**: hanzod nodes connect worldwide via PQ RNS tunnels
 
-```
+```text
 ┌────────────────────────────────────────────────────────────────────────────────────┐
 │                            GLOBAL MESH NETWORK                                      │
 ├────────────────────────────────────────────────────────────────────────────────────┤
@@ -277,7 +277,7 @@ impl LightAgent {
 
 ### Network Topology
 
-```
+```text
 GLOBAL MESH NETWORK
 ═══════════════════
 
@@ -368,7 +368,7 @@ pub enum AgentRole {
 
 Zero-copy agent protocol over Cap'n Proto:
 
-```text
+```c
 # agent-mesh.capnp
 
 @0xabc123def456789a;
@@ -1331,7 +1331,7 @@ mod tests {
 
 ## Repository Structure
 
-```
+```text
 hanzoai/
 ├── tools/                  # Base tools (shared MCP/ZAP)
 │   ├── src/
@@ -1409,7 +1409,7 @@ hanzoai/
 
 ### Crate Dependencies
 
-```
+```text
 ┌──────────────────────────────────────────────────────────────────┐
 │                          hanzod                                   │
 │  (Full Node - 1 per system)                                       │

@@ -109,14 +109,14 @@ Avoid writing directly to `process.stdout` / `process.stderr` / `process.stdin`;
 
 Nested `codex.tool(...)` diagnostics are emitted through normal `tracing` output.
 
-```sh
+```bash
 RUST_LOG=codex_core::tools::js_repl=info \
 LOG_FORMAT=json \
 dev app-server \
 2> /tmp/dev-app-server.log
 ```
 
-```sh
+```bash
 RUST_LOG=codex_core::tools::js_repl=trace \
 LOG_FORMAT=json \
 dev app-server \

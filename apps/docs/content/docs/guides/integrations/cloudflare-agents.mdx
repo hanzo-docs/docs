@@ -9,7 +9,7 @@ Cloudflare Agents has no base-URL parameter of its own. The documented construct
 npm i agents openai
 ```
 
-```ts
+```typescript
 import { Agent } from "agents";
 import { OpenAI } from "openai";
 
@@ -53,7 +53,7 @@ The other documented path is the AI SDK, which `AIChatAgent` and the starter tem
 
 MCP is a method on the Agent rather than a client library. `addMcpServer` returns an id and an `authUrl`; a non-null `authUrl` means that server wants an OAuth round trip, which ours does not.
 
-```ts
+```typescript
 export class Researcher extends Agent {
   async onStart() {
     await this.addMcpServer("hanzo", "https://api.hanzo.ai/v1/mcp");

@@ -54,6 +54,43 @@ value to a flag.
   the code is noise; a comment that records the measurement behind a decision is
   the most valuable line in the file.
 
+## Code blocks
+
+**Every fence carries a language.** A fence with an empty info string gets no
+highlighting, and a reader cannot tell it from one where the highlighter simply
+had nothing to say. Terminal output, ASCII diagrams and box-drawing get `text`,
+which says "not code" out loud.
+
+**One spelling per language.** `typescript`, not `ts`. `javascript`, not `js`.
+`bash`, not `sh` or `cmd`. `json`, not `jsonc` unless the block really has
+comments. `package-install`, not `npm`, for a dependency the reader installs.
+Shiki resolves the aliases, so a mixed file is not broken — it is just two
+answers to one question.
+
+**A code sample is checked against the artifact, not remembered.** Before
+writing an import, a constructor or a method name, read it out of the published
+package: the tarball on npm, the wheel on PyPI, the module on the proxy, the
+crate on crates.io. Every one of these pages once taught `from hanzoai import
+Hanzo`, a name that distribution has never exported. The
+[reference](/docs/openapi) does not have this problem because it is generated;
+prose does, so prose has to go and look.
+
+**Two forms of tab group, chosen by what is inside.** They are not
+interchangeable and the choice is mechanical:
+
+- *A code block per language, nothing else* — put `tab="Label"` on each fence
+  (`bash tab="curl"`, then `typescript tab="TypeScript"`, then `python
+  tab="Python"`). Consecutive tabbed fences merge into one group, with no import
+  and no JSX. A fence in the run that omits `tab` ends the group.
+
+- *Tabs whose bodies carry prose, or nested tabs* — the JSX form, which needs
+  `import { Tab, Tabs } from '@hanzo/docs-base-ui/components/tabs'` in the same
+  file. The element is `<Tab value="…">`. There is no `<TabsContent>`; a page
+  using it renders nothing, which is how it went unnoticed.
+
+Order the languages the same way everywhere: `curl`, CLI, TypeScript, Python,
+Go, Rust, then the rest.
+
 ## Prose
 
 Plain, specific, and short. A number beats an adjective — "381 operations" says

@@ -25,17 +25,17 @@ one domain. Nothing is duplicated, so nothing is ambiguous.
 
 <ProductSection
   title="Intelligence"
-  href="/docs/llm"
+  href="/docs/openapi/ai"
   snippet="hanzo run zen-1 'summarize this repo'"
-  action={{ label: 'Make your first call', href: '/docs/getting-started' }}
+  action={{ label: 'Make your first call', href: '/docs/quickstart' }}
   links={[
     { name: 'Models', href: '/docs/models' },
-    { name: 'Agents', href: '/docs/agents' },
+    { name: 'Agents', href: '/docs/openapi/agents' },
     { name: 'MCP', href: '/docs/mcp' },
-    { name: 'Embeddings', href: '/docs/embeddings' },
-    { name: 'Prompts', href: '/docs/prompts' },
-    { name: 'GPUs', href: '/docs/gpus' },
-    { name: 'Functions', href: '/docs/functions' },
+    { name: 'Prompt', href: '/docs/openapi/prompt' },
+    { name: 'Tools', href: '/docs/openapi/tools' },
+    { name: 'Sandbox', href: '/docs/openapi/sandbox' },
+    { name: 'Functions', href: '/docs/openapi/functions' },
   ]}
 >
   Every model, agent and tool you can call — one key, one endpoint, and the
@@ -44,15 +44,15 @@ one domain. Nothing is duplicated, so nothing is ambiguous.
 
 <ProductSection
   title="Identity & trust"
-  href="/docs/iam"
+  href="/docs/openapi/iam"
   snippet="hanzo auth login && hanzo keys create --name prod"
-  action={{ label: 'Set up an org', href: '/docs/iam' }}
+  action={{ label: 'Set up an org', href: '/docs/openapi/iam' }}
   links={[
-    { name: 'IAM', href: '/docs/iam' },
-    { name: 'AuthZ', href: '/docs/authz' },
-    { name: 'KMS', href: '/docs/kms' },
-    { name: 'MPC', href: '/docs/mpc' },
-    { name: 'Zero-Trust', href: '/docs/zero-trust' },
+    { name: 'IAM', href: '/docs/openapi/iam' },
+    { name: 'AuthZ', href: '/docs/openapi/authz' },
+    { name: 'KMS', href: '/docs/openapi/kms' },
+    { name: 'Wallet', href: '/docs/openapi/wallet' },
+    { name: 'Trust', href: '/docs/openapi/trust' },
   ]}
 >
   Who someone is, what they may touch, and where secrets stay. Every other
@@ -61,17 +61,16 @@ one domain. Nothing is duplicated, so nothing is ambiguous.
 
 <ProductSection
   title="Data"
-  href="/docs/sql"
+  href="/docs/openapi/base"
   snippet="hanzo kv set greeting hello && hanzo kv get greeting"
-  action={{ label: 'Store something', href: '/docs/sql' }}
+  action={{ label: 'Store something', href: '/docs/openapi/base' }}
   links={[
-    { name: 'SQL', href: '/docs/sql' },
-    { name: 'Vector', href: '/docs/vector' },
-    { name: 'KV', href: '/docs/kv' },
-    { name: 'Search', href: '/docs/search' },
-    { name: 'Object', href: '/docs/storage' },
-    { name: 'Base', href: '/docs/base' },
-    { name: 'DocDB', href: '/docs/docdb' },
+    { name: 'Index', href: '/docs/openapi/index' },
+    { name: 'KV', href: '/docs/openapi/kv' },
+    { name: 'Search', href: '/docs/openapi/search' },
+    { name: 'S3', href: '/docs/openapi/s3' },
+    { name: 'Base', href: '/docs/openapi/base' },
+    { name: 'Graph', href: '/docs/openapi/graph' },
   ]}
 >
   Somewhere to put your data and read it back fast — relational, vector,
@@ -80,14 +79,14 @@ one domain. Nothing is duplicated, so nothing is ambiguous.
 
 <ProductSection
   title="Streams"
-  href="/docs/pubsub"
+  href="/docs/openapi/pubsub"
   snippet="hanzo pubsub publish orders '{ &quot;id&quot;: 1 }'"
-  action={{ label: 'Move a message', href: '/docs/pubsub' }}
+  action={{ label: 'Move a message', href: '/docs/openapi/pubsub' }}
   links={[
-    { name: 'PubSub', href: '/docs/pubsub' },
-    { name: 'Tasks', href: '/docs/tasks' },
-    { name: 'Pipelines', href: '/docs/pipelines' },
-    { name: 'Crawl', href: '/docs/crawl' },
+    { name: 'PubSub', href: '/docs/openapi/pubsub' },
+    { name: 'Tasks', href: '/docs/openapi/tasks' },
+    { name: 'Flow', href: '/docs/openapi/flow' },
+    { name: 'Crawl', href: '/docs/openapi/crawl' },
   ]}
 >
   Move messages and run work in the background, with delivery you can reason
@@ -96,16 +95,15 @@ one domain. Nothing is duplicated, so nothing is ambiguous.
 
 <ProductSection
   title="Observability"
-  href="/docs/o11y"
+  href="/docs/openapi/o11y"
   snippet="hanzo o11y query 'sum(rate(http_requests_total[5m]))'"
-  action={{ label: 'See what is happening', href: '/docs/o11y' }}
+  action={{ label: 'See what is happening', href: '/docs/openapi/o11y' }}
   links={[
-    { name: 'Metrics', href: '/docs/o11y' },
-    { name: 'Logs', href: '/docs/o11y' },
-    { name: 'Traces', href: '/docs/o11y' },
-    { name: 'Sessions', href: '/docs/sessions' },
-    { name: 'Evals', href: '/docs/experiments' },
-    { name: 'Analytics', href: '/docs/analytics' },
+    { name: 'O11y', href: '/docs/openapi/o11y' },
+    { name: 'Metrics', href: '/docs/openapi/metrics' },
+    { name: 'Experiment', href: '/docs/openapi/experiment' },
+    { name: 'Eval', href: '/docs/openapi/eval' },
+    { name: 'Event', href: '/docs/openapi/event' },
   ]}
 >
   Metrics, logs, traces and evals for everything above — including the model
@@ -114,14 +112,14 @@ one domain. Nothing is duplicated, so nothing is ambiguous.
 
 <ProductSection
   title="Commerce"
-  href="/docs/commerce"
+  href="/docs/openapi/commerce"
   snippet="hanzo billing balance"
-  action={{ label: 'Meter usage', href: '/docs/commerce' }}
+  action={{ label: 'Meter usage', href: '/docs/openapi/commerce' }}
   links={[
-    { name: 'Commerce', href: '/docs/commerce' },
-    { name: 'Billing', href: '/docs/billing' },
-    { name: 'Marketplace', href: '/docs/marketplace' },
-    { name: 'Referrals', href: '/docs/referrals' },
+    { name: 'Commerce', href: '/docs/openapi/commerce' },
+    { name: 'Billing', href: '/docs/openapi/billing' },
+    { name: 'Marketplace', href: '/docs/openapi/marketplace' },
+    { name: 'Referral', href: '/docs/openapi/referral' },
   ]}
 >
   Turn usage into money — meter it, price it, bill it. The same ledger the
@@ -130,14 +128,14 @@ one domain. Nothing is duplicated, so nothing is ambiguous.
 
 <ProductSection
   title="Platform"
-  href="/docs/gateway"
+  href="/docs/openapi/gateway"
   snippet="hanzo deploy ."
-  action={{ label: 'Ship your code', href: '/docs/gateway' }}
+  action={{ label: 'Ship your code', href: '/docs/openapi/gateway' }}
   links={[
-    { name: 'Gateway', href: '/docs/gateway' },
-    { name: 'Machines', href: '/docs/machines' },
-    { name: 'Edge', href: '/docs/edge' },
-    { name: 'Registry', href: '/docs/registry' },
+    { name: 'Gateway', href: '/docs/openapi/gateway' },
+    { name: 'Visor', href: '/docs/openapi/visor' },
+    { name: 'Ingress', href: '/docs/openapi/ingress' },
+    { name: 'Registry', href: '/docs/openapi/registry' },
   ]}
 >
   Run your code next to everything else — one gateway in front, your choice of
@@ -154,6 +152,7 @@ one domain. Nothing is duplicated, so nothing is ambiguous.
     { name: 'Studio', href: '/docs/studio' },
     { name: 'Dev', href: '/docs/dev' },
     { name: 'Integrations', href: '/docs/guides/integrations' },
+    { name: 'Apps', href: '/docs/apps' },
   ]}
 >
   The finished products built on the domains above — useful on their own, and a

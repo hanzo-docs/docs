@@ -20,7 +20,7 @@ npm install @hanzo/usage
 Create a `UsageStore`, give it a host for your environment, and start the poll
 loop. The store is observable — subscribe to render, or use the React hook.
 
-```ts title="usage.ts"
+```typescript title="usage.ts"
 import { UsageStore, allProviders } from '@hanzo/usage'
 import { nodeHost } from '@hanzo/usage/node' // or createTauriHost from '@hanzo/usage/tauri'
 
@@ -39,7 +39,7 @@ store.subscribe(() => console.log(store.getState()))
 Pass the Tauri plugin modules in — the core stays dependency-free for web and
 Node bundles:
 
-```ts title="tauri-host.ts"
+```typescript title="tauri-host.ts"
 import * as fs from '@tauri-apps/plugin-fs'
 import { fetch } from '@tauri-apps/plugin-http'
 import { homeDir } from '@tauri-apps/api/path'
@@ -50,7 +50,7 @@ const host = await createTauriHost({ fs, fetch, homeDir })
 
 ## In React
 
-```ts title="Component.tsx"
+```typescript title="Component.tsx"
 import { useUsage } from '@hanzo/usage/react'
 
 const state = useUsage(store) // re-renders on every refresh

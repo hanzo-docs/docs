@@ -56,7 +56,7 @@ ZAP uses a hybrid handshake combining classical and post-quantum algorithms:
 
 ### Handshake Flow
 
-```
+```text
 Client                                     Server
   |                                           |
   |  PQHandshakeInit                          |
@@ -134,7 +134,7 @@ struct PQHandshakeResponse {
 
 The shared secret combines both classical and post-quantum sources:
 
-```
+```text
 X25519_DH = X25519(client_sk, server_pk)
 ML_KEM_SS = ML-KEM.Decapsulate(client_sk, ciphertext)
 
