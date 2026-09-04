@@ -149,7 +149,7 @@ if err != nil {
 
 ```go
 // From an API key
-creds := hanzo.FromAPIKey("hzo_sk_live_abc123...")
+creds := hanzo.FromAPIKey("sk-your-key")
 
 // From a JWT token directly
 creds := hanzo.FromToken("eyJhbGciOiJSUzI1NiIs...")
@@ -819,7 +819,7 @@ func TestJwtCredentialsFromToken(t *testing.T) {
 }
 
 func TestJwtCredentialsFromAPIKey(t *testing.T) {
-	creds := hanzo.FromAPIKey("hzo_sk_live_abc123")
+	creds := hanzo.FromAPIKey("sk-your-key")
 	if creds.AuthMethod() != "ext-jwt" {
 		t.Errorf("expected ext-jwt, got: %s", creds.AuthMethod())
 	}

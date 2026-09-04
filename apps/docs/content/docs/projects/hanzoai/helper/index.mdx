@@ -15,7 +15,7 @@ shape (`/v1/messages`), so a tool built for either one works once it is pointed 
 npx @hanzo/helper login
 ```
 
-That opens `hanzo.id` with a device code to approve, mints (or reuses) your `hk-` API key,
+That opens `hanzo.id` with a device code to approve, mints (or reuses) your `sk-` API key,
 lets you pick a default model, and configures the tools you choose.
 
 Then run your tool — it is already talking to Hanzo:
@@ -103,7 +103,7 @@ GitHub apps. `hanzo-helper install list` prints what is available.
      │     POST /oauth/device            → user_code + verification_uri
      │     POST /oauth/token   (poll)    → access_token
      │
-     ├── mint API key ─────────────▶ iam  POST /v1/iam/mint-user-keys  → hk-…
+     ├── mint API key ─────────────▶ iam  POST /v1/iam/mint-user-keys  → sk-…
      │     (self-authorized by your login token)
      │
      └── configure tools ──────────▶ ~/.claude/settings.json
