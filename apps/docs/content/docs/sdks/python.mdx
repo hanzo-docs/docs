@@ -1,146 +1,107 @@
 ---
-title: Python SDK
-description: The flagship Hanzo Python SDK — pip install hanzo for AI + agents, pip install hanzoai for the full Cloud SDK.
+title: Python
+description: pip install hanzoai for the whole /v1 surface as hanzoai.cloud, and what the separate hanzo, hanzo-agents and hanzo-mcp distributions are for.
 ---
 
-import { Cards, Card } from '@hanzo/docs-base-ui/components/card'
 import { Callout } from '@hanzo/docs-base-ui/components/callout'
 
-# Python SDK
+# Python
 
-Python is Hanzo's **flagship** — the most complete of every language. It ships in
-two lines you can install independently or together.
-
-<Cards>
-  <Card title="hanzo — AI / agents (flagship)">
-    `pip install hanzo`. Models, agents, tools, memory, MCP, and inference.
-    Source: [hanzoai/python-sdk](https://github.com/hanzoai/python-sdk).
-  </Card>
-  <Card title="hanzoai — Cloud SDK">
-    `pip install hanzoai`. The full, generated client for the entire Open AI
-    Cloud (`/v1/*`). OpenAI-compatible surface. Source: [hanzo-py/sdk](https://github.com/hanzo-py).
-  </Card>
-</Cards>
-
-## Install
-
-```bash tab="AI / agents (flagship)"
-pip install hanzo
-```
-
-```bash tab="Cloud SDK"
+```bash
 pip install hanzoai
 ```
 
-Both are generally available on PyPI. Set your key once:
+That is the client for **every** `/v1` capability, generated from the API's own
+document. It exposes exactly one thing:
+
+```python
+import hanzoai
+hanzoai.cloud          # the client. Nothing else is re-exported at the top level.
+```
+
+<Callout title="Why nothing is flat">
+The distribution used to re-export ~2,200 names at `hanzoai.api` and
+`hanzoai.models`, from a document that had stopped existing — most of them built
+a request the server answered with a 404. They were removed rather than
+refreshed: two ways to call one API is already a defect, and the namespace
+already says which service and which document a symbol came from. Import from
+`hanzoai.cloud`.
+</Callout>
+
+Set the key once:
 
 ```bash
 export HANZO_API_KEY="sk-..."   # from console.hanzo.ai
 ```
 
-## Quick start — Cloud SDK
+## The shape
 
-The `hanzoai` client is a typed client for every `/v1` endpoint, OpenAI-compatible
-for chat:
+One `Configuration`, one `ApiClient`, and one class per product:
 
 ```python
-from hanzoai import Hanzo
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import AiApi
 
-client = Hanzo(api_key="sk-your-key")  # or reads HANZO_API_KEY
+client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
 
-response = client.chat.completions.create(
+models = AiApi(client).get_models()
+```
+
+The class is the product and the method is the operation, so the
+[reference](/docs/openapi) is the index — each operation page prints this call
+beside the raw HTTP.
+
+## Chat completions
+
+Use the `openai` client, pointed at Hanzo:
+
+```python
+import os
+from openai import OpenAI
+
+client = OpenAI(
+    api_key=os.environ["HANZO_API_KEY"],
+    base_url="https://api.hanzo.ai/v1",
+)
+
+answer = client.chat.completions.create(
     model="zen5",
     messages=[{"role": "user", "content": "Explain quantum computing"}],
 )
-print(response.choices[0].message.content)
+print(answer.choices[0].message.content)
 ```
 
-### Streaming
+This is the recommendation rather than a workaround, and it is worth saying why.
+`api.hanzo.ai/v1` speaks the OpenAI and Anthropic wire formats on purpose, so
+streaming, tool calls and every helper that library already carries keep
+working — the edit is the base URL and the key, which is all [Migrate from
+OpenAI](/docs/guides/migrate/openai) asks for. Meanwhile `hanzoai` is generated
+from the document, and the document states the chat route's address without
+stating its body schema: `AiApi.post_chat_completions()` therefore takes no
+request body and decodes no response. A generated client cannot invent a shape
+nobody wrote down. Reach for `hanzoai` for the rest of `/v1`, which the OpenAI
+client does not describe at all.
 
-```python
-stream = client.chat.completions.create(
-    model="zen5-coder",
-    messages=[{"role": "user", "content": "Write a haiku about AI"}],
-    stream=True,
-)
-for chunk in stream:
-    if chunk.choices[0].delta.content:
-        print(chunk.choices[0].delta.content, end="")
-```
+## The other distributions
 
-### Async
+`hanzo` on PyPI is **the CLI**, not a library — it exports `cli` and `main` and
+installs the `hanzo` command. The agent and tool packages are their own
+distributions, and `pip install "hanzo[all]"` is the convenience that pulls
+them:
 
-```python
-import asyncio
-from hanzoai import AsyncHanzo
-
-async def main():
-    client = AsyncHanzo(api_key="sk-your-key")
-    response = await client.chat.completions.create(
-        model="zen5",
-        messages=[{"role": "user", "content": "Hello!"}],
-    )
-    print(response.choices[0].message.content)
-
-asyncio.run(main())
-```
-
-## Quick start — AI / agents (flagship)
-
-The `hanzo` library is the AI-first flagship — agents, tools, memory, and MCP on
-top of the same cloud:
-
-```python
-from hanzo import Agent
-
-agent = Agent(model="zen5", tools=["search", "shell", "browser"])
-result = agent.run("Find the latest release and summarize the changelog.")
-print(result.output)
-```
-
-<Callout title="Bundled tooling">
-`pip install "hanzo[all]"` also installs the `hanzo` CLI (login, dev, bot, kms,
-iam, storage) plus `hanzo-agent`, `hanzo-mcp`, and `hanzo-memory`.
-</Callout>
-
-## Function calling
-
-```python
-tools = [{
-    "type": "function",
-    "function": {
-        "name": "get_weather",
-        "description": "Get the current weather for a location",
-        "parameters": {
-            "type": "object",
-            "properties": {"location": {"type": "string"}},
-            "required": ["location"],
-        },
-    },
-}]
-
-response = client.chat.completions.create(
-    model="zen5",
-    messages=[{"role": "user", "content": "Weather in Tokyo?"}],
-    tools=tools,
-    tool_choice="auto",
-)
-```
-
-## Configuration
-
-```python
-client = Hanzo(
-    api_key="sk-your-key",
-    base_url="https://api.hanzo.ai/v1",  # default
-    timeout=60.0,
-    max_retries=2,
-)
-```
+| Distribution | What it is |
+|---|---|
+| `hanzo` | The [CLI](/docs/cli). `pip install hanzo`, then `hanzo auth login`. |
+| `hanzo-agents` | Client for the agents control plane. |
+| `hanzo-mcp` | The [MCP](/docs/mcp) server, as a Python process. |
+| `hanzo-memory` | The memory service. |
+| `hanzo-aci` | The agent–computer interface. |
 
 ## Resources
 
-- **AI flagship** — [hanzoai/python-sdk](https://github.com/hanzoai/python-sdk) · [`hanzo` on PyPI](https://pypi.org/project/hanzo/)
-- **Cloud SDK** — [`hanzoai` on PyPI](https://pypi.org/project/hanzoai/) · org [hanzo-py](https://github.com/hanzo-py)
-- **Umbrella** — [hanzoai/sdk](https://github.com/hanzoai/sdk)
-- **API reference** — [every `/v1` endpoint →](/reference)
+- [`hanzoai` on PyPI](https://pypi.org/project/hanzoai/) ·
+  [`hanzo` on PyPI](https://pypi.org/project/hanzo/)
+- Source — [hanzoai/python-sdk](https://github.com/hanzoai/python-sdk) ·
+  [hanzo-py](https://github.com/hanzo-py)
+- [Every `/v1` operation →](/docs/openapi)

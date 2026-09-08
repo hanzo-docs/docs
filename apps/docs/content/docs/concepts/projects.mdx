@@ -40,7 +40,7 @@ best-effort. It answers `201` in `draft`.
 
 Its lifecycle is **releases**, not environments:
 
-```
+```text
 POST /v1/projects/{slug}/deploy
 GET  /v1/projects/{slug}/releases
 POST /v1/projects/{slug}/releases/{release}/activate
@@ -58,7 +58,7 @@ The scope people pick between when their work is separated by product or client
 rather than by team. It is created and deleted **only** at `/v1/iam/projects`,
 and it rides on a request as the validated `X-Project-Id`.
 
-```
+```text
 GET /v1/iam/projects
 ```
 
@@ -66,7 +66,7 @@ You never create one anywhere else. `/v1/platform/projects` is a *projection* â€
 the project plus what the container plane has put under it â€” and it says so
 outright. Applications live under it:
 
-```
+```text
 /v1/platform/projects/{project}/apps/{app}
 /v1/platform/projects/{project}/apps/{app}/env
 /v1/platform/projects/{project}/apps/{app}/preview

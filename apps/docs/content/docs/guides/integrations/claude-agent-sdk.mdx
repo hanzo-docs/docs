@@ -24,7 +24,7 @@ curl -X POST "$ANTHROPIC_BASE_URL/v1/messages" \
 
 In process, pass them through the SDK's `env` option. The two SDKs treat it differently: in TypeScript `options.env` replaces the spawned process's environment entirely, so spread `process.env` into it; in Python it merges on top of what was inherited.
 
-```ts
+```typescript
 import { query } from "@anthropic-ai/claude-agent-sdk";
 
 const result = query({
@@ -61,7 +61,7 @@ An `env` block in `.claude/settings.json` sets the same two variables, and takes
 
 Servers go in the `mcpServers` option. The remote form is a type, a URL and the headers that authenticate it.
 
-```ts
+```typescript
 const result = query({
   prompt: "What is my account balance?",
   options: {

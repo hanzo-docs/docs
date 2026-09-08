@@ -261,7 +261,12 @@ export const SDKS: SdkLang[] = [
     lang: 'go',
     render(op, doc) {
       const svc = `${pascalTag(op.product)}API`;
-      const go_pkg = pkg('go', 'packageName', 'cloud');
+      // `hanzoai`: the Go client is `package hanzoai` at the module root, which
+      // is what `import "github.com/hanzoai/go-sdk"` binds. There is no `go` row
+      // in sdks.yaml — the client owns its own invocation, for the reason stated
+      // there — so this fallback is the only place the name is written, and it
+      // said `cloud`, a package no published module declares.
+      const go_pkg = pkg('go', 'packageName', 'hanzoai');
       return [
         `cfg := ${go_pkg}.NewConfiguration()`,
         `cfg.AddDefaultHeader("Authorization", "Bearer "+os.Getenv("HANZO_API_KEY"))`,
@@ -282,7 +287,10 @@ export const SDKS: SdkLang[] = [
     lang: 'rust',
     render(op, doc) {
       const mod = `${snakeId(pascalTag(op.product))}_api`;
-      const crate = pkg('rust', 'packageName', 'hanzo-cloud').replace(/-/g, '_');
+      // `hanzo-client` is the crate hanzo-rs/sdk publishes; `hanzo` is a
+      // different crate (the umbrella over the Rust stack). Same situation as
+      // go: no `rust` row in sdks.yaml, so the fallback is the name.
+      const crate = pkg('rust', 'packageName', 'hanzo-client').replace(/-/g, '_');
       return [
         `use ${crate}::apis::{configuration::Configuration, ${mod}};`,
         ``,
@@ -307,7 +315,11 @@ export const SDKS: SdkLang[] = [
         `import ${jpkg}.api.${cls};`,
         ``,
         `ApiClient client = new ApiClient();`,
-        `client.setRequestInterceptor(b -> b.header("Authorization", "Bearer " + System.getenv("HANZO_API_KEY")));`,
+        // `setBearerToken`, not `setRequestInterceptor`. The interceptor is the
+        // `native` (java.net.http) library's shape, and the java row in
+        // sdks.yaml says `okhttp-gson` — which has no such method, so the
+        // sample this printed did not compile against the client it named.
+        `client.setBearerToken(System.getenv("HANZO_API_KEY"));`,
         ``,
         `var result = new ${cls}(client).${camelId(op.id)}();`,
       ].join('\n');

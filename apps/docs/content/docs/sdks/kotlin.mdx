@@ -1,69 +1,57 @@
 ---
-title: Kotlin SDK
-description: The Hanzo Kotlin Cloud SDK — native JVM/Android client via Gradle. Coming soon.
+title: Kotlin
+description: ai.hanzo:sdk — the full /v1 surface as a coroutine-native client for the JVM and Android. Via JitPack until Maven Central publication lands.
 ---
 
 import { Callout } from '@hanzo/docs-base-ui/components/callout'
 
-# Kotlin SDK
+# Kotlin
 
-A native **Cloud SDK** for Kotlin — coroutines, kotlinx.serialization, first-class
-on the JVM and Android.
+Coroutine-native, on OkHttp and Gson — the same HTTP and JSON stack the
+[Java](/docs/sdks/java) client uses, so a JVM project pulling both pulls one
+stack. Generated from the API's own document.
 
-<Callout title="Coming soon">
-The Kotlin package is in active development in the per-language org
-[hanzo-kt](https://github.com/hanzo-kt). Until it ships, reach the Open AI Cloud
-from Kotlin with any HTTP client (Ktor, OkHttp) against `https://api.hanzo.ai/v1`
-(OpenAI-compatible).
-</Callout>
-
-## Install (planned)
-
-Gradle (Kotlin DSL):
+## Install
 
 ```kotlin
 // build.gradle.kts
 dependencies {
-    implementation("ai.hanzo:sdk:latest.release")
+    implementation("ai.hanzo:sdk:8.0.0")
 }
 ```
 
-Maven:
+<Callout title="Maven Central publication is in progress">
+Until `ai.hanzo:sdk` lands there, consume the repository through JitPack: add
+`maven("https://jitpack.io")` to `repositories`, then
+`implementation("com.github.hanzo-kt:sdk:v8.0.0")`.
+</Callout>
 
-```xml
-<dependency>
-  <groupId>ai.hanzo</groupId>
-  <artifactId>sdk</artifactId>
-  <version>LATEST</version>
-</dependency>
-```
+## The shape
 
-## Quick start (planned)
+Authenticate once on `ApiClient`, then call the capability's class:
 
 ```kotlin
-import ai.hanzo.Hanzo
+import ai.hanzo.sdk.apis.AgentsApi
+import ai.hanzo.sdk.infrastructure.ApiClient
+import kotlinx.coroutines.runBlocking
 
-val client = Hanzo(apiKey = System.getenv("HANZO_API_KEY"))
+fun main() = runBlocking {
+    // Base URL defaults to https://api.hanzo.ai.
+    ApiClient.accessToken = System.getenv("HANZO_API_KEY")
 
-val response = client.chat.completions.create(
-    model = "zen5",
-    messages = listOf(Message.user("Explain quantum computing")),
-)
-println(response.choices.first().message.content)
-```
-
-## Meanwhile — raw HTTP (Ktor)
-
-```kotlin
-val response = HttpClient().post("https://api.hanzo.ai/v1/chat/completions") {
-    header("Authorization", "Bearer $apiKey")
-    contentType(ContentType.Application.Json)
-    setBody("""{"model":"zen5","messages":[{"role":"user","content":"Hello"}]}""")
+    val agents = AgentsApi().chatGetAgents()
+    println(agents)
 }
 ```
+
+Every capability is an `*Api` class — `AiApi`, `AgentsApi`, `BillingApi`, and
+the rest — and every method is a suspending function. The class and the method
+both come from the document, so the [reference](/docs/openapi) is the index.
+`accessToken` takes an IAM access token or a Hanzo API key; see
+[Authentication](/docs/api-keys).
 
 ## Resources
 
-- **Cloud SDK** — org [hanzo-kt](https://github.com/hanzo-kt) · [hanzo-kt/sdk](https://github.com/hanzo-kt/sdk)
-- **Umbrella** — [hanzoai/sdk](https://github.com/hanzoai/sdk)
-- **API reference** — [every `/v1` endpoint →](/reference)
+- Source — [hanzo-kt/sdk](https://github.com/hanzo-kt/sdk). Every operation and
+  model is also written out under `docs/` in that repository.
+- [Every `/v1` operation →](/docs/openapi)
