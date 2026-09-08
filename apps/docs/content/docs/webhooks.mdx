@@ -85,7 +85,7 @@ read is redacted. Rotation takes effect immediately.
 - **No auto-disable and no dead-letter queue.** Every outcome — success and
   failure alike — is a row you read back:
 
-```
+```text
 GET /v1/webhooks/{id}/deliveries
 ```
 
@@ -94,7 +94,7 @@ switched off behind your back, and the record of what happened is the queue.
 
 Test without waiting for real traffic:
 
-```
+```text
 POST /v1/webhooks/{id}/test
 ```
 

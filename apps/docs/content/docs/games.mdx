@@ -25,7 +25,7 @@ Same game, three paths. Pick by how much you want to type.
 No install, no key, nothing to configure. Open [hanzo.app](https://hanzo.app), sign
 in, and describe the game:
 
-```
+```text
 Build a single-page snake game. Arrow keys to move, the snake grows when it
 eats, and the score is kept in the corner. Game over on hitting a wall or
 yourself, with a restart button. Use a canvas, no dependencies.
@@ -101,9 +101,13 @@ curl https://api.hanzo.ai/v1/chat/completions \
 Write the response to `snake.html` and open it. The same thing in Python:
 
 ```python
-from hanzoai import Hanzo
+import os
+from openai import OpenAI
 
-client = Hanzo(api_key="sk-...")
+client = OpenAI(
+    api_key=os.environ["HANZO_API_KEY"],
+    base_url="https://api.hanzo.ai/v1",
+)
 
 game = client.chat.completions.create(
     model="enso",
@@ -127,16 +131,16 @@ somewhere shared to put the state, and something to tell each tab when it change
 which is the point at which a toy starts using the platform properly:
 
 <Cards>
-  <Card icon={<Sparkles />} title="Keep the scores" href="/docs/kv" description="A key/value store for the leaderboard — read and written from the browser." />
-  <Card icon={<Rocket />} title="Push the moves" href="/docs/pubsub" description="Publish each move, subscribe in the other tab. No polling loop to write." />
-  <Card icon={<Code />} title="Know who is playing" href="/docs/iam" description="Sign-in, so a high score belongs to a person instead of a browser." />
-  <Card icon={<Package />} title="Put it somewhere" href="/docs/deploy" description="Ship the finished thing to a URL you can send to someone." />
+  <Card icon={<Sparkles />} title="Keep the scores" href="/docs/openapi/kv" description="A key/value store for the leaderboard — read and written from the browser." />
+  <Card icon={<Rocket />} title="Push the moves" href="/docs/openapi/pubsub" description="Publish each move, subscribe in the other tab. No polling loop to write." />
+  <Card icon={<Code />} title="Know who is playing" href="/docs/openapi/iam" description="Sign-in, so a high score belongs to a person instead of a browser." />
+  <Card icon={<Package />} title="Put it somewhere" href="/docs/openapi/deploy" description="Ship the finished thing to a URL you can send to someone." />
 </Cards>
 
 ## Then take it further
 
 <Cards>
-  <Card icon={<Rocket />} title="Get Started" href="/docs/getting-started" description="Account, API key, first call — the five-minute version." />
+  <Card icon={<Rocket />} title="Get Started" href="/docs/quickstart" description="Account, API key, first call — the five-minute version." />
   <Card icon={<Code />} title="API Reference" href="/docs/openapi" description="Every endpoint, generated from OpenAPI." />
   <Card icon={<Package />} title="SDKs" href="/docs/sdks" description="Python, TypeScript, Go, Rust — one contract, many bindings." />
   <Card icon={<Sparkles />} title="MCP" href="/docs/mcp" description="Give the model real tools — files, HTTP, your own functions." />

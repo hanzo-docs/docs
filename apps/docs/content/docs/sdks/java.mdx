@@ -1,0 +1,63 @@
+---
+title: Java
+description: hanzo-java-cloud — the generated client for every /v1 capability, on OkHttp and Gson. Built from source until it lands on Maven Central.
+---
+
+import { Callout } from '@hanzo/docs-base-ui/components/callout'
+
+# Java
+
+The Java client is generated from the API's own document onto OkHttp and Gson —
+the same HTTP and JSON stack the [Kotlin](/docs/sdks/kotlin) client uses, so a
+JVM project that pulls both pulls one stack.
+
+<Callout title="Not on Maven Central yet">
+The artifact is `ai.hanzo:hanzo-java-cloud`, and it is tagged and buildable in
+[hanzoai/java-sdk](https://github.com/hanzoai/java-sdk) but not yet published to
+a repository. Build and install it locally, or reach `/v1` over HTTP in the
+meantime — the routes are OpenAI- and Anthropic-shaped where it matters.
+</Callout>
+
+## Install
+
+```bash
+git clone https://github.com/hanzoai/java-sdk && cd java-sdk
+./gradlew :hanzo-java-cloud:publishToMavenLocal
+```
+
+Then depend on it:
+
+```kotlin
+// build.gradle.kts
+repositories { mavenLocal() }
+dependencies { implementation("ai.hanzo:hanzo-java-cloud:8.5.156") }
+```
+
+## The shape
+
+One `ApiClient`, one class per capability:
+
+```java
+import ai.hanzo.cloud.ApiClient;
+import ai.hanzo.cloud.api.AiApi;
+import ai.hanzo.cloud.model.AiModelList;
+
+ApiClient client = new ApiClient();
+client.setBearerToken(System.getenv("HANZO_API_KEY"));
+
+AiModelList models = new AiApi(client).getModels();
+```
+
+`setBearerToken` also takes a `Supplier<String>`, which is what you want when
+the credential is an IAM access token that refreshes rather than a static
+`sk-`. See [Authentication](/docs/api-keys).
+
+The class is the capability and the method is the operation, both derived from
+the document — the [reference](/docs/openapi) prints the pair per operation.
+Every call throws `ApiException`, which carries the status code and the response
+body.
+
+## Resources
+
+- Source — [hanzoai/java-sdk](https://github.com/hanzoai/java-sdk)
+- [Every `/v1` operation →](/docs/openapi)

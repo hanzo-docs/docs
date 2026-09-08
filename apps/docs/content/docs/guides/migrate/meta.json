@@ -30,6 +30,7 @@
     "launchdarkly",
     "---[Boxes]Agents & inference---",
     "openai",
+    "nemo",
     "replicate",
     "modal",
     "langsmith",

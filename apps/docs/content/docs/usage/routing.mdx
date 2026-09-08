@@ -50,9 +50,7 @@ Restart the gateway to pick up the change.
 Set the model to `auto` on a chat completion against `api.hanzo.ai`. Nothing
 else changes — same request shape, same response shape.
 
-<Tabs items={["curl", "JavaScript"]}>
-<TabsContent value="curl">
-```bash
+```bash tab="curl"
 curl https://api.hanzo.ai/v1/chat/completions \
   -H "Authorization: Bearer $HANZO_API_KEY" \
   -H "Content-Type: application/json" \
@@ -64,27 +62,42 @@ curl https://api.hanzo.ai/v1/chat/completions \
   }' -i
 ```
 
-The `-i` flag prints response headers so you can see the `X-Routed-Model`
-value the router picked.
-</TabsContent>
-<TabsContent value="JavaScript">
-```ts
-import Hanzo from '@hanzo/sdk';
+```typescript tab="TypeScript"
+import { Hanzo } from '@hanzo/ai'
 
-const client = new Hanzo({ apiKey: process.env.HANZO_API_KEY });
+const hanzo = new Hanzo({ secretKey: process.env.HANZO_API_KEY })
 
-const res = await client.chat.completions.create({
+const res = await hanzo.chat.completions.create({
   model: 'auto',
   messages: [
     { role: 'user', content: 'Summarize this changelog in one line.' },
   ],
-});
+})
 
 // The model that actually served the request:
-console.log(res.model); // e.g. "zen5-flash" | "zen5" | a frontier model
+console.log(res.model) // e.g. "zen5-flash" | "zen5" | a frontier model
 ```
-</TabsContent>
-</Tabs>
+
+```python tab="Python"
+import os
+from openai import OpenAI
+
+client = OpenAI(
+    api_key=os.environ["HANZO_API_KEY"],
+    base_url="https://api.hanzo.ai/v1",
+)
+
+res = client.chat.completions.create(
+    model="auto",
+    messages=[{"role": "user", "content": "Summarize this changelog in one line."}],
+)
+
+print(res.model)  # the model that actually served the request
+```
+
+`curl -i` prints the response headers, so you can read the `X-Routed-Model`
+value the router picked. From an SDK the same answer is on the response body's
+`model` field.
 
 ## Steering with an SLO
 
@@ -100,7 +113,7 @@ them:
     "min_quality": 0.85,
     "max_cost_per_1k": 0.50
   },
-  "messages": [ ... ]
+  "messages": [{ "role": "user", "content": "Summarize this changelog." }]
 }
 ```
 

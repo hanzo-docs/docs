@@ -1,35 +1,35 @@
 ---
-title: Go SDK
-description: The Hanzo Go Cloud SDK — go get github.com/hanzoai/go-sdk. Functional options, minimal dependencies.
+title: Go
+description: go get github.com/hanzoai/go-sdk — package hanzoai at the module root, one service per capability, generated from the API's own document.
 ---
 
 import { Callout } from '@hanzo/docs-base-ui/components/callout'
 
-# Go SDK
-
-The Go **Cloud SDK** is a typed client for the entire Open AI Cloud (`/v1/*`) —
-functional-options API, minimal dependencies, context-aware. Generally available.
-
-## Install
+# Go
 
 ```bash
 go get github.com/hanzoai/go-sdk
 ```
 
 ```go
-import (
-    "github.com/hanzoai/go-sdk"
-    "github.com/hanzoai/go-sdk/option"
-)
+import "github.com/hanzoai/go-sdk" // package hanzoai
 ```
 
-Set your key:
+The package name is `hanzoai` and it sits at the module root, beside `go.mod` —
+which is why the import path and the package identifier differ. The module path
+stays `github.com/hanzoai/go-sdk` permanently: it is what the module proxy has
+and what existing code requires. The source lives at
+[hanzo-go/sdk](https://github.com/hanzo-go/sdk).
+
+Set the key:
 
 ```bash
 export HANZO_API_KEY="sk-..."   # from console.hanzo.ai
 ```
 
-## Quick start
+## The shape
+
+One configuration, one client, one service field per capability:
 
 ```go
 package main
@@ -37,56 +37,41 @@ package main
 import (
     "context"
     "fmt"
+    "os"
 
     "github.com/hanzoai/go-sdk"
-    "github.com/hanzoai/go-sdk/option"
 )
 
 func main() {
-    client := hanzoai.NewClient(
-        option.WithAPIKey("sk-your-key"), // or HANZO_API_KEY
-    )
+    cfg := hanzoai.NewConfiguration()
+    cfg.AddDefaultHeader("Authorization", "Bearer "+os.Getenv("HANZO_API_KEY"))
+    client := hanzoai.NewAPIClient(cfg)
 
-    resp, err := client.Chat.Completions.New(context.TODO(), hanzoai.ChatCompletionNewParams{
-        Model: hanzoai.F("zen5"),
-        Messages: hanzoai.F([]hanzoai.ChatCompletionMessageParamUnion{
-            hanzoai.UserMessage("Explain quantum computing"),
-        }),
-    })
+    models, _, err := client.ModelsAPI.AiListModels(context.Background()).Execute()
     if err != nil {
         panic(err)
     }
-    fmt.Println(resp.Choices[0].Message.Content)
+    fmt.Println(models)
 }
 ```
 
-## Streaming
+Every operation is a request builder: the method takes a `context.Context` and
+returns a request you finish with `.Execute()`, which answers the decoded value,
+the `*http.Response` and an error. Optional parameters are setters on the
+request in between.
 
-```go
-stream := client.Chat.Completions.NewStreaming(ctx, hanzoai.ChatCompletionNewParams{
-    Model: hanzoai.F("zen5-coder"),
-    Messages: hanzoai.F([]hanzoai.ChatCompletionMessageParamUnion{
-        hanzoai.UserMessage("Write a haiku about AI"),
-    }),
-})
-for stream.Next() {
-    chunk := stream.Current()
-    if len(chunk.Choices) > 0 {
-        fmt.Print(chunk.Choices[0].Delta.Content)
-    }
-}
-if stream.Err() != nil {
-    panic(stream.Err())
-}
-```
+The service field is the capability — `client.ModelsAPI`, `client.BillingAPI`,
+`client.KmsAPI` — and the method is the operation. The
+[reference](/docs/openapi) prints the pair for each one.
 
-<Callout title="Base URL">
-Point the client at any service with `option.WithBaseURL("https://api.hanzo.ai/v1")`
-— the default. One key works across every `/v1` service.
+<Callout title="OpenAI-shaped calls">
+The chat, embeddings and messages routes speak the OpenAI and Anthropic wire
+formats, so an existing Go client for either works against
+`https://api.hanzo.ai/v1` with a Hanzo key. This client adds the rest of `/v1`.
 </Callout>
 
 ## Resources
 
-- **Cloud SDK** — [`go get github.com/hanzoai/go-sdk`](https://pkg.go.dev/github.com/hanzoai/go-sdk) · org [hanzo-go](https://github.com/hanzo-go)
-- **Umbrella** — [hanzoai/sdk](https://github.com/hanzoai/sdk)
-- **API reference** — [every `/v1` endpoint →](/reference)
+- [`github.com/hanzoai/go-sdk` on pkg.go.dev](https://pkg.go.dev/github.com/hanzoai/go-sdk)
+- Source — [hanzo-go/sdk](https://github.com/hanzo-go/sdk)
+- [Every `/v1` operation →](/docs/openapi)

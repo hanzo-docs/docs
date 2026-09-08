@@ -14,7 +14,7 @@ ZAP uses Cap'n Proto's standard wire format for all messages.
 
 ### Message Structure
 
-```
+```text
 +------------------+------------------+
 |  Segment Count   |  Segment 0 Size  |
 |   (4 bytes)      |   (4 bytes)      |
@@ -92,7 +92,7 @@ struct Return {
 2. Server returns `Return` with `ServerInfo` capability
 3. Client calls `init()` on the capability
 
-```
+```text
 Client                          Server
   |                                |
   |  Bootstrap(questionId=0)       |
@@ -112,7 +112,7 @@ Client                          Server
 
 Standard RPC call flow:
 
-```
+```text
 Client                          Server
   |                                |
   |  Call(qid=1, listTools)        |
@@ -129,7 +129,7 @@ Client                          Server
 
 Cap'n Proto supports promise pipelining:
 
-```
+```text
 Client                          Server
   |                                |
   |  Call(qid=1, subscribe, uri)   |
@@ -157,7 +157,7 @@ Default ZAP transport over TCP:
 - Framing: Cap'n Proto standard
 
 Connection URL format:
-```
+```text
 zap://host:port
 zap+tls://host:port  # With TLS
 zap+pq://host:port   # With post-quantum TLS
@@ -167,7 +167,7 @@ zap+pq://host:port   # With post-quantum TLS
 
 For local IPC:
 
-```
+```text
 zap+unix:///path/to/socket
 ```
 
@@ -175,7 +175,7 @@ zap+unix:///path/to/socket
 
 For browser clients:
 
-```
+```text
 zap+ws://host:port/path
 zap+wss://host:port/path  # With TLS
 ```
@@ -188,7 +188,7 @@ Binary WebSocket frames contain Cap'n Proto messages.
 
 When using `zap+pq://`:
 
-```
+```text
 Client                          Server
   |                                |
   |  PQHandshakeInit               |
@@ -318,7 +318,7 @@ Clients should check capabilities before calling methods.
 
 Gateway translates MCP JSON-RPC to ZAP:
 
-```
+```text
 MCP Server (stdio)          Gateway              ZAP Client
   |                           |                      |
   |  JSON-RPC request         |                      |

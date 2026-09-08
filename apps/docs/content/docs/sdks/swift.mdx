@@ -1,65 +1,77 @@
 ---
-title: Swift SDK
-description: The Hanzo Swift Cloud SDK — native iOS/macOS client via Swift Package Manager. Coming soon.
+title: Swift
+description: The Hanzo package for SwiftPM — async/await, no dependencies, one class per capability. Builds on Apple platforms and Linux.
 ---
 
 import { Callout } from '@hanzo/docs-base-ui/components/callout'
 
-# Swift SDK
+# Swift
 
-A native **Cloud SDK** for Swift — async/await, Codable models, first-class on
-iOS, macOS, and the rest of the Apple platforms.
+The Swift client is generated from the API's own document and has no external
+dependencies — `URLSession`, `Codable`, `async/await`, nothing else. It builds
+on Apple platforms and on Linux.
 
-<Callout title="Coming soon">
-The Swift package is in active development in the per-language org
-[hanzo-swift](https://github.com/hanzo-swift). Until it ships, reach the Open AI
-Cloud from Swift with `URLSession` against `https://api.hanzo.ai/v1`
-(OpenAI-compatible).
-</Callout>
+## Install
 
-## Install (planned)
-
-Swift Package Manager:
+Swift Package Manager, from the repository:
 
 ```swift
 // Package.swift
 dependencies: [
-    .package(url: "https://github.com/hanzo-swift/sdk", branch: "main"),
+    .package(url: "https://github.com/hanzo-swift/sdk", from: "8.0.0")
 ]
 ```
 
-Or in Xcode: **File → Add Packages…** → `https://github.com/hanzo-swift/sdk`.
+```swift
+.target(name: "App", dependencies: [.product(name: "Hanzo", package: "sdk")])
+```
 
-## Quick start (planned)
+In Xcode: **File → Add Package Dependencies…** → `https://github.com/hanzo-swift/sdk`.
+
+The package declares `swiftLanguageModes: [.v6]`, so Swift 6 is required: the
+client throws typed errors (`async throws(ErrorResponse)`), which earlier
+language modes do not parse.
+
+## The shape
+
+A configuration value and one class per capability:
 
 ```swift
 import Hanzo
 
-let client = HanzoClient(apiKey: ProcessInfo.processInfo.environment["HANZO_API_KEY"]!)
-
-let response = try await client.chat.completions.create(
-    model: "zen5",
-    messages: [.user("Explain quantum computing")]
+let hanzo = HanzoAPIConfiguration(
+    basePath: "https://api.hanzo.ai",
+    customHeaders: ["Authorization": "Bearer \(key)"]
 )
-print(response.choices.first?.message.content ?? "")
+
+try await AiAPI.getModels(apiConfiguration: hanzo)
 ```
 
-## Meanwhile — raw HTTP
+`HanzoAPIConfiguration.shared` is the default every call falls back to, so a
+program serving one tenant sets it once instead of passing it. `basePath`
+already defaults to `https://api.hanzo.ai`.
 
-```swift
-var request = URLRequest(url: URL(string: "https://api.hanzo.ai/v1/chat/completions")!)
-request.httpMethod = "POST"
-request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
-request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-request.httpBody = try JSONSerialization.data(withJSONObject: [
-    "model": "zen5",
-    "messages": [["role": "user", "content": "Hello"]],
-])
-let (data, _) = try await URLSession.shared.data(for: request)
-```
+Method names are the document's operation ids, and a path parameter reads as
+`by`: `GET /v1/billing/balance` is `getBillingBalance`, and `GET /v1/kv/{name}`
+is `getKvByName(name:)`. Request and response types live under
+`Sources/Hanzo/Models`.
+
+<Callout title="Reading a body the document does not describe">
+A few routes — `getModels` among them — state their address without stating
+their response shape, so the generated method returns nothing to decode. Call
+`getModelsWithRequestBuilder(...).execute()` and read the response directly when
+you need the body.
+</Callout>
+
+## Auth
+
+One scheme: a bearer token in `Authorization`. That is an IAM access token or a
+Hanzo API key — `sk-` on a server, `pk-` in an app you ship. See
+[Authentication](/docs/api-keys). Every operation sends it except the four that
+do not authenticate: `getModels`, `getModelsProviders`, `getCommands` and
+`getOpenapiJson`.
 
 ## Resources
 
-- **Cloud SDK** — org [hanzo-swift](https://github.com/hanzo-swift) · [hanzo-swift/sdk](https://github.com/hanzo-swift/sdk)
-- **Umbrella** — [hanzoai/sdk](https://github.com/hanzoai/sdk)
-- **API reference** — [every `/v1` endpoint →](/reference)
+- Source — [hanzo-swift/sdk](https://github.com/hanzo-swift/sdk)
+- [Every `/v1` operation →](/docs/openapi)

@@ -9,7 +9,7 @@ description: "createOpenAICompatible takes baseURL. Two other providers on the s
 npm i ai @ai-sdk/openai-compatible
 ```
 
-```ts
+```typescript
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
 import { generateText } from 'ai';
 
@@ -33,7 +33,7 @@ Two sibling providers take the same `baseURL` and reach the other shapes: `creat
 
 `createMCPClient` comes from `@ai-sdk/mcp` and is awaited. The URL lives on the transport, which the SDK recommends be HTTP in production.
 
-```ts
+```typescript
 import { createMCPClient } from '@ai-sdk/mcp';
 
 const mcp = await createMCPClient({
