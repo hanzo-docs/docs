@@ -7,7 +7,7 @@ on:
       - 'apps/insights-docs/**'
       - 'packages/**'
       - 'pnpm-lock.yaml'
-      - '.hanzo/workflows/deploy-insights-docs.yml'
+      - '.github/workflows/deploy-insights-docs.yml'
   workflow_dispatch:
 
 jobs:

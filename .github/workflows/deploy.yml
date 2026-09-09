@@ -41,7 +41,7 @@ on:
       - 'packages/**'
       - 'pnpm-lock.yaml'
       - 'Dockerfile'
-      - '.hanzo/workflows/deploy.yml'
+      - '.github/workflows/deploy.yml'
   workflow_dispatch:
 
 concurrency:

@@ -7,7 +7,7 @@ on:
       - 'apps/cloud/**'
       - 'packages/**'
       - 'pnpm-lock.yaml'
-      - '.hanzo/workflows/deploy-cloud.yml'
+      - '.github/workflows/deploy-cloud.yml'
   workflow_dispatch:
 
 jobs:
