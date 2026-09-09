@@ -75,7 +75,7 @@ export function SelectLabel({
     <Primitive.GroupLabel
       className={(s) =>
         cn(
-          'px-2 py-1.5 text-xs font-semibold uppercase tracking-wider text-fd-muted-foreground',
+          'px-2 py-1.5 text-xs font-semibold text-fd-muted-foreground',
           typeof className === 'function' ? className(s) : className,
         )
       }
