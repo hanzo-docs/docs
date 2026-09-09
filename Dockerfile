@@ -119,7 +119,7 @@ RUN sh scripts/check-export.sh "apps/${APP}/out"
 # v0.5.6. Measured by running the v0.5.6 binary over this site's own index:
 # 1,527,061 -> 213,911 bytes with Vary: Accept-Encoding, the PNG untouched,
 # and Accept-Encoding: gzip;q=0 correctly served identity.
-FROM ghcr.io/hanzoai/static:v0.5.6
+FROM ghcr.io/hanzoai/static:0.5.15
 # Re-declared: an ARG is scoped to the stage that names it.
 ARG APP=docs
 COPY --from=build /src/apps/${APP}/out /public
