@@ -130,7 +130,7 @@ function ModelRow({ m }: { m: Model }) {
         <div className="font-medium text-fd-foreground">{m.fullName || m.name || m.id}</div>
         <CopyId id={m.id} />
         {m.tier ? (
-          <span className="ml-2 rounded bg-fd-primary/10 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-fd-primary align-middle">
+          <span className="ml-2 rounded bg-fd-primary/10 px-1.5 py-0.5 text-[11px] font-medium text-fd-primary align-middle">
             {m.tier}
           </span>
         ) : null}
@@ -278,7 +278,7 @@ export function ModelsCatalog() {
             <div className="overflow-x-auto rounded-lg border border-fd-border">
               <table className="w-full border-collapse text-sm">
                 <thead>
-                  <tr className="text-xs uppercase tracking-wide text-fd-muted-foreground">
+                  <tr className="text-xs text-fd-muted-foreground">
                     <th className="py-2 pr-4 text-left font-medium">Model</th>
                     <th className="py-2 px-3 text-right font-medium">Context</th>
                     <th className="py-2 px-3 text-right font-medium">Input /1M</th>
