@@ -7,7 +7,7 @@ on:
       - 'apps/dev-docs/**'
       - 'packages/**'
       - 'pnpm-lock.yaml'
-      - '.hanzo/workflows/deploy-dev-docs.yml'
+      - '.github/workflows/deploy-dev-docs.yml'
   workflow_dispatch:
 
 jobs:
