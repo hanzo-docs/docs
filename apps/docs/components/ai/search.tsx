@@ -27,6 +27,22 @@ const Context = createContext<{
   chat: HanzoChat;
 } | null>(null);
 
+// Citation URLs come from untrusted model output: `provideLinks` is parsed by a
+// loose schema whose `url` is any string, so a model can emit `javascript:` or
+// `data:`. Render a link only when its href is site-relative ('/…') or resolves
+// to http(s) — the render-time scheme allowlist.
+function isSafeHref(url: string | null | undefined): boolean {
+  if (!url) return false;
+  const u = url.trim();
+  if (u.startsWith('/') && !u.startsWith('//')) return true;
+  try {
+    const { protocol } = new URL(u, 'https://docs.hanzo.ai');
+    return protocol === 'https:' || protocol === 'http:';
+  } catch {
+    return false;
+  }
+}
+
 export function AISearchPanelHeader({ className, ...props }: ComponentProps<'div'>) {
   const { setOpen } = useAISearchContext();
 
@@ -273,6 +289,8 @@ function Message({ message, ...props }: { message: ChatMessage } & ComponentProp
     }
   }
 
+  const safeLinks = (links ?? []).filter((item) => isSafeHref(item?.url));
+
   return (
     <div onClick={(e) => e.stopPropagation()} {...props}>
       <p
@@ -286,9 +304,9 @@ function Message({ message, ...props }: { message: ChatMessage } & ComponentProp
       <div className="prose text-sm">
         <Markdown text={markdown} />
       </div>
-      {links && links.length > 0 && (
+      {safeLinks.length > 0 && (
         <div className="mt-2 flex flex-row flex-wrap items-center gap-1">
-          {links.map((item, i) => (
+          {safeLinks.map((item, i) => (
             <Link
               key={i}
               href={item.url}
