@@ -31,7 +31,7 @@ curl -sS -X POST https://api.hanzo.ai/v1/account/keys \
 curl -sS -X POST https://api.hanzo.ai/v1/agents \
   -H "Authorization: Bearer $HANZO_API_KEY" \
   -H 'Content-Type: application/json' \
-  -d '{"name":"eng","model":"zen4","instructions":"You are the engineering agent…",
+  -d '{"name":"eng","model":"zen5","instructions":"You are the engineering agent…",
        "tools":["lease_sandbox","run_in_sandbox","read_sandbox_file","write_sandbox_file"]}'
 
 # 3. the computer it works on — dev attaches the project's disk and carries dev, git and hanzo-mcp

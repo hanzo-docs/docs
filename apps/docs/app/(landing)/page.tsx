@@ -696,9 +696,9 @@ export default function Page() {
             </p>
             <Grid columns={{ min: 130, max: 6 }} gap={12}>
               {[
-                { name: 'zen4', spec: '~400B MoDE' },
-                { name: 'zen4-coder', spec: '~200B MoDE' },
-                { name: 'zen4-thinking', spec: 'Deep CoT' },
+                { name: 'zen5', spec: 'Frontier' },
+                { name: 'zen5-coder', spec: 'Code' },
+                { name: 'zen-vl', spec: 'Vision' },
                 { name: 'zen3-omni', spec: '72B Multimodal' },
                 { name: 'zen3-nano', spec: '4B Edge' },
                 { name: 'zen3-guard', spec: '8B Safety' },
