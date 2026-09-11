@@ -369,13 +369,13 @@ export default function Page() {
                 completion goes until the document describes its shape. */}
             <Tab value="TypeScript">
               <CodeBlock
-                code={`// npm i hanzoai\nimport { AiApi, Configuration } from 'hanzoai'\n\nconst ai = new AiApi(new Configuration())\n\nconst { data } = await ai.getModels()\nconsole.log(data.data.length, 'models')`}
+                code={`// npm i hanzoai\nimport { AiApi, Configuration } from 'hanzoai'\n\nconst ai = new AiApi(new Configuration())\n\nconst { data } = await ai.getModels()\nconsole.log(data.data?.length, 'models')`}
                 lang="typescript"
               />
             </Tab>
             <Tab value="Python">
               <CodeBlock
-                code={`# pip install hanzoai\nfrom hanzoai.cloud import AiApi, ApiClient, Configuration\n\nai = AiApi(ApiClient(Configuration()))\n\nprint(len(ai.get_models().data), "models")`}
+                code={`# pip install hanzoai\nfrom hanzoai.cloud import AiApi, ApiClient, Configuration\n\nai = AiApi(ApiClient(Configuration()))\n\nprint(len(ai.get_models().data or []), "models")`}
                 lang="python"
               />
             </Tab>
