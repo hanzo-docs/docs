@@ -38,12 +38,18 @@ cd dev
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 source "$HOME/.cargo/env"
 
+# The engines are submodules, and the build patches that checkout in place
+git submodule update --init --depth 1
+
 # Build (~20 min cold, ~2 min incremental)
-./build-fast.sh
+make build
 
 # Launch the TUI
-./hanzo-dev/target/dev-fast/dev
+./target/debug/dev
 ```
+
+`make install` instead of `make build` puts an optimized `dev` on your PATH via
+`cargo install`.
 
 ## Tracing / Verbose Logging
 

@@ -19,8 +19,9 @@ brew install hanzo-dev
 
 ```bash tab="From source"
 git clone https://github.com/hanzoai/dev.git
-cd dev/codex-rs
-cargo build --release
+cd dev
+git submodule update --init --depth 1
+make install
 ```
 
 Then launch:

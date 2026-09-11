@@ -326,8 +326,10 @@ export default function Page() {
           {/* Install, then use — the same two steps /docs/quickstart shows, and
               the same order of tabs, so the front page and the quickstart do not
               teach different install lines. npm is first because it is the one
-              most readers already have. */}
-          <Tabs items={['npm', 'Script', 'Homebrew', 'pip']}>
+              most readers already have. There is no pip tab: PyPI `hanzo` is the
+              orchestration library and installs a `hanzo-py` command, so it
+              cannot be a fourth way to get this binary. */}
+          <Tabs items={['npm', 'Script', 'Homebrew', 'From source']}>
             <Tab value="npm">
               <CodeBlock code={`npm i -g hanzo`} lang="bash" />
             </Tab>
@@ -337,8 +339,11 @@ export default function Page() {
             <Tab value="Homebrew">
               <CodeBlock code={`brew install hanzoai/tap/hanzo`} lang="bash" />
             </Tab>
-            <Tab value="pip">
-              <CodeBlock code={`pip install hanzo`} lang="bash" />
+            <Tab value="From source">
+              <CodeBlock
+                code={`git clone https://github.com/hanzoai/cli && cd cli && cargo install --path .`}
+                lang="bash"
+              />
             </Tab>
           </Tabs>
 
@@ -354,33 +359,41 @@ export default function Page() {
                 lang="bash"
               />
             </Tab>
+            {/* Every SDK tab is the catalogue read, the same call /docs/quickstart
+                opens with. It is the one operation all four generated clients
+                express and the one that answers without a credential, so a reader
+                can run the tab they are looking at. A typed chat call is not a
+                fourth thing they could paste here: cloud declares
+                /v1/chat/completions as an address with no requestBody, so every
+                generated method takes no prompt — the HTTP tab is where a
+                completion goes until the document describes its shape. */}
             <Tab value="TypeScript">
               <CodeBlock
-                code={`// npm i @hanzo/ai\nimport Hanzo from '@hanzo/ai'\n\nconst hanzo = new Hanzo() // reads HANZO_API_KEY\n\nconst r = await hanzo.chat.completions.create({\n  model: 'zen4',\n  messages: [{ role: 'user', content: 'Hello!' }],\n})\nconsole.log(r.choices[0].message.content)`}
+                code={`// npm i hanzoai\nimport { AiApi, Configuration } from 'hanzoai'\n\nconst ai = new AiApi(new Configuration())\n\nconst { data } = await ai.getModels()\nconsole.log(data.data.length, 'models')`}
                 lang="typescript"
               />
             </Tab>
             <Tab value="Python">
               <CodeBlock
-                code={`# pip install hanzoai\nfrom hanzoai import Hanzo\n\nclient = Hanzo()  # reads HANZO_API_KEY\n\nr = client.chat.completions.create(\n    model="zen4",\n    messages=[{"role": "user", "content": "Hello!"}],\n)\nprint(r.choices[0].message.content)`}
+                code={`# pip install hanzoai\nfrom hanzoai.cloud import AiApi, ApiClient, Configuration\n\nai = AiApi(ApiClient(Configuration()))\n\nprint(len(ai.get_models().data), "models")`}
                 lang="python"
               />
             </Tab>
             <Tab value="Go">
               <CodeBlock
-                code={`// go get github.com/hanzoai/go-sdk\nimport "github.com/hanzoai/go-sdk"\n\nclient := hanzo.NewClient() // reads HANZO_API_KEY`}
+                code={`// go get github.com/hanzoai/go-sdk\nimport hanzoai "github.com/hanzoai/go-sdk"\n\nclient := hanzoai.NewClient(os.Getenv("HANZO_API_KEY"))\n\nresp, err := client.ModelsAPI.GetModels(ctx).Execute()`}
                 lang="go"
               />
             </Tab>
             <Tab value="Rust">
               <CodeBlock
-                code={`// cargo add hanzo\nuse hanzo::Client;\n\nlet hanzo = Client::from_env()?; // reads HANZO_API_KEY`}
+                code={`// cargo add hanzo-client\nuse hanzo_client::apis::{ai_api, configuration::Configuration};\n\nlet cfg = Configuration::new();\n\nlet models = ai_api::get_models(&cfg).await?;`}
                 lang="rust"
               />
             </Tab>
             <Tab value="HTTP">
               <CodeBlock
-                code={`curl https://api.hanzo.ai/v1/chat/completions \\\n  -H "Authorization: Bearer $HANZO_API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d '{"model":"zen4","messages":[{"role":"user","content":"Hello!"}]}'`}
+                code={`curl https://api.hanzo.ai/v1/chat/completions \\\n  -H "Authorization: Bearer $HANZO_API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d '{"model":"zen5","messages":[{"role":"user","content":"Hello!"}]}'`}
                 lang="bash"
               />
             </Tab>

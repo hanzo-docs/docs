@@ -52,7 +52,7 @@ const PATHS = [
     external: false,
     cta: 'Read the CLI docs',
     lang: 'Terminal',
-    code: 'curl -fsSL hanzo.sh | bash\nhanzo auth login\nhanzo dev "add a leaderboard to the game"',
+    code: 'curl -fsSL https://hanzo.sh | sh\nhanzo auth login\nhanzo dev "add a leaderboard to the game"',
   },
   {
     id: 'api',
@@ -230,7 +230,7 @@ export function DocsHero({
         style={{ ['--d' as string]: '520ms' }}
       >
         <Link
-          href="#get-going"
+          href="/docs/quickstart"
           className="inline-flex h-10 items-center rounded-full bg-fd-primary px-6 text-sm font-medium text-fd-primary-foreground transition-opacity hover:opacity-90"
         >
           Get started

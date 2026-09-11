@@ -112,11 +112,11 @@ go get github.com/hanzoai/go-sdk
 ```
 
 ```go
-cfg := hanzoai.NewConfiguration()
-cfg.AddDefaultHeader("Authorization", "Bearer "+os.Getenv("HANZO_API_KEY"))
-client := hanzoai.NewAPIClient(cfg)
+import hanzoai "github.com/hanzoai/go-sdk"
 
-models, _, err := client.ModelsAPI.AiListModels(context.Background()).Execute()
+client := hanzoai.NewClient(os.Getenv("HANZO_API_KEY"))
+
+resp, err := client.ModelsAPI.GetModels(context.Background()).Execute()
 ```
 </Tab>
 <Tab value=".rs">
@@ -198,13 +198,17 @@ zero; [Pricing](/docs/pricing) is the rate for every model and tool.
 The same binary that serves `api.hanzo.ai` runs on your machine:
 
 ```bash
-hanzo up cloud
+hanzo host serve
 ```
 
-Bare `hanzo up` is the same thing — `cloud` is the default. Name one service to
-run it alone: `hanzo up iam`, `hanzo up kms`, `hanzo up gateway`, `hanzo up
-storage`, `hanzo up pubsub`. See [Run your own](/docs/network) for what that
-means and what it needs.
+`cloud` is the default, so that is the whole API. Name one service to run it
+alone: `hanzo host serve iam`, and likewise `kms`, `gateway`, `storage`,
+`pubsub`. `hanzo host start` runs the same thing in the background, with
+`status` and `stop` beside it.
+
+`hanzo up` is a different command — it boots k3s in a microVM and hands you a
+kubeconfig, which is what you want to run your own *cluster* rather than your
+own cloud. See [Run your own](/docs/network) for what each needs.
 
 ## Where to go next
 
