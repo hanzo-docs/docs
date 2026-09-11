@@ -1,49 +1,47 @@
 ---
 title: Authentication
-description: Set up authentication for Hanzo Dev.
+description: Sign Hanzo Dev in to the Hanzo cloud.
 ---
 
 ## Authentication
 
-Hanzo Dev supports multiple authentication methods.
-
-### API Key
-
-Set your API key via environment variable:
-
-```bash
-export OPENAI_API_KEY="sk-..."
-```
-
-Or login interactively:
+Hanzo Dev ships pointed at `https://api.hanzo.ai/v1`, so signing it in is
+signing in to Hanzo. There is nothing else to configure.
 
 ```bash
 dev login
 ```
 
-### Login with API Key from stdin
+That opens [hanzo.id](https://hanzo.id) and stores the credential under
+`~/.hanzo`. One account covers the whole toolchain — `hanzo auth login` signs
+Dev in too, and this signs the CLI in — because they share that one file.
 
 ```bash
-printenv OPENAI_API_KEY | dev login --with-api-key
+dev login status    # who you are
+dev logout          # forget it
 ```
 
-### Check Status
+### A key instead of a person
+
+For a machine, mint a key at **console.hanzo.ai → API keys** and hand it over on
+stdin, so it never lands in a file:
 
 ```bash
-dev login status
+printenv HANZO_USER_KEY | dev login --with-api-key
 ```
 
-### Logout
+Keep production keys in [KMS](/docs/openapi/kms) — never in source, never in a
+committed `.env`.
 
-```bash
-dev logout
-```
-
-### Environment Variables
+### Environment
 
 | Variable | Description |
 | --- | --- |
-| `OPENAI_API_KEY` | OpenAI API key |
-| `CODE_HOME` | Override config directory (default: `~/.hanzo`) |
-| `CODEX_HOME` | Legacy config directory (fallback) |
-| `CODEX_SECURE_MODE` | Enable security hardening when set to `"1"` |
+| `HANZO_USER_KEY` | Your Hanzo key, read by the default `hanzo` provider |
+| `DEV_HOME` | Config and session directory (default: `~/.hanzo/dev`) |
+
+A `DEV_HOME` you set is its own island: it gets no shared credential, so sign in
+again inside it.
+
+Other model providers are configurable in `config.toml`, each declaring its own
+`env_key`. The default provider is Hanzo and needs none of them.

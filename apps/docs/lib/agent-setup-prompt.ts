@@ -286,8 +286,8 @@ If a check fails, diagnose and fix it before reporting completion.
 ## Resources
 
 - Hanzo documentation: \`https://docs.hanzo.ai\`
-- Hanzo CLI: \`https://docs.hanzo.ai/docs/services/platform/getting-started/cli\`
-- Hanzo MCP documentation: \`https://docs.hanzo.ai/docs/skills/hanzo-mcp/\`
+- Hanzo CLI: \`https://docs.hanzo.ai/docs/cli\`
+- Hanzo MCP documentation: \`https://docs.hanzo.ai/docs/mcp\`
 - Hanzo MCP source: \`https://github.com/hanzoai/mcp\`
 - Hanzo Dev installation: \`https://docs.hanzo.ai/docs/dev/getting-started/install\`
 - Hanzo Dev MCP commands: \`https://docs.hanzo.ai/docs/dev/reference/cli\`

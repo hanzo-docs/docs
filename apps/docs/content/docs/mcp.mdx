@@ -14,8 +14,11 @@ One Model Context Protocol server, one tool surface. Add **`hanzo-mcp`** to Clau
 > Looking for the hosted MCP server instead? **[Cloud MCP](/docs/mcp-tools)** is a URL with nothing to install, and its every tool is enumerated in the [tool catalogue](/docs/mcp-tools/all-tools). This page is the server that runs beside your editor.
 
 ```bash title="Add the Hanzo MCP to Claude Code"
-claude mcp add hanzo -- npx -y @hanzo/mcp serve
+claude mcp add hanzo -- npx -y --package=@hanzo/mcp@latest hanzo-mcp serve
 ```
+
+Name the package and the binary separately. In the shorter `npx -y @hanzo/mcp
+serve`, npx is free to read `serve` as a second package to fetch.
 
 That one command exposes the full surface:
 
@@ -32,7 +35,7 @@ The same surface ships three ways — TypeScript (`@hanzo/mcp`), Python (`hanzo-
   "mcpServers": {
     "hanzo": {
       "command": "npx",
-      "args": ["-y", "@hanzo/mcp", "serve"]
+      "args": ["-y", "--package=@hanzo/mcp@latest", "hanzo-mcp", "serve"]
     }
   }
 }
