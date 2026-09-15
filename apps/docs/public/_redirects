@@ -25,9 +25,8 @@
 # hanzoai/logs is archived (retired Loki import). Log ingest runs on o11y.
 /docs/skills/hanzo-logs /docs/openapi/o11y     301
 
-# Tutorials were merged into Services.
-/tutorials         /docs/start            301
-/tutorials/*       /docs/services/:splat  301
+# Tutorials were merged into Guides.
+/tutorials         /docs/guides           301
 
 # Top-level convenience aliases. docs.hanzo.ai is already the docs subdomain, so
 # bare product paths resolve to their canonical page under /docs. Explicit list
@@ -68,7 +67,6 @@
 /docs/cms          /docs/projects/hanzoai/cms       301
 /docs/helpdesk     /docs/projects/hanzoai/helpdesk  301
 /docs/apm          /docs/openapi/o11y     301
-/docs/apps         /docs/services/paas              301
 /docs/nodes        /docs/openapi/compute  301
 /docs/dns          /docs/openapi/dns      301
 /docs/desktop      /docs/apps/desktop               301
