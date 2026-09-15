@@ -43,7 +43,7 @@
 /getting-started   /docs/quickstart       301
 /models            /docs/openapi/ai       301
 /chat              /docs/chat             301
-/agents            /docs/openapi/agents   301
+/agents            /docs/openapi/agent    301
 /mcp               /docs/mcp              301
 /sdks              /docs/sdks             301
 /llm               /docs/openapi/ai       301
@@ -69,7 +69,7 @@
 /docs/helpdesk     /docs/projects/hanzoai/helpdesk  301
 /docs/apm          /docs/openapi/o11y     301
 /docs/apps         /docs/services/paas              301
-/docs/nodes        /docs/openapi/visor    301
+/docs/nodes        /docs/openapi/compute  301
 /docs/dns          /docs/openapi/dns      301
 /docs/desktop      /docs/apps/desktop               301
 /docs/code         /docs/openapi/code     301
@@ -82,13 +82,13 @@
 # Old console/product slugs kept resolving so no deep-link 404s post-merge. Only
 # listed where a canonical page exists; ads→marketing and cms→content are omitted
 # until those pages are authored (a 301 to a missing page is still a dead end).
-/docs/featuregate  /docs/openapi/flags    301
+/docs/featuregate  /docs/openapi/flag     301
 /docs/cron         /docs/openapi/tasks    301
 /docs/connectorruntime /docs/openapi/auto     301
 
 # Console module "Docs" buttons that link bare product paths (docsUrl + '/x').
 /crawl             /docs/openapi/crawl    301
-/functions         /docs/openapi/functions 301
+/functions         /docs/openapi/function 301
 /kms               /docs/openapi/kms      301
 
 # QA: a guessed program slug → the real page. /docs/startups is itself a page,
@@ -162,3 +162,17 @@
 /docs/integrations/smolagents         /docs/guides/integrations/smolagents  301
 /docs/integrations/llamaindex         /docs/guides/integrations/llamaindex  301
 /docs/integrations/autogen            /docs/guides/integrations/autogen     301
+
+# Cloud renamed nine capabilities to the singular word each answers at, and the
+# reference is named for the capability — so every old section URL moved with it.
+# The operation pages under them moved too; those are generated and a wildcard
+# cannot be expanded here, so an old deep link lands on the 404 page with search.
+/docs/openapi/agents       /docs/openapi/agent        301
+/docs/openapi/tools        /docs/openapi/tool         301
+/docs/openapi/flags        /docs/openapi/flag         301
+/docs/openapi/functions    /docs/openapi/function     301
+/docs/openapi/channels     /docs/openapi/channel      301
+/docs/openapi/integrations /docs/openapi/integration  301
+/docs/openapi/projects     /docs/openapi/project      301
+# visor is retired; compute is the plane it named.
+/docs/openapi/visor        /docs/openapi/compute      301
