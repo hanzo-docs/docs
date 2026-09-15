@@ -50,9 +50,9 @@ result = BillingApi(client).get_billing_balance()
 </Tab>
 <Tab value=".go">
 ```go
-cfg := cloud.NewConfiguration()
+cfg := hanzoai.NewConfiguration()
 cfg.AddDefaultHeader("Authorization", "Bearer "+os.Getenv("HANZO_API_KEY"))
-client := cloud.NewAPIClient(cfg)
+client := hanzoai.NewAPIClient(cfg)
 
 resp, _, err := client.BillingAPI.GetBillingBalance(context.Background()).Execute()
 if err != nil {
@@ -62,7 +62,7 @@ if err != nil {
 </Tab>
 <Tab value=".rs">
 ```rust
-use hanzo_cloud::apis::{configuration::Configuration, billing_api};
+use hanzo_client::apis::{configuration::Configuration, billing_api};
 
 let mut cfg = Configuration::new();
 cfg.bearer_access_token = std::env::var("HANZO_API_KEY").ok();
@@ -76,7 +76,7 @@ import ai.hanzo.cloud.ApiClient;
 import ai.hanzo.cloud.api.BillingApi;
 
 ApiClient client = new ApiClient();
-client.setRequestInterceptor(b -> b.header("Authorization", "Bearer " + System.getenv("HANZO_API_KEY")));
+client.setBearerToken(System.getenv("HANZO_API_KEY"));
 
 var result = new BillingApi(client).getBillingBalance();
 ```
@@ -153,9 +153,9 @@ result = BillingApi(client).get_billing_usage()
 </Tab>
 <Tab value=".go">
 ```go
-cfg := cloud.NewConfiguration()
+cfg := hanzoai.NewConfiguration()
 cfg.AddDefaultHeader("Authorization", "Bearer "+os.Getenv("HANZO_API_KEY"))
-client := cloud.NewAPIClient(cfg)
+client := hanzoai.NewAPIClient(cfg)
 
 resp, _, err := client.BillingAPI.GetBillingUsage(context.Background()).Execute()
 if err != nil {
@@ -165,7 +165,7 @@ if err != nil {
 </Tab>
 <Tab value=".rs">
 ```rust
-use hanzo_cloud::apis::{configuration::Configuration, billing_api};
+use hanzo_client::apis::{configuration::Configuration, billing_api};
 
 let mut cfg = Configuration::new();
 cfg.bearer_access_token = std::env::var("HANZO_API_KEY").ok();
@@ -179,7 +179,7 @@ import ai.hanzo.cloud.ApiClient;
 import ai.hanzo.cloud.api.BillingApi;
 
 ApiClient client = new ApiClient();
-client.setRequestInterceptor(b -> b.header("Authorization", "Bearer " + System.getenv("HANZO_API_KEY")));
+client.setBearerToken(System.getenv("HANZO_API_KEY"));
 
 var result = new BillingApi(client).getBillingUsage();
 ```

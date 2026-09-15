@@ -39,28 +39,28 @@ hanzo tools get
 <Tabs items={['.ts', '.py', '.go', '.rs', '.java']}>
 <Tab value=".ts">
 ```ts
-import { Configuration, ToolsApi } from 'hanzoai';
+import { Configuration, ToolApi } from 'hanzoai';
 
-const api = new ToolsApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
-const { data } = await api.getTools();
+const api = new ToolApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data } = await api.getTool();
 ```
 </Tab>
 <Tab value=".py">
 ```python
 from hanzoai.cloud import ApiClient, Configuration
-from hanzoai.cloud.api import ToolsApi
+from hanzoai.cloud.api import ToolApi
 
 client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
-result = ToolsApi(client).get_tools()
+result = ToolApi(client).get_tool()
 ```
 </Tab>
 <Tab value=".go">
 ```go
-cfg := cloud.NewConfiguration()
+cfg := hanzoai.NewConfiguration()
 cfg.AddDefaultHeader("Authorization", "Bearer "+os.Getenv("HANZO_API_KEY"))
-client := cloud.NewAPIClient(cfg)
+client := hanzoai.NewAPIClient(cfg)
 
-resp, _, err := client.ToolsAPI.GetTools(context.Background()).Execute()
+resp, _, err := client.ToolAPI.GetTool(context.Background()).Execute()
 if err != nil {
 	return err
 }
@@ -68,26 +68,28 @@ if err != nil {
 </Tab>
 <Tab value=".rs">
 ```rust
-use hanzo_cloud::apis::{configuration::Configuration, tools_api};
+use hanzo_client::apis::{configuration::Configuration, tool_api};
 
 let mut cfg = Configuration::new();
 cfg.bearer_access_token = std::env::var("HANZO_API_KEY").ok();
 
-let result = tools_api::get_tools(&cfg, Default::default()).await?;
+let result = tool_api::get_tool(&cfg, Default::default()).await?;
 ```
 </Tab>
 <Tab value=".java">
 ```java
 import ai.hanzo.cloud.ApiClient;
-import ai.hanzo.cloud.api.ToolsApi;
+import ai.hanzo.cloud.api.ToolApi;
 
 ApiClient client = new ApiClient();
-client.setRequestInterceptor(b -> b.header("Authorization", "Bearer " + System.getenv("HANZO_API_KEY")));
+client.setBearerToken(System.getenv("HANZO_API_KEY"));
 
-var result = new ToolsApi(client).getTools();
+var result = new ToolApi(client).getTool();
 ```
 </Tab>
 </Tabs>
+
+The method above is the one at the current release of the document. `hanzoai@8.5.157` (npm) and `hanzoai@8.5.156` (PyPI) were generated from an earlier release, where this operation carried a different id, so it spells the method differently — regenerating the clients is what makes the two agree. [SDKs →](/docs/sdks)
 </Tab>
 <Tab value="HTTP">
 ```bash
@@ -96,7 +98,7 @@ curl https://api.hanzo.ai/v1/tool \
 ```
 </Tab>
 <Tab value="MCP">
-MCP reaches **tools** through the `tools` tool, which names its 19 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
+MCP reaches **tool** through the `tools` tool, which names its 19 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
 
 ```bash
 curl -X POST https://api.hanzo.ai/v1/mcp \

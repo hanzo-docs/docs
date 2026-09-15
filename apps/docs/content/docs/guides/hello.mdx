@@ -71,9 +71,9 @@ result = AiApi(client).get_models()
 </Tab>
 <Tab value=".go">
 ```go
-cfg := cloud.NewConfiguration()
+cfg := hanzoai.NewConfiguration()
 cfg.AddDefaultHeader("Authorization", "Bearer "+os.Getenv("HANZO_API_KEY"))
-client := cloud.NewAPIClient(cfg)
+client := hanzoai.NewAPIClient(cfg)
 
 resp, _, err := client.AiAPI.GetModels(context.Background()).Execute()
 if err != nil {
@@ -83,7 +83,7 @@ if err != nil {
 </Tab>
 <Tab value=".rs">
 ```rust
-use hanzo_cloud::apis::{configuration::Configuration, ai_api};
+use hanzo_client::apis::{configuration::Configuration, ai_api};
 
 let mut cfg = Configuration::new();
 cfg.bearer_access_token = std::env::var("HANZO_API_KEY").ok();
@@ -97,7 +97,7 @@ import ai.hanzo.cloud.ApiClient;
 import ai.hanzo.cloud.api.AiApi;
 
 ApiClient client = new ApiClient();
-client.setRequestInterceptor(b -> b.header("Authorization", "Bearer " + System.getenv("HANZO_API_KEY")));
+client.setBearerToken(System.getenv("HANZO_API_KEY"));
 
 var result = new AiApi(client).getModels();
 ```
@@ -146,7 +146,9 @@ page shows the honest empty state and never a fabricated key.
 
 <Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
 <Tab value="CLI">
-`hanzo` has no subcommand for this operation — the CLI serves only what cloud's live route table confirms. Use HTTP or an SDK.
+```bash
+hanzo account keys get
+```
 </Tab>
 <Tab value="SDK">
 <Tabs items={['.ts', '.py', '.go', '.rs', '.java']}>
@@ -169,9 +171,9 @@ result = AccountApi(client).get_account_keys()
 </Tab>
 <Tab value=".go">
 ```go
-cfg := cloud.NewConfiguration()
+cfg := hanzoai.NewConfiguration()
 cfg.AddDefaultHeader("Authorization", "Bearer "+os.Getenv("HANZO_API_KEY"))
-client := cloud.NewAPIClient(cfg)
+client := hanzoai.NewAPIClient(cfg)
 
 resp, _, err := client.AccountAPI.GetAccountKeys(context.Background()).Execute()
 if err != nil {
@@ -181,7 +183,7 @@ if err != nil {
 </Tab>
 <Tab value=".rs">
 ```rust
-use hanzo_cloud::apis::{configuration::Configuration, account_api};
+use hanzo_client::apis::{configuration::Configuration, account_api};
 
 let mut cfg = Configuration::new();
 cfg.bearer_access_token = std::env::var("HANZO_API_KEY").ok();
@@ -195,14 +197,12 @@ import ai.hanzo.cloud.ApiClient;
 import ai.hanzo.cloud.api.AccountApi;
 
 ApiClient client = new ApiClient();
-client.setRequestInterceptor(b -> b.header("Authorization", "Bearer " + System.getenv("HANZO_API_KEY")));
+client.setBearerToken(System.getenv("HANZO_API_KEY"));
 
 var result = new AccountApi(client).getAccountKeys();
 ```
 </Tab>
 </Tabs>
-
-The method above is the one at the current release of the document. `hanzoai@8.5.89` (npm) and `hanzoai@8.5.89` (PyPI) were generated from an earlier release, where this operation carried a different id, so it spells the method differently — regenerating the clients is what makes the two agree. [SDKs →](/docs/sdks)
 </Tab>
 <Tab value="HTTP">
 ```bash

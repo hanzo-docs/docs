@@ -24,15 +24,18 @@ per-org cap on scheduled agents.
 
 | Parameter | In | Required | Description |
 |---|---|---|---|
+| `avatar` | body | — | Avatar and Emoji are how the agent APPEARS. An image wins when both are given — it is the thing somebody made |
+| `cap_micro_usd` | body | — | The budget, required. An agent is not creatable without one: a zero cap would mean no limit and no record of i |
 | `computeRef` | body | — | ComputeRef optionally binds this bot to a visor machine. Opaque here, bounded at 256 characters, and not resol |
 | `description` | body | — | Description is the one line published as the description of the `agent_&lt;name&gt;` tool, which is how another agen |
+| `emoji` | body | — | Emoji is the single glyph shown when there is no image. An image WINS when both are given — it is the thing so |
 | `executionMode` | body | — | ExecutionMode is one-shot or long-running. Empty takes one-shot, which runs only when something POSTs to it. l |
 | `instructions` | body | — | Instructions is the system prompt, up to 32 KiB, stored verbatim. This is what the model reads; Description is |
+| `max_task_micro_usd` | body | — | MaxTaskMicroUSD is the ceiling for a single run, in micro-USD. A session cannot exceed it even when the period |
 | `model` | body | — | Model names the model to run on. Omit it to take the deployment's configured default; name one and it is check |
 | `name` | body | — | Name is the agent's org-unique handle and the only required field. It must match ^[A-Za-z0-9][A-Za-z0-9._-]&#123;0, |
+| `period` | body | — | Period is the window the cap resets on: day, week or month. |
 | `schedule` | body | — | Schedule is the 5-field cron a long-running agent fires on, parsed here so a bad expression is a 400 and not a |
-| `serviceAccountId` | body | — | ServiceAccountID optionally names the IAM agent service account (&lt;org&gt;-&lt;agent&gt;) a scheduled run should be bill |
-| `tools` | body | — | Tools are the tool names this agent may call. Omitted or empty grants NONE — that default is the agent's autho |
 
 <Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
 <Tab value="CLI">
@@ -44,28 +47,28 @@ hanzo agents create
 <Tabs items={['.ts', '.py', '.go', '.rs', '.java']}>
 <Tab value=".ts">
 ```ts
-import { Configuration, AgentsApi } from 'hanzoai';
+import { Configuration, AgentApi } from 'hanzoai';
 
-const api = new AgentsApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
-const { data } = await api.postAgents({ computeRef: "<computeRef>", description: "<description>" });
+const api = new AgentApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data } = await api.postAgent({ avatar: "<avatar>", cap_micro_usd: 0 });
 ```
 </Tab>
 <Tab value=".py">
 ```python
 from hanzoai.cloud import ApiClient, Configuration
-from hanzoai.cloud.api import AgentsApi
+from hanzoai.cloud.api import AgentApi
 
 client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
-result = AgentsApi(client).post_agents(compute_ref="<computeRef>", description="<description>")
+result = AgentApi(client).post_agent(avatar="<avatar>", cap_micro_usd=0)
 ```
 </Tab>
 <Tab value=".go">
 ```go
-cfg := cloud.NewConfiguration()
+cfg := hanzoai.NewConfiguration()
 cfg.AddDefaultHeader("Authorization", "Bearer "+os.Getenv("HANZO_API_KEY"))
-client := cloud.NewAPIClient(cfg)
+client := hanzoai.NewAPIClient(cfg)
 
-resp, _, err := client.AgentsAPI.PostAgents(context.Background()).Execute()
+resp, _, err := client.AgentAPI.PostAgent(context.Background()).Execute()
 if err != nil {
 	return err
 }
@@ -73,26 +76,28 @@ if err != nil {
 </Tab>
 <Tab value=".rs">
 ```rust
-use hanzo_cloud::apis::{configuration::Configuration, agents_api};
+use hanzo_client::apis::{configuration::Configuration, agent_api};
 
 let mut cfg = Configuration::new();
 cfg.bearer_access_token = std::env::var("HANZO_API_KEY").ok();
 
-let result = agents_api::post_agents(&cfg, Default::default()).await?;
+let result = agent_api::post_agent(&cfg, Default::default()).await?;
 ```
 </Tab>
 <Tab value=".java">
 ```java
 import ai.hanzo.cloud.ApiClient;
-import ai.hanzo.cloud.api.AgentsApi;
+import ai.hanzo.cloud.api.AgentApi;
 
 ApiClient client = new ApiClient();
-client.setRequestInterceptor(b -> b.header("Authorization", "Bearer " + System.getenv("HANZO_API_KEY")));
+client.setBearerToken(System.getenv("HANZO_API_KEY"));
 
-var result = new AgentsApi(client).postAgents();
+var result = new AgentApi(client).postAgent();
 ```
 </Tab>
 </Tabs>
+
+The method above is the one at the current release of the document. `hanzoai@8.5.157` (npm) and `hanzoai@8.5.156` (PyPI) were generated from an earlier release, where this operation carried a different id, so it spells the method differently — regenerating the clients is what makes the two agree. [SDKs →](/docs/sdks)
 </Tab>
 <Tab value="HTTP">
 ```bash
@@ -100,13 +105,13 @@ curl -X POST https://api.hanzo.ai/v1/agent \
   -H "Authorization: Bearer $HANZO_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-       "computeRef": "<computeRef>",
-       "description": "<description>"
+       "avatar": "<avatar>",
+       "cap_micro_usd": 0
      }'
 ```
 </Tab>
 <Tab value="MCP">
-Tool `agents`, op `post_agents` — POST the JSON-RPC envelope to `https://api.hanzo.ai/v1/mcp`.
+Tool `agents`, op `post_agent` — POST the JSON-RPC envelope to `https://api.hanzo.ai/v1/mcp`.
 
 ```bash
 curl -X POST https://api.hanzo.ai/v1/mcp \
@@ -119,10 +124,10 @@ curl -X POST https://api.hanzo.ai/v1/mcp \
        "params": {
          "name": "agents",
          "arguments": {
-           "op": "post_agents",
+           "op": "post_agent",
            "input": {
-             "computeRef": "<computeRef>",
-             "description": "<description>"
+             "avatar": "<avatar>",
+             "cap_micro_usd": 0
            }
          }
        }
@@ -157,28 +162,28 @@ hanzo agents run <ref>
 <Tabs items={['.ts', '.py', '.go', '.rs', '.java']}>
 <Tab value=".ts">
 ```ts
-import { Configuration, AgentsApi } from 'hanzoai';
+import { Configuration, AgentApi } from 'hanzoai';
 
-const api = new AgentsApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
-const { data } = await api.postAgentsByRefRun({ ref: 'ref' });
+const api = new AgentApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data } = await api.postAgentByRefRun({ ref: 'ref' });
 ```
 </Tab>
 <Tab value=".py">
 ```python
 from hanzoai.cloud import ApiClient, Configuration
-from hanzoai.cloud.api import AgentsApi
+from hanzoai.cloud.api import AgentApi
 
 client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
-result = AgentsApi(client).post_agents_by_ref_run(ref='ref')
+result = AgentApi(client).post_agent_by_ref_run(ref='ref')
 ```
 </Tab>
 <Tab value=".go">
 ```go
-cfg := cloud.NewConfiguration()
+cfg := hanzoai.NewConfiguration()
 cfg.AddDefaultHeader("Authorization", "Bearer "+os.Getenv("HANZO_API_KEY"))
-client := cloud.NewAPIClient(cfg)
+client := hanzoai.NewAPIClient(cfg)
 
-resp, _, err := client.AgentsAPI.PostAgentsByRefRun(context.Background()).Execute()
+resp, _, err := client.AgentAPI.PostAgentByRefRun(context.Background()).Execute()
 if err != nil {
 	return err
 }
@@ -186,26 +191,28 @@ if err != nil {
 </Tab>
 <Tab value=".rs">
 ```rust
-use hanzo_cloud::apis::{configuration::Configuration, agents_api};
+use hanzo_client::apis::{configuration::Configuration, agent_api};
 
 let mut cfg = Configuration::new();
 cfg.bearer_access_token = std::env::var("HANZO_API_KEY").ok();
 
-let result = agents_api::post_agents_by_ref_run(&cfg, Default::default()).await?;
+let result = agent_api::post_agent_by_ref_run(&cfg, Default::default()).await?;
 ```
 </Tab>
 <Tab value=".java">
 ```java
 import ai.hanzo.cloud.ApiClient;
-import ai.hanzo.cloud.api.AgentsApi;
+import ai.hanzo.cloud.api.AgentApi;
 
 ApiClient client = new ApiClient();
-client.setRequestInterceptor(b -> b.header("Authorization", "Bearer " + System.getenv("HANZO_API_KEY")));
+client.setBearerToken(System.getenv("HANZO_API_KEY"));
 
-var result = new AgentsApi(client).postAgentsByRefRun();
+var result = new AgentApi(client).postAgentByRefRun();
 ```
 </Tab>
 </Tabs>
+
+The method above is the one at the current release of the document. `hanzoai@8.5.157` (npm) and `hanzoai@8.5.156` (PyPI) were generated from an earlier release, where this operation carried a different id, so it spells the method differently — regenerating the clients is what makes the two agree. [SDKs →](/docs/sdks)
 </Tab>
 <Tab value="HTTP">
 ```bash
@@ -214,7 +221,7 @@ curl -X POST https://api.hanzo.ai/v1/agent/<ref>/run \
 ```
 </Tab>
 <Tab value="MCP">
-MCP reaches **agents** through the `agents` tool, which names its 36 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
+MCP reaches **agent** through the `agents` tool, which names its 36 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
 
 ```bash
 curl -X POST https://api.hanzo.ai/v1/mcp \
@@ -257,28 +264,28 @@ hanzo agents runs <ref>
 <Tabs items={['.ts', '.py', '.go', '.rs', '.java']}>
 <Tab value=".ts">
 ```ts
-import { Configuration, AgentsApi } from 'hanzoai';
+import { Configuration, AgentApi } from 'hanzoai';
 
-const api = new AgentsApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
-const { data } = await api.getAgentsByRefRuns({ ref: 'ref' });
+const api = new AgentApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data } = await api.getAgentByRefRuns({ ref: 'ref' });
 ```
 </Tab>
 <Tab value=".py">
 ```python
 from hanzoai.cloud import ApiClient, Configuration
-from hanzoai.cloud.api import AgentsApi
+from hanzoai.cloud.api import AgentApi
 
 client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
-result = AgentsApi(client).get_agents_by_ref_runs(ref='ref')
+result = AgentApi(client).get_agent_by_ref_runs(ref='ref')
 ```
 </Tab>
 <Tab value=".go">
 ```go
-cfg := cloud.NewConfiguration()
+cfg := hanzoai.NewConfiguration()
 cfg.AddDefaultHeader("Authorization", "Bearer "+os.Getenv("HANZO_API_KEY"))
-client := cloud.NewAPIClient(cfg)
+client := hanzoai.NewAPIClient(cfg)
 
-resp, _, err := client.AgentsAPI.GetAgentsByRefRuns(context.Background()).Execute()
+resp, _, err := client.AgentAPI.GetAgentByRefRuns(context.Background()).Execute()
 if err != nil {
 	return err
 }
@@ -286,26 +293,28 @@ if err != nil {
 </Tab>
 <Tab value=".rs">
 ```rust
-use hanzo_cloud::apis::{configuration::Configuration, agents_api};
+use hanzo_client::apis::{configuration::Configuration, agent_api};
 
 let mut cfg = Configuration::new();
 cfg.bearer_access_token = std::env::var("HANZO_API_KEY").ok();
 
-let result = agents_api::get_agents_by_ref_runs(&cfg, Default::default()).await?;
+let result = agent_api::get_agent_by_ref_runs(&cfg, Default::default()).await?;
 ```
 </Tab>
 <Tab value=".java">
 ```java
 import ai.hanzo.cloud.ApiClient;
-import ai.hanzo.cloud.api.AgentsApi;
+import ai.hanzo.cloud.api.AgentApi;
 
 ApiClient client = new ApiClient();
-client.setRequestInterceptor(b -> b.header("Authorization", "Bearer " + System.getenv("HANZO_API_KEY")));
+client.setBearerToken(System.getenv("HANZO_API_KEY"));
 
-var result = new AgentsApi(client).getAgentsByRefRuns();
+var result = new AgentApi(client).getAgentByRefRuns();
 ```
 </Tab>
 </Tabs>
+
+The method above is the one at the current release of the document. `hanzoai@8.5.157` (npm) and `hanzoai@8.5.156` (PyPI) were generated from an earlier release, where this operation carried a different id, so it spells the method differently — regenerating the clients is what makes the two agree. [SDKs →](/docs/sdks)
 </Tab>
 <Tab value="HTTP">
 ```bash
@@ -314,23 +323,19 @@ curl https://api.hanzo.ai/v1/agent/<ref>/runs \
 ```
 </Tab>
 <Tab value="MCP">
-Tool `agents`, op `get_agents_by_ref_runs` — POST the JSON-RPC envelope to `https://api.hanzo.ai/v1/mcp`.
+MCP reaches **agent** through the `agents` tool, which names its 36 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
 
 ```bash
 curl -X POST https://api.hanzo.ai/v1/mcp \
-  -H "Authorization: Bearer $HANZO_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
        "jsonrpc": "2.0",
        "id": 1,
        "method": "tools/call",
        "params": {
-         "name": "agents",
+         "name": "describe",
          "arguments": {
-           "op": "get_agents_by_ref_runs",
-           "input": {
-             "ref": "<ref>"
-           }
+           "op": "list_agent_conversations"
          }
        }
      }'
