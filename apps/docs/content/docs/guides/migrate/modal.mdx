@@ -1,10 +1,10 @@
 ---
 title: Modal
-description: Modal deploys Python functions onto GPUs and calls them from a client. Here that is /v1/functions (11 operations) for the function, /v1/sandbox (19) for a sandbox and /v1/visor (34) for the accelerators underneath — with the tenant coming from your key rather than a workspace.
+description: Modal deploys Python functions onto GPUs and calls them from a client. Here that is /v1/function (11 operations) for the function, /v1/sandbox (19) for a sandbox and /v1/compute (34) for the accelerators underneath — with the tenant coming from your key rather than a workspace.
 ---
 
 Modal runs a Python function on a GPU and hands you a handle to call it.
-`/v1/functions` (11 operations) is the same unit: publish a record, invoke it by
+`/v1/function` (11 operations) is the same unit: publish a record, invoke it by
 name, read what it did. The structural difference to know before porting
 anything is that Modal deploys a **graph** — an app holding functions holding
 images, volumes and secrets, all declared in one file and shipped together by
@@ -25,13 +25,13 @@ curl -sS -X POST https://api.hanzo.ai/v1/account/keys \
   -d '{"type":"secret"}'
 
 # 2. publish the function — name is the only required field
-curl -sS -X POST https://api.hanzo.ai/v1/functions \
+curl -sS -X POST https://api.hanzo.ai/v1/function \
   -H "Authorization: Bearer $HANZO_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{"name":"render","runtime":"python","code":"import sys; print(sys.stdin.read().strip().upper())"}'
 
 # 3. invoke it — input arrives on stdin, the record comes back
-curl -sS -X POST https://api.hanzo.ai/v1/functions/render/invoke \
+curl -sS -X POST https://api.hanzo.ai/v1/function/render/invoke \
   -H "Authorization: Bearer $HANZO_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{"input":"abc"}'
@@ -39,7 +39,7 @@ curl -sS -X POST https://api.hanzo.ai/v1/functions/render/invoke \
 
 Step 2 answers 201 with the stored record; step 3 answers 200 with a real
 invocation — an id, a duration and how the run ended; what it printed is at
-`GET /v1/functions/{name}/logs`. That is `modal deploy` plus `.remote()` in two
+`GET /v1/function/{name}/logs`. That is `modal deploy` plus `.remote()` in two
 calls, with no app namespace to name and no client whose Python has to match the
 container's.
 
@@ -47,9 +47,9 @@ container's.
 
 | Capability | What it does | Operations |
 |---|---|---|
-| `/v1/functions` | Publish once, then call it at `POST /v1/functions/{name}/invoke` | 11 |
+| `/v1/function` | Publish once, then call it at `POST /v1/function/{name}/invoke` | 11 |
 | `/v1/sandbox` | Lease a container at `POST /v1/sandbox/lease`, then exec, read, write | 19 |
-| `/v1/visor` | The GPUs a `fleet` function runs on, listed at `GET /v1/visor/gpus` | 34 |
+| `/v1/compute` | The GPUs a `fleet` function runs on, listed at `GET /v1/compute/gpus` | 34 |
 
 ## Nouns
 
@@ -60,19 +60,19 @@ container's.
 | Workspace, from `modal token new` | Your org, taken from the validated key. Never a field in the request |
 | App — `modal.App("thumbs")`, the namespace a function deploys under | No app namespace. `name` is org-unique and addresses the function directly |
 | Environment — `modal environment create` | `namespace` on the record, which is cosmetic grouping. The org is the isolation key |
-| `@app.function(...)` plus `modal deploy` | `POST /v1/functions` — one record carrying runtime, code, limits and secret names |
-| `.remote(x)` | `POST /v1/functions/{name}/invoke`, `input` arriving on the program's stdin |
-| Web endpoint and its `*.modal.run` URL | `endpoint` on the record; every function's is listed at `GET /v1/functions/triggers` |
-| `gpu="H100"` | `target: "fleet"` — the org's own GPU fleet, inventoried at `GET /v1/visor/gpus` |
+| `@app.function(...)` plus `modal deploy` | `POST /v1/function` — one record carrying runtime, code, limits and secret names |
+| `.remote(x)` | `POST /v1/function/{name}/invoke`, `input` arriving on the program's stdin |
+| Web endpoint and its `*.modal.run` URL | `endpoint` on the record; every function's is listed at `GET /v1/function/triggers` |
+| `gpu="H100"` | `target: "fleet"` — the org's own GPU fleet, inventoried at `GET /v1/compute/gpus` |
 | `timeout=900` | `timeoutSec` — 30 by default, clamped at 900 rather than reset to the default |
 | `memory=`, `cpu=` | `memoryLimit` — 256Mi by default, and the multiplier on the GB-seconds charge |
 | `image=modal.Image...` | `image` — a prebuilt image, listed at `GET /v1/registry/images` |
 | `secrets=[modal.Secret.from_name("s3")]` | `envNames` — the secret NAMES only. Values stay in `/v1/kms` (5) and never ride the definition |
-| `modal app list` | `GET /v1/functions/deployments` — a function has one record, and that record IS its live deployment |
-| `modal app logs` | `GET /v1/functions/{name}/logs` — the most recent run's output, and nothing older |
-| The function's dashboard page | `GET /v1/functions/{name}` — definition, 7-day rollup, trigger, last twenty invocations, secret names, in one round-trip |
-| Call history | `GET /v1/functions/{name}/invocations` — real recorded rows, newest first, never a projection |
-| The usage graphs | `GET /v1/functions/metrics` — counted invocations per bucket, with the cost column left null rather than guessed |
+| `modal app list` | `GET /v1/function/deployments` — a function has one record, and that record IS its live deployment |
+| `modal app logs` | `GET /v1/function/{name}/logs` — the most recent run's output, and nothing older |
+| The function's dashboard page | `GET /v1/function/{name}` — definition, 7-day rollup, trigger, last twenty invocations, secret names, in one round-trip |
+| Call history | `GET /v1/function/{name}/invocations` — real recorded rows, newest first, never a projection |
+| The usage graphs | `GET /v1/function/metrics` — counted invocations per bucket, with the cost column left null rather than guessed |
 
 ### Sandboxes and shells
 
@@ -98,9 +98,9 @@ container's.
 | `modal secret create` | `POST /v1/kms/secrets`; `GET /v1/kms/secrets` enumerates names and is structurally incapable of emitting a value |
 | Building and holding that image | `POST /v1/platform/runner` builds it in-cluster and answers 202 with the build job id; `/v1/registry` (6) holds it in the org's own OCI namespace, filtered server-side so a listing can only hold your images |
 | `min_containers`, an always-warm service | `POST /v1/platform/run` — an image in, a live URL back, `minScale` floor and `maxScale` ceiling, idempotent by name |
-| Modal's GPU classes and pricing page | `GET /v1/visor/compute/sizes` for what can be launched, `GET /v1/visor/fleet` for what you hold |
-| Adding capacity | `POST /v1/visor/machines`, or your own host dialing in with `hanzo link` |
-| The GPU work queue | `GET /v1/visor/fleet/jobs` — per-node lanes plus a shared any-GPU lane, cancelled at `POST /v1/visor/fleet/jobs/{id}/cancel` |
+| Modal's GPU classes and pricing page | `GET /v1/compute/compute/sizes` for what can be launched, `GET /v1/compute/fleet` for what you hold |
+| Adding capacity | `POST /v1/compute/machines`, or your own host dialing in with `hanzo link` |
+| The GPU work queue | `GET /v1/compute/fleet/jobs` — per-node lanes plus a shared any-GPU lane, cancelled at `POST /v1/compute/fleet/jobs/{id}/cancel` |
 | Training and fine-tuning runs you put on Modal | `POST /v1/ai/finetune/jobs`, then `POST /v1/ai/finetune/deploy` |
 | Serving your own weights behind an endpoint | `POST /v1/ml/models`, inference at `POST /v1/ml/models/{name}/predict` |
 | Calling a hosted model instead of hosting one | `/v1/ai` (272) — the Zen family, served on the same key |
@@ -133,7 +133,7 @@ def render(seed: str) -> str:
 Hanzo — publish the record, then invoke it:
 
 ```bash
-curl -sS -X POST https://api.hanzo.ai/v1/functions \
+curl -sS -X POST https://api.hanzo.ai/v1/function \
   -H "Authorization: Bearer $HANZO_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
@@ -146,7 +146,7 @@ curl -sS -X POST https://api.hanzo.ai/v1/functions \
     "code": "import sys; print(sys.stdin.read().strip().upper())"
   }'
 
-curl -sS -X POST https://api.hanzo.ai/v1/functions/render/invoke \
+curl -sS -X POST https://api.hanzo.ai/v1/function/render/invoke \
   -H "Authorization: Bearer $HANZO_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{"input":"abc"}'
@@ -173,7 +173,7 @@ invocation of a failing program.
 Reading it back is one call, not a tour of the dashboard:
 
 ```bash
-curl -sS https://api.hanzo.ai/v1/functions/render \
+curl -sS https://api.hanzo.ai/v1/function/render \
   -H "Authorization: Bearer $HANZO_API_KEY"
 ```
 
@@ -191,14 +191,14 @@ stdin; structured output is whatever your program prints. A typed signature does
 not port — write the encode and decode yourself.
 
 **`.map()` and `.spawn()` have no counterpart.** Modal fans a function across an
-iterable and hands back a `FunctionCall` you poll. `POST /v1/functions/{name}/invoke`
+iterable and hands back a `FunctionCall` you poll. `POST /v1/function/{name}/invoke`
 is synchronous and answers when the run is over. Fan-out is a queue you drive:
-`/v1/mq` (15) for the work, one invoke per item, and `GET /v1/visor/fleet/jobs`
+`/v1/mq` (15) for the work, one invoke per item, and `GET /v1/compute/fleet/jobs`
 to watch what the GPU lanes are holding.
 
 **`gpu="H100:8"` is not a field on a function.** `target` is `sandbox` or
 `fleet`, and `fleet` means the org's own accelerators — the ones at
-`GET /v1/visor/gpus`, added by `POST /v1/visor/machines` or by a host running
+`GET /v1/compute/gpus`, added by `POST /v1/compute/machines` or by a host running
 `hanzo link`. You choose the fleet, not the card, and `fleet` accepts
 `runtime: python` only.
 
@@ -216,5 +216,5 @@ from inside the code.
 memory limit, and no replica floor — it starts when it is called. An always-on
 autoscaled service is `POST /v1/platform/run`, which takes `minScale` and
 `maxScale` and is idempotent by name. Port a Modal function with
-`min_containers` there and keep `/v1/functions` for work that begins on a
+`min_containers` there and keep `/v1/function` for work that begins on a
 request.

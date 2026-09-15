@@ -83,14 +83,14 @@ staging key from touching production data.
 | **Created at** | `/v1/projects` | `/v1/iam/projects` |
 | **Identified by** | a slug, unique per org | an id, carried as `X-Project-Id` |
 | **Versioned by** | releases | nothing — it is a boundary |
-| **Capability** | [projects](/docs/openapi/projects) | [iam](/docs/openapi/iam) |
+| **Capability** | [projects](/docs/openapi/project) | [iam](/docs/openapi/iam) |
 
 Rule of thumb: **if you are deploying bytes, it is a site project. If you are
 scoping permissions, it is an IAM project.**
 
 ## Next
 
-- **[Projects reference](/docs/openapi/projects)** — every operation on a site.
+- **[Projects reference](/docs/openapi/project)** — every operation on a site.
 - **[Platform](/docs/openapi/platform)** — the container plane, and what lives
   under an IAM project.
 - **[Environments](/docs/environments)** — why there is no environment resource.

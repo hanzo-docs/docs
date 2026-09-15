@@ -1,12 +1,12 @@
 ---
 title: Netlify
-description: Netlify serves a built directory, runs functions beside it, collects form posts and signs visitors in. Here that is /v1/projects (27) for the site, /v1/functions (11) for the code and /v1/iam (159) for the people — and a deploy is one call, because the bytes never pass through the API.
+description: Netlify serves a built directory, runs functions beside it, collects form posts and signs visitors in. Here that is /v1/projects (27) for the site, /v1/function (11) for the code and /v1/iam (159) for the people — and a deploy is one call, because the bytes never pass through the API.
 ---
 
 Netlify does five things: it serves a built directory, builds that directory
 from a repo, runs functions beside it, collects form posts, and signs visitors
 in. Three capabilities answer those — `/v1/projects` (27) is the site,
-`/v1/functions` (11) is the code, `/v1/iam` (159) is the people — and a form
+`/v1/function` (11) is the code, `/v1/iam` (159) is the people — and a form
 post lands in the project's own Base data space, which is provisioned when the
 project is created.
 
@@ -50,7 +50,7 @@ slug, because the key already carried the org.
 | Capability | What it does | Operations |
 |---|---|---|
 | `/v1/projects` | The site: slug, archive deploy, releases, custom domains, cache purge | 27 |
-| `/v1/functions` | The code beside it: node, python or deno, invoked by name | 11 |
+| `/v1/function` | The code beside it: node, python or deno, invoked by name | 11 |
 | `/v1/iam` | The people: signup, OAuth, SCIM, roles, invitations | 159 |
 
 ## Nouns
@@ -88,10 +88,10 @@ answers it.
 | Sensitive values in a build env | `/v1/kms` (5) — sealed at rest, listed by name only |
 | Deploy log | `GET /v1/platform/projects/{project}/apps/{app}/deployments/{id}/logs` |
 | Deploy notification to Slack or a URL | `/v1/webhook` (8), with `deliveries` and a `test` |
-| Serverless Function | `POST /v1/functions` — node, python or deno |
+| Serverless Function | `POST /v1/function` — node, python or deno |
 | Edge Function, Deno runtime | Same surface, `runtime` set to `deno` |
-| `/.netlify/functions/{name}` | `POST /v1/functions/{name}/invoke` |
-| Function log, function metrics | `GET /v1/functions/{name}/logs`, `GET /v1/functions/metrics` |
+| `/.netlify/functions/{name}` | `POST /v1/function/{name}/invoke` |
+| Function log, function metrics | `GET /v1/function/{name}/logs`, `GET /v1/function/metrics` |
 | Scheduled function | `/v1/tasks` (5) — a durable engine that outlives any one deploy |
 | Netlify Blobs | `/v1/kv` (6) for values with history, `/v1/s3` (6) for objects |
 

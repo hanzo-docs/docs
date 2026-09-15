@@ -45,7 +45,7 @@ Sign in once (`hanzo auth login`) and the `hanzo` cloud tool + your connectors a
 
 ## The tool index
 
-Every tool the platform can expose is indexed at `GET api.hanzo.ai/v1/tools` (authenticated). The unified server presents them through the compact action-routed surface above. A tool's `source` is one of six values, and the order below is also the [precedence order](/docs/extend#precedence--who-wins-a-name-collision) — the lowest wins a name collision:
+Every tool the platform can expose is indexed at `GET api.hanzo.ai/v1/tool` (authenticated). The unified server presents them through the compact action-routed surface above. A tool's `source` is one of six values, and the order below is also the [precedence order](/docs/extend#precedence--who-wins-a-name-collision) — the lowest wins a name collision:
 
 | Source | What it is |
 |--------|-----------|

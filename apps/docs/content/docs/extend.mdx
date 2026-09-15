@@ -94,7 +94,7 @@ source sorts after all six.
 A registered tool is discoverable but not callable. `Registry.Dispatch`
 (`apps/tools/registry.go:231`) resolves by precedence, then refuses anything not
 activated for the caller's `(org, project)` — `403`, before your code runs. Switch
-one on with `PUT /v1/tools/activation`, or `hanzo tools activation replace`.
+one on with `PUT /v1/tool/activation`, or `hanzo tools activation replace`.
 
 ```bash
 hanzo tools get                                   # everything reachable, each flagged activated
@@ -186,7 +186,7 @@ Four things the plane does that you must not do yourself:
 **A plugin is a process.** The fused monolith is gone: each subsystem ships as
 its own binary and the host starts it on the first request that reaches it
 (`cmd/cloud/main.go`). `tools.Register` writes to a **process-wide** registry
-(`apps/tools/registry.go:70`), so a provider is on `GET /v1/tools` exactly when
+(`apps/tools/registry.go:70`), so a provider is on `GET /v1/tool` exactly when
 its subsystem and the tools plane are in the same process. That is true of a
 local or single-app binary, and of the two providers the tools plane registers
 itself (`apps/tools/tools.go:90`). It is a fact about the deployment, not about
@@ -209,7 +209,7 @@ header to inject into, and `secret`, the value. The CLI has no `--secret` flag
 today, so a credentialed registration goes over HTTP:
 
 ```bash
-curl -sS https://api.hanzo.ai/v1/tools/mcp/servers \
+curl -sS https://api.hanzo.ai/v1/tool/mcp/servers \
   -H "Authorization: Bearer $HANZO_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -226,7 +226,7 @@ is never listed and never returned by any route. With no KMS configured, a
 registration carrying a secret is refused rather than stored in the clear.
 
 Passing `listing` instead of `url` enables an entry from the public catalogue
-(`GET /v1/tools/catalog`) — the same record either way, with `source` recording
+(`GET /v1/tool/catalog`) — the same record either way, with `source` recording
 which it was. A listing that ships only a runnable package and publishes no
 streamable-http endpoint is refused: there is nothing to reach.
 
@@ -336,13 +336,13 @@ and `apps/tools/skillstore.go:206` for an org's own — and `Dispatch` returns
 `ErrNotDispatchable`, which the API answers as **422**. A skill is discovery and
 activation metadata attached to an agent; it is never called.
 
-So a client that filters `GET /v1/tools` on `dispatchable` renders an **empty
+So a client that filters `GET /v1/tool` on `dispatchable` renders an **empty
 Skills list**, always. Filter on `?source=skill` instead, or read
-`GET /v1/tools/skills`, which is the narrowed listing that exists for this.
+`GET /v1/tool/skills`, which is the narrowed listing that exists for this.
 </Callout>
 
 <Callout type="warn">
-**`GET /v1/tools/plugins` hides what is switched off.** It reports the
+**`GET /v1/tool/plugins` hides what is switched off.** It reports the
 deployment's mounted subsystems, and by default only the **running** ones —
 `apps/tools/registries.go:248` skips any subsystem whose `enabled` is false
 unless the query carries `all`. Pass `?all=true` to get the configured-but-off
@@ -363,7 +363,7 @@ direction for placing subsystems as independently scheduled plugins is
 HIP-0125 (Draft) — track it at [hips.hanzo.ai](https://hips.hanzo.ai).
 
 <Cards>
-  <Card title="Tool plane reference" href="/docs/openapi/tools" description="Every /v1/tools operation, generated from the document the binary emits." />
+  <Card title="Tool plane reference" href="/docs/openapi/tool" description="Every /v1/tool operation, generated from the document the binary emits." />
   <Card title="MCP" href="/docs/mcp" description="Point a client at Hanzo, or have Hanzo host your MCP server." />
   <Card title="Automations" href="/docs/openapi/auto" description="Flows, versions, runs and triggers — the /v1/auto surface." />
   <Card title="Plugin platform" href="/docs/architecture/plugin-platform" description="The unshipped HIP-0125 direction: plugins as the unit of placement." />

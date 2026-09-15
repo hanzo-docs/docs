@@ -53,7 +53,7 @@ address. Creating does not arm the flow's trigger, which is what
 | Capability | What it does | Operations |
 |---|---|---|
 | `/v1/auto` | Flows, versions, durable runs, schedules and signals. The engine holds the step tree and executes it | 17 |
-| `/v1/functions` | Code a step needs, published once and called at `POST /v1/functions/{name}/invoke` | 11 |
+| `/v1/function` | Code a step needs, published once and called at `POST /v1/function/{name}/invoke` | 11 |
 | `/v1/sandbox` | A leased machine for a step that must run a real command, at `POST /v1/sandbox/run` | 19 |
 
 ## Nouns
@@ -79,7 +79,7 @@ address. Creating does not arm the flow's trigger, which is what
 
 | Temporal | Hanzo |
 |---|---|
-| The worker fleet you build, deploy and scale | Nothing to run. Code a step needs is published to `/v1/functions` (11) and called at `POST /v1/functions/{name}/invoke` |
+| The worker fleet you build, deploy and scale | Nothing to run. Code a step needs is published to `/v1/function` (11) and called at `POST /v1/function/{name}/invoke` |
 | An activity that must run a command on a real machine | `/v1/sandbox` (19) — lease one, then `POST /v1/sandbox/run` |
 | A local activity — one short snippet | `POST /v1/exec` — a snippet in a sandboxed interpreter |
 | Task queue used as a durable buffer with acks | `/v1/mq` (15) — streams and pull consumers, drained at `.../consumer/{name}/next` |
@@ -180,7 +180,7 @@ status, the version that ran and its timestamps. Step-level detail lives in
 plainly that runs already started are unaffected, and
 `DELETE /v1/auto/flows/{id}` removes the flow, its versions and its history
 rather than stopping work. That control does exist for a supervised agent —
-`/v1/agents/sessions/{id}/pause`, `/resume` and `/stop` on the agents plane (37)
+`/v1/agent/sessions/{id}/pause`, `/resume` and `/stop` on the agents plane (37)
 — but it is a different plane, so porting a terminate means moving the work onto
 it.
 

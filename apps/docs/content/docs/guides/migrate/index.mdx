@@ -16,9 +16,9 @@ below are read from the API document this site is built from.
 | From | What it does | Capability |
 |---|---|---|
 | [Vercel](/docs/guides/migrate/vercel) | Building a repo and serving it on a domain | `/v1/platform` (37) · `/v1/projects` (27) |
-| [Netlify](/docs/guides/migrate/netlify) | Static hosting, builds, edge functions and forms | `/v1/projects` (27) · `/v1/functions` (11) |
+| [Netlify](/docs/guides/migrate/netlify) | Static hosting, builds, edge functions and forms | `/v1/projects` (27) · `/v1/function` (11) |
 | [Render](/docs/guides/migrate/render) | Apps, cron and managed data stores | `/v1/platform` (37) · `/v1/provisioning` (28) |
-| [Fly.io](/docs/guides/migrate/fly) | Machines placed in named regions | `/v1/platform` (37) · `/v1/visor` (34) |
+| [Fly.io](/docs/guides/migrate/fly) | Machines placed in named regions | `/v1/platform` (37) · `/v1/compute` (34) |
 | [Heroku](/docs/guides/migrate/heroku) | Dynos, buildpacks, pipelines and add-ons | `/v1/platform` (37) · `/v1/provisioning` (28) |
 
 ## Identity
@@ -47,22 +47,22 @@ below are read from the API document this site is built from.
 |---|---|---|
 | [Datadog](/docs/guides/migrate/datadog) | Metrics, traces, logs, dashboards and monitors | `/v1/o11y` (381) · `/v1/metrics` (11) |
 | [Sentry](/docs/guides/migrate/sentry) | Error tracking, releases and performance | `/v1/event` (12) · `/v1/o11y` (381) |
-| [PostHog](/docs/guides/migrate/posthog) | Product analytics, flags, experiments and replay | `/v1/event` (12) · `/v1/flags` (8) |
+| [PostHog](/docs/guides/migrate/posthog) | Product analytics, flags, experiments and replay | `/v1/event` (12) · `/v1/flag` (8) |
 | [Grafana](/docs/guides/migrate/grafana) | Dashboards, logs, traces and alerting | `/v1/o11y` (381) · `/v1/notify` (4) |
-| [LaunchDarkly](/docs/guides/migrate/launchdarkly) | Which users see which behaviour | `/v1/flags` (8) · `/v1/experiment` (7) |
+| [LaunchDarkly](/docs/guides/migrate/launchdarkly) | Which users see which behaviour | `/v1/flag` (8) · `/v1/experiment` (7) |
 
 ## Agents and inference
 
 | From | What it does | Capability |
 |---|---|---|
-| [OpenAI platform](/docs/guides/migrate/openai) | Models, assistants and the platform around them | `/v1/ai` (272) · `/v1/agents` (37) |
+| [OpenAI platform](/docs/guides/migrate/openai) | Models, assistants and the platform around them | `/v1/ai` (272) · `/v1/agent` (37) |
 | [NVIDIA NeMo](/docs/guides/migrate/nemo) | Nemotron, NIM, Relay, Guardrails, Evaluator and the agent toolkit | `/v1/ai` (272) · `/v1/o11y` (381) · `/v1/eval` (16) |
 | [Replicate](/docs/guides/migrate/replicate) | Running a model under a name | `/v1/ml` (7) · `/v1/ai` (272) |
-| [Modal](/docs/guides/migrate/modal) | Serverless GPU functions, sandboxes and jobs | `/v1/functions` (11) · `/v1/sandbox` (19) |
+| [Modal](/docs/guides/migrate/modal) | Serverless GPU functions, sandboxes and jobs | `/v1/function` (11) · `/v1/sandbox` (19) |
 | [LangSmith](/docs/guides/migrate/langsmith) | LLM tracing, datasets and evaluations | `/v1/o11y` (381) · `/v1/eval` (16) |
-| [Composio](/docs/guides/migrate/composio) | Authenticated third-party tools for agents | `/v1/integrations` (48) |
+| [Composio](/docs/guides/migrate/composio) | Authenticated third-party tools for agents | `/v1/integration` (48) |
 | [E2B](/docs/guides/migrate/e2b) | Sandboxes for code an agent wrote | `/v1/sandbox` (19) · `/v1/exec` (4) |
-| [Centaur](/docs/guides/migrate/centaur) | Shared Slack agents in Kubernetes sandboxes | `/v1/channels` · `/v1/agents` · `/v1/sandbox` · `/v1/integrations` |
+| [Centaur](/docs/guides/migrate/centaur) | Shared Slack agents in Kubernetes sandboxes | `/v1/channel` · `/v1/agent` · `/v1/sandbox` · `/v1/integration` |
 | [Tavily](/docs/guides/migrate/tavily) | Web search and page extraction for agents | `/v1/websearch` (6) · `/v1/crawl` (1) |
 
 ## Messaging
@@ -70,8 +70,8 @@ below are read from the API document this site is built from.
 | From | What it does | Capability |
 |---|---|---|
 | [Amazon SQS](/docs/guides/migrate/sqs) | Queues between services | `/v1/mq` (15) · `/v1/pubsub` (2) |
-| [Twilio](/docs/guides/migrate/twilio) | Phone numbers, SMS and calls | `/v1/tel` (10) · `/v1/channels` (7) |
-| [AgentMail](/docs/guides/migrate/agentmail) | Mailboxes an agent can send and read | `/v1/notify` (4) · `/v1/channels` (7) |
+| [Twilio](/docs/guides/migrate/twilio) | Phone numbers, SMS and calls | `/v1/tel` (10) · `/v1/channel` (7) |
+| [AgentMail](/docs/guides/migrate/agentmail) | Mailboxes an agent can send and read | `/v1/notify` (4) · `/v1/channel` (7) |
 | [ElevenLabs](/docs/guides/migrate/elevenlabs) | Speech synthesis and transcription | `/v1/audio` (5) |
 
 ## Money and business

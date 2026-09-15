@@ -54,7 +54,7 @@ Step 3 answers 202 — an accepted deployment, not a live one — and comes back
 |---|---|---|
 | `/v1/platform` | Builds a repo and runs it: deploy, per-deployment logs, preview, promote, rollback, env, domains | 37 |
 | `/v1/projects` | Serves a directory you already built, as content-addressed releases with domains and purge | 27 |
-| `/v1/functions` | Publishes one handler with no app around it, and invokes it | 11 |
+| `/v1/function` | Publishes one handler with no app around it, and invokes it | 11 |
 
 ## Nouns
 
@@ -82,12 +82,12 @@ product surface; the right is the capability that answers it.
 
 | Vercel | Hanzo |
 |---|---|
-| Serverless / Edge Functions | `/v1/functions` (11) |
+| Serverless / Edge Functions | `/v1/function` (11) |
 | Cron Jobs | `/v1/tasks` (5) — a durable engine, not a timer on a deployment |
 | Vercel KV | `/v1/kv` (6) |
 | Vercel Blob | `/v1/s3` (6) |
 | Vercel Postgres / storage you provision | `/v1/provisioning` (28) |
-| Edge Config | `/v1/flags` (8) — a definition and a deterministic decision |
+| Edge Config | `/v1/flag` (8) — a definition and a deterministic decision |
 | Web Analytics | `/v1/event` (12) |
 | Speed Insights, Log Drains, traces | `/v1/o11y` (381) |
 | Firewall, rate limiting, allowed origins | `/v1/gateway` (3) |

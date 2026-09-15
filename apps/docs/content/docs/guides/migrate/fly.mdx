@@ -1,13 +1,13 @@
 ---
 title: Fly.io
-description: Fly runs Firecracker machines under an app namespace, in regions you name. Here that is /v1/platform (37 operations) for an app that deploys and rolls back, and /v1/visor (34) for a machine placed in a region — with the tenant coming from your key rather than an org_slug field.
+description: Fly runs Firecracker machines under an app namespace, in regions you name. Here that is /v1/platform (37 operations) for an app that deploys and rolls back, and /v1/compute (34) for a machine placed in a region — with the tenant coming from your key rather than an org_slug field.
 ---
 
 On Fly the app is a namespace that holds no compute and the machine is the unit
 that runs, so you keep three names in step: `org_slug`, `app_name`, and the hex
 id the machine create mints. Two capabilities answer that here. **`/v1/platform`**
 (37 operations) is an application you deploy, stop, promote and roll back;
-**`/v1/visor`** (34) is a metered machine you place in a named region and
+**`/v1/compute`** (34) is a metered machine you place in a named region and
 address by the name you gave it. The structural difference to know before you
 port anything: the org is never in the request. It comes from the validated key,
 which is what decides who pays and which namespace the objects land in.
@@ -48,7 +48,7 @@ and roll back a git app.
 | Capability | What it does | Operations |
 |---|---|---|
 | `/v1/platform` | Applications you deploy, stop, promote and roll back. `run` is the one-call path from image to URL | 37 |
-| `/v1/visor` | Metered machines placed in a named region, addressed by the name you chose, priced before you spend | 34 |
+| `/v1/compute` | Metered machines placed in a named region, addressed by the name you chose, priced before you spend | 34 |
 | `/v1/ingress` | The edge `fly ips` and `fly certs` reach — routes, services, middlewares, TLS | 18 |
 
 ## Nouns
@@ -59,8 +59,8 @@ and roll back a git app.
 |---|---|
 | Organization — `org_slug`, required on every app create | Your org, taken from the validated key. Never a field in the request |
 | App — a namespace holding no compute of its own | Application under a project — `POST /v1/platform/projects/{project}/apps` |
-| Machine, addressed by a minted hex id | Machine, addressed by the name you chose — Visor keys on owner plus name, so `/v1/visor/machines/{id}` takes `edge-1` |
-| `POST /v1/apps/{app}/machines` with a config block | `POST /v1/visor/machines`, or `POST /v1/platform/run` to go from image to live URL in one call |
+| Machine, addressed by a minted hex id | Machine, addressed by the name you chose — Visor keys on owner plus name, so `/v1/compute/machines/{id}` takes `edge-1` |
+| `POST /v1/apps/{app}/machines` with a config block | `POST /v1/compute/machines`, or `POST /v1/platform/run` to go from image to live URL in one call |
 | Remote builders building your Dockerfile | An in-cluster BuildKit Job, launched by `POST .../apps/{app}/deploy` for a git app and billed in wall-clock build minutes |
 | `fly deploy` | `POST .../apps/{app}/deploy` — 202 with a monotonically versioned deployment record |
 | `fly machine start` and `stop` | `POST .../apps/{app}/start` and `.../stop` — back to the configured replicas, or to zero |
@@ -68,8 +68,8 @@ and roll back a git app.
 | `fly releases --rollback` | `POST .../apps/{app}/rollback` — redeploys the old image under a NEW version, appending to history rather than rewinding it |
 | `fly scale count` | `replicas` on the app record; `minScale` and `maxScale` on a run |
 | `auto_stop_machines`, `auto_start_machines` | `maxScale` above `minScale` declares the autoscaling ceiling; `maxScale: 0` is a fixed run at the floor |
-| `fly platform regions`, `fly platform vm-sizes` | `GET /v1/visor/compute/regions` and `GET /v1/visor/compute/sizes` |
-| GPU machines (a100, l40s) | A GPU size on `POST /v1/visor/machines`; per-accelerator inventory at `GET /v1/visor/gpus` |
+| `fly platform regions`, `fly platform vm-sizes` | `GET /v1/compute/compute/regions` and `GET /v1/compute/compute/sizes` |
+| GPU machines (a100, l40s) | A GPU size on `POST /v1/compute/machines`; per-accelerator inventory at `GET /v1/compute/gpus` |
 | `fly ssh console`, `fly machine exec` | `POST /v1/sandbox/lease`, then `POST /v1/sandbox/run`; a self-contained browser terminal at `GET /v1/sandbox/{id}/terminal` |
 | `fly machine run` for a one-off | `POST /v1/exec` — a throwaway sandbox across thirteen languages, answering stdout and the files the program left |
 
@@ -145,14 +145,14 @@ When you want a specific region, that is the machine plane, and you can price it
 before you spend anything:
 
 ```bash
-curl -sS -X POST https://api.hanzo.ai/v1/visor/machines \
+curl -sS -X POST https://api.hanzo.ai/v1/compute/machines \
   -H "Authorization: Bearer $HANZO_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{"name":"edge-1","size":"s-2vcpu-4gb","region":"sfo3","dryRun":true}'
 ```
 
 `dryRun: true` answers 200 with the quote and launches nothing. Drop it and the
-same body launches; `GET /v1/visor/machines/edge-1` and `DELETE` on the same
+same body launches; `GET /v1/compute/machines/edge-1` and `DELETE` on the same
 address reach it for the rest of its life, because the key is owner plus name
 rather than the provider's id. A machine that is recreated is still `edge-1`.
 
@@ -160,8 +160,8 @@ rather than the provider's id. A machine that is recreated is still `edge-1`.
 
 **A region is a machine's property, not an app's.** Neither `POST
 /v1/platform/run` nor the app record carries a region field — an app lands in
-your org's `tenant-<org>` namespace. `GET /v1/visor/compute/regions` is the
-catalog `POST /v1/visor/machines` places against. `fly scale count 2 --region
+your org's `tenant-<org>` namespace. `GET /v1/compute/compute/regions` is the
+catalog `POST /v1/compute/machines` places against. `fly scale count 2 --region
 syd` has no app-plane equivalent: spread on the machine plane and put the
 results behind `/v1/ingress` routes yourself.
 

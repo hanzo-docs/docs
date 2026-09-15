@@ -1,12 +1,12 @@
 ---
 title: OpenAI
-description: OpenAI serves models and the platform grown around them. Here that is /v1/ai (272 operations) for the models, their files and their routing, and /v1/agents (37) for the assistant that runs, with the OpenAI-shaped inference routes at the addresses your client already calls.
+description: OpenAI serves models and the platform grown around them. Here that is /v1/ai (272 operations) for the models, their files and their routing, and /v1/agent (37) for the assistant that runs, with the OpenAI-shaped inference routes at the addresses your client already calls.
 ---
 
 OpenAI is a model API with a platform grown around it: chat and embeddings at the
 centre, then assistants, files, vector stores, fine-tuning, batch and realtime.
 Two capabilities answer it. `/v1/ai` (272 operations) holds the models, the files
-they read, the stores they search, fine-tuning and the router; `/v1/agents` (37)
+they read, the stores they search, fine-tuning and the router; `/v1/agent` (37)
 holds the assistant, its runs and its live sessions. The OpenAI-shaped routes are
 at the addresses your client already calls — `POST /v1/chat/completions`,
 `/v1/embeddings`, `/v1/responses`, `/v1/images/generations`, `/v1/audio/speech` —
@@ -47,8 +47,8 @@ does.
 | Capability | What it does | Operations |
 |---|---|---|
 | `/v1/ai` | Models, files, stores, RAG, fine-tuning, memory and the router | 272 |
-| `/v1/agents` | The assistant — create it, run it, stream it, list every run in the org | 37 |
-| `/v1/tools` | The named tools an agent may call, and the MCP servers behind them | 19 |
+| `/v1/agent` | The assistant — create it, run it, stream it, list every run in the org | 37 |
+| `/v1/tool` | The named tools an agent may call, and the MCP servers behind them | 19 |
 
 ## Nouns
 
@@ -75,18 +75,18 @@ Four tables, because OpenAI is four products stacked on one another.
 
 | OpenAI | Hanzo |
 |---|---|
-| Assistant | Agent — `POST /v1/agents`, carrying `model`, `instructions` and `tools` |
+| Assistant | Agent — `POST /v1/agent`, carrying `model`, `instructions` and `tools` |
 | `assistant_id` | The `agent_…` id or the org-unique name you chose. Either resolves the same agent |
-| Thread, and `thread_id` | `conversationId` on `POST /v1/agents/chat`, listed at `/v1/agents/chat/conversations` |
-| Run, then poll `GET /v1/threads/{t}/runs/{r}` | `POST /v1/agents/{ref}/run` — answers the finished run |
+| Thread, and `thread_id` | `conversationId` on `POST /v1/agent/chat`, listed at `/v1/agent/chat/conversations` |
+| Run, then poll `GET /v1/threads/{t}/runs/{r}` | `POST /v1/agent/{ref}/run` — answers the finished run |
 | Reading the answer back off the thread | The run's `output`, in that same response |
-| A run's per-assistant history | `GET /v1/agents/{ref}` — the agent plus its 20 most recent runs |
-| No feed across assistants | `GET /v1/agents/runs` — every run in the org, newest first, filterable by status |
-| Tool of type `function` | A name from `GET /v1/tools` (19), dispatched with `POST /v1/tools/call` |
+| A run's per-assistant history | `GET /v1/agent/{ref}` — the agent plus its 20 most recent runs |
+| No feed across assistants | `GET /v1/agent/runs` — every run in the org, newest first, filterable by status |
+| Tool of type `function` | A name from `GET /v1/tool` (19), dispatched with `POST /v1/tool/call` |
 | Tool of type `code_interpreter` | `POST /v1/sandbox/run` (19) — exit code, stdout and stderr returned as data |
 | Tool of type `file_search` | `POST /v1/ai/rag/query` over what `POST /v1/ai/rag/ingest` indexed |
-| A remote MCP server named on a response | `POST /v1/tools/mcp/servers` registers it; `POST /v1/mcp` is the endpoint |
-| Streaming run events | `GET /v1/agents/sessions/stream` — server-sent events, filtered on tenant before fan-out |
+| A remote MCP server named on a response | `POST /v1/tool/mcp/servers` registers it; `POST /v1/mcp` is the endpoint |
+| Streaming run events | `GET /v1/agent/sessions/stream` — server-sent events, filtered on tenant before fan-out |
 | Scheduling a run yourself | `executionMode: long-running` with a 5-field cron, parsed at create |
 
 ### The data the model reads
@@ -158,12 +158,12 @@ read-back stay.
 Hanzo. Two requests and one identifier, which is the name you picked:
 
 ```bash
-curl -sS -X POST https://api.hanzo.ai/v1/agents \
+curl -sS -X POST https://api.hanzo.ai/v1/agent \
   -H "Authorization: Bearer $HANZO_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{"name":"helper","model":"zen5","instructions":"be terse"}'
 
-curl -sS -X POST https://api.hanzo.ai/v1/agents/helper/run \
+curl -sS -X POST https://api.hanzo.ai/v1/agent/helper/run \
   -H "Authorization: Bearer $HANZO_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{"input":"summarise Q3"}'
@@ -207,17 +207,17 @@ answers it.
 
 **Conversation state and runs are two surfaces, not one.** OpenAI keeps the
 messages on a thread and every run against them in the same place.
-`POST /v1/agents/{ref}/run` is one shot: it composes the agent's stored
+`POST /v1/agent/{ref}/run` is one shot: it composes the agent's stored
 instructions with your `input` and returns. Multi-turn state lives on
-`POST /v1/agents/chat` with a `conversationId`, listed at
-`/v1/agents/chat/conversations`. Pick by whether the turn needs the last one.
+`POST /v1/agent/chat` with a `conversationId`, listed at
+`/v1/agent/chat/conversations`. Pick by whether the turn needs the last one.
 
 **A tool is a name the org holds, not a schema you send.** OpenAI takes the
 function definition in the request body, so the callable set is whatever that
-request says. An agent's `tools` is a list of names resolved from `GET /v1/tools`
+request says. An agent's `tools` is a list of names resolved from `GET /v1/tool`
 at run time, and omitting it grants none — that default is the agent's authority
 and nothing widens it later. Your own function goes in by publishing an MCP
-server and registering it with `POST /v1/tools/mcp/servers`; it then appears in
+server and registering it with `POST /v1/tool/mcp/servers`; it then appears in
 the same listing.
 
 **Fine-tuning is still a job you poll.** No parity claim here.

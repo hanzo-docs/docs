@@ -1,12 +1,12 @@
 ---
 title: AgentMail
-description: AgentMail gives an agent its own mailbox. Here /v1/notify sends and /v1/channels carries the conversation — but there is no mailbox, so read the last section first.
+description: AgentMail gives an agent its own mailbox. Here /v1/notify sends and /v1/channel carries the conversation — but there is no mailbox, so read the last section first.
 ---
 
 AgentMail gives an agent an email address of its own: it sends, receives,
 threads and replies. Two capabilities answer parts of that — `/v1/notify` (4
 operations) delivers transactional email through the org's own provider
-credential, and `/v1/channels` (7) is the conversation plane, inbound and
+credential, and `/v1/channel` (7) is the conversation plane, inbound and
 outbound. Neither is a mailbox. If inbound email is the reason you use
 AgentMail, read [what does not carry](#what-does-not-carry) before anything else.
 
@@ -29,7 +29,7 @@ curl -sS -X POST "https://api.hanzo.ai/v1/notify/send/email?sync=true" \
   -d '{"to":["ada@example.com"],"subject":"Your report is ready","body":"It is attached."}'
 
 # 3. read what people have sent the org's bots — oldest first
-curl -sS "https://api.hanzo.ai/v1/channels/inbox?limit=100" \
+curl -sS "https://api.hanzo.ai/v1/channel/inbox?limit=100" \
   -H "Authorization: Bearer $HANZO_API_KEY"
 ```
 
@@ -43,7 +43,7 @@ why replies to that email land nowhere on this surface.
 | Capability | What it does | Operations |
 |---|---|---|
 | `/v1/notify` | Sends email and SMS through the org's own provider credential, read from KMS, and fails closed when none is configured | 4 |
-| `/v1/channels` | The conversation plane across Discord, Slack, Teams and Telegram — inbound feed, outbound send, allowlist and pairing | 7 |
+| `/v1/channel` | The conversation plane across Discord, Slack, Teams and Telegram — inbound feed, outbound send, allowlist and pairing | 7 |
 
 ## Nouns
 
@@ -51,10 +51,10 @@ why replies to that email land nowhere on this surface.
 |---|---|
 | `client.inboxes.messages.send(...)` | `POST /v1/notify/send/email?sync=true` — `to`, `subject`, `body` |
 | The API key scoped to one inbox | The org in your key |
-| `client.inboxes.messages.list(...)` | `GET /v1/channels/inbox` — a cursor feed of what people sent the org's bots |
+| `client.inboxes.messages.list(...)` | `GET /v1/channel/inbox` — a cursor feed of what people sent the org's bots |
 | The pagination cursor | `since`, an integer cursor. Pass the returned `cursor` back |
-| `client.inboxes.messages.reply(...)` | `POST /v1/channels/{channel}/send` with `replyTo` |
-| Which surfaces the agent can reach | `GET /v1/channels` — every channel, and whether it can send right now |
+| `client.inboxes.messages.reply(...)` | `POST /v1/channel/{channel}/send` with `replyTo` |
+| Which surfaces the agent can reach | `GET /v1/channel` — every channel, and whether it can send right now |
 | A message's `from`, `to`, `subject`, `text` | The notify body's `to`, `subject`, `body`; the inbox envelope's `sender`, `room`, `text` |
 
 The delivery credential is the org's own, read from KMS. Naming no provider
@@ -97,11 +97,11 @@ curl -X POST "https://api.hanzo.ai/v1/notify/send/email?sync=true" \
 
 # Read what people have sent the org's bots. Oldest first; pass the returned
 # cursor back as `since` for only what has arrived since.
-curl -sS "https://api.hanzo.ai/v1/channels/inbox?limit=100" \
+curl -sS "https://api.hanzo.ai/v1/channel/inbox?limit=100" \
   -H "Authorization: Bearer $HANZO_API_KEY"
 
 # Answer one, on the transport it came in on.
-curl -X POST https://api.hanzo.ai/v1/channels/slack/send \
+curl -X POST https://api.hanzo.ai/v1/channel/slack/send \
   -H "Authorization: Bearer $HANZO_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
@@ -125,7 +125,7 @@ twice, while a send that fails releases the key so you can re-attempt.
 allocate one from. `client.inboxes.create()` has no counterpart: `/v1/notify` is
 a sender, not an account.
 
-**No inbound email.** `GET /v1/channels/inbox` is a feed of chat — Discord,
+**No inbound email.** `GET /v1/channel/inbox` is a feed of chat — Discord,
 Slack, Teams and Telegram — not mail. Nothing on this surface receives an email,
 so an agent that reads its own replies keeps its existing mail path.
 
@@ -144,8 +144,8 @@ The inbox here is a cursor feed you poll: pass the returned `cursor` back as
 **A bot must be spoken to first.** A room the org has not bound is 403, and a
 room whose route the bot has never learned is 409 — meaning someone has to
 message the bot there before you can send into it. There is also an access
-policy per channel at `GET /v1/channels/allowlist`, and pairing requests to
-approve at `GET /v1/channels/pairing`.
+policy per channel at `GET /v1/channel/allowlist`, and pairing requests to
+approve at `GET /v1/channel/pairing`.
 
 **All four transports render text today.** Attachments and actions are in the
 send envelope, and they may not appear as you expect.

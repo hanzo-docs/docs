@@ -1,12 +1,12 @@
 ---
 title: Twilio
-description: Twilio holds phone numbers and moves messages over them. Three capabilities answer it — /v1/tel for the carrier, /v1/notify for transactional delivery, /v1/channels for chat.
+description: Twilio holds phone numbers and moves messages over them. Three capabilities answer it — /v1/tel for the carrier, /v1/notify for transactional delivery, /v1/channel for chat.
 ---
 
 Twilio is three products wearing one account: numbers and the calls and texts
 over them, transactional delivery through a provider you configure, and chat on
 somebody else's transport. Each has its own address here — `/v1/tel` (10
-operations), `/v1/notify` (4), `/v1/channels` (7).
+operations), `/v1/notify` (4), `/v1/channel` (7).
 
 ## Start here
 
@@ -40,7 +40,7 @@ and buy with `POST /v1/tel/numbers` before sending.
 | Capability | What it does | Operations |
 |---|---|---|
 | `/v1/tel` | Numbers the org holds, and the calls and messages over them | 10 |
-| `/v1/channels` | Chat on Discord, Slack, Teams and Telegram | 7 |
+| `/v1/channel` | Chat on Discord, Slack, Teams and Telegram | 7 |
 | `/v1/notify` | Transactional email and SMS through the org's own provider credential | 4 |
 
 ## Nouns
@@ -58,7 +58,7 @@ and buy with `POST /v1/tel/numbers` before sending.
 | TwiML answering a call | `agent` — the Hanzo assistant that answers it |
 | Twilio Email or SendGrid | `POST /v1/notify/send/email?sync=true` |
 | A transactional SMS through your own Twilio account | `POST /v1/notify/send/sms?sync=true` |
-| Conversations on chat transports | `POST /v1/channels/{channel}/send` — `discord`, `slack`, `teams`, `telegram` |
+| Conversations on chat transports | `POST /v1/channel/{channel}/send` — `discord`, `slack`, `teams`, `telegram` |
 
 `/v1/tel` is the carrier: numbers the org bought, and traffic over them.
 `/v1/notify` is delivery through the org's *own* provider credential, read from
@@ -134,7 +134,7 @@ org's own numbers and nothing else.
 `media` — there is no `StatusCallback` field. Delivery state is the `status` on
 the row, read back with `GET /v1/tel/messages`.
 
-**No WhatsApp and no RCS.** `/v1/channels` covers Discord, Slack, Teams and
+**No WhatsApp and no RCS.** `/v1/channel` covers Discord, Slack, Teams and
 Telegram. All four render text today, so attachments and actions are flattened
 to one line each after the text — never dropped.
 

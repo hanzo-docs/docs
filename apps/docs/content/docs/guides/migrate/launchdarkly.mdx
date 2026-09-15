@@ -1,11 +1,11 @@
 ---
 title: LaunchDarkly
-description: LaunchDarkly decides which users see which behaviour. Here that is /v1/flags — eight operations, one deterministic decision, and no SDK that has to be kept warm.
+description: LaunchDarkly decides which users see which behaviour. Here that is /v1/flag — eight operations, one deterministic decision, and no SDK that has to be kept warm.
 ---
 
-LaunchDarkly holds flag definitions and evaluates them per user. `/v1/flags`
-(8 operations) does the same: `PUT /v1/flags/defs/{key}` stores a definition,
-`POST /v1/flags/decide` answers for a subject.
+LaunchDarkly holds flag definitions and evaluates them per user. `/v1/flag`
+(8 operations) does the same: `PUT /v1/flag/defs/{key}` stores a definition,
+`POST /v1/flag/decide` answers for a subject.
 
 The difference is where evaluation happens. LaunchDarkly's SDKs stream rules into
 your process and decide locally. Here the decision is a call, and it is
@@ -24,13 +24,13 @@ curl -sS -X POST https://api.hanzo.ai/v1/account/keys \
   -d '{"type":"secret"}'
 
 # 2. store one definition — the key in the URL wins over any "key" in the body
-curl -sS -X PUT https://api.hanzo.ai/v1/flags/defs/new-editor \
+curl -sS -X PUT https://api.hanzo.ai/v1/flag/defs/new-editor \
   -H "Authorization: Bearer $HANZO_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{"active": true, "filters": {"groups": [{"rollout_percentage": 25}]}}'
 
 # 3. ask what it says for one identity
-curl -sS -X POST https://api.hanzo.ai/v1/flags/decide \
+curl -sS -X POST https://api.hanzo.ai/v1/flag/decide \
   -H "Authorization: Bearer $HANZO_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{"distinct_id": "u1", "person_properties": {"plan": "pro"}}'
@@ -45,7 +45,7 @@ is the property a streaming SDK was buying you.
 
 | Capability | What it does | Operations |
 |---|---|---|
-| `/v1/flags` | Stores definitions and evaluates them for one identity, in-process over your own org and project store | 8 |
+| `/v1/flag` | Stores definitions and evaluates them for one identity, in-process over your own org and project store | 8 |
 | `/v1/experiment` | Registers an experiment with its assignment flag, buckets subjects, and reports lift, z and p against the control arm | 7 |
 | `/v1/event` | Takes the per-subject outcome rows that `POST /v1/experiment/{id}/analyze` folds into per-variant samples | 12 |
 
@@ -55,13 +55,13 @@ is the property a streaming SDK was buying you.
 |---|---|
 | Project | Your org and project, from the validated key |
 | Environment | No such field. A definition is scoped to one org and project, so a second environment is a second project |
-| Feature flag | Definition — `/v1/flags/defs/{key}` |
+| Feature flag | Definition — `/v1/flag/defs/{key}` |
 | Variation | A variant on the definition, with a weight |
 | Targeting rule | Rules on the definition |
 | Percentage rollout | Weights. The subject hash decides, not chance |
-| `client.variation(key, user, default)` | `POST /v1/flags/decide` |
+| `client.variation(key, user, default)` | `POST /v1/flag/decide` |
 | User / context | `distinct_id` plus `person_properties` on the decide call |
-| Audit log | `GET /v1/flags/activity` |
+| Audit log | `GET /v1/flag/activity` |
 | Experiment | `/v1/experiment`, which composes flags for assignment |
 
 ## The call
@@ -76,7 +76,7 @@ Hanzo — one call, every flag for that identity, and you read out the one you
 came for:
 
 ```bash
-curl -sS -X POST https://api.hanzo.ai/v1/flags/decide \
+curl -sS -X POST https://api.hanzo.ai/v1/flag/decide \
   -H "Authorization: Bearer $HANZO_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
@@ -88,7 +88,7 @@ curl -sS -X POST https://api.hanzo.ai/v1/flags/decide \
 Storing the definition:
 
 ```bash
-curl -sS -X PUT https://api.hanzo.ai/v1/flags/defs/new-checkout \
+curl -sS -X PUT https://api.hanzo.ai/v1/flag/defs/new-checkout \
   -H "Authorization: Bearer $HANZO_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
@@ -98,7 +98,7 @@ curl -sS -X PUT https://api.hanzo.ai/v1/flags/defs/new-checkout \
 ```
 
 The body is the definition document itself, kept byte-for-byte, so edit one by
-reading it back with `GET /v1/flags/defs/{key}` and writing the whole thing —
+reading it back with `GET /v1/flag/defs/{key}` and writing the whole thing —
 not by rebuilding it from the parts you recognise.
 
 Because the assignment is a hash of `(key, subject)`, a subject keeps its variant
@@ -116,7 +116,7 @@ a cache cannot disagree with the server about a subject it has already seen.
 here are flat. Compose them in your own code, where the reader can see it.
 
 **No approval queue inside the flag service.** A definition is written by whoever
-holds the key; change control is your deploy pipeline and `GET /v1/flags/activity`.
+holds the key; change control is your deploy pipeline and `GET /v1/flag/activity`.
 A change that should happen later is a job — `/v1/tasks` is a durable engine and
 outlives any one deploy — rather than a scheduled-change feature bolted onto the
 flag.
@@ -125,6 +125,6 @@ flag.
 `/v1/experiment`, which reads outcomes from analytics rather than from a
 browser SDK.
 
-**Removing a flag is a delete.** `DELETE /v1/flags/defs/{key}` removes the
+**Removing a flag is a delete.** `DELETE /v1/flag/defs/{key}` removes the
 definition. There is no archive state that keeps serving a last-known value, so
 retire the call site first and the definition second.

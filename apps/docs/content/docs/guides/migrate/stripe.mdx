@@ -31,21 +31,21 @@ curl -sS https://api.hanzo.ai/v1/billing/settings \
   -H "Authorization: Bearer $HANZO_API_KEY"
 
 # 3. charge the single-use token that came back from the browser
-curl -sS -X POST https://api.hanzo.ai/v1/commerce/payments \
+curl -sS -X POST https://api.hanzo.ai/v1/billing/topup \
   -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H 'X-Idempotency-Key: first-charge-1' \
   -H 'Content-Type: application/json' \
   -d '{
     "amountCents": 5000,
     "currency": "usd",
-    "sourceId": "cnon:card-nonce-from-the-browser",
-    "idempotencyKey": "first-charge-1"
+    "sourceId": "cnon:card-nonce-from-the-browser"
   }'
 ```
 
 Step 2 names the processor account the charge will land on and `live` says
-whether step 3 moves real money; step 3 answers a ledger transaction id,
-`processorRef` for reconciling at the processor, and `test` echoing that same
-bucket. No `cus_…`, no `pm_…`, no `price_…` had to exist first — the org
+whether step 3 moves real money; step 3 answers the balance after the charge,
+`processorRef` for reconciling at the processor, `status` for what the processor
+did, and `test` echoing that same bucket. No `cus_…`, no `pm_…`, no `price_…` had to exist first — the org
 credited is the key that made the call, so $50 cannot land in someone else's
 books.
 
@@ -66,8 +66,8 @@ The left column is Stripe's product surface, not just its payments core.
 | Stripe | Hanzo |
 |---|---|
 | Customer | Your org, taken from the validated key. Never a field in the request |
-| PaymentIntent, confirmed | `POST /v1/commerce/payments` — amount, currency, card token, idempotency key |
-| Charge, read back | `GET /v1/commerce/payments/{id}`, by the ledger transaction id |
+| PaymentIntent, confirmed | `POST /v1/billing/topup` — amount, currency, card token, and the idempotency key as a header |
+| Charge, read back | `GET /v1/billing/ledger` — the entries the charge wrote |
 | PaymentMethod attached to a customer | `POST /v1/billing/methods` — vaulted at the processor, always the caller's own |
 | SetupIntent, to charge later | The same `POST /v1/billing/methods`. A card already on file answers 200, a new one 201 |
 | Publishable key for Elements | `GET /v1/billing/settings` — the ids a browser tokenizes with, and which environment |
@@ -157,14 +157,14 @@ curl -sS https://api.stripe.com/v1/payment_intents \
 Hanzo:
 
 ```bash
-curl -sS -X POST https://api.hanzo.ai/v1/commerce/payments \
+curl -sS -X POST https://api.hanzo.ai/v1/billing/topup \
   -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "X-Idempotency-Key: $KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "amountCents": 5000,
     "currency": "usd",
-    "sourceId": "cnon:card-nonce-from-the-browser",
-    "idempotencyKey": "'"$KEY"'"
+    "sourceId": "cnon:card-nonce-from-the-browser"
   }'
 ```
 
@@ -176,10 +176,10 @@ default, and the charge is risk-screened before the card is touched: 403 is a
 refusal, 503 is a screen that could not reach a decision and is worth retrying,
 and no money moved either way. The receipt carries `processorRef` for
 reconciliation against the processor and `test` for which bucket it credited,
-so a sandbox charge can never be read as a live one. Omitting `idempotencyKey`
-is survivable rather than dangerous: the server falls back to a key derived from
-amount and currency, and a double-submit inside 15 minutes collapses onto one
-charge.
+so a sandbox charge can never be read as a live one. Omitting
+`X-Idempotency-Key` is survivable rather than dangerous: the server falls back to
+a key derived from amount and currency, and a double-submit inside 15 minutes
+collapses onto one charge.
 
 Invoicing is the same collapse. Stripe builds the invoice from items you create
 first, then finalizes, then pays:

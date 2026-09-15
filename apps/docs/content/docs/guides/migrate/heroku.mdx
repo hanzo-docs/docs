@@ -97,8 +97,8 @@ be attached at create — it goes through add-domain and DNS verification first.
 | Log drains, Papertrail, Logentries | `/v1/o11y` (381) — logs, live tail, pipelines and retention |
 | APM add-ons, New Relic, Scout | `GET /v1/o11y/traces` with flamegraph and waterfall, plus `/v1/metrics` (11) |
 | Error trackers, Sentry, Rollbar | `/v1/event` (12) |
-| Flag add-ons, LaunchDarkly, Split | `/v1/flags` (8) — a definition and a deterministic decision |
-| Heroku Managed Inference and Agents | `/v1/ai` (272) — the Zen models themselves, not a broker to somebody else's — plus `/v1/agents` (37) for the agent runtime |
+| Flag add-ons, LaunchDarkly, Split | `/v1/flag` (8) — a definition and a deterministic decision |
+| Heroku Managed Inference and Agents | `/v1/ai` (272) — the Zen models themselves, not a broker to somebody else's — plus `/v1/agent` (37) for the agent runtime |
 | Elements marketplace, Heroku Button | `/v1/marketplace` (6) to install one tool, `/v1/blueprint` (3) for a whole stack with its monthly cost |
 
 ### The rest of the account
@@ -114,7 +114,7 @@ be attached at create — it goes through add-domain and DNS verification first.
 | Buying the domain itself | `/v1/domain` (7) |
 | Routing, TLS and middleware in front of the app | `/v1/ingress` (18) |
 | `heroku run bash` | `POST /v1/sandbox`, then `POST /v1/sandbox/{id}/exec` — `/v1/sandbox` (19) |
-| A function rather than a dyno | `/v1/functions` (11) |
+| A function rather than a dyno | `/v1/function` (11) |
 
 ## The call
 

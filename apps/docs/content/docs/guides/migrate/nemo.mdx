@@ -1,6 +1,6 @@
 ---
 title: NVIDIA NeMo
-description: NeMo is a suite of libraries and microservices for the model and agent lifecycle. The served parts map to /v1/ai (272) for Nemotron and NIM, /v1/o11y (381) for Relay's telemetry, /v1/eval (16) and /v1/benchmark (9) for Evaluator, and /v1/agents (37) for the Agent Toolkit; the data and training libraries keep running, pointed at the same host.
+description: NeMo is a suite of libraries and microservices for the model and agent lifecycle. The served parts map to /v1/ai (272) for Nemotron and NIM, /v1/o11y (381) for Relay's telemetry, /v1/eval (16) and /v1/benchmark (9) for Evaluator, and /v1/agent (37) for the Agent Toolkit; the data and training libraries keep running, pointed at the same host.
 ---
 
 NeMo is not one product. It is a set of libraries and containers that between
@@ -15,8 +15,8 @@ The services have a capability that answers them. `/v1/ai` (272 operations)
 serves the models at the addresses a NIM or `integrate.api.nvidia.com` client
 already calls, and every call it serves is already a `gen_ai` trace in `/v1/o11y`
 (381), which is the half of Relay that records. `/v1/eval` (16) and
-`/v1/benchmark` (9) are Evaluator's two modes; `/v1/agents` (37) is the Agent
-Toolkit's workflow with its tools resolved from `/v1/tools` (19).
+`/v1/benchmark` (9) are Evaluator's two modes; `/v1/agent` (37) is the Agent
+Toolkit's workflow with its tools resolved from `/v1/tool` (19).
 
 The libraries have no counterpart and need none. Curator, Data Designer,
 Anonymizer, Safe Synthesizer and NeMo RL take an OpenAI-compatible provider and
@@ -63,7 +63,7 @@ benchmarks `nel eval run --bench` would run on your machine, run for you.
 | `/v1/o11y` | Traces, LLM observations, sessions, scores and review queues | 381 |
 | `/v1/eval` | Datasets, stored judges and judged runs | 16 |
 | `/v1/benchmark` | The public benchmark catalog, runs against a model or your endpoint, the leaderboard | 9 |
-| `/v1/agents` | An agent, its runs and its live sessions | 37 |
+| `/v1/agent` | An agent, its runs and its live sessions | 37 |
 | `/v1/sandbox` | A leased computer for code and tool environments | 19 |
 
 ## Nouns
@@ -95,11 +95,11 @@ call `/v1/ai` serves. The second is a property of the agent definition.
 | Relay scope — one agent run, its nested tool and LLM calls | A trace. `GET /v1/o11y/llm/traces` lists them; `POST /v1/o11y/traces/{traceId}/waterfall` draws one |
 | Relay session across a coding-agent run | `GET /v1/o11y/llm/sessions` — spans grouped by `session.id` |
 | Trajectory export (ATIF) | `GET /v1/eval/traces`, one per model call an evaluation made, narrowed by `runName` |
-| Relay middleware: redaction, policy, allow or deny before execution | [Hanzo Guard](https://github.com/hanzoai/guard) at the same three boundaries — `guard-proxy` in front of the model host, `guard-wrap` around a local agent, `guard-mcp` in front of a tool server — redacting PII and scoring injection before the call proceeds; and the agent's `tools` list, names resolved from `GET /v1/tools` at run time, omitting one denies it |
-| `nemo-relay run -- claude` observing a local coding agent | `guard-wrap claude` wraps the same process locally; hosted, `POST /v1/agents/coding` runs the coding agent on this side of the API and `GET /v1/agents/sessions/stream` is the live event feed |
-| Agent Toolkit workflow YAML: `llms`, `functions`, `workflow` | `POST /v1/agents` carrying `model`, `instructions` and `tools`; `POST /v1/agents/{ref}/run` runs it and answers the finished run |
-| Agent Toolkit function | A name from `GET /v1/tools`, dispatched with `POST /v1/tools/call`; your own goes in as an MCP server at `POST /v1/tools/mcp/servers` |
-| Agent Toolkit evaluation and profiling of a workflow | `GET /v1/agents/runs` for every run in the org, `GET /v1/agents/metrics` for the aggregate |
+| Relay middleware: redaction, policy, allow or deny before execution | [Hanzo Guard](https://github.com/hanzoai/guard) at the same three boundaries — `guard-proxy` in front of the model host, `guard-wrap` around a local agent, `guard-mcp` in front of a tool server — redacting PII and scoring injection before the call proceeds; and the agent's `tools` list, names resolved from `GET /v1/tool` at run time, omitting one denies it |
+| `nemo-relay run -- claude` observing a local coding agent | `guard-wrap claude` wraps the same process locally; hosted, `POST /v1/agent/coding` runs the coding agent on this side of the API and `GET /v1/agent/sessions/stream` is the live event feed |
+| Agent Toolkit workflow YAML: `llms`, `functions`, `workflow` | `POST /v1/agent` carrying `model`, `instructions` and `tools`; `POST /v1/agent/{ref}/run` runs it and answers the finished run |
+| Agent Toolkit function | A name from `GET /v1/tool`, dispatched with `POST /v1/tool/call`; your own goes in as an MCP server at `POST /v1/tool/mcp/servers` |
+| Agent Toolkit evaluation and profiling of a workflow | `GET /v1/agent/runs` for every run in the org, `GET /v1/agent/metrics` for the aggregate |
 
 ### Guardrails
 
@@ -135,7 +135,7 @@ call `/v1/ai` serves. The second is a property of the agent definition.
 | Data Designer's LLM-as-judge columns, Anonymizer's LLM substitutions | Metered and traced like any other call on your key |
 | Customizer, the hosted fine-tuning microservice | `POST /v1/ai/finetune/jobs`; `GET /v1/ai/finetune/presets` is the catalogue of base model, method and task with a recommended configuration for each |
 | Serving the fine-tuned result as a NIM | `POST /v1/ai/finetune/deploy` — serves the checkpoints and registers the result as a routable model name on `/v1/chat/completions` |
-| NeMo RL, Megatron-Bridge, Automodel on your cluster | [hanzoai/gym](https://github.com/hanzoai/gym) — LoRA SFT and GRPO in Rust, one binary for CUDA and Metal, Axolotl-shaped configs, PEFT adapters out. Full fine-tuning and multi-node stay with NeMo on your cluster; `GET /v1/visor/gpus` is one row per accelerator your org holds here |
+| NeMo RL, Megatron-Bridge, Automodel on your cluster | [hanzoai/gym](https://github.com/hanzoai/gym) — LoRA SFT and GRPO in Rust, one binary for CUDA and Metal, Axolotl-shaped configs, PEFT adapters out. Full fine-tuning and multi-node stay with NeMo on your cluster; `GET /v1/compute/gpus` is one row per accelerator your org holds here |
 | A prompt kept in a NeMo recipe | `POST /v1/prompt` — a repeated name appends a version |
 
 ## The call
@@ -287,6 +287,6 @@ two runs is what Guard's stages caught.
 **Relay's runtime events have no bus.** Relay emits scope lifecycle events —
 started, tool called, model called, ended — that plugins subscribe to in
 process. What exists here is the trace after the fact and the session stream
-during an agent run at `GET /v1/agents/sessions/stream`. A plugin that acted on
+during an agent run at `GET /v1/agent/sessions/stream`. A plugin that acted on
 a Relay event before the call proceeded has no hook to attach to; the decision
 moves into the agent definition or into your caller.

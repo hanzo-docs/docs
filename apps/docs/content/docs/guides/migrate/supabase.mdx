@@ -1,6 +1,6 @@
 ---
 title: Supabase
-description: Supabase is one Postgres instance with auth, storage, realtime, functions and vectors bolted to it. Here those are separate capabilities behind one host — /v1/iam (159 operations) signs people in, /v1/provisioning (28) mints the database, and /v1/functions (11), /v1/s3 (6), /v1/mq (15) and /v1/index (17) do the rest.
+description: Supabase is one Postgres instance with auth, storage, realtime, functions and vectors bolted to it. Here those are separate capabilities behind one host — /v1/iam (159 operations) signs people in, /v1/provisioning (28) mints the database, and /v1/function (11), /v1/s3 (6), /v1/mq (15) and /v1/index (17) do the rest.
 ---
 
 Supabase is a Postgres instance with the rest of a backend attached to it: your
@@ -8,7 +8,7 @@ users sit in an `auth.users` table, row-level security lives in your policies,
 realtime tails the write-ahead log, and a vector is a column type. Here those are
 separate capabilities behind one host — `/v1/iam` (159 operations) is the largest
 single piece of the migration, `/v1/provisioning` (28) mints the database itself,
-and `/v1/functions` (11), `/v1/s3` (6), `/v1/mq` (15) and `/v1/index` (17) cover
+and `/v1/function` (11), `/v1/s3` (6), `/v1/mq` (15) and `/v1/index` (17) cover
 the rest.
 
 The structural difference is that one: you cannot `JOIN` your users table,
@@ -96,8 +96,8 @@ reads the row, and neither body names an org because the key carries it.
 |---|---|
 | Storage bucket | `POST /v1/s3/buckets`; `GET /v1/s3/buckets/{bucket}/objects` — one folder level, or `?recursive=true` |
 | `storage.upload()` | `POST /v1/s3/buckets/{bucket}/objects` — mints a presigned PUT |
-| Edge Function | `POST /v1/functions` — runtime node, python or deno |
-| `functions.invoke()` | `POST /v1/functions/{name}/invoke`; logs at `GET /v1/functions/{name}/logs` |
+| Edge Function | `POST /v1/function` — runtime node, python or deno |
+| `functions.invoke()` | `POST /v1/function/{name}/invoke`; logs at `GET /v1/function/{name}/logs` |
 | Function secrets | `envNames` on the definition — names only; values stay in the store |
 | Realtime Broadcast | `POST /v1/pubsub/publish` — durable when a stream captures the subject |
 | Realtime Postgres Changes | Base collection subscriptions. On a provisioned instance, you publish the change |

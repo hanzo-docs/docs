@@ -1,13 +1,13 @@
 ---
 title: Firebase
-description: Firebase is six products behind one project id — sign-in is /v1/iam (159 operations), the data is /v1/kv (6) and /v1/provisioning (28), files are /v1/s3 (6), code is /v1/functions (11), hosting is /v1/projects (27), and the project id stops being something you carry.
+description: Firebase is six products behind one project id — sign-in is /v1/iam (159 operations), the data is /v1/kv (6) and /v1/provisioning (28), files are /v1/s3 (6), code is /v1/function (11), hosting is /v1/projects (27), and the project id stops being something you carry.
 ---
 
 Firebase bundles authentication, a document store, object storage, functions,
 hosting and push behind one project and one web API key. Every one but push has
 an answer here, and they are separate capabilities rather than facets of a
 project: `/v1/iam` (159 operations) signs people in, `/v1/kv` (6) and
-`/v1/provisioning` (28) hold data, `/v1/s3` (6) holds files, `/v1/functions`
+`/v1/provisioning` (28) hold data, `/v1/s3` (6) holds files, `/v1/function`
 (11) runs code, `/v1/projects` (27) and `/v1/platform` (37) serve it. The
 structural difference that costs the most work to port: Firebase names the
 project in every path and every config field, and here the tenant is derived
@@ -98,8 +98,8 @@ Firebase Auth is the Identity Toolkit REST API plus an Admin SDK. It is
 | Listing a folder | `GET /v1/s3/buckets/{bucket}/objects?prefix=` |
 | `storage.rules` | `POST /v1/authz/check`, plus the presigned URL's own bucket, key and expiry |
 | A dedicated bucket you provision | `POST /v1/provisioning/s3` |
-| HTTPS function | `POST /v1/functions`, called at `POST /v1/functions/{name}/invoke` |
-| Function logs and invocations | `GET /v1/functions/{name}/logs`, `GET /v1/functions/{name}/invocations` |
+| HTTPS function | `POST /v1/function`, called at `POST /v1/function/{name}/invoke` |
+| Function logs and invocations | `GET /v1/function/{name}/logs`, `GET /v1/function/{name}/invocations` |
 | `onSchedule` | `/v1/tasks` — a durable engine, not a property of a deployment |
 | `onMessagePublished` | `POST /v1/pubsub/publish`, with `POST /v1/auto/hooks/{source}/{event}` to run work off it |
 | Hosting, a static build | `/v1/projects` (27) — upload a directory, activate a release |
@@ -119,15 +119,15 @@ version, populate files, finalize, then release. The static plane here is two:
 |---|---|
 | Cloud Messaging to a device token | Not here — see below |
 | Transactional mail and SMS | `POST /v1/notify/send` — the channel is a body field, provider credential read from KMS |
-| Reaching a team room | `POST /v1/channels/{channel}/send` — Slack, Discord, Teams, Telegram |
-| Remote Config | `PUT /v1/flags/defs/{key}`, decided at `POST /v1/flags/decide` |
+| Reaching a team room | `POST /v1/channel/{channel}/send` — Slack, Discord, Teams, Telegram |
+| Remote Config | `PUT /v1/flag/defs/{key}`, decided at `POST /v1/flag/decide` |
 | A/B Testing | `/v1/experiment` (7) — `/v1/experiment/{id}/assign`, `/decide`, `/analyze` |
 | Google Analytics for Firebase | `/v1/event` (12), browser tag at `GET /v1/event/tag.js` |
 | Crashlytics | `GET /v1/o11y/errortracking/issues`, and `GET /v1/event/errors` |
 | Performance Monitoring | `/v1/o11y` (381) — dashboards, traces, alerts |
 | App Check | `/v1/gateway` (3) — the CORS allowlist, per-IP flood cap and rate ceiling in force |
 | Dynamic Links | Not here — `/v1/link` is AI provider-account linking, not short links |
-| Extensions | `/v1/integrations` (48) — connectors and the providers behind them |
+| Extensions | `/v1/integration` (48) — connectors and the providers behind them |
 | Genkit, Vertex AI in Firebase | `/v1/ai` (272) — Zen models on our own inference, `POST /v1/chat/completions` |
 | Test Lab, somewhere to run code | `/v1/sandbox` (19), `POST /v1/exec` |
 | Firebase Console | console.hanzo.ai |
@@ -209,18 +209,18 @@ curl -sS -X PUT \
 ```
 
 ```bash
-curl -sS -X PUT https://api.hanzo.ai/v1/flags/defs/new-editor \
+curl -sS -X PUT https://api.hanzo.ai/v1/flag/defs/new-editor \
   -H "Authorization: Bearer $HANZO_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{"key":"new-editor","active":true,"filters":{"groups":[{"rollout_percentage":25}]}}'
 
-curl -sS -X POST https://api.hanzo.ai/v1/flags/decide \
+curl -sS -X POST https://api.hanzo.ai/v1/flag/decide \
   -H "Authorization: Bearer $HANZO_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{"distinct_id":"u1","person_properties":{"plan":"pro"}}'
 ```
 
-`POST /v1/flags/decide` evaluates in-process over the caller's own definitions —
+`POST /v1/flag/decide` evaluates in-process over the caller's own definitions —
 no network hop and no shared cache between the write and the read — so the
 second call returns the definition the first call wrote. Which version a client
 is running is not a question you have to ask.
@@ -230,11 +230,11 @@ is running is not a question you have to ask.
 **No push notification.** FCM's job — a token per device, topics, APNs and web
 push fan-out — has no answer here. `/v1/notify/send` delivers email and SMS
 through your org's own provider credential, synchronously, and
-`/v1/channels/{channel}/send` reaches a Slack, Discord, Teams or Telegram room.
+`/v1/channel/{channel}/send` reaches a Slack, Discord, Teams or Telegram room.
 A phone that is asleep is reachable by none of them. Port this to a push vendor
 directly.
 
-**A function has one trigger and it is HTTP.** `GET /v1/functions/triggers`
+**A function has one trigger and it is HTTP.** `GET /v1/function/triggers`
 says as much: every function's trigger is its own invoke endpoint.
 `onDocumentWritten`, `onObjectFinalized` and `beforeUserCreated` do not port as
 a property of the function. Publish the event to `POST /v1/pubsub/publish` or
@@ -262,7 +262,7 @@ migration — the rest is transcription.
 **Every identity is a record.** Firebase mints a durable uid for a caller who
 has supplied nothing at all. Accounts here exist in `/v1/iam/users`. A
 logged-out visitor is instead a `distinct_id` you choose, which is what
-`POST /v1/flags/decide` and `POST /v1/event` take — a stable analytics identity,
+`POST /v1/flag/decide` and `POST /v1/event` take — a stable analytics identity,
 and not an account. The browser credential that carries it is a publishable
 `pk-` key, which resolves the tenant a beacon belongs to and can read nothing
 back.

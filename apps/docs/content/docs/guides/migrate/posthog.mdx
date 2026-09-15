@@ -1,14 +1,14 @@
 ---
 title: PostHog
-description: PostHog is product analytics, feature flags, experiments and session replay behind one SDK. Here that is /v1/event (12), /v1/flags (8) and /v1/experiment (7) — the same wire on all three, with the tenant taken from the key rather than an api_key field.
+description: PostHog is product analytics, feature flags, experiments and session replay behind one SDK. Here that is /v1/event (12), /v1/flag (8) and /v1/experiment (7) — the same wire on all three, with the tenant taken from the key rather than an api_key field.
 ---
 
 PostHog captures events, decides flags, runs experiments and records sessions.
 Four capabilities answer it: **`/v1/event`** (12 operations) for capture and the
-read lenses, **`/v1/flags`** (8) for decisions, **`/v1/experiment`** (7) for
+read lenses, **`/v1/flag`** (8) for decisions, **`/v1/experiment`** (7) for
 trials, and **`/v1/o11y`** (381) for dashboards, error tracking, alerting and
 query. The wire is the one you already send — `POST /v1/event` accepts PostHog's
-capture body verbatim, `distinct_id` and all, and `POST /v1/flags/decide` accepts
+capture body verbatim, `distinct_id` and all, and `POST /v1/flag/decide` accepts
 PostHog's `/decide` body and answers `featureFlags`, `featureFlagPayloads` and
 `errorsWhileComputingFlags` — so pointing an SDK here is a base URL.
 
@@ -52,7 +52,7 @@ browser, which is what proves the write is yours to read.
 | Capability | What it does | Operations |
 |---|---|---|
 | `/v1/event` | Capture, replay ingest, and the fixed read lenses: overview, top, timeseries, live events, errors | 12 |
-| `/v1/flags` | Decide flags for a subject, and hold the definitions plus an actor-stamped activity log | 8 |
+| `/v1/flag` | Decide flags for a subject, and hold the definitions plus an actor-stamped activity log | 8 |
 | `/v1/experiment` | Create a trial that is already bucketing, assign arms, analyze, promote a winner | 7 |
 
 ## Nouns
@@ -81,12 +81,12 @@ browser, which is what proves the write is yours to read.
 
 | PostHog | Hanzo |
 |---|---|
-| `POST /decide?v=3` | `POST /v1/flags/decide` — same body, same answer |
+| `POST /decide?v=3` | `POST /v1/flag/decide` — same body, same answer |
 | `distinct_id`, `person_properties`, `groups` | The same three fields, unchanged |
-| Feature flag | `PUT /v1/flags/defs/{key}` — the definition document, stored byte for byte |
+| Feature flag | `PUT /v1/flag/defs/{key}` — the definition document, stored byte for byte |
 | Multivariate flag | Variants and weights inside that document |
 | Local evaluation, polled from a payload | Evaluation is already in-process over your own definitions. No poll, no shared cache |
-| Flag activity log | `GET /v1/flags/activity` — every create, update and delete, with the actor |
+| Flag activity log | `GET /v1/flag/activity` — every create, update and delete, with the actor |
 | Create experiment, then set `start_date` to launch | `POST /v1/experiment` — 201 means the arms are bucketing |
 | Experiment results, refreshed | `POST /v1/experiment/{id}/analyze` — exposed, conversions, rate, lift, z, p |
 | Which variant is this user in | `GET /v1/experiment/{id}/assign` |
@@ -146,7 +146,7 @@ curl -sS -X POST https://api.hanzo.ai/v1/event \
   }'
 # {"accepted":1,"dropped":0}
 
-curl -sS -X POST https://api.hanzo.ai/v1/flags/decide \
+curl -sS -X POST https://api.hanzo.ai/v1/flag/decide \
   -H "Authorization: Bearer $HANZO_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
@@ -225,7 +225,7 @@ saves here is the single filter the marketing plane acts on.
 **A survey is a form, not a targeted popup.** `/v1/ai/forms` holds the
 definition and `GET /v1/ai/forms/data` the responses. PostHog injects the survey
 into your page and picks who sees it. Rendering it is yours —
-`POST /v1/flags/decide` answers who should get it.
+`POST /v1/flag/decide` answers who should get it.
 
 **`assign` records no exposure.** `GET /v1/experiment/{id}/assign` buckets the
 subject and returns the arm, and it is a pure read: nothing is written. The

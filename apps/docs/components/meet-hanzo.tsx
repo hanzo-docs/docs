@@ -21,7 +21,7 @@ import { MeetHanzoMenu } from '@hanzogui/shell';
 const DOCS_HREFS: Record<string, string> = {
   models: '/docs/openapi/ai',
   enso: '/docs/openapi/ai',
-  agents: '/docs/openapi/agents',
+  agents: '/docs/openapi/agent',
   mcp: '/docs/mcp',
   gateway: '/docs/openapi/gateway',
   api: '/docs/openapi',
