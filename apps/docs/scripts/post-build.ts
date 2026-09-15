@@ -1,6 +1,7 @@
 import env from '@next/env';
 import { updateSearchIndexes } from './update-hanzo-index';
 import { emit as emitRedirects } from './emit-redirects';
+import { check as checkLinks } from './check-links';
 
 env.loadEnvConfig(process.cwd());
 
@@ -15,6 +16,11 @@ async function main() {
   // Before indexing: a redirect page is part of the export, and indexing is
   // allowed to fail without taking the deploy down.
   emitRedirects();
+  // After the redirects, because a stub IS a page a link may point at. Reports,
+  // never refuses: this build has already produced the site, and a link that
+  // rotted since the last one is a thing to fix, not a reason to stop shipping
+  // the other 2,900 pages.
+  checkLinks();
   await updateSearchIndexes();
 }
 
