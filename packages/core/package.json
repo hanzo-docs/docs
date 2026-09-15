@@ -234,12 +234,13 @@
     }
   },
   "inlinedDependencies": {
-    "@formatjs/fast-memoize": "3.1.5",
-    "@formatjs/intl-localematcher": "0.8.9",
-    "@shikijs/transformers": "4.1.0",
+    "@formatjs/fast-memoize": "3.1.7",
+    "@formatjs/intl-localematcher": "0.8.13",
+    "@shikijs/transformers": "4.4.3",
+    "content-type": "2.1.0",
     "image-size": "2.0.2",
-    "negotiator": "1.0.0",
-    "npm-to-yarn": "3.0.1",
+    "negotiator": "1.1.0",
+    "npm-to-yarn": "3.2.0",
     "path-to-regexp": "8.4.2",
     "remove-markdown": "0.6.4"
   }

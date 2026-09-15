@@ -36,6 +36,9 @@ export default defineConfig({
       'image-size',
       'path-to-regexp',
       'negotiator',
+      // negotiator 1.1.0 moved its media-type parsing into content-type, and a
+      // bundled dependency's own dependencies have to be named here too.
+      'content-type',
       'npm-to-yarn',
       '@formatjs/fast-memoize',
       '@shikijs/transformers',
