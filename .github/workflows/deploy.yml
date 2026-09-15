@@ -27,7 +27,10 @@ concurrency:
 
 jobs:
   site:
-    runs-on: hanzo-docs-build-linux-amd64
+    # A static export names no architecture; the label picks the host. arm64 is
+    # spark, which has the memory and is not the node the rest of the fleet
+    # builds images on.
+    runs-on: [self-hosted, Linux, arm64]
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
