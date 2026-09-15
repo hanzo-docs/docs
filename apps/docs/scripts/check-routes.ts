@@ -55,7 +55,12 @@ function listed(dir: string): string[] | null {
     return pages
       .filter((p: unknown): p is string => typeof p === 'string')
       .filter((p) => !p.startsWith('---') && !p.startsWith('[') && !p.includes('://'))
-      .map((p) => p.replace(/^\.\//, ''));
+      // `...folder` INLINES that folder's children where the entry sits, and
+      // `!name` hides one; both name a real file or directory, so the name is
+      // what is checked and the marker is not part of it. Reading the marker as
+      // part of the name reported the folder as missing AND as unlisted at once.
+      .filter((p) => p !== '...' && p !== 'z...a')
+      .map((p) => p.replace(/^\.\//, '').replace(/^\.\.\./, '').replace(/^!/, ''));
   } catch {
     return null;
   }

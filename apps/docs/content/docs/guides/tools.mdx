@@ -7,7 +7,7 @@ import { Tab, Tabs } from '@hanzo/docs-base-ui/components/tabs'
 
 **List the MCP tools this key can reach.**
 
-> GET /v1/tools is the catalogue read: every tool the caller's org and project can reach, from every source, each flagged with whether it is activated. Assert the count is greater than zero and print three names.
+> GET /v1/tool is the catalogue read: every tool the caller's org and project can reach, from every source, each flagged with whether it is activated. Assert the count is greater than zero and print three names.
 
 This flow named `mcp_rpc` (POST /v1/mcp, the JSON-RPC endpoint) until the document became the only authority on what exists. That endpoint IS live — POST /v1/mcp answers 200 with the tool list while POST /v1/mcp-zzq9 answers 404, so the address is real and the control refutes nothing — but cloud's emission does not declare it, so it has no operationId and no generated method. An example may not reach for an address the document does not carry: that is a hand-rolled HTTP call inside a generated client, the exact drift these SDKs exist to prevent. `POST /v1/mcp` returns here the release cloud declares it (LLM.md, "Handed to hanzo-inc/cloud").
 
@@ -15,14 +15,14 @@ Note for whoever writes that declaration: JSON-RPC reports failure INSIDE a 200,
 
 ## Lists every tool the caller's org and project can reach, from every source, each flagged with whether it is activated.
 
-`GET /v1/tools` · [reference →](/docs/openapi/tools)
+`GET /v1/tool` · [reference →](/docs/openapi/tool)
 
 Lists every tool the caller's org and project can reach, from every
 source, each flagged with whether it is activated. This is the discovery
 surface: one flat set of names spanning connector actions, user functions,
 zap-service routes, agents, skills and the org's own external MCP servers,
 deduplicated by name so the highest-precedence source wins a collision. It
-lists; it does not call — dispatch is POST /v1/tools/call.
+lists; it does not call — dispatch is POST /v1/tool/call.
 
 | Parameter | In | Required | Description |
 |---|---|---|---|
@@ -91,7 +91,7 @@ var result = new ToolsApi(client).getTools();
 </Tab>
 <Tab value="HTTP">
 ```bash
-curl https://api.hanzo.ai/v1/tools \
+curl https://api.hanzo.ai/v1/tool \
   -H "Authorization: Bearer $HANZO_API_KEY"
 ```
 </Tab>

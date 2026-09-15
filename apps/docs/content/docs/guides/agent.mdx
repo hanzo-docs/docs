@@ -11,7 +11,7 @@ import { Tab, Tabs } from '@hanzo/docs-base-ui/components/tabs'
 
 ## Defines an agent in the caller's org: a model, a system prompt (instructions) and a set of tool names.
 
-`POST /v1/agents` · [reference →](/docs/openapi/agents)
+`POST /v1/agent` · [reference →](/docs/openapi/agent)
 
 Defines an agent in the caller's org: a model, a system prompt
 (instructions) and a set of tool names. The name must be unique in the org and
@@ -96,7 +96,7 @@ var result = new AgentsApi(client).postAgents();
 </Tab>
 <Tab value="HTTP">
 ```bash
-curl -X POST https://api.hanzo.ai/v1/agents \
+curl -X POST https://api.hanzo.ai/v1/agent \
   -H "Authorization: Bearer $HANZO_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -133,7 +133,7 @@ curl -X POST https://api.hanzo.ai/v1/mcp \
 
 ## Run one of your org's agents and get the recorded run back.
 
-`POST /v1/agents/{ref}/run` · [reference →](/docs/openapi/agents)
+`POST /v1/agent/{ref}/run` · [reference →](/docs/openapi/agent)
 
 Composes the agent's stored instructions with the caller's `input`, executes one real chat completion through the same in-process AI client the rest of the console uses, and answers with the run that was recorded: its id, status, model, output, duration and error. Every run this returns reflects an execution that actually happened — a model failure is recorded and reported, never hidden and never fabricated. A transient upstream failure (429, 5xx, empty choices) is retried up to three times with jittered backoff, and a configured failover model is tried before the run is called an error.
 
@@ -209,7 +209,7 @@ var result = new AgentsApi(client).postAgentsByRefRun();
 </Tab>
 <Tab value="HTTP">
 ```bash
-curl -X POST https://api.hanzo.ai/v1/agents/<ref>/run \
+curl -X POST https://api.hanzo.ai/v1/agent/<ref>/run \
   -H "Authorization: Bearer $HANZO_API_KEY"
 ```
 </Tab>
@@ -236,7 +236,7 @@ curl -X POST https://api.hanzo.ai/v1/mcp \
 
 ## Returns one agent's execution history, newest first — each run's input, its output or its error, and how long it took.
 
-`GET /v1/agents/{ref}/runs` · [reference →](/docs/openapi/agents)
+`GET /v1/agent/{ref}/runs` · [reference →](/docs/openapi/agent)
 
 Returns one agent's execution history, newest first — each run's
 input, its output or its error, and how long it took. Every row is a run that
@@ -309,7 +309,7 @@ var result = new AgentsApi(client).getAgentsByRefRuns();
 </Tab>
 <Tab value="HTTP">
 ```bash
-curl https://api.hanzo.ai/v1/agents/<ref>/runs \
+curl https://api.hanzo.ai/v1/agent/<ref>/runs \
   -H "Authorization: Bearer $HANZO_API_KEY"
 ```
 </Tab>
