@@ -16,10 +16,13 @@ export interface NotFoundProps {
 export function NotFound(props: NotFoundProps) {
   return (
     <div className="flex flex-col items-center justify-center text-center gap-4 p-8 [grid-area:main]">
-      <h1 className="text-4xl font-bold font-mono">Not Found</h1>
+      <h1 className="text-4xl font-bold font-mono">Page not found</h1>
+      <p className="text-sm text-fd-muted-foreground">
+        Nothing is published at this address. Search the docs from the rail, or start here.
+      </p>
       <div className="w-full border border-fd-foreground/50 border-dashed p-4 max-w-[600px]">
         <Suspense
-          fallback={<p className="text-sm text-fd-muted-foreground">Finding Alternatives...</p>}
+          fallback={<p className="text-sm text-fd-muted-foreground">Finding alternatives…</p>}
         >
           <Alternative {...props} />
         </Suspense>
@@ -34,7 +37,7 @@ async function Alternative({ getSuggestions }: NotFoundProps) {
   if (suggestions.length === 0) {
     return (
       <div>
-        <p className="text-sm text-fd-muted-foreground mb-2">No Alternative Found</p>
+        <p className="text-sm text-fd-muted-foreground mb-2">No alternative found</p>
         <Link href="/" className={cn(buttonVariants({ variant: 'secondary' }))}>
           Return to Home
         </Link>
@@ -44,7 +47,7 @@ async function Alternative({ getSuggestions }: NotFoundProps) {
 
   return (
     <div>
-      <h2 className="text-sm text-fd-muted-foreground mb-2">Maybe you are looking for</h2>
+      <h2 className="text-sm text-fd-muted-foreground mb-2">Maybe you meant</h2>
 
       <div className="flex flex-col rounded-lg border bg-fd-card text-fd-card-foreground shadow-md overflow-hidden divide-y divide-fd-border">
         {suggestions.map((doc) => (
