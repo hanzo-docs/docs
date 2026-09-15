@@ -36,11 +36,27 @@ function urlOf(out: string, file: string): string {
   return rel.replace(/\/index\.html$/, '/').replace(/\.html$/, '');
 }
 
-/** Resolve an href against the page it sits on; null when it leaves the site. */
+const SITE = 'docs.hanzo.ai';
+
+/**
+ * Resolve an href against the page it sits on; null when it leaves the site.
+ *
+ * An absolute link to our own host is one of ours: a page that spells its
+ * sibling `https://docs.hanzo.ai/docs/…` can rot exactly like a rooted one, and
+ * several do — the shared footer and the product registry both write links that
+ * way.
+ */
 export function target(href: string, from: string): string | null {
   const h = href.trim();
-  if (!h || /^(#|[a-z][a-z0-9+.-]*:|\/\/)/i.test(h)) return null;
-  const u = new URL(h, `https://docs.hanzo.ai${from}`);
+  if (!h || h.startsWith('#')) return null;
+  let u: URL;
+  try {
+    u = new URL(h, `https://${SITE}${from}`);
+  } catch {
+    return null; // not a URL at all (a template that never rendered, say)
+  }
+  if (u.protocol !== 'https:' && u.protocol !== 'http:') return null;
+  if (u.hostname !== SITE) return null;
   return decodeURIComponent(u.pathname);
 }
 
