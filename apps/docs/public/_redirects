@@ -64,7 +64,8 @@
 # so the console's Docs button always resolves.
 /docs/analytics    /docs/openapi/event    301
 /docs/auto         /docs/openapi/auto     301
-/docs/cms          /docs/projects/hanzoai/cms       301
+# The CMS is the content capability; the ported hanzoai/cms snapshot is gone.
+/docs/cms          /docs/openapi/content            301
 /docs/helpdesk     /docs/projects/hanzoai/helpdesk  301
 /docs/apm          /docs/openapi/o11y     301
 /docs/nodes        /docs/openapi/compute  301
