@@ -1,37 +1,11 @@
 name: deploy
 
-# Builds docs.hanzo.ai and publishes the image the operator runs. A build never
-# deploys itself: what is live is named by hanzoai/universe
-# charts/app/values/hanzo/docs.yaml, set by a human. That file carries
-# `cd.automated: true`, so the commit that edits it IS the rollout.
+# docs.hanzo.ai is a static export on the Sites plane. This job builds
+# apps/docs/out and publishes it as project `docs`, whose prefix (hanzo/docs) the
+# docs.hanzo.ai route serves. No image, no pod. RELEASE.md has the whole path.
 #
-# The predecessor did deploy itself — it patched `app docs` with kubectl and
-# waited on the rollout — and it built the image from a heredoc Dockerfile
-# pinned to static:0.4.1 while the repo's own Dockerfile, the one the fabric
-# actually builds, pinned v0.5.1. Two builders for one image is one too many, so
-# the recipe lives in the Dockerfile alone and this file only runs it.
-#
-# This file runs. It could not before, and the reason was ONE repo setting, not
-# the two that were written down here: git.hanzo.ai/hanzo-docs/docs had no
-# Actions unit, so /actions 404'd and nothing scheduled.
-#
-# The second reason recorded here — that a mirror sync moves refs without firing
-# a push event — is FALSE on this forge, and it mattered, because it made the
-# blocker look like infrastructure we did not have rather than a checkbox.
-# services/mirror/mirror_pull.go calls notify_service.SyncPushCommits on every
-# updated ref, services/actions/notifier.go implements it as a real
-# HookEventPush, and the only gate between the two is the Actions unit
-# (notifier_helper.go). The natural experiment settles it without reading any of
-# that: hanzoai/docs is also a pull mirror, it HAS the unit, and its runs are
-# stamped `event: push`. A mirror on this forge builds.
-#
-# It is also the only definition of the tag hanzoai/universe pins — the full
-# 40-char SHA. See RELEASE.md for every path that can publish and what each needs.
-#
-# It is also the ONLY builder here that fires by itself. .github/workflows/
-# cicd.yml is workflow_dispatch-only for exactly that reason: give this repo two
-# push-triggered builders for one image and the same commit produces two images
-# under two tag schemes, and the pin in universe names one of them by luck.
+# It runs on git.hanzo.ai (hanzoai/docs, a pull mirror of this repo). GitHub
+# Actions is off for this repo, so GitHub builds nothing.
 
 on:
   push:
@@ -40,231 +14,108 @@ on:
       - 'apps/docs/**'
       - 'packages/**'
       - 'pnpm-lock.yaml'
-      - 'Dockerfile'
+      - 'scripts/check-export.sh'
       - '.github/workflows/deploy.yml'
   workflow_dispatch:
 
+# One publish at a time: a newer push waits for the running one to finish, then
+# the newest waiting commit publishes. Two publishes at once would each delete
+# the other's files when they complete.
 concurrency:
-  # PER-SHA, because `cancel-in-progress: false` does not mean "do not cancel".
-  # It selects which statuses a newer run in the same group sweeps: the kill list
-  # is {waiting, blocked} always, and gains {running, cancelling} only when the
-  # flag is true. A run that has not been given a runner yet is forfeit to the
-  # next push either way.
-  #
-  # Sharing the group `deploy-<ref>` therefore coalesced nothing and cost
-  # everything: this repo takes a push every few minutes, the fleet hands out a
-  # runner more slowly than that, so every deploy sat in `waiting` until the next
-  # push swept it. Measured — runs for 1ab21251, 3446e7e2 and a hand-dispatched
-  # one all ended `cancelled`, no image was pushed for any of them, and
-  # docs.hanzo.ai served a seven-hour-old build while main moved eleven commits.
-  # A deploy that never runs is not a slower deploy, it is an absent one.
-  #
-  # Per-sha, no run is another run's rival. A pull request keeps a shared group,
-  # where a newer push to the same branch genuinely does supersede the older one.
-  group: deploy-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || github.sha }}
+  group: deploy-docs
   cancel-in-progress: false
 
 jobs:
-  image:
+  site:
     runs-on: hanzo-docs-build-linux-amd64
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
         with:
-          # Team-owned doc sections (hanzo-docs/<team>) are submodules under
-          # apps/docs/content/docs/. The Dockerfile copies the checkout, so
-          # without these the unified build silently loses whole sections.
+          # Team sections (hanzo-docs/<team>) are submodules under
+          # apps/docs/content/docs/; without them whole sections are missing.
           submodules: recursive
 
-      # The ingest key comes from KMS, never from a forge secret. Secrets live in
-      # ONE place and CI reads them at run time; a copy pasted into a repo's
-      # secret store is a second thing to rotate and the one nobody remembers.
-      #
-      # The contract is hanzoai/ci `.hanzo/workflows/build.yml`'s KMS step, which
-      # is the fleet's definition of how a build reads a secret:
-      #
-      #   login  POST {KMS}/v1/kms/auth/login {clientId,clientSecret} -> .accessToken
-      #   read   GET  {KMS}/v1/kms/secrets/<path>/<name>?env=<env>    -> .value
-      #
-      # The org is carried by the TOKEN, not the URL. The older
-      # /v1/kms/orgs/<org>/secrets/... form with a nested `.secret.value` is a
-      # DIFFERENT service, and this workflow deliberately does not fall back to
-      # it: the two instances hold different values under this same name, and the
-      # standalone one's copy is stale — measured, it is refused at ingest with
-      # 403. Reading the wrong host is worse than reading nothing, because the
-      # build "finds" a key and ships one that cannot write.
-      - name: ingest key from KMS
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      # build:pre and build:post run under bun.
+      - uses: oven-sh/setup-bun@v2
+
+      # The ingest key is public (it ships in the bundle) and lives in KMS so it
+      # rotates without a commit. Login and read are retried on a lost answer
+      # (000/429/5xx) and not on a refusal.
+      - name: ingest key
         env:
           KMS_CLIENT_ID: ${{ secrets.KMS_CLIENT_ID }}
           KMS_CLIENT_SECRET: ${{ secrets.KMS_CLIENT_SECRET }}
         run: |
           set -euo pipefail
-          KMS="${KMS_ENDPOINT:-https://api.hanzo.ai}"
-          if [ -z "${KMS_CLIENT_ID:-}" ] || [ -z "${KMS_CLIENT_SECRET:-}" ]; then
-            echo "::error::KMS_CLIENT_ID/KMS_CLIENT_SECRET are unset, so the ingest key cannot be read. Add them as org secrets on this forge."
-            exit 1
-          fi
-          # `curl -sf` under `set -euo pipefail` makes every message below it
-          # unreachable: -f turns a refusal into exit 22, the pipeline carries it,
-          # -e ends the script, and the line that would say WHICH call failed
-          # never runs. Two diagnoses of a real outage produced "exitcode '22'"
-          # and nothing else. Ask for the status instead, and say what came back.
-          # Retried because the answer can be lost rather than refused. cloud
-          # serves KMS as a plugin over a unix socket and that socket drops
-          # responses mid-write under load — 47 `kms.sock … broken pipe` in one
-          # hour, measured, with the pod at 0 restarts. curl reports 000 for it,
-          # which is indistinguishable here from unreachable, so the only honest
-          # move is to ask again. A real refusal (401/403/404) returns a code and
-          # is NOT retried — this waits out a dropped answer, it does not paper
-          # over a rejection.
-          ask() {  # ask <outfile> <curl args...>  -> prints the status code
-            local out="$1"; shift
-            local code=""
+          KMS=https://api.hanzo.ai
+          [ -n "${KMS_CLIENT_ID:-}" ] && [ -n "${KMS_CLIENT_SECRET:-}" ] || {
+            echo "::error::KMS_CLIENT_ID/KMS_CLIENT_SECRET are unset on this forge org"; exit 1; }
+          ask() {  # ask <outfile> <curl args...> -> status code
+            local out="$1"; shift; local code=""
             for wait in 0 5 15 45; do
               [ "$wait" = 0 ] || sleep "$wait"
-              # `|| code=000` on the ASSIGNMENT, never `|| echo 000` inside the
-              # substitution: -w already prints 000 when curl fails, so a second
-              # one makes the variable "000000", which matches nothing below and
-              # turns an outage into a refusal that never retries.
               code="$(curl -s -o "$out" -w '%{http_code}' --max-time 30 "$@")" || code=000
-              case "$code" in
-                000|429|5*) continue ;;   # lost, throttled, or the gateway's own
-                *) break ;;               # an answer, including a refusal
-              esac
+              case "$code" in 000|429|5*) continue ;; *) break ;; esac
             done
             printf '%s' "$code"
           }
-          login_code="$(ask /tmp/kms_login.json \
-            "$KMS/v1/kms/auth/login" -H 'Content-Type: application/json' \
+          code="$(ask /tmp/login.json "$KMS/v1/kms/auth/login" -H 'Content-Type: application/json' \
             -d "{\"clientId\":\"$KMS_CLIENT_ID\",\"clientSecret\":\"$KMS_CLIENT_SECRET\"}")"
-          if [ "$login_code" != "200" ]; then
-            echo "::error::KMS login at $KMS answered $login_code after 3 tries. 401 means this forge's KMS_CLIENT_ID/KMS_CLIENT_SECRET are rejected; 000 means the endpoint was unreachable from the build container."
-            exit 1
-          fi
-          token="$(sed -n 's/.*"accessToken"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' /tmp/kms_login.json)"
-          [ -n "$token" ] || { echo "::error::KMS login returned 200 with no accessToken"; exit 1; }
-
-          secret_code="$(ask /tmp/kms_secret.json \
-            "$KMS/v1/kms/secrets/deploy/PUBLISHABLE_KEY?env=prod" \
+          [ "$code" = 200 ] || { echo "::error::KMS login answered $code"; exit 1; }
+          token="$(jq -r '.accessToken // empty' /tmp/login.json)"
+          [ -n "$token" ] || { echo "::error::KMS login returned no accessToken"; exit 1; }
+          code="$(ask /tmp/key.json "$KMS/v1/kms/secrets/deploy/PUBLISHABLE_KEY?env=prod" \
             -H "Authorization: Bearer $token")"
-          if [ "$secret_code" != "200" ]; then
-            echo "::error::reading deploy/PUBLISHABLE_KEY (env=prod) answered $secret_code after 3 tries. 403 means this client may not read that path; 404 means the secret is not there."
-            exit 1
-          fi
-          key="$(sed -n 's/.*"value"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' /tmp/kms_secret.json)"
-          # Fail closed. An empty build-arg produces an image that builds, serves,
-          # and looks correct while every event it emits is unattributed — the
-          # exact silent hole this step exists to close, and one no amount of
-          # looking at a green build would reveal. Same rule as the export gate:
-          # refuse to produce the artifact rather than produce a hollow one.
+          [ "$code" = 200 ] || { echo "::error::reading deploy/PUBLISHABLE_KEY answered $code (403: this client may not read it; 404: not sealed)"; exit 1; }
+          key="$(jq -r '.value // empty' /tmp/key.json)"
+          rm -f /tmp/login.json /tmp/key.json
           case "$key" in
-            pk-*) : ;;
-            '')   echo "::error::KMS returned no value for deploy/PUBLISHABLE_KEY (env=prod)"; exit 1 ;;
-            *)    echo "::error::deploy/PUBLISHABLE_KEY is not a publishable key (expected a pk- prefix)"; exit 1 ;;
+            pk-*) ;;
+            *) echo "::error::deploy/PUBLISHABLE_KEY is empty or not a pk- key"; exit 1 ;;
           esac
-          # Shape is not liveness. `pk-live-c886…` was sealed, non-empty and
-          # correctly prefixed, so it passed the case above AND the export grep
-          # below — and its PROJECT had been deleted, so the endpoint answered 403
-          # and docs recorded nothing. This repo then rebuilt cleanly on 08-06
-          # and baked the same dead key again, because every check it runs asks
-          # whether a key is PRESENT and none asks whether it WORKS.
-          #
-          # An empty batch is a no-op the endpoint still authenticates: 200 for a
-          # live key, 403 for one naming no project, 401 for one it cannot read.
-          # Fail closed on an answer, warn on no answer — an unreachable endpoint is
-          # a fact about the network, not about the key.
-          code="$(curl -s -o /tmp/keycheck.json -w '%{http_code}' --max-time 20 \
+          # A well-formed key can still name a deleted project: ask the endpoint.
+          code="$(curl -s -o /tmp/ingest.json -w '%{http_code}' --max-time 20 \
             -X POST "https://api.hanzo.ai/v1/event?ingest_key=$key" \
-            -H 'content-type: application/json' -d '{"batch":[]}' || echo 000)"
+            -H 'content-type: application/json' -d '{"batch":[]}')" || code=000
           case "$code" in
-            200) echo "the publishable key resolves at the ingest endpoint (200)" ;;
-            000) echo "::warning::could not reach the ingest endpoint; proceeding (network, not the key)" ;;
-            *)   echo "::error::deploy/PUBLISHABLE_KEY does not resolve: the endpoint answered $code $(cat /tmp/keycheck.json 2>/dev/null). Baking it ships docs that drops every event. Rotate the KMS value, then rebuild."; exit 1 ;;
+            200) ;;
+            000|429|5*) echo "::warning::ingest endpoint answered $code; key unverified" ;;
+            *) echo "::error::the ingest key is refused ($code): $(cat /tmp/ingest.json)"; exit 1 ;;
           esac
           echo "::add-mask::$key"
-          echo "PUBLISHABLE_KEY=$key" >> "$GITHUB_ENV"
+          echo "NEXT_PUBLIC_PUBLISHABLE_KEY=$key" >> "$GITHUB_ENV"
 
-      # Reclaim the runner's docker storage before building, and SAY how much
-      # there is. This build lives inside a 38Gi emptyDir and wants most of it,
-      # so a few GB left behind by earlier jobs on this runner is the difference
-      # between finishing and being evicted mid-export by the kubelet.
-      #
-      # Print the numbers rather than trusting them: when this build fails for
-      # space, the log needs to show what it started with, otherwise the failure
-      # looks like a broken Dockerfile. That is exactly how this was misread
-      # before — an eviction has no error message of its own, it just truncates
-      # the log and restarts the pod.
-      - name: reclaim runner disk
-        run: |
-          set -eu
-          echo "before:"; df -h /var/lib/docker 2>/dev/null | tail -1 || true
-          docker system df 2>/dev/null || true
-          # Unused images and the build cache only. Nothing else on this runner
-          # owns state here: a job's container is torn down with the job.
-          docker builder prune -af >/dev/null 2>&1 || true
-          docker image prune -af >/dev/null 2>&1 || true
-          docker volume prune -f >/dev/null 2>&1 || true
-          echo "after:"; df -h /var/lib/docker 2>/dev/null | tail -1 || true
-          docker system df 2>/dev/null || true
+      - run: pnpm install --frozen-lockfile
 
       - name: build
-        run: |
-          docker build \
-            --build-arg "PUBLISHABLE_KEY=${PUBLISHABLE_KEY}" \
-            -t "docs:${GITHUB_SHA}" .
-
-      # The gate itself runs inside the Dockerfile, so `docker build` above has
-      # already refused a broken export and this step cannot be the thing that
-      # saves us — which is the point: every builder gets it, not just this one.
-      #
-      # What is left for this step is the one question the build stage cannot
-      # answer: did the export actually land in the IMAGE. That is a different
-      # claim from "the export was good", and it is the claim that matters to a
-      # registry. Same script, same rules, read out of the finished image —
-      # hanzoai/static is FROM scratch and has no shell, so /public comes out
-      # with docker cp.
-      - name: validate export in the image
-        run: |
-          set -euo pipefail
-          cid="$(docker create "docs:${GITHUB_SHA}")"
-          trap 'docker rm -f "${cid}" >/dev/null' EXIT
-          rm -rf out && docker cp "${cid}:/public" out
-          sh scripts/check-export.sh out apps/docs/export.require
-          # The same question, for the ingest key: it was read from KMS and
-          # passed as a build-arg, but did Next actually BAKE it into a chunk?
-          # A key that is present at build time and absent from the bundle is
-          # indistinguishable from success everywhere except the warehouse,
-          # where the traffic simply lands unattributed. So assert it on the
-          # bytes that ship, which is the only place the claim is true or false.
-          if ! grep -rqF "${PUBLISHABLE_KEY}" out; then
-            echo "::error::the ingest key is not in the exported bundle — docs would ship unattributed"
-            exit 1
-          fi
-          echo "ingest key present in the export"
-
-      - name: push
+        run: pnpm build --filter=docs
         env:
-          REGISTRY_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
+          NEXT_EXPORT: '1'
+          HANZO_DOCS_SYNC: '0'
+          NEXT_TELEMETRY_DISABLED: '1'
+          NODE_OPTIONS: --max-old-space-size=8192
+
+      - name: export gate
         run: |
-          set -euo pipefail
-          if [ -z "${REGISTRY_TOKEN:-}" ]; then
-            echo "::error::REGISTRY_TOKEN is unset, so nothing was published. Add the org secret."
-            exit 1
-          fi
-          # The FULL 40-char SHA. universe already pins exactly this shape; see
-          # RELEASE.md for what every other builder tags instead.
-          image="ghcr.io/hanzoai/docs:${GITHUB_SHA}"
-          echo "${REGISTRY_TOKEN}" | docker login ghcr.io -u hanzo-dev --password-stdin
-          docker tag "docs:${GITHUB_SHA}" "${image}"
-          docker push "${image}"
-          # The digest is what a pin actually PULLS: the chart renders
-          # repo:tag@digest and the digest wins, so moving the tag beside a stale
-          # digest changes nothing at all. Print both, in the shape they are pasted.
-          # Never fail the step over this — the image is already published, and a
-          # missing digest line is a paste-it-yourself, not a failed release.
-          digest="$(docker inspect --format='{{range .RepoDigests}}{{println .}}{{end}}' "${image}" \
-                    | grep "^ghcr.io/hanzoai/docs@" | head -1 | cut -d@ -f2 || true)"
-          echo "published ${image}"
-          echo "to make it live — hanzoai/universe charts/app/values/hanzo/docs.yaml:"
-          echo "    tag: ${GITHUB_SHA}"
-          echo "    digest: ${digest:-<crane digest ${image}>}"
+          set -eu
+          sh scripts/check-export.sh apps/docs/out
+          grep -rqF "$NEXT_PUBLIC_PUBLISHABLE_KEY" apps/docs/out \
+            || { echo "::error::the ingest key is not in the export"; exit 1; }
+
+      - name: publish
+        uses: hanzoai/ci/.github/actions/site@v1
+        with:
+          slug: docs
+          dir: apps/docs/out
+          jobs: '48'
+        env:
+          KMS_CLIENT_ID: ${{ secrets.KMS_CLIENT_ID }}
+          KMS_CLIENT_SECRET: ${{ secrets.KMS_CLIENT_SECRET }}
