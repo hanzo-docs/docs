@@ -32,6 +32,12 @@
 # Top-level convenience aliases. docs.hanzo.ai is already the docs subdomain, so
 # bare product paths resolve to their canonical page under /docs. Explicit list
 # only — never a catch-all, which would shadow /, /blog, /showcase, /login.
+#
+# /cloud is where hanzo.id's Cloud card and every "Docs" button beside the
+# product send a reader, and Hanzo Cloud is not a section of this site — it is
+# the site. So it lands on the docs home, which is the page that says what the
+# platform is, rather than on a second page restating it.
+/cloud             /docs                  301
 /introduction      /docs/quickstart       301
 /quickstart        /docs/quickstart       301
 /getting-started   /docs/quickstart       301
@@ -85,9 +91,8 @@
 /functions         /docs/openapi/functions 301
 /kms               /docs/openapi/kms      301
 
-# QA: guessed program slugs → real pages (getting-started covers the /startup
-# on-ramp; deploy lives under the platform/paas services docs).
-/docs/startups     /docs/getting-started      301
+# QA: a guessed program slug → the real page. /docs/startups is itself a page,
+# so it needs no rule.
 /docs/deploy       /docs/openapi/deploy   301
 
 # The Guides destination: the nav item, the URL, the page title and the
