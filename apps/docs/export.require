@@ -37,3 +37,14 @@ docs/projects/hanzoai/index.html
 llms.txt
 llms-full.txt
 llms.mdx/docs/content.md
+#
+#   404.html         app/not-found.tsx, which Next writes only for an export. It
+#                    is the one page nothing links to, so nothing else notices
+#                    when it stops being emitted — and the serving plane points
+#                    errorPage404 straight at this filename.
+#   cloud/index.html one of the pages scripts/emit-redirects.ts writes out of
+#                    public/_redirects. That script skips a rule whose target is
+#                    not itself served, silently and by design, so a rule can go
+#                    quiet without the build saying anything.
+404.html
+cloud/index.html
