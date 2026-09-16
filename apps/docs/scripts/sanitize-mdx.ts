@@ -39,6 +39,94 @@ const CONTENT_DIR = path.resolve(SCRIPT_DIR, '..', 'content', 'docs');
 
 const AUTOLINK = /<((?:https?|ftp|mailto):[^\s<>]+)>/g;
 
+// HTML that a markdown renderer accepts and an MDX parser does not. Ported docs
+// are somebody else's README, written for GitHub, so all three shapes below
+// arrive by the hundred and each one drops its whole page:
+//
+//   <img src=x>        a void element left open. MDX is JSX: it waits for a
+//                      closing tag, swallows the rest of the page, and reports
+//                      the mismatch at whatever closes next ("expected
+//                      corresponding closing tag for <img>").
+//   <!-- … -->         an HTML comment. MDX reads `<` then `!` and stops.
+//   width=95%          an unquoted attribute value, which JSX does not allow.
+//
+// Rewriting is the port: the page keeps its markup and its meaning, and the
+// parser can read it. Upstream is not ours to fix, and a page that renders only
+// the error boundary is not a port.
+const NAME = /^[a-zA-Z_:][-a-zA-Z0-9_:.]*/;
+
+/**
+ * Quote every unquoted attribute value in one tag's attribute text.
+ *
+ * Walked rather than matched: a URL already inside quotes carries `=` of its
+ * own, and a pattern that reads `name=value` anywhere rewrites the query string
+ * of an image badge into a broken attribute. The scanner knows when it is
+ * inside a value and leaves it alone.
+ */
+function quoteAttrs(attrs: string): string {
+  let out = '';
+  let i = 0;
+  while (i < attrs.length) {
+    const rest = attrs.slice(i);
+    const ws = /^\s+/.exec(rest);
+    if (ws) {
+      out += ws[0];
+      i += ws[0].length;
+      continue;
+    }
+    const name = NAME.exec(attrs.slice(i));
+    if (!name) {
+      out += attrs[i];
+      i += 1;
+      continue;
+    }
+    out += name[0];
+    i += name[0].length;
+    if (attrs[i] !== '=') continue;
+    out += '=';
+    i += 1;
+    const q = attrs[i];
+    if (q === '"' || q === "'" || q === '{') {
+      const close = q === '{' ? '}' : q;
+      const end = attrs.indexOf(close, i + 1);
+      const stop = end === -1 ? attrs.length : end + 1;
+      out += attrs.slice(i, stop);
+      i = stop;
+      continue;
+    }
+    let end = i;
+    while (end < attrs.length && !/\s/.test(attrs[end])) end += 1;
+    out += `"${attrs.slice(i, end)}"`;
+    i = end;
+  }
+  return out;
+}
+
+const VOID_TAGS = new Set([
+  'img', 'br', 'hr', 'input', 'source', 'meta', 'col', 'embed', 'area', 'base',
+  'link', 'track', 'wbr',
+]);
+
+/** Any HTML tag: lowercase names only, so a JSX component is never touched. */
+const TAG = /<(\/?)([a-z][a-z0-9-]*)((?:\s[^<>]*?)?)(\/?)>/g;
+
+/**
+ * Rewrite one line's HTML so MDX can read it: voids self-closed, attribute
+ * values quoted. Local, per tag, and never structural — a page's tags are
+ * balanced by whoever wrote it, and a rewriter that starts dropping or adding
+ * closes deletes the one line holding somebody's JSX together.
+ */
+function html(line: string): string {
+  return line.replace(TAG, (whole, close: string, tag: string, attrs: string, selfClose: string) => {
+    if (close) return whole;
+    const name = tag.toLowerCase();
+    const quoted = quoteAttrs(attrs).trim();
+    const rendered = `<${tag}${quoted ? ' ' + quoted : ''}`;
+    if (VOID_TAGS.has(name)) return `${rendered} />`;
+    return `${rendered}${selfClose ? ' />' : '>'}`;
+  });
+}
+
 /** One whole ESM import with a module specifier, bound or bare. */
 const IMPORT = /^import\s+(?:.*\sfrom\s+)?['"][^'"]+['"];?\s*$/;
 
@@ -82,6 +170,7 @@ function terminateImportHeader(lines: string[]): void {
 function sanitize(src: string, ported: boolean, stats: { dropped: number }): string {
   const kept: string[] = [];
   let inFence = false;
+  let inComment = false;
   let fence = '';
   for (const line of src.split('\n')) {
     const trimmed = line.trimStart();
@@ -100,7 +189,28 @@ function sanitize(src: string, ported: boolean, stats: { dropped: number }): str
       stats.dropped++;
       continue;
     }
-    kept.push(line.replace(AUTOLINK, '$1'));
+    let out = line.replace(AUTOLINK, '$1');
+    if (ported) {
+      // A comment can span lines, so the state travels with the loop: the line
+      // that opens one carries `{/*`, the line that closes it carries `*/}`.
+      if (inComment) {
+        const end = out.indexOf('-->');
+        if (end === -1) {
+          kept.push(out);
+          continue;
+        }
+        inComment = false;
+        out = out.slice(0, end) + '*/}' + out.slice(end + 3);
+      }
+      out = out.replace(/<!--([\s\S]*?)-->/g, '{/*$1*/}');
+      const start = out.indexOf('<!--');
+      if (start !== -1) {
+        inComment = true;
+        out = out.slice(0, start) + '{/*' + out.slice(start + 4);
+      }
+      out = html(out);
+    }
+    kept.push(out);
   }
   terminateImportHeader(kept);
   return kept.join('\n');
