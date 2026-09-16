@@ -3,7 +3,7 @@ title: Ml
 description: Hanzo ML — fast multi-backend (CPU/CUDA/Metal/ROCm/Vulkan) tensor & ML framework for Rust with quantization; the compute core of the Hanzo stack.
 ---
 
-<p align="center"><img src=".github/hero.svg" alt="ml" width="880" /></p>
+<p align="center"><img src=".github/hero.svg" alt="ml" width="880"></p>
 
 # Hanzo ML
 [![crates.io](https://img.shields.io/crates/v/hanzo-ml.svg?style=flat-square&color=black)](https://crates.io/crates/hanzo-ml)
@@ -105,27 +105,27 @@ We also provide some command line based examples using state of the art models:
   the LLaMA model using the same quantization techniques as
   [llama.cpp](https://github.com/ggerganov/llama.cpp).
 
-<img src="https://github.com/hanzoai/ml/raw/main/hanzo-ml-examples/examples/quantized/assets/aoc.gif" width="600" />
+<img src="https://github.com/hanzoai/ml/raw/main/hanzo-ml-examples/examples/quantized/assets/aoc.gif" width="600">
   
 - [Stable Diffusion](./hanzo-ml-examples/examples/stable-diffusion/): text to
   image generative model, support for the 1.5, 2.1, SDXL 1.0 and Turbo versions.
 
-<img src="https://github.com/hanzoai/ml/raw/main/hanzo-ml-examples/examples/stable-diffusion/assets/stable-diffusion-xl.jpg" width="200" />
+<img src="https://github.com/hanzoai/ml/raw/main/hanzo-ml-examples/examples/stable-diffusion/assets/stable-diffusion-xl.jpg" width="200">
 
 - [Wuerstchen](./hanzo-ml-examples/examples/wuerstchen/): another text to
   image generative model.
 
-<img src="https://github.com/hanzoai/ml/raw/main/hanzo-ml-examples/examples/wuerstchen/assets/cat.jpg" width="200" />
+<img src="https://github.com/hanzoai/ml/raw/main/hanzo-ml-examples/examples/wuerstchen/assets/cat.jpg" width="200">
 
 - [yolo-v3](./hanzo-ml-examples/examples/yolo-v3/) and
   [yolo-v8](./hanzo-ml-examples/examples/yolo-v8/): object detection and pose
   estimation models.
 
-<img src="https://github.com/hanzoai/ml/raw/main/hanzo-ml-examples/examples/yolo-v8/assets/bike.od.jpg" width="200" /><img src="https://github.com/hanzoai/ml/raw/main/hanzo-ml-examples/examples/yolo-v8/assets/bike.pose.jpg" width="200" />
+<img src="https://github.com/hanzoai/ml/raw/main/hanzo-ml-examples/examples/yolo-v8/assets/bike.od.jpg" width="200"><img src="https://github.com/hanzoai/ml/raw/main/hanzo-ml-examples/examples/yolo-v8/assets/bike.pose.jpg" width="200">
 - [segment-anything](./hanzo-ml-examples/examples/segment-anything/): image
   segmentation model with prompt.
 
-<img src="https://github.com/hanzoai/ml/raw/main/hanzo-ml-examples/examples/segment-anything/assets/sam_merged.jpg" width="200" />
+<img src="https://github.com/hanzoai/ml/raw/main/hanzo-ml-examples/examples/segment-anything/assets/sam_merged.jpg" width="200">
 
 - [SegFormer](./hanzo-ml-examples/examples/segformer/): transformer based semantic segmentation model.
 - [Whisper](./hanzo-ml-examples/examples/whisper/): speech recognition model.
@@ -177,7 +177,7 @@ trunk serve --release --port 8081
 And then head over to
 [http://localhost:8081/](http://localhost:8081/).
 
-{/*- ANCHOR: useful_libraries -*/}
+<!--- ANCHOR: useful_libraries --->
 
 ## Useful External Resources
 - [`hanzo-ml-tutorial`](https://github.com/ToluClassics/hanzo-ml-tutorial): A
@@ -201,9 +201,9 @@ And then head over to
 
 If you have an addition to this list, please submit a pull request.
 
-{/*- ANCHOR_END: useful_libraries -*/}
+<!--- ANCHOR_END: useful_libraries --->
 
-{/*- ANCHOR: features -*/}
+<!--- ANCHOR: features --->
 
 ## Features
 
@@ -260,11 +260,11 @@ If you have an addition to this list, please submit a pull request.
 - Serverless (on CPU), small and fast deployments.
 - Quantization support using the llama.cpp quantized types.
 
-{/*- ANCHOR_END: features -*/}
+<!--- ANCHOR_END: features --->
 
 ## How to use
 
-{/*- ANCHOR: cheatsheet -*/}
+<!--- ANCHOR: cheatsheet --->
 Cheatsheet:
 
 |            | Using PyTorch                            | Using ML                                                     |
@@ -280,7 +280,7 @@ Cheatsheet:
 | Saving     | `torch.save({"A": A}, "model.bin")`      | `hanzo::safetensors::save(&HashMap::from([("A", A)]), "model.safetensors")?` |
 | Loading    | `weights = torch.load("model.bin")`      | `hanzo::safetensors::load("model.safetensors", &device)`        |
 
-{/*- ANCHOR_END: cheatsheet -*/}
+<!--- ANCHOR_END: cheatsheet --->
 
 
 ## Structure
@@ -298,7 +298,7 @@ Cheatsheet:
 
 ### Why should I use ML?
 
-{/*- ANCHOR: goals -*/}
+<!--- ANCHOR: goals --->
 
 ML's core goal is to *make serverless inference possible*. Full machine learning frameworks like PyTorch
 are very large, which makes creating instances on a cluster slow. ML allows deployment of lightweight
@@ -309,7 +309,7 @@ and the [GIL](https://www.backblaze.com/blog/the-python-gil-past-present-and-fut
 
 Finally, Rust is cool! A lot of the HF ecosystem already has Rust crates, like [safetensors](https://github.com/huggingface/safetensors) and [tokenizers](https://github.com/huggingface/tokenizers).
 
-{/*- ANCHOR_END: goals -*/}
+<!--- ANCHOR_END: goals --->
 
 ### Other ML frameworks
 
