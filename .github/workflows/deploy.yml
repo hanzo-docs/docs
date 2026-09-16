@@ -116,8 +116,9 @@ jobs:
         run: |
           set -euo pipefail
           ( while :; do
-              printf '[mem] %s used=%s\n' "$(date -u +%H:%M:%S)" \
-                "$(cat /sys/fs/cgroup/memory.current 2>/dev/null || echo '?')"
+              printf '[usage] %s mem=%s disk=%s\n' "$(date -u +%H:%M:%S)" \
+                "$(cat /sys/fs/cgroup/memory.current 2>/dev/null || echo '?')" \
+                "$(df -Pk . | awk 'NR==2{print $4"k free"}')"
               sleep 30
             done ) &
           heartbeat=$!
