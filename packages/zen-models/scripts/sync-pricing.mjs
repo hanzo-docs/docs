@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * sync-pricing.mjs — Fetch live pricing from pricing.hanzo.ai and patch
+ * sync-pricing.mjs — Fetch live pricing from api.hanzo.ai and patch
  * the static fallback values in models.ts and pricing.ts.
  *
  * Exit codes:
@@ -21,7 +21,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const SRC = resolve(__dirname, '..', 'src')
 const MODELS_PATH = resolve(SRC, 'models.ts')
 const PRICING_PATH = resolve(SRC, 'pricing.ts')
-const PRICING_API = 'https://pricing.hanzo.ai/v1/pricing'
+const PRICING_API = 'https://api.hanzo.ai/v1/pricing'
 const DRY_RUN = process.argv.includes('--dry-run')
 
 /** API model names that map to different source IDs. */

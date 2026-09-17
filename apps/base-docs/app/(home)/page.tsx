@@ -520,8 +520,8 @@ const records = await base
           <p className="text-fd-muted-foreground mb-8">
             Each Base instance runs on a dedicated compute node.
             Pricing syncs from{' '}
-            <a href="https://pricing.hanzo.ai" className="underline underline-offset-4 hover:text-fd-foreground">
-              pricing.hanzo.ai
+            <a href="https://hanzo.ai/pricing" className="underline underline-offset-4 hover:text-fd-foreground">
+              hanzo.ai/pricing
             </a>
             .
           </p>

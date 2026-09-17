@@ -4,7 +4,7 @@
  * Zen models are priced at a sustainable multiplier over inference cost.
  * Third-party models available via the Hanzo API are priced with standard markup.
  *
- * Live pricing fetched from pricing.hanzo.ai; static values are fallbacks only.
+ * Live pricing fetched from api.hanzo.ai; static values are fallbacks only.
  */
 
 /** Markup applied to third-party model pass-through pricing. */
@@ -23,7 +23,7 @@ export const tools = [
   { name: 'Text-to-Speech', unit: 'per 1M characters', price: 15 },
 ] as const
 
-/** Infrastructure compute tiers ($/mo). Syncs from pricing.hanzo.ai. */
+/** Infrastructure compute tiers ($/mo). Syncs from api.hanzo.ai. */
 export const compute = [
   { name: 'Nano', vcpus: 1, cpuType: 'shared', memory: '1 GB', storage: '25 GB', transfer: '1 TB', price: 5 },
   { name: 'Starter', vcpus: 1, cpuType: 'shared', memory: '2 GB', storage: '50 GB', transfer: '2 TB', price: 6 },
@@ -94,10 +94,10 @@ export const thirdPartyModels = [
 ] as const
 
 // ---------------------------------------------------------------------------
-// Dynamic pricing fetch from pricing.hanzo.ai
+// Dynamic pricing fetch from api.hanzo.ai
 // ---------------------------------------------------------------------------
 
-const PRICING_API = 'https://pricing.hanzo.ai/v1/pricing'
+const PRICING_API = 'https://api.hanzo.ai/v1/pricing'
 
 export interface PricingApiModel {
   name: string
@@ -145,7 +145,7 @@ export interface PricingData {
 }
 
 /**
- * Fetch live pricing from pricing.hanzo.ai.
+ * Fetch live pricing from api.hanzo.ai.
  * Returns full pricing data including Zen models, third-party models, and tools.
  * Falls back to null on failure — callers should use static data as fallback.
  */
@@ -162,7 +162,7 @@ export async function fetchPricing(): Promise<PricingData | null> {
 }
 
 /**
- * Fetch live model pricing from pricing.hanzo.ai/v1/pricing/models.
+ * Fetch live model pricing from api.hanzo.ai/v1/pricing/models.
  * Returns array of all models (Zen + third-party) with pricing.
  * Falls back to null on failure.
  */

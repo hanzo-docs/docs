@@ -1,5 +1,5 @@
 /**
- * Base pricing — syncs from pricing.hanzo.ai with static fallback.
+ * Base pricing — syncs from api.hanzo.ai with static fallback.
  *
  * Each Base instance runs on a compute node. Pricing maps 1:1 to
  * Hanzo cloud VM tiers (same as platform.hanzo.ai and visor.hanzo.ai).
@@ -133,7 +133,7 @@ export const COMPUTE_PLANS: ComputePlan[] = [
 
 const PRICING_API =
   process.env.NEXT_PUBLIC_PRICING_API_URL ||
-  'https://pricing.hanzo.ai/v1/pricing/cloud/plans'
+  'https://api.hanzo.ai/v1/pricing/cloud/plans'
 
 /**
  * Fetch live pricing from the Hanzo pricing API.

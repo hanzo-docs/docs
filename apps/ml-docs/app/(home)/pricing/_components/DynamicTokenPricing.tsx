@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { SparklesIcon } from 'lucide-react'
 
-const PRICING_API = 'https://pricing.hanzo.ai/v1/pricing'
+const PRICING_API = 'https://api.hanzo.ai/v1/pricing'
 
 interface ModelPricing {
   name: string
