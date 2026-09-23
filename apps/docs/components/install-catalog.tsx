@@ -28,6 +28,12 @@ type Target = {
 // Ordered by kind, then by how likely a reader is to be on it. The list is the
 // same set the product's own install step offers, so a framework that works there
 // is discoverable here and vice versa.
+//
+// Every line resolves to a package WE publish, checked against its registry. A
+// name we do not hold is someone else's: `gem install hanzo` is a Heroku deploy
+// tool and `flutter pub add hanzo` a git-hooks library, and both installed
+// without complaint. A stack with nothing published has no row — Android and
+// Elixir had lines that resolved nowhere.
 const TARGETS: Target[] = [
   // Web
   { id: 'nextjs', label: 'Next.js', kind: 'web', install: 'npm i @hanzo/event', docs: '/docs/sdks/typescript' },
@@ -43,10 +49,9 @@ const TARGETS: Target[] = [
   { id: 'html', label: 'HTML snippet', kind: 'web', install: '<script src="https://cdn.hanzo.ai/event.js"></script>' },
 
   // Mobile
-  { id: 'ios', label: 'iOS', kind: 'mobile', install: 'pod "Hanzo"', docs: '/docs/sdks/swift' },
-  { id: 'android', label: 'Android', kind: 'mobile', install: 'implementation("ai.hanzo:hanzo")', docs: '/docs/sdks/kotlin' },
+  { id: 'ios', label: 'iOS', kind: 'mobile', install: '.package(url: "https://github.com/hanzo-swift/sdk", from: "8.0.0")', docs: '/docs/sdks/swift' },
   { id: 'react-native', label: 'React Native', kind: 'mobile', install: 'npm i @hanzo/event' },
-  { id: 'flutter', label: 'Flutter', kind: 'mobile', install: 'flutter pub add hanzo' },
+  { id: 'flutter', label: 'Flutter', kind: 'mobile', install: 'flutter pub add hanzoai' },
 
   // Server
   { id: 'node', label: 'Node.js', kind: 'server', install: 'npm i @hanzo/event', docs: '/docs/sdks/typescript' },
@@ -54,12 +59,11 @@ const TARGETS: Target[] = [
   { id: 'go', label: 'Go', kind: 'server', install: 'go get github.com/hanzoai/go-sdk/v8', docs: '/docs/sdks/go' },
   { id: 'rust', label: 'Rust', kind: 'server', install: 'cargo add hanzo-client', docs: '/docs/sdks/rust' },
   { id: 'cpp', label: 'C++', kind: 'server', install: 'find_package(hanzo)', docs: '/docs/sdks/cpp' },
-  { id: 'ruby', label: 'Ruby', kind: 'server', install: 'gem install hanzo' },
-  { id: 'rails', label: 'Ruby on Rails', kind: 'server', install: 'gem install hanzo' },
-  { id: 'php', label: 'PHP', kind: 'server', install: 'composer require hanzo/hanzo' },
-  { id: 'laravel', label: 'Laravel', kind: 'server', install: 'composer require hanzo/hanzo' },
+  { id: 'ruby', label: 'Ruby', kind: 'server', install: 'gem install hanzoai' },
+  { id: 'rails', label: 'Ruby on Rails', kind: 'server', install: 'gem install hanzoai' },
+  { id: 'php', label: 'PHP', kind: 'server', install: 'composer require hanzoai/hanzoai' },
+  { id: 'laravel', label: 'Laravel', kind: 'server', install: 'composer require hanzoai/hanzoai' },
   { id: 'django', label: 'Django', kind: 'server', install: 'pip install hanzoai', docs: '/docs/sdks/python' },
-  { id: 'elixir', label: 'Elixir', kind: 'server', install: '{:hanzo, "~> 1.0"}' },
   { id: 'api', label: 'HTTP API', kind: 'server', install: 'POST https://api.hanzo.ai/v1/event', docs: '/docs/openapi' },
 
   // LLM
