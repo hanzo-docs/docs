@@ -106,12 +106,11 @@ const config: NextConfig = {
   experimental: {
     // Reduce peak memory during webpack compilation for large builds.
     webpackMemoryOptimizations: true,
-    // The export is built once, on a runner that keeps nothing, inside a 12Gi
-    // memory limit. Turbopack's build cache would serve a next build that never
-    // runs there, and it costs memory twice: the compile tracks every dependency
-    // edge so the cache can be invalidated, and the compiler stays resident
-    // while the cache is written, which overlaps page generation.
-    turbopackFileSystemCacheForBuild: false,
+    // The export is built inside a 12Gi memory limit. Turbopack's build cache
+    // is on disk, and it is the only place Turbopack can put a task it takes out
+    // of memory: after every snapshot of the cache, the build drops every task it
+    // can reload from it rather than keeping them all resident to the end.
+    turbopackMemoryEviction: 'full',
     // The export publishes no source maps and runs no server, so the export
     // build makes no maps and does not minify the server bundle it renders with.
     // `next dev` keeps its maps.
