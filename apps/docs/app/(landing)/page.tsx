@@ -383,7 +383,7 @@ export default function Page() {
             </Tab>
             <Tab value="Go">
               <CodeBlock
-                code={`// go get github.com/hanzoai/go-sdk\nimport hanzoai "github.com/hanzoai/go-sdk"\n\nclient := hanzoai.NewClient(os.Getenv("HANZO_API_KEY"))\n\nresp, err := client.ModelsAPI.GetModels(ctx).Execute()`}
+                code={`// go get github.com/hanzoai/go-sdk/v8\nimport hanzoai "github.com/hanzoai/go-sdk/v8"\n\nclient := hanzoai.NewAPIClient(hanzoai.NewConfiguration())\n\nmodels, _, err := client.AiAPI.GetModels(ctx).Execute()`}
                 lang="go"
               />
             </Tab>

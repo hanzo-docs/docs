@@ -28,18 +28,18 @@ document at a ref its own `.spec-lock` names.
 | Language | Coordinate | Install |
 |---|---|---|
 | TypeScript | `hanzoai` on npm | `npm i hanzoai` |
-| Python | `hanzoai` on PyPI | `pip install hanzoai` |
-| Go | `github.com/hanzoai/go-sdk` | `go get github.com/hanzoai/go-sdk` |
+| Python | `hanzoai` on PyPI | `pip install "hanzoai>=8"` |
+| Go | `github.com/hanzoai/go-sdk/v8` | `go get github.com/hanzoai/go-sdk/v8` |
 | Rust | `hanzo-client` on crates.io | `cargo add hanzo-client` |
 | Swift | [hanzo-swift/sdk](https://github.com/hanzo-swift/sdk), product `Hanzo` | SwiftPM, from the git URL |
-| Kotlin | `ai.hanzo:sdk` | Gradle, via JitPack until Maven Central |
-| Java | `ai.hanzo:hanzo-java-cloud` | Gradle, built from source |
+| Kotlin | `ai.hanzo:hanzo-kotlin-cloud` | Gradle, built from source |
+| Java | `ai.hanzo:hanzo-java-cloud` on Maven Central | Gradle or Maven, from `mavenCentral()` |
 | C++ | [hanzo-cpp/sdk](https://github.com/hanzo-cpp/sdk) | CMake, from a tag |
 
-Swift, Kotlin, Java and C++ are tagged and buildable but not on a package
-manager that resolves them by name alone — Swift and C++ because neither
-ecosystem has a central registry, Kotlin and Java because the Maven Central
-publication has not landed. Each page says exactly what the coordinate looks
+Swift, Kotlin and C++ are tagged and buildable but not on a package manager
+that resolves them by name alone — Swift and C++ because neither ecosystem has
+a central registry, Kotlin because its Maven Central publication has not
+landed. Each page says exactly what the coordinate looks
 like in the meantime.
 
 ## The same first call, everywhere

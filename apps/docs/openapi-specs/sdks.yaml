@@ -98,7 +98,7 @@ sdks:
   # rmtree's the destination and copies the fresh tree in. The shipped Go client
   # has no such directory — `package hanzoai` sits at the MODULE ROOT, beside
   # go.mod, LICENSE, README.md, scripts/ and .git, because that is what
-  # `import "github.com/hanzoai/go-sdk"` requires. `take: { . : . }` would
+  # `import "github.com/hanzoai/go-sdk/v8"` requires. `take: { . : . }` would
   # therefore delete the repository and replace it with generated files.
   #
   # The row that used to be here promised something else again: `take: {.: cloud}`
@@ -110,8 +110,8 @@ sdks:
   # `.spec-lock` names. That is the pull model working, not
   # a gap: `packageName=hanzoai, withGoMod=false, structPrefix=true,
   # enumClassPrefix=true`, output at the root. Canonical repo is hanzo-go/sdk;
-  # `hanzoai/go-sdk` is a rename redirect and stays the MODULE PATH, because
-  # that is what the proxy has and what consumers require.
+  # `hanzoai/go-sdk` is a rename redirect and, with its major, stays the MODULE
+  # PATH: github.com/hanzoai/go-sdk/v8.
 
   typescript:
     repo: js-sdk

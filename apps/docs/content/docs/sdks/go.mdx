@@ -1,6 +1,6 @@
 ---
 title: Go
-description: go get github.com/hanzoai/go-sdk — package hanzoai at the module root, one service per capability, generated from the API's own document.
+description: go get github.com/hanzoai/go-sdk/v8 — package hanzoai at the module root, one service per capability, generated from the API's own document.
 ---
 
 import { Callout } from '@hanzo/docs-base-ui/components/callout'
@@ -8,17 +8,18 @@ import { Callout } from '@hanzo/docs-base-ui/components/callout'
 # Go
 
 ```bash
-go get github.com/hanzoai/go-sdk
+go get github.com/hanzoai/go-sdk/v8
 ```
 
 ```go
-import "github.com/hanzoai/go-sdk" // package hanzoai
+import hanzoai "github.com/hanzoai/go-sdk/v8"
 ```
 
 The package name is `hanzoai` and it sits at the module root, beside `go.mod` —
 which is why the import path and the package identifier differ. The module path
-stays `github.com/hanzoai/go-sdk` permanently: it is what the module proxy has
-and what existing code requires. The source lives at
+carries its major, `/v8`, as Go requires of any release past v1: without it,
+`go get github.com/hanzoai/go-sdk` resolves v1.0.5, an older client whose
+methods are spelled differently. The source lives at
 [hanzo-go/sdk](https://github.com/hanzo-go/sdk).
 
 Set the key:
@@ -39,7 +40,7 @@ import (
     "fmt"
     "os"
 
-    "github.com/hanzoai/go-sdk"
+    hanzoai "github.com/hanzoai/go-sdk/v8"
 )
 
 func main() {
@@ -47,7 +48,7 @@ func main() {
     cfg.AddDefaultHeader("Authorization", "Bearer "+os.Getenv("HANZO_API_KEY"))
     client := hanzoai.NewAPIClient(cfg)
 
-    models, _, err := client.ModelsAPI.AiListModels(context.Background()).Execute()
+    models, _, err := client.AiAPI.GetModels(context.Background()).Execute()
     if err != nil {
         panic(err)
     }
@@ -60,7 +61,7 @@ returns a request you finish with `.Execute()`, which answers the decoded value,
 the `*http.Response` and an error. Optional parameters are setters on the
 request in between.
 
-The service field is the capability — `client.ModelsAPI`, `client.BillingAPI`,
+The service field is the capability — `client.AiAPI`, `client.BillingAPI`,
 `client.KmsAPI` — and the method is the operation. The
 [reference](/docs/openapi) prints the pair for each one.
 
@@ -72,6 +73,6 @@ formats, so an existing Go client for either works against
 
 ## Resources
 
-- [`github.com/hanzoai/go-sdk` on pkg.go.dev](https://pkg.go.dev/github.com/hanzoai/go-sdk)
+- [`github.com/hanzoai/go-sdk/v8` on pkg.go.dev](https://pkg.go.dev/github.com/hanzoai/go-sdk/v8)
 - Source — [hanzo-go/sdk](https://github.com/hanzo-go/sdk)
 - [Every `/v1` operation →](/docs/openapi)

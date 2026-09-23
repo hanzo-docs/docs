@@ -1,57 +1,61 @@
 ---
 title: Kotlin
-description: ai.hanzo:sdk — the full /v1 surface as a coroutine-native client for the JVM and Android. Via JitPack until Maven Central publication lands.
+description: ai.hanzo:hanzo-kotlin-cloud — the generated client for every /v1 capability, on OkHttp and Gson. Built from source until it lands on Maven Central.
 ---
 
 import { Callout } from '@hanzo/docs-base-ui/components/callout'
 
 # Kotlin
 
-Coroutine-native, on OkHttp and Gson — the same HTTP and JSON stack the
-[Java](/docs/sdks/java) client uses, so a JVM project pulling both pulls one
-stack. Generated from the API's own document.
+Generated from the API's own document onto OkHttp and Gson — the same HTTP and
+JSON stack the [Java](/docs/sdks/java) client uses, so a JVM project pulling
+both pulls one stack.
+
+<Callout title="Not on Maven Central yet">
+`ai.hanzo:hanzo-kotlin-cloud` resolves from no repository. Build it into your
+local Maven repository, or use the [Java](/docs/sdks/java) client, which is on
+Maven Central, from Kotlin.
+</Callout>
 
 ## Install
 
-```kotlin
-// build.gradle.kts
-dependencies {
-    implementation("ai.hanzo:sdk:8.0.0")
-}
+Building wants a JDK 21 toolchain; the jar is Java 8 bytecode. `-PpublishLocal`
+skips the GPG signing a Central upload needs.
+
+```sh
+git clone https://github.com/hanzo-kotlin/sdk hanzo-kotlin-sdk
+cd hanzo-kotlin-sdk
+./gradlew -PpublishLocal :hanzo-kotlin-cloud:publishToMavenLocal
 ```
 
-<Callout title="Maven Central publication is in progress">
-Until `ai.hanzo:sdk` lands there, consume the repository through JitPack: add
-`maven("https://jitpack.io")` to `repositories`, then
-`implementation("com.github.hanzo-kt:sdk:v8.0.0")`.
-</Callout>
+```kotlin
+// build.gradle.kts
+repositories { mavenLocal() }
+dependencies { implementation("ai.hanzo:hanzo-kotlin-cloud:8.5.156") }
+```
 
 ## The shape
 
-Authenticate once on `ApiClient`, then call the capability's class:
+`Hanzo()` reads the endpoint and the credential from the environment
+(`HANZO_API_KEY`, `HANZO_BASE_URL`, default `https://api.hanzo.ai`), and
+`api(::AccountApi)` builds that generated class, or any other, against them:
 
 ```kotlin
-import ai.hanzo.sdk.apis.AgentsApi
-import ai.hanzo.sdk.infrastructure.ApiClient
-import kotlinx.coroutines.runBlocking
+import ai.hanzo.Hanzo
+import ai.hanzo.cloud.api.AccountApi
 
-fun main() = runBlocking {
-    // Base URL defaults to https://api.hanzo.ai.
-    ApiClient.accessToken = System.getenv("HANZO_API_KEY")
-
-    val agents = AgentsApi().chatGetAgents()
-    println(agents)
+fun main() {
+    val keys = Hanzo().api(::AccountApi).getAccountKeys().propertyKeys.orEmpty()
+    println("${keys.size} keys")
 }
 ```
 
-Every capability is an `*Api` class — `AiApi`, `AgentsApi`, `BillingApi`, and
-the rest — and every method is a suspending function. The class and the method
-both come from the document, so the [reference](/docs/openapi) is the index.
-`accessToken` takes an IAM access token or a Hanzo API key; see
-[Authentication](/docs/api-keys).
+The classes follow the document's tags under `ai.hanzo.cloud.api`, with their
+request and response types under `ai.hanzo.cloud.model`, so the
+[reference](/docs/openapi) is the index. Calls block; wrap them in your own
+dispatcher if you need them off a thread.
 
 ## Resources
 
-- Source — [hanzo-kt/sdk](https://github.com/hanzo-kt/sdk). Every operation and
-  model is also written out under `docs/` in that repository.
+- Source — [hanzo-kotlin/sdk](https://github.com/hanzo-kotlin/sdk)
 - [Every `/v1` operation →](/docs/openapi)

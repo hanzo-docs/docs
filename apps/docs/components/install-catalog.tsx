@@ -13,7 +13,7 @@
 import { useMemo, useState } from 'react';
 import { Search, Check, Copy } from 'lucide-react';
 
-type Kind = 'web' | 'mobile' | 'server' | 'llm' | 'platform';
+type Kind = 'web' | 'mobile' | 'server' | 'llm';
 
 type Target = {
   id: string;
@@ -28,6 +28,14 @@ type Target = {
 // Ordered by kind, then by how likely a reader is to be on it. The list is the
 // same set the product's own install step offers, so a framework that works there
 // is discoverable here and vice versa.
+//
+// Every line is a command a package registry answers for, or a line of the HTTP
+// API (scripts/installs.test.ts). A name we do not hold is someone else's:
+// `gem install hanzo` is a Heroku deploy tool and `flutter pub add hanzo` a
+// git-hooks library, and both installed without complaint. A stack with nothing
+// published has no row: Android and Elixir had lines that resolved nowhere, the
+// WordPress, Shopify, Bubble, Segment, Zapier and n8n rows named listings that
+// do not exist, and the HTML snippet loaded cdn.hanzo.ai/event.js, a 404.
 const TARGETS: Target[] = [
   // Web
   { id: 'nextjs', label: 'Next.js', kind: 'web', install: 'npm i @hanzo/event', docs: '/docs/sdks/typescript' },
@@ -40,48 +48,33 @@ const TARGETS: Target[] = [
   { id: 'nuxt', label: 'Nuxt', kind: 'web', install: 'npm i @hanzo/event' },
   { id: 'vite', label: 'Vite', kind: 'web', install: 'npm i @hanzo/event' },
   { id: 'tanstack', label: 'TanStack Start', kind: 'web', install: 'npm i @hanzo/event' },
-  { id: 'html', label: 'HTML snippet', kind: 'web', install: '<script src="https://cdn.hanzo.ai/event.js"></script>' },
+  { id: 'docusaurus', label: 'Docusaurus', kind: 'web', install: 'npm i @hanzo/event' },
 
   // Mobile
-  { id: 'ios', label: 'iOS', kind: 'mobile', install: 'pod "Hanzo"', docs: '/docs/sdks/swift' },
-  { id: 'android', label: 'Android', kind: 'mobile', install: 'implementation("ai.hanzo:hanzo")', docs: '/docs/sdks/kotlin' },
+  { id: 'ios', label: 'iOS', kind: 'mobile', install: '.package(url: "https://github.com/hanzo-swift/sdk", from: "8.0.0")', docs: '/docs/sdks/swift' },
   { id: 'react-native', label: 'React Native', kind: 'mobile', install: 'npm i @hanzo/event' },
-  { id: 'flutter', label: 'Flutter', kind: 'mobile', install: 'flutter pub add hanzo' },
+  { id: 'flutter', label: 'Flutter', kind: 'mobile', install: 'flutter pub add hanzoai' },
 
   // Server
   { id: 'node', label: 'Node.js', kind: 'server', install: 'npm i @hanzo/event', docs: '/docs/sdks/typescript' },
-  { id: 'python', label: 'Python', kind: 'server', install: 'pip install hanzoai', docs: '/docs/sdks/python' },
-  { id: 'go', label: 'Go', kind: 'server', install: 'go get github.com/hanzoai/go-sdk', docs: '/docs/sdks/go' },
-  { id: 'rust', label: 'Rust', kind: 'server', install: 'cargo add hanzo', docs: '/docs/sdks/rust' },
+  { id: 'python', label: 'Python', kind: 'server', install: 'pip install "hanzoai>=8"', docs: '/docs/sdks/python' },
+  { id: 'go', label: 'Go', kind: 'server', install: 'go get github.com/hanzoai/go-sdk/v8', docs: '/docs/sdks/go' },
+  { id: 'rust', label: 'Rust', kind: 'server', install: 'cargo add hanzo-client', docs: '/docs/sdks/rust' },
   { id: 'cpp', label: 'C++', kind: 'server', install: 'find_package(hanzo)', docs: '/docs/sdks/cpp' },
-  { id: 'ruby', label: 'Ruby', kind: 'server', install: 'gem install hanzo' },
-  { id: 'rails', label: 'Ruby on Rails', kind: 'server', install: 'gem install hanzo' },
-  { id: 'php', label: 'PHP', kind: 'server', install: 'composer require hanzo/hanzo' },
-  { id: 'laravel', label: 'Laravel', kind: 'server', install: 'composer require hanzo/hanzo' },
-  { id: 'django', label: 'Django', kind: 'server', install: 'pip install hanzoai', docs: '/docs/sdks/python' },
-  { id: 'elixir', label: 'Elixir', kind: 'server', install: '{:hanzo, "~> 1.0"}' },
+  { id: 'ruby', label: 'Ruby', kind: 'server', install: 'gem install hanzoai' },
+  { id: 'rails', label: 'Ruby on Rails', kind: 'server', install: 'gem install hanzoai' },
+  { id: 'php', label: 'PHP', kind: 'server', install: 'composer require hanzoai/hanzoai' },
+  { id: 'laravel', label: 'Laravel', kind: 'server', install: 'composer require hanzoai/hanzoai' },
+  { id: 'django', label: 'Django', kind: 'server', install: 'pip install "hanzoai>=8"', docs: '/docs/sdks/python' },
   { id: 'api', label: 'HTTP API', kind: 'server', install: 'POST https://api.hanzo.ai/v1/event', docs: '/docs/openapi' },
 
   // LLM
   { id: 'openai', label: 'OpenAI-compatible', kind: 'llm', install: 'base_url="https://api.hanzo.ai/v1"', docs: '/docs/openapi' },
   { id: 'anthropic', label: 'Anthropic-compatible', kind: 'llm', install: 'base_url="https://api.hanzo.ai/v1"', docs: '/docs/openapi' },
   { id: 'ai-sdk', label: 'Vercel AI SDK', kind: 'llm', install: 'npm i @hanzo/ai' },
-  { id: 'langchain', label: 'LangChain', kind: 'llm', install: 'pip install hanzoai' },
-  { id: 'llamaindex', label: 'LlamaIndex', kind: 'llm', install: 'pip install hanzoai' },
+  { id: 'langchain', label: 'LangChain', kind: 'llm', install: 'pip install "hanzoai>=8"' },
+  { id: 'llamaindex', label: 'LlamaIndex', kind: 'llm', install: 'pip install "hanzoai>=8"' },
   { id: 'mcp', label: 'MCP', kind: 'llm', install: 'npx @hanzo/mcp', docs: '/docs/mcp' },
-
-  // Platform / no-code
-  { id: 'wordpress', label: 'WordPress', kind: 'platform', install: 'Hanzo plugin' },
-  { id: 'shopify', label: 'Shopify', kind: 'platform', install: 'Hanzo app' },
-  { id: 'webflow', label: 'Webflow', kind: 'platform', install: 'Custom code → head' },
-  { id: 'framer', label: 'Framer', kind: 'platform', install: 'Custom code → head' },
-  { id: 'bubble', label: 'Bubble', kind: 'platform', install: 'Hanzo plugin' },
-  { id: 'gtm', label: 'Google Tag Manager', kind: 'platform', install: 'Custom HTML tag' },
-  { id: 'segment', label: 'Segment', kind: 'platform', install: 'Hanzo destination' },
-  { id: 'zapier', label: 'Zapier', kind: 'platform', install: 'Hanzo app' },
-  { id: 'n8n', label: 'n8n', kind: 'platform', install: 'Hanzo node' },
-  { id: 'retool', label: 'Retool', kind: 'platform', install: 'REST resource' },
-  { id: 'docusaurus', label: 'Docusaurus', kind: 'platform', install: 'npm i @hanzo/event' },
 ];
 
 const KINDS: { id: Kind | 'all'; label: string }[] = [
@@ -90,7 +83,6 @@ const KINDS: { id: Kind | 'all'; label: string }[] = [
   { id: 'mobile', label: 'Mobile' },
   { id: 'server', label: 'Server' },
   { id: 'llm', label: 'LLM' },
-  { id: 'platform', label: 'Platform' },
 ];
 
 function Row({ t }: { t: Target }) {

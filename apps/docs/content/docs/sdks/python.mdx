@@ -1,6 +1,6 @@
 ---
 title: Python
-description: pip install hanzoai for the whole /v1 surface as hanzoai.cloud, and what the separate hanzo, hanzo-agents and hanzo-mcp distributions are for.
+description: hanzoai on PyPI, Python 3.12 or newer, is the whole /v1 surface as hanzoai.cloud, and what the separate hanzo, hanzo-agents and hanzo-mcp distributions are for.
 ---
 
 import { Callout } from '@hanzo/docs-base-ui/components/callout'
@@ -8,8 +8,12 @@ import { Callout } from '@hanzo/docs-base-ui/components/callout'
 # Python
 
 ```bash
-pip install hanzoai
+pip install "hanzoai>=8"
 ```
+
+Python 3.12 or newer. The `>=8` is load-bearing: without it, pip on 3.9 to 3.11
+resolves `hanzoai` to the 2.1 line, which has no `hanzoai.cloud`, and says
+nothing. With it, pip refuses rather than install a different client.
 
 That is the client for **every** `/v1` capability, generated from the API's own
 document. It exposes exactly one thing:
@@ -85,14 +89,16 @@ client does not describe at all.
 
 ## The other distributions
 
-`hanzo` on PyPI is **the CLI**, not a library — it exports `cli` and `main` and
-installs the `hanzo` command. The agent and tool packages are their own
+The `hanzo` command is the native [CLI](/docs/cli), installed with
+`curl -fsSL https://hanzo.sh | sh`, not a Python package. `hanzo` on PyPI is the
+older Python CLI, installed as `hanzo-py` so the two never share a name on a
+PATH. The agent and tool packages are their own
 distributions, and `pip install "hanzo[all]"` is the convenience that pulls
 them:
 
 | Distribution | What it is |
 |---|---|
-| `hanzo` | The [CLI](/docs/cli). `pip install hanzo`, then `hanzo auth login`. |
+| `hanzo` | The older Python CLI, as the `hanzo-py` command. |
 | `hanzo-agents` | Client for the agents control plane. |
 | `hanzo-mcp` | The [MCP](/docs/mcp) server, as a Python process. |
 | `hanzo-memory` | The memory service. |
