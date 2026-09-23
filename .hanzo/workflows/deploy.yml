@@ -32,9 +32,10 @@ jobs:
     # 4-core, 16Gi node the sandboxes share.
     runs-on: linux-amd64
     # The export alone took 47 minutes on a 10-core workstation (15 compiling,
-    # 23 rendering 5,907 pages); this job gets 6 cores, and install, packages
-    # and publish come on top.
-    timeout-minutes: 150
+    # 23 rendering 5,907 pages). Here it compiles two tasks wide and renders
+    # with two workers to fit the runner's 12Gi, so it runs longer, and install,
+    # packages and publish come on top. The runner pod itself ends at 4 hours.
+    timeout-minutes: 210
     steps:
       - uses: actions/checkout@v4
         with:
@@ -49,8 +50,13 @@ jobs:
           node-version: 24
           cache: pnpm
 
-      # build:pre and build:post run under bun.
+      # build:pre and build:post run under bun. An exact version is fetched from
+      # its release by name; "latest" first asks api.github.com for the tag list,
+      # which answers the runner's shared address 403 once its anonymous rate
+      # limit is spent.
       - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.11
 
       # The ingest key is public (it ships in the bundle) and lives in KMS so it
       # rotates without a commit. Login and read are retried on a lost answer
@@ -116,14 +122,22 @@ jobs:
       # every half minute, so a run that hits the runner's 12Gi limit says so in
       # its last line instead of simply stopping: the cgroup's number where the
       # runtime exposes one, and under visor, which does not, the sandbox's own
-      # /proc/meminfo.
+      # /proc/meminfo. After it come the five largest processes by resident
+      # memory, so the line also says which part of the build holds it.
+      #
+      # The build is sized to that limit. TURBO_TASKS_AVAILABLE_PARALLELISM sets
+      # how many tasks Turbopack runs at once and how many Node processes it
+      # starts for loaders, and each loader process holds its own heap. Every
+      # Node process gets a 4GB heap rather than 8GB: page workers and loaders
+      # grow toward whatever ceiling they are given before they collect.
       - name: build the export
         run: |
           set -euo pipefail
           ( while :; do
-              printf '[usage] %s mem=%s disk=%s\n' "$(date -u +%H:%M:%S)" \
+              printf '[usage] %s mem=%s disk=%s%s\n' "$(date -u +%H:%M:%S)" \
                 "$(cat /sys/fs/cgroup/memory.current 2>/dev/null || awk '/^MemTotal:/{t=$2} /^MemAvailable:/{a=$2} END{print (t-a)"k"}' /proc/meminfo)" \
-                "$(df -Pk . | awk 'NR==2{print $4"k free"}')"
+                "$(df -Pk . | awk 'NR==2{print $4"k free"}')" \
+                "$(awk '/^Name:/{n=$2} /^VmRSS:/{print $2, n}' /proc/[0-9]*/status 2>/dev/null | sort -rn | head -5 | awk '{printf " %s=%dM", $2, $1/1024}')"
               sleep 30
             done ) &
           heartbeat=$!
@@ -133,7 +147,8 @@ jobs:
           NEXT_EXPORT: '1'
           HANZO_DOCS_SYNC: '0'
           NEXT_TELEMETRY_DISABLED: '1'
-          NODE_OPTIONS: --max-old-space-size=8192
+          NODE_OPTIONS: --max-old-space-size=4096
+          TURBO_TASKS_AVAILABLE_PARALLELISM: '2'
 
       - name: export gate
         run: |

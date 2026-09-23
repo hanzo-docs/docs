@@ -33,8 +33,10 @@ const assetPrefix = sectionAssetPrefix[process.env.DOCS_SECTION ?? ''];
 // Used as the resolution target for unresolvable upstream doc platform packages.
 const emptyProjectModule = path.resolve(__dirname, 'lib/empty-project-module.js');
 
+const isExport = process.env.NEXT_EXPORT === '1';
+
 const config: NextConfig = {
-  output: process.env.NEXT_EXPORT === '1' ? 'export' : undefined,
+  output: isExport ? 'export' : undefined,
   // Directory-index export (docs/services/index.html), not flat siblings
   // (docs/services.html). This is the ONE convention hanzoai/static serves:
   // it resolves /docs/services -> docs/services/index.html in place. Without
@@ -104,6 +106,23 @@ const config: NextConfig = {
   experimental: {
     // Reduce peak memory during webpack compilation for large builds.
     webpackMemoryOptimizations: true,
+    // The export is built once, on a runner that keeps nothing, inside a 12Gi
+    // memory limit. Turbopack's build cache would serve a next build that never
+    // runs there, and it costs memory twice: the compile tracks every dependency
+    // edge so the cache can be invalidated, and the compiler stays resident
+    // while the cache is written, which overlaps page generation.
+    turbopackFileSystemCacheForBuild: false,
+    // The export publishes no source maps and runs no server, so the export
+    // build makes no maps and does not minify the server bundle it renders with.
+    // `next dev` keeps its maps.
+    ...(isExport && {
+      turbopackSourceMaps: false,
+      turbopackInputSourceMaps: false,
+      serverMinification: false,
+    }),
+    // Two page-generation workers rather than one per core. Each worker loads
+    // its own copy of the page modules, so memory grows with the count.
+    cpus: 2,
   },
   webpack: (config) => {
     // ------------------------------------------------------------------ //
