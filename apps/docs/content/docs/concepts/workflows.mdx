@@ -14,7 +14,7 @@ want, and why none of them is called a loop.**
 |---|---|---|
 | **[auto](/docs/openapi/auto)** | workflows that run themselves, on a schedule or a webhook | `/v1/auto` |
 | **[flow](/docs/openapi/flow)** | an agent workflow built on a visual canvas | `/v1/flow` |
-| **[tasks](/docs/openapi/tasks)** | the durable async queue underneath | `/v1/tasks` |
+| **[workflow](/docs/openapi/workflow)** | the durable engine underneath | `/v1/workflow` |
 | **[agents](/docs/concepts/agents)** | a model deciding what to do next | `/v1/agent` |
 
 Pick by who decides the next step. **auto** and **flow**: you did, in advance.
@@ -78,7 +78,7 @@ four operations rather than forty.
   `/v1/auto/hooks/{source}/{event}` brings it in;
 - a **schedule** → a five-field cron on the flow, or on an
   [agent](/docs/concepts/agents) that runs continuously;
-- a **queue** → [tasks](/docs/openapi/tasks), for work you enqueue yourself.
+- a **queue** → [workflow](/docs/openapi/workflow), for work you enqueue yourself.
 
 ## Next
 

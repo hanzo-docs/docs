@@ -127,7 +127,7 @@ version, populate files, finalize, then release. The static plane here is two:
 | Performance Monitoring | `/v1/o11y` (381) — dashboards, traces, alerts |
 | App Check | `/v1/gateway` (3) — the CORS allowlist, per-IP flood cap and rate ceiling in force |
 | Dynamic Links | Not here — `/v1/link` is AI provider-account linking, not short links |
-| Extensions | `/v1/integration` (48) — connectors and the providers behind them |
+| Extensions | `/v1/provider` (56) · `/v1/connection` (8) — connectors and the providers behind them |
 | Genkit, Vertex AI in Firebase | `/v1/ai` (272) — Zen models on our own inference, `POST /v1/chat/completions` |
 | Test Lab, somewhere to run code | `/v1/sandbox` (19), `POST /v1/exec` |
 | Firebase Console | console.hanzo.ai |

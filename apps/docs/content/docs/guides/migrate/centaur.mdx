@@ -1,6 +1,6 @@
 ---
 title: Centaur
-description: Centaur gives a Slack thread a Kubernetes pod, a coding harness and a credential proxy. Here that is /v1/channel, /v1/agent, /v1/sandbox and /v1/integration on one origin — with a kernel boundary Centaur leaves off by default.
+description: Centaur gives a Slack thread a Kubernetes pod, a coding harness and a credential proxy. Here that is /v1/channel, /v1/agent, /v1/sandbox and /v1/provider on one origin — with a kernel boundary Centaur leaves off by default.
 ---
 
 Centaur is Paradigm's self-hosted agent platform. A bot is mentioned in Slack, the thread is
@@ -63,7 +63,7 @@ personas behind one bot are several agents, each with its own model, instruction
 | [`/v1/agent`](/docs/concepts/agents) | Named agents with model, instructions, tools and schedule; sessions with an ordered durable event log, parent/child trees and an SSE stream. |
 | [`/v1/sandbox`](/docs/concepts/sandboxes) | One gVisor or Kata pod per lease, a per-project volume, exec as the only way in, three clocks to end it. |
 | [`/v1/tasks` and `/v1/auto`](/docs/concepts/workflows) | The durable engine, embedded in the process, and the flow editor over it. |
-| `/v1/integration` | Org connectors and each person's own connectors; the GitHub and Linear webhooks that turn an issue comment into a channel turn, mirror issues into the todo and fire automation triggers. |
+| `/v1/provider` | Org connectors and each person's own connectors; the GitHub and Linear webhooks that turn an issue comment into a channel turn, mirror issues into the todo and fire automation triggers. |
 | `egress` | Provider keys spent on the caller's behalf, off the managed cluster; a caller asks for a call, never for a key. |
 | [`/.well-known/agent-skills/`](/docs/mcp) | The org's skills catalogue, and every `/v1` operation as an MCP tool. |
 
@@ -164,7 +164,7 @@ agentic run are the same object with different lease lengths — so its isolatio
 | Session keyed by `thread_key` | `/v1/agent/sessions` — ordered durable event log, parent/child trees, SSE stream |
 | Sandbox per thread, warm pool, agent-sandbox CRD | `/v1/sandbox` — one pod per lease, per-project volume, three-clock reaper |
 | `harness-server` normalizing Codex, Claude Code, Amp, Hermes | `dev`, Hanzo's own harness; `claude` and `codex` also run in the `dev` class |
-| iron-proxy placeholder substitution | `egress` for provider keys; IAM token exchange for identity; `/v1/integration/connectors` for a person's own accounts |
+| iron-proxy placeholder substitution | `egress` for provider keys; IAM token exchange for identity; `/v1/connection` for a person's own accounts |
 | 1Password vault | Hanzo KMS — sealed secrets, per-secret agent policy, per-agent audit trail |
 | Slackbot, Teamsbot, Discordbot | `/v1/channel` |
 | Githubbot, Linearbot | `github` and `linear` are channels transports: an issue is a room, a comment that mentions the App is a turn, the reply is a comment; issues also mirror into the native todo and fire automation triggers |
@@ -197,10 +197,10 @@ Centaur's HTTP surface is small and each route has a direct counterpart.
 | `GET /api/workflows/schedules` | `/v1/tasks` schedules |
 | `POST /api/workflows/events` | `/v1/tasks` signal |
 | `ANY /api/webhooks/{slug}` | `POST /v1/auto/hooks/{source}/{event}` |
-| `/api/slack/channels`, `/api/slack/files/…` | `POST /v1/channel/slack/send`; `/v1/integration/connectors/slack` |
+| `/api/slack/channels`, `/api/slack/files/…` | `POST /v1/channel/slack/send`; `/v1/connection/slack` |
 | `/api/admin/slack/archive-imports`, `dm-sync`, `google/docs-sync`, `granola/sync` | `/v1/sync` |
 | `POST /mcp` | `POST /v1/mcp`, and `hanzo-mcp` over stdio |
-| Console `/api/v1/secrets`, `broker_credentials`, `oauth_apps` | `/v1/kms`; `/v1/integration/connectors` |
+| Console `/api/v1/secrets`, `broker_credentials`, `oauth_apps` | `/v1/kms`; `/v1/connection` |
 | Console `/api/v1/principals`, `roles`, `grants`, `api_keys` | `/v1/iam`; `/v1/account/keys` |
 | Console `scheduled_tasks` | `PATCH /v1/agent/{ref}` with `schedule` |
 | Console `skills` | `/.well-known/agent-skills/` |
@@ -247,7 +247,7 @@ provider — never by anything running in the pod. See the [Vault](/docs/guides/
 and [Doppler](/docs/guides/migrate/doppler) guides for the custody side.
 
 **A person's own external accounts** — GitHub, Google, Slack, Linear — are enrolled once under
-`/v1/integration/connectors` and spent only for them, so `gh pr create` from a shared channel
+`/v1/connection` and spent only for them, so `gh pr create` from a shared channel
 opens the pull request as the human who asked. That is what Centaur's per-turn requester
 credentials do, without a proxy.
 

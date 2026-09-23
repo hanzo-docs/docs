@@ -1,12 +1,12 @@
 ---
 title: Composio
-description: Composio gives an agent authenticated tools across third-party apps. Here that is /v1/integration for the org's credential, /v1/integration/connectors for a user's own, and /v1/tool for the actions they reach.
+description: Composio gives an agent authenticated tools across third-party apps. Here that is /v1/provider for the org's credential, /v1/connection for a user's own, and /v1/tool for the actions they reach.
 ---
 
 Composio holds OAuth credentials for third-party apps and hands an agent the
-actions those credentials reach. Two capabilities answer it: `/v1/integration`
-(40 operations) holds the credential an **org** connects,
-`/v1/integration/connectors` (8) holds the one a **user** connects, and every
+actions those credentials reach. Two capabilities answer it: `/v1/provider`
+(56 operations) holds the credential an **org** connects,
+`/v1/connection` (8) holds the one a **user** connects, and every
 action either one reaches shows up in `/v1/tool`.
 
 ## Start here
@@ -42,27 +42,27 @@ argument has no counterpart here.
 
 | Capability | What it does | Operations |
 |---|---|---|
-| `/v1/integration` | The credential an **org** connects to a provider, and the callbacks that acquire it | 40 |
-| `/v1/integration/connectors` | The same credential held per **user** — device flow, refresh, token read | 8 |
+| `/v1/provider` | The credential an **org** connects to a provider, and the callbacks that acquire it | 56 |
+| `/v1/connection` | The same credential held per **user** — device flow, refresh, token read | 8 |
 | `/v1/tool` | One flat set of callable actions across every source, plus dispatch and activation | 19 |
 
 ## Nouns
 
 | Composio | Hanzo |
 |---|---|
-| Toolkit — an app such as GitHub or Slack | Provider — `GET /v1/integration/{provider}` returns one with this org's connection status |
+| Toolkit — an app such as GitHub or Slack | Provider — `GET /v1/provider/{provider}` returns one with this org's connection status |
 | Auth config — the OAuth app you register per toolkit | The deployment's own provider configuration. A connect against a provider it lacks answers 503 |
-| Connected account, shared by a team | Connection — `POST /v1/integration/{provider}/connect` |
-| Connected account, one per end user | Connector — `GET /v1/integration/connectors`, rows keyed by (org, user) |
+| Connected account, shared by a team | Connection — `POST /v1/provider/{provider}/connect` |
+| Connected account, one per end user | Connector — `GET /v1/connection`, rows keyed by (org, user) |
 | `userId` passed on every call | The validated principal in the key |
 | Tool | Tool — `GET /v1/tool`, one flat set across every source, each with an `inputSchema` |
 | Executing a tool | `POST /v1/tool/call` |
 | A session's hosted MCP endpoint | `POST /v1/mcp` |
-| Disconnecting an account | `POST /v1/integration/{provider}/disconnect`, which deletes the custodied secret and the row |
+| Disconnecting an account | `POST /v1/provider/{provider}/disconnect`, which deletes the custodied secret and the row |
 
 Two scopes, not one. Composio scopes a connected account by the `userId` you
-pass; here the scope is structural. An `/v1/integration` connection belongs to
-the org and every member reaches it. A `/v1/integration/connectors` row belongs
+pass; here the scope is structural. A `/v1/provider` connection belongs to
+the org and every member reaches it. A `/v1/connection` row belongs
 to one person and is invisible to everyone else, including their own org's
 admins. Pick by who owns the account, not by a field.
 
@@ -85,7 +85,7 @@ Hanzo — connect, discover, dispatch:
 ```bash
 # 1. Acquire the org's GitHub credential. With no `token` in the body this
 #    begins OAuth and answers an `authorizeUrl` to send the person to.
-curl -X POST https://api.hanzo.ai/v1/integration/github/connect \
+curl -X POST https://api.hanzo.ai/v1/provider/github/connect \
   -H "Authorization: Bearer $HANZO_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{}'
@@ -115,7 +115,7 @@ toolkits across a large set of apps, the same for every customer.
 `GET /v1/tool` returns what *this* org can reach — the platform's own
 operations, the actions of its connected providers, its authored skills, its
 agents and functions, and the tools of every external MCP server it
-registered. Check `GET /v1/integration` for the
+registered. Check `GET /v1/provider` for the
 providers this deployment carries before you plan a cutover. A provider that is
 not there is added by registering its MCP server with
 `POST /v1/tool/mcp/servers`, not by waiting for a catalog entry.
