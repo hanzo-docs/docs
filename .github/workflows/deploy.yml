@@ -28,9 +28,8 @@ concurrency:
 jobs:
   site:
     # A static export names no architecture; the label picks the host.
-    # linux-amd64 is the runner node (8 cores, 32Gi). linux-arm64 is a 4-core,
-    # 16Gi sandbox node: this export starved it until its kubelet stopped
-    # answering, and the job died mid-compile with nothing published.
+    # linux-amd64 is the runner node, 8 cores and 32Gi. linux-arm64 is a
+    # 4-core, 16Gi node the sandboxes share.
     runs-on: linux-amd64
     # The export alone took 47 minutes on a 10-core workstation (15 compiling,
     # 23 rendering 5,907 pages); this job gets 6 cores, and install, packages
