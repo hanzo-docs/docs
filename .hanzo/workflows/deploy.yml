@@ -28,13 +28,14 @@ concurrency:
 jobs:
   site:
     # A static export names no architecture; the label picks the host.
-    # linux-amd64 is the runner node, 8 cores and 32Gi. linux-arm64 is a
+    # linux-amd64 runs on the amd64 runner nodes, 32Gi each. linux-arm64 is a
     # 4-core, 16Gi node the sandboxes share.
     runs-on: linux-amd64
-    # The export alone took 47 minutes on a 10-core workstation (15 compiling,
-    # 23 rendering 5,907 pages). Here it compiles two tasks wide and renders
-    # with two workers to fit the runner's 12Gi, so it runs longer, and install,
-    # packages and publish come on top. The runner pod itself ends at 4 hours.
+    # A runner pod is capped at 6 cores and 24Gi, and this job is the reason
+    # the memory cap is that high: its compile holds 14-16G in one process at
+    # the peak. It compiles two tasks wide and renders with two workers, which
+    # keeps it well inside the cap and makes it slower than the 47 minutes it
+    # took on a 10-core workstation. The runner pod itself ends at 4 hours.
     timeout-minutes: 210
     steps:
       - uses: actions/checkout@v4
@@ -119,17 +120,17 @@ jobs:
       # log that stopped seven minutes before the job did.
       #
       # The heartbeat is there for the same reason. It prints the memory in use
-      # every 15 seconds, so a run that hits the runner's 12Gi limit says so in
-      # its last line instead of simply stopping: the cgroup's number where the
-      # runtime exposes one, and under visor, which does not, the sandbox's own
-      # /proc/meminfo. After it come the five largest processes by resident
-      # memory, so the line also says which part of the build holds it.
+      # every 15 seconds, so a run that hits the runner's memory limit says so
+      # in its last line instead of simply stopping: the cgroup's number where
+      # the runtime exposes one, and under visor, which does not, the sandbox's
+      # own /proc/meminfo. That figure leaves out what the pod is also charged
+      # for, visor's sentry (about 1.4G) and the page cache of files the job
+      # wrote. After it come the five largest processes by resident memory, so
+      # the line also says which part of the build holds it.
       #
-      # The build is sized to that limit. TURBO_TASKS_AVAILABLE_PARALLELISM sets
-      # how many tasks Turbopack runs at once and how many Node processes it
-      # starts for loaders, and each loader process holds its own heap. Every
-      # Node process gets a 4GB heap rather than 8GB: page workers and loaders
-      # grow toward whatever ceiling they are given before they collect.
+      # TURBO_TASKS_AVAILABLE_PARALLELISM sets how many tasks Turbopack runs at
+      # once and how many Node processes it starts for loaders, each with its
+      # own heap. Two keeps the loaders near 1.2G together.
       - name: build the export
         run: |
           set -euo pipefail
@@ -147,7 +148,7 @@ jobs:
           NEXT_EXPORT: '1'
           HANZO_DOCS_SYNC: '0'
           NEXT_TELEMETRY_DISABLED: '1'
-          NODE_OPTIONS: --max-old-space-size=4096
+          NODE_OPTIONS: --max-old-space-size=8192
           TURBO_TASKS_AVAILABLE_PARALLELISM: '2'
 
       - name: export gate
