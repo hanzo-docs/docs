@@ -38,7 +38,7 @@ const served = new Set<string>(
  */
 const code = PAGES.flatMap((page) => {
   const src = read(page);
-  const blocks = [...src.matchAll(/```([a-z]*)\n([\s\S]*?)```/g)].map((m) => ({
+  const blocks = [...src.matchAll(/```([a-z]*)[^\n]*\n([\s\S]*?)```/g)].map((m) => ({
     text: m[2],
     shell: ['bash', 'sh', 'shell', ''].includes(m[1]),
   }));
@@ -50,7 +50,7 @@ const code = PAGES.flatMap((page) => {
 const words = (line: string) => [...line.matchAll(/'[^']*'|"[^"]*"|\S+/g)].map((m) => m[0]);
 
 /** The CLI's own commands, which are not capabilities and are not in the table. */
-const NATIVE = new Set(['auth', 'version', 'up', 'run', 'dev', 'code']);
+const NATIVE = new Set(['auth', 'version', 'up', 'run', 'dev', 'code', 'host']);
 
 const lines = code
   .filter((b) => b.shell)
@@ -58,7 +58,8 @@ const lines = code
     text
       .replace(/\\\n\s*/g, ' ')
       .split('\n')
-      .map((line) => ({ page, line: line.trim() })),
+      // A trailing `# comment` is prose, not an argument.
+      .map((line) => ({ page, line: line.replace(/\s+#.*$/, '').trim() })),
   );
 
 /** The commands on a line: `hanzo auth login && hanzo account keys create` is two. */
@@ -77,7 +78,8 @@ describe('first-call pages', () => {
   it('run only CLI commands the CLI has, with the flags it takes', () => {
     const run = firstCalls.flatMap(({ page, line }) =>
       commands(line)
-        .filter((w) => w[0] === 'hanzo' && !NATIVE.has(w[1]))
+        // `hanzo --help` lists the capabilities; it names none.
+        .filter((w) => w[0] === 'hanzo' && !NATIVE.has(w[1]) && !w[1]?.startsWith('--'))
         .map((w) => ({ page, line: w.join(' '), w })),
     );
     expect(run.length).toBeGreaterThan(0);
@@ -85,6 +87,8 @@ describe('first-call pages', () => {
       expect(products.has(w[1]), `${page}: \`${line}\` names no capability`).toBe(true);
       const flagAt = w.findIndex((x) => x.startsWith('--'));
       const said = w.slice(1, flagAt < 0 ? undefined : flagAt);
+      // `hanzo billing --help` lists a capability's commands; it runs none.
+      if (said.length === 1 && w.includes('--help')) continue;
       const cmd = table.find(
         (c) =>
           [c.product, ...c.nodes, c.verb].join(' ') === said.slice(0, 2 + c.nodes.length).join(' '),
@@ -150,11 +154,11 @@ describe('first-call pages', () => {
     const allowed: Record<string, RegExp> = {
       ts: /^(hanzo|hanzoai)$/,
       typescript: /^(hanzo|hanzoai)$/,
-      python: /^hanzoai\.cloud$/,
+      python: /^hanzoai\.cloud(\.api)?$/,
       go: /^github\.com\/hanzoai\/go-sdk\/v8$/,
     };
     const imports = PAGES.flatMap((page) =>
-      [...read(page).matchAll(/```(\w+)\n([\s\S]*?)```/g)]
+      [...read(page).matchAll(/```(\w+)[^\n]*\n([\s\S]*?)```/g)]
         .filter((m) => allowed[m[1]])
         .flatMap((m) =>
           [
@@ -173,7 +177,7 @@ describe('first-call pages', () => {
   it('call only operations the published clients have', () => {
     const langs: Record<string, string> = { ts: 'typescript', typescript: 'typescript', python: 'python' };
     const calls = PAGES.flatMap((page) =>
-      [...read(page).matchAll(/```(\w+)\n([\s\S]*?)```/g)]
+      [...read(page).matchAll(/```(\w+)[^\n]*\n([\s\S]*?)```/g)]
         .filter((m) => langs[m[1]])
         .flatMap((m) =>
           [...m[2].matchAll(/\.((?:get|post|put|patch|delete)[A-Z_]\w*)\(/g)].map((c) => ({
