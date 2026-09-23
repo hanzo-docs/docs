@@ -38,14 +38,14 @@ dependencies { implementation("ai.hanzo:hanzo-kotlin-cloud:8.5.156") }
 
 `Hanzo()` reads the endpoint and the credential from the environment
 (`HANZO_API_KEY`, `HANZO_BASE_URL`, default `https://api.hanzo.ai`), and
-`api(::SomeApi)` builds any generated class against them:
+`api(::AccountApi)` builds that generated class, or any other, against them:
 
 ```kotlin
 import ai.hanzo.Hanzo
-import ai.hanzo.cloud.api.KeysApi
+import ai.hanzo.cloud.api.AccountApi
 
 fun main() {
-    val keys = Hanzo().api(::KeysApi).getKeys().propertyKeys.orEmpty()
+    val keys = Hanzo().api(::AccountApi).getAccountKeys().propertyKeys.orEmpty()
     println("${keys.size} keys")
 }
 ```

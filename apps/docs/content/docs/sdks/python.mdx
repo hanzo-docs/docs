@@ -1,6 +1,6 @@
 ---
 title: Python
-description: pip install hanzoai for the whole /v1 surface as hanzoai.cloud, and what the separate hanzo, hanzo-agents and hanzo-mcp distributions are for.
+description: hanzoai on PyPI, Python 3.12 or newer, is the whole /v1 surface as hanzoai.cloud, and what the separate hanzo, hanzo-agents and hanzo-mcp distributions are for.
 ---
 
 import { Callout } from '@hanzo/docs-base-ui/components/callout'
@@ -8,8 +8,12 @@ import { Callout } from '@hanzo/docs-base-ui/components/callout'
 # Python
 
 ```bash
-pip install hanzoai
+pip install "hanzoai>=8"
 ```
+
+Python 3.12 or newer. The `>=8` is load-bearing: without it, pip on 3.9 to 3.11
+resolves `hanzoai` to the 2.1 line, which has no `hanzoai.cloud`, and says
+nothing. With it, pip refuses rather than install a different client.
 
 That is the client for **every** `/v1` capability, generated from the API's own
 document. It exposes exactly one thing:
