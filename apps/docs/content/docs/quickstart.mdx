@@ -69,8 +69,9 @@ export HANZO_API_KEY=sk-...
 
 ## 3. List the models
 
-The catalogue of models the gateway currently serves. It is a read, it needs
-nothing but the key, and it is the same operation on all four surfaces.
+The catalogue of models the gateway currently serves. It needs no key at all,
+and it is the same operation on all four surfaces. An `id` from it is what a
+request names as `model`.
 
 <Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
 <Tab value="CLI">
@@ -180,10 +181,27 @@ HTTP needs no page: it is `https://api.hanzo.ai` and the key you just exported.
 ## 4. Send a completion
 
 This is the first step that draws down credit; everything above is free to run.
+`zen5` is an `id` the catalogue lists.
 
+<Tabs items={['CLI', 'HTTP']}>
+<Tab value="CLI">
 ```bash
-hanzo chat completions --model zen5 --messages '[{"role":"user","content":"hello"}]'
+hanzo chat completions --data '{"model":"zen5","messages":[{"role":"user","content":"hello"}]}'
 ```
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -X POST https://api.hanzo.ai/v1/chat/completions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"zen5","messages":[{"role":"user","content":"hello"}]}'
+```
+</Tab>
+</Tabs>
+
+A `401` names what was missing and where a key comes from; a `402
+insufficient_balance` means the key is fine and the org has no credit — see
+[Credits & billing](/docs/credits). A `429` carries `Retry-After`, in seconds.
 
 Then read what it drew down:
 
@@ -195,7 +213,27 @@ hanzo usage summary
 [Credits & billing](/docs/credits) explains what a credit is and what happens at
 zero; [Pricing](/docs/pricing) is the rate for every model and tool.
 
-## 5. Run the cloud locally
+## 5. Record a fact and read it back
+
+The graph holds what is true of your org's entities, and who said so. Assert
+one fact, then resolve what holds now.
+
+```bash
+curl -X POST https://api.hanzo.ai/v1/graph \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"assertions":[{"entity":"acme","relation":"owner","value":"ada","at":"2026-01-01T00:00:00Z","source":"quickstart"}]}'
+
+curl -X POST https://api.hanzo.ai/v1/graph/resolve \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"entity":"acme","relation":"owner"}'
+```
+
+The assert answers `{"recorded":1,…}`; the resolve answers `"known":true` with
+the assertion as `winner`. [Graph](/docs/openapi/graph) is the rest of it.
+
+## 6. Run the cloud locally
 
 The same binary that serves `api.hanzo.ai` runs on your machine:
 
