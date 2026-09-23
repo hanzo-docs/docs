@@ -139,10 +139,12 @@ export default function Page() {
       {/* One column, centred. It was `flex flex-col items-center`, which is the
           same picture drawn with the wrong primitive: a column of blocks IS a
           one-track grid, and saying so means `justifyItems` centres the children
-          without each of them having to be told. */}
+          without each of them having to be told. `minmax(0, 1fr)` pins the
+          track to the section; the implicit `auto` track grows to the cards
+          grid's intrinsic 896px and overflows a phone. */}
       <section
         className="relative mx-auto w-full max-w-5xl px-6 pt-24 pb-16 md:pt-36 md:pb-24"
-        style={{ display: 'grid', justifyItems: 'center', textAlign: 'center' }}
+        style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', justifyItems: 'center', textAlign: 'center' }}
       >
         {/* The atmosphere behind the headline, as dots rather than a gradient —
             the halftone IS the mark, and a gradient carries none of it. `fade`
