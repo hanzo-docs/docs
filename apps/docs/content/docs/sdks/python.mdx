@@ -85,14 +85,16 @@ client does not describe at all.
 
 ## The other distributions
 
-`hanzo` on PyPI is **the CLI**, not a library — it exports `cli` and `main` and
-installs the `hanzo` command. The agent and tool packages are their own
+The `hanzo` command is the native [CLI](/docs/cli), installed with
+`curl -fsSL https://hanzo.sh | sh`, not a Python package. `hanzo` on PyPI is the
+older Python CLI, installed as `hanzo-py` so the two never share a name on a
+PATH. The agent and tool packages are their own
 distributions, and `pip install "hanzo[all]"` is the convenience that pulls
 them:
 
 | Distribution | What it is |
 |---|---|
-| `hanzo` | The [CLI](/docs/cli). `pip install hanzo`, then `hanzo auth login`. |
+| `hanzo` | The older Python CLI, as the `hanzo-py` command. |
 | `hanzo-agents` | Client for the agents control plane. |
 | `hanzo-mcp` | The [MCP](/docs/mcp) server, as a Python process. |
 | `hanzo-memory` | The memory service. |
