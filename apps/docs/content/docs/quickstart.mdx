@@ -108,15 +108,17 @@ models = AiApi(client).get_models()
 </Tab>
 <Tab value=".go">
 ```bash
-go get github.com/hanzoai/go-sdk
+go get github.com/hanzoai/go-sdk/v8
 ```
 
 ```go
-import hanzoai "github.com/hanzoai/go-sdk"
+import hanzoai "github.com/hanzoai/go-sdk/v8"
 
-client := hanzoai.NewClient(os.Getenv("HANZO_API_KEY"))
+cfg := hanzoai.NewConfiguration()
+cfg.AddDefaultHeader("Authorization", "Bearer "+os.Getenv("HANZO_API_KEY"))
+client := hanzoai.NewAPIClient(cfg)
 
-resp, err := client.ModelsAPI.GetModels(context.Background()).Execute()
+models, _, err := client.AiAPI.GetModels(context.Background()).Execute()
 ```
 </Tab>
 <Tab value=".rs">

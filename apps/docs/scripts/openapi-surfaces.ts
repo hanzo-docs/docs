@@ -262,7 +262,7 @@ export const SDKS: SdkLang[] = [
     render(op, doc) {
       const svc = `${pascalTag(op.product)}API`;
       // `hanzoai`: the Go client is `package hanzoai` at the module root, which
-      // is what `import "github.com/hanzoai/go-sdk"` binds. There is no `go` row
+      // is what `import "github.com/hanzoai/go-sdk/v8"` binds. There is no `go` row
       // in sdks.yaml — the client owns its own invocation, for the reason stated
       // there — so this fallback is the only place the name is written, and it
       // said `cloud`, a package no published module declares.
