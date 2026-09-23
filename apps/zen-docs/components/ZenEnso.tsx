@@ -1,6 +1,6 @@
 'use client'
 
-import type { CSSProperties } from 'react'
+import { useId, type CSSProperties } from 'react'
 
 // Geometrically exact circle: r=172, center=(256,256), viewBox=512x512
 const R = 172
@@ -27,7 +27,9 @@ export function ZenEnso({
   asLoader = false,
   className = '',
 }: ZenEnsoProps) {
-  const uid = Math.random().toString(36).slice(2, 7)
+  // useId is the same on the server and the client, so the exported <style>
+  // hydrates as rendered; keep only characters a CSS name accepts.
+  const uid = useId().replace(/[^\w-]/g, '')
   const dur = loop ? '1.35s' : '1.25s'
   const iter = loop ? 'infinite' : '1'
 
