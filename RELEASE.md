@@ -6,7 +6,7 @@ There is no image to tag and no pin to move.
 
     push main
       -> git.hanzo.ai/hanzoai/docs          a pull mirror of github.com/hanzo-docs/docs
-      -> .github/workflows/deploy.yml       the forge reads this directory natively
+      -> .hanzo/workflows/deploy.yml        the forge reads this directory natively
       -> pnpm build --filter=docs           NEXT_EXPORT=1 -> apps/docs/out
       -> hanzoai/ci .github/actions/site    POST /v1/projects/docs/deployments
       -> s3://hanzo-sites/hanzo/docs        the prefix the docs.hanzo.ai route serves
@@ -16,9 +16,9 @@ The route is an `IngressRoute` + `Middleware` pair in hanzoai/universe
 `docs-static` -> `root: s3://hanzo-sites/hanzo/docs`. No pod, no replicas, no
 image. A site is files and a route.
 
-GitHub Actions is **off** for this repo. Every workflow under
-`.github/workflows/` runs on git.hanzo.ai, which reads that directory itself; on
-github.com the same files would queue against runners that do not exist there.
+Every workflow lives in `.hanzo/workflows/` and runs on git.hanzo.ai, which reads
+that directory first. GitHub reads only `.github/workflows/`, so none of them can
+queue there (Actions is also disabled on hanzo-docs/docs).
 
 ## Fire it
 
@@ -80,7 +80,7 @@ build or pin it to publish; retiring it is a universe change.
 ## Sibling sites in this repo
 
 `apps/cloud` publishes Sites project `hanzo-cloud` through the same action
-(`.github/workflows/deploy-cloud.yml`). The remaining `deploy-*-docs.yml`
+(`.hanzo/workflows/deploy-cloud.yml`). The remaining `deploy-*-docs.yml`
 workflows still `wrangler pages deploy` their app; each is the only deploy of its
 host, so they stay until that host has a Sites project of its own. The path for
 each is the one above: give the app `output: 'export'`, publish a slug, then move

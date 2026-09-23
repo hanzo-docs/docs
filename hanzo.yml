@@ -10,12 +10,11 @@
 # file only declares WHAT is built; it does not restate the recipe.
 #
 # THE TAG CONTRACT. hanzoai/universe pins this image in
-# charts/app/values/hanzo/docs.yaml, and the six builders that can produce it do
+# charts/app/values/hanzo/docs.yaml, and the five builders that can produce it do
 # not agree on what to call it:
 #
 #   platform webhook, THIS file   <sha40>-amd64-docs        ← what universe pins
 #   POST /v1/runner               whatever the caller names
-#   .hanzo/workflows/deploy.yml   <sha40>
 #   hanzoai/ci (buildx)           sha-<sha7>-amd64  + latest
 #   hanzoai/ci (mode: delegate)   sha-<sha7>-amd64
 #   forge push orchestrator       sha-<sha7>-amd64-docs      (dormant)
@@ -31,7 +30,7 @@
 # Whichever one publishes, the pin has to be told its name — and the line that
 # actually decides what runs is `digest:`, not `tag:`, because the chart renders
 # repo:tag@digest and a digest beside a tag is what gets pulled. Read the tag off
-# the build you actually fired; RELEASE.md writes out the edit for each of the six.
+# the build you actually fired; RELEASE.md writes out the edit for each of the five.
 images:
   - name: docs
     context: .

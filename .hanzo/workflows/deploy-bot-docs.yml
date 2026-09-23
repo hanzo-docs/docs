@@ -1,13 +1,13 @@
-name: Deploy ZT Docs
+name: Deploy Bot Docs
 
 on:
   push:
     branches: [main]
     paths:
-      - 'apps/zt-docs/**'
+      - 'apps/bot-docs/**'
       - 'packages/**'
       - 'pnpm-lock.yaml'
-      - '.github/workflows/deploy-zt-docs.yml'
+      - '.hanzo/workflows/deploy-bot-docs.yml'
   workflow_dispatch:
 
 jobs:
@@ -29,13 +29,15 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - run: pnpm build --filter=zt-docs
+      - run: pnpm build --filter=bot-docs
+        env:
+          NODE_OPTIONS: '--max-old-space-size=8192'
 
       - name: Publish to the Sites plane
         uses: https://git.hanzo.ai/hanzoai/ci/.github/actions/site@v1
         with:
-          slug: zerotrust
-          dir: apps/zt-docs/out
+          slug: bot
+          dir: apps/bot-docs/out
         env:
           KMS_CLIENT_ID: ${{ secrets.KMS_CLIENT_ID }}
           KMS_CLIENT_SECRET: ${{ secrets.KMS_CLIENT_SECRET }}

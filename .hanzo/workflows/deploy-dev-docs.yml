@@ -1,13 +1,13 @@
-name: Deploy Bot Docs
+name: Deploy Dev Docs
 
 on:
   push:
     branches: [main]
     paths:
-      - 'apps/bot-docs/**'
+      - 'apps/dev-docs/**'
       - 'packages/**'
       - 'pnpm-lock.yaml'
-      - '.github/workflows/deploy-bot-docs.yml'
+      - '.hanzo/workflows/deploy-dev-docs.yml'
   workflow_dispatch:
 
 jobs:
@@ -17,27 +17,25 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
-
       - uses: pnpm/action-setup@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: pnpm
-
       - uses: oven-sh/setup-bun@v2
-
       - run: pnpm install --frozen-lockfile
 
-      - run: pnpm build --filter=bot-docs
+      - name: Build dev-docs
+        run: pnpm build --filter=dev-docs
         env:
           NODE_OPTIONS: '--max-old-space-size=8192'
+        timeout-minutes: 30
 
       - name: Publish to the Sites plane
         uses: https://git.hanzo.ai/hanzoai/ci/.github/actions/site@v1
         with:
-          slug: bot
-          dir: apps/bot-docs/out
+          slug: dev
+          dir: apps/dev-docs/out
         env:
           KMS_CLIENT_ID: ${{ secrets.KMS_CLIENT_ID }}
           KMS_CLIENT_SECRET: ${{ secrets.KMS_CLIENT_SECRET }}

@@ -1,13 +1,13 @@
-name: Deploy Cloud Landing Page
+name: Deploy Zen Docs
 
 on:
   push:
     branches: [main]
     paths:
-      - 'apps/cloud/**'
+      - 'apps/zen-docs/**'
       - 'packages/**'
       - 'pnpm-lock.yaml'
-      - '.github/workflows/deploy-cloud.yml'
+      - '.hanzo/workflows/deploy-zen-docs.yml'
   workflow_dispatch:
 
 jobs:
@@ -22,20 +22,24 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
+          # 22, like the other nine deploy lanes here. pnpm/action-setup above
+          # fetches a pnpm that requires Node >= 22.13, so a 20 pin fails at THIS
+          # step — before install, before build — with "This version of pnpm
+          # requires at least Node.js v22.13".
           node-version: 22
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
 
-      - run: pnpm --filter @hanzo/cloud build
+      - run: pnpm build --filter=zen-docs
         env:
           NODE_OPTIONS: '--max-old-space-size=8192'
 
       - name: Publish to the Sites plane
         uses: https://git.hanzo.ai/hanzoai/ci/.github/actions/site@v1
         with:
-          slug: hanzo-cloud
-          dir: apps/cloud/out
+          slug: zen
+          dir: apps/zen-docs/out
         env:
           KMS_CLIENT_ID: ${{ secrets.KMS_CLIENT_ID }}
           KMS_CLIENT_SECRET: ${{ secrets.KMS_CLIENT_SECRET }}

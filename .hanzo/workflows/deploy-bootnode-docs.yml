@@ -1,13 +1,12 @@
-name: Deploy Zen Docs
+name: Deploy Bootnode Docs
 
 on:
   push:
     branches: [main]
     paths:
-      - 'apps/zen-docs/**'
+      - 'apps/bootnode-docs/**'
       - 'packages/**'
-      - 'pnpm-lock.yaml'
-      - '.github/workflows/deploy-zen-docs.yml'
+      - '.hanzo/workflows/deploy-bootnode-docs.yml'
   workflow_dispatch:
 
 jobs:
@@ -17,29 +16,21 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
-
       - uses: pnpm/action-setup@v4
-
       - uses: actions/setup-node@v4
         with:
-          # 22, like the other nine deploy lanes here. pnpm/action-setup above
-          # fetches a pnpm that requires Node >= 22.13, so a 20 pin fails at THIS
-          # step — before install, before build — with "This version of pnpm
-          # requires at least Node.js v22.13".
           node-version: 22
           cache: pnpm
-
+      # apps/bootnode-docs runs its build:pre and build:post hooks under bun.
+      - uses: oven-sh/setup-bun@v2
       - run: pnpm install --frozen-lockfile
-
-      - run: pnpm build --filter=zen-docs
-        env:
-          NODE_OPTIONS: '--max-old-space-size=8192'
+      - run: pnpm build --filter bootnode-docs
 
       - name: Publish to the Sites plane
         uses: https://git.hanzo.ai/hanzoai/ci/.github/actions/site@v1
         with:
-          slug: zen
-          dir: apps/zen-docs/out
+          slug: bootnode
+          dir: apps/bootnode-docs/out
         env:
           KMS_CLIENT_ID: ${{ secrets.KMS_CLIENT_ID }}
           KMS_CLIENT_SECRET: ${{ secrets.KMS_CLIENT_SECRET }}

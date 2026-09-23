@@ -1,13 +1,13 @@
-name: Deploy Base Docs
+name: Deploy Insights Docs
 
 on:
   push:
     branches: [main]
     paths:
-      - 'apps/base-docs/**'
+      - 'apps/insights-docs/**'
       - 'packages/**'
       - 'pnpm-lock.yaml'
-      - '.github/workflows/deploy-base-docs.yml'
+      - '.hanzo/workflows/deploy-insights-docs.yml'
   workflow_dispatch:
 
 jobs:
@@ -17,20 +17,27 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
+
       - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: pnpm
+
       - uses: oven-sh/setup-bun@v2
+
       - run: pnpm install --frozen-lockfile
-      - run: pnpm build --filter=base-docs
+
+      - run: pnpm build --filter=insights-docs
+        env:
+          NODE_OPTIONS: '--max-old-space-size=8192'
 
       - name: Publish to the Sites plane
         uses: https://git.hanzo.ai/hanzoai/ci/.github/actions/site@v1
         with:
-          slug: base
-          dir: apps/base-docs/out
+          slug: insights
+          dir: apps/insights-docs/out
         env:
           KMS_CLIENT_ID: ${{ secrets.KMS_CLIENT_ID }}
           KMS_CLIENT_SECRET: ${{ secrets.KMS_CLIENT_SECRET }}

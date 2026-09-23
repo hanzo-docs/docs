@@ -4,8 +4,8 @@ name: deploy
 # apps/docs/out and publishes it as project `docs`, whose prefix (hanzo/docs) the
 # docs.hanzo.ai route serves. No image, no pod. RELEASE.md has the whole path.
 #
-# It runs on git.hanzo.ai (hanzoai/docs, a pull mirror of this repo). GitHub
-# Actions is off for this repo, so GitHub builds nothing.
+# It runs on git.hanzo.ai (hanzoai/docs, a pull mirror of this repo), which reads
+# .hanzo/workflows/. GitHub reads only .github/workflows/, so it runs none of it.
 
 on:
   push:
@@ -15,7 +15,7 @@ on:
       - 'packages/**'
       - 'pnpm-lock.yaml'
       - 'scripts/check-export.sh'
-      - '.github/workflows/deploy.yml'
+      - '.hanzo/workflows/deploy.yml'
   workflow_dispatch:
 
 # One publish at a time: a newer push waits for the running one to finish, then
