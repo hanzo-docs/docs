@@ -17,12 +17,16 @@ const read = (rel: string) => fs.readFileSync(path.join(APP, rel), 'utf8');
 
 const PAGES = [
   'content/docs/quickstart.mdx',
+  'content/docs/api-keys.mdx',
   'content/docs/index.mdx',
   'content/docs/concepts/agents.mdx',
   'content/docs/concepts/budgets.mdx',
 ];
 
 const table = [...loadCliTable().values()];
+const clients: { lang: string; methods: string[] }[] = JSON.parse(
+  read('openapi-specs/sdk-clients.json'),
+).clients;
 const products = new Set(table.map((c) => c.product));
 const served = new Set<string>(
   JSON.parse(read('openapi-specs/pricing.json')).hanzoModels.map((m: { name: string }) => m.name),
@@ -115,6 +119,74 @@ describe('first-call pages', () => {
       for (const m of line.matchAll(/(?:--data|-d)\s+'([^']*)'/g)) {
         expect(() => JSON.parse(m[1]), `${page}: body ${m[1]}`).not.toThrow();
       }
+    }
+  });
+
+  it('link only to pages the site has', () => {
+    // The pre-build generators write these sections; they are not on disk here.
+    const generated = new Set(['openapi', 'cli', 'mcp-tools', 'pricing', 'guides', 'services']);
+    const exists = (href: string) => {
+      const slug = href.replace(/^\/docs\/?/, '').replace(/[#?].*$/, '').replace(/\/$/, '');
+      if (slug === '' || generated.has(slug.split('/')[0])) return true;
+      const base = path.join(APP, 'content/docs', slug);
+      return ['.mdx', '/index.mdx', '/meta.json'].some((ext) => fs.existsSync(base + ext));
+    };
+    // Every link in the quickstart, and the home page's way into it.
+    const links = PAGES.flatMap((page) =>
+      read(page)
+        .split('\n')
+        .filter((line) => page.endsWith('quickstart.mdx') || /first call/i.test(line))
+        .flatMap((line) => [...line.matchAll(/href[:=]\s*['"](\/docs[^'"]*)['"]|\]\((\/docs[^)\s]*)\)/g)])
+        .map((m) => ({ page, href: m[1] ?? m[2] })),
+    );
+    expect(links.length).toBeGreaterThan(0);
+    for (const { page, href } of links) {
+      expect(exists(href), `${page}: ${href} is not a page`).toBe(true);
+    }
+  });
+
+  it('import the generated clients', () => {
+    // hanzo re-exports hanzoai; hanzoai.cloud is the Python one; Go's is /v8.
+    const allowed: Record<string, RegExp> = {
+      ts: /^(hanzo|hanzoai)$/,
+      typescript: /^(hanzo|hanzoai)$/,
+      python: /^hanzoai\.cloud$/,
+      go: /^github\.com\/hanzoai\/go-sdk\/v8$/,
+    };
+    const imports = PAGES.flatMap((page) =>
+      [...read(page).matchAll(/```(\w+)\n([\s\S]*?)```/g)]
+        .filter((m) => allowed[m[1]])
+        .flatMap((m) =>
+          [
+            ...m[2].matchAll(
+              /\bfrom ['"]([^'"]+)['"]|^from (\S+) import|^import (?:\w+ )?"(github\.com\/hanzoai\/[^"]+)"/gm,
+            ),
+          ].map((i) => ({ page, lang: m[1], from: i[1] ?? i[2] ?? i[3] })),
+        ),
+    );
+    expect(imports.length).toBeGreaterThan(0);
+    for (const { page, lang, from } of imports) {
+      expect(from, `${page}: ${lang} imports ${from}`).toMatch(allowed[lang]);
+    }
+  });
+
+  it('call only operations the published clients have', () => {
+    const langs: Record<string, string> = { ts: 'typescript', typescript: 'typescript', python: 'python' };
+    const calls = PAGES.flatMap((page) =>
+      [...read(page).matchAll(/```(\w+)\n([\s\S]*?)```/g)]
+        .filter((m) => langs[m[1]])
+        .flatMap((m) =>
+          [...m[2].matchAll(/\.((?:get|post|put|patch|delete)[A-Z_]\w*)\(/g)].map((c) => ({
+            page,
+            lang: langs[m[1]],
+            method: c[1],
+          })),
+        ),
+    );
+    expect(calls.length).toBeGreaterThan(0);
+    for (const { page, lang, method } of calls) {
+      const client = clients.find((c) => c.lang === lang);
+      expect(client?.methods, `${page}: the ${lang} client has no ${method}`).toContain(method);
     }
   });
 

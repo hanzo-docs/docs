@@ -198,6 +198,16 @@ new Hanzo({ publishableKey: 'pk-...' })               // a browser bundle
 A third-party HTTP client written against the chat-completions shape works too —
 point its base URL at `https://api.hanzo.ai/v1` and give it the same key.
 
+### Calling from a browser
+
+The API answers a cross-origin request only from an origin it can trust:
+Hanzo's own hosts, and an `https` host your org has attached to a site and
+verified over DNS — `POST /v1/projects/{slug}/domains`, then
+`POST /v1/projects/{slug}/domains/{host}/verify`. Any other origin, `localhost`
+included, gets no CORS headers, so the browser will not read the answer. A
+secret key belongs on your server either way; a page carries only the
+publishable key.
+
 ## Spend and usage
 
 Spend for the calling credential comes from the billing and event APIs —
