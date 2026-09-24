@@ -48,3 +48,16 @@ llms.mdx/docs/content.md
 #                    quiet without the build saying anything.
 404.html
 cloud/index.html
+#
+#   docs/<product>/  the addresses the console's Docs buttons open, each a page
+#                    emit-redirects writes. The console is not crawled by the
+#                    link sweep, so a rule that goes quiet here is a dead button
+#                    that nothing else reports.
+docs/agents/index.html
+docs/crawl/index.html
+docs/edge/index.html
+docs/embeddings/index.html
+docs/gateway/index.html
+docs/functions/index.html
+docs/kms/index.html
+docs/machines/index.html

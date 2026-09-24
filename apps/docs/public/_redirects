@@ -72,6 +72,43 @@
 /docs/dns          /docs/openapi/dns      301
 /docs/desktop      /docs/apps/desktop               301
 /docs/code         /docs/openapi/code     301
+# The console's own Docs buttons: AgentsModule, SearchModule (/crawl),
+# EdgeModule, embeddings SettingsView and ResourceRail, the inference rail,
+# FunctionsModule and its secrets tab, and the machines view. Edge is
+# GET /v1/project/edge, so it lands on that operation.
+/docs/agents       /docs/openapi/agent              301
+/docs/crawl        /docs/openapi/crawl              301
+/docs/edge         /docs/openapi/project/get-project-edge  301
+/docs/embeddings   /docs/openapi/ai/post-embeddings 301
+/docs/gateway      /docs/openapi/gateway            301
+/docs/functions    /docs/openapi/function           301
+/docs/kms          /docs/openapi/kms                301
+/docs/machines     /docs/openapi/compute            301
+# The product cards on /docs linked /docs/<product> until those pages were
+# folded into the reference; each old address lands on its capability. Hanzo
+# Tasks is the durable workflow engine (/v1/workflow), not the task board, and
+# the zero-trust routers are /v1/network/routers.
+/docs/authz        /docs/openapi/authz              301
+/docs/base         /docs/openapi/base               301
+/docs/billing      /docs/openapi/billing            301
+/docs/commerce     /docs/openapi/commerce           301
+/docs/experiments  /docs/openapi/experiment         301
+/docs/gpus         /docs/openapi/compute            301
+/docs/iam          /docs/openapi/iam                301
+/docs/kv           /docs/openapi/kv                 301
+/docs/marketplace  /docs/openapi/marketplace        301
+/docs/o11y         /docs/openapi/o11y               301
+/docs/prompts      /docs/openapi/prompt             301
+/docs/pubsub       /docs/openapi/pubsub             301
+/docs/registry     /docs/openapi/registry           301
+/docs/search       /docs/openapi/search             301
+/docs/sql          /docs/projects/hanzoai/sql       301
+/docs/storage      /docs/openapi/s3                 301
+/docs/tasks        /docs/openapi/workflow           301
+/docs/zero-trust   /docs/openapi/network            301
+/docs/zt           /docs/openapi/network            301
+/docs/getting-started  /docs/quickstart             301
+/docs/contributing     /docs/contributing/style     301
 
 # The console links the SDK product at the singular /docs/sdk; the section is
 # /docs/sdks. Catch the singular rather than move the section.
