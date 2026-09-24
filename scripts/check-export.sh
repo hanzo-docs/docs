@@ -14,8 +14,9 @@
 #                               here aborts the build BEFORE any push, whether
 #                               that push came from `docker buildx --push`, an
 #                               in-cluster BuildKit job, or a plain docker build.
-#   .hanzo/workflows/deploy.yml on /public copied out of the FINISHED image, so
-#                               the forge lane also proves the copy landed.
+#   .hanzo/workflows/deploy.yml on apps/docs/out, the export itself, before the
+#                               publish step uploads it to the Sites plane. That
+#                               lane builds no image; it gates the files.
 #
 # Usage: check-export.sh <export-dir> [require-file]
 #
