@@ -56,11 +56,22 @@ function groups(doc: Document, table: Map<string, CliCommand>): Group[] {
   return [...out.values()];
 }
 
+/** The words a command spells its capability with: through the word that names
+ *  it, or the product alone when none does. A capability the CLI files under
+ *  another command is spelled there — `/v1/link` is `hanzo auth link` — so the
+ *  page names the spelling a reader types, not the tag it is filed under. */
+export function spelling(command: string, name: string): string[] {
+  const words = command.replace(/\s*\\\n\s*/g, ' ').split(/\s+/).slice(1);
+  const at = words.indexOf(name);
+  return words.slice(0, at >= 0 ? at + 1 : 1);
+}
+
 function renderGroup(g: Group, doc: Document): string {
   const L: string[] = [];
+  const spelled = g.rows.length ? spelling(g.rows[0].command, g.name).join(' ') : g.name;
   L.push('---');
   L.push(`title: ${yamlString(g.title)}`);
-  L.push(`description: ${yamlString(`The \`hanzo ${g.name}\` commands.`)}`);
+  L.push(`description: ${yamlString(`The \`hanzo ${spelled}\` commands.`)}`);
   L.push('---');
   L.push('');
   if (g.description) {
@@ -128,7 +139,7 @@ function renderGroup(g: Group, doc: Document): string {
     const one = command.replace(/\s*\\\n\s*/g, ' ');
     // `hanzo <capability> <noun> <verb> …` — the noun is the segment after the
     // capability, and a command with none acts on the capability itself.
-    const parts = one.split(/\s+/).slice(2);
+    const parts = one.split(/\s+/).slice(1 + spelling(one, g.name).length);
     const noun = parts.length > 1 ? parts[0] : '';
     const list = byNoun.get(noun) ?? [];
     list.push({ one, what: text(firstSentence(op.summary || op.description, 120)) });
@@ -205,8 +216,9 @@ function renderIndex(gs: Group[], commands: number, covered: number): string {
   L.push('| Group | Commands | What it is |');
   L.push('|---|---|---|');
   for (const g of gs) {
+    const spelled = g.rows.length ? spelling(g.rows[0].command, g.name).join(' ') : g.name;
     L.push(
-      `| [\`hanzo ${g.name}\`](/docs/cli/${g.name}) | ${g.rows.length} | ${text(
+      `| [\`hanzo ${spelled}\`](/docs/cli/${g.name}) | ${g.rows.length} | ${text(
         firstSentence(g.description, 110),
       )} |`,
     );
