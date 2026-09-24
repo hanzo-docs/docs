@@ -109,9 +109,15 @@ const config: NextConfig = {
     // The export publishes no source maps and runs no server, so the export
     // build makes no maps and does not minify the server bundle it renders with.
     // `next dev` keeps its maps.
+    //
+    // Nor does it keep Turbopack's filesystem cache, which Next 16 turns on for
+    // builds. The export runs once on a fresh runner, so the cache is never
+    // read back, and under visor every file the job writes is cached in the
+    // sandbox's own memory, which the pod's limit is charged for.
     ...(isExport && {
       turbopackSourceMaps: false,
       turbopackInputSourceMaps: false,
+      turbopackFileSystemCacheForBuild: false,
       serverMinification: false,
     }),
     // Two page-generation workers rather than one per core. Each worker loads
