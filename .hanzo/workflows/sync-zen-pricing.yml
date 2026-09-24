@@ -1,0 +1,80 @@
+name: Sync Zen Pricing
+
+on:
+  schedule:
+    - cron: '30 4 * * *' # 30 min after pricing service daily sync at 04:00 UTC
+  repository_dispatch:
+    types: [pricing-updated]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    name: Sync pricing from pricing.hanzo.ai
+    runs-on: hanzo-docs-build-linux-amd64
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The credential this checkout persists is the one `git push` below
+          # uses. The automatic token belongs to the Actions user, which holds
+          # no access on this repo, so main's protection answers every push
+          # `Not allowed to push to protected branch main` — the sync computed
+          # its prices, committed them, and dropped them on the floor daily.
+          # FORGE_TOKEN is the fleet's git.hanzo.ai write credential and is the
+          # identity every other write-back in the fleet already uses.
+          token: ${{ secrets.FORGE_TOKEN }}
+
+      - uses: pnpm/action-setup@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Install Dependencies
+        run: pnpm i --frozen-lockfile
+
+      - name: Run sync-pricing
+        id: sync
+        run: |
+          set +e
+          node packages/zen-models/scripts/sync-pricing.mjs
+          CODE=$?
+          set -e
+          echo "exit_code=$CODE" >> "$GITHUB_OUTPUT"
+          if [ "$CODE" -eq 2 ]; then
+            echo "::error::Pricing sync failed (API error)"
+            exit 1
+          fi
+
+      - name: Create changeset
+        if: steps.sync.outputs.exit_code == '0'
+        run: |
+          TIMESTAMP=$(date +%Y%m%d%H%M%S)
+          # packages/zen-models publishes as @zenlm/models. Naming a package that
+          # is not in the workspace makes `changeset version` fail in release.yml,
+          # so every sync this wrote was a changeset that could not be consumed.
+          cat > .changeset/pricing-sync-${TIMESTAMP}.md << 'CHANGESET'
+          ---
+          '@zenlm/models': patch
+          ---
+
+          Sync model pricing from pricing.hanzo.ai
+          CHANGESET
+
+      - name: Commit and push
+        if: steps.sync.outputs.exit_code == '0'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add packages/zen-models/src/ .changeset/
+          git commit -m "$(cat <<'EOF'
+          chore(zen-models): sync pricing from pricing.hanzo.ai
+
+          Automated daily pricing sync. Changes detected and changeset created.
+          EOF
+          )"
+          git push

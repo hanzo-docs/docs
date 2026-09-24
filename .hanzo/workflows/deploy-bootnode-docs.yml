@@ -1,0 +1,36 @@
+name: Deploy Bootnode Docs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/bootnode-docs/**'
+      - 'packages/**'
+      - '.hanzo/workflows/deploy-bootnode-docs.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: hanzo-docs-build-linux-amd64
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      # apps/bootnode-docs runs its build:pre and build:post hooks under bun.
+      - uses: oven-sh/setup-bun@v2
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build --filter bootnode-docs
+
+      - name: Publish to the Sites plane
+        uses: https://git.hanzo.ai/hanzoai/ci/.github/actions/site@v1
+        with:
+          slug: bootnode
+          dir: apps/bootnode-docs/out
+        env:
+          KMS_CLIENT_ID: ${{ secrets.KMS_CLIENT_ID }}
+          KMS_CLIENT_SECRET: ${{ secrets.KMS_CLIENT_SECRET }}

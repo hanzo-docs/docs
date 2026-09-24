@@ -1,0 +1,41 @@
+name: Deploy Cloud Landing Page
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/cloud/**'
+      - 'packages/**'
+      - 'pnpm-lock.yaml'
+      - '.hanzo/workflows/deploy-cloud.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: hanzo-docs-build-linux-amd64
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm --filter @hanzo/cloud build
+        env:
+          NODE_OPTIONS: '--max-old-space-size=8192'
+
+      - name: Publish to the Sites plane
+        uses: https://git.hanzo.ai/hanzoai/ci/.github/actions/site@v1
+        with:
+          slug: hanzo-cloud
+          dir: apps/cloud/out
+        env:
+          KMS_CLIENT_ID: ${{ secrets.KMS_CLIENT_ID }}
+          KMS_CLIENT_SECRET: ${{ secrets.KMS_CLIENT_SECRET }}
