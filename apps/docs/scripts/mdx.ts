@@ -71,25 +71,26 @@ export const unpackage = (s: string): string => {
 };
 
 /**
- * The first sentence, for a description or a card blurb.
+ * The first sentence, for a description, a table cell or a card blurb.
  *
- * A sentence that fits comes back whole. One that does not is cut at the last
- * sentence boundary inside the budget, and where the budget holds no boundary,
- * at a word boundary with an ellipsis. The ellipsis is the point: a cell cut
- * mid-clause otherwise reads as a complete sentence the source never wrote, and
- * a reader has no way to tell there is more.
+ * WHOLE, always. It used to be cut to a budget — at the last sentence boundary
+ * inside it, else mid-clause with an ellipsis — and a budget of 120 characters
+ * against summaries that run to 400 put "…" on a quarter of the reference: the
+ * CLI page for `bot` read "Returns the caller org's bots as space members — each
+ * with the member account uuid and the Person reference the roster…". A cell that
+ * stops mid-clause is not shorter, it is unfinished, and the reader cannot get
+ * the rest from where they are. The summary is already written to be one
+ * sentence (cloud's zipdoc cuts it at the first full stop), so it is printed as
+ * written; a long one wraps.
+ *
+ * Only the first PARAGRAPH is read, so prose that opens with a list or a block
+ * and has no full stop in its first paragraph gives that paragraph, not the page.
  */
-export const firstSentence = (s: string, max = 200): string => {
-  const t = String(s ?? '').replace(/\s+/g, ' ').trim();
-  if (t.length <= max) {
-    const m = t.match(/^(.+?[.!?])(\s|$)/);
-    return (m ? m[1] : t).trim();
-  }
-  const head = t.slice(0, max);
-  const stop = head.lastIndexOf('. ');
-  if (stop > 40) return head.slice(0, stop + 1).trim();
-  const word = head.lastIndexOf(' ');
-  return (word > 40 ? head.slice(0, word) : head).trim() + '…';
+export const firstSentence = (s: string): string => {
+  const para = String(s ?? '').trim().split(/\n\s*\n/)[0] ?? '';
+  const t = para.replace(/\s+/g, ' ').trim();
+  const m = t.match(/^(.+?[.!?])(\s|$)/);
+  return (m ? m[1] : t).trim();
 };
 
 export const fence = (lang: string, body: string): string[] => ['```' + lang, body, '```'];

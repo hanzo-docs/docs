@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse as parseYaml } from 'yaml';
-import { unpackage } from './mdx';
+import { firstSentence, unpackage } from './mdx';
 
 // THE DOCUMENT.
 //
@@ -481,12 +481,6 @@ export function aliases(p: string): string[] {
 export const titleCase = (name: string): string =>
   WRITTEN[name.toLowerCase()] ??
   (/^[a-z]/.test(name) ? name[0].toUpperCase() + name.slice(1) : name);
-
-const firstSentence = (s: string): string => {
-  const t = String(s ?? '').replace(/\s+/g, ' ').trim();
-  const m = t.match(/^(.{0,220}?[.!?])(\s|$)/);
-  return (m ? m[1] : t.slice(0, 220)).trim();
-};
 
 /**
  * The capability rule: THE TAG.

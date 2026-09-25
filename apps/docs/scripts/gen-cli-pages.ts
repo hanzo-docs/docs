@@ -1,8 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { DOCUMENT, canonical, loadDocument, opHref, type Document, type Operation } from './openapi-doc';
-import { cli } from './openapi-surfaces';
+import { DOCUMENT, canonical, loadDocument, titleCase, type Document, type Operation } from './openapi-doc';
+import { cli, command as lookup } from './openapi-surfaces';
 import { loadCliTable, type CliCommand } from './sync-cli-commands';
 import { domains, icon } from './capabilities';
 import { firstSentence, text, yamlString } from './mdx';
@@ -62,21 +62,22 @@ interface Group {
   name: string;
   title: string;
   description: string;
-  rows: Array<{ op: Operation; command: string }>;
+  rows: Array<{ op: Operation; command: string; cmd: CliCommand }>;
 }
 
 function groups(doc: Document, table: Map<string, CliCommand>): Group[] {
   const out = new Map<string, Group>();
   for (const p of doc.products) {
     for (const op of p.operations) {
+      const cmd = lookup(op, table);
       const command = cli(op, doc, table);
-      if (!command) continue;
+      if (!cmd || !command) continue;
       let g = out.get(p.name);
       if (!g) {
         g = { name: p.name, title: p.title, description: p.description, rows: [] };
         out.set(p.name, g);
       }
-      g.rows.push({ op, command });
+      g.rows.push({ op, command, cmd });
     }
   }
   return [...out.values()];
@@ -92,6 +93,41 @@ export function spelling(command: string, name: string): string[] {
   return words.slice(0, at >= 0 ? at + 1 : 1);
 }
 
+/** The words after `hanzo <capability>` that name what a command acts on — its
+ *  noun and its verb — read from the CLI's own coordinates rather than from the
+ *  printed command. The printed command also carries the arguments a reader
+ *  fills in, spelled as an example when the document gives one (`1`, `true`, an
+ *  enum's first value), and counting those as words made `hanzo campaign rm
+ *  <id>` a noun `rm` with a verb `<id>`: the page grew a section called "rm".
+ *  The capability's own spelling is dropped the way `spelling` finds it. */
+export function words(cmd: CliCommand, name: string): string[] {
+  const all = [cmd.product, ...cmd.nodes, cmd.verb];
+  const at = all.indexOf(name);
+  return all.slice(at >= 0 ? at + 1 : 1);
+}
+
+/** A section heading for a noun, written as a reader says it: `members` ->
+ *  "Members", `service-accounts` -> "Service accounts", `api-keys` -> "API keys".
+ *  The noun is a CLI token, spelled for a shell; the heading is a title, and it
+ *  is the line the page's table of contents repeats. The command itself is in
+ *  every row below it, spelled as typed. A literal path (`.well-known`) is code. */
+export function heading(noun: string): string {
+  if (noun.startsWith('.')) return `\`${noun}\``;
+  const parts = noun
+    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+    .split(/[-_\s]+/)
+    .filter(Boolean);
+  return parts
+    .map((w, i) => {
+      if (/^[A-Z0-9]{2,}s?$/.test(w)) return w;
+      const lower = w.toLowerCase();
+      const titled = titleCase(lower);
+      const written = titled !== lower[0].toUpperCase() + lower.slice(1);
+      return written ? titled : i === 0 ? titled : lower;
+    })
+    .join(' ');
+}
+
 function renderGroup(g: Group, doc: Document): string {
   const L: string[] = [];
   const spelled = g.rows.length ? spelling(g.rows[0].command, g.name).join(' ') : g.name;
@@ -101,7 +137,7 @@ function renderGroup(g: Group, doc: Document): string {
   L.push('---');
   L.push('');
   if (g.description) {
-    L.push(text(firstSentence(g.description, 400)));
+    L.push(text(firstSentence(g.description)));
     L.push('');
   }
   // The CLI names a capability at ITS lock, which can be a spelling the
@@ -160,22 +196,22 @@ function renderGroup(g: Group, doc: Document): string {
   // how it is used, and repeating it per row made the widest column in the
   // table the one a CLI reader never needs. The reference is linked once above.
   const byNoun = new Map<string, { one: string; what: string }[]>();
-  for (const { op, command } of g.rows) {
+  for (const { op, command, cmd } of g.rows) {
     // The multi-flag form breaks a command across lines for a code block; a
     // table row needs the one-line spelling.
     const one = command.replace(/\s*\\\n\s*/g, ' ');
-    // `hanzo <capability> <noun> <verb> …` — the noun is the segment after the
-    // capability, and a command with none acts on the capability itself.
-    const parts = one.split(/\s+/).slice(1 + spelling(one, g.name).length);
+    // `hanzo <capability> <noun> <verb> …` — the noun is the word after the
+    // capability, and a command with no noun acts on the capability itself.
+    const parts = words(cmd, g.name);
     const noun = parts.length > 1 ? parts[0] : '';
     const list = byNoun.get(noun) ?? [];
-    list.push({ one, what: text(firstSentence(op.summary || op.description, 120)) });
+    list.push({ one, what: text(firstSentence(op.summary || op.description)) });
     byNoun.set(noun, list);
   }
 
   for (const noun of [...byNoun.keys()].sort()) {
     if (noun) {
-      L.push(`### ${noun}`);
+      L.push(`### ${heading(noun)}`);
       L.push('');
     }
     L.push('| Command | What it does |');
@@ -246,7 +282,7 @@ function renderIndex(gs: Group[], commands: number, covered: number): string {
     const spelled = g.rows.length ? spelling(g.rows[0].command, g.name).join(' ') : g.name;
     L.push(
       `| [\`hanzo ${spelled}\`](/docs/cli/${g.name}) | ${g.rows.length} | ${text(
-        firstSentence(g.description, 110),
+        firstSentence(g.description),
       )} |`,
     );
   }

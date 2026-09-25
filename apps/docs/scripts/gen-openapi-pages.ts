@@ -111,7 +111,7 @@ function requestRows(op: Operation, raw: any): string[] {
       (p) =>
         `| \`${code(p.name)}\` | ${p.in} | ${text(typeOf(p.schema))} | ${
           p.required ? 'yes' : '—'
-        } | ${text(firstSentence(p.description, 160))} |`,
+        } | ${text(firstSentence(p.description))} |`,
     );
 
   if (op.body?.schema) {
@@ -125,7 +125,7 @@ function fieldRow(f: Field, where: string): string {
   const notes = [
     f.default ? `Default \`${code(f.default)}\`.` : '',
     f.enum.length ? `One of ${f.enum.map((e) => `\`${code(e)}\``).join(', ')}.` : '',
-    text(firstSentence(f.description, 160)),
+    text(firstSentence(f.description)),
   ]
     .filter(Boolean)
     .join(' ');
@@ -192,7 +192,7 @@ function response(op: Operation, raw: any, doc: Document): string[] {
     const schema = Object.values((r?.content ?? {}) as Record<string, any>)[0]?.schema;
     L.push(
       `| \`${code(status)}\` | ${schema ? text(typeOf(schema)) : '—'} | ${text(
-        firstSentence(r?.description ?? '', 160),
+        firstSentence(r?.description ?? ''),
       )} |`,
     );
   }
@@ -358,7 +358,7 @@ function returns(op: Operation): string {
   const s = op.success;
   if (!s) return '';
   const named = typeOf(s.schema);
-  const said = firstSentence(s.description, 140);
+  const said = firstSentence(s.description);
   if (!named && !said) return '';
   return `Answers \`${s.status}\`${named ? ` with \`${text(named)}\`` : ''}${said ? ` — ${text(said)}` : ''}.`;
 }
@@ -387,6 +387,9 @@ const ACTIONS = new Set([
   'export', 'import', 'search', 'query', 'resolve', 'validate', 'preview',
   'publish', 'deploy', 'launch', 'run', 'invoke', 'claim', 'redeem', 'login',
   'logout', 'signin', 'signup', 'connect', 'disconnect', 'enable', 'disable',
+  // The CRUD words, where an address spells its verb as a path segment:
+  // `GET /v1/ai/memory/list` is listing memory, not "List list".
+  'list', 'get', 'create', 'update', 'delete', 'remove', 'add',
 ]);
 
 /**
@@ -402,7 +405,7 @@ const ACTIONS = new Set([
  * segment gives the subject. Measured over the whole document — 2,253
  * operations, longest name 33 characters, mean 13, none over 40.
  */
-function opTitle(op: Operation, taken: Set<string>): string {
+function opName(op: Operation): string {
   const address = `${op.method.toUpperCase()} ${op.path}`;
   const segs = op.path.replace(/^\/v1\//, '').split('/').filter(Boolean);
   const words = segs.filter((s) => !s.startsWith('{')).map((s) => s.replace(/[-_]/g, ' '));
@@ -434,11 +437,19 @@ function opTitle(op: Operation, taken: Set<string>): string {
     if (!verb) return address;
     name = `${verb} ${subject}`;
   }
+  return name;
+}
 
-  // Two operations under one product can land on one name (POST and PUT on the
-  // same item). The address disambiguates, exactly as it did for summaries.
-  const key = name.toLowerCase();
-  return taken.has(key) ? `${name} — ${address}` : name;
+/**
+ * The title: the name, and where two operations under one product land on one
+ * name (POST and PUT on the same item, `global` under eleven collections), the
+ * address after it on both. `shared` is the set of names that repeat, measured
+ * over the same names — it used to be measured over the SUMMARIES, the rule the
+ * name replaced, so no name ever matched it and 226 pages shared a title.
+ */
+function opTitle(op: Operation, shared: Set<string>): string {
+  const name = opName(op);
+  return shared.has(name.toLowerCase()) ? `${name} — ${op.method.toUpperCase()} ${op.path}` : name;
 }
 
 /**
@@ -460,16 +471,16 @@ function renderOperation(
   doc: Document,
   table: Map<string, CliCommand>,
   d: Door,
-  taken: Set<string>,
+  shared: Set<string>,
 ): string {
   const L: string[] = [];
   const address = `${op.method.toUpperCase()} ${op.path}`;
 
   L.push('---');
-  L.push(`title: ${yamlString(opTitle(op, taken))}`);
+  L.push(`title: ${yamlString(opTitle(op, shared))}`);
   L.push(
     `description: ${yamlString(
-      firstSentence(op.description || op.summary, 155) || `${address} on ${doc.server}.`,
+      firstSentence(op.description || op.summary) || `${address} on ${doc.server}.`,
     )}`,
   );
   L.push('---');
@@ -713,7 +724,7 @@ function renderProduct(
   L.push('| Endpoint | What it does |');
   L.push('|---|---|');
   for (const op of p.operations) {
-    const said = firstSentence(op.summary || op.description, 150);
+    const said = firstSentence(op.summary || op.description);
     L.push(
       `| [\`${op.method.toUpperCase()} ${code(op.path)}\`](${opHref(op)}) | ${
         op.deprecated ? '**Deprecated.** ' : ''
@@ -834,7 +845,7 @@ function renderIndex(
       L.push(`  <Card title=${JSON.stringify(p ? p.title : titleCase(n))} href="/docs/openapi/${n}">`);
       L.push(
         p
-          ? `    ${text(firstSentence(p.description, 130))} · ${p.operations.length} operations`
+          ? `    ${text(firstSentence(p.description))} · ${p.operations.length} operations`
           : `    ${text(off.get(n) ?? '')}`,
       );
       L.push('  </Card>');
@@ -905,14 +916,14 @@ function writePages(
     fs.mkdirSync(folder, { recursive: true });
     fs.writeFileSync(path.join(folder, 'index.mdx'), renderProduct(p, doc, table, d, hips));
 
-    // Summaries that repeat inside one product get the address appended, so no
+    // Names that repeat inside one product get the address appended, so no
     // two pages here carry the same title.
     const seen = new Set<string>();
     const dup = new Set<string>();
     for (const op of p.operations) {
-      const k = firstSentence(op.summary.replace(/\s+/g, ' ').trim(), 80).toLowerCase();
-      if (k && seen.has(k)) dup.add(k);
-      if (k) seen.add(k);
+      const k = opName(op).toLowerCase();
+      if (seen.has(k)) dup.add(k);
+      seen.add(k);
     }
 
     const slugs = new Set<string>();
@@ -950,7 +961,7 @@ function writePages(
     fs.writeFileSync(
       path.join(folder, 'meta.json'),
       JSON.stringify(
-        { title: p.title, description: firstSentence(p.description, 160), pages: [], collapsible: false },
+        { title: p.title, description: firstSentence(p.description), pages: [], collapsible: false },
         null,
         2,
       ) + '\n',

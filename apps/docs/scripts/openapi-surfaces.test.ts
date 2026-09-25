@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { camelId, pascalId, pascalTag, snakeId, toolOperations, toolOps } from './openapi-surfaces';
+import { camelId, pascalId, pascalTag, snakeId, toolOperations } from './openapi-surfaces';
+import { ops as toolOps } from './sync-mcp-tools';
 
 // The SDK surface printed in the docs must be the surface openapi-generator
 // actually emits. These cases are lifted verbatim from the checked-in generated
@@ -89,16 +90,17 @@ describe('the tool -> operation join reads the shape the server serves', () => {
     product: 'x', id, name: id, tag: 'x', method, path: p,
     summary: '', description: '', parameters: [], deprecated: false,
   });
-  const doc: any = { operations: [opWith('get_keys', 'get', '/v1/keys'), opWith('post_keys', 'post', '/v1/keys')] };
+  const operations = [opWith('get_keys', 'get', '/v1/keys'), opWith('post_keys', 'post', '/v1/keys')];
+  const doc: any = { operations, byId: new Map(operations.map((o) => [o.id, o])) };
 
   it('resolves a grouped tool through its op enum', () => {
-    const grouped = { name: 'account', inputSchema: { properties: { op: { enum: ['get_keys', 'post_keys'] } } } };
+    const grouped = { name: 'account', description: '', inputSchema: { properties: { op: { enum: ['get_keys', 'post_keys'] } } } };
     const m = toolOperations(doc, [grouped]);
     expect(m.get('account')?.map((o: any) => o.id).sort()).toEqual(['get_keys', 'post_keys']);
   });
 
   it('still resolves a flat tool by its own name', () => {
-    const m = toolOperations(doc, [{ name: 'get_keys' }]);
+    const m = toolOperations(doc, [{ name: 'get_keys', description: '' }]);
     expect(m.get('get_keys')?.map((o: any) => o.id)).toEqual(['get_keys']);
   });
 
@@ -106,12 +108,14 @@ describe('the tool -> operation join reads the shape the server serves', () => {
     // The reference joins a LIVE server to a PINNED document, so a server ahead of
     // the pin legitimately names ids the document lacks. That must read as
     // unmapped, never as a wrong operation.
-    const m = toolOperations(doc, [{ name: 'admission', inputSchema: { properties: { op: { enum: ['get_flag_waitlist'] } } } }]);
+    const m = toolOperations(doc, [{ name: 'admission', description: '', inputSchema: { properties: { op: { enum: ['get_flag_waitlist'] } } } }]);
     expect(m.has('admission')).toBe(false);
   });
 
+  // A flat tool IS its one operation, named by itself; a grouped one names its
+  // operations in the enum and is never read as an operation called `account`.
   it('reads the enum off the tool rather than guessing from its name', () => {
-    expect(toolOps({ name: 'account', inputSchema: { properties: { op: { enum: ['get_keys'] } } } })).toEqual(['get_keys']);
-    expect(toolOps({ name: 'describe' })).toEqual([]);
+    expect(toolOps({ name: 'account', description: '', inputSchema: { properties: { op: { enum: ['get_keys'] } } } })).toEqual(['get_keys']);
+    expect(toolOps({ name: 'get_keys', description: '' })).toEqual(['get_keys']);
   });
 });

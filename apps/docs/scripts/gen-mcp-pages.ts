@@ -288,7 +288,26 @@ const legend = (d: string): string[] => {
   return lines.length > 1 && lines.every((l) => l.includes(' — ')) ? lines : [];
 };
 
-function fieldTable(fields: Field[]): string[] {
+/**
+ * What one line of a legend says an operation does: the document's own first
+ * sentence when the line names an operation the document has, MCP's text when
+ * it names one the document does not.
+ *
+ * MCP cuts each line to a budget and ends it with "…" — "The repository list for
+ * the signed-in caller's org — each repo with its description, default branch,
+ * size and last…" — which is a sentence that stops, not a shorter one. The line
+ * is keyed by the operation's id, so the whole sentence is one lookup away, and
+ * it is the same sentence the CLI table and the API reference print for that
+ * operation.
+ */
+const said = (line: string, byId?: Map<string, Operation>): { id: string; what: string } => {
+  const at = line.indexOf(' — ');
+  const id = line.slice(0, at);
+  const op = byId?.get(id);
+  return { id, what: op ? firstSentence(op.summary || op.description) || line.slice(at + 3) : line.slice(at + 3) };
+};
+
+function fieldTable(fields: Field[], byId?: Map<string, Operation>): string[] {
   const out = [
     '| Field | Type | Required | Default | Values | Description |',
     '|---|---|---|---|---|---|',
@@ -308,8 +327,8 @@ function fieldTable(fields: Field[]): string[] {
     if (!lines.length) continue;
     out.push('', `**\`${code(f.name)}\`** — what each one does:`, '');
     for (const l of lines) {
-      const at = l.indexOf(' — ');
-      out.push(`- \`${code(l.slice(0, at))}\` — ${text(l.slice(at + 3))}`);
+      const { id, what } = said(l, byId);
+      out.push(`- \`${code(id)}\` — ${text(what)}`);
     }
   }
   return out;
@@ -658,7 +677,7 @@ function renderTool(
         : 'This tool declares no arguments. Call it with an empty `arguments` object.',
     );
   } else {
-    L.push(...fieldTable(fields));
+    L.push(...fieldTable(fields, doc.byId));
     L.push(...sourceNotice(schema, fields, ops, con));
   }
   // The gap, stated where a reader would otherwise be misled into an empty
@@ -750,7 +769,7 @@ function renderTool(
     for (const o of ops) {
       L.push(
         `| \`${code(o.id)}\` | \`${o.method.toUpperCase()} ${code(o.path)}\` | [${text(o.product)}](/docs/openapi/${o.product}) | ${
-          text(firstSentence(o.summary || o.description, 90)) || '—'
+          text(firstSentence(o.summary || o.description)) || '—'
         } |`,
       );
     }
@@ -806,7 +825,7 @@ function renderProductIndex(product: string, tools: McpTool[], cat: McpCatalog, 
         ops?.length ? `\`${ops[0].method.toUpperCase()} ${code(ops[0].path)}\`` : '—'
       } | ${Object.keys(t.inputSchema?.properties ?? {}).length} | ${
         req.length ? req.map((f) => `\`${code(f.name)}\``).join(', ') : '—'
-      } | ${text(firstSentence(t.description, 100))} |`,
+      } | ${text(firstSentence(t.description))} |`,
     );
   }
   L.push('');
@@ -863,7 +882,7 @@ function renderCatalog(groups: Map<string, McpTool[]>, cat: McpCatalog, mapped: 
       L.push(
         `| [\`${code(t.name)}\`](${toolHref(p, t.name, groups.get(p)!.length)}) | ${
           ops?.length ? `\`${ops[0].method.toUpperCase()} ${code(ops[0].path)}\`` : '—'
-        } | ${text(firstSentence(t.description, 110))} |`,
+        } | ${text(firstSentence(t.description))} |`,
       );
     }
     L.push('');
@@ -1009,7 +1028,7 @@ function renderIndex(cat: McpCatalog, doc: Document, groups: Map<string, McpTool
     L.push('|---|---|---|');
     for (const o of servers) {
       L.push(
-        `| \`${o.method.toUpperCase()} ${code(o.path)}\` | \`${code(o.id)}\` | ${text(firstSentence(o.summary || o.description, 120)) || '—'} |`,
+        `| \`${o.method.toUpperCase()} ${code(o.path)}\` | \`${code(o.id)}\` | ${text(firstSentence(o.summary || o.description)) || '—'} |`,
       );
     }
     L.push('');

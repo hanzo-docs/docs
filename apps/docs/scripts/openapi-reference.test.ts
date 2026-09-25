@@ -13,6 +13,7 @@ import {
 } from './openapi-doc';
 import { fields } from './openapi-schema';
 import { genOpenapiPages } from './gen-openapi-pages';
+import { firstSentence } from './mdx';
 
 // THE API REFERENCE, held to its own claims.
 //
@@ -142,13 +143,18 @@ describe('said once — the product index is an index, not a copy', () => {
   // The index used to carry each operation's whole description. Two addresses
   // serving the same paragraph is one a reader lands on by chance and one a
   // search engine picks between; the index states the summary and links out.
+  // The summary is a whole sentence, and some run past 200 characters, so a
+  // stretch of the description that is still inside that first sentence is the
+  // summary being stated, not the description being copied.
   it('does not repeat an operation description onto the index', () => {
     const copied: string[] = [];
     for (const p of doc.products) {
       const index = flat(spoken(page.get(`${p.name}/index.mdx`)!));
       for (const op of p.operations) {
         const tail = flat(op.description).slice(200, 320);
-        if (tail.length > 80 && index.includes(tail)) copied.push(`${p.name}: ${op.id}`);
+        const said = flat(firstSentence(op.summary || op.description));
+        if (tail.length > 80 && !said.includes(tail) && index.includes(tail))
+          copied.push(`${p.name}: ${op.id}`);
       }
     }
     expect(copied).toEqual([]);
