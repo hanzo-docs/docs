@@ -1,0 +1,10 @@
+{
+  "title": "Models",
+  "description": "Zen generates, Enso routes, Kai decides, Policy governs.",
+  "icon": "Boxes",
+  "pages": [
+    "zen",
+    "enso",
+    "kai"
+  ]
+}

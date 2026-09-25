@@ -96,7 +96,7 @@ interface Pricing {
  *
  * hanzo.ai/enso also quotes per-token prices, and they DISAGREE with what the
  * gateway bills. The gateway wins here — it is the thing that charges you — and
- * /docs/enso already publishes the same gateway figures.
+ * /docs/models/enso reads the same gateway figures.
  */
 const GPQA: Record<string, string> = {
   'enso-flash': '92.9%',
@@ -328,7 +328,7 @@ function render(p: Pricing): string {
     for (const m of tiers) {
       if (m.description) w(`- \`${text(m.name)}\` — ${text(m.description)}`);
     }
-    w('', '[What each tier is for, in depth →](/docs/enso)', '');
+    w('', '[How Enso routes, and each tier →](/docs/models/enso)', '');
   }
 
   // --- Everything else ----------------------------------------------------
@@ -435,7 +435,7 @@ function render(p: Pricing): string {
     '',
     '<Cards>',
     '  <Card icon={<Boxes />} title="Models" href="/docs/models" description="The live catalogue — every model id and its current rate." />',
-    '  <Card icon={<Sparkle />} title="Enso" href="/docs/enso" description="What the three tiers are and how to pick between them." />',
+    '  <Card icon={<Sparkle />} title="Enso" href="/docs/models/enso" description="How the router picks a model, and the enso-* tiers." />',
     '  <Card icon={<Key />} title="API keys" href="/docs/api-keys" description="Mint the key these requests are billed against." />',
     '  <Card icon={<Code />} title="Pricing API" href="/docs/openapi/pricing" description="Every pricing endpoint, generated from the spec." />',
     '</Cards>',

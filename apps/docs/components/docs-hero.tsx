@@ -200,24 +200,22 @@ export function DocsHero({
         </pre>
       </div>
 
-      {/* The model, because it is the reason to choose the platform at all. */}
+      {/* The models, because they are the reason to choose the platform at all. */}
       <Link
-        href="https://hanzo.ai/enso"
-        target="_blank"
-        rel="noreferrer"
+        href="/docs/models"
         className="hanzo-rise group mb-8 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl border border-fd-border bg-fd-card/40 px-5 py-4 transition-colors hover:border-fd-foreground/25 hover:bg-fd-accent/40"
         style={{ ['--d' as string]: '460ms' }}
       >
         <span className="rounded border border-fd-border px-1.5 py-0.5 text-[11px] font-medium text-fd-muted-foreground">
-          Enso
+          Models
         </span>
         <span className="text-sm font-medium text-fd-foreground">
-          Our frontier model, and the default on every surface
+          Zen generates, Enso routes, Kai decides
         </span>
         <span className="text-sm text-fd-muted-foreground">
-          Zen stays open weights.{' '}
+          Open weights, one router, typed decisions.{' '}
           <span className="text-fd-foreground/70 underline-offset-4 group-hover:underline">
-            Meet Enso →
+            See the models →
           </span>
         </span>
       </Link>

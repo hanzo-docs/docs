@@ -1,0 +1,29 @@
+---
+title: Cookbook
+description: "Four recipes that put Zen, Enso and Kai in one loop: route a request, triage with typed answers, gate an agent's command, and drive an agent from programs instead of prompts."
+icon: ChefHat
+---
+
+**Each recipe is one job, end to end, in requests you can paste.** Together they
+show the pattern the platform is built around: Kai answers the bounded
+questions, Zen writes where writing is the work, Enso decides which is which,
+and your policy keeps the last word.
+
+| Recipe | What it shows | Runs on |
+|---|---|---|
+| [Route with Enso](/docs/guides/cookbook/route) | one request for every model, a price cap per call, the model that answered, feedback that trains the router | `api.hanzo.ai` |
+| [Triage with Kai, reply with Zen](/docs/guides/cookbook/triage) | three decisions with no generated tokens, then one generation | Kai runtime + `api.hanzo.ai` |
+| [Gate an agent's command](/docs/guides/cookbook/gate) | a Decision Program's thresholds and verdict rule, joined with your policy by mode | Kai runtime |
+| [Drive an agent loop](/docs/guides/cookbook/loop) | the loop's control flow as programs — preflight, generate, check done — not as prompts | Kai runtime + `api.hanzo.ai` |
+
+**Kai runtime**: `POST /v1/decisions` is served by the decision runtime,
+`decision serve`, which listens on `127.0.0.1:8080` by default. It is not
+public yet and `api.hanzo.ai` does not serve the route yet — see
+[status](/docs/models/kai#status). The Kai responses quoted in these recipes
+are real, from that runtime serving the `kai-1` baseline on CPU, not from a
+trained Kai checkpoint.
+
+```bash
+export HANZO_API_KEY=...                  # console.hanzo.ai
+export DECISIONS=http://127.0.0.1:8080    # decision serve
+```

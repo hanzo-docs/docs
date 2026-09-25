@@ -1,0 +1,72 @@
+---
+title: Zen
+description: "Zen generates: open-weight models for reasoning, code, vision, speech, embeddings and safety. Download them, or call them hosted."
+icon: Sparkle
+---
+
+**After this page you can call a Zen model on the API, find its weights, and
+know which generation is current.**
+
+Zen is the generative family: open questions — reason, write, code, explain —
+answered in text, images or audio. Weights are published under
+[huggingface.co/zenlm](https://huggingface.co/zenlm); each model card states its
+license, base and serving instructions. The same ids answer hosted on
+`api.hanzo.ai`.
+
+## Generations
+
+| Generation | Models | Where | Status |
+|---|---|---|---|
+| **Zen7** | — | — | upcoming; replaces Satori, which is retiring |
+| **Zen6** | [`zen6`](https://huggingface.co/zenlm/zen6) — 27B dense, NVFP4, 1M-token context (YaRN) · [`zen6-coder`](https://huggingface.co/zenlm/zen6-coder) — mixture-of-experts for agentic coding · [`zen6-flash`](https://huggingface.co/zenlm/zen6-flash) — 27B ternary vision-language model for one GPU or a laptop | weights on Hugging Face; `zen6` and `zen6-coder` hosted | shipped |
+| **Zen5** | `zen5`, `zen5-coder`, `zen5-pro`, `zen5-flash`, `zen5-mini`, `zen5.8`, `zen5.8-coder` | hosted; GGUF builds on Hugging Face (`zen5-gguf`, `zen5-coder-gguf`, …) | shipped |
+| **Zen3** | speech (`zen3-asr`, `zen3-tts`), image (`zen3-image`), `zen3-vl`, `zen3-omni`, `zen3-nano`, `zen3-guard` | weights on Hugging Face | shipped |
+
+Task lines sit beside the generations: `zen-embedding` and `zen-reranker`
+(0.6B, 4B, 8B) for retrieval, `zen-guard` for safety, `zen-vl`
+for vision. [`zen-router`](https://huggingface.co/zenlm/zen-router) is a
+classifier, not a generator; the gateway also accepts its name as an alias for
+[`auto`](/docs/models/enso).
+
+## Call one
+
+```bash
+curl https://api.hanzo.ai/v1/chat/completions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "zen6",
+    "messages": [{"role": "user", "content": "Write a binary search in Rust."}]
+  }'
+```
+
+Every hosted Zen id, with its context window and rate, is one request away and
+needs no key:
+
+```bash
+curl -s https://api.hanzo.ai/v1/models \
+  | jq -r '.data[] | select(.owned_by == "zenlm") | "\(.id)\t\(.context_window)\t\(.pricing.input)/\(.pricing.output)"'
+```
+
+The gateway is the source of truth for ids, windows and rates. If this page and
+that command disagree, believe the command.
+
+## Run one yourself
+
+```bash
+hf download zenlm/zen6 --local-dir zen6
+```
+
+Each card carries the serving command its model was built for: an SGLang launch
+for `zen6`, llama.cpp for `zen6-coder`, `zen6-flash` and the GGUF builds. A server that speaks
+`/v1/chat/completions` takes the same request as above with its own base URL.
+
+## Where Zen sits
+
+Zen is the model that writes. It is not the model that picks which model
+writes — that is [Enso](/docs/models/enso) — and it is not asked bounded
+questions a typed answer settles — that is [Kai](/docs/models/kai). An agent
+built on all three spends generative compute only where generation is the work.
+
+Specifications: [HIP-0039](https://hips.hanzo.ai/docs/hip-0039-zen-model-architecture) for the
+family, [HIP-0904](https://hips.hanzo.ai/docs/hip-0904-zen6) for Zen6.

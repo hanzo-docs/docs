@@ -1,0 +1,78 @@
+---
+title: Models
+description: "Zen generates, Enso routes, Kai decides, Policy governs — the model families, what each is for, and the live catalogue with every id you can pass."
+icon: Boxes
+---
+
+**After this page you know which family answers which kind of question, which
+ones you can download, and which ids the gateway serves right now.**
+
+## Four roles
+
+| Family | Role | Weights | Reach it at | Status |
+|---|---|---|---|---|
+| **[Zen](/docs/models/zen)** | generates: reasoning, code, language, vision, speech, embeddings | open, on [Hugging Face](https://huggingface.co/zenlm) | `zen*` ids on `/v1/chat/completions` | shipped |
+| **[Enso](/docs/models/enso)** | routes and orchestrates: picks the model, context and tools per request | router code open ([hanzoai/engine](https://github.com/hanzoai/engine)); family SKUs hosted | `model: "auto"` and `enso-*` ids | shipped |
+| **[Kai](/docs/models/kai)** | decides: typed, calibrated answers to bounded questions | in training; the baseline it starts from is open | `POST /v1/decisions` | in progress |
+| **Policy** | governs: deterministic allow / ask / deny | — | your rules, in every Decision Program | a part of Hanzo Decision, not a model |
+
+The split is by the shape of the answer. An open question — write, explain,
+plan — needs generation, so it goes to Zen. A bounded one — which model, which
+tool, is this done, allow or deny — has a known answer space, so it goes to Kai,
+which answers it without generating text. Enso sits in front and sends each
+operation to the one that should answer it. Policy has the last word on any
+action, and a model can make a verdict stricter, never looser.
+
+## Other lines
+
+| Name | What it is | Status |
+|---|---|---|
+| **Zen7** | the next Zen generation; succeeds Satori | upcoming — no release, no weights |
+| **Satori** | a video-generation line, never trained | retiring; replaced by Zen7 |
+| **Jin** | a multimodal model specified in [HIP-0003](https://hips.hanzo.ai/docs/hip-0003-jin-multimodal-ai-architecture) | not built; no weights |
+| **Enso Diffusion** | a sparse mixture-of-experts diffusion transformer, forked from DiT-MoE: [zenlm/enso](https://github.com/zenlm/enso) | research code, no released weights |
+| **Enso Browser** | a Firefox-based desktop browser | not released |
+
+## The live catalogue
+
+Every model below answers on one address with one key. Pass the `id` as `model`
+and the rest of the request is the same whichever you pick.
+
+```bash
+curl https://api.hanzo.ai/v1/chat/completions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"<id from below>","messages":[{"role":"user","content":"Hello"}]}'
+```
+
+The table is fetched from [`/v1/models`](/docs/openapi/ai) in your browser when
+this page loads, so it is the catalogue the gateway is serving right now rather
+than a copy written down when the page was built. The same list, by family,
+needs no key:
+
+```bash
+curl -s https://api.hanzo.ai/v1/models \
+  | jq -r '.data[] | select(.id | test("^(zen|enso)")) | "\(.id)\t\(.owned_by)\t\(.pricing.input)/\(.pricing.output)"'
+```
+
+<ModelsCatalog />
+
+## What a rate means
+
+Rates are per million tokens, input and output priced separately, and they are
+the same whether you call from the CLI, an SDK, HTTP or an MCP tool — the price
+is a property of the model, not of the surface you reach it through.
+
+[Pricing](/docs/pricing) explains how usage becomes a bill. [Credits](/docs/credits)
+covers what happens when the balance runs out.
+
+## Specifications
+
+| HIP | Subject | Status |
+|---|---|---|
+| [HIP-0511](https://hips.hanzo.ai/docs/hip-0511-model-families) | Model families: every line, its HIP, its API and where it runs | Living |
+| [HIP-0039](https://hips.hanzo.ai/docs/hip-0039-zen-model-architecture) | Zen model architecture | Final |
+| [HIP-0904](https://hips.hanzo.ai/docs/hip-0904-zen6) | Zen6: dense, coder and ternary checkpoints | Final |
+| [HIP-0510](https://hips.hanzo.ai/docs/hip-0510-enso-learned-router) | Enso: learned per-request routing | Final |
+| [HIP-1332](https://hips.hanzo.ai/docs/hip-1332-kai-the-decision-model) | Kai: the decision model and the decision plane | Draft |
+| [HIP-0003](https://hips.hanzo.ai/docs/hip-0003-jin-multimodal-ai-architecture) | Jin: a multimodal model that was not built | Draft |

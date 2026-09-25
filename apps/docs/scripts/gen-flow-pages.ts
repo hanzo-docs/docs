@@ -229,6 +229,12 @@ function renderIndex(flows: Flow[], doc: Document): string {
   }
   L.push('</Cards>');
   L.push('');
+  L.push('## Cookbook');
+  L.push('');
+  L.push(
+    'Zen, Enso and Kai in one loop — route a request, triage with typed answers, gate an agent\'s command, drive an agent from programs: [the cookbook](/docs/guides/cookbook).',
+  );
+  L.push('');
   L.push(
     'Every capability the API serves is in the [reference](/docs/openapi), and the same key reaches all of it.',
   );

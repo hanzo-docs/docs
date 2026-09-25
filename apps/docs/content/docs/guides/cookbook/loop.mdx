@@ -1,0 +1,110 @@
+---
+title: Drive an agent loop
+description: "An agent's control flow as Decision Programs: preflight picks the model, Zen does the work, a completion check decides whether to stop. Prompts only where text is the output."
+---
+
+**The loop is a graph; only one node generates.** An agent asks itself the same
+bounded questions every turn — which model, which tool, is it done. Asked of a
+generative model, each costs a completion and a parser. Asked of Kai, each is
+one typed decision.
+
+```text
+task ─▶ preflight (Kai) ─▶ generate (Zen, model by tier) ─▶ complete? (Kai) ─┬─▶ stop
+                                     ▲                                        │
+                                     └──────────────── not done ──────────────┘
+```
+
+## 1. Two programs
+
+Trimmed from `agent.preflight@1` and `agent.complete@1`, two of the agent
+programs in [Hanzo Decision](/docs/models/kai#kai-inside-enso):
+
+```bash
+cat > preflight.json <<'EOF'
+{
+  "model": "kai-1-agent",
+  "questions": {
+    "model_tier": {"type": "choice", "instructions": "Which model tier should handle the task?",
+                   "criteria": {"cheap": "a small fast model is enough: lookup, formatting, short answers",
+                                "zen-coder": "a coding model: writing, editing or reviewing code",
+                                "frontier": "the strongest model: hard reasoning, long multi-step plans, ambiguity"}},
+    "needs_user": {"type": "noul", "instructions": "Does the agent need more information or a decision from the user before it can start?"}
+  },
+  "thresholds": {"model_tier": 0.5, "needs_user": 0.5}
+}
+EOF
+cat > complete.json <<'EOF'
+{
+  "model": "kai-1-agent",
+  "questions": {
+    "done":     {"type": "noul", "instructions": "Has the agent finished everything the user asked for?"},
+    "verified": {"type": "noul", "instructions": "Is the result backed by evidence in the transcript, such as passing tests or command output?"}
+  },
+  "thresholds": {"done": 0.6, "verified": 0.6}
+}
+EOF
+
+decide() {   # decide <program> <state json>
+  jq -n --slurpfile p "$1" --argjson s "$2" '{model: $p[0].model, state: $s, questions: $p[0].questions}' \
+  | curl -s "$DECISIONS/v1/decisions" -H "Content-Type: application/json" -d @-
+}
+```
+
+## 2. The loop
+
+```bash
+task='Fix the failing test in config_test.go: undefined parseConfig.'
+
+pre=$(decide preflight.json "$(jq -n --arg t "$task" '{task: $t}')")
+tier=$(jq -r --slurpfile p preflight.json \
+  '.answers.model_tier | if .answer_confidence >= $p[0].thresholds.model_tier then .choice else "unsure" end' <<<"$pre")
+case $tier in
+  cheap)     model=enso-flash ;;
+  zen-coder) model=zen6-coder ;;
+  frontier)  model=enso-ultra ;;
+  *)         model=auto ;;          # Kai is unsure: let Enso route
+esac
+
+transcript=""
+for turn in 1 2 3; do
+  out=$(curl -s https://api.hanzo.ai/v1/chat/completions \
+    -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+    -d "$(jq -n --arg m "$model" --arg t "$task" --arg x "$transcript" \
+          '{model: $m, messages: [{role: "user", content: ($t + "\n\n" + $x)}]}')" \
+    | jq -r '.choices[0].message.content')
+  transcript+="$out"$'\n'
+  # ... run what it proposed, append the command output to $transcript ...
+  fin=$(decide complete.json "$(jq -n --arg t "$task" --arg x "$transcript" '{task: $t, transcript: $x}')")
+  jq -e --slurpfile p complete.json \
+    '.answers.done.noul >= $p[0].thresholds.done and .answers.verified.noul >= $p[0].thresholds.verified' \
+    <<<"$fin" >/dev/null && break
+done
+```
+
+Stopping needs `done` **and** `verified`: finished and shown, not finished and
+claimed.
+
+## What the baseline answered
+
+The Kai half, run against the `kai-1-agent` baseline:
+
+| State | Answer |
+|---|---|
+| "Rename the variable usr to user in main.go." | `zen-coder` at 0.4968 — under 0.5, so `auto` |
+| "Fix the failing test in config_test.go: undefined parseConfig." | `zen-coder` at 0.5483 → `zen6-coder` |
+| "Design a migration plan from our monolith to services, with rollback at every step." | `frontier` at 0.4533 — under 0.5, so `auto` |
+| "What is 2 + 2?" | `cheap` at 0.4716 — under 0.5, so `auto` |
+| transcript "I fixed it. The test should pass now." | `done` 0.5346, `verified` 0.4467 — keep going |
+| transcript with `go test ./...` → `ok` | `done` 0.5189, `verified` 0.6251 — keep going |
+
+Every tier the baseline picked is the right one, and most of its picks are too
+unsure to act on. That is why the threshold exists and why `auto` sits under
+it: an unsure decision costs nothing but a fallback to the router. It is also
+why these programs run in `shadow` and `advisory` until a trained Kai
+checkpoint measures better, and why a completion check that reads "tests pass"
+as not yet done is a finding, not a footnote.
+
+**What this buys.** The control flow is data: versioned programs with
+thresholds, each answer carrying the checkpoint and weights hash that produced
+it. Swap the model under a program and the loop does not change; change a
+threshold and the change is a diff.

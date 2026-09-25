@@ -1,0 +1,144 @@
+---
+title: Enso
+description: "Enso routes: a learned router picks the model for every request, bills the model that served, and learns from your feedback. The enso-* family serves that choice under one name."
+icon: Route
+---
+
+**After this page you know how Enso picks a model, how to bound and steer the
+pick, how to teach it, and which Enso id to send.**
+
+Enso is the router. Every request it sees is classified, priced against what
+your org can serve, and sent to the model that should answer it — a Zen model,
+another provider's, or one you host. The decision runs on a CPU:
+[HIP-0510](https://hips.hanzo.ai/docs/hip-0510-enso-learned-router) measures
+300 ns for the rule router and 12 µs for the learned one, before a model call
+that takes seconds.
+
+## Two ways in
+
+| Send | What happens | Pick it when |
+|---|---|---|
+| `model: "auto"` | Enso routes across the models your org can serve and bills the one that answered | you want the choice made per request, over your own pool |
+| an `enso-*` id | one managed name; Hanzo picks the serving path behind it | you want one id, one rate, and no pool to manage |
+
+```bash
+curl -si https://api.hanzo.ai/v1/chat/completions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"model": "auto", "messages": [{"role": "user", "content": "Summarize this changelog in one line."}]}'
+```
+
+The rewrite happens before provider, pricing and billing are resolved, so the
+request is priced, metered and reported as exactly the model that served it.
+That model is in the `X-Routed-Model` response header and in the body's
+`model` field; the two always match. `zen-router` is accepted as an alias for
+`auto`.
+
+## How it picks
+
+1. **Classify.** Media, length and keywords put the request in one task class:
+   `code`, `reasoning`, `math`, `creative`, `vision`, `long_context`,
+   `cheap_chat` or `general`.
+2. **Narrow.** Only models your org can actually serve are eligible — a route
+   exists and your tier or grant admits it — then only the ones your org
+   enabled, then only the ones under your cost ceiling. A narrower scope can
+   only narrow; it never reaches a model another scope could not.
+3. **Choose**, in this order, first answer wins:
+   - an **override** your org pinned for that task class;
+   - the **learned policy**: a bilinear utility `xᵀW p` over request features
+     and per-model profiles, fit by ridge regression and adapted per user with
+     LinUCB; it defers when it is unsure;
+   - an optional **exploration** share that samples a non-champion model, so
+     every model in the pool keeps earning feedback;
+   - the **rule table**: an ordered list of models per task class, Zen first;
+     the first servable one wins.
+
+With routing on for your org, `auto` always resolves: when the learned policy
+is unreachable or unsure, the rule table answers.
+
+## Bound it
+
+Two optional headers set a ceiling per request without touching the body:
+
+| Header | Meaning |
+|---|---|
+| `X-Max-Cost` | the most you will pay, in USD per 1,000 tokens |
+| `X-Max-Latency-Ms` | the slowest model you will accept, in milliseconds |
+
+An org can also set, once: a cost ceiling that fills an unset `X-Max-Cost`,
+per-task overrides, the enabled-model list, and the strategy — `enso` (the
+learned policy leads; the default) or `heuristic` (rules only, for routing you
+can audit line by line). An explicit header always wins when it is lower.
+[Smart routing](/docs/usage/routing) covers where those switches live.
+
+## Teach it
+
+Tell Enso how a routed answer went. The `request_id` is the response `id` you
+already hold (`chatcmpl-…`):
+
+```bash
+curl https://api.hanzo.ai/v1/ai/feedback \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"request_id": "chatcmpl-…", "signal": "accept"}'
+```
+
+| `signal` | Reward |
+|---|---|
+| `up`, `accept` | 1 |
+| `regenerate` | 0.25 |
+| `down`, `switch`, `abandon`, `revert` | 0 |
+| `rating` with `rating` 1, 2 or 3 | 0, 0.5, 1 |
+| `dismiss` | nothing recorded |
+
+The ledger holds features and a reward, never prompt text. A reward can land
+only on your own org's requests, and an org that turns training contribution
+off records none. Each cycle fits a candidate, deploys it only if it beats the
+incumbent on held-out reward, and otherwise keeps the incumbent: a regression
+cannot ship. Your org's own policy trains on your org's rewards alone.
+
+## The Enso family
+
+The managed ids, from the gateway:
+
+```bash
+curl -s https://api.hanzo.ai/v1/models \
+  | jq -r '.data[] | select(.id | startswith("enso")) | "\(.id)\t\(.context_window)\t\(.pricing.input)/\(.pricing.output)"'
+```
+
+| Id | Reasoning | Note |
+|---|---|---|
+| `enso-auto` | medium | the default: [Hanzo Dev](/docs/dev) sends it when you name no model |
+| `enso-flash` | off | fast, for volume |
+| `enso-ultra` | maximum | the most compute per request |
+| `enso-pro` | medium | served on the same path as `enso` |
+| `enso` | medium | the earlier name of `enso-auto`, kept while clients move |
+| `enso-free` | — | the no-charge tier |
+
+Reasoning is the serving catalogue's setting today. Rates and windows are the
+command's, not this page's: the gateway is the source of truth, and
+[Pricing](/docs/pricing) is generated from it.
+
+## Kai inside Enso
+
+Routing is one bounded decision; an agent loop makes many more — how much
+context, which tool, how much reasoning, whether the step made progress, whether
+the task is done, whether a command may run. [Kai](/docs/models/kai) is being
+built into Enso as the in-process controller for those, one Decision Program
+each, starting in `shadow`. Status: in progress.
+
+## Also named Enso
+
+| Name | What it is | Status |
+|---|---|---|
+| **Enso Diffusion** | a sparse mixture-of-experts diffusion transformer with rectified-flow training, forked from DiT-MoE: [zenlm/enso](https://github.com/zenlm/enso) | research code, no released weights |
+| **Enso Browser** | a Firefox-based desktop browser | not released |
+
+## Source
+
+The router and learned policy: [hanzoai/engine](https://github.com/hanzoai/engine)
+(`enso`, `hanzo-router`). The family: [hanzoai/enso](https://github.com/hanzoai/enso).
+
+Specification: [HIP-0510](https://hips.hanzo.ai/docs/hip-0510-enso-learned-router).
+
+Measurements and economics: the [Enso paper](https://github.com/hanzoai/papers/tree/main/enso).

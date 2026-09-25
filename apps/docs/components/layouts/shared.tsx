@@ -34,6 +34,13 @@ export const linkItems: LinkItemType[] = [
     active: 'nested-url',
   },
   {
+    // The model families: Zen, Enso, Kai. On-site, unlike the marketing
+    // "Models" item this nav once carried, which left for hanzo.ai.
+    text: 'Models',
+    url: '/docs/models',
+    active: 'nested-url',
+  },
+  {
     text: 'APIs',
     url: '/docs/openapi',
     active: 'nested-url',

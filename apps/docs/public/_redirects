@@ -40,7 +40,7 @@
 /introduction      /docs/quickstart       301
 /quickstart        /docs/quickstart       301
 /getting-started   /docs/quickstart       301
-/models            /docs/openapi/ai       301
+/models            /docs/models           301
 /chat              /docs/chat             301
 /agents            /docs/openapi/agent    301
 /mcp               /docs/mcp              301
@@ -212,3 +212,11 @@
 /docs/openapi/projects     /docs/openapi/project      301
 # visor is retired; compute is the plane it named.
 /docs/openapi/visor        /docs/openapi/compute      301
+
+# The model families live under /docs/models: one page each for Zen, Enso and
+# Kai. /docs/enso was the Enso tier page before Enso was the router; the other
+# three are the addresses a reader guesses for a family.
+/docs/enso         /docs/models/enso      301
+/docs/zen          /docs/models/zen       301
+/docs/kai          /docs/models/kai       301
+/docs/decisions    /docs/models/kai       301

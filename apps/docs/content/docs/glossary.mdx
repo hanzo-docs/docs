@@ -77,8 +77,12 @@ The house vocabulary. None of these is guessable, so each gets a sentence.
 | **o11y** | Observability, abbreviated by letter count (o + 11 letters + y). Logs, metrics, traces. |
 | **ZAP** | Zero-Copy App Proto — the binary protocol our services speak to each other. |
 | **visor** | The compute you rent: machines, GPUs, clusters. |
-| **enso** | Our frontier model family. |
-| **Zen** | Our open-weight model family. |
+| **Zen** | The generative model family: open weights, for reasoning, code, vision, speech and embeddings. [Zen](/docs/models/zen). |
+| **Enso** | The router: picks the model for each request (`model: "auto"`), and the `enso-*` family that serves the choice under one name. [Enso](/docs/models/enso). |
+| **Kai** | The decision model: typed, calibrated answers to bounded questions, no generated text. [Kai](/docs/models/kai). |
+| **Hanzo Decision** | Kai, Decision Programs, Decision Packages and policy, served at `POST /v1/decisions`. |
+| **Decision Program** | A versioned graph of typed nodes — deterministic, Kai, Zen, solver, human, policy — over evidence. |
+| **Decision Package** | The hashed, replayable record of one program run. |
 | **Base** | The managed instance product — a database and backend per org. |
 | **Pack** | The zero-configuration builder that turns a repository into a deployable image. |
 | **egress** | Outbound traffic. In billing it is the per-gigabyte charge; in architecture it is the one process permitted to make outbound calls holding a credential. |

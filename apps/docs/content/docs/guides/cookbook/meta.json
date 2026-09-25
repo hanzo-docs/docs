@@ -1,0 +1,11 @@
+{
+  "title": "Cookbook",
+  "description": "Zen, Enso and Kai in one loop, recipe by recipe.",
+  "icon": "ChefHat",
+  "pages": [
+    "route",
+    "triage",
+    "gate",
+    "loop"
+  ]
+}

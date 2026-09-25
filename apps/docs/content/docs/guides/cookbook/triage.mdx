@@ -1,0 +1,70 @@
+---
+title: Triage with Kai, reply with Zen
+description: "Route a support ticket with three typed decisions and no generated tokens, act only on the answers the model stands behind, then let Zen write the reply."
+---
+
+**Three decisions, one generation.** Which team, whether it is a bug and how
+urgent are bounded questions: Kai answers them as distributions. The reply is
+open text: Zen writes it.
+
+## 1. Decide
+
+```bash
+cat > ticket.json <<'EOF'
+{
+  "model": "kai",
+  "state": {"message": "I was charged twice for my March invoice and the second charge is still pending."},
+  "questions": {
+    "is_bug":  {"type": "noul", "instructions": "Is this a product defect?",
+                "criteria": {"true": "a defect", "false": "working as intended"}},
+    "team":    {"type": "choice", "instructions": "Which team should handle it?",
+                "criteria": {"account": "logins and profiles",
+                             "payments": "charges, invoices and refunds",
+                             "product": "features and bugs"}},
+    "urgency": {"type": "score", "instructions": "How urgent is it?",
+                "criteria": ["later", "this week", "today", "now"]}
+  }
+}
+EOF
+d=$(curl -s "$DECISIONS/v1/decisions" -H "Content-Type: application/json" -d @ticket.json)
+```
+
+The baseline answered `team: payments` at 0.98, `is_bug` P(true) 0.31, and
+`urgency` with `confidence` 0.11 — four levels close to even. The full response
+is on the [Kai](/docs/models/kai#ask-questions) page. `usage.output_tokens` is 0.
+
+## 2. Act on what is settled
+
+```bash
+team=$(jq -r '.answers.team | if .confidence >= 0.5 then .choice else "review" end' <<<"$d")
+urgency=$(jq -r '.answers.urgency
+  | if .confidence >= 0.5 then .legend[(.probabilities | to_entries | max_by(.value).key)]
+    else "review" end' <<<"$d")
+echo "$team $urgency"    # payments review
+```
+
+`confidence` is 0 when the options are equally likely and 1 when one takes all
+the mass, so one threshold serves every question. Here `team` clears it and is
+routed; `urgency` does not, so it goes to a person instead of being guessed.
+Tune the threshold per question against your own outcomes, not by feel.
+
+## 3. Reply
+
+```bash
+msg=$(jq -r .state.message ticket.json)
+curl -s https://api.hanzo.ai/v1/chat/completions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d "$(jq -n --arg team "$team" --arg msg "$msg" '{
+        model: "zen6",
+        messages: [
+          {role: "system", content: "You write for the \($team) team. Two sentences. Promise nothing you cannot see."},
+          {role: "user", content: $msg}
+        ]}')" \
+  | jq -r '.choices[0].message.content'
+```
+
+**What this buys.** The routing questions cost one forward pass of a small
+encoder, return the same answer for the same ticket, and carry a hash of the
+weights and of the state they read. Generation is spent once, on the reply,
+where writing is the work.

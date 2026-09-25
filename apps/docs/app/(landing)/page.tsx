@@ -153,17 +153,15 @@ export default function Page() {
             because its shape is a function; see components/hero-field.tsx. */}
         <HeroField />
 
-        {/* Enso first. The model is the reason to choose the platform; a
-            capability count is the reason to choose nothing. */}
+        {/* The model families first. They are the reason to choose the
+            platform; a capability count is the reason to choose nothing. */}
         <Link
-          href="https://hanzo.ai/enso"
-          target="_blank"
-          rel="noreferrer"
+          href="/docs/models"
           className="relative mb-8 rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-neutral-400 backdrop-blur transition-colors hover:border-white/20 hover:text-white"
           style={{ display: 'inline-grid', gridAutoFlow: 'column', alignItems: 'center', columnGap: 8 }}
         >
           <span className="rounded-full bg-white" style={{ width: 6, height: 6 }} />
-          Meet Enso — our frontier model, default on every surface
+          Zen generates · Enso routes · Kai decides
           <ArrowRight className="size-3.5" />
         </Link>
 
@@ -690,20 +688,20 @@ export default function Page() {
               <CardTitle fontSize={24} fontWeight="700" letterSpacing={-0.5}>
                 Zen
               </CardTitle>
-              <span className="rounded-full bg-white/5 px-2 py-0.5 font-mono text-xs text-neutral-400">44 models</span>
+              <span className="rounded-full bg-white/5 px-2 py-0.5 font-mono text-xs text-neutral-400">open weights</span>
             </div>
             <p className="text-neutral-300 text-sm leading-relaxed max-w-2xl">
-              Frontier AI models from 4B edge to 1T+ reasoning. MoDE (Mixture of Diverse Experts) architecture.
-              Text, code, vision, audio, video, 3D, and safety. Open weights on HuggingFace.
+              The generative family: reasoning, code, vision, speech, embeddings and safety. Weights on
+              Hugging Face; the same ids hosted on api.hanzo.ai, routed by Enso.
             </p>
             <Grid columns={{ min: 130, max: 6 }} gap={12}>
               {[
-                { name: 'zen5', spec: 'Frontier' },
-                { name: 'zen5-coder', spec: 'Code' },
-                { name: 'zen-vl', spec: 'Vision' },
-                { name: 'zen3-omni', spec: '72B Multimodal' },
-                { name: 'zen3-nano', spec: '4B Edge' },
-                { name: 'zen3-guard', spec: '8B Safety' },
+                { name: 'zen6', spec: '27B dense, 1M context' },
+                { name: 'zen6-coder', spec: 'Agentic code' },
+                { name: 'zen6-flash', spec: 'Ternary vision' },
+                { name: 'zen5', spec: 'Hosted' },
+                { name: 'zen-embedding', spec: 'Retrieval' },
+                { name: 'zen-guard', spec: 'Safety' },
               ].map((m) => (
                 <Card
                   key={m.name}
@@ -721,14 +719,12 @@ export default function Page() {
               ))}
             </Grid>
             <XStack flexWrap="wrap" gap={12} alignItems="center">
-              <a
-                href="https://zenlm.org"
-                target="_blank"
-                rel="noreferrer noopener"
+              <Link
+                href="/docs/models/zen"
                 className="rounded-full border border-white/20 px-4 py-2 text-xs text-white transition-colors hover:bg-white/5"
               >
-                zenlm.org &rarr;
-              </a>
+                Zen models &rarr;
+              </Link>
               <a
                 href="https://huggingface.co/zenlm"
                 target="_blank"

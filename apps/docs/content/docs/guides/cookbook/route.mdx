@@ -1,0 +1,61 @@
+---
+title: Route with Enso
+description: "Send model auto, cap the price of each call, read which model answered, and tell the router how it went."
+---
+
+**One request shape for every model.** Enso picks per request; you bound what it
+may spend and grade what it picked.
+
+## 1. Send `auto`, capped
+
+```bash
+curl -s https://api.hanzo.ai/v1/chat/completions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -H "X-Max-Cost: 0.002" \
+  -D headers.txt -o answer.json \
+  -d '{"model": "auto", "messages": [{"role": "user", "content": "Rewrite this SQL to use a join: SELECT * FROM a WHERE id IN (SELECT a_id FROM b)"}]}'
+
+grep -i '^x-routed-model' headers.txt
+jq -r '.model, .choices[0].message.content' answer.json
+```
+
+`X-Max-Cost` is a ceiling in USD per 1,000 tokens; models priced above it are
+not eligible. `X-Max-Latency-Ms` bounds latency the same way. The routed model
+is in the header and in `.model`, and it is what you are billed for.
+
+## 2. Tell it how it went
+
+```bash
+curl -s https://api.hanzo.ai/v1/ai/feedback \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d "$(jq -n --arg id "$(jq -r .id answer.json)" '{request_id: $id, signal: "accept"}')"
+```
+
+`accept` and `up` record 1, `regenerate` 0.25, `down`, `switch`, `abandon` and
+`revert` 0; `dismiss` records nothing. Send the signal your product already has
+— the user kept the answer, re-rolled it, or switched model — and the router
+learns from ordinary use. No prompt text is sent or stored.
+
+## The same from Python
+
+```python
+import os
+from openai import OpenAI
+
+client = OpenAI(api_key=os.environ["HANZO_API_KEY"], base_url="https://api.hanzo.ai/v1")
+
+raw = client.chat.completions.with_raw_response.create(
+    model="auto",
+    messages=[{"role": "user", "content": "Rewrite this SQL to use a join: ..."}],
+    extra_headers={"X-Max-Cost": "0.002"},
+)
+answer = raw.parse()
+print(raw.headers.get("x-routed-model"), answer.id)
+print(answer.choices[0].message.content)
+```
+
+**Why it pays:** most requests are easy, and a router that sends easy ones to a
+small model spends the large one's price only where it buys something. How the
+pick is made: [Enso](/docs/models/enso#how-it-picks).

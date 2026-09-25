@@ -26,9 +26,9 @@ See [Example Configuration](./example-config) for a fully annotated sample file.
 ## Core Model Selection
 
 ```toml
-model = "gpt-5.1-codex"          # Primary model
-review_model = "gpt-5.1-codex"   # Model for /review
-model_provider = "openai"         # Provider id from [model_providers]
+model = "enso-auto"          # Primary model; the default
+review_model = "enso-auto"   # Model for /review
+model_provider = "hanzo"     # Provider id from [model_providers]; the default
 ```
 
 Optional manual overrides (auto-detected when unset):
