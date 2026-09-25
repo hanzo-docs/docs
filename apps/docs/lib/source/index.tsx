@@ -2,6 +2,7 @@ import { type LoaderPlugin, loader } from '@hanzo/docs-core/source';
 import { blog as blogPosts, docs } from 'collections/server';
 import { createSource } from '@hanzo/docs-mdx/runtime/server';
 import { lucideIconsPlugin } from '@hanzo/docs-core/source/lucide-icons';
+import { inlineCode } from '@/lib/inline-code';
 
 // ONE REFERENCE.
 //
@@ -39,6 +40,10 @@ function pageTreeCodeTitles(): LoaderPlugin {
   return {
     transformPageTree: {
       file(node) {
+        // The previous/next cards print a page's description from the tree.
+        if (typeof node.description === 'string' && node.description.includes('`')) {
+          node = { ...node, description: inlineCode(node.description) };
+        }
         if (
           typeof node.name === 'string' &&
           (node.name.endsWith('()') || node.name.match(/^<\w+ \/>$/))

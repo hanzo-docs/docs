@@ -6,6 +6,7 @@ import { TypeTable } from '@hanzo/docs-base-ui/components/type-table';
 import * as Preview from '@/components/preview';
 import { createMetadata } from '@/lib/metadata';
 import { source } from '@/lib/source';
+import { inlineCode } from '@/lib/inline-code';
 import { Wrapper } from '@/components/preview/wrapper';
 import { Mermaid } from '@/components/mdx/mermaid';
 import { PageFeedback, PageFeedbackBlock } from '@/components/feedback';
@@ -71,7 +72,7 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
       }}
     >
       <h1 className="text-[1.75em] font-semibold">{page.data.title}</h1>
-      <p className="text-lg text-fd-muted-foreground mb-2">{page.data.description}</p>
+      <p className="text-lg text-fd-muted-foreground mb-2">{inlineCode(page.data.description)}</p>
       {/* No page actions under the title: AgentActions is one control at the
           head of the right rail, reachable from every page rather than only
           from under a heading, and one row of chrome instead of two. */}
@@ -99,7 +100,7 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
                     </HoverCardTrigger>
                     <HoverCardContent className="text-sm">
                       <p className="font-medium">{found.page.data.title}</p>
-                      <p className="text-fd-muted-foreground">{found.page.data.description}</p>
+                      <p className="text-fd-muted-foreground">{inlineCode(found.page.data.description)}</p>
                     </HoverCardContent>
                   </HoverCard>
                 );
@@ -158,7 +159,7 @@ export async function generateMetadata(props: PageProps<'/docs/[[...slug]]'>): P
       title: 'Not Found',
     });
 
-  const description = page.data.description ?? 'Hanzo AI Cloud documentation';
+  const description = page.data.description?.replaceAll('`', '') || 'Hanzo AI Cloud documentation';
 
   return createMetadata({
     title: page.data.title,
