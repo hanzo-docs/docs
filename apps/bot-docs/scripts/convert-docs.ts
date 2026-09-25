@@ -1,19 +1,29 @@
 /**
- * Convert OpenClaw/Bot docs from Mintlify .md → Hanzo Docs .mdx
+ * Convert Hanzo Bot's docs (hanzoai/bot, docs/*.md) into this app's .mdx.
  *
- * - Copies all .md files preserving directory structure
- * - Converts frontmatter (summary → description, removes read_when)
- * - Rebrands OpenClaw → Hanzo Bot
+ * - Copies every .md file in the categories below, preserving directory structure
+ * - Converts frontmatter (summary → description, drops read_when)
  * - Creates meta.json for each directory
  * - Renames index.md → index.mdx
+ *
+ *   bun scripts/convert-docs.ts [path/to/bot/docs]
+ *
+ * The text is copied as written. It used to be run through a rebrand map
+ * (OpenClaw → Hanzo Bot, openclaw → hanzo-bot, …) from when the fork's docs
+ * still said OpenClaw. They no longer do: the bot repo is the source of truth and
+ * is branded at the source, so every name the map still matched was one written
+ * on purpose — the migration guide's `hanzo bot migrate openclaw` and
+ * `~/.openclaw`, the `clawdbot` compatibility shim in install/updating — and the
+ * map turned each into a command, a path or a fact that does not exist.
  */
 
-import { readdir, readFile, writeFile, mkdir, stat } from 'fs/promises';
-import { join, relative, basename, dirname, extname } from 'path';
+import { readdir, readFile, writeFile, mkdir } from 'fs/promises';
+import { join, relative, dirname, resolve } from 'path';
 import { existsSync } from 'fs';
+import { homedir } from 'os';
 
-const SRC = '/Users/z/work/hanzo/bot/docs';
-const DEST = '/Users/z/work/hanzo/docs/apps/bot-docs/content/docs';
+const SRC = resolve(process.argv[2] ?? join(homedir(), 'work/hanzobot/bot/docs'));
+const DEST = resolve(import.meta.dirname, '../content/docs');
 
 // Directories to include (top-level categories)
 const CATEGORIES = [
@@ -28,36 +38,11 @@ const SKIP_FILES = new Set([
   'Gemfile', 'Gemfile.lock', '_layouts', '_includes',
 ]);
 
-// Rebrand map
-const REBRAND: [RegExp, string][] = [
-  [/\bOpenClaw\b/g, 'Hanzo Bot'],
-  [/\bopenclaw\b/g, 'hanzo-bot'],
-  [/\bOPENCLAW\b/g, 'HANZO_BOT'],
-  [/\bopenclaw\.ai\b/g, 'hanzo.bot'],
-  [/\bClawdBot\b/g, 'Hanzo Bot'],
-  [/\bclawdbot\b/g, 'hanzo-bot'],
-  [/\bCLAWDBOT\b/g, 'BOT'],
-  [/openclaw\.ai/g, 'hanzo.bot'],
-  [/docs\.openclaw\.ai/g, 'hanzo.bot/docs'],
-  // GitHub refs
-  [/github\.com\/openclaw\/openclaw/g, 'github.com/hanzoai/bot'],
-  [/github\.com\/bot\/bot/g, 'github.com/hanzoai/bot'],
-  [/github\.com\/bot\/nix-bot/g, 'github.com/hanzoai/nix-bot'],
-  [/github\.com\/bot\/bot-ansible/g, 'github.com/hanzoai/bot-ansible'],
-  // Discord
-  [/channels\.discord\.gg\/bot/g, 'discord.gg/XthHQQj'],
-  [/discord\.gg\/hanzo\b/g, 'discord.gg/XthHQQj'],
-  [/discord\.gg\/clawd\b/g, 'discord.gg/XthHQQj'],
-  // Domain
-  [/hanzo\.bot\/install/g, 'hanzo.bot/install'],
-  // Hanzo Cloud messaging
-];
-
 // Category display names and ordering
 const CATEGORY_META: Record<string, { title: string; pages?: string[] }> = {
   install: {
     title: 'Installation',
-    pages: ['index', 'installer', 'node', 'docker', 'nix', 'ansible', 'bun', 'updating', 'development-channels', 'uninstall'],
+    pages: ['index', 'installer', 'node', 'docker', 'nix', 'ansible', 'bun', 'updating', 'migrate-from-openclaw', 'development-channels', 'uninstall'],
   },
   start: {
     title: 'Getting Started',
@@ -167,14 +152,63 @@ function convertFrontmatter(content: string): string {
   return newFm.join('\n') + '\n\n' + body.trim() + '\n';
 }
 
-function applyRebrand(content: string): string {
-  let result = content;
-  for (const [pattern, replacement] of REBRAND) {
-    result = result.replace(pattern, replacement);
+/**
+ * Markdown that MDX cannot parse, made into markdown it can.
+ *
+ * The bot's docs are CommonMark; this site compiles MDX, where `<` always opens
+ * JSX. Three constructs the source uses on purpose stop the parser, and a page
+ * that does not parse is not rendered at all:
+ *
+ * - an HTML comment (`<!-- markdownlint-disable MD037 -->`) becomes an MDX
+ *   comment, `{/* … *\/}`;
+ * - an autolink (`<https://www.perplexity.ai/settings/api>`) becomes the bare
+ *   URL, which GFM links on its own;
+ * - a `<` that cannot open a tag (`GPT-4 <-> Claude`, `a <= b`) becomes `&lt;`.
+ *
+ * Fenced blocks and inline code are left exactly as written.
+ */
+export function mdxSafe(doc: string): string {
+  const front = doc.match(/^---\n[\s\S]*?\n---\n/)?.[0] ?? '';
+  const out: string[] = [];
+  let fence = '';
+  let comment = false;
+  for (const line of doc.slice(front.length).split('\n')) {
+    const f = line.match(/^\s*(```+|~~~+)/);
+    if (fence) {
+      if (f && f[1][0] === fence[0] && f[1].length >= fence.length) fence = '';
+      out.push(line);
+      continue;
+    }
+    if (f) {
+      fence = f[1];
+      out.push(line);
+      continue;
+    }
+    const parts = line.split('`');
+    for (let i = 0; i < parts.length; i += 2) {
+      let t = parts[i];
+      if (comment) {
+        const end = t.indexOf('-->');
+        if (end < 0) {
+          parts[i] = t.replace(/\*\//g, '* /');
+          continue;
+        }
+        t = t.slice(0, end).replace(/\*\//g, '* /') + '*/}' + t.slice(end + 3);
+        comment = false;
+      }
+      t = t.replace(/<!--([\s\S]*?)-->/g, (_m, c: string) => `{/*${c.replace(/\*\//g, '* /')}*/}`);
+      const open = t.indexOf('<!--');
+      if (open >= 0) {
+        t = t.slice(0, open) + '{/*' + t.slice(open + 4).replace(/\*\//g, '* /');
+        comment = true;
+      }
+      t = t.replace(/<((?:https?|ftp|mailto):[^\s<>]+)>/g, '$1');
+      t = t.replace(/<(?![A-Za-z/!{])/g, '&lt;');
+      parts[i] = t;
+    }
+    out.push(parts.join('`'));
   }
-
-  // Add Hanzo Cloud callout to install/getting-started pages
-  return result;
+  return front + out.join('\n');
 }
 
 async function* walkDir(dir: string): AsyncGenerator<string> {
@@ -218,8 +252,7 @@ async function convertFile(srcPath: string) {
     const destPath = join(DEST, mapped);
     await mkdir(dirname(destPath), { recursive: true });
     let content = await readFile(srcPath, 'utf-8');
-    content = convertFrontmatter(content);
-    content = applyRebrand(content);
+    content = mdxSafe(convertFrontmatter(content));
     await writeFile(destPath, content, 'utf-8');
     console.log(`  ${relPath} → ${mapped}`);
     return;
@@ -232,8 +265,7 @@ async function convertFile(srcPath: string) {
   await mkdir(dirname(destPath), { recursive: true });
 
   let content = await readFile(srcPath, 'utf-8');
-  content = convertFrontmatter(content);
-  content = applyRebrand(content);
+  content = mdxSafe(convertFrontmatter(content));
 
   await writeFile(destPath, content, 'utf-8');
   console.log(`  ${relPath} → ${destRel}`);
@@ -253,6 +285,15 @@ async function createMetaFiles() {
 
     if (meta.pages) {
       metaContent.pages = meta.pages;
+      // A page a fixed list does not name is converted and then never shown:
+      // the sidebar lists what meta.json lists. Say so, so a new page is added
+      // to the list on purpose rather than lost from the nav by default.
+      for (const f of await readdir(catDir)) {
+        const page = f.replace(/\.mdx$/, '');
+        if (f.endsWith('.mdx') && !meta.pages.includes(page)) {
+          console.warn(`  [nav] ${category}/${f} is not in ${category}'s pages; it has no sidebar entry`);
+        }
+      }
     } else {
       // Auto-discover pages from directory
       try {
@@ -308,7 +349,7 @@ async function createMetaFiles() {
 }
 
 async function main() {
-  console.log('Converting OpenClaw docs → Hanzo Bot Hanzo Docs MDX\n');
+  console.log('Converting Hanzo Bot docs → MDX\n');
   console.log(`Source: ${SRC}`);
   console.log(`Dest:   ${DEST}\n`);
 
@@ -329,4 +370,4 @@ async function main() {
   console.log('\nDone!');
 }
 
-main().catch(console.error);
+if (import.meta.main) main().catch(console.error);

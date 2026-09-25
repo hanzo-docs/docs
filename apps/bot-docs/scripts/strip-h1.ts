@@ -3,9 +3,9 @@
  * Hanzo Docs renders title from frontmatter, so body H1s are redundant.
  */
 import { readdir, readFile, writeFile } from 'fs/promises';
-import { join } from 'path';
+import { join, resolve } from 'path';
 
-const DEST = '/Users/z/work/hanzo/docs/apps/bot-docs/content/docs';
+const DEST = resolve(import.meta.dirname, '../content/docs');
 
 async function* walkMdx(dir: string): AsyncGenerator<string> {
   const entries = await readdir(dir, { withFileTypes: true });

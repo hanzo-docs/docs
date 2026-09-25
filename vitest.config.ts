@@ -25,6 +25,15 @@ export default defineConfig({
           exclude: ['**/node_modules/**', '**/dist/**', 'content/docs/projects/**', 'e2e/**'],
         },
       },
+      // The bot docs' converter, and nothing under content/: those pages are
+      // the bot repo's, converted, not code.
+      {
+        test: {
+          name: 'bot-docs',
+          root: './apps/bot-docs',
+          include: ['scripts/**/*.test.ts'],
+        },
+      },
     ],
   },
 });
