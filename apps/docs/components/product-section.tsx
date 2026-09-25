@@ -67,9 +67,12 @@ export function ProductSection({
               {title}
             </Link>
           </h3>
-          <p className="mt-2 text-sm leading-relaxed text-fd-muted-foreground">
+          {/* A div, not a p: MDX hands multi-line children over already
+              wrapped in a <p>, and a <p> inside a <p> is invalid HTML the
+              browser splits apart, so React failed to hydrate /docs. */}
+          <div className="mt-2 text-sm leading-relaxed text-fd-muted-foreground">
             {children}
-          </p>
+          </div>
           {action ? (
             <Link
               href={action.href}
