@@ -145,11 +145,15 @@ describe('said once — the product index is an index, not a copy', () => {
   // search engine picks between; the index states the summary and links out.
   // The summary is a whole sentence, and some run past 200 characters, so a
   // stretch of the description that is still inside that first sentence is the
-  // summary being stated, not the description being copied.
+  // summary being stated, not the description being copied. The Specification
+  // section is the capability's HIP, quoted at its pin: a spec and a doc comment
+  // written about the same route may say the same thing, and neither is the
+  // generator copying the other.
   it('does not repeat an operation description onto the index', () => {
     const copied: string[] = [];
     for (const p of doc.products) {
-      const index = flat(spoken(page.get(`${p.name}/index.mdx`)!));
+      const src = spoken(page.get(`${p.name}/index.mdx`)!);
+      const index = flat(src.replace(section(src, 'Specification'), ''));
       for (const op of p.operations) {
         const tail = flat(op.description).slice(200, 320);
         const said = flat(firstSentence(op.summary || op.description));
