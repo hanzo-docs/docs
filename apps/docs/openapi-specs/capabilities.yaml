@@ -133,9 +133,14 @@ domains:
     # being a row. Neither is the storefront's reverse edge, which is a consumer
     # inside another binary. Both were retired from `manifest/apps.go` rather
     # than renamed, and a capability with no row has no page.
+    # `principal` is an org as an economic principal — what it may pay and
+    # which agents answer to it; `tax` the W-9s, W-8s and 1099s companies
+    # exchange from the payments that moved between them. Both file beside
+    # books, the ledger they read.
     tags: [commerce, billing, treasury, plan, pricing, allowance,
            marketplace, books, captable, referral, affiliate, author,
-           licensing, x402, marketing, campaign, ad, experiment]
+           licensing, x402, marketing, campaign, ad, experiment,
+           principal, tax]
 
   - id: platform
     # FABRIC, for the reason Economy is: `platform` is a capability inside this
