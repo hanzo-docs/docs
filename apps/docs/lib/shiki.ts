@@ -23,12 +23,30 @@
  * emphasis rare, and the block quiet enough that the prose around it still leads.
  */
 export const CODE_THEME = {
-  light: 'github-light',
+  light: 'github-light-default',
   dark: 'vesper',
 } as const
 
-/** Shape shiki/rehype-code want: `{ themes }`. One object, so no caller spells the pair. */
-export const shikiConfig = { themes: CODE_THEME }
+/**
+ * The colours in those themes that fail WCAG AA on this site's code ground,
+ * replaced with the nearest ones that pass.
+ *
+ * Vesper writes comments in #8b8b8b at 58% alpha, which over the dark code
+ * ground (#0a0a0a) is #555 — 2.65:1, so every `# comment` in a command block
+ * was near-unreadable. The same grey opaque is 5.8:1. The light theme is
+ * `github-light-default`, GitHub's own AA palette, rather than the older
+ * `github-light`, whose keyword red (#d73a49, 4.45:1 on #fcfcfc), orange and
+ * green all fell short of 4.5; its comment grey is measured against white and
+ * is 4.43:1 on this site's #fcfcfc, so it takes GitHub's darker muted grey.
+ */
+export const CODE_COLORS = {
+  vesper: { '#8b8b8b94': '#8b8b8b' },
+  'github-light-default': { '#6e7781': '#59636e' },
+}
+
+/** Shape shiki/rehype-code want: `{ themes, colorReplacements }`. One object, so
+ *  no caller spells the pair. */
+export const shikiConfig = { themes: CODE_THEME, colorReplacements: CODE_COLORS }
 
 /** The former name. Kept because `source.config.ts` imports it. */
 export const defaultShikiOptions = shikiConfig
