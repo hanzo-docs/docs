@@ -12,6 +12,7 @@
     "clean": "rimraf .next",
     "dev": "next dev",
     "lint": "docs-mdx && bun ./scripts/lint.entry.ts",
+    "test:e2e": "playwright test",
     "start": "next start",
     "gen:collections": "node --input-type=module -e \"const m=await import('@hanzo/docs-mdx/next'); await m.postInstall({configPath:'source.config.ts'})\""
   },
@@ -86,6 +87,7 @@
     "@hanzo/products": "catalog:",
     "@next/bundle-analyzer": "catalog:",
     "@next/env": "catalog:",
+    "@playwright/test": "catalog:",
     "@tailwindcss/postcss": "catalog:",
     "@types/d3-force": "catalog:",
     "@types/estree": "catalog:",

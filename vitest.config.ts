@@ -14,11 +14,15 @@ export default defineConfig({
       // reported a red suite for two eslint tutorials that were never ours and
       // that nothing in this repo can fix. We publish those pages; we do not own
       // their test runs.
+      //
+      // `e2e/` is Playwright's (`pnpm --filter docs test:e2e`): those specs
+      // drive a browser against a running site, which vitest has no way to give
+      // them.
       {
         test: {
           name: 'docs',
           root: './apps/docs',
-          exclude: ['**/node_modules/**', '**/dist/**', 'content/docs/projects/**'],
+          exclude: ['**/node_modules/**', '**/dist/**', 'content/docs/projects/**', 'e2e/**'],
         },
       },
     ],

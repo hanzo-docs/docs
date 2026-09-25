@@ -1,6 +1,9 @@
 out
 .open-next
 .dev.vars
+# Playwright's own output (`pnpm --filter docs test:e2e`).
+test-results/
+playwright-report/
 # The API reference is generated from the document on every build — including
 # its index, whose product list and counts are the document's, not ours.
 content/docs/openapi/
