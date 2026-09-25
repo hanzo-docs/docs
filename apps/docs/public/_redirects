@@ -94,6 +94,9 @@
 /docs/commerce     /docs/openapi/commerce           301
 /docs/experiments  /docs/openapi/experiment         301
 /docs/gpus         /docs/openapi/compute            301
+# Hanzo Graph (HIP-1198, the assertion plane) is documented as its capability;
+# /docs/graph is the address a reader types and the one the product links.
+/docs/graph        /docs/openapi/graph              301
 /docs/iam          /docs/openapi/iam                301
 /docs/kv           /docs/openapi/kv                 301
 /docs/marketplace  /docs/openapi/marketplace        301
