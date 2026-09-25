@@ -68,7 +68,13 @@ export function TOC({ container, header, footer, style = 'normal', list }: TOCPr
         // every child's default flex-shrink, which is a rule you have to know
         // rather than one you can read. The header and footer slots are
         // optional, so the rows are auto-placed rather than a fixed template.
-        'sticky top-(--fd-docs-row-1) h-[calc(var(--fd-docs-height)-var(--fd-docs-row-1))] grid grid-cols-[minmax(0,1fr)] auto-rows-[minmax(0,auto)] [grid-area:toc] w-(--fd-toc-width) pt-12 pe-4 pb-2 xl:layout:[--fd-toc-width:268px] max-xl:hidden',
+        //
+        // `content-start` packs those rows at the top. A grid with a definite
+        // height STRETCHES its auto rows to fill it (align-content: normal),
+        // so a short TOC was spread over the whole rail: the header at the
+        // top, "On this page" a third of the way down and its first entry
+        // two thirds down, each alone in a row it did not need.
+        'sticky top-(--fd-docs-row-1) h-[calc(var(--fd-docs-height)-var(--fd-docs-row-1))] grid grid-cols-[minmax(0,1fr)] auto-rows-[minmax(0,auto)] content-start [grid-area:toc] w-(--fd-toc-width) pt-12 pe-4 pb-2 xl:layout:[--fd-toc-width:268px] max-xl:hidden',
         container?.className,
       )}
     >
