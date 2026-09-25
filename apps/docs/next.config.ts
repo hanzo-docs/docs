@@ -33,6 +33,15 @@ const assetPrefix = sectionAssetPrefix[process.env.DOCS_SECTION ?? ''];
 // Used as the resolution target for unresolvable upstream doc platform packages.
 const emptyProjectModule = path.resolve(__dirname, 'lib/empty-project-module.js');
 
+// On the web `react-native` IS `react-native-web`. @hanzo/gui is cross-platform
+// and its packages name `react-native` (@hanzogui/scroll-view 8.3.5, under the
+// landing page's cards, imports it outright); resolved as written, the bundler
+// parses react-native's Flow source and `/` fails to compile with "Expected
+// 'from', got 'typeOf'". @hanzo/ui/next states the mapping once, for every app on
+// the stack; both bundlers below take it from there. The module ships no types.
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const { GUI_ALIAS } = require('@hanzo/ui/next') as { GUI_ALIAS: Record<string, string> };
+
 const isExport = process.env.NEXT_EXPORT === '1';
 
 const config: NextConfig = {
@@ -60,6 +69,7 @@ const config: NextConfig = {
   turbopack: {
     resolveAlias: {
       ...collectionsAlias,
+      ...GUI_ALIAS,
       // Ported docs written against the upstream framework name still say
       // `fumadocs-ui`; those components are ours, under our name. They resolve to
       // the base-ui adapter because that is the one this site renders with — the
@@ -137,6 +147,7 @@ const config: NextConfig = {
     // ------------------------------------------------------------------ //
     config.resolve.alias = {
       ...config.resolve.alias,
+      ...GUI_ALIAS,
 
       // Virtual collection modules (internal). Both the namespaced specifier
       // and the bare `collections/*` specifier resolve to the generated source

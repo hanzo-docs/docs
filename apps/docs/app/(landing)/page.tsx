@@ -182,11 +182,11 @@ export default function Page() {
         {/* -- Install command -- the main CTA ------------------------------ */}
         <div className="relative mt-10 w-full max-w-lg">
           <Card
-            backgroundColor="rgba(255,255,255,0.03)"
+            bg="rgba(255,255,255,0.03)"
             borderColor="rgba(255,255,255,0.08)"
-            borderRadius={16}
-            padding={4}
-            paddingVertical={4}
+            rounded={16}
+            p={4}
+            py={4}
             gap={0}
           >
             {/* `$` then the command: a fixed leader and a track that takes the
@@ -427,12 +427,12 @@ export default function Page() {
                 <Card
                   key={item.name}
                   className="group"
-                  minHeight={140}
-                  backgroundColor="rgba(255,255,255,0.02)"
+                  minH={140}
+                  bg="rgba(255,255,255,0.02)"
                   borderColor="rgba(255,255,255,0.08)"
-                  hoverStyle={{ borderColor: 'rgba(255,255,255,0.2)', backgroundColor: 'rgba(255,255,255,0.05)' }}
-                  borderRadius={16}
-                  paddingVertical={0}
+                  hoverStyle={{ borderColor: 'rgba(255,255,255,0.2)', bg: 'rgba(255,255,255,0.05)' }}
+                  rounded={16}
+                  py={0}
                   gap={0}
                   style={{
                     position: 'relative',
@@ -464,7 +464,7 @@ export default function Page() {
                     </div>
                     <span className="text-[11px] font-medium text-neutral-400">{item.tag}</span>
                   </div>
-                  <CardTitle paddingHorizontal={24} fontSize={14} fontWeight="600" color="#ffffff" marginBottom={6}>
+                  <CardTitle px={24} fontSize={14} fontWeight="600" color="#ffffff" mb={6}>
                     {item.name}
                   </CardTitle>
                   <p className="px-5 sm:px-6 text-xs text-neutral-400 leading-relaxed group-hover:text-neutral-200 transition-colors">
@@ -498,17 +498,17 @@ export default function Page() {
               <Card
                 key={t.name}
                 className="group"
-                backgroundColor="rgba(255,255,255,0.02)"
+                bg="rgba(255,255,255,0.02)"
                 borderColor="rgba(255,255,255,0.08)"
-                hoverStyle={{ borderColor: 'rgba(255,255,255,0.2)', backgroundColor: 'rgba(255,255,255,0.04)' }}
-                borderRadius={16}
-                paddingVertical={0}
+                hoverStyle={{ borderColor: 'rgba(255,255,255,0.2)', bg: 'rgba(255,255,255,0.04)' }}
+                rounded={16}
+                py={0}
                 gap={0}
                 style={{ position: 'relative', transition: 'all 300ms' }}
               >
                 <Link href={t.href} aria-label={t.name} className="absolute inset-0 z-10" />
                 <CardContent
-                  padding={24}
+                  p={24}
                   style={{ display: 'grid', gridTemplateRows: 'auto auto auto', justifyItems: 'start', rowGap: 4 }}
                 >
                   <t.icon className="size-5 text-neutral-400 mb-3 group-hover:text-white transition-colors" />
@@ -541,10 +541,10 @@ export default function Page() {
             ].map((p) => (
               <Card
                 key={p.name}
-                backgroundColor="rgba(255,255,255,0.02)"
+                bg="rgba(255,255,255,0.02)"
                 borderColor="rgba(255,255,255,0.06)"
-                borderRadius={8}
-                paddingVertical={0}
+                rounded={8}
+                py={0}
                 gap={0}
               >
                 <CardContent style={{ display: 'grid', rowGap: 4, padding: '12px 16px', textAlign: 'center' }}>
@@ -582,15 +582,15 @@ export default function Page() {
           ].map((s) => (
             <Card
               key={s.title}
-              backgroundColor="rgba(255,255,255,0.02)"
+              bg="rgba(255,255,255,0.02)"
               borderColor="rgba(255,255,255,0.08)"
-              borderRadius={16}
-              paddingVertical={0}
+              rounded={16}
+              py={0}
               gap={0}
               overflow="hidden"
             >
               <CardContent
-                padding={32}
+                p={32}
                 style={{ display: 'grid', gridTemplateRows: 'auto auto auto auto', justifyItems: 'start', rowGap: 8 }}
               >
                 <span style={{ display: 'grid', gridAutoFlow: 'column', alignItems: 'center', columnGap: 12 }}>
@@ -624,10 +624,10 @@ export default function Page() {
 
         {/* -- What the CLI can do ----------------------------------------- */}
         <Card
-          backgroundColor="rgba(255,255,255,0.02)"
+          bg="rgba(255,255,255,0.02)"
           borderColor="rgba(255,255,255,0.08)"
-          borderRadius={16}
-          paddingVertical={0}
+          rounded={16}
+          py={0}
           gap={0}
           overflow="hidden"
         >
@@ -657,10 +657,10 @@ export default function Page() {
               ].map((item) => (
                 <Card
                   key={item.cmd}
-                  backgroundColor="rgba(255,255,255,0.02)"
+                  bg="rgba(255,255,255,0.02)"
                   borderColor="rgba(255,255,255,0.06)"
-                  borderRadius={8}
-                  paddingVertical={0}
+                  rounded={8}
+                  py={0}
                   gap={0}
                 >
                   <CardContent style={{ display: 'grid', rowGap: 4, padding: '12px 16px' }}>
@@ -675,10 +675,10 @@ export default function Page() {
 
         {/* -- Zen Models Banner ------------------------------------------- */}
         <Card
-          backgroundColor="rgba(255,255,255,0.02)"
+          bg="rgba(255,255,255,0.02)"
           borderColor="rgba(255,255,255,0.08)"
-          borderRadius={16}
-          paddingVertical={0}
+          rounded={16}
+          py={0}
           gap={0}
           overflow="hidden"
         >
@@ -705,10 +705,10 @@ export default function Page() {
               ].map((m) => (
                 <Card
                   key={m.name}
-                  backgroundColor="rgba(255,255,255,0.02)"
+                  bg="rgba(255,255,255,0.02)"
                   borderColor="rgba(255,255,255,0.06)"
-                  borderRadius={8}
-                  paddingVertical={0}
+                  rounded={8}
+                  py={0}
                   gap={0}
                 >
                   <CardContent style={{ display: 'grid', rowGap: 4, padding: 12 }}>
