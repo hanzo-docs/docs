@@ -23,6 +23,7 @@
     "logs",
     "memory",
     "message",
+    "migrate",
     "models",
     "node",
     "nodes",

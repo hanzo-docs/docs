@@ -190,6 +190,15 @@ export default function Page() {
       {/* Install Tabs */}
       <div id="quickstart">
         <InstallTabs />
+        <p className="mt-3 text-center text-sm text-fd-muted-foreground">
+          Coming from OpenClaw?{' '}
+          <Link
+            href="/docs/install/migrate-from-openclaw"
+            className="text-brand font-medium hover:text-[#00e5cc] transition-colors no-underline"
+          >
+            Move your install with one command
+          </Link>
+        </p>
       </div>
 
       {/* Features */}
