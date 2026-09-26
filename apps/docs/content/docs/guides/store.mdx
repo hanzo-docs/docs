@@ -9,11 +9,11 @@ import { Tab, Tabs } from '@hanzo/docs-base-ui/components/tabs'
 
 > The delete belongs in the language's finally/defer, so a failed read still cleans up instead of leaving the store for the next run to collide with. This is the provisioning plane — create a KV STORE, read it, drop it — at its served address, /v1/provisioning/kv. The bare /v1/kv spellings are the legacy dialect the binary itself tags compat, and the publication drops a compat operation by that declaration — so the day this file named them it would have named ids the published document does not have, which is exactly what test_flows.py went red on. Probed at api.hanzo.ai: GET /v1/provisioning/kv answers 403 while /v1/provisioning/kv-zzq9 answers 404, which is the existence proof this file requires (auth runs before the handler; only a mounted route can refuse).
 
-## CreateKV launches your org's OWN key-value instance and answers with its `kv://` connection string.
+## Launches your org's OWN key-value instance and answers with its `kv://` connection string.
 
 `POST /v1/provisioning/kv` · [reference →](/docs/openapi/provisioning)
 
-CreateKV launches your org's OWN key-value instance and answers with its `kv://`
+Launches your org's OWN key-value instance and answers with its `kv://`
 connection string.
 
 The instance is yours alone — a deployment in your own tenant namespace, so its
@@ -118,11 +118,11 @@ curl -X POST https://api.hanzo.ai/v1/mcp \
 </Tab>
 </Tabs>
 
-## GetKV returns one Hanzo KV store's metadata.
+## Returns one Hanzo KV store's metadata.
 
 `GET /v1/provisioning/kv/{name}` · [reference →](/docs/openapi/provisioning)
 
-GetKV returns one Hanzo KV store's metadata. It carries the store's status,
+Returns one Hanzo KV store's metadata. It carries the store's status,
 its instance address and the Valkey user it authenticates as ("default", the
 only user a requirepass instance has) — never the password. A still-booting
 instance reads "provisioning", reconciled from the operator's live view.
@@ -218,11 +218,11 @@ curl -X POST https://api.hanzo.ai/v1/mcp \
 </Tab>
 </Tabs>
 
-## DropKV deprovisions one Hanzo KV store.
+## Deprovisions one Hanzo KV store.
 
 `DELETE /v1/provisioning/kv/{name}` · [reference →](/docs/openapi/provisioning)
 
-DropKV deprovisions one Hanzo KV store. It reverts any app instance bound to
+Deprovisions one Hanzo KV store. It reverts any app instance bound to
 it back to Base BEFORE tearing down the org's dedicated Valkey instance, then
 deletes the sealed credential and removes the metadata row. Answers 204 with
 no body; a second call is a 404.

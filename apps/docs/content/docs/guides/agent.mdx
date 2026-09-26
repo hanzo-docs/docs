@@ -20,7 +20,9 @@ deployment's configured default; a named one is checked against the gateway's
 served catalog, so a model this deployment never serves is refused here rather
 than failing at run time. A long-running agent must carry a 5-field cron
 schedule (the scheduler would otherwise never fire it) and counts against a
-per-org cap on scheduled agents.
+per-org cap on scheduled agents. An agent spawned by another names it as its
+parent; the parent must be an agent of the caller's org, and the new agent
+carries its whole lineage.
 
 | Parameter | In | Required | Description |
 |---|---|---|---|
@@ -34,13 +36,13 @@ per-org cap on scheduled agents.
 | `max_task_micro_usd` | body | — | MaxTaskMicroUSD is the ceiling for a single run, in micro-USD. A session cannot exceed it even when the period |
 | `model` | body | — | Model names the model to run on. Omit it to take the deployment's configured default; name one and it is check |
 | `name` | body | — | Name is the agent's org-unique handle and the only required field. It must match ^[A-Za-z0-9][A-Za-z0-9._-]&#123;0, |
+| `parent` | body | — | Parent is the agent spawning this one — its id or name, in the caller's org. The new agent answers to the org |
 | `period` | body | — | Period is the window the cap resets on: day, week or month. |
-| `schedule` | body | — | Schedule is the 5-field cron a long-running agent fires on, parsed here so a bad expression is a 400 and not a |
 
 <Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
 <Tab value="CLI">
 ```bash
-hanzo agents create
+hanzo agent create
 ```
 </Tab>
 <Tab value="SDK">
@@ -97,7 +99,7 @@ var result = new AgentApi(client).postAgent();
 </Tab>
 </Tabs>
 
-The method above is the one at the current release of the document. `hanzoai@8.5.157` (npm) and `hanzoai@8.5.156` (PyPI) were generated from an earlier release, where this operation carried a different id, so it spells the method differently — regenerating the clients is what makes the two agree. [SDKs →](/docs/sdks)
+The method above is the one at the current release of the document. `hanzoai@8.5.157` (npm) was generated from an earlier release, where this operation carried a different id, so it spells the method differently — regenerating the clients is what makes the two agree. [SDKs →](/docs/sdks)
 </Tab>
 <Tab value="HTTP">
 ```bash
@@ -155,7 +157,7 @@ THE RULE A READER GETS WRONG: a failed run is a 502 whose body is the RUN, not a
 <Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
 <Tab value="CLI">
 ```bash
-hanzo agents run <ref>
+hanzo agent run <ref>
 ```
 </Tab>
 <Tab value="SDK">
@@ -212,7 +214,7 @@ var result = new AgentApi(client).postAgentByRefRun();
 </Tab>
 </Tabs>
 
-The method above is the one at the current release of the document. `hanzoai@8.5.157` (npm) and `hanzoai@8.5.156` (PyPI) were generated from an earlier release, where this operation carried a different id, so it spells the method differently — regenerating the clients is what makes the two agree. [SDKs →](/docs/sdks)
+The method above is the one at the current release of the document. `hanzoai@8.5.157` (npm) was generated from an earlier release, where this operation carried a different id, so it spells the method differently — regenerating the clients is what makes the two agree. [SDKs →](/docs/sdks)
 </Tab>
 <Tab value="HTTP">
 ```bash
@@ -257,7 +259,7 @@ actually happened.
 <Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
 <Tab value="CLI">
 ```bash
-hanzo agents runs <ref>
+hanzo agent runs <ref>
 ```
 </Tab>
 <Tab value="SDK">
@@ -314,7 +316,7 @@ var result = new AgentApi(client).getAgentByRefRuns();
 </Tab>
 </Tabs>
 
-The method above is the one at the current release of the document. `hanzoai@8.5.157` (npm) and `hanzoai@8.5.156` (PyPI) were generated from an earlier release, where this operation carried a different id, so it spells the method differently — regenerating the clients is what makes the two agree. [SDKs →](/docs/sdks)
+The method above is the one at the current release of the document. `hanzoai@8.5.157` (npm) was generated from an earlier release, where this operation carried a different id, so it spells the method differently — regenerating the clients is what makes the two agree. [SDKs →](/docs/sdks)
 </Tab>
 <Tab value="HTTP">
 ```bash

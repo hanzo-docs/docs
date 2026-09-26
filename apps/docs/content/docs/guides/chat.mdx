@@ -19,6 +19,21 @@ Non-streaming when it does. Streaming is a different transport (SSE) that the ge
 
 Implements the OpenAI-compatible chat completions API
 
+| Parameter | In | Required | Description |
+|---|---|---|---|
+| `frequency_penalty` | body | — |  |
+| `function_call` | body | — |  |
+| `functions` | body | — |  |
+| `logit_bias` | body | — |  |
+| `logprobs` | body | — |  |
+| `max_completion_tokens` | body | — |  |
+| `max_tokens` | body | — |  |
+| `messages` | body | — |  |
+| `metadata` | body | — |  |
+| `model` | body | — |  |
+| `n` | body | — |  |
+| `parallel_tool_calls` | body | — |  |
+
 <Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
 <Tab value="CLI">
 ```bash
@@ -32,7 +47,7 @@ hanzo chat completions
 import { Configuration, AiApi } from 'hanzoai';
 
 const api = new AiApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
-const { data } = await api.postChatCompletions();
+const { data } = await api.postChatCompletions({ frequency_penalty: 0, function_call: "<function_call>" });
 ```
 </Tab>
 <Tab value=".py">
@@ -41,7 +56,7 @@ from hanzoai.cloud import ApiClient, Configuration
 from hanzoai.cloud.api import AiApi
 
 client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
-result = AiApi(client).post_chat_completions()
+result = AiApi(client).post_chat_completions(frequency_penalty=0, function_call="<function_call>")
 ```
 </Tab>
 <Tab value=".go">
@@ -82,7 +97,12 @@ var result = new AiApi(client).postChatCompletions();
 <Tab value="HTTP">
 ```bash
 curl -X POST https://api.hanzo.ai/v1/chat/completions \
-  -H "Authorization: Bearer $HANZO_API_KEY"
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+       "frequency_penalty": 0,
+       "function_call": "<function_call>"
+     }'
 ```
 </Tab>
 <Tab value="MCP">
