@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { mdxSafe } from './convert-docs';
+import { mdxSafe, relink } from './convert-docs';
 
 // Markdown the bot repo writes on purpose, which MDX reads as JSX and refuses:
 // a page that does not parse is not rendered at all.
@@ -38,5 +38,23 @@ describe('markdown made MDX-safe', () => {
     const guide =
       'Moving from OpenClaw: `hanzo bot migrate openclaw` reads `~/.openclaw/openclaw.json`.';
     expect(mdxSafe(guide)).toBe(guide);
+  });
+});
+
+// The upstream docs invite a reader into the upstream community; ours invite
+// them into Hanzo's. Only the invite moves: a name written on purpose stays.
+describe('links to the community', () => {
+  it("point an upstream Discord invite at Hanzo's server", () => {
+    expect(relink('Ask in Discord: [https://discord.gg/clawd](https://discord.gg/clawd)')).toBe(
+      'Ask in Discord: [https://discord.gg/XthHQQj](https://discord.gg/XthHQQj)',
+    );
+    expect(relink('[#showcase](https://discord.gg/clawd) or channels.discord.gg/bot')).toBe(
+      '[#showcase](https://discord.gg/XthHQQj) or discord.gg/XthHQQj',
+    );
+  });
+
+  it('leave every other name as written', () => {
+    const doc = 'Run `hanzo bot migrate openclaw`; the `clawdbot` shim reads ~/.openclaw.';
+    expect(relink(doc)).toBe(doc);
   });
 });

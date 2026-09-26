@@ -15,6 +15,11 @@
  * on purpose — the migration guide's `hanzo bot migrate openclaw` and
  * `~/.openclaw`, the `clawdbot` compatibility shim in install/updating — and the
  * map turned each into a command, a path or a fact that does not exist.
+ *
+ * Links are the exception, because a link is an address and not a claim: an
+ * invite to the upstream community server sends a Hanzo Bot reader somewhere
+ * that is not ours. `relink` points each at Hanzo's server and touches nothing
+ * else.
  */
 
 import { readdir, readFile, writeFile, mkdir } from 'fs/promises';
@@ -37,6 +42,17 @@ const SKIP_FILES = new Set([
   '_config.yml', 'docs.json', 'CNAME', '.gitignore',
   'Gemfile', 'Gemfile.lock', '_layouts', '_includes',
 ]);
+
+/** The community invites the upstream docs still carry, and Hanzo's server. */
+const INVITES: [RegExp, string][] = [
+  [/\bdiscord\.gg\/(?:clawd|hanzo)\b/g, 'discord.gg/XthHQQj'],
+  [/\bchannels\.discord\.gg\/bot\b/g, 'discord.gg/XthHQQj'],
+];
+
+/** A doc with every upstream community invite pointed at Hanzo's server. */
+export function relink(doc: string): string {
+  return INVITES.reduce((d, [from, to]) => d.replace(from, to), doc);
+}
 
 // Category display names and ordering
 const CATEGORY_META: Record<string, { title: string; pages?: string[] }> = {
@@ -252,7 +268,7 @@ async function convertFile(srcPath: string) {
     const destPath = join(DEST, mapped);
     await mkdir(dirname(destPath), { recursive: true });
     let content = await readFile(srcPath, 'utf-8');
-    content = mdxSafe(convertFrontmatter(content));
+    content = mdxSafe(convertFrontmatter(relink(content)));
     await writeFile(destPath, content, 'utf-8');
     console.log(`  ${relPath} → ${mapped}`);
     return;
@@ -265,7 +281,7 @@ async function convertFile(srcPath: string) {
   await mkdir(dirname(destPath), { recursive: true });
 
   let content = await readFile(srcPath, 'utf-8');
-  content = mdxSafe(convertFrontmatter(content));
+  content = mdxSafe(convertFrontmatter(relink(content)));
 
   await writeFile(destPath, content, 'utf-8');
   console.log(`  ${relPath} → ${destRel}`);
