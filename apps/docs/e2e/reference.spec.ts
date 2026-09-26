@@ -183,6 +183,24 @@ test('an operation page finishes every field sentence', async ({ page }) => {
   );
 });
 
+// A quotation's own "?" or full stop ends the quotation, not the sentence: the
+// device-code row read `Answers "what am I approving?"` and dropped what it
+// answers for, and the sandbox `entries` cell stopped at `dotfiles included, "."`.
+test('a line runs past a quotation its sentence goes on after', async ({ page }) => {
+  await open(page, '/docs/cli/iam/', 'dark');
+  const rows = (await page.locator('.prose td:last-child').allInnerTexts()).map((c) => c.trim());
+  expect(rows).toContain('Answers "what am I approving?" for a pending device code.');
+  expect(
+    rows.filter((c) => /[.?!]["'”’]$/.test(c)),
+    'rows that end on a quotation',
+  ).toEqual([]);
+  await open(page, '/docs/openapi/sandbox/read-sandbox-file/', 'dark');
+  const cells = (await page.locator('.prose td:last-child').allInnerTexts()).map((c) => c.trim());
+  expect(cells).toContain(
+    'Entries is a directory\'s contents as bare NAMES, not paths — one level, no recursion, dotfiles included, "." and ".." excluded (ls -1A).',
+  );
+});
+
 test('prose is spaced: a paragraph has a margin', async ({ page }) => {
   await open(page, '/docs/quickstart/', 'dark');
   const margin = await page
