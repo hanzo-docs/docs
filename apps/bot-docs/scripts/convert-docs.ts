@@ -43,10 +43,14 @@ const SKIP_FILES = new Set([
   'Gemfile', 'Gemfile.lock', '_layouts', '_includes',
 ]);
 
-/** The community invites the upstream docs still carry, and Hanzo's server. */
+/**
+ * The community invites the upstream docs carry, in every form they write one,
+ * and Hanzo's server. `clawd` is OpenClaw's server; `bot` is what the old
+ * rebrand map made of it, and is a stranger's server called "bot"; `hanzo` is
+ * no invite at all. Each resolves through Discord's own invite lookup.
+ */
 const INVITES: [RegExp, string][] = [
-  [/\bdiscord\.gg\/(?:clawd|hanzo)\b/g, 'discord.gg/XthHQQj'],
-  [/\bchannels\.discord\.gg\/bot\b/g, 'discord.gg/XthHQQj'],
+  [/\b(?:channels\.)?discord\.(?:gg|com\/invite)\/(?:clawd|hanzo|bot)\b/g, 'discord.gg/XthHQQj'],
 ];
 
 /** A doc with every upstream community invite pointed at Hanzo's server. */

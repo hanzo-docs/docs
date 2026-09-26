@@ -1,3 +1,5 @@
+import { readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { mdxSafe, relink } from './convert-docs';
 
@@ -51,6 +53,32 @@ describe('links to the community', () => {
     expect(relink('[#showcase](https://discord.gg/clawd) or channels.discord.gg/bot')).toBe(
       '[#showcase](https://discord.gg/XthHQQj) or discord.gg/XthHQQj',
     );
+    expect(relink('Ask in [Discord](https://discord.com/invite/clawd).')).toBe(
+      'Ask in [Discord](https://discord.gg/XthHQQj).',
+    );
+    expect(relink('[Discord](https://discord.com/invite/bot) or https://discord.gg/bot')).toBe(
+      '[Discord](https://discord.gg/XthHQQj) or https://discord.gg/XthHQQj',
+    );
+    expect(relink('https://discord.gg/botany and discord.gg/XthHQQj')).toBe(
+      'https://discord.gg/botany and discord.gg/XthHQQj',
+    );
+  });
+
+  it('leave no upstream invite on a published page', () => {
+    const upstream: string[] = [];
+    const walk = (d: string) => {
+      for (const e of readdirSync(d, { withFileTypes: true })) {
+        const f = join(d, e.name);
+        if (e.isDirectory()) walk(f);
+        else if (
+          e.name.endsWith('.mdx') &&
+          relink(readFileSync(f, 'utf8')) !== readFileSync(f, 'utf8')
+        )
+          upstream.push(f);
+      }
+    };
+    walk(join(import.meta.dirname, '../content/docs'));
+    expect(upstream).toEqual([]);
   });
 
   it('leave every other name as written', () => {
