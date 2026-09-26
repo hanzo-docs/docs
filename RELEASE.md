@@ -8,13 +8,18 @@ There is no image to tag and no pin to move.
       -> git.hanzo.ai/hanzoai/docs          a pull mirror of github.com/hanzo-docs/docs
       -> .hanzo/workflows/deploy.yml        the forge reads this directory natively
       -> pnpm build --filter=docs           NEXT_EXPORT=1 -> apps/docs/out
-      -> hanzoai/ci .github/actions/site    POST /v1/projects/docs/deployments
-      -> s3://hanzo-sites/hanzo/docs        the prefix the docs.hanzo.ai route serves
+      -> hanzoai/ci .github/actions/site    POST /v1/projects/docs-hanzo-ai/deployments
+      -> s3://hanzo-sites/hanzo/docs-hanzo-ai   the prefix the docs.hanzo.ai route serves
 
 The route is an `IngressRoute` + `Middleware` pair in hanzoai/universe
 (`charts/app/values/hanzo/static-sites.yaml`): `Host(docs.hanzo.ai)` ->
-`docs-static` -> `root: s3://hanzo-sites/hanzo/docs`. No pod, no replicas, no
-image. A site is files and a route.
+`docs-static` -> `root: s3://hanzo-sites/hanzo/docs-hanzo-ai`. No pod, no
+replicas, no image. A site is files and a route.
+
+The project is named for its host, as `hanzo-ai` is hanzo.ai's. `docs` is a
+reserved label on the Sites plane (cloud `apps/sites/reserved.go`), so no project
+can be created with it: the publish step asks for the project first, and that ask
+answered 400 "slug is a reserved subdomain" the first time a run got that far.
 
 Every workflow lives in `.hanzo/workflows/` and runs on git.hanzo.ai, which reads
 that directory first. GitHub reads only `.github/workflows/`, so none of them can

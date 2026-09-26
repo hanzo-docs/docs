@@ -1,8 +1,9 @@
 name: deploy
 
 # docs.hanzo.ai is a static export on the Sites plane. This job builds
-# apps/docs/out and publishes it as project `docs`, whose prefix (hanzo/docs) the
-# docs.hanzo.ai route serves. No image, no pod. RELEASE.md has the whole path.
+# apps/docs/out and publishes it as project `docs-hanzo-ai`, whose prefix
+# (hanzo/docs-hanzo-ai) the docs.hanzo.ai route serves. No image, no pod.
+# RELEASE.md has the whole path.
 #
 # It runs on git.hanzo.ai (hanzoai/docs, a pull mirror of this repo), which reads
 # .hanzo/workflows/. GitHub reads only .github/workflows/, so it runs none of it.
@@ -161,10 +162,14 @@ jobs:
           grep -rqF "$NEXT_PUBLIC_PUBLISHABLE_KEY" apps/docs/out \
             || { echo "::error::the ingest key is not in the export"; exit 1; }
 
+      # The slug is the host's name, as hanzo-ai is hanzo.ai's and cloud-hanzo-ai
+      # is cloud.hanzo.ai's. `docs` cannot be a project: it is a reserved label
+      # (cloud apps/sites/reserved.go), so creating it answers 400, and the first
+      # run to reach this step failed there with the export built and gated.
       - name: publish
         uses: hanzoai/ci/.github/actions/site@v1
         with:
-          slug: docs
+          slug: docs-hanzo-ai
           dir: apps/docs/out
           jobs: '48'
         env:
