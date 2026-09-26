@@ -406,6 +406,7 @@ const WRITTEN: Record<string, string> = {
   hf: 'HF',
   iam: 'IAM',
   id: 'ID',
+  ios: 'iOS',
   k8s: 'K8s',
   kb: 'KB',
   kms: 'KMS',
@@ -413,6 +414,7 @@ const WRITTEN: Record<string, string> = {
   kyc: 'KYC',
   llm: 'LLM',
   lsp: 'LSP',
+  macos: 'macOS',
   mcp: 'MCP',
   mfa: 'MFA',
   ml: 'ML',
@@ -423,6 +425,7 @@ const WRITTEN: Record<string, string> = {
   openapi: 'OpenAPI',
   openrouter: 'OpenRouter',
   optin: 'Opt-in',
+  paypal: 'PayPal',
   pvcs: 'PVCs',
   rag: 'RAG',
   rpc: 'RPC',
@@ -548,7 +551,15 @@ const capabilityOf = (op: any): string =>
  * words (`Delete` of `delete_kv_by_bucket_by_key`, `Health` of
  * `get_licensing_healthz`) followed by a verb a doc comment opens with. The verb
  * then opens the sentence; "is" leaves with the name. `Discord interactions
- * endpoint` and `A sales channel is …` are English and keep their first word.
+ * endpoint` and `A sales channel is …` are English and keep their first word,
+ * and so does a brand (`GitHub`), spelled as WRITTEN spells it.
+ *
+ * zipdoc's own strip leaves the "is" behind: `Datasets is the datasets your org
+ * has` arrives as "Is the datasets your org has", which is not a statement.
+ * The "is" goes the way the name went. What the name was said to be can be
+ * another function (`AskPost is askGet with the question in the BODY`,
+ * `DetachPortalMethod is DetachMethod at …`); that one is spelled as words, so
+ * the reader gets "Ask get with the question …" and never an identifier.
  */
 const OPENS = new Set(
   (
@@ -562,17 +573,37 @@ const OPENS = new Set(
 );
 
 export function unname(prose: string, id: string): string {
+  let rest = prose;
   const m = /^([A-Z][A-Za-z0-9]*) ([a-z]+)\b/.exec(prose);
-  if (!m) return prose;
-  const [, name, verb] = m;
-  const words = id.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase().split(/[^a-z0-9]+/);
-  const go = /[a-z0-9][A-Z]/.test(name)
-    ? verb === 'is' || verb === 'are' || verb.endsWith('s')
-    : /^[A-Z][a-z]/.test(name) && OPENS.has(verb) && words.some((w) => w.startsWith(name.toLowerCase()));
-  if (!go) return prose;
-  const rest = prose.slice(name.length + 1 + (verb === 'is' || verb === 'are' ? verb.length + 1 : 0));
-  return rest ? rest[0].toUpperCase() + rest.slice(1) : prose;
+  if (/^Is \S/.test(prose) && !/^[^.!]*\?/.test(prose)) rest = prose.slice(3);
+  else if (m && goName(m[1], m[2], id))
+    rest = prose.slice(m[1].length + 1 + (m[2] === 'is' || m[2] === 'are' ? m[2].length + 1 : 0));
+  if (rest === prose || !rest) return prose;
+  const lead = /^[A-Za-z]*[a-z0-9][A-Z][A-Za-z0-9]*(?= )/.exec(rest)?.[0] ?? '';
+  if (BRANDS.has(lead)) return rest;
+  if (lead) rest = words(lead) + rest.slice(lead.length);
+  return rest[0].toUpperCase() + rest.slice(1);
 }
+
+/** A capitalised first word, followed by `verb`, that names a function. */
+const goName = (name: string, verb: string, id: string): boolean => {
+  if (BRANDS.has(name)) return false;
+  if (/[a-z0-9][A-Z]/.test(name)) return verb === 'is' || verb === 'are' || verb.endsWith('s');
+  const own = id.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase().split(/[^a-z0-9]+/);
+  return /^[A-Z][a-z]/.test(name) && OPENS.has(verb) && own.some((w) => w.startsWith(name.toLowerCase()));
+};
+
+/** The casings English writes with an inner capital: `GitHub`, `iOS`, `PayPal`. */
+const BRANDS = new Set(Object.values(WRITTEN).filter((w) => /[a-z0-9][A-Z]/.test(w)));
+
+/** `dashboardListV2` -> `dashboard list V2`: an identifier as the words it joins. */
+const words = (name: string): string =>
+  name
+    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+    .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
+    .split(' ')
+    .map((w) => (/^[A-Z][a-z]+$/.test(w) ? w.toLowerCase() : w))
+    .join(' ');
 
 /**
  * An operation its own prose says cannot work: every call answers 501.
@@ -627,6 +658,8 @@ export function loadDocument(file: string): Document {
   const operations: Operation[] = [];
   const unresolved: Operation[] = [];
   const byId = new Map<string, Operation>();
+  /** Each operation's prose as the document wrote it: summary, then description. */
+  const written = new Map<Operation, [string, string]>();
 
   for (const [path, item] of Object.entries<any>(raw.paths)) {
     if (!item || typeof item !== 'object') continue;
@@ -664,6 +697,8 @@ export function loadDocument(file: string): Document {
       const okRaw = okStatus ? deref(raw, op.responses[okStatus]) : undefined;
       const okCt = okRaw?.content ? Object.keys(okRaw.content)[0] : undefined;
 
+      const summary = String(op.summary ?? '').replace(/\s+/g, ' ').trim();
+      const description = String(op.description ?? '').trim();
       const resolved: Operation = {
         product: product_,
         id,
@@ -676,8 +711,8 @@ export function loadDocument(file: string): Document {
         name: id,
         method,
         path,
-        summary: unname(String(op.summary ?? '').replace(/\s+/g, ' ').trim(), id),
-        description: unname(String(op.description ?? '').trim(), id),
+        summary: unname(summary, id),
+        description: unname(description, id),
         parameters,
         body,
         success: okStatus
@@ -691,11 +726,26 @@ export function loadDocument(file: string): Document {
       };
 
       operations.push(resolved);
+      written.set(resolved, [summary, description]);
       if (id) byId.set(id, resolved);
 
       if (product_) product(product_).operations.push(resolved);
       else unresolved.push(resolved);
     }
+  }
+
+  // One handler at two addresses carries one comment to both, and its name is
+  // an operation's own word at only one of them: `Pubkey publishes the key` is
+  // the handler of get_licensing_pubkey AND of get_licensing_jwks. A comment
+  // stripped at one address is stripped at every address that carries it.
+  const stripped = new Map<string, string>();
+  for (const [o, [s, d]] of written) {
+    if (o.summary !== s) stripped.set(s, o.summary);
+    if (o.description !== d) stripped.set(d, o.description);
+  }
+  for (const [o, [s, d]] of written) {
+    o.summary = stripped.get(s) ?? o.summary;
+    o.description = stripped.get(d) ?? o.description;
   }
 
   // \0 as the separator, written as the ESCAPE and not as the byte: a literal

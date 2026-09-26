@@ -6,6 +6,7 @@ import { DOCUMENT, loadDocument, type Operation } from './openapi-doc';
 import { door, toolOperations } from './openapi-surfaces';
 import { load, ops as doorOps } from './sync-mcp-tools';
 import { constraintsOf, genMcpPages, published, said, slugOf } from './gen-mcp-pages';
+import { cut, named } from './english';
 
 // THE MCP REFERENCE, held to its own claims.
 //
@@ -455,14 +456,16 @@ describe('provenance — the reference says where it came from', () => {
 // the line names the operation by its id or by MCP's verb phrase for it, and a
 // line nothing finishes names the operation and says no more.
 describe('whole — no legend line stops mid-sentence', () => {
-  it('ends no line with "…", on any tool page', () => {
-    const cut: string[] = [];
+  it('finishes every line, and opens none with a Go name, on any tool page', () => {
+    const bad: string[] = [];
     for (const [slug, src] of pageOf) {
       for (const m of src.matchAll(/^- `([^`]+)`(?: — (.*))?$/gm)) {
-        if ((m[2] ?? '').trimEnd().endsWith('…')) cut.push(`${slug}: ${m[1]}`);
+        const what = m[2] ?? '';
+        const why = what && (cut(what) || named(what, m[1].split(/[^a-z0-9]+/)));
+        if (why) bad.push(`${slug}: ${m[1]}: ${why}`);
       }
     }
-    expect(cut).toEqual([]);
+    expect(bad).toEqual([]);
   });
 
   const op = (id: string, summary: string, description = summary) =>

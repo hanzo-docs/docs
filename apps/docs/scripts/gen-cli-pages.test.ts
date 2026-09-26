@@ -98,4 +98,38 @@ describe('the first sentence', () => {
       firstSentence('Starts enrolling a factor:\n\n  app  a secret\n\nNothing is on yet.'),
     ).toBe('Starts enrolling a factor:');
   });
+
+  it('runs past an abbreviation, a bracket and a code span', () => {
+    expect(
+      firstSentence(
+        'Events are NATS subject patterns to subscribe to (e.g. "commerce.order.>").\nAn empty list means EVERY event.',
+      ),
+    ).toBe('Events are NATS subject patterns to subscribe to (e.g. "commerce.order.>").');
+    expect(
+      firstSentence(
+        'Name is the ADDRESS — "module.name", e.g. "kb.page". A name with a space is encoded.',
+      ),
+    ).toBe('Name is the ADDRESS — "module.name", e.g. "kb.page".');
+    expect(firstSentence('Jurisdiction is the U.S. state of formation.')).toBe(
+      'Jurisdiction is the U.S. state of formation.',
+    );
+    expect(firstSentence("TIN is W-9 Part I, or a W-8's U.S. TIN. Never logged.")).toBe(
+      "TIN is W-9 Part I, or a W-8's U.S. TIN.",
+    );
+    expect(firstSentence('The page, i.e. one screen. Next.')).toBe('The page, i.e. one screen.');
+    expect(firstSentence('Filters rows (one per id. Ids repeat) in order. Next.')).toBe(
+      'Filters rows (one per id. Ids repeat) in order.',
+    );
+    expect(firstSentence('Runs `a. b` first. Then c.')).toBe('Runs `a. b` first.');
+  });
+
+  it('ends where a reader stops', () => {
+    expect(firstSentence('Keys, tokens, etc. The rest is kept.')).toBe('Keys, tokens, etc.');
+    expect(firstSentence('Keys, tokens, etc. and more. Next.')).toBe(
+      'Keys, tokens, etc. and more.',
+    );
+    expect(firstSentence('It said "stop." Then it stopped.')).toBe('It said "stop."');
+    expect(firstSentence('Serves hanzo.ai. Then more.')).toBe('Serves hanzo.ai.');
+    expect(firstSentence('Is it on? Ask.')).toBe('Is it on?');
+  });
 });

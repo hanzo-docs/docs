@@ -14,6 +14,7 @@ import {
 import { fields } from './openapi-schema';
 import { genOpenapiPages } from './gen-openapi-pages';
 import { firstSentence } from './mdx';
+import { cut, doubled, named } from './english';
 
 // THE API REFERENCE, held to its own claims.
 //
@@ -131,14 +132,38 @@ describe('addressable — every operation has a page of its own', () => {
 // work.
 describe('readable — a page describes its operation in English', () => {
   it('opens no description with the name of a Go function', () => {
-    const go =
-      /^(?:[A-Z][a-z0-9]+[A-Z][A-Za-z0-9]* (?:is|are|[a-z]+s)|(?:Delete|Download|Get|Health|Issue|List|Publish|Revoke|Status|Stop|Verify) (?:is|returns|removes|reports|mints|resolves|terminates|distributes|turns|checks))\b/;
-    const named: string[] = [];
+    const bad: string[] = [];
+    const said: string[] = [];
     for (const [file, src] of page) {
       const d = (src.match(/^description:\s*(.*)$/m)?.[1] ?? '').replace(/^"(.*)"$/, '$1');
-      if (go.test(d)) named.push(`${file}: ${d.slice(0, 60)}`);
+      const why = named(d, file.split(/[^a-z0-9]+/));
+      if (why) bad.push(`${file}: ${why}: ${d.slice(0, 60)}`);
+      said.push(d);
     }
-    expect(named).toEqual([]);
+    expect(bad).toEqual([]);
+    expect(doubled(said)).toEqual([]);
+  });
+
+  // A parameter's or a field's cell is its description's first sentence, and a
+  // sentence that runs past "e.g." is cut there by a full stop that ends
+  // nothing: "Events are NATS subject patterns to subscribe to (e.g.".
+  it('finishes the sentence in every parameter, field and response cell', () => {
+    const stopped: string[] = [];
+    let cells = 0;
+    for (const [file, src] of page) {
+      for (const name of ['Request', 'Response']) {
+        for (const row of section(src, name).split('\n')) {
+          if (!row.startsWith('| `')) continue;
+          const cell = row.split(/(?<!\\)\|/).slice(-2)[0].trim();
+          cells++;
+          const why = cut(cell);
+          if (why) stopped.push(`${file}: ${why}: ${cell.slice(-60)}`);
+        }
+      }
+    }
+    expect(stopped).toEqual([]);
+    expect(cells).toBeGreaterThan(10_000);
+    console.log(`[openapi-ref] cells read: ${cells}`);
   });
 
   it('writes no page for an operation that answers 501 to every call', () => {

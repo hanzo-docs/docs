@@ -18,6 +18,8 @@ const REFERENCE = [
   '/docs/cli/bot/',
   '/docs/cli/sync/',
   '/docs/cli/campaign/',
+  '/docs/cli/code/',
+  '/docs/cli/licensing/',
   '/docs/openapi/bot/',
 ];
 
@@ -166,6 +168,21 @@ test('an operation page carries no fallback tree and names its product', async (
   ).toBeVisible();
 });
 
+// A field's cell is its description's first sentence, and a full stop after
+// "e.g." ends nothing: the cell read "subscribe to (e.g." with the example cut.
+test('an operation page finishes every field sentence', async ({ page }) => {
+  await open(page, '/docs/openapi/webhook/post-webhook/', 'dark');
+  const cells = (await page.locator('.prose td:last-child').allInnerTexts()).map((c) => c.trim());
+  expect(cells.length, 'the page has a field table').toBeGreaterThan(0);
+  expect(
+    cells.filter((c) => c.endsWith('…') || /\b(?:e\.g|i\.e|U\.S)\.$/.test(c)),
+    'cells that stop at an abbreviation',
+  ).toEqual([]);
+  expect(cells).toContain(
+    'Events are NATS subject patterns to subscribe to (e.g. "commerce.order.>").',
+  );
+});
+
 test('prose is spaced: a paragraph has a margin', async ({ page }) => {
   await open(page, '/docs/quickstart/', 'dark');
   const margin = await page
@@ -194,15 +211,18 @@ for (const path of REFERENCE) {
           )
           .map((td) => (td as HTMLElement).innerText.trim()),
       );
-    const cut = prose.filter((c) => c.endsWith('…'));
+    // A cell also stops where a full stop ends an abbreviation, not the
+    // sentence: "Events are NATS subject patterns to subscribe to (e.g.".
+    const cut = prose.filter((c) => c.endsWith('…') || /\b(?:e\.g|i\.e|U\.S)\.$/.test(c));
     expect(cut, 'cells that stop mid-sentence').toEqual([]);
     const refusals = cells.filter((c) => /\b501\b|not implemented/i.test(c));
     expect(refusals, 'rows for an operation that only answers 501').toEqual([]);
     // A cell opening with a Go identifier and its verb: the handler's own name
-    // ("List returns …", "Stop terminates …") or a CamelCase symbol
-    // ("ListGPUTiers returns …", "CompleteDeployment is …").
+    // ("List returns …", "Stop terminates …"), a CamelCase symbol
+    // ("ListGPUTiers returns …", "CompleteDeployment is …"), or the "Is" a
+    // stripped name leaves ("Is askGet with …", "Is the datasets …").
     const symbol = cells.filter((c) =>
-      /^([A-Z][a-z]+[A-Z]\w*|List|Get|Stop|Run|Create|Delete|Put|Post) (is|are|[a-z]+s)\b/.test(
+      /^(?:([A-Z][a-z]+[A-Z]\w*|List|Get|Stop|Run|Create|Delete|Put|Post) (is|are|[a-z]+s)|Is [a-z])\b/.test(
         c.trim(),
       ),
     );

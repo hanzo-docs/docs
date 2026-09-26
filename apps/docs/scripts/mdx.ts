@@ -85,12 +85,40 @@ export const unpackage = (s: string): string => {
  *
  * Only the first PARAGRAPH is read, so prose that opens with a list or a block
  * and has no full stop in its first paragraph gives that paragraph, not the page.
+ *
+ * A full stop ends the sentence only where a reader would stop. Not after an
+ * abbreviation — "subscribe to (e.g. `commerce.order.>`)" was printed as
+ * "subscribe to (e.g." and "the U.S. state of formation" as "the U.S." — and
+ * not inside brackets or a code span, where the sentence has not ended even if a
+ * sentence inside it has. "etc." ends one only when a capital follows it.
  */
 export const firstSentence = (s: string): string => {
   const para = String(s ?? '').trim().split(/\n\s*\n/)[0] ?? '';
   const t = para.replace(/\s+/g, ' ').trim();
-  const m = t.match(/^(.+?[.!?])(\s|$)/);
-  return (m ? m[1] : t).trim();
+  let depth = 0;
+  let code = false;
+  for (let i = 0; i < t.length; i++) {
+    const c = t[i];
+    if (c === '`') code = !code;
+    if (code) continue;
+    if (c === '(' || c === '[') depth++;
+    else if ((c === ')' || c === ']') && depth > 0) depth--;
+    if (depth > 0 || (c !== '.' && c !== '!' && c !== '?')) continue;
+    let end = i + 1;
+    while (end < t.length && /["'”’]/.test(t[end])) end++;
+    if (end < t.length && t[end] !== ' ') continue;
+    if (c === '.' && abbreviation(t.slice(0, i), t.slice(end + 1))) continue;
+    return t.slice(0, end);
+  }
+  return t;
+};
+
+/** Whether the full stop after `before` closes an abbreviation, not a sentence. */
+const abbreviation = (before: string, after: string): boolean => {
+  const word = /(?:^|[\s(["'])([A-Za-z][A-Za-z.]*)$/.exec(before)?.[1] ?? '';
+  if (/^(?:e\.g|i\.e|a\.k\.a|vs|cf|viz|approx|incl|esp)$/i.test(word)) return true;
+  if (/^[A-Z](?:\.[A-Z])*$/.test(word)) return true;
+  return /^etc$/i.test(word) && !/^[A-Z]/.test(after);
 };
 
 export const fence = (lang: string, body: string): string[] => ['```' + lang, body, '```'];

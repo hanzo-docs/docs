@@ -3,9 +3,10 @@ import os from 'node:os';
 import path from 'node:path';
 import { parse as parseYaml } from 'yaml';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { DOCUMENT, METHODS, unimplemented, unname } from './openapi-doc';
+import { DOCUMENT, loadDocument, METHODS, unimplemented, unname } from './openapi-doc';
 import { genCliPages, heading, nounOf } from './gen-cli-pages';
 import { loadCliTable } from './sync-cli-commands';
+import { cut, doubled, named } from './english';
 
 // THE CLI REFERENCE, held to what a reader sees on every page of it.
 //
@@ -38,11 +39,12 @@ beforeAll(async () => {
   );
 }, 120_000);
 
-/** A Go doc comment's opening: a function's name, then the verb its comment
- *  says it with. `List activities` is an imperative and passes; `Delete removes
- *  one key` and `ListGPUTiers returns …` do not. */
-const GO_OPENING =
-  /^(?:[A-Z][a-z0-9]+[A-Z][A-Za-z0-9]* (?:is|are|[a-z]+s)|(?:Delete|Download|Get|Health|Issue|List|Publish|Revoke|Status|Stop|Verify) (?:is|returns|removes|reports|mints|resolves|terminates|distributes|turns|checks))\b/;
+/** The words a command is named with: `hanzo kv delete <key>` -> hanzo, kv, delete, key. */
+const own = (command: string) =>
+  command
+    .toLowerCase()
+    .split(/[^a-z0-9]+/)
+    .filter(Boolean);
 
 describe('the CLI reference, row by row', () => {
   it('has a page per command group and a row per command', () => {
@@ -50,16 +52,18 @@ describe('the CLI reference, row by row', () => {
     expect(rows.length).toBeGreaterThan(2000);
   });
 
-  it('whole — no row stops with "…"', () => {
-    expect(rows.filter((r) => r.what.trimEnd().endsWith('…')).map((r) => r.command)).toEqual([]);
+  it('whole — no row stops before its sentence ends', () => {
+    expect(rows.filter((r) => cut(r.what)).map((r) => `${r.command}: ${cut(r.what)}`)).toEqual([]);
   });
 
   it('unnamed — no row opens with the name of a Go function', () => {
     expect(
       rows
-        .filter((r) => GO_OPENING.test(r.what))
-        .map((r) => `${r.command}: ${r.what.slice(0, 60)}`),
+        .filter((r) => named(r.what, own(r.command)))
+        .map((r) => `${r.command}: ${named(r.what, own(r.command))}: ${r.what.slice(0, 60)}`),
     ).toEqual([]);
+    // One handler's comment at two addresses reads the same at both.
+    expect(doubled(rows.map((r) => r.what))).toEqual([]);
   });
 
   it('real — no command calls an operation that answers 501 to every call', () => {
@@ -127,7 +131,40 @@ describe('a Go name is not prose', () => {
     );
   });
 
+  it('drops the "is" a stripped name left, and spells what it named as words', () => {
+    expect(unname('Is the datasets your org has.', 'get_eval_datasets')).toBe(
+      'The datasets your org has.',
+    );
+    expect(unname('Is whether the subsystem is mounted.', 'get_experiment_health')).toBe(
+      'Whether the subsystem is mounted.',
+    );
+    expect(unname('Is askGet with the question in the request BODY.', 'post_code_ask')).toBe(
+      'Ask get with the question in the request BODY.',
+    );
+    expect(
+      unname('Is dashboardListV2 personalized for the calling user.', 'ListDashboardsForUserV2'),
+    ).toBe('Dashboard list V2 personalized for the calling user.');
+    expect(
+      unname('DetachPortalMethod is DetachMethod at the address a checkout uses.', 'delete_x'),
+    ).toBe('Detach method at the address a checkout uses.');
+    expect(unname('PushTarget is iOS devices a push reaches.', 'get_push')).toBe(
+      'iOS devices a push reaches.',
+    );
+  });
+
+  it('strips one comment at every address that carries it', () => {
+    const jwks = loadDocument(DOCUMENT).byId.get('get_licensing_jwks');
+    expect(jwks?.summary.startsWith('Publishes the Ed25519 PUBLIC verification key')).toBe(true);
+  });
+
   it('keeps English', () => {
+    expect(unname('Is it on?', 'get_x')).toBe('Is it on?');
+    expect(unname('GitHub returns the person here.', 'get_provider_github_user_callback')).toBe(
+      'GitHub returns the person here.',
+    );
+    expect(unname('Record turns in a conversation', 'post_agent_chat_conversations')).toBe(
+      'Record turns in a conversation',
+    );
     expect(unname('A sales channel is a named selling surface.', 'put_commerce_saleschannel')).toBe(
       'A sales channel is a named selling surface.',
     );
@@ -140,6 +177,37 @@ describe('a Go name is not prose', () => {
     expect(unname("Returns the caller org's bots.", 'get_bot_members')).toBe(
       "Returns the caller org's bots.",
     );
+  });
+});
+
+describe('the rules a line is read against', () => {
+  it('name each way a Go name opens a line', () => {
+    expect(named('ListGPUTiers returns the tiers.', [])).not.toBe('');
+    expect(named('Is askGet with the question.', [])).not.toBe('');
+    expect(named('Is the datasets your org has.', [])).not.toBe('');
+    expect(named('Delete removes one key.', ['kv', 'delete'])).not.toBe('');
+    expect(doubled(['Pubkey publishes the key.', 'Publishes the key.'])).toEqual([
+      'Pubkey publishes the key.',
+    ]);
+  });
+
+  it('pass English', () => {
+    expect(named('List articles', ['articles', 'list'])).toBe('');
+    expect(named("List this org's datasets", ['dataset', 'list'])).toBe('');
+    expect(named('GitHub App webhook', [])).toBe('');
+    expect(named("OpenRouter's spend is invisible.", ['openrouter'])).toBe('');
+    expect(named('Is it on?', [])).toBe('');
+    expect(named('A sales channel is a surface.', ['saleschannel'])).toBe('');
+  });
+
+  it('name each way a line stops early', () => {
+    expect(cut('Events are patterns to subscribe to (e.g.')).not.toBe('');
+    expect(cut('Jurisdiction is the U.S.')).not.toBe('');
+    expect(cut('Returns the roster…')).not.toBe('');
+    expect(cut('Runs `a. b')).not.toBe('');
+    expect(cut('Events are patterns (e.g. `order.*`).')).toBe('');
+    expect(cut('Keys, tokens, etc.')).toBe('');
+    expect(cut('Returns the P&L over (from, to]: the balance.')).toBe('');
   });
 });
 
