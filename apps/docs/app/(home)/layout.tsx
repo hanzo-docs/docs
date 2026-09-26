@@ -34,7 +34,14 @@ export default function Layout({ children }: LayoutProps<'/'>) {
       >
         {children}
       </HomeLayout>
-      <HanzoPreFooterCTA surface="hanzo.ai" />
+      {/* The pre-footer is glass drawn for a dark ground, and the blog is light
+          for a light reader: on the white body its heading printed at 2.38:1 and
+          its links at 4.19:1. It sits on the same dark ground the landing gives
+          it, with the site's foreground as @hanzo/ui's --text-primary (its ramp
+          has no `.dark`; see the landing layout). */}
+      <div className="dark bg-fd-background text-fd-foreground [--text-primary:var(--color-fd-foreground)]">
+        <HanzoPreFooterCTA surface="hanzo.ai" />
+      </div>
       <Footer />
     </>
   );

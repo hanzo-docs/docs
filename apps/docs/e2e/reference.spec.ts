@@ -129,6 +129,18 @@ for (const theme of ['dark', 'light'] as const) {
   });
 }
 
+// The blog is light for a light reader: its cards' dates printed #f5f5f5 on
+// #fcfcfc, and the pre-footer's glass sat on the white body at 2.38:1.
+for (const theme of ['dark', 'light'] as const) {
+  test(`the blog is readable (${theme})`, async ({ page }) => {
+    await open(page, '/blog/', theme);
+    expect(await page.locator('main a p').count()).toBeGreaterThan(0);
+    expect(
+      await lowContrast(page, 'main a p, section[data-hanzo-shell] h2, section[data-hanzo-shell] a'),
+    ).toEqual([]);
+  });
+}
+
 test('prose is spaced: a paragraph has a margin', async ({ page }) => {
   await open(page, '/docs/quickstart/', 'dark');
   const margin = await page
