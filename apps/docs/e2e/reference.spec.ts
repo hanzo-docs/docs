@@ -145,7 +145,10 @@ for (const theme of ['dark', 'light'] as const) {
     await open(page, '/blog/', theme);
     expect(await page.locator('main a p').count()).toBeGreaterThan(0);
     expect(
-      await lowContrast(page, 'main a p, section[data-hanzo-shell] h2, section[data-hanzo-shell] a'),
+      await lowContrast(
+        page,
+        'main a p, section[data-hanzo-shell] h2, section[data-hanzo-shell] a',
+      ),
     ).toEqual([]);
   });
 }
@@ -158,7 +161,9 @@ test('an operation page carries no fallback tree and names its product', async (
   const html = await res!.text();
   expect(html).not.toContain('fallback:openapi');
   expect(html.length, 'HTML bytes').toBeLessThan(1_000_000);
-  await expect(page.locator('article a[href="/docs/openapi/bot/"]', { hasText: /^Bot$/ })).toBeVisible();
+  await expect(
+    page.locator('article a[href="/docs/openapi/bot/"]', { hasText: /^Bot$/ }),
+  ).toBeVisible();
 });
 
 test('prose is spaced: a paragraph has a margin', async ({ page }) => {

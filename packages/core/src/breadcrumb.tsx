@@ -130,7 +130,7 @@ export function searchPath(nodes: PageTree.Node[], url: string): PageTree.Node[]
  * - When no page above `url` exists either, return null
  */
 export function searchNearestPath(nodes: PageTree.Node[], url: string): PageTree.Node[] | null {
-  for (let at = normalizeUrl(url); at.lastIndexOf('/') > 0; ) {
+  for (let at = normalizeUrl(url); at.lastIndexOf('/') > 0;) {
     at = at.slice(0, at.lastIndexOf('/'));
     const found = searchPath(nodes, at);
     if (found) return found.at(-1)?.type === 'page' ? found.slice(0, -1) : found;
