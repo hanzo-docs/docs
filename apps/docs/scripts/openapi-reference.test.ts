@@ -136,7 +136,7 @@ describe('readable — a page describes its operation in English', () => {
     const said: string[] = [];
     for (const [file, src] of page) {
       const d = (src.match(/^description:\s*(.*)$/m)?.[1] ?? '').replace(/^"(.*)"$/, '$1');
-      const why = named(d, file.split(/[^a-z0-9]+/));
+      const why = named(d, file.split(/[^a-z0-9]+/)) || cut(d);
       if (why) bad.push(`${file}: ${why}: ${d.slice(0, 60)}`);
       said.push(d);
     }
@@ -164,6 +164,44 @@ describe('readable — a page describes its operation in English', () => {
     expect(stopped).toEqual([]);
     expect(cells).toBeGreaterThan(10_000);
     console.log(`[openapi-ref] cells read: ${cells}`);
+  });
+
+  // Every line a generator prints is firstSentence of some summary or
+  // description, so the rule is held against ALL of the document's prose, not
+  // the pages: a sentence that stops at a quotation's own "?" while the
+  // paragraph goes on in lower case, or with a dash, stopped too soon —
+  // `Answers "what am I approving?"` of "… for a pending device code." And a
+  // summary does not run on past the paragraph its description opens with.
+  it('ends each first sentence where its paragraph does not go on', () => {
+    const early: string[] = [];
+    let read = 0;
+    const walk = (node: any, at: string) => {
+      if (Array.isArray(node)) return node.forEach((n, i) => walk(n, `${at}[${i}]`));
+      if (!node || typeof node !== 'object') return;
+      for (const [k, v] of Object.entries(node)) {
+        if ((k !== 'summary' && k !== 'description') || typeof v !== 'string') {
+          walk(v, `${at}.${k}`);
+          continue;
+        }
+        read++;
+        const one = firstSentence(v);
+        const rest = flat(v.trim().split(/\n\s*\n/)[0]).slice(one.length);
+        if (/["'”’]$/.test(one) && /^\s*(?:[a-z]|[—–-])/.test(rest))
+          early.push(`${at}.${k}: ${one.slice(-50)} ‖ ${rest.slice(0, 30)}`);
+      }
+    };
+    walk(doc.raw.paths, 'paths');
+    walk(doc.raw.components, 'components');
+    expect(early).toEqual([]);
+    expect(read).toBeGreaterThan(10_000);
+    const ran: string[] = [];
+    for (const op of doc.operations) {
+      const [first = '', ...block] = op.description.split(/\n\s*\n/);
+      const lead = flat(first).replace(/:$/, '');
+      const past = op.summary.length > lead.length + 1 && op.summary.startsWith(lead);
+      if (block.length && lead && past) ran.push(op.id);
+    }
+    expect(ran).toEqual([]);
   });
 
   it('writes no page for an operation that answers 501 to every call', () => {

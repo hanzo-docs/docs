@@ -91,9 +91,18 @@ export const unpackage = (s: string): string => {
  * "subscribe to (e.g." and "the U.S. state of formation" as "the U.S." — and
  * not inside brackets or a code span, where the sentence has not ended even if a
  * sentence inside it has. "etc." ends one only when a capital follows it.
+ *
+ * A "?" or a full stop inside a closing quote ends the quotation, and the
+ * sentence only when the next one starts there: `Answers "what am I
+ * approving?" for a pending device code.` goes on in lower case, and printing
+ * it as `Answers "what am I approving?"` drops what the operation answers FOR.
+ *
+ * A paragraph that ends in a colon introduces the block below it, so as a
+ * sentence of its own it ends there, with a full stop: "Starts enrolling a
+ * factor:" over a list of factors reads "Starts enrolling a factor."
  */
 export const firstSentence = (s: string): string => {
-  const para = String(s ?? '').trim().split(/\n\s*\n/)[0] ?? '';
+  const [para = '', ...block] = String(s ?? '').trim().split(/\n\s*\n/);
   const t = para.replace(/\s+/g, ' ').trim();
   let depth = 0;
   let code = false;
@@ -107,15 +116,16 @@ export const firstSentence = (s: string): string => {
     let end = i + 1;
     while (end < t.length && /["'”’]/.test(t[end])) end++;
     if (end < t.length && t[end] !== ' ') continue;
+    if (end > i + 1 && end < t.length && !/^ ["'“‘([]*[A-Z0-9]/.test(t.slice(end))) continue;
     if (c === '.' && abbreviation(t.slice(0, i), t.slice(end + 1))) continue;
     return t.slice(0, end);
   }
-  return t;
+  return block.length && t.endsWith(':') ? `${t.slice(0, -1)}.` : t;
 };
 
 /** Whether the full stop after `before` closes an abbreviation, not a sentence. */
 const abbreviation = (before: string, after: string): boolean => {
-  const word = /(?:^|[\s(["'])([A-Za-z][A-Za-z.]*)$/.exec(before)?.[1] ?? '';
+  const word = /(?:^|[\s(["'“‘—–])([A-Za-z][A-Za-z.]*)$/.exec(before)?.[1] ?? '';
   if (/^(?:e\.g|i\.e|a\.k\.a|vs|cf|viz|approx|incl|esp)$/i.test(word)) return true;
   if (/^[A-Z](?:\.[A-Z])*$/.test(word)) return true;
   return /^etc$/i.test(word) && !/^[A-Z]/.test(after);

@@ -146,7 +146,8 @@ describe('a Go name is not prose', () => {
     ).toBe('Dashboard list V2 personalized for the calling user.');
     expect(
       unname('DetachPortalMethod is DetachMethod at the address a checkout uses.', 'delete_x'),
-    ).toBe('Detach method at the address a checkout uses.');
+    ).toBe('DetachMethod at the address a checkout uses.');
+    expect(named('DetachMethod at the address a checkout uses.', [])).not.toBe('');
     expect(unname('PushTarget is iOS devices a push reaches.', 'get_push')).toBe(
       'iOS devices a push reaches.',
     );
@@ -177,6 +178,11 @@ describe('a Go name is not prose', () => {
     expect(unname("Returns the caller org's bots.", 'get_bot_members')).toBe(
       "Returns the caller org's bots.",
     );
+    expect(unname('Is ClickHouse data for the org.', 'get_x')).toBe('ClickHouse data for the org.');
+    expect(unname('Is YouTube linked.', 'get_x')).toBe('YouTube linked.');
+    expect(unname('Is JavaScript code the page runs.', 'get_x')).toBe(
+      'JavaScript code the page runs.',
+    );
   });
 });
 
@@ -189,6 +195,7 @@ describe('the rules a line is read against', () => {
     expect(doubled(['Pubkey publishes the key.', 'Publishes the key.'])).toEqual([
       'Pubkey publishes the key.',
     ]);
+    expect(doubled(['Foo ', 'Bar'])).toEqual([]);
   });
 
   it('pass English', () => {
@@ -205,6 +212,8 @@ describe('the rules a line is read against', () => {
     expect(cut('Jurisdiction is the U.S.')).not.toBe('');
     expect(cut('Returns the roster…')).not.toBe('');
     expect(cut('Runs `a. b')).not.toBe('');
+    expect(cut('Returns the value—e.g.')).not.toBe('');
+    expect(cut('Starts enrolling a factor and hands over what it takes:')).not.toBe('');
     expect(cut('Events are patterns (e.g. `order.*`).')).toBe('');
     expect(cut('Keys, tokens, etc.')).toBe('');
     expect(cut('Returns the P&L over (from, to]: the balance.')).toBe('');

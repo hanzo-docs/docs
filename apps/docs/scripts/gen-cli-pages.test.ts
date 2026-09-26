@@ -96,7 +96,8 @@ describe('the first sentence', () => {
   it('comes from the first paragraph only', () => {
     expect(
       firstSentence('Starts enrolling a factor:\n\n  app  a secret\n\nNothing is on yet.'),
-    ).toBe('Starts enrolling a factor:');
+    ).toBe('Starts enrolling a factor.');
+    expect(firstSentence('Values are listed below:')).toBe('Values are listed below:');
   });
 
   it('runs past an abbreviation, a bracket and a code span', () => {
@@ -131,5 +132,29 @@ describe('the first sentence', () => {
     expect(firstSentence('It said "stop." Then it stopped.')).toBe('It said "stop."');
     expect(firstSentence('Serves hanzo.ai. Then more.')).toBe('Serves hanzo.ai.');
     expect(firstSentence('Is it on? Ask.')).toBe('Is it on?');
+    expect(firstSentence('Returns the value—e.g. a count. Next.')).toBe(
+      'Returns the value—e.g. a count.',
+    );
+  });
+
+  // A quotation's own "?" or full stop is not the sentence's: it ends there
+  // only when the next sentence starts there.
+  it('runs past a quotation the sentence goes on after', () => {
+    expect(firstSentence('Answers "what am I approving?" for a pending device code.')).toBe(
+      'Answers "what am I approving?" for a pending device code.',
+    );
+    expect(
+      firstSentence(
+        'Answers a question about the books — "what is my MRR?", "how long is my runway?" — with figures from the ledger. Next.',
+      ),
+    ).toBe(
+      'Answers a question about the books — "what is my MRR?", "how long is my runway?" — with figures from the ledger.',
+    );
+    expect(
+      firstSentence(
+        'Entries are names — dotfiles included, "." and ".." excluded (`ls -1A`). Next.',
+      ),
+    ).toBe('Entries are names — dotfiles included, "." and ".." excluded (`ls -1A`).');
+    expect(firstSentence('It said "stop." "Go" came next.')).toBe('It said "stop."');
   });
 });

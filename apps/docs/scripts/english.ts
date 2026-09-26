@@ -7,25 +7,11 @@
 // patterns, not lists of the names seen so far, so the next handler's name fails
 // too.
 
-/** Casings English writes with an inner capital. A new one fails until added. */
-const BRANDS = new Set([
-  'DocDB',
-  'eSign',
-  'GitHub',
-  'GitLab',
-  'iOS',
-  'macOS',
-  'OAuth',
-  'OpenAPI',
-  'OpenRouter',
-  'PayPal',
-  'WebAuthn',
-  'WhatsApp',
-]);
+import { BRANDS } from './openapi-doc';
 
 /** Abbreviations whose full stop a sentence runs past. */
 const ABBREVIATED =
-  /(?:^|[\s(["'])(?:e\.g|i\.e|a\.k\.a|vs|cf|viz|approx|incl|esp|[A-Z](?:\.[A-Z])+)\.$/i;
+  /(?:^|[\s(["'“‘—–])(?:e\.g|i\.e|a\.k\.a|vs|cf|viz|approx|incl|esp|[A-Z](?:\.[A-Z])+)\.$/i;
 
 /** Text outside code spans, where a bracket or a full stop is the prose's own. */
 const prose = (s: string) => s.replace(/`[^`]*`/g, '``');
@@ -37,6 +23,7 @@ const prose = (s: string) => s.replace(/`[^`]*`/g, '``');
 export function cut(line: string): string {
   const t = line.trim();
   if (t.endsWith('…')) return 'ends with "…"';
+  if (t.endsWith(':')) return 'ends at the colon that leads into what it left out';
   if (ABBREVIATED.test(t)) return 'ends at an abbreviation';
   if ((t.match(/`/g) ?? []).length % 2) return 'ends inside a code span';
   const p = prose(t);
@@ -80,7 +67,7 @@ export function doubled(lines: Iterable<string>): string[] {
   const out: string[] = [];
   for (const l of all) {
     const rest = l.replace(/^\S+ /, '');
-    if (rest !== l && all.has(rest[0].toUpperCase() + rest.slice(1))) out.push(l);
+    if (rest && rest !== l && all.has(rest[0].toUpperCase() + rest.slice(1))) out.push(l);
   }
   return out;
 }

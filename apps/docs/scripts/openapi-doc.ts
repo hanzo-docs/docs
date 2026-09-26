@@ -557,9 +557,13 @@ const capabilityOf = (op: any): string =>
  * zipdoc's own strip leaves the "is" behind: `Datasets is the datasets your org
  * has` arrives as "Is the datasets your org has", which is not a statement.
  * The "is" goes the way the name went. What the name was said to be can be
- * another function (`AskPost is askGet with the question in the BODY`,
- * `DetachPortalMethod is DetachMethod at …`); that one is spelled as words, so
- * the reader gets "Ask get with the question …" and never an identifier.
+ * another function (`AskPost is askGet with the question in the BODY`); that
+ * one is spelled as words, so the reader gets "Ask get with the question …" and
+ * never an identifier. Only a name no English word is spelled like is split: one
+ * that opens in lower case (`askGet`) or carries a digit (`dashboardListV2`).
+ * `ClickHouse`, `YouTube` and an exported `DetachMethod` keep their casing — a
+ * brand split into "Click house" reads wrong and no test can see it, where a Go
+ * name left whole is caught by the reference tests and fixed at its comment.
  */
 const OPENS = new Set(
   (
@@ -581,7 +585,7 @@ export function unname(prose: string, id: string): string {
   if (rest === prose || !rest) return prose;
   const lead = /^[A-Za-z]*[a-z0-9][A-Z][A-Za-z0-9]*(?= )/.exec(rest)?.[0] ?? '';
   if (BRANDS.has(lead)) return rest;
-  if (lead) rest = words(lead) + rest.slice(lead.length);
+  if (/^[a-z]|\d/.test(lead)) rest = words(lead) + rest.slice(lead.length);
   return rest[0].toUpperCase() + rest.slice(1);
 }
 
@@ -594,7 +598,7 @@ const goName = (name: string, verb: string, id: string): boolean => {
 };
 
 /** The casings English writes with an inner capital: `GitHub`, `iOS`, `PayPal`. */
-const BRANDS = new Set(Object.values(WRITTEN).filter((w) => /[a-z0-9][A-Z]/.test(w)));
+export const BRANDS: ReadonlySet<string> = new Set(Object.values(WRITTEN).filter((w) => /[a-z0-9][A-Z]/.test(w)));
 
 /** `dashboardListV2` -> `dashboard list V2`: an identifier as the words it joins. */
 const words = (name: string): string =>
@@ -604,6 +608,27 @@ const words = (name: string): string =>
     .split(' ')
     .map((w) => (/^[A-Z][a-z]+$/.test(w) ? w.toLowerCase() : w))
     .join(' ');
+
+/**
+ * The summary, as one sentence of the description's first paragraph.
+ *
+ * zipdoc cuts a summary at the doc comment's first full stop, and a comment
+ * whose first paragraph leads into a list has none before the list ends: the
+ * summary of POST /v1/iam/mfa/setup/initiate ran "… to prove they hold it: app
+ * a fresh secret and the otpauth:// URL … sms a code texted to the number …
+ * Nothing is switched on yet, …" — three list rows and the next paragraph
+ * flattened into one line, printed as its title, its CLI row and its index row.
+ * A sentence does not cross a paragraph, so a summary that runs past the first
+ * one is that paragraph's sentence instead.
+ */
+const sentenceOf = (summary: string, description: string): string => {
+  const flat = summary.replace(/\s+/g, ' ').trim();
+  const [lead, ...block] = description.split(/\n\s*\n/);
+  const p = (lead ?? '').replace(/\s+/g, ' ').trim().replace(/:$/, '');
+  return block.length && p && flat.length > p.length + 1 && flat.startsWith(p)
+    ? firstSentence(description)
+    : flat;
+};
 
 /**
  * An operation its own prose says cannot work: every call answers 501.
@@ -697,8 +722,8 @@ export function loadDocument(file: string): Document {
       const okRaw = okStatus ? deref(raw, op.responses[okStatus]) : undefined;
       const okCt = okRaw?.content ? Object.keys(okRaw.content)[0] : undefined;
 
-      const summary = String(op.summary ?? '').replace(/\s+/g, ' ').trim();
       const description = String(op.description ?? '').trim();
+      const summary = sentenceOf(String(op.summary ?? ''), description);
       const resolved: Operation = {
         product: product_,
         id,
