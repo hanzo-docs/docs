@@ -14,7 +14,12 @@ import { expect, test, type Page } from '@playwright/test';
 // Each is checked on the generated pages, which are built the same way, so a
 // regression in the generator or the chrome shows up on all of them at once.
 
-const REFERENCE = ['/docs/cli/bot/', '/docs/cli/sync/', '/docs/cli/campaign/', '/docs/openapi/bot/'];
+const REFERENCE = [
+  '/docs/cli/bot/',
+  '/docs/cli/sync/',
+  '/docs/cli/campaign/',
+  '/docs/openapi/bot/',
+];
 
 async function open(page: Page, path: string, theme: 'dark' | 'light') {
   await page.addInitScript((t) => {
@@ -67,7 +72,11 @@ async function lowContrast(page: Page, selector: string) {
         const fg = { r: mix('r'), g: mix('g'), b: mix('b') };
         const [hi, lo] = [lum(fg), lum(ground)].sort((x, y) => y - x);
         const ratio = (hi + 0.05) / (lo + 0.05);
-        return { text: el.textContent!.trim().slice(0, 60), color: getComputedStyle(el).color, ratio: +ratio.toFixed(2) };
+        return {
+          text: el.textContent!.trim().slice(0, 60),
+          color: getComputedStyle(el).color,
+          ratio: +ratio.toFixed(2),
+        };
       })
       .filter((r) => r.ratio < 4.5);
   });
@@ -98,9 +107,25 @@ for (const theme of ['dark', 'light'] as const) {
     const first = await page.locator('#nd-toc a[href^="#"]').first().boundingBox();
     expect(box && h1 && first, 'title, heading and first entry all render').toBeTruthy();
     // It starts level with the article, not somewhere down the rail ...
-    expect(box!.y, '"On this page" starts no lower than the page title').toBeLessThanOrEqual(h1!.y + 8);
+    expect(box!.y, '"On this page" starts no lower than the page title').toBeLessThanOrEqual(
+      h1!.y + 8,
+    );
     // ... and its entries follow it, not a screen further down.
-    expect(first!.y - (box!.y + box!.height), 'first entry sits under "On this page"').toBeLessThan(32);
+    expect(first!.y - (box!.y + box!.height), 'first entry sits under "On this page"').toBeLessThan(
+      32,
+    );
+  });
+}
+
+// The landing is dark by class whatever the reader chose, so its headings and
+// the pre-footer have to read on that ground in both themes.
+for (const theme of ['dark', 'light'] as const) {
+  test(`the landing's headings are readable (${theme})`, async ({ page }) => {
+    await open(page, '/', theme);
+    expect(await page.locator('main h2').count()).toBeGreaterThan(0);
+    expect(
+      await lowContrast(page, 'main h2, section[data-hanzo-shell] h2, section[data-hanzo-shell] a'),
+    ).toEqual([]);
   });
 }
 
@@ -109,7 +134,10 @@ test('prose is spaced: a paragraph has a margin', async ({ page }) => {
   const margin = await page
     .locator('.prose p')
     .first()
-    .evaluate((p) => parseFloat(getComputedStyle(p).marginBottom) + parseFloat(getComputedStyle(p).marginTop));
+    .evaluate(
+      (p) =>
+        parseFloat(getComputedStyle(p).marginBottom) + parseFloat(getComputedStyle(p).marginTop),
+    );
   expect(margin, 'paragraph margins').toBeGreaterThan(0);
 });
 
@@ -124,7 +152,9 @@ for (const path of REFERENCE) {
       .locator('.prose td')
       .evaluateAll((tds) =>
         tds
-          .filter((td) => [...td.childNodes].some((n) => n.nodeType === Node.TEXT_NODE && n.textContent!.trim()))
+          .filter((td) =>
+            [...td.childNodes].some((n) => n.nodeType === Node.TEXT_NODE && n.textContent!.trim()),
+          )
           .map((td) => (td as HTMLElement).innerText.trim()),
       );
     const cut = prose.filter((c) => c.endsWith('…'));
@@ -135,7 +165,9 @@ for (const path of REFERENCE) {
     // ("List returns …", "Stop terminates …") or a CamelCase symbol
     // ("ListGPUTiers returns …", "CompleteDeployment is …").
     const symbol = cells.filter((c) =>
-      /^([A-Z][a-z]+[A-Z]\w*|List|Get|Stop|Run|Create|Delete|Put|Post) (is|are|[a-z]+s)\b/.test(c.trim()),
+      /^([A-Z][a-z]+[A-Z]\w*|List|Get|Stop|Run|Create|Delete|Put|Post) (is|are|[a-z]+s)\b/.test(
+        c.trim(),
+      ),
     );
     expect(symbol, 'cells that open with a Go identifier').toEqual([]);
   });
@@ -146,7 +178,9 @@ test('CLI section headings are titles, not tokens', async ({ page }) => {
   const headings = await page.locator('.prose h3').allInnerTexts();
   expect(headings.length).toBeGreaterThan(0);
   for (const h of headings) expect(h.trim()[0], `heading "${h}"`).toMatch(/[A-Z`.]/);
-  expect(await page.locator('.prose td code', { hasText: 'hanzo bot runs create' }).count()).toBe(0);
+  expect(await page.locator('.prose td code', { hasText: 'hanzo bot runs create' }).count()).toBe(
+    0,
+  );
   // The line under the title, and the previous/next cards, name a command as
   // code, not as backticks.
   const subtitle = page.locator('h1 + p').first();
@@ -154,7 +188,10 @@ test('CLI section headings are titles, not tokens', async ({ page }) => {
   await expect(subtitle.locator('code')).toHaveText('hanzo bot');
   const cards = await page.locator('a p.truncate').allInnerTexts();
   expect(cards.length, 'previous/next cards').toBeGreaterThan(0);
-  expect(cards.filter((c) => c.includes('`')), 'cards printing backticks').toEqual([]);
+  expect(
+    cards.filter((c) => c.includes('`')),
+    'cards printing backticks',
+  ).toEqual([]);
 });
 
 // A redirect is a page the export writes from public/_redirects (see

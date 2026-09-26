@@ -24,7 +24,13 @@ export default function Layout({ children }: LayoutProps<'/'>) {
           the wordmark arrived at a 72px white headline on a white page. `.dark`
           is a plain class selector, so nesting it redefines the tokens for
           everything below — chrome included, which is why it sits here and not
-          on the page's own <main>. */}
+          on the page's own <main>.
+
+          @hanzo/ui's own ramp has no `.dark` (dark is its :root, light its
+          `.light`), so in here a light reader's --text-primary stayed #0a0a0a and
+          its h1–h4 printed black on #050505. The div names the site's foreground
+          as that token, and the pre-footer's glass sits on this ground, not on
+          the white body. */}
       {/* THE TREE IS THE POINT, so it starts open here as it does everywhere
           else. It started collapsed on the argument that a reader who typed the
           domain has not asked for a table of contents — but the landing page is
@@ -32,12 +38,12 @@ export default function Layout({ children }: LayoutProps<'/'>) {
           rail answers that by showing nothing. It also cost the page its
           wordmark: the sidebar renders it, so collapsing the sidebar rendered no
           brand at all. One state, every route. */}
-      <div className="dark bg-fd-background text-fd-foreground">
+      <div className="dark bg-fd-background text-fd-foreground [--text-primary:var(--color-fd-foreground)]">
         <Docs themeSwitch={{ enabled: false }} sidebar={{ defaultCollapsed: false }}>
           {children}
         </Docs>
+        <HanzoPreFooterCTA surface="hanzo.ai" />
       </div>
-      <HanzoPreFooterCTA surface="hanzo.ai" />
       <Footer />
     </>
   );
