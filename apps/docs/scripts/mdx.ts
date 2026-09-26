@@ -123,11 +123,17 @@ export const firstSentence = (s: string): string => {
   return block.length && t.endsWith(':') ? `${t.slice(0, -1)}.` : t;
 };
 
-/** Whether the full stop after `before` closes an abbreviation, not a sentence. */
+/**
+ * Whether the full stop after `before` closes an abbreviation, not a sentence.
+ * An abbreviation may follow a dash ("the value—e.g. a count"), but a lone
+ * capital after one closes a range, not an initial: "the exemption code, A–M.
+ * Entities only." ends at "A–M.".
+ */
 const abbreviation = (before: string, after: string): boolean => {
-  const word = /(?:^|[\s(["'“‘—–])([A-Za-z][A-Za-z.]*)$/.exec(before)?.[1] ?? '';
+  const [, lead = '', word = ''] = /(^|[\s(["'“‘—–])([A-Za-z][A-Za-z.]*)$/.exec(before) ?? [];
   if (/^(?:e\.g|i\.e|a\.k\.a|vs|cf|viz|approx|incl|esp)$/i.test(word)) return true;
-  if (/^[A-Z](?:\.[A-Z])*$/.test(word)) return true;
+  if (/^[A-Z](?:\.[A-Z])+$/.test(word)) return true;
+  if (/^[A-Z]$/.test(word)) return !/[—–]/.test(lead);
   return /^etc$/i.test(word) && !/^[A-Z]/.test(after);
 };
 

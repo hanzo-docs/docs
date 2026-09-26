@@ -135,6 +135,14 @@ describe('the first sentence', () => {
     expect(firstSentence('Returns the value—e.g. a count. Next.')).toBe(
       'Returns the value—e.g. a count.',
     );
+    // A lone capital after a dash closes a range (tax.profileIn `fatca`).
+    expect(firstSentence('FATCA is the FATCA exemption code, A–M. Entities only.')).toBe(
+      'FATCA is the FATCA exemption code, A–M.',
+    );
+    expect(firstSentence('Filed for a person—U.S. persons only. Next.')).toBe(
+      'Filed for a person—U.S. persons only.',
+    );
+    expect(firstSentence('Signed by J. Smith. Next.')).toBe('Signed by J. Smith.');
   });
 
   // A quotation's own "?" or full stop is not the sentence's: it ends there
