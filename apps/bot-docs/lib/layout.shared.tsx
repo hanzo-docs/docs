@@ -1,5 +1,5 @@
 import { BookOpenIcon, LayoutGridIcon, LogInIcon, MonitorIcon, DollarSignIcon } from 'lucide-react';
-import type { BaseLayoutProps, LinkItemType } from '@hanzo/docs/ui/layouts/shared';
+import type { BaseLayoutProps, LinkItemType } from '@hanzo/docs-base-ui/layouts/shared';
 import { getMenuBarSVG } from '@hanzo/logo';
 
 const HanzoLogo = () => (

@@ -3,8 +3,10 @@
 import {
   MessageSquareIcon, BotIcon, GlobeIcon, HashIcon,
   SmartphoneIcon, BrainCircuitIcon, MusicIcon, LampIcon,
-  BookOpenIcon, MailIcon, GithubIcon, ChromeIcon,
+  BookOpenIcon, MailIcon,
 } from 'lucide-react';
+// lucide 1.x carries no brand marks; the brands are @hanzo/ui's.
+import { Chrome, Github } from '@hanzo/ui/brands';
 import type { ReactNode } from 'react';
 
 interface Pill {
@@ -26,9 +28,9 @@ const pills: Pill[] = [
   { name: 'Hue', icon: <LampIcon className="w-4 h-4" />, color: '#0065D3' },
   { name: 'Obsidian', icon: <BookOpenIcon className="w-4 h-4" />, color: '#7C3AED' },
   { name: 'Twitter', icon: <GlobeIcon className="w-4 h-4" />, color: '#FFFFFF' },
-  { name: 'Browser', icon: <ChromeIcon className="w-4 h-4" />, color: '#4285F4' },
+  { name: 'Browser', icon: <Chrome className="w-4 h-4" />, color: '#4285F4' },
   { name: 'Gmail', icon: <MailIcon className="w-4 h-4" />, color: '#EA4335' },
-  { name: 'GitHub', icon: <GithubIcon className="w-4 h-4" />, color: '#FFFFFF' },
+  { name: 'GitHub', icon: <Github className="w-4 h-4" />, color: '#FFFFFF' },
 ];
 
 export function IntegrationPills() {

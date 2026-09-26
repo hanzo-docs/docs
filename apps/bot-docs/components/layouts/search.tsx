@@ -12,11 +12,11 @@ import {
   SearchDialogOverlay,
   type SearchItemType,
   type SharedProps,
-} from '@hanzo/docs/ui/components/dialog/search';
+} from '@hanzo/docs-base-ui/components/dialog/search';
 import { useDocsSearch } from '@hanzo/docs/core/search/client';
 import { useMemo } from 'react';
 import { ArrowRight } from 'lucide-react';
-import { useTreeContext } from '@hanzo/docs/ui/contexts/tree';
+import { useTreeContext } from '@hanzo/docs-base-ui/contexts/tree';
 import type { Item, Node } from '@hanzo/docs/core/page-tree';
 import { useRouter } from 'next/navigation';
 import { publishableKey, searchEndpoint } from '@/lib/hanzo/client';

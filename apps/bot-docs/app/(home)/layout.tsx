@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { HomeLayout } from '@hanzo/docs/ui/layouts/home';
+import { HomeLayout } from '@hanzo/docs-base-ui/layouts/home';
 import { baseOptions, linkItems, logo } from '@/lib/layout.shared';
 import { AISearchPanel, AISearchTrigger } from '@/components/ai/search';
 import { MessageCircleIcon } from 'lucide-react';

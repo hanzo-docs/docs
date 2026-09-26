@@ -52,5 +52,7 @@ packages/radix-ui/css/generated/*.css
 packages/base-ui/css/generated/*.css
 packages/openapi/css/generated/*.css
 CLAUDE.md
+# `next dev` writes its agent notes beside each app; LLM.md is this repo's one.
+apps/*/AGENTS.md
 .code/
 .claude/worktrees/
