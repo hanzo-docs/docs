@@ -1,5 +1,5 @@
 import { baseOptions, linkItems, logo } from '@/components/layouts/shared';
-import { source } from '@/lib/source';
+import { clientTree, source } from '@/lib/source';
 import { getSection } from '@/lib/source/navigation';
 import { getSidebarTabs } from '@hanzo/docs-base-ui/components/sidebar/tabs/index';
 import type { ReactNode } from 'react';
@@ -12,7 +12,7 @@ export function FluxLayout({ children }: { children: ReactNode }) {
   return (
     <LayoutClient
       {...base}
-      tree={source.getPageTree()}
+      tree={clientTree()}
       // just icon items
       links={linkItems.filter((item) => item.type === 'icon')}
       nav={{

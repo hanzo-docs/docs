@@ -9,7 +9,7 @@ import { Provider } from './provider';
 import type { ReactNode } from 'react';
 import { Zen, ZenMono } from '@hanzo/font';
 import { TreeContextProvider } from '@hanzo/docs-base-ui/contexts/tree';
-import { source } from '@/lib/source';
+import { clientTree } from '@/lib/source';
 import { NextProvider } from '@hanzo/docs/core/framework/next';
 import { Analytics } from '@hanzo/docs-analytics';
 import { AppearanceDock } from '@/components/appearance-dock';
@@ -36,7 +36,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en" className={`${Zen.variable} ${ZenMono.variable}`} suppressHydrationWarning>
       <Body>
         <NextProvider>
-          <TreeContextProvider tree={source.getPageTree()}>
+          <TreeContextProvider tree={clientTree()}>
             <Provider>{children}</Provider>
           </TreeContextProvider>
         </NextProvider>

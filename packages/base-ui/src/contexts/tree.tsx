@@ -2,7 +2,7 @@
 import type * as PageTree from '@hanzo/docs-core/page-tree';
 import { usePathname } from '@hanzo/docs-core/framework';
 import { type ReactNode, useMemo, useRef, createContext, use } from 'react';
-import { searchPath } from '@hanzo/docs-core/breadcrumb';
+import { searchNearestPath, searchPath } from '@hanzo/docs-core/breadcrumb';
 
 type MakeRequired<O, K extends keyof O> = Omit<O, K> & Pick<Required<O>, K>;
 
@@ -32,6 +32,8 @@ export function TreeContextProvider({
     return (
       searchPath(tree.children, pathname) ??
       (tree.fallback ? searchPath(tree.fallback.children, pathname) : null) ??
+      // An operation page no meta lists breadcrumbs as its product's page.
+      searchNearestPath(tree.children, pathname) ??
       []
     );
   }, [tree, pathname]);

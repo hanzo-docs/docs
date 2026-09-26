@@ -63,6 +63,26 @@ function pageTreeCodeTitles(): LoaderPlugin {
   };
 }
 
+/**
+ * The page tree the chrome sends to the browser: the tree without its fallback.
+ *
+ * The fallback holds every page no meta.json lists — the 2,400 operation pages
+ * under /docs/openapi — and the layout serialises the tree into every page it
+ * renders, so each of 6,000 pages carried 0.8 MB of it, five times over (the
+ * HTML and four RSC files): 16 GB of the 19 GB export. The browser used it for
+ * one thing, the breadcrumb of an operation page, and that is found from the
+ * operation's product page instead (base-ui contexts/tree `nearest`). The server
+ * keeps the whole tree for neighbours, the search index and the sitemap.
+ */
+let shipped: ReturnType<typeof source.getPageTree> | undefined;
+export function clientTree(): ReturnType<typeof source.getPageTree> {
+  if (!shipped) {
+    const { fallback: _served, ...tree } = source.getPageTree();
+    shipped = tree;
+  }
+  return shipped;
+}
+
 export const blog = loader(createSource(blogPosts, []), {
   baseUrl: '/blog',
 });

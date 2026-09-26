@@ -141,6 +141,17 @@ for (const theme of ['dark', 'light'] as const) {
   });
 }
 
+// Every page carried the page tree's fallback — the 2,400 operation pages no
+// meta lists — so an operation page weighed 1.7 MB of HTML, most of it a list of
+// other pages. It ships without it and still says where it is.
+test('an operation page carries no fallback tree and names its product', async ({ page }) => {
+  const res = await page.goto('/docs/openapi/bot/get-bot-runs/', { waitUntil: 'load' });
+  const html = await res!.text();
+  expect(html).not.toContain('fallback:openapi');
+  expect(html.length, 'HTML bytes').toBeLessThan(1_000_000);
+  await expect(page.locator('article a[href="/docs/openapi/bot/"]', { hasText: /^Bot$/ })).toBeVisible();
+});
+
 test('prose is spaced: a paragraph has a margin', async ({ page }) => {
   await open(page, '/docs/quickstart/', 'dark');
   const margin = await page

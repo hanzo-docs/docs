@@ -117,3 +117,23 @@ export function searchPath(nodes: PageTree.Node[], url: string): PageTree.Node[]
 
   return findPath(nodes, (node) => node.type === 'page' && node.url === normalizedUrl);
 }
+
+/**
+ * The path to the closest page ABOVE `url`, for a page the tree does not list.
+ *
+ * A generated reference lists its product pages and not every operation under
+ * them: `/docs/openapi/bot/get-bot-runs` has no node, and `/docs/openapi/bot`
+ * does. The page that answered is an ancestor, not the page being read, so it
+ * leaves the path and its folder ends it — a breadcrumb then names the product,
+ * and a sidebar opens where the product page opens it.
+ *
+ * - When no page above `url` exists either, return null
+ */
+export function searchNearestPath(nodes: PageTree.Node[], url: string): PageTree.Node[] | null {
+  for (let at = normalizeUrl(url); at.lastIndexOf('/') > 0; ) {
+    at = at.slice(0, at.lastIndexOf('/'));
+    const found = searchPath(nodes, at);
+    if (found) return found.at(-1)?.type === 'page' ? found.slice(0, -1) : found;
+  }
+  return null;
+}

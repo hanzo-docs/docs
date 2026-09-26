@@ -1,8 +1,8 @@
 import { joinPath, splitPath } from '@/source/path';
 import { describe, expect, test } from 'vitest';
-import type { Root } from '@/page-tree/definitions';
+import type { Folder, Item, Root } from '@/page-tree/definitions';
 import { findNeighbour, findSiblings } from '@/page-tree/utils';
-import { getBreadcrumbItems } from '@/breadcrumb';
+import { getBreadcrumbItems, searchNearestPath } from '@/breadcrumb';
 import { DefaultFormatter } from '@/i18n/middleware';
 import { NextURL } from 'next/dist/server/web/next-url';
 import { updateHref } from '@/dynamic-link';
@@ -265,4 +265,19 @@ test('Dynamic Link: update href', () => {
 
   // relative -> relative
   expect(updateHref('[lang]/test', {})).toBe('test');
+});
+
+// A generated reference lists a product's page and not each operation under it,
+// so an operation page is placed under its product rather than nowhere.
+test('Search Nearest Path', () => {
+  const index: Item = { type: 'page', name: 'Bot', url: '/docs/openapi/bot' };
+  const bot: Folder = { type: 'folder', name: 'Bot', index, children: [] };
+  const api: Folder = { type: 'folder', name: 'By domain', children: [bot] };
+  const top: Item = { type: 'page', name: 'Home', url: '/docs' };
+  const nodes = [top, api];
+
+  expect(searchNearestPath(nodes, '/docs/openapi/bot/get-bot-runs')).toEqual([api, bot]);
+  expect(searchNearestPath(nodes, '/docs/openapi/bot/get-bot-runs/')).toEqual([api, bot]);
+  expect(searchNearestPath(nodes, '/docs/games')).toEqual([]);
+  expect(searchNearestPath(nodes, '/elsewhere')).toBeNull();
 });
