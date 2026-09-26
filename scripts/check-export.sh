@@ -63,5 +63,14 @@ if [ -f "$req" ]; then
   done < "$req"
 fi
 
+# 6. A page carries the page tree it renders, not a list of every other page.
+# The tree's fallback (every page no meta.json lists) was serialised into all
+# of them — 0.8 MB, five copies per page, 16 GB of a 19 GB export that the
+# runner then had to write and upload. lib/source clientTree ships it without.
+if grep -rq --include=index.txt '"$id":"fallback:' "$dir" 2>/dev/null; then
+  say "FAIL a page carries the page tree's fallback: $(grep -rl --include=index.txt '"$id":"fallback:' "$dir" | head -1)"
+  fail=1
+fi
+
 [ "$fail" -eq 0 ] || { say "REFUSING this export"; exit 1; }
 say "ok"

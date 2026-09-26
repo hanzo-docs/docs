@@ -31,11 +31,14 @@ jobs:
     # linux-amd64 runs on the amd64 runner nodes, 32Gi each. linux-arm64 is a
     # 4-core, 16Gi node the sandboxes share.
     runs-on: linux-amd64
-    # A runner pod is capped at 6 cores and 24Gi, and this job is the reason
-    # the memory cap is that high: its compile holds 14-16G in one process at
-    # the peak. It compiles two tasks wide and renders with two workers, which
-    # keeps it well inside the cap and makes it slower than the 47 minutes it
-    # took on a 10-core workstation. The runner pod itself ends at 4 hours.
+    # A runner pod is capped at 6 cores and 24Gi. The compile used to peak at
+    # 24 GB in one process, because the API reference's code examples were
+    # highlighted into the bundle token by token, and the last failed run died
+    # in it. They are highlighted as each page renders now
+    # (apps/docs/lib/rehype-example.ts): measured with this job's settings, the
+    # compile peaks near 10 GB and the build, render workers included, near
+    # 14 GB, and the export is 6 GB rather than 19. It compiles two tasks wide
+    # and renders with two workers. The runner pod itself ends at 4 hours.
     timeout-minutes: 210
     steps:
       - uses: actions/checkout@v4
