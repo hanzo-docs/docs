@@ -11,6 +11,7 @@ import { visit } from 'unist-util-visit';
 import type { Transformer } from 'unified';
 import type { Root } from 'mdast';
 import { remarkFixInternalLinks } from './lib/remark-fix-links';
+import { rehypeExample } from './lib/rehype-example';
 
 const isLint = process.env.LINT === '1';
 
@@ -131,7 +132,8 @@ export const docs = defineDocs({
               [remarkAutoTypeTable, typeTableOptions],
               remarkTypeScriptToJavaScript,
             ],
-        rehypePlugins: (v) => [rehypeKatex, ...v],
+        // rehypeExample first: it takes the reference's examples out of rehype-code's way.
+        rehypePlugins: (v) => [rehypeExample, rehypeKatex, ...v],
       })(environment);
     },
   },

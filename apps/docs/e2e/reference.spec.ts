@@ -98,6 +98,15 @@ for (const theme of ['dark', 'light'] as const) {
     expect(await lowContrast(page, '.prose pre code span')).toEqual([]);
   });
 
+  // The reference's examples are highlighted as the page renders (components/
+  // example.tsx), not by the compile; they carry the same themes and colours.
+  test(`a reference example is highlighted and readable (${theme})`, async ({ page }) => {
+    await open(page, '/docs/openapi/bot/get-bot-runs/', theme);
+    const tokens = page.locator('.prose figure.shiki pre code span[style]');
+    expect(await tokens.count()).toBeGreaterThan(0);
+    expect(await lowContrast(page, '.prose figure.shiki pre code span')).toEqual([]);
+  });
+
   test(`the table of contents heads the right rail (${theme})`, async ({ page }) => {
     await open(page, '/docs/cli/bot/', theme);
     const title = page.locator('#toc-title');

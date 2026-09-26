@@ -9,6 +9,7 @@ import { ModelsCatalog, ConnectorsCatalog, InstallCatalog } from '@/components/p
 import { DocsHero } from '@/components/docs-hero';
 import { ProductSection, ProductSections } from '@/components/product-section';
 import { ProviderStrip } from '@/components/provider-strip';
+import { Example } from '@/components/example';
 import * as icons from 'lucide-react';
 
 export function getMDXComponents(components?: MDXComponents): MDXComponents {
@@ -32,6 +33,8 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     ModelsCatalog,
     ConnectorsCatalog,
     InstallCatalog,
+    // The API reference's examples, highlighted at render (lib/rehype-example).
+    Example,
     Tabs,
     Tab,
     TabsContent,
