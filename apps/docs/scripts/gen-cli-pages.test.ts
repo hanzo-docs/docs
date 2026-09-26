@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { spelling } from './gen-cli-pages';
+import { guideLines, guidePages, spelling } from './gen-cli-pages';
 
 // A page names the command a reader types. Most capabilities are spelled by
 // their own name; one the CLI files under another command is spelled there.
@@ -19,5 +19,20 @@ describe('the spelling of a capability', () => {
 
   it('reads a command broken across lines as one line', () => {
     expect(spelling('hanzo auth link create \\\n  --account a', 'link')).toEqual(['auth', 'link']);
+  });
+});
+
+// The Bot page is where hanzo.ai sends people; one coming from OpenClaw finds
+// the move there and beside it in the sidebar.
+describe('a capability with guides', () => {
+  it('links the OpenClaw move from the Bot page and its sidebar entry', () => {
+    const href = 'https://docs.hanzo.bot/docs/install/migrate-from-openclaw';
+    expect(guideLines('bot').join('\n')).toContain(`[Migrate from OpenClaw →](${href})`);
+    expect(guidePages('bot')).toEqual([`[Migrate from OpenClaw](${href})`]);
+  });
+
+  it('adds nothing to a capability without one', () => {
+    expect(guideLines('network')).toEqual([]);
+    expect(guidePages('network')).toEqual([]);
   });
 });

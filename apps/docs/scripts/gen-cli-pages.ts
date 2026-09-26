@@ -31,6 +31,32 @@ const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = path.resolve(SCRIPT_DIR, '..');
 const OUT_DIR = path.join(APP_ROOT, 'content/docs/cli');
 
+/**
+ * Guides a capability's product keeps on its own docs site. The reference says
+ * what the commands do, not how to adopt the product; a reader who came here
+ * from the product's own page is pointed at the guide from this page and from
+ * the capability's place in the sidebar.
+ */
+export const GUIDES: Record<string, Array<{ title: string; href: string; lead: string }>> = {
+  bot: [
+    {
+      title: 'Migrate from OpenClaw',
+      href: 'https://docs.hanzo.bot/docs/install/migrate-from-openclaw',
+      lead: 'Coming from OpenClaw? One command moves your install to Hanzo Bot.',
+    },
+  ],
+};
+
+/** The lines a capability page carries for its guides. */
+export function guideLines(name: string): string[] {
+  return (GUIDES[name] ?? []).flatMap((g) => [`${g.lead} [${g.title} →](${g.href})`, '']);
+}
+
+/** The sidebar entries under a capability: its guides, as links. */
+export function guidePages(name: string): string[] {
+  return (GUIDES[name] ?? []).map((g) => `[${g.title}](${g.href})`);
+}
+
 interface Group {
   /** The capability that serves these routes. */
   name: string;
@@ -86,6 +112,7 @@ function renderGroup(g: Group, doc: Document): string {
     L.push(`[API reference →](/docs/openapi/${ref})`);
     L.push('');
   }
+  L.push(...guideLines(g.name));
 
   // ONE command, spelled out and runnable. A page that lists two hundred
   // commands and shows none of them being run tells a reader what exists and
@@ -257,15 +284,16 @@ export async function genCliPages(): Promise<void> {
     const folder = path.join(OUT_DIR, g.name);
     fs.mkdirSync(folder, { recursive: true });
     fs.writeFileSync(path.join(folder, 'index.mdx'), renderGroup(g, doc));
-    // `pages: []`, never `['index']` — the same shape the reference uses, for
-    // the same reason. A folder's own `index.mdx` is already its landing page;
-    // the tree builder resolves it before it reads `pages`. Naming it demotes
-    // the page from BEING the folder to being a child OF it, so the sidebar
-    // reads `Agents > Agents` — once per capability. Empty means "no children",
-    // which is true: this folder holds one page.
+    // Never `['index']` — the same shape the reference uses, for the same
+    // reason. A folder's own `index.mdx` is already its landing page; the tree
+    // builder resolves it before it reads `pages`. Naming it demotes the page
+    // from BEING the folder to being a child OF it, so the sidebar reads
+    // `Agents > Agents` — once per capability. The folder holds one page; its
+    // only children are the product's guides, as links.
     fs.writeFileSync(
       path.join(folder, 'meta.json'),
-      JSON.stringify({ title: g.title, pages: [], collapsible: false }, null, 2) + '\n',
+      JSON.stringify({ title: g.title, pages: guidePages(g.name), collapsible: false }, null, 2) +
+        '\n',
     );
   }
   fs.writeFileSync(
