@@ -2,7 +2,8 @@
 //
 // The CLI rows, the API page descriptions and cells, and the MCP legend lines
 // are all cut from Go doc comments, so they fail the same ways: they stop
-// mid-sentence, or they open with the name of a function. Each test reads its
+// mid-sentence — visibly, or at a quotation's own full stop while the source
+// goes on — or they open with the name of a function. Each test reads its
 // own pages and asks this module what is wrong with a line; the rules are
 // patterns, not lists of the names seen so far, so the next handler's name fails
 // too.
@@ -31,6 +32,23 @@ export function cut(line: string): string {
   if ((p.match(/[([]/g) ?? []).length > (p.match(/[)\]]/g) ?? []).length)
     return 'ends inside a bracket';
   return '';
+}
+
+/**
+ * Why `line`, printed as the first sentence of `text`, stops before that
+ * sentence does, or '' when it does not. `cut` reads the line alone and cannot
+ * see this: a quotation's own "?" or full stop reads as a sentence's end —
+ * `Answers "what am I approving?"` — while the paragraph it came from goes on
+ * in lower case ("for a pending device code.") or after a dash. Only the
+ * source says the sentence went on, so this rule reads the line against it.
+ */
+export function early(line: string, text: string): string {
+  const t = line.trim();
+  const para = (text.trim().split(/\n\s*\n/)[0] ?? '').replace(/\s+/g, ' ').trim();
+  if (!/[.?!]["'”’]+$/.test(t) || !para.startsWith(t)) return '';
+  return /^\s*(?:[a-z]|[—–-])/.test(para.slice(t.length))
+    ? 'stops at a quotation its sentence goes on after'
+    : '';
 }
 
 /**

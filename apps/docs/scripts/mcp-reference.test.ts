@@ -6,7 +6,8 @@ import { DOCUMENT, loadDocument, type Operation } from './openapi-doc';
 import { door, toolOperations } from './openapi-surfaces';
 import { load, ops as doorOps } from './sync-mcp-tools';
 import { constraintsOf, genMcpPages, published, said, slugOf } from './gen-mcp-pages';
-import { cut, named } from './english';
+import { cut, early, named } from './english';
+import { firstSentence } from './mdx';
 
 // THE MCP REFERENCE, held to its own claims.
 //
@@ -466,6 +467,16 @@ describe('whole — no legend line stops mid-sentence', () => {
       }
     }
     expect(bad).toEqual([]);
+  });
+
+  // A tool's own line is its description's first sentence, printed on its page
+  // and in the catalogue; the operation lines are held to the same rule in the
+  // API reference's test, against the document they come from.
+  it('ends no tool line where its description goes on', () => {
+    const stopped = catalog.tools
+      .map((t) => [t.name, early(firstSentence(t.description), t.description)])
+      .filter(([, why]) => why);
+    expect(stopped).toEqual([]);
   });
 
   const op = (id: string, summary: string, description = summary) =>

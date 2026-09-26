@@ -3,10 +3,11 @@ import os from 'node:os';
 import path from 'node:path';
 import { parse as parseYaml } from 'yaml';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { DOCUMENT, loadDocument, METHODS, unimplemented, unname } from './openapi-doc';
+import { BRANDS, DOCUMENT, loadDocument, METHODS, unimplemented, unname } from './openapi-doc';
 import { genCliPages, heading, nounOf } from './gen-cli-pages';
 import { loadCliTable } from './sync-cli-commands';
-import { cut, doubled, named } from './english';
+import { cut, doubled, early, named } from './english';
+import { firstSentence } from './mdx';
 
 // THE CLI REFERENCE, held to what a reader sees on every page of it.
 //
@@ -207,6 +208,16 @@ describe('the rules a line is read against', () => {
     expect(named('A sales channel is a surface.', ['saleschannel'])).toBe('');
   });
 
+  // One list of brands: the loader keeps a brand's casing and the rules pass it,
+  // so a brand added where product names are written is English to both.
+  it('pass every brand the loader keeps', () => {
+    expect(BRANDS.size).toBeGreaterThan(5);
+    for (const b of BRANDS) {
+      expect(unname(`Is ${b} linked.`, 'get_x')).toBe(`${b} linked.`);
+      expect(named(`${b} links the account.`, [])).toBe('');
+    }
+  });
+
   it('name each way a line stops early', () => {
     expect(cut('Events are patterns to subscribe to (e.g.')).not.toBe('');
     expect(cut('Jurisdiction is the U.S.')).not.toBe('');
@@ -217,6 +228,43 @@ describe('the rules a line is read against', () => {
     expect(cut('Events are patterns (e.g. `order.*`).')).toBe('');
     expect(cut('Keys, tokens, etc.')).toBe('');
     expect(cut('Returns the P&L over (from, to]: the balance.')).toBe('');
+  });
+
+  // What a line cut at a quotation's own "?" or full stop looked like, against
+  // the paragraph it was cut from: each reads as finished on its own.
+  it('name a line that stops at a quotation its source goes on after', () => {
+    const cuts: Array<[string, string]> = [
+      [
+        'Answers "what am I approving?"',
+        'Answers "what am I approving?" for a pending device code.',
+      ],
+      [
+        'Answers a question about the books — "what is my MRR?", "how long is my runway?"',
+        'Answers a question about the books — "what is my\nMRR?", "how long is my runway?" — with figures from the ledger.',
+      ],
+      [
+        'Answers "is this browser signed in, and if not where does it sign in?"',
+        'Answers "is this browser signed in, and if not where does it sign in?" – the bootstrap question.\n\nMore.',
+      ],
+      [
+        'Entries are names — dotfiles included, "."',
+        'Entries are names — dotfiles included, "." and ".." excluded (`ls -1A`).',
+      ],
+    ];
+    for (const [line, text] of cuts) {
+      expect(cut(line)).toBe('');
+      expect(early(line, text)).not.toBe('');
+      expect(early(firstSentence(text), text)).toBe('');
+    }
+    expect(early('It said "stop."', 'It said "stop." Then it stopped.')).toBe('');
+    expect(early('It said "stop."', 'It said "stop."\n\nthen more.')).toBe('');
+    expect(early('Is it on?', 'Is it on? ask.')).toBe('');
+    expect(
+      early(
+        'Created says whether this call made the row.',
+        'Created says whether this call made the row. false means it had.',
+      ),
+    ).toBe('');
   });
 });
 

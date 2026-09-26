@@ -138,23 +138,40 @@ describe('the first sentence', () => {
   });
 
   // A quotation's own "?" or full stop is not the sentence's: it ends there
-  // only when the next sentence starts there.
+  // only when the next sentence starts there. The four texts it once cut, as
+  // the document carries them (POST /v1/books/ask, GET /v1/deploy/session/
+  // userinfo, POST /v1/iam/oauth/device/info, sandbox.Blob `entries`).
   it('runs past a quotation the sentence goes on after', () => {
-    expect(firstSentence('Answers "what am I approving?" for a pending device code.')).toBe(
-      'Answers "what am I approving?" for a pending device code.',
-    );
     expect(
       firstSentence(
-        'Answers a question about the books — "what is my MRR?", "how long is my runway?" — with figures from the ledger. Next.',
+        'Answers a plain-language question about the caller\'s own books — "what is my\nMRR?", "how long is my runway?" — with figures taken from their ledger, never a guessed\nnumber. A deterministic keyword router picks the intent and reads the real metrics.',
       ),
     ).toBe(
-      'Answers a question about the books — "what is my MRR?", "how long is my runway?" — with figures from the ledger.',
+      'Answers a plain-language question about the caller\'s own books — "what is my MRR?", "how long is my runway?" — with figures taken from their ledger, never a guessed number.',
     );
     expect(
       firstSentence(
-        'Entries are names — dotfiles included, "." and ".." excluded (`ls -1A`). Next.',
+        'Answers "is this browser signed in, and if not where does it\nsign in?" — the dashboard SPA\'s bootstrap question, and the only route on this\nplane that answers for an anonymous caller.\n\nThe anonymous answer carries loggedIn:false and a URL and NOTHING else.',
       ),
-    ).toBe('Entries are names — dotfiles included, "." and ".." excluded (`ls -1A`).');
+    ).toBe(
+      'Answers "is this browser signed in, and if not where does it sign in?" — the dashboard SPA\'s bootstrap question, and the only route on this plane that answers for an anonymous caller.',
+    );
+    expect(
+      firstSentence(
+        'Answers "what am I approving?" for a pending device code.\n\nThe approval page exists to tell a human WHICH application they are authorizing.',
+      ),
+    ).toBe('Answers "what am I approving?" for a pending device code.');
+    expect(
+      firstSentence(
+        'Entries is a directory\'s contents as bare NAMES, not paths — one level, no\nrecursion, dotfiles included, "." and ".." excluded (`ls -1A`). Empty for a\nfile, and for an empty directory.',
+      ),
+    ).toBe(
+      'Entries is a directory\'s contents as bare NAMES, not paths — one level, no recursion, dotfiles included, "." and ".." excluded (`ls -1A`).',
+    );
+    expect(firstSentence('It said "stop." Then it stopped.')).toBe('It said "stop."');
     expect(firstSentence('It said "stop." "Go" came next.')).toBe('It said "stop."');
+    expect(firstSentence('Answers "is it on?" 2 ways.')).toBe('Answers "is it on?"');
+    expect(firstSentence('Answers "is it on?"')).toBe('Answers "is it on?"');
+    expect(firstSentence('Is it on? Ask.')).toBe('Is it on?');
   });
 });

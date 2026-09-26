@@ -14,7 +14,7 @@ import {
 import { fields } from './openapi-schema';
 import { genOpenapiPages } from './gen-openapi-pages';
 import { firstSentence } from './mdx';
-import { cut, doubled, named } from './english';
+import { cut, doubled, early, named } from './english';
 
 // THE API REFERENCE, held to its own claims.
 //
@@ -167,13 +167,14 @@ describe('readable — a page describes its operation in English', () => {
   });
 
   // Every line a generator prints is firstSentence of some summary or
-  // description, so the rule is held against ALL of the document's prose, not
-  // the pages: a sentence that stops at a quotation's own "?" while the
-  // paragraph goes on in lower case, or with a dash, stopped too soon —
+  // description — an operation's, a field's, a product tag's, the document's
+  // own — so the rule is held against ALL of the document's prose, not the
+  // pages: a sentence that stops at a quotation's own "?" while the paragraph
+  // goes on in lower case, or with a dash, stopped too soon —
   // `Answers "what am I approving?"` of "… for a pending device code." And a
   // summary does not run on past the paragraph its description opens with.
   it('ends each first sentence where its paragraph does not go on', () => {
-    const early: string[] = [];
+    const stopped: string[] = [];
     let read = 0;
     const walk = (node: any, at: string) => {
       if (Array.isArray(node)) return node.forEach((n, i) => walk(n, `${at}[${i}]`));
@@ -185,14 +186,12 @@ describe('readable — a page describes its operation in English', () => {
         }
         read++;
         const one = firstSentence(v);
-        const rest = flat(v.trim().split(/\n\s*\n/)[0]).slice(one.length);
-        if (/["'”’]$/.test(one) && /^\s*(?:[a-z]|[—–-])/.test(rest))
-          early.push(`${at}.${k}: ${one.slice(-50)} ‖ ${rest.slice(0, 30)}`);
+        const why = early(one, v);
+        if (why) stopped.push(`${at}.${k}: ${why}: ${one.slice(-50)}`);
       }
     };
-    walk(doc.raw.paths, 'paths');
-    walk(doc.raw.components, 'components');
-    expect(early).toEqual([]);
+    walk(doc.raw, '');
+    expect(stopped).toEqual([]);
     expect(read).toBeGreaterThan(10_000);
     const ran: string[] = [];
     for (const op of doc.operations) {
