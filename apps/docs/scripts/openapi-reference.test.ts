@@ -125,6 +125,28 @@ describe('addressable — every operation has a page of its own', () => {
   });
 });
 
+// A page's description is the line under its title and the text of every card
+// and search result that points at it, so it is held to what a CLI row is: a
+// sentence, not a Go doc comment's opening, and never an operation that cannot
+// work.
+describe('readable — a page describes its operation in English', () => {
+  it('opens no description with the name of a Go function', () => {
+    const go =
+      /^(?:[A-Z][a-z0-9]+[A-Z][A-Za-z0-9]* (?:is|are|[a-z]+s)|(?:Delete|Download|Get|Health|Issue|List|Publish|Revoke|Status|Stop|Verify) (?:is|returns|removes|reports|mints|resolves|terminates|distributes|turns|checks))\b/;
+    const named: string[] = [];
+    for (const [file, src] of page) {
+      const d = (src.match(/^description:\s*(.*)$/m)?.[1] ?? '').replace(/^"(.*)"$/, '$1');
+      if (go.test(d)) named.push(`${file}: ${d.slice(0, 60)}`);
+    }
+    expect(named).toEqual([]);
+  });
+
+  it('writes no page for an operation that answers 501 to every call', () => {
+    expect([...page.keys()].filter((f) => f.startsWith('marketing/') && /publish/.test(f))).toEqual([]);
+    expect([...page.values()].filter((src) => /every channel answers an honest 501/.test(src))).toEqual([]);
+  });
+});
+
 describe('said once — the product index is an index, not a copy', () => {
   it('links every operation it owns, and links nothing else', () => {
     const wrong: string[] = [];
