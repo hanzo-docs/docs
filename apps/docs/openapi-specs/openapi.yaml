@@ -19691,6 +19691,12 @@ components:
         buyer:
           description: Buyer is the org that paid.
           type: string
+        category:
+          description: |-
+            Category is what the payment was for — service, goods, transfer, refund or
+            royalty — as the rail recorded the parties agreeing it. Empty on an event
+            stated before version 2, and on a rail that records no purpose.
+          type: string
         chain:
           description: Chain is the CAIP-2 network an on-chain payment moved on.
           type: string
@@ -32301,6 +32307,259 @@ components:
             nothing changed. A refused token never reaches this shape — it is a 403.
           type: boolean
       type: object
+    marketplace.Delivery:
+      properties:
+        at:
+          description: At is when, unix seconds.
+          format: int64
+          type: integer
+        hash:
+          description: |-
+            Hash commits to what was delivered: the seller's own 32-byte hash, or the
+            SHA-256 of the note and URL. It is the escrow's delivery hash on chain.
+          type: string
+        note:
+          description: Note says what was delivered.
+          type: string
+        url:
+          description: URL is where it is, https.
+          type: string
+      type: object
+    marketplace.Dispute:
+      properties:
+        at:
+          description: At is when, unix seconds.
+          format: int64
+          type: integer
+        by:
+          description: By is the org that disputed.
+          type: string
+        contested:
+          description: |-
+            Contested is the clock's own dispute: the payment stopped clearing when the
+            review window closed. A party's dispute never carries it, whatever the party
+            is named.
+          type: boolean
+        reason:
+          description: Reason is the disputing party's words.
+          type: string
+      type: object
+    marketplace.Earnings:
+      properties:
+        byRail:
+          additionalProperties: {}
+          description: ByRail sums them by the rail that moved them.
+          type: object
+        currency:
+          description: Currency is USD.
+          type: string
+        gross:
+          description: Gross is the sum of every payment to the org, exact USD.
+        partial:
+          description: Partial is true when the year held more than one read sums.
+          type: boolean
+        payments:
+          description: Payments is how many.
+          format: int64
+          type: integer
+        year:
+          description: Year is the calendar year (UTC).
+          format: int64
+          type: integer
+      type: object
+    marketplace.Escrow:
+      properties:
+        contract:
+          description: |-
+            Contract is the contract the money moves through: the token the x402
+            authorization transfers, or the escrow on chain.
+          type: string
+        network:
+          description: Network is the CAIP-2 network the payment is signed for.
+          type: string
+        payTo:
+          description: PayTo is the seller's payout address.
+          type: string
+        rail:
+          description: |-
+            Rail is x402 — the buyer's balance, settled at release — or chain, the Lux
+            escrow contract.
+          type: string
+        txHash:
+          description: |-
+            TxHash is the transaction that paid the seller, once one did: the chain's
+            hash, or the x402 settlement id on the ledger.
+          type: string
+      type: object
+    marketplace.Facets:
+      properties:
+        category:
+          additionalProperties:
+            format: int64
+            type: integer
+          description: |-
+            Category counts listings in each category; an uncategorized one is not
+            counted.
+          type: object
+        kind:
+          additionalProperties:
+            format: int64
+            type: integer
+          description: Kind counts listings of each kind.
+          type: object
+        price:
+          additionalProperties:
+            format: int64
+            type: integer
+          description: Price counts free and priced listings.
+          type: object
+        rating:
+          additionalProperties:
+            format: int64
+            type: integer
+          description: |-
+            Rating counts listings by their rounded rating, "1" to "5", and those with
+            no rating yet as "unrated".
+          type: object
+      type: object
+    marketplace.Feedback:
+      properties:
+        about:
+          description: About is the other party of the job, the org it is about.
+          type: string
+        at:
+          description: At is when, unix seconds.
+          format: int64
+          type: integer
+        comment:
+          description: Comment is the party's words, at most 4096 characters.
+          type: string
+        from:
+          description: From is the org that gave it.
+          type: string
+        job:
+          description: Job is the job it is about.
+          type: string
+        listing:
+          description: Listing is the listing the job was hired through; empty for
+            a direct offer.
+          type: string
+        rating:
+          description: Rating is 1 to 5 stars.
+          format: int64
+          type: integer
+      type: object
+    marketplace.Job:
+      properties:
+        amount:
+          description: Amount is what the job pays, exact USD.
+        brief:
+          description: Brief is what the buyer asked for.
+          type: string
+        buyerOrg:
+          description: BuyerOrg is the org that pays.
+          type: string
+        category:
+          description: |-
+            Category is what the payment is for — service, goods, transfer or royalty —
+            as the buyer declared it and the seller accepted it. It is what the
+            economic event says.
+          type: string
+        clearance:
+          description: |-
+            Clearance is principal's latest decision that the buyer may pay the seller
+            this amount — asked when the job was quoted, again when it was funded, and
+            again when it was released: GET /v1/principal/clearance/{id}.
+          type: string
+        createdAt:
+          description: CreatedAt is when the job was quoted, unix seconds.
+          format: int64
+          type: integer
+        currency:
+          description: 'Currency labels Amount: USD.'
+          type: string
+        deadline:
+          description: Deadline is when delivery must land by, unix seconds.
+          format: int64
+          type: integer
+        delivery:
+          $ref: '#/components/schemas/marketplace.Delivery'
+          description: Delivery is what the seller delivered, once it has.
+        dispute:
+          $ref: '#/components/schemas/marketplace.Dispute'
+          description: Dispute is why the job was stopped, once it was.
+        ending:
+          description: |-
+            Ending is the unpaid ending the job was given — declined, cancelled or
+            refunded — while the rail returns the amount it set aside. It takes no other
+            step meanwhile, and Status becomes Ending once the money is back.
+          type: string
+        escrow:
+          $ref: '#/components/schemas/marketplace.Escrow'
+          description: Escrow is how the job is paid.
+        history:
+          description: History is every step the job took, oldest first.
+          items:
+            $ref: '#/components/schemas/marketplace.Step'
+          type: array
+        id:
+          description: ID is the job, "job_"-prefixed.
+          type: string
+        listing:
+          description: Listing is the listing it was hired through; empty for a direct
+            offer.
+          type: string
+        performed:
+          description: Performed is where the work is performed, ISO 3166-1 alpha-2,
+            when said.
+          type: string
+        review:
+          description: |-
+            Review is how many seconds after delivery the buyer has to release or
+            dispute before the job releases itself.
+          format: int64
+          type: integer
+        sellerOrg:
+          description: SellerOrg is the org that does the work and is paid.
+          type: string
+        status:
+          description: |-
+            Status is where the job stands: open, accepted, delivered, released,
+            disputed, declined, cancelled or refunded.
+          type: string
+        title:
+          description: 'Title names the work: the listing''s title, or the offer''s
+            own.'
+          type: string
+        updatedAt:
+          description: UpdatedAt is when it last moved, unix seconds.
+          format: int64
+          type: integer
+      type: object
+    marketplace.JobCounts:
+      properties:
+        completed:
+          description: Completed is released jobs.
+          format: int64
+          type: integer
+        disputed:
+          description: Disputed is jobs ever disputed.
+          format: int64
+          type: integer
+      type: object
+    marketplace.Links:
+      properties:
+        cli:
+          description: CLI is the hanzo command that buys it.
+          type: string
+        docs:
+          description: Docs is the listing's documentation, when the seller named
+            one.
+          type: string
+        mcp:
+          $ref: '#/components/schemas/marketplace.MCPRef'
+          description: MCP is the MCP tool and operation that buys it.
+      type: object
     marketplace.Listing:
       properties:
         category:
@@ -32328,6 +32587,11 @@ components:
             Description is the long copy. Publish REFUSES one past 4096 bytes rather
             than truncating it, so what is stored is what was sent; empty is allowed.
           type: string
+        docs:
+          description: |-
+            Docs is where the listing's documentation lives: an https URL, or a path on
+            docs.hanzo.ai. Empty when the seller named none.
+          type: string
         id:
           description: |-
             ID is the listing's id, minted here as "lst_" + 16 hex characters. A
@@ -32335,8 +32599,15 @@ components:
             within PublisherOrg (the primary key is the pair), and it is the path segment
             DELETE /v1/marketplace/listings/:id takes.
           type: string
+        kind:
+          description: |-
+            Kind is what the listing sells: agent, persona, app, skill, mcp or tool.
+            Listings published before kinds existed sold tools, and read as tool.
+          type: string
         price:
-          description: exact per-call price; 0 is free.
+          description: |-
+            Price is the exact price, 18 decimal places of USD: per call for a tool,
+            the price a job is offered at for an agent. Zero is free.
         public:
           description: |-
             Public is whether other orgs can discover the listing. It also decides
@@ -32352,7 +32623,17 @@ components:
             only rows carrying its own org.
           type: string
         recipient:
-          description: seller payout WALLET ID, in PublisherOrg.
+          description: |-
+            Recipient is the seller's payout WALLET id in PublisherOrg: the wallet x402
+            pays for a call or a job bought through this listing.
+          type: string
+        ref:
+          description: |-
+            Ref is the id the thing's owning app knows it by, resolved when the listing
+            was published — the agent id for an agent named by its name. A tool's is the
+            x402 resource a dispatch of it is priced by: the source it resolves from and
+            its name, so a price follows the tool that runs and not a name another org's
+            own row may share.
           type: string
         title:
           description: |-
@@ -32361,10 +32642,128 @@ components:
           type: string
         tool:
           description: |-
-            Tool is the registry name of the offered capability, in the flat fleet-wide
-            tool namespace. It resolved in the publisher's own scope at publish time, so
-            no listing advertises a capability that did not exist; it is also the key the
-            price table looks a dispatch up by.
+            Tool names the thing sold, as the seller named it: the agent, app, skill or
+            MCP server's name or id, or the tool's registry name. It was proved the
+            seller's own when the listing was published. For a tool it is what install
+            switches on.
+          type: string
+        updatedAt:
+          description: |-
+            UpdatedAt is when the listing was last edited, unix seconds; its creation
+            when it never was.
+          format: int64
+          type: integer
+      type: object
+    marketplace.MCPRef:
+      properties:
+        op:
+          description: Op is the operation within it.
+          type: string
+        tool:
+          description: 'Tool is the MCP tool: marketplace.'
+          type: string
+      type: object
+    marketplace.Onboarding:
+      properties:
+        credentials:
+          description: |-
+            Credentials are the TaxPrincipalCredentials signed for the org's agents,
+            newest first.
+          items:
+            $ref: '#/components/schemas/marketplace.Statement'
+          type: array
+        earnings:
+          $ref: '#/components/schemas/marketplace.Earnings'
+          description: |-
+            Earnings is what the org was paid in Year, from the economic events the rails
+            stated.
+        entity:
+          description: |-
+            Entity is the legal entity's formation stage (KYB) — "company" once formed
+            — or empty when the org began none.
+          type: string
+        identity:
+          description: |-
+            Identity is the founders' identity verification (KYC): verified, pending,
+            failed or none.
+          type: string
+        missing:
+          description: |-
+            Missing names what the org still owes before it is paid without a hitch:
+            identity, sanctions, tax_form, tax_invalid or payout.
+          items:
+            type: string
+          type: array
+        org:
+          description: Org is the seller org.
+          type: string
+        payout:
+          $ref: '#/components/schemas/marketplace.Payout'
+          description: Payout is the wallet the org proved it is paid into.
+        ready:
+          description: Ready is true when nothing is missing.
+          type: boolean
+        received:
+          description: Received are the 1099s payers furnished the org for Year.
+          items:
+            $ref: '#/components/schemas/marketplace.Received'
+          type: array
+        sanctions:
+          description: |-
+            Sanctions is the org's own screening: clear, review, blocked, unscreened or
+            unavailable, and why in words.
+          type: string
+        sanctionsReason:
+          description: SanctionsReason says why Sanctions is what it is.
+          type: string
+        sources:
+          description: |-
+            Sources names each owning app asked, and whether it answered: ok, absent
+            (not run by this deployment) or failed.
+          items:
+            $ref: '#/components/schemas/marketplace.Source'
+          type: array
+        tax:
+          $ref: '#/components/schemas/marketplace.TaxStatus'
+          description: Tax is the org's own tax form, when it has one.
+      type: object
+    marketplace.Payout:
+      properties:
+        address:
+          description: Address is its address, recovered from the signature that proved
+            it.
+          type: string
+        bound:
+          description: Bound is true once a signature proved it.
+          type: boolean
+        boundAt:
+          description: BoundAt is when, unix seconds.
+          format: int64
+          type: integer
+        wallet:
+          description: Wallet is the wallet id, in the seller's org.
+          type: string
+      type: object
+    marketplace.PayoutChallenge:
+      properties:
+        address:
+          description: Address is its address, which the signature must recover to.
+          type: string
+        digest:
+          description: |-
+            Digest is the EIP-191 hash of Message, 0x hex: what POST
+            /v1/wallet/{id}/sign signs, for a wallet the platform holds.
+          type: string
+        expires:
+          description: Expires is when the challenge may no longer be signed, unix
+            seconds.
+          format: int64
+          type: integer
+        message:
+          description: Message is the text to sign with the wallet (EIP-191 personal_sign).
+          type: string
+        wallet:
+          description: Wallet is the wallet to prove.
           type: string
       type: object
     marketplace.Price:
@@ -32383,6 +32782,330 @@ components:
             paid at.
           type: string
       type: object
+    marketplace.Received:
+      properties:
+        corrected:
+          description: Corrected is true for a statement that corrects an earlier
+            one.
+          type: boolean
+        furnished:
+          description: Furnished is when it was delivered, unix seconds.
+          format: int64
+          type: integer
+        id:
+          description: ID is the form id the payer issued it under.
+          type: string
+        kind:
+          description: Kind is 1099-NEC or 1099-MISC.
+          type: string
+        payer:
+          description: Payer is the org that furnished it.
+          type: string
+        superseded:
+          description: Superseded is true for one a later correction replaced.
+          type: boolean
+        year:
+          description: Year is the calendar year of the payments.
+          format: int64
+          type: integer
+      type: object
+    marketplace.Reputation:
+      properties:
+        installs:
+          description: Installs is how many orgs installed a tool listing's tool.
+          format: int64
+          type: integer
+        jobs:
+          $ref: '#/components/schemas/marketplace.JobCounts'
+          description: Jobs counts the jobs released, and those that were ever disputed.
+        rating:
+          description: |-
+            Rating is the mean stars buyers gave, 1 to 5 to one decimal; null until the
+            first review.
+          format: double
+          type: number
+        reviews:
+          description: Reviews is how many buyers rated.
+          format: int64
+          type: integer
+      type: object
+    marketplace.Seller:
+      properties:
+        documented:
+          description: |-
+            Documented is true while the seller's tax form is certified and valid —
+            what its agents' TaxPrincipalCredentials rest on. False as well when that
+            could not be asked just now.
+          type: boolean
+        org:
+          description: Org is the seller org.
+          type: string
+        reputation:
+          $ref: '#/components/schemas/marketplace.Reputation'
+          description: Reputation is what buyers made of the seller, across its listings.
+      type: object
+    marketplace.Shop:
+      properties:
+        facets:
+          $ref: '#/components/schemas/marketplace.Facets'
+          description: |-
+            Facets counts the matches by kind, category, price and rating, each
+            counted as if its own filter were not applied.
+        listings:
+          description: Listings is this page, newest first.
+          items:
+            $ref: '#/components/schemas/marketplace.ShopListing'
+          type: array
+        total:
+          description: Total is how many listings the search matched, past this page.
+          format: int64
+          type: integer
+      type: object
+    marketplace.ShopListing:
+      properties:
+        category:
+          description: Category groups it; empty is ungrouped.
+          type: string
+        createdAt:
+          description: CreatedAt is when it was published, unix seconds.
+          format: int64
+          type: integer
+        currency:
+          description: Currency labels Price.
+          type: string
+        description:
+          description: Description is the long copy.
+          type: string
+        docs:
+          description: Docs is where its documentation lives, when the seller said.
+          type: string
+        id:
+          description: ID is the listing.
+          type: string
+        kind:
+          description: 'Kind is what it sells: agent, persona, app, skill, mcp or
+            tool.'
+          type: string
+        links:
+          $ref: '#/components/schemas/marketplace.Links'
+          description: Links are the ways to act on it.
+        price:
+          description: |-
+            Price is the exact USD price — per call for a tool, per job otherwise; "0"
+            is free.
+        public:
+          description: Public is always true here.
+          type: boolean
+        publisherOrg:
+          description: PublisherOrg is the org that sells it.
+          type: string
+        reputation:
+          $ref: '#/components/schemas/marketplace.Reputation'
+          description: Reputation is what buyers made of this listing.
+        seller:
+          $ref: '#/components/schemas/marketplace.Seller'
+          description: Seller is what anyone may know about the seller.
+        title:
+          description: Title is the shop-window name.
+          type: string
+        tool:
+          description: Tool names the thing sold, as the seller named it.
+          type: string
+        updatedAt:
+          description: UpdatedAt is when it was last edited, unix seconds.
+          format: int64
+          type: integer
+      type: object
+    marketplace.Source:
+      properties:
+        app:
+          description: App is the app.
+          type: string
+        status:
+          description: Status is ok, absent or failed.
+          type: string
+      type: object
+    marketplace.Statement:
+      properties:
+        agent:
+          description: Agent is the agent it is about.
+          type: string
+        expires:
+          description: |-
+            Expires is when it stops standing, unix seconds; zero for a W-9, which
+            stands until the form changes.
+          format: int64
+          type: integer
+        form:
+          description: 'Form is the class of tax form it rests on: w9, w8ben or w8bene.'
+          type: string
+        id:
+          description: ID is the statement's jti.
+          type: string
+        issued:
+          description: Issued is when it was signed, unix seconds.
+          format: int64
+          type: integer
+        jws:
+          description: |-
+            JWS is the signed statement itself — the credential an agent presents —
+            answered only to the org it is about.
+          type: string
+        kind:
+          description: 'Kind is what it states: tax.'
+          type: string
+        org:
+          description: Org is the principal the agent answers to.
+          type: string
+        revoked:
+          description: Revoked is when it was withdrawn, unix seconds; zero while
+            it stands.
+          format: int64
+          type: integer
+        status:
+          description: Status is live, expired or revoked.
+          type: string
+      type: object
+    marketplace.Step:
+      properties:
+        at:
+          description: At is when, unix seconds.
+          format: int64
+          type: integer
+        by:
+          description: By is the org whose act it was, or "marketplace" for a clock
+            that ran out.
+          type: string
+        status:
+          description: Status is the state the job entered.
+          type: string
+      type: object
+    marketplace.TaxStatus:
+      properties:
+        certified:
+          description: Certified is whether its signature covers the form as it stands.
+          type: boolean
+        expires:
+          description: Expires is when a W-8 lapses, unix seconds; a W-9 does not.
+          format: int64
+          type: integer
+        form:
+          description: Form is w9, w8ben or w8bene.
+          type: string
+        valid:
+          description: Valid is whether it is complete and unexpired.
+          type: boolean
+      type: object
+    marketplace.declineIn:
+      properties:
+        id:
+          description: ID is the job, from the path.
+          type: string
+        reason:
+          description: Reason is the seller's words to the buyer, at most 4096 characters.
+          type: string
+      type: object
+    marketplace.deliverIn:
+      properties:
+        hash:
+          description: |-
+            Hash is the seller's own commitment to what was delivered, 32 bytes as 0x
+            hex; the SHA-256 of the note and URL when empty.
+          type: string
+        id:
+          description: ID is the job, from the path.
+          type: string
+        note:
+          description: Note says what was delivered. Required, at most 4096 characters.
+          type: string
+        url:
+          description: URL is where it is, https.
+          type: string
+      type: object
+    marketplace.disputeIn:
+      properties:
+        id:
+          description: ID is the job, from the path.
+          type: string
+        reason:
+          description: Reason is the disputing party's words. Required, at most 4096
+            characters.
+          type: string
+      type: object
+    marketplace.feedbackIn:
+      properties:
+        comment:
+          description: Comment is the party's words, at most 4096 characters.
+          type: string
+        id:
+          description: ID is the job, from the path.
+          type: string
+        rating:
+          description: Rating is 1 to 5 stars. Required.
+          format: int64
+          type: integer
+      type: object
+    marketplace.hireIn:
+      properties:
+        amount:
+          description: 'Amount is what the job pays, U.S. dollars to the cent: "250.00".'
+          type: string
+        brief:
+          description: |-
+            Brief is what the buyer asks for, and what delivered looks like. Required,
+            at most 4096 characters.
+          type: string
+        category:
+          description: |-
+            Category is what the payment is for: service (the default), goods,
+            transfer or royalty.
+          type: string
+        deadline:
+          description: |-
+            Deadline is when delivery must land by, unix seconds. Without one, it is
+            the latest the payment leaves room for: its expiry, less the review window,
+            fourteen days for a ruling on a dispute, and a day for the clock.
+          format: int64
+          type: integer
+        listing:
+          description: |-
+            Listing is the public listing the job is hired through. Empty for a direct
+            offer, which names Seller instead.
+          type: string
+        payment:
+          description: |-
+            Payment is the buyer's signed x402 authorization for the job — the value
+            PAYMENT-SIGNATURE carries, for a caller that sends no headers of its own,
+            over MCP or the command line. The header wins when both are sent.
+          type: string
+        performed:
+          description: |-
+            Performed is where the work is performed, ISO 3166-1 alpha-2. It decides
+            whether a foreign seller's pay is U.S.-source.
+          type: string
+        rail:
+          description: Rail is x402 (the default) or chain.
+          type: string
+        review:
+          description: |-
+            Review is how many seconds the buyer has after delivery to release or
+            dispute: three days by default, thirty at most.
+          format: int64
+          type: integer
+        seller:
+          description: Seller is the org offered the job directly; only without a
+            listing.
+          type: string
+        title:
+          description: Title names a direct offer; a listing's job takes the listing's
+            title.
+          type: string
+        wallet:
+          description: |-
+            Wallet is the buyer's wallet the payment is signed from. When named, the
+            authorization must be signed by its address.
+          type: string
+      type: object
     marketplace.installReq:
       properties:
         tool:
@@ -32399,6 +33122,14 @@ components:
         tool:
           description: Tool is the capability the write applied to.
           type: string
+      type: object
+    marketplace.jobPage:
+      properties:
+        jobs:
+          description: Jobs is at most 500 jobs.
+          items:
+            $ref: '#/components/schemas/marketplace.Job'
+          type: array
       type: object
     marketplace.listingPage:
       properties:
@@ -32450,9 +33181,48 @@ components:
         title:
           description: |-
             Title is the shop-window name, painted over the registry Name from the
-            CHEAPEST public listing for this tool — several orgs may list the same one,
-            and the row shown is the one a buyer would pay. Absent when no org has listed
-            the tool publicly: that row is a plain capability, not an offer.
+            CHEAPEST public listing of this very tool — the platform's, for a tool every
+            org reaches — the row a call would pay. Absent when the tool is not listed:
+            that row is a plain capability, not an offer.
+          type: string
+      type: object
+    marketplace.patchReq:
+      properties:
+        category:
+          description: Category groups the listing in the shop window.
+          type: string
+        currency:
+          description: Currency denominates Price.
+          type: string
+        description:
+          description: Description is the long copy, at most 4096 characters.
+          type: string
+        docs:
+          description: Docs is where the listing's documentation lives; empty clears
+            it.
+          type: string
+        id:
+          description: ID is the listing to edit, from the path.
+          type: string
+        price:
+          description: Price is the decimal USD price, exact to 18 places; "0" makes
+            it free.
+          type: string
+        public:
+          description: Public makes the listing discoverable by other orgs, or withdraws
+            it.
+          type: boolean
+        recipient:
+          description: Recipient is the payout wallet id, in the publishing org.
+          type: string
+        title:
+          description: Title is the shop-window name, 1-200 characters.
+          type: string
+      type: object
+    marketplace.payoutIn:
+      properties:
+        wallet:
+          description: Wallet is one of the caller org's wallets. Required.
           type: string
       type: object
     marketplace.publishReq:
@@ -32464,13 +33234,23 @@ components:
           description: Currency denominates Price.
           type: string
         description:
-          description: Description is the long copy, clipped at 4096 characters.
+          description: Description is the long copy, at most 4096 characters.
+          type: string
+        docs:
+          description: |-
+            Docs is where the listing's documentation lives: an https URL or a path on
+            docs.hanzo.ai.
+          type: string
+        kind:
+          description: |-
+            Kind is what is sold: agent, persona, app, skill, mcp or tool (the default).
+            A tool is a platform tool, sold per call by the platform alone.
           type: string
         price:
           description: |-
-            Price is the per-call price as a decimal USD string, exact to 18 places —
-            "0.0025" is a quarter of a cent and stays one. Empty or "0" (the default)
-            publishes it free; any positive price makes the listing monetized and
+            Price is the price as a decimal USD string, exact to 18 places — per call
+            for a tool, what a job is offered at otherwise. "0.0025" is a quarter of a
+            cent and stays one. Empty or "0" publishes it free; a positive price
             requires Recipient.
           type: string
         public:
@@ -32479,7 +33259,7 @@ components:
           type: boolean
         recipient:
           description: |-
-            Recipient is the seller's payout wallet ID, in the publishing org — the
+            Recipient is the seller's payout wallet id, in the publishing org — the
             wallet x402 pays. Required for a monetized listing.
           type: string
         title:
@@ -32487,8 +33267,28 @@ components:
           type: string
         tool:
           description: |-
-            Tool is the registry name of the capability being offered. It must already
-            resolve in the publisher's own scope — there are no phantom listings.
+            Tool names the thing sold, in the seller's own org: an agent's name or id,
+            an app's project slug or id, a skill's name or id, an MCP server's name or
+            id registered by hand, or a platform tool's registry name. It must be the
+            seller's — there are no phantom listings.
+          type: string
+      type: object
+    marketplace.resolveIn:
+      properties:
+        id:
+          description: ID is the job, from the path.
+          type: string
+        outcome:
+          description: Outcome is release — the seller is paid the whole amount —
+            or refund.
+          type: string
+      type: object
+    marketplace.verifyIn:
+      properties:
+        signature:
+          description: |-
+            Signature is the wallet's 65-byte signature over the challenge's message
+            (EIP-191), 0x hex. Required.
           type: string
       type: object
     meet.meetHealth:
@@ -49126,6 +49926,47 @@ components:
             it.
           type: string
       type: object
+    principal.Statement:
+      properties:
+        agent:
+          description: Agent is the agent it is about.
+          type: string
+        expires:
+          description: |-
+            Expires is when it stops standing, unix seconds; zero for a W-9, which
+            stands until the form changes.
+          format: int64
+          type: integer
+        form:
+          description: 'Form is the class of tax form it rests on: w9, w8ben or w8bene.'
+          type: string
+        id:
+          description: ID is the statement's jti.
+          type: string
+        issued:
+          description: Issued is when it was signed, unix seconds.
+          format: int64
+          type: integer
+        jws:
+          description: |-
+            JWS is the signed statement itself — the credential an agent presents —
+            answered only to the org it is about.
+          type: string
+        kind:
+          description: 'Kind is what it states: tax.'
+          type: string
+        org:
+          description: Org is the principal the agent answers to.
+          type: string
+        revoked:
+          description: Revoked is when it was withdrawn, unix seconds; zero while
+            it stands.
+          format: int64
+          type: integer
+        status:
+          description: Status is live, expired or revoked.
+          type: string
+      type: object
     principal.Step:
       properties:
         code:
@@ -61986,6 +62827,12 @@ components:
             asset's own units (USDC's 6 dp) and truncates to fit them, while the ledger
             moves this exact value.
           type: string
+        category:
+          description: |-
+            Category is what the payment was for — service, goods, transfer or royalty
+            — as the price table said it: a tool call is a service, a job is what its
+            parties agreed.
+          type: string
         from:
           description: |-
             From is the payer's EVM address: the account that signed the EIP-3009
@@ -62055,6 +62902,14 @@ components:
             and it means the money moved without a chain, not that it failed. The
             wire's PAYMENT-RESPONSE `transaction` falls back to ID when this is empty.
           type: string
+      type: object
+    x402.settlementList:
+      properties:
+        settlements:
+          description: Settlements is at most 1000 receipts.
+          items:
+            $ref: '#/components/schemas/x402.Receipt'
+          type: array
       type: object
   securitySchemes:
     bearer:
@@ -76453,9 +77308,11 @@ paths:
     get:
       description: |-
         Answers the org's own postings inside `range=`, each as a signed
-        entry: a DEPOSIT CREDITS the wallet (positive, account `credits:<org>`) and
-        every other posting DEBITS it (negative, account `usage:<org>`), described by
-        its notes or its tags. The sign is the posting's own meaning, read through ONE
+        entry: a DEPOSIT CREDITS the wallet (positive, account `credits:<org>`), a
+        HOLD sets money aside for a payment agreed and not yet made (negative, account
+        `held:<org>`) and its return gives it back (positive), and every other posting
+        DEBITS it (negative, account `usage:<org>`), described by its notes or its
+        tags. The sign is the posting's own meaning, read through ONE
         vocabulary shared with the ledger that wrote it — a reader with its own
         spelling for `deposit` rendered a customer's grant as a charge.
 
@@ -76506,9 +77363,11 @@ paths:
                 $ref: '#/components/schemas/problem-details'
           description: refused
       summary: 'Answers the org''s own postings inside `range=`, each as a signed
-        entry: a DEPOSIT CREDITS the wallet (positive, account `credits:<org>`) and
-        every other posting DEBITS it (negative, account `usage:<org>`), described
-        by its notes or its tags.'
+        entry: a DEPOSIT CREDITS the wallet (positive, account `credits:<org>`), a
+        HOLD sets money aside for a payment agreed and not yet made (negative, account
+        `held:<org>`) and its return gives it back (positive), and every other posting
+        DEBITS it (negative, account `usage:<org>`), described by its notes or its
+        tags.'
       tags:
       - billing
       x-app: billing
@@ -76710,9 +77569,9 @@ paths:
   /v1/billing/portal/methods/{id}:
     delete:
       description: |-
-        DetachPortalMethod is DetachMethod at the address a hosted checkout addresses
-        it by. One set of rows, two spellings: a card detached at either is gone from
-        both, because there is one store behind them.
+        Removes one card or account the caller has saved, at the
+        address a hosted checkout reaches it by. One set of rows, two spellings: a card
+        detached at either is gone from both, because there is one store behind them.
       operationId: delete_billing_portal_methods_by_id
       parameters:
       - description: ID is the saved method to detach, from the path.
@@ -76734,8 +77593,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/problem-details'
           description: refused
-      summary: DetachPortalMethod is DetachMethod at the address a hosted checkout
-        addresses it by.
+      summary: Removes one card or account the caller has saved, at the address a
+        hosted checkout reaches it by.
       tags:
       - billing
       x-app: billing
@@ -81904,9 +82763,10 @@ paths:
       x-tool: true
     post:
       description: |-
-        Is askGet with the question in the request BODY, for a question too
-        long or too awkward to put in a URL. `query` and `repo` in the body take
-        precedence over `?q=` and `?repo=`; either source works alone.
+        Answers a question about the caller org's code with a CITED answer,
+        taking the question from the request BODY, for a question too long or too
+        awkward to put in a URL. `query` and `repo` in the body take precedence over
+        `?q=` and `?repo=`; either source works alone.
       operationId: post_code_ask
       requestBody:
         content:
@@ -81930,8 +82790,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/problem-details'
           description: refused
-      summary: Is askGet with the question in the request BODY, for a question too
-        long or too awkward to put in a URL.
+      summary: Answers a question about the caller org's code with a CITED answer,
+        taking the question from the request BODY, for a question too long or too
+        awkward to put in a URL.
       tags:
       - code
       x-app: code
@@ -111005,41 +111866,6 @@ paths:
       x-app: marketing
       x-public: true
       x-tool: true
-  /v1/marketing/calendar/{id}/publish:
-    post:
-      description: |-
-        Publishes a post NOW, synchronously, whatever its
-        schedule. No social connector is wired today, so every channel answers an
-        honest 501 naming the client a real one would plug into, and the post is
-        recorded failed with that exact reason — never a faked "published".
-      operationId: post_marketing_calendar_by_id_publish
-      parameters:
-      - description: ID is the post id from the path, as returned by create.
-        example: cal_1d7f3b9e5a2c8046f1b3d5a7c9e02468
-        in: path
-        name: id
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/marketing.CalendarPost'
-          description: ok
-        default:
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/problem-details'
-          description: refused
-      summary: Publishes a post NOW, synchronously, whatever its schedule.
-      tags:
-      - marketing
-      x-app: marketing
-      x-public: true
-      x-tool: true
   /v1/marketing/campaigns:
     get:
       description: |-
@@ -112109,6 +112935,505 @@ paths:
       x-app: marketplace
       x-public: true
       x-tool: true
+  /v1/marketplace/jobs:
+    get:
+      description: |-
+        Lists the jobs the caller's org is a party to, newest first: as buyer, the work
+        it hired; as seller, the work it was hired for. Any member of the org.
+      operationId: get_marketplace_jobs
+      parameters:
+      - description: |-
+          Role is buyer — the jobs the caller's org hired for — or seller, the jobs it
+          was hired for. Buyer when empty.
+        example: seller
+        in: query
+        name: role
+        required: false
+        schema:
+          type: string
+      - description: Status keeps one state.
+        example: open
+        in: query
+        name: status
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/marketplace.jobPage'
+          description: ok
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem-details'
+          description: refused
+      summary: 'Lists the jobs the caller''s org is a party to, newest first: as buyer,
+        the work it hired; as seller, the work it was hired for.'
+      tags:
+      - marketplace
+      x-app: marketplace
+      x-public: true
+      x-tool: true
+    post:
+      description: |-
+        Hires another org for a piece of work, through a public listing or by a direct
+        offer, and answers 201 with the job — open, waiting for the seller.
+
+        It is paid over x402, in two steps on this one call. Sent without payment, the
+        terms are cleared first — principal decides whether the buyer may pay the seller
+        this amount, and a blocked payment, one that waits on the seller's tax form, and
+        one that clears only with tax withheld, which this rail does not withhold, are
+        refused and nothing is opened — and it answers 402 with the terms to sign, for
+        the job resource job:<id>: on PAYMENT-REQUIRED, in the body, and in the message.
+        The same terms asked again within the hour answer the same quote. Sent again
+        with the signed authorization — on PAYMENT-SIGNATURE, or as payment — echoing
+        that resource, the terms are cleared once more, and the rail
+        checks it against exactly those terms, checks it stays acceptable until a
+        dispute could last be ruled on, holds it for this job, and sets the amount
+        aside in the buyer's wallet: a wallet that cannot cover it answers 402
+        insufficient_funds and opens nothing. Nothing is paid until the buyer releases
+        the job, or its review window passes after delivery; a job that ends unpaid
+        returns the amount to the wallet. Any member of the buying org; a platform
+        SuperAdmin inspecting another org cannot spend it.
+      operationId: post_marketplace_jobs
+      requestBody:
+        content:
+          application/json:
+            example:
+              amount: "250.00"
+              brief: Summarize our Q3 filings
+              listing: lst_4f1c
+            schema:
+              $ref: '#/components/schemas/marketplace.hireIn'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/marketplace.Job'
+          description: created
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem-details'
+          description: refused
+      summary: Hires another org for a piece of work, through a public listing or
+        by a direct offer, and answers 201 with the job — open, waiting for the seller.
+      tags:
+      - marketplace
+      x-app: marketplace
+      x-public: true
+      x-tool: true
+  /v1/marketplace/jobs/{id}:
+    get:
+      description: |-
+        Reads one job the caller's org is a party to. Another org's job, and one that
+        does not exist, are the same 404.
+      operationId: get_marketplace_jobs_by_id
+      parameters:
+      - description: ID is the job, from the path.
+        example: job_9a1f
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/marketplace.Job'
+          description: ok
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem-details'
+          description: refused
+      summary: Reads one job the caller's org is a party to.
+      tags:
+      - marketplace
+      x-app: marketplace
+      x-public: true
+      x-tool: true
+  /v1/marketplace/jobs/{id}/accept:
+    post:
+      description: |-
+        Accepts a job the caller's org was hired for: the seller takes the work on and
+        the clock toward its deadline is the seller's. Only an open job, and only before
+        its deadline.
+      operationId: post_marketplace_jobs_by_id_accept
+      parameters:
+      - description: ID is the job, from the path.
+        example: job_9a1f
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/marketplace.Job'
+          description: ok
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem-details'
+          description: refused
+      summary: 'Accepts a job the caller''s org was hired for: the seller takes the
+        work on and the clock toward its deadline is the seller''s.'
+      tags:
+      - marketplace
+      x-app: marketplace
+      x-public: true
+      x-tool: true
+  /v1/marketplace/jobs/{id}/cancel:
+    post:
+      description: |-
+        Takes back a job the caller's org opened, before the seller accepts it. Nothing
+        was paid: the amount set aside returns to the wallet.
+      operationId: post_marketplace_jobs_by_id_cancel
+      parameters:
+      - description: ID is the job, from the path.
+        example: job_9a1f
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/marketplace.Job'
+          description: ok
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem-details'
+          description: refused
+      summary: Takes back a job the caller's org opened, before the seller accepts
+        it.
+      tags:
+      - marketplace
+      x-app: marketplace
+      x-public: true
+      x-tool: true
+  /v1/marketplace/jobs/{id}/decline:
+    post:
+      description: |-
+        Declines a job the caller's org was hired for, before any work. Nothing was
+        paid: the buyer's authorization is given up, never settled, and the amount it
+        set aside returns to the buyer's wallet.
+      operationId: post_marketplace_jobs_by_id_decline
+      parameters:
+      - description: ID is the job, from the path.
+        example: job_9a1f
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              id: job_9a1f
+              reason: Booked through March
+            schema:
+              $ref: '#/components/schemas/marketplace.declineIn'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/marketplace.Job'
+          description: ok
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem-details'
+          description: refused
+      summary: Declines a job the caller's org was hired for, before any work.
+      tags:
+      - marketplace
+      x-app: marketplace
+      x-public: true
+      x-tool: true
+  /v1/marketplace/jobs/{id}/deliver:
+    post:
+      description: |-
+        Records delivery of a job the caller's org accepted, before its deadline, and
+        starts the review window: the buyer releases or disputes within it, or it
+        releases itself when it closes.
+      operationId: post_marketplace_jobs_by_id_deliver
+      parameters:
+      - description: ID is the job, from the path.
+        example: job_9a1f
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              id: job_9a1f
+              note: Summary attached
+              url: https://files.example.com/q3.pdf
+            schema:
+              $ref: '#/components/schemas/marketplace.deliverIn'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/marketplace.Job'
+          description: ok
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem-details'
+          description: refused
+      summary: 'Records delivery of a job the caller''s org accepted, before its deadline,
+        and starts the review window: the buyer releases or disputes within it, or
+        it releases itself when it closes.'
+      tags:
+      - marketplace
+      x-app: marketplace
+      x-public: true
+      x-tool: true
+  /v1/marketplace/jobs/{id}/dispute:
+    post:
+      description: |-
+        Stops a job for a ruling, as either party: before delivery (and before the
+        deadline), or within the review window after it. Nothing moves while it is
+        disputed. It ends when the buyer releases it, the seller refunds it, the
+        platform's arbiter rules, or the arbiter's time lapses and it is refunded.
+      operationId: post_marketplace_jobs_by_id_dispute
+      parameters:
+      - description: ID is the job, from the path.
+        example: job_9a1f
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              id: job_9a1f
+              reason: The summary covers Q2, not Q3
+            schema:
+              $ref: '#/components/schemas/marketplace.disputeIn'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/marketplace.Job'
+          description: ok
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem-details'
+          description: refused
+      summary: 'Stops a job for a ruling, as either party: before delivery (and before
+        the deadline), or within the review window after it.'
+      tags:
+      - marketplace
+      x-app: marketplace
+      x-public: true
+      x-tool: true
+  /v1/marketplace/jobs/{id}/feedback:
+    post:
+      description: |-
+        Rates the other party of a settled job — the seller when the caller's org
+        bought, the buyer when it sold — once per party per job, and never edited. A
+        job counts as settled once it was released, or refunded after the seller took
+        it on; one cancelled or declined before any work earns nothing. What buyers say
+        of a seller is its listing's and its own reputation in the shop. It answers 201
+        with the feedback recorded.
+      operationId: post_marketplace_jobs_by_id_feedback
+      parameters:
+      - description: ID is the job, from the path.
+        example: job_9a1f
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              comment: Thorough and on time
+              id: job_9a1f
+              rating: 5
+            schema:
+              $ref: '#/components/schemas/marketplace.feedbackIn'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/marketplace.Feedback'
+          description: created
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem-details'
+          description: refused
+      summary: Rates the other party of a settled job — the seller when the caller's
+        org bought, the buyer when it sold — once per party per job, and never edited.
+      tags:
+      - marketplace
+      x-app: marketplace
+      x-public: true
+      x-tool: true
+  /v1/marketplace/jobs/{id}/refund:
+    post:
+      description: |-
+        Refunds a job the caller's org accepted, as the seller, at any point before it
+        is paid: nothing was moved, so the buyer's authorization is given up, never
+        settled, and the amount it set aside returns to the buyer's wallet.
+      operationId: post_marketplace_jobs_by_id_refund
+      parameters:
+      - description: ID is the job, from the path.
+        example: job_9a1f
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/marketplace.Job'
+          description: ok
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem-details'
+          description: refused
+      summary: 'Refunds a job the caller''s org accepted, as the seller, at any point
+        before it is paid: nothing was moved, so the buyer''s authorization is given
+        up, never settled, and the amount it set aside returns to the buyer''s wallet.'
+      tags:
+      - marketplace
+      x-app: marketplace
+      x-public: true
+      x-tool: true
+  /v1/marketplace/jobs/{id}/release:
+    post:
+      description: |-
+        Releases a job the caller's org is paying for, paying the seller the whole
+        amount: the buyer's authorization is settled on the rail, once, and the rail
+        states the payment. The buyer may release any time after acceptance, including
+        to end a dispute.
+      operationId: post_marketplace_jobs_by_id_release
+      parameters:
+      - description: ID is the job, from the path.
+        example: job_9a1f
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/marketplace.Job'
+          description: ok
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem-details'
+          description: refused
+      summary: 'Releases a job the caller''s org is paying for, paying the seller
+        the whole amount: the buyer''s authorization is settled on the rail, once,
+        and the rail states the payment.'
+      tags:
+      - marketplace
+      x-app: marketplace
+      x-public: true
+      x-tool: true
+  /v1/marketplace/jobs/{id}/resolve:
+    post:
+      description: |-
+        Rules on a disputed job, as the platform's arbiter: release pays the seller the
+        whole amount from the buyer's held authorization, if the payment still clears;
+        refund ends it with nothing paid, and the amount set aside returns to the
+        buyer's wallet. A platform SuperAdmin only.
+      operationId: post_marketplace_jobs_by_id_resolve
+      parameters:
+      - description: ID is the job, from the path.
+        example: job_9a1f
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              id: job_9a1f
+              outcome: refund
+            schema:
+              $ref: '#/components/schemas/marketplace.resolveIn'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/marketplace.Job'
+          description: ok
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem-details'
+          description: refused
+      summary: 'Rules on a disputed job, as the platform''s arbiter: release pays
+        the seller the whole amount from the buyer''s held authorization, if the payment
+        still clears; refund ends it with nothing paid, and the amount set aside returns
+        to the buyer''s wallet.'
+      tags:
+      - marketplace
+      x-app: marketplace
+      x-public: true
+      x-tool: true
   /v1/marketplace/listings:
     get:
       description: |-
@@ -112137,23 +113462,27 @@ paths:
       x-tool: true
     post:
       description: |-
-        Offers one tool on the marketplace, optionally monetized. The tool must
-        already resolve in the publisher's own scope, so a listing can never advertise a
-        capability that does not exist; a listing with a price must name the payout wallet
-        the x402 client settles to, so a monetized offer is never unpayable. The price is
-        exact to 18 decimal places, so a per-call price below a cent is a real price and
-        not a rounded-away zero. The listing is owned by the publishing org, paid into a
-        wallet of that same org, and answers 201 with the created row.
+        Offers one thing the caller's org owns on the marketplace — an agent,
+        persona, app, skill or MCP server, or, for the platform, a tool sold per call —
+        optionally monetized. The owning app is asked, as the org, whether the thing is
+        the org's, so a listing never sells something that does not exist or belongs to
+        someone else: a tool every org reaches is the platform's, and a server enabled
+        off the public shelf is the shelf's. A monetized listing names a payout wallet of
+        the org's own, which wallets confirms, so a price is never unpayable. The price
+        is exact to 18 decimal places, so a per-call price below a cent is a real price
+        and not a rounded-away zero. An org admin publishes, at most 1000 listings an
+        org; it answers 201 with the created row.
       operationId: post_marketplace_listings
       requestBody:
         content:
           application/json:
             example:
-              price: "0.0025"
+              kind: agent
+              price: "250"
               public: true
               recipient: wal_9f2
-              title: Summarize
-              tool: summarize
+              title: Research analyst
+              tool: researcher
             schema:
               $ref: '#/components/schemas/marketplace.publishReq'
         required: true
@@ -112170,7 +113499,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/problem-details'
           description: refused
-      summary: Offers one tool on the marketplace, optionally monetized.
+      summary: Offers one thing the caller's org owns on the marketplace — an agent,
+        persona, app, skill or MCP server, or, for the platform, a tool sold per call
+        — optionally monetized.
       tags:
       - marketplace
       x-app: marketplace
@@ -112183,10 +113514,11 @@ paths:
         answers 204. Only the publishing org can remove its own listing; an id that is
         unknown, or belongs to another org, is the same 404, so a probe learns nothing
         about what exists. Removing a listing removes its price from per-call enforcement;
-        it does not uninstall the tool for anyone who already installed it.
+        it does not uninstall the tool for anyone who already installed it, and a job
+        already opened through it runs to its end. An org admin unpublishes.
       operationId: delete_marketplace_listings_by_id
       parameters:
-      - description: ID is the listing to unpublish, from the path.
+      - description: ID is the listing, from the path.
         example: lst_1
         in: path
         name: id
@@ -112204,6 +113536,297 @@ paths:
           description: refused
       summary: Withdraws one of the caller org's listings from the marketplace and
         answers 204.
+      tags:
+      - marketplace
+      x-app: marketplace
+      x-public: true
+      x-tool: true
+    patch:
+      description: |-
+        Edits one of the caller org's listings — its copy, price, payout wallet,
+        visibility and documentation — under the same rules publish applies, and
+        answers the listing as it now stands. Another org's listing and one that does
+        not exist are the same 404. An org admin edits.
+      operationId: patch_marketplace_listings_by_id
+      parameters:
+      - description: ID is the listing to edit, from the path.
+        example: lst_4f1c
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              id: lst_4f1c
+              price: "300"
+              public: true
+            schema:
+              $ref: '#/components/schemas/marketplace.patchReq'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/marketplace.Listing'
+          description: ok
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem-details'
+          description: refused
+      summary: Edits one of the caller org's listings — its copy, price, payout wallet,
+        visibility and documentation — under the same rules publish applies, and answers
+        the listing as it now stands.
+      tags:
+      - marketplace
+      x-app: marketplace
+      x-public: true
+      x-tool: true
+  /v1/marketplace/seller:
+    get:
+      description: |-
+        Answers where the caller's org stands as a seller, in one read: its founders'
+        identity verification (KYC) and legal entity (KYB), its tax form and whether it
+        is certified and valid, its own sanctions screening — only what an org may see
+        about itself — the payout wallet it proved, the TaxPrincipalCredentials signed
+        for its agents, what it earned in the year from the economic events the rails
+        stated, and the 1099s payers furnished it. Ready says nothing is missing. Each
+        owning app is asked as the org; one this deployment does not run is named absent
+        rather than read as empty. An org admin reads it.
+      operationId: get_marketplace_seller
+      parameters:
+      - description: Year is the calendar year (UTC); the current one when zero.
+        example: 2026
+        in: query
+        name: year
+        required: false
+        schema:
+          format: int64
+          type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/marketplace.Onboarding'
+          description: ok
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem-details'
+          description: refused
+      summary: 'Answers where the caller''s org stands as a seller, in one read: its
+        founders'' identity verification (KYC) and legal entity (KYB), its tax form
+        and whether it is certified and valid, its own sanctions screening — only
+        what an org may see about itself — the payout wallet it proved, the TaxPrincipalCredentials
+        signed for its agents, what it earned in the year from the economic events
+        the rails stated, and the 1099s payers furnished it.'
+      tags:
+      - marketplace
+      x-app: marketplace
+      x-public: true
+      x-tool: true
+  /v1/marketplace/seller/payout:
+    post:
+      description: |-
+        Starts binding one of the caller org's wallets as the wallet it is paid into:
+        answers a challenge naming the org, the wallet and its address, to be signed
+        with that wallet within fifteen minutes and sent to POST
+        /v1/marketplace/seller/payout/verify. A newer challenge replaces an older one.
+        An org admin binds.
+      operationId: post_marketplace_seller_payout
+      requestBody:
+        content:
+          application/json:
+            example:
+              wallet: wal_9f2
+            schema:
+              $ref: '#/components/schemas/marketplace.payoutIn'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/marketplace.PayoutChallenge'
+          description: ok
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem-details'
+          description: refused
+      summary: 'Starts binding one of the caller org''s wallets as the wallet it is
+        paid into: answers a challenge naming the org, the wallet and its address,
+        to be signed with that wallet within fifteen minutes and sent to POST /v1/marketplace/seller/payout/verify.'
+      tags:
+      - marketplace
+      x-app: marketplace
+      x-public: true
+      x-tool: true
+  /v1/marketplace/seller/payout/verify:
+    post:
+      description: |-
+        Binds the caller org's payout wallet: the signature over its outstanding
+        challenge is recovered, and must recover to the wallet's address, before the
+        challenge expires. A challenge binds once. It answers the payout wallet as it
+        now stands; a job offered directly to the org is paid into it. An org admin
+        binds.
+      operationId: post_marketplace_seller_payout_verify
+      requestBody:
+        content:
+          application/json:
+            example:
+              signature: 0x5f1c…1b
+            schema:
+              $ref: '#/components/schemas/marketplace.verifyIn'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/marketplace.Payout'
+          description: ok
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem-details'
+          description: refused
+      summary: 'Binds the caller org''s payout wallet: the signature over its outstanding
+        challenge is recovered, and must recover to the wallet''s address, before
+        the challenge expires.'
+      tags:
+      - marketplace
+      x-app: marketplace
+      x-public: true
+      x-tool: true
+  /v1/marketplace/shop:
+    get:
+      description: |-
+        Searches every public listing of every kind — agents and personas to hire,
+        apps, skills, MCP servers and tools — newest first, with facets by kind,
+        category, price and rating, paged. Each listing carries its seller's public
+        face, its reputation from settled jobs and installs, and the command and MCP
+        operation that buy it. It needs no credential and answers the same to everyone.
+      operationId: get_marketplace_shop
+      parameters:
+      - description: |-
+          Q keeps listings whose title, description, category, thing or seller
+          contains every word of it, case-insensitively.
+        example: research
+        in: query
+        name: q
+        required: false
+        schema:
+          type: string
+      - description: 'Kind keeps one kind: agent, persona, app, skill, mcp or tool.'
+        example: agent
+        in: query
+        name: kind
+        required: false
+        schema:
+          type: string
+      - description: Category keeps one category, exactly.
+        in: query
+        name: category
+        required: false
+        schema:
+          type: string
+      - description: Price keeps free listings or priced ones.
+        in: query
+        name: price
+        required: false
+        schema:
+          type: string
+      - description: Rating keeps listings rated at least this many stars, 1 to 5.
+        in: query
+        name: rating
+        required: false
+        schema:
+          format: int64
+          type: integer
+      - description: Seller keeps one seller org's listings.
+        in: query
+        name: seller
+        required: false
+        schema:
+          type: string
+      - description: 'Limit is the page size: 48 by default, 200 at most.'
+        example: 48
+        in: query
+        name: limit
+        required: false
+        schema:
+          format: int64
+          type: integer
+      - description: Offset is where the page starts.
+        in: query
+        name: offset
+        required: false
+        schema:
+          format: int64
+          type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/marketplace.Shop'
+          description: ok
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem-details'
+          description: refused
+      security: []
+      summary: Searches every public listing of every kind — agents and personas to
+        hire, apps, skills, MCP servers and tools — newest first, with facets by kind,
+        category, price and rating, paged.
+      tags:
+      - marketplace
+      x-app: marketplace
+      x-public: true
+      x-tool: true
+  /v1/marketplace/shop/{id}:
+    get:
+      description: |-
+        Reads one public listing as the shop shows it — its seller's public face, its
+        reputation and the ways to buy it. A private listing and one that does not
+        exist are the same 404. It needs no credential.
+      operationId: get_marketplace_shop_by_id
+      parameters:
+      - description: ID is the listing, from the path.
+        example: lst_4f1c
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/marketplace.ShopListing'
+          description: ok
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem-details'
+          description: refused
+      security: []
+      summary: Reads one public listing as the shop shows it — its seller's public
+        face, its reputation and the ways to buy it.
       tags:
       - marketplace
       x-app: marketplace
@@ -134430,6 +136053,43 @@ paths:
       x-app: principal
       x-public: true
       x-tool: true
+  /v1/principal/statements/{id}:
+    get:
+      description: |-
+        Reads whether one statement the platform signed about an agent still stands:
+        live, expired, or revoked and when. Open to anyone — a verifier holding a
+        TaxPrincipalCredential checks it here after checking its signature offline
+        against GET /v1/principal/keys. The answer names nothing the statement itself
+        does not.
+      operationId: get_principal_statements_by_id
+      parameters:
+      - description: ID is the statement's jti, as its JWS carries it.
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/principal.Statement'
+          description: ok
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem-details'
+          description: refused
+      security: []
+      summary: 'Reads whether one statement the platform signed about an agent still
+        stands: live, expired, or revoked and when.'
+      tags:
+      - principal
+      x-app: principal
+      x-public: true
+      x-tool: true
   /v1/project:
     get:
       description: |-
@@ -148658,6 +150318,9 @@ paths:
         It is PAGED — 50 by default, 200 at most. The public registry publishes tens of
         thousands of servers, so an unbounded answer is a twenty-megabyte response and a
         storefront that renders in a minute. total is the whole match, not the page.
+
+        It needs no credential: the shelf is a copy of public registries, the same for
+        every org, and a storefront shows it to a visitor before anyone signs in.
       operationId: get_tool_catalog
       parameters:
       - description: Q matches the name, title or description, case-insensitively.
@@ -148711,6 +150374,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/problem-details'
           description: refused
+      security: []
       summary: 'Lists the MCP servers the public registries publish, as we hold them:
         our canonical copy of registry.modelcontextprotocol.io, plus what we decided
         about each entry.'
@@ -148730,7 +150394,8 @@ paths:
 
         A HIDDEN listing is not served to an org — a shelf that renders what it does
         not list would be a way around the shelf — but is served to a SuperAdmin, who
-        is the one deciding whether to put it back.
+        is the one deciding whether to put it back. Like the shelf, it needs no
+        credential.
       operationId: get_tool_catalog_by_id
       parameters:
       - description: |-
@@ -148754,6 +150419,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/problem-details'
           description: refused
+      security: []
       summary: 'Returns one catalog entry in full: the publisher''s description, its
         repository and site, every package form with the runtime that launches it,
         and every hosted endpoint.'
@@ -151789,6 +153455,57 @@ paths:
       - world
       x-app: world
       x-public: true
+  /v1/x402/settlements:
+    get:
+      description: |-
+        Lists the caller's x402 receipts, newest first: as payer, what its
+        ledger paid; as payee, what it was paid — each settled payment with what it
+        bought, both parties, the exact amount and when. A payer is the org whose ledger
+        is debited, which for a SuperAdmin inspecting another org is still its own; a
+        payee is the caller's own org. An unsettled claim is not a receipt and is never
+        listed.
+      operationId: get_x402_settlements
+      parameters:
+      - description: |-
+          Role is payer — what the caller's org paid — or payee — what it was paid.
+          Payer when empty.
+        example: payee
+        in: query
+        name: role
+        required: false
+        schema:
+          type: string
+      - description: |-
+          Year keeps the calendar year (UTC) the payments settled in. Zero keeps
+          every year.
+        example: 2026
+        in: query
+        name: year
+        required: false
+        schema:
+          format: int64
+          type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/x402.settlementList'
+          description: ok
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/problem-details'
+          description: refused
+      summary: 'Lists the caller''s x402 receipts, newest first: as payer, what its
+        ledger paid; as payee, what it was paid — each settled payment with what it
+        bought, both parties, the exact amount and when.'
+      tags:
+      - x402
+      x-app: x402
+      x-public: true
+      x-tool: true
   /v1/x402/settlements/{id}:
     get:
       description: |-
@@ -152040,8 +153757,9 @@ tags:
 - description: 'Package marketing is lifecycle email: drip sequences that reach the
     right people.'
   name: marketing
-- description: 'Package marketplace is the shop for tools and agents: browse, install
-    into your project, publish your own free or priced.'
+- description: 'Package marketplace is the one market between orgs: agents and personas
+    to hire, apps, skills, MCP servers and tools to buy, each sold by the org that
+    owns it, and the two-sided work one org buys from another.'
   name: marketplace
 - description: 'Package meet is the virtual office: it decides who may join a room
     and mints the short-lived token that lets them in.'
