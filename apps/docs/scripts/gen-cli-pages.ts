@@ -106,6 +106,14 @@ export function words(cmd: CliCommand, name: string): string[] {
   return all.slice(at >= 0 ? at + 1 : 1);
 }
 
+/** The noun a command's section is named for: the first of its words before the
+ *  verb that is a word. A route's one-letter segment is not one — `hanzo esign
+ *  o sign get <org> <token>` is the signing flow at `/v1/esign/o/…`, and a
+ *  section titled "O" names nothing — so the next word names it. */
+export function nounOf(parts: string[]): string {
+  return parts.slice(0, -1).find((w) => w.length > 1) ?? '';
+}
+
 /** A section heading for a noun, written as a reader says it: `members` ->
  *  "Members", `service-accounts` -> "Service accounts", `api-keys` -> "API keys".
  *  The noun is a CLI token, spelled for a shell; the heading is a title, and it
@@ -202,8 +210,7 @@ function renderGroup(g: Group, doc: Document): string {
     const one = command.replace(/\s*\\\n\s*/g, ' ');
     // `hanzo <capability> <noun> <verb> …` — the noun is the word after the
     // capability, and a command with no noun acts on the capability itself.
-    const parts = words(cmd, g.name);
-    const noun = parts.length > 1 ? parts[0] : '';
+    const noun = nounOf(words(cmd, g.name));
     const list = byNoun.get(noun) ?? [];
     list.push({ one, what: text(firstSentence(op.summary || op.description)) });
     byNoun.set(noun, list);
@@ -304,20 +311,20 @@ function sidebar(gs: Group[]): string[] {
   return out;
 }
 
-export async function genCliPages(): Promise<void> {
+export async function genCliPages(outDir: string = OUT_DIR): Promise<void> {
   const doc = loadDocument(DOCUMENT);
   const table = loadCliTable();
   const gs = groups(doc, table);
 
-  fs.rmSync(OUT_DIR, { recursive: true, force: true });
-  fs.mkdirSync(OUT_DIR, { recursive: true });
+  fs.rmSync(outDir, { recursive: true, force: true });
+  fs.mkdirSync(outDir, { recursive: true });
 
   // Every group is a FOLDER — `<name>/index.mdx` — for the reason the reference
   // is: one capability is called `index` (Hanzo Index, full-text search), and
   // flat files put its page at the same filename as this section's own. One
   // shape for all of them retires the special case.
   for (const g of gs) {
-    const folder = path.join(OUT_DIR, g.name);
+    const folder = path.join(outDir, g.name);
     fs.mkdirSync(folder, { recursive: true });
     fs.writeFileSync(path.join(folder, 'index.mdx'), renderGroup(g, doc));
     // Never `['index']` — the same shape the reference uses, for the same
@@ -333,11 +340,11 @@ export async function genCliPages(): Promise<void> {
     );
   }
   fs.writeFileSync(
-    path.join(OUT_DIR, 'index.mdx'),
+    path.join(outDir, 'index.mdx'),
     renderIndex(gs, table.size, doc.products.length),
   );
   fs.writeFileSync(
-    path.join(OUT_DIR, 'meta.json'),
+    path.join(outDir, 'meta.json'),
     JSON.stringify(
       {
         title: 'CLI',

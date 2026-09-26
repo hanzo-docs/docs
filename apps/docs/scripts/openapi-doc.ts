@@ -378,7 +378,9 @@ function readKeyTypes(raw: any, item: any): KeyType[] {
  * wrong for an initialism: it published `Kms`, `Iam`, `Ai`, `Mq` and `O11y` as
  * the titles of the five products most often searched for by their initials.
  * Whether a name is a word or an initialism is not a property of its letters,
- * so it cannot be derived — it has to be stated.
+ * so it cannot be derived — it has to be stated. The same holds for a brand's
+ * own casing (`GitHub`, `OAuth`) and for a compound whose word break the token
+ * lost (`saleschannel` is "Sales channel").
  *
  * Its real home is the document: an OpenAPI tag may carry `x-displayName`, and
  * none of hanzo.yaml's 182 tags does. Until cloud writes them there, this is
@@ -389,33 +391,57 @@ const WRITTEN: Record<string, string> = {
   ai: 'AI',
   amqp: 'AMQP',
   api: 'API',
+  apis: 'APIs',
   cli: 'CLI',
   crm: 'CRM',
   csrf: 'CSRF',
   dns: 'DNS',
+  docdb: 'DocDB',
+  errortracking: 'Error tracking',
+  esign: 'eSign',
+  fs: 'FS',
+  github: 'GitHub',
+  gitlab: 'GitLab',
   gpus: 'GPUs',
+  hf: 'HF',
   iam: 'IAM',
+  id: 'ID',
   k8s: 'K8s',
   kb: 'KB',
   kms: 'KMS',
   kv: 'KV',
+  kyc: 'KYC',
   llm: 'LLM',
   lsp: 'LSP',
   mcp: 'MCP',
+  mfa: 'MFA',
   ml: 'ML',
   mpc: 'MPC',
   mq: 'MQ',
   o11y: 'O11y',
+  oauth: 'OAuth',
   openapi: 'OpenAPI',
+  openrouter: 'OpenRouter',
+  optin: 'Opt-in',
+  pvcs: 'PVCs',
   rag: 'RAG',
   rpc: 'RPC',
   s3: 'S3',
+  saleschannel: 'Sales channel',
   sbom: 'SBOM',
+  scim: 'SCIM',
   sdk: 'SDK',
   seo: 'SEO',
   seso: 'SESO',
+  signin: 'Sign-in',
   sql: 'SQL',
   ssh: 'SSH',
+  stocklocation: 'Stock location',
+  tls: 'TLS',
+  tokentransaction: 'Token transaction',
+  topup: 'Top-up',
+  webauthn: 'WebAuthn',
+  whatsapp: 'WhatsApp',
   x402: 'x402',
   zt: 'ZT',
 };
@@ -508,6 +534,60 @@ export const titleCase = (name: string): string =>
 const capabilityOf = (op: any): string =>
   (Array.isArray(op?.tags) && typeof op.tags[0] === 'string' ? op.tags[0] : '').trim();
 
+/**
+ * An operation's prose without the Go name it opens with.
+ *
+ * cloud lifts an operation's prose from its handler's doc comment, and zipdoc
+ * drops the handler's own name ("List returns …" reads "Returns …"). A comment
+ * that opens with a DIFFERENT identifier keeps it — `ListGPUTiers returns the
+ * rentable GPU configurations`, `Delete removes one key`, `CompleteDeployment is
+ * the CI completion hook` — and a reader has no use for the name of a function.
+ *
+ * A name is Go's when English would not spell it (`ListGPUTiers`, `DecideKYC`:
+ * a capital after a lower-case letter), or when it is one of the operation's own
+ * words (`Delete` of `delete_kv_by_bucket_by_key`, `Health` of
+ * `get_licensing_healthz`) followed by a verb a doc comment opens with. The verb
+ * then opens the sentence; "is" leaves with the name. `Discord interactions
+ * endpoint` and `A sales channel is …` are English and keep their first word.
+ */
+const OPENS = new Set(
+  (
+    'is are returns reports removes mints resolves records reconciles opens finishes publishes ' +
+    'distributes turns checks lists describes answers creates updates deletes reads writes sets starts ' +
+    'stops marks issues revokes verifies serves streams fetches adds runs sends accepts registers ' +
+    'claims completes cancels applies computes renders builds drops handles proxies probes uploads ' +
+    'downloads schedules triggers executes launches flips grants rotates seals signs stores finds ' +
+    'searches counts exchanges redeems validates attaches detaches enables disables pauses resumes'
+  ).split(' '),
+);
+
+export function unname(prose: string, id: string): string {
+  const m = /^([A-Z][A-Za-z0-9]*) ([a-z]+)\b/.exec(prose);
+  if (!m) return prose;
+  const [, name, verb] = m;
+  const words = id.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase().split(/[^a-z0-9]+/);
+  const go = /[a-z0-9][A-Z]/.test(name)
+    ? verb === 'is' || verb === 'are' || verb.endsWith('s')
+    : /^[A-Z][a-z]/.test(name) && OPENS.has(verb) && words.some((w) => w.startsWith(name.toLowerCase()));
+  if (!go) return prose;
+  const rest = prose.slice(name.length + 1 + (verb === 'is' || verb === 'are' ? verb.length + 1 : 0));
+  return rest ? rest[0].toUpperCase() + rest.slice(1) : prose;
+}
+
+/**
+ * An operation its own prose says cannot work: every call answers 501.
+ *
+ * An operation that is not implemented is not documented (house rule: no
+ * stubs). cloud removes such an operation where it finds one, and until it
+ * does, a reference that lists it as a command documents something nobody can
+ * run — `hanzo marketing calendar publish` read "Publishes a post NOW" while its
+ * description went on "every channel answers an honest 501". A 501 that depends
+ * on the deployment ("a deployment with no scanner model answers 501") is a
+ * working operation and stays.
+ */
+export const unimplemented = (prose: string): boolean =>
+  /\bevery\b[^.;]*\b501\b|\b501\b[^.;]*\bevery (?:call|request)\b/i.test(prose.replace(/\s+/g, ' '));
+
 export function loadDocument(file: string): Document {
   const raw = parseYaml(fs.readFileSync(file, 'utf8'));
   if (!raw?.paths) throw new Error(`${file}: not an OpenAPI document (no paths)`);
@@ -557,6 +637,7 @@ export function loadDocument(file: string): Document {
 
       const id = String(op.operationId ?? '');
       const product_ = capabilityOf(op);
+      if (unimplemented(String(op.description ?? ''))) continue;
 
       const parameters: Param[] = [...shared, ...(op.parameters ?? [])]
         .map((p) => deref(raw, p))
@@ -595,8 +676,8 @@ export function loadDocument(file: string): Document {
         name: id,
         method,
         path,
-        summary: String(op.summary ?? '').replace(/\s+/g, ' ').trim(),
-        description: String(op.description ?? '').trim(),
+        summary: unname(String(op.summary ?? '').replace(/\s+/g, ' ').trim(), id),
+        description: unname(String(op.description ?? '').trim(), id),
         parameters,
         body,
         success: okStatus
