@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { parse as parseYaml } from 'yaml';
+import { parse as parseYaml, stringify as yaml } from 'yaml';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { BRANDS, DOCUMENT, loadDocument, METHODS, unimplemented, unname } from './openapi-doc';
 import { genCliPages, heading, nounOf } from './gen-cli-pages';
@@ -154,6 +154,28 @@ describe('a Go name is not prose', () => {
     );
   });
 
+  // A comment with no full stop is summarised as its first LINE, so the row read
+  // "… for context injection; with q it" — no "…", and no rule on the row alone
+  // can tell it stopped. The loader prints the description's first sentence.
+  it("prints a summary that stops inside its description's first sentence whole", () => {
+    const line = 'Recall recent/relevant memories for context injection; with q it';
+    const text = `${line}\nranks semantically, without q it returns the most recent`;
+    const raw = parseYaml(fs.readFileSync(DOCUMENT, 'utf8'));
+    Object.assign(raw.paths['/v1/ai/memory/recall'].get, { summary: line, description: text });
+    Object.assign(raw.paths['/v1/ai/memory/list'].get, {
+      summary: 'Lists memories.',
+      description: 'Lists memories. Newest first.',
+    });
+    const file = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'summary-')), 'openapi.yaml');
+    fs.writeFileSync(file, yaml(raw));
+    const doc = loadDocument(file);
+    const whole = `${line} ranks semantically, without q it returns the most recent`;
+    expect(doc.byId.get('get_ai_memory_recall')?.summary).toBe(whole);
+    expect(doc.byId.get('get_ai_memory_list')?.summary).toBe('Lists memories.');
+    expect(early(line, text)).not.toBe('');
+    expect(early(whole, text)).toBe('');
+  }, 60_000);
+
   it('strips one comment at every address that carries it', () => {
     const jwks = loadDocument(DOCUMENT).byId.get('get_licensing_jwks');
     expect(jwks?.summary.startsWith('Publishes the Ed25519 PUBLIC verification key')).toBe(true);
@@ -184,6 +206,20 @@ describe('a Go name is not prose', () => {
     expect(unname('Is JavaScript code the page runs.', 'get_x')).toBe(
       'JavaScript code the page runs.',
     );
+  });
+
+  // Split, these read "I cloud linked." and "G RPC served." — English to every
+  // rule. Whole, the rules name the identifier and the brand goes into WRITTEN.
+  it('leaves a name whose first word would be one letter whole, for the rules to name', () => {
+    for (const [said, left] of [
+      ['Is iCloud linked.', 'iCloud linked.'],
+      ['Is eBay linked.', 'eBay linked.'],
+      ['Is gRPC served.', 'gRPC served.'],
+      ['Is OAuth2Client the client.', 'OAuth2Client the client.'],
+    ]) {
+      expect(unname(said, 'get_x')).toBe(left);
+      expect(named(left, [])).not.toBe('');
+    }
   });
 });
 
@@ -256,6 +292,11 @@ describe('the rules a line is read against', () => {
       expect(early(line, text)).not.toBe('');
       expect(early(firstSentence(text), text)).toBe('');
     }
+    expect(early('Recall memories; with q it', 'Recall memories; with q it\nranks them.')).not.toBe(
+      '',
+    );
+    expect(early('Recall memories', 'Recall memories')).toBe('');
+    expect(early('Recall memories.', 'Recall memories. Newest first.')).toBe('');
     expect(early('It said "stop."', 'It said "stop." Then it stopped.')).toBe('');
     expect(early('It said "stop."', 'It said "stop."\n\nthen more.')).toBe('');
     expect(early('Is it on?', 'Is it on? ask.')).toBe('');

@@ -37,16 +37,23 @@ export function cut(line: string): string {
 /**
  * Why `line`, printed as the first sentence of `text`, stops before that
  * sentence does, or '' when it does not. `cut` reads the line alone and cannot
- * see this: a quotation's own "?" or full stop reads as a sentence's end —
- * `Answers "what am I approving?"` — while the paragraph it came from goes on
- * in lower case ("for a pending device code.") or after a dash. Only the
- * source says the sentence went on, so this rule reads the line against it.
+ * see this, so this rule reads the line against its source:
+ *
+ *   mid-sentence   the line ends on no stop while its paragraph goes on — a
+ *                  summary cut at the end of a comment's first line, "Recall
+ *                  … for context injection; with q it" of "… it ranks
+ *                  semantically, …"
+ *   at a quotation a quotation's own "?" or full stop reads as a sentence's end —
+ *                  `Answers "what am I approving?"` — while the paragraph goes
+ *                  on in lower case ("for a pending device code.") or after a
+ *                  dash
  */
 export function early(line: string, text: string): string {
   const t = line.trim();
   const para = (text.trim().split(/\n\s*\n/)[0] ?? '').replace(/\s+/g, ' ').trim();
-  if (!/[.?!]["'”’]+$/.test(t) || !para.startsWith(t)) return '';
-  return /^\s*(?:[a-z]|[—–-])/.test(para.slice(t.length))
+  if (!t || para.length <= t.length || !para.startsWith(t)) return '';
+  if (!/[.?!]["'”’]*$/.test(t)) return 'stops mid-sentence where its paragraph goes on';
+  return /[.?!]["'”’]+$/.test(t) && /^\s*(?:[a-z]|[—–-])/.test(para.slice(t.length))
     ? 'stops at a quotation its sentence goes on after'
     : '';
 }

@@ -171,8 +171,11 @@ describe('readable — a page describes its operation in English', () => {
   // own — so the rule is held against ALL of the document's prose, not the
   // pages: a sentence that stops at a quotation's own "?" while the paragraph
   // goes on in lower case, or with a dash, stopped too soon —
-  // `Answers "what am I approving?"` of "… for a pending device code." And a
-  // summary does not run on past the paragraph its description opens with.
+  // `Answers "what am I approving?"` of "… for a pending device code." A
+  // summary does not run on past the paragraph its description opens with, and
+  // the line printed from it — CLI row, index row, MCP legend — does not stop
+  // inside that description's first sentence: "… with q it" of "… with q it
+  // ranks semantically, …".
   it('ends each first sentence where its paragraph does not go on', () => {
     const stopped: string[] = [];
     let read = 0;
@@ -194,13 +197,18 @@ describe('readable — a page describes its operation in English', () => {
     expect(stopped).toEqual([]);
     expect(read).toBeGreaterThan(10_000);
     const ran: string[] = [];
+    const short: string[] = [];
     for (const op of doc.operations) {
       const [first = '', ...block] = op.description.split(/\n\s*\n/);
       const lead = flat(first).replace(/:$/, '');
       const past = op.summary.length > lead.length + 1 && op.summary.startsWith(lead);
       if (block.length && lead && past) ran.push(op.id);
+      const line = firstSentence(op.summary || op.description);
+      const why = early(line, op.description);
+      if (why) short.push(`${op.id}: ${why}: ${line.slice(-50)}`);
     }
     expect(ran).toEqual([]);
+    expect(short).toEqual([]);
   });
 
   it('writes no page for an operation that answers 501 to every call', () => {

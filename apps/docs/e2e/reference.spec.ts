@@ -201,6 +201,19 @@ test('a line runs past a quotation its sentence goes on after', async ({ page })
   );
 });
 
+// A summary cut where its comment's first line ended carries no "…": the memory
+// recall row read "… for context injection; with q it" on the CLI page and the
+// API index. Both print the description's first sentence whole.
+test('a row runs to the end of the sentence its summary stopped inside', async ({ page }) => {
+  for (const path of ['/docs/cli/ai/', '/docs/openapi/ai/']) {
+    await open(page, path, 'dark');
+    const rows = (await page.locator('.prose td:last-child').allInnerTexts()).map((c) => c.trim());
+    expect(rows.filter((c) => c.startsWith('Recall recent/relevant memories')), path).toEqual([
+      expect.stringMatching(/; with q it ranks semantically, without q it returns the most recent\.?$/),
+    ]);
+  }
+});
+
 test('prose is spaced: a paragraph has a margin', async ({ page }) => {
   await open(page, '/docs/quickstart/', 'dark');
   const margin = await page

@@ -564,6 +564,9 @@ const capabilityOf = (op: any): string =>
  * `ClickHouse`, `YouTube` and an exported `DetachMethod` keep their casing — a
  * brand split into "Click house" reads wrong and no test can see it, where a Go
  * name left whole is caught by the reference tests and fixed at its comment.
+ * So does a name whose first word would be one letter (`iCloud`, `eBay`, `gRPC`,
+ * `OAuth2Client`): split, it read "I cloud", "G RPC", "O Auth2 client", which
+ * no rule can tell from English; whole, it fails the reference tests loudly.
  */
 const OPENS = new Set(
   (
@@ -584,9 +587,10 @@ export function unname(prose: string, id: string): string {
     rest = prose.slice(m[1].length + 1 + (m[2] === 'is' || m[2] === 'are' ? m[2].length + 1 : 0));
   if (rest === prose || !rest) return prose;
   const lead = /^[A-Za-z]*[a-z0-9][A-Z][A-Za-z0-9]*(?= )/.exec(rest)?.[0] ?? '';
-  if (BRANDS.has(lead)) return rest;
-  if (/^[a-z]|\d/.test(lead)) rest = words(lead) + rest.slice(lead.length);
-  return rest[0].toUpperCase() + rest.slice(1);
+  if (!lead) return rest[0].toUpperCase() + rest.slice(1);
+  const split = words(lead);
+  if (BRANDS.has(lead) || !/^[a-z]|\d/.test(lead) || /^\S /.test(split)) return rest;
+  return split[0].toUpperCase() + split.slice(1) + rest.slice(lead.length);
 }
 
 /** A capitalised first word, followed by `verb`, that names a function. */
@@ -620,14 +624,20 @@ const words = (name: string): string =>
  * flattened into one line, printed as its title, its CLI row and its index row.
  * A sentence does not cross a paragraph, so a summary that runs past the first
  * one is that paragraph's sentence instead.
+ *
+ * A comment with no full stop at all is cut where its first LINE ends: GET
+ * /v1/ai/memory/recall was summarised "Recall recent/relevant memories for
+ * context injection; with q it" while its description goes on "ranks
+ * semantically, …". A summary that stops inside its description's first
+ * sentence is that sentence, whole.
  */
 const sentenceOf = (summary: string, description: string): string => {
   const flat = summary.replace(/\s+/g, ' ').trim();
+  const whole = firstSentence(description);
+  if (flat && whole.length > flat.length && whole.startsWith(flat)) return whole;
   const [lead, ...block] = description.split(/\n\s*\n/);
   const p = (lead ?? '').replace(/\s+/g, ' ').trim().replace(/:$/, '');
-  return block.length && p && flat.length > p.length + 1 && flat.startsWith(p)
-    ? firstSentence(description)
-    : flat;
+  return block.length && p && flat.length > p.length + 1 && flat.startsWith(p) ? whole : flat;
 };
 
 /**
