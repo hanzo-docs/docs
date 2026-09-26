@@ -2,10 +2,10 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { DOCUMENT, loadDocument } from './openapi-doc';
+import { DOCUMENT, loadDocument, type Operation } from './openapi-doc';
 import { door, toolOperations } from './openapi-surfaces';
 import { load, ops as doorOps } from './sync-mcp-tools';
-import { constraintsOf, genMcpPages, published, slugOf } from './gen-mcp-pages';
+import { constraintsOf, genMcpPages, published, said, slugOf } from './gen-mcp-pages';
 
 // THE MCP REFERENCE, held to its own claims.
 //
@@ -450,17 +450,53 @@ describe('provenance — the reference says where it came from', () => {
 });
 
 // A legend line MCP cut to a budget ("… default branch, size and last…") is a
-// sentence that stops. Where the line names an operation the document has, the
-// page prints that operation's whole first sentence instead: the one the CLI
-// table and the API reference print for it.
-describe('whole — a legend line the document can finish is finished', () => {
-  it('ends no line with "…" for an operation the document describes', () => {
+// sentence that stops. The page prints the operation's whole first sentence
+// instead — the one the CLI table and the API reference print for it — whether
+// the line names the operation by its id or by MCP's verb phrase for it, and a
+// line nothing finishes names the operation and says no more.
+describe('whole — no legend line stops mid-sentence', () => {
+  it('ends no line with "…", on any tool page', () => {
     const cut: string[] = [];
     for (const [slug, src] of pageOf) {
-      for (const m of src.matchAll(/^- `([^`]+)` — (.*)$/gm)) {
-        if (doc.byId.has(m[1]) && m[2].trimEnd().endsWith('…')) cut.push(`${slug}: ${m[1]}`);
+      for (const m of src.matchAll(/^- `([^`]+)`(?: — (.*))?$/gm)) {
+        if ((m[2] ?? '').trimEnd().endsWith('…')) cut.push(`${slug}: ${m[1]}`);
       }
     }
     expect(cut).toEqual([]);
+  });
+
+  const op = (id: string, summary: string, description = summary) =>
+    ({ id, summary, description }) as Operation;
+  const fixture = (...all: Operation[]) => ({ byId: new Map(all.map((o) => [o.id, o])), operations: all });
+
+  it("finishes a verb-phrase line from the operation whose description it starts", () => {
+    const d = fixture(
+      op('get_deploy_applications', 'Returns the fleet as an ApplicationList, one per App CR.'),
+      op('get_deploy_clusters', 'Returns the clusters the fleet reconciles into.'),
+    );
+    expect(said('list_deploy_applications — Returns the fleet as an Applica…', d)).toEqual({
+      id: 'list_deploy_applications',
+      what: 'Returns the fleet as an ApplicationList, one per App CR.',
+    });
+  });
+
+  it('takes the sentence two addresses of one handler share, and nothing two handlers split', () => {
+    const twins = fixture(
+      op('post_project_by_slug_complete', 'Flips a queued deployment to live.'),
+      op('post_projects_by_slug_complete', 'Flips a queued deployment to live.'),
+    );
+    expect(said('complete_project_deployment — Flips a queued deploy…', twins).what).toBe(
+      'Flips a queued deployment to live.',
+    );
+    const split = fixture(op('a', 'Returns one key.'), op('b', 'Returns one value.'));
+    expect(said('get_x — Returns one…', split)).toEqual({ id: 'get_x', what: '' });
+  });
+
+  it('keeps a whole line MCP did not cut, and drops the text of one it did', () => {
+    const none = fixture();
+    expect(said('describe — Returns an operation\'s input schema.', none).what).toBe(
+      "Returns an operation's input schema.",
+    );
+    expect(said('gc_git_repo — Collects the garbage of one reposit…', none).what).toBe('');
   });
 });

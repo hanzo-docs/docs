@@ -9,6 +9,7 @@ import {
   release,
   secretKey,
   titleCase,
+  unname,
   type Document,
   type Operation,
 } from './openapi-doc';
@@ -299,15 +300,38 @@ const legend = (d: string): string[] => {
  * is keyed by the operation's id, so the whole sentence is one lookup away, and
  * it is the same sentence the CLI table and the API reference print for that
  * operation.
+ *
+ * The key is not always the document's id. MCP publishes a verb phrase for
+ * each operation (`list_deploy_applications` for `get_deploy_applications`,
+ * cloud client/verbs.go), so a line whose name the document lacks is found by
+ * what it says instead: MCP's text is the start of that operation's own
+ * description, and the one operation whose description starts with it is the
+ * one the line names. A cut line that matches nothing prints its name alone,
+ * because a sentence that stops mid-clause says less than no sentence.
  */
-const said = (line: string, byId?: Map<string, Operation>): { id: string; what: string } => {
+type Ops = Pick<Document, 'byId' | 'operations'>;
+
+export const said = (line: string, doc?: Ops): { id: string; what: string } => {
   const at = line.indexOf(' — ');
   const id = line.slice(0, at);
-  const op = byId?.get(id);
-  return { id, what: op ? firstSentence(op.summary || op.description) || line.slice(at + 3) : line.slice(at + 3) };
+  // The document's prose has lost the Go name a comment opened with (see
+  // unname), so MCP's copy of the same comment loses it too before the two are
+  // compared.
+  const told = unname(line.slice(at + 3).trim(), id);
+  const flat = (s: string): string => s.replace(/\s+/g, ' ').trim();
+  const lead = flat(told.replace(/…$/, ''));
+  const named = doc?.byId.get(id);
+  const hits = named
+    ? [named]
+    : (doc?.operations ?? []).filter((o) => [o.description, o.summary].some((d) => d && flat(d).startsWith(lead)));
+  // Two addresses for one handler (`/v1/project` and `/v1/projects`) say the
+  // same sentence, and saying it is not a guess.
+  const says = new Set(hits.map((o) => firstSentence(o.summary || o.description)));
+  if (says.size === 1) return { id, what: [...says][0] || told };
+  return { id, what: told.endsWith('…') ? '' : told };
 };
 
-function fieldTable(fields: Field[], byId?: Map<string, Operation>): string[] {
+function fieldTable(fields: Field[], doc?: Ops): string[] {
   const out = [
     '| Field | Type | Required | Default | Values | Description |',
     '|---|---|---|---|---|---|',
@@ -327,8 +351,8 @@ function fieldTable(fields: Field[], byId?: Map<string, Operation>): string[] {
     if (!lines.length) continue;
     out.push('', `**\`${code(f.name)}\`** — what each one does:`, '');
     for (const l of lines) {
-      const { id, what } = said(l, byId);
-      out.push(`- \`${code(id)}\` — ${text(what)}`);
+      const { id, what } = said(l, doc);
+      out.push(what ? `- \`${code(id)}\` — ${text(what)}` : `- \`${code(id)}\``);
     }
   }
   return out;
@@ -677,7 +701,7 @@ function renderTool(
         : 'This tool declares no arguments. Call it with an empty `arguments` object.',
     );
   } else {
-    L.push(...fieldTable(fields, doc.byId));
+    L.push(...fieldTable(fields, doc));
     L.push(...sourceNotice(schema, fields, ops, con));
   }
   // The gap, stated where a reader would otherwise be misled into an empty
