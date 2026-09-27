@@ -24,7 +24,7 @@ Notes:
   curl -fsSL https://hanzo.bot/install.sh | bash -s -- --install-method git --no-onboard
   ```
   The installer will `git pull --rebase` **only** if the repo is clean.
-- For **global installs**, the script uses `npm install -g bot@latest` under the hood.
+- For **global installs**, the script uses `npm install -g @hanzo/bot@latest` under the hood.
 
 ## Before you update
 
@@ -40,11 +40,11 @@ Notes:
 Global install (pick one):
 
 ```bash
-npm i -g bot@latest
+npm i -g @hanzo/bot@latest
 ```
 
 ```bash
-pnpm add -g bot@latest
+pnpm add -g @hanzo/bot@latest
 ```
 We do **not** recommend Bun for the Gateway runtime (WhatsApp/Telegram bugs).
 
@@ -169,11 +169,11 @@ Runbook + exact service labels: [Gateway runbook](/gateway)
 Install a known-good version (replace `<version>` with the last working one):
 
 ```bash
-npm i -g bot@<version>
+npm i -g @hanzo/bot@<version>
 ```
 
 ```bash
-pnpm add -g bot@<version>
+pnpm add -g @hanzo/bot@<version>
 ```
 
 Tip: to see the current published version, run `npm view bot version`.

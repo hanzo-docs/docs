@@ -60,13 +60,13 @@ curl -fsSL https://hanzo.bot/install.sh | bash -s -- --no-onboard
 If you already have Node:
 
 ```bash
-npm install -g bot@latest
+npm install -g @hanzo/bot@latest
 ```
 
 If you have libvips installed globally (common on macOS via Homebrew) and `sharp` fails to install, force prebuilt binaries:
 
 ```bash
-SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install -g bot@latest
+SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install -g @hanzo/bot@latest
 ```
 
 If you see `sharp: Please add node-gyp to your dependencies`, either install build tooling (macOS: Xcode CLT + `npm install -g node-gyp`) or use the `SHARP_IGNORE_GLOBAL_LIBVIPS=1` workaround above to skip the native build.
@@ -74,7 +74,7 @@ If you see `sharp: Please add node-gyp to your dependencies`, either install bui
 Or:
 
 ```bash
-pnpm add -g bot@latest
+pnpm add -g @hanzo/bot@latest
 ```
 
 Then:
@@ -114,7 +114,7 @@ Tip: if you don’t have a global install yet, run repo commands via `pnpm bot .
 
 The installer supports two methods:
 
-- `npm` (default): `npm install -g bot@latest`
+- `npm` (default): `npm install -g @hanzo/bot@latest`
 - `git`: clone/build from GitHub and run from a source checkout
 
 ### CLI flags
