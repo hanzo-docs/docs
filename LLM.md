@@ -345,7 +345,7 @@ Build tool: `tsdown` (all packages except `hanzo-docs` wrapper which uses `tsup`
 
 - Next.js 15-16+ with App Router
 - React 19+
-- Tailwind CSS 4+ (being removed — "Moving onto @hanzo/gui")
+- `apps/docs` renders no Tailwind; the framework packages still ship it ("Moving onto @hanzo/gui")
 - pnpm 10+
 
 ## Moving onto @hanzo/gui — the plan
@@ -382,7 +382,14 @@ Folds: plain state + gui stacks. Icons: `@hanzogui/lucide-icons-2`. Theme:
 | 1 | Chrome on every page: rail, tree, bar, outline, page header, search trigger, account, theme | base-ui `DocsLayout`/`DocsPage`/sidebar/toc, next-themes, the corner dock | shipped (f11eb49dc2) |
 | 2 | Page bodies: markdown's elements (`components/mdx/prose.tsx`), the parts content names — Callout, Cards, Tabs, Steps, Accordion, Files, code blocks and code tabs (`blocks.tsx`, `tabs.tsx`, `code.tsx`) — and `Example`; content imports none of them; ported and studio pages reach them through the `parts` aliases in next.config | Tailwind typography, base-ui MDX components, shiki.css, the HoverCard link preview (a `title` now) | shipped |
 | 3 | App pages and app parts: landing (on the theme now, no forced dark), hero, product sections, provider strip, catalogs, search (`search.tsx` + `finder.tsx`, ⌘K), feedback (a real `docs.feedback` event, not a console stub), 404, blog (in the shell, on the page frame), sign-in screens | base-ui search dialog, `RootProvider`, HomeLayout, the registry build and the dead preview / AI-search / API-page modules | shipped |
-| 4 | The build: drop `@import 'tailwindcss'`, the presets, `@tailwindcss/postcss` + `postcss.config.mjs`, `tailwind-merge`, `cva`, every `@radix-ui/*` and `@base-ui/*`, `@hanzo/docs-base-ui`/`@hanzo/docs-ui` from `apps/docs`; delete what nothing else consumes (`packages/gui` stub, the registry build) | — | |
+| 4 | The build: `app/global.css` is plain CSS (faces, ground, `color-scheme`, the shell footer); no `@import 'tailwindcss'`, no presets, no `postcss.config.mjs`; `apps/docs` no longer depends on `tailwindcss`, `@tailwindcss/postcss`, `tailwindcss-animate`, `tailwind-merge`, `class-variance-authority`, any `@radix-ui/*`, `@hanzo/docs-base-ui`, `@hanzo/docs-ui`, `lucide-react`, or the build plugins that emitted their parts (twoslash, auto type table, ts2js) | — | shipped |
+
+**No framework package was deleted, because none is dead.** `packages/base-ui`,
+`radix-ui`, `tailwind`, `story`, `twoslash`, `typescript`, `openapi` and the
+`packages/gui` stub each still have consumers in `apps/*`, `examples/*` or the
+`@hanzo/docs` wrapper. They leave when those apps move onto the gui parts in
+`apps/docs/components/` — lift those into a package first, so every docs app
+renders one set.
 
 **Known gap in @hanzo/ui (8.27.18):** its `.d.ts` augments `@hanzogui/web`
 without depending on it, so in this workspace the augmentation lands on the

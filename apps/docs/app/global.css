@@ -1,213 +1,54 @@
 @import '@hanzo/font/css';
-@import 'tailwindcss';
-@import '@hanzo/docs-base-ui/css/neutral.css';
-@import '@hanzo/docs-base-ui/css/preset.css';
-@import '@hanzo/docs-twoslash/twoslash.css';
-@import '@hanzo/docs-openapi/css/preset.css';
-@import '@hanzo/docs-story/css/preset.css';
-@plugin 'tailwindcss-animate';
 
-/* `dark:` answers gui's theme class, the one the theme script writes on <html>
-   and the landing sets on its own subtree. The preset's variant names `.dark`,
-   which nothing writes any more. */
-@custom-variant dark (&:where(.t_dark, .t_dark *));
+/* The site's stylesheet. Everything a page draws is a @hanzo/gui part styled by
+   its own props; what is left here is what no part owns — the faces, the
+   document's ground, and the one fact the code blocks read from the page. */
 
-/* Zen. The faces are declared by the import above; these name the role. */
+/* Zen. The faces are declared by the import above; these name the role, and
+   gui's `$body` / `$mono` fonts read them. */
 :root {
   --font-sans: 'Zen', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'Zen Mono', ui-monospace, SFMono-Regular, monospace;
 }
 
-@theme {
-  --spacing-page: 1436px;
-  --color-brand: hsl(0, 0%, 96%);
-  --color-brand-foreground: hsl(0, 0%, 4%);
-  --color-brand-secondary: hsl(0, 0%, 80%);
-  --color-brand-secondary-foreground: hsl(0, 0%, 10%);
-  --color-brand-200: hsl(0, 0%, 85%);
-
-  --color-landing-foreground: #171717;
-  --color-landing-foreground-200: #525252;
-}
-
+/* The theme class on <html> (gui's NextThemeProvider writes it) sets the
+   colour scheme. Code tokens are `color: light-dark(…)`, so this is what picks
+   their palette, and it is what the browser's own controls and scrollbars read. */
 .t_dark {
-  --color-landing-foreground: #f5f5f5;
-  --color-landing-foreground-200: #a3a3a3;
-
-  --color-brand: hsl(0, 0%, 96%);
-  --color-brand-secondary: hsl(0, 0%, 80%);
-  --color-brand-secondary-foreground: #ffffff;
-  --color-brand-foreground: hsl(0, 0%, 4%);
-  --color-brand-200: hsl(0, 0%, 85%);
+  color-scheme: dark;
 }
 
-@theme inline {
-  --default-font-family: var(--font-zen-sans);
-  --default-mono-font-family: var(--font-zen-mono);
-  --animate-marquee: marquee var(--duration) infinite linear;
-  --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
-
-  @keyframes marquee {
-    from {
-      transform: translateX(0);
-    }
-    to {
-      transform: translateX(calc(-100% - var(--gap)));
-    }
-  }
-
-  @keyframes marquee-vertical {
-    from {
-      transform: translateY(0);
-    }
-    to {
-      transform: translateY(calc(-100% - var(--gap)));
-    }
-  }
-
-  @keyframes stroke {
-    from {
-      stroke-dasharray: 1000;
-    }
-    to {
-      stroke-dasharray: 1000;
-      stroke-dashoffset: 2000;
-    }
-  }
-
-  --animate-stroke: stroke 5s linear infinite;
-
-  --color-gradient-radial: radial-gradient(circle, var(--tw-gradient-stops));
-  --color-repeat-gradient-to-r: repeating-linear-gradient(to right, var(--tw-gradient-stops));
-  --color-repeat-gradient-to-br: repeating-linear-gradient(
-    to bottom right,
-    var(--tw-gradient-stops)
-  );
+.t_light {
+  color-scheme: light;
 }
 
-/* The primary is the THEME's, and it travels with its own foreground — so a
-   filled control reads white-on-near-black or near-black-on-white, and a label
-   can never sit on a fill that was recoloured without it. A per-section hue
-   overrode the fill alone, which is the one way to get an unreadable pair; this
-   site is monochrome, so there is nothing to override. */
 html {
   scrollbar-gutter: stable;
 }
 
+/* A dialog locks the page's scroll; the gutter above already holds the
+   scrollbar's width, so the lock must not add it again. */
 html > body[data-scroll-locked] {
   margin-right: 0px !important;
   --removed-body-scroll-bar-size: 0px !important;
 }
 
-/* The ground and ink are the palette's, and match gui's `$background`, so the
-   chrome and the page body sit on one ground in both themes. */
 body {
-  background-color: var(--color-fd-background);
-  color: var(--color-fd-foreground);
+  margin: 0;
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
 }
 
-/* The light theme. This block used to hold the DARK palette, with `.dark` below
-   repeating it value-for-value — so the site had one theme written twice and none
-   to switch to. Toggling removed `.dark`, :root stayed dark, and light mode did
-   nothing. Monochrome both ways, as the brand is: the light side is the inverse,
-   not a new hue. */
-:root {
-  color-scheme: light;
-  --color-fd-background: #f7f7f7;
-  --color-fd-foreground: hsl(0, 0%, 4%);
-  --color-fd-muted: hsl(0, 0%, 96%);
-  --color-fd-muted-foreground: hsla(0, 0%, 28%, 0.9);
-  --color-fd-popover: hsl(0, 0%, 100%);
-  --color-fd-popover-foreground: hsl(0, 0%, 10%);
-  --color-fd-card: hsl(0, 0%, 99%);
-  --color-fd-card-foreground: hsl(0, 0%, 4%);
-  --color-fd-border: rgb(0 0 0 / 0.1);
-  --color-fd-primary: hsl(0, 0%, 8%);
-  --color-fd-primary-foreground: hsl(0, 0%, 98%);
-  --color-fd-secondary: hsl(0, 0%, 96%);
-  --color-fd-secondary-foreground: hsl(0, 0%, 10%);
-  --color-fd-accent: hsla(0, 0%, 0%, 0.06);
-  --color-fd-accent-foreground: hsl(0, 0%, 10%);
-  --color-fd-ring: hsl(0, 0%, 45%);
-  --color-fd-overlay: hsla(0, 0%, 0%, 0.2);
-}
-
-.t_dark {
-  color-scheme: dark;
-  --color-fd-background: #0a0a0a;
-  --color-fd-foreground: hsl(0, 0%, 96%);
-  --color-fd-muted: hsl(0, 0%, 10%);
-  --color-fd-muted-foreground: hsla(0, 0%, 70%, 0.85);
-  --color-fd-popover: hsl(0, 0%, 4%);
-  --color-fd-popover-foreground: hsl(0, 0%, 90%);
-  --color-fd-card: hsl(0, 0%, 4%);
-  --color-fd-card-foreground: hsl(0, 0%, 96%);
-  --color-fd-border: rgb(255 255 255 / 0.1);
-  --color-fd-primary: hsl(0, 0%, 96%);
-  --color-fd-primary-foreground: hsl(0, 0%, 8%);
-  --color-fd-secondary: hsl(0, 0%, 12%);
-  --color-fd-secondary-foreground: hsl(0, 0%, 92%);
-  --color-fd-accent: hsla(0, 0%, 40%, 0.3);
-  --color-fd-accent-foreground: hsl(0, 0%, 92%);
-  --color-fd-ring: hsl(0, 0%, 55%);
-  --color-fd-overlay: hsla(0, 0%, 0%, 0.3);
-}
-
-@layer base {
-  /* Tailwind v4's preflight leaves buttons on the arrow cursor, so every real
-     button on the site read as inert. One rule, the way hanzo.ai and hanzo.app
-     do it — a per-component `cursor-pointer` class is the same fix written N
-     times. Utilities still win where a component genuinely wants otherwise. */
-  button:not(:disabled) {
-    cursor: pointer;
-  }
-
-  /* The house focus ring is monochrome. An element that carries no colour of
-     its own falls through to Chrome's -webkit-focus-ring-color — a blue the
-     brand does not contain, which is what the masthead logo was painting.
-     Only the colour is set: the ring itself is never removed, and a component
-     that designs its own outline still wins from the utility layer. */
-  :focus-visible {
-    outline-color: var(--color-fd-muted-foreground);
-  }
-}
-
-/* @hanzogui/shell paints the shared pre-footer CTA and the ecosystem footer
-   with INLINE styles, so only !important reaches them. Two seams to close:
-   the page is Zen and they shipped the system stack, and the footer ground
-   was #0b0b0f — blue-tinted where the page is neutral. Ground stays dark in
-   both themes because the shell's own text colour is a fixed white. */
+/* @hanzogui/shell paints the pre-footer and the ecosystem footer with inline
+   styles, so only !important reaches them: the page is Zen where they ship the
+   system stack, and the footer's own ground is a blue-tinted #0b0b0f where the
+   page is neutral. */
 [data-hanzo-shell],
 [data-hanzo-shell] * {
   font-family: var(--font-sans) !important;
 }
 
 footer[data-hanzo-shell] {
-  background: var(--color-neutral-950) !important;
-}
-
-@keyframes circuit_1 {
-  0% {
-    transform: translateY(-20px);
-  }
-
-  100% {
-    transform: translateY(100px);
-  }
-}
-
-@keyframes circuit_1_x_energy {
-  0%,
-  46% {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  47%,
-  70% {
-    opacity: 100%;
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(212px);
-  }
+  background: #0a0a0a !important;
 }

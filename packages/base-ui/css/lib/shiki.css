@@ -89,8 +89,7 @@
   }
 }
 
-.dark .shiki:not(.not-hanzo-codeblock *),
-.t_dark .shiki:not(.not-hanzo-codeblock *) {
+.dark .shiki:not(.not-hanzo-codeblock *) {
   code span {
     color: var(--shiki-dark);
     font-style: var(--shiki-dark-font-style);
@@ -103,8 +102,7 @@ code.shiki:not(.not-hanzo-code *) span {
   font-style: var(--shiki-light-font-style);
 }
 
-.dark code.shiki:not(.not-hanzo-code *) span,
-.t_dark code.shiki:not(.not-hanzo-code *) span {
+.dark code.shiki:not(.not-hanzo-code *) span {
   color: var(--shiki-dark);
   font-style: var(--shiki-dark-font-style);
 }

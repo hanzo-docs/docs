@@ -252,17 +252,14 @@ const config: NextConfig = {
   // the later one won, so the shell/brand entries above it had never taken
   // effect — the comment explaining why they must be transpiled outlived the
   // setting it described. Both groups are here now:
-  //   - workspace UI packages are consumed as compiled dist, so Turbopack needs
-  //     them listed to resolve deep subpath exports
-  //     (@hanzo/docs-base-ui/components/ui/*, etc.)
+  //   - the docs framework packages are consumed as compiled dist, so Turbopack
+  //     needs them listed to resolve deep subpath exports
   //   - the shared Hanzo shell chrome (header/mega-menu/footer) and brand tokens
   //     ship as ESM with 'use client' boundaries, so the client/server split and
   //     JSX runtime resolve correctly only when the app build compiles them
   transpilePackages: [
     '@hanzo/docs',
-    '@hanzo/docs-base-ui',
     '@hanzo/docs-core',
-    '@hanzo/docs-openapi',
     '@hanzogui/shell',
     '@hanzo/brand',
   ],
@@ -270,7 +267,6 @@ const config: NextConfig = {
     'ts-morph',
     'typescript',
     'oxc-transform',
-    'twoslash',
     'shiki',
     '@takumi-rs/image-response',
     // Turbopack JSON file issues with these packages

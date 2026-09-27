@@ -4,7 +4,6 @@ import type { ElementContent } from 'hast';
 import jsonSchema from '@hanzo/docs-mdx/plugins/json-schema';
 import lastModified from '@hanzo/docs-mdx/plugins/last-modified';
 import type { ShikiTransformer } from 'shiki';
-import type { RemarkAutoTypeTableOptions } from '@hanzo/docs-typescript';
 import { shikiConfig } from './lib/shiki';
 import { metaSchema, pageSchema } from '@hanzo/docs-core/source/schema';
 import { visit } from 'unist-util-visit';
@@ -55,20 +54,8 @@ export const docs = defineDocs({
       const { remarkFeedbackBlock } =
         await import('@hanzo/docs-core/mdx-plugins/remark-feedback-block');
       const { remarkBlockId } = await import('@hanzo/docs-core/mdx-plugins/remark-block-id');
-      const { transformerTwoslash } = await import('@hanzo/docs-twoslash');
-      const { createFileSystemTypesCache } = await import('@hanzo/docs-twoslash/cache-fs');
       const { default: remarkMath } = await import('remark-math');
-      const { remarkTypeScriptToJavaScript } = await import('@hanzo/docs-docgen/remark-ts2js');
       const { default: rehypeKatex } = await import('rehype-katex');
-      const { remarkAutoTypeTable, createGenerator, createFileSystemGeneratorCache } =
-        await import('@hanzo/docs-typescript');
-
-      const typeTableOptions: RemarkAutoTypeTableOptions = {
-        generator: createGenerator({
-          cache: createFileSystemGeneratorCache('.next/@hanzo/docs-typescript'),
-        }),
-        shiki: shikiConfig,
-      };
       return applyMdxPreset({
         rehypeCodeOptions: isLint
           ? false
@@ -77,14 +64,6 @@ export const docs = defineDocs({
               ...shikiConfig,
               transformers: [
                 ...(rehypeCodeDefaultOptions.transformers ?? []),
-                transformerTwoslash({
-                  typesCache: createFileSystemTypesCache(),
-                  twoslashOptions: {
-                    compilerOptions: {
-                      types: ['@types/node'],
-                    },
-                  },
-                }),
                 transformerEscape(),
               ],
             },
@@ -99,7 +78,6 @@ export const docs = defineDocs({
                 case 'mdxJsxTextElement':
                   switch (node.name) {
                     case 'File':
-                    case 'TypeTable':
                     case 'Callout':
                     case 'Card':
                     case 'Custom':
@@ -133,8 +111,6 @@ export const docs = defineDocs({
               remarkParts,
               remarkMath,
               [remarkBlockId, { addDataAttribute: 'feedback' }],
-              [remarkAutoTypeTable, typeTableOptions],
-              remarkTypeScriptToJavaScript,
             ],
         // rehypeExample first: it takes the reference's examples out of rehype-code's way.
         rehypePlugins: (v) => [rehypeExample, rehypeKatex, ...v],
