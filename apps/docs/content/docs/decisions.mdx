@@ -1,0 +1,209 @@
+---
+title: Decisions
+description: "POST /v1/decisions: typed questions about a state, answered with calibrated distributions instead of generated text. Kai, or Jev through the same wire."
+icon: ListChecks
+---
+
+**After this page you can ask typed questions about any state, read the
+distributions that come back, and choose between Kai and Jev with one field.**
+
+A decision is a bounded question: which team, is this a bug, how urgent. The
+answer space is known in advance, so the model returns a probability over it
+and generates nothing; `usage.output_tokens` is 0 for Kai. **Hanzo Decision**
+is the endpoint that serves these questions:
+
+```text
+POST https://api.hanzo.ai/v1/decisions
+```
+
+The wire is OpenRouter's Decisions API. A client written for Jev works
+unchanged: set its base URL to `https://api.hanzo.ai/v1` and send a Hanzo key.
+
+<Callout>
+The route is being added to the gateway. Until that release is live,
+`api.hanzo.ai` answers `404` on this path.
+</Callout>
+
+## Request
+
+```bash
+curl https://api.hanzo.ai/v1/decisions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "kai",
+    "state": {"message": "I was charged twice for my March invoice and the second charge is still pending."},
+    "questions": {
+      "is_bug":  {"type": "noul", "instructions": "Is this a product defect?",
+                  "criteria": {"true": "a defect", "false": "working as intended"}},
+      "team":    {"type": "choice", "instructions": "Which team should handle it?",
+                  "criteria": {"account": "logins and profiles",
+                               "payments": "charges, invoices and refunds",
+                               "product": "features and bugs"}},
+      "urgency": {"type": "score", "instructions": "How urgent is it?",
+                  "criteria": ["later", "this week", "today", "now"]}
+    }
+  }'
+```
+
+| Field | Type | Limit |
+|---|---|---|
+| `model` | `kai`, `typesafe/jev-1.13` or `~typesafe/jev-latest` | required |
+| `state` | a string, object or array: whatever the questions are about | required; at most 50,000 characters as the model reads it (a string as is, anything else as its JSON text) |
+| `questions` | `{name: question}`; answers come back under the same names, in the same order | required; at most 64 |
+| `session_id`, `user` | strings | optional; at most 256 characters each |
+| `provider`, `trace` | any JSON | optional; forwarded to OpenRouter on a Jev request |
+
+A question is `{type, instructions, criteria}`. `instructions` is the text the
+model answers. `criteria` depends on the type.
+
+## The three types
+
+### `choice`: one label of many
+
+`criteria` maps each label to its description. A list of labels is also
+accepted, for labels that need no description.
+
+```json
+"team": {"type": "choice", "instructions": "Which team should handle it?",
+         "criteria": {"account": "logins and profiles",
+                      "payments": "charges, invoices and refunds",
+                      "product": "features and bugs"}}
+```
+
+```json
+"team": {"type": "choice", "choice": "payments", "confidence": 0.91,
+         "probabilities": {"account": 0.03, "payments": 0.94, "product": 0.03},
+         "answer_confidence": 0.94}
+```
+
+`choice` is the most probable label. `probabilities` covers every label, in
+the order the question gave them.
+
+### `noul`: does a statement hold
+
+`criteria` is optional: `{"true": …, "false": …}`, either side or both,
+describes what each side means. Any other key is refused.
+
+```json
+"is_bug": {"type": "noul", "instructions": "Is this a product defect?",
+           "criteria": {"true": "a defect", "false": "working as intended"}}
+```
+
+```json
+"is_bug": {"type": "noul", "noul": 0.12, "answer_confidence": 0.88}
+```
+
+`noul` is P(true). `answer_confidence` is `max(p, 1 − p)`.
+
+### `score`: an ordinal level
+
+`criteria` is the list of levels, lowest first. Every level needs a
+description.
+
+```json
+"urgency": {"type": "score", "instructions": "How urgent is it?",
+            "criteria": ["later", "this week", "today", "now"]}
+```
+
+```json
+"urgency": {"type": "score", "score": 1.95, "confidence": 0.4667,
+            "legend": {"0": "later", "1": "this week", "2": "today", "3": "now"},
+            "probabilities": {"0": 0.05, "1": 0.15, "2": 0.6, "3": 0.2},
+            "answer_confidence": 0.6}
+```
+
+`score` is the expected level, Σ i·pᵢ. `legend` and `probabilities` are keyed
+by level index. The most probable level is the key of the largest probability,
+here `"2"`, `today`.
+
+The numbers in these examples show the shape and the arithmetic. They are not
+a recorded answer.
+
+## Response
+
+```json
+{
+  "id": "dec_5f0c2a9e7b1d4c38a6e2f90b1c7d3e44",
+  "model": "kai",
+  "provider": "Hanzo",
+  "answers": {
+    "is_bug":  {"type": "noul", "noul": 0.12, "answer_confidence": 0.88},
+    "team":    {"type": "choice", "choice": "payments", "confidence": 0.91,
+                "probabilities": {"account": 0.03, "payments": 0.94, "product": 0.03},
+                "answer_confidence": 0.94},
+    "urgency": {"type": "score", "score": 1.95, "confidence": 0.4667,
+                "legend": {"0": "later", "1": "this week", "2": "today", "3": "now"},
+                "probabilities": {"0": 0.05, "1": 0.15, "2": 0.6, "3": 0.2},
+                "answer_confidence": 0.6}
+  },
+  "usage": {"input_tokens": 212, "output_tokens": 0},
+  "routing": {
+    "backend": "kai",
+    "checkpoint": "hanzoai/kai",
+    "revision": "<commit of the checkpoint>",
+    "sha256": "<SHA-256 of the weights>",
+    "calibration": "cal_<16 hex digits>",
+    "device": "cpu",
+    "reason": "explicit model='kai'"
+  },
+  "state_hash": "sha256:<64 hex digits>"
+}
+```
+
+Every response also carries `latency_ms`. The example leaves it out because it
+is a measurement, not part of the shape.
+
+`id`, `model`, `provider`, `answers` and `usage` are the Decisions API's
+fields, and so are an answer's `choice`, `noul`, `score`, `confidence`,
+`probabilities` and `legend`. `confidence`, on a `choice` or `score`, is
+`(n·p_max − 1)/(n − 1)` over n options: 0 when all are equally likely, 1 when
+one takes all the mass, so one threshold means the same thing for 3 options or
+30. Probabilities are rounded to four places.
+
+Hanzo adds four fields, which a Decisions client ignores:
+
+| Field | Meaning |
+|---|---|
+| `answer_confidence` | on each answer: `p_max`, the calibrated probability of the reported answer |
+| `routing` | the backend (`kai` or `openrouter`), the checkpoint, its revision, the SHA-256 of its weights, the hash of the calibration tables, the device, and why the request went there |
+| `state_hash` | SHA-256 of the state as the model read it, so two decisions over one input are provably over one input |
+| `latency_ms` | wall time of the decision, in milliseconds |
+
+A caller acts on an answer whose `confidence` clears its threshold and
+escalates the rest, to a person or a generative model, rather than trusting a
+number the model does not stand behind.
+
+## Models
+
+| `model` | Served by | Answers |
+|---|---|---|
+| `kai` | Hanzo, in process ([Kai](/docs/models/kai)) | `provider: "Hanzo"`; `usage.output_tokens` 0; `routing` names the checkpoint, weights hash and calibration |
+| `typesafe/jev-1.13`, `~typesafe/jev-latest` | TypeSafe's Jev, through OpenRouter's Decisions API | `provider` as upstream reports it; `usage` as upstream bills it; `routing.upstream` is the upstream generation id |
+
+A Jev request goes upstream as it came in, `provider`, `session_id`, `user` and
+`trace` included. The answer is checked before it is returned: every question
+must come back answered, with its own type and, for a `choice`, a label the
+question has; a choice's `probabilities` are put back in label order. An answer
+that fails the check is a `502`.
+
+## Errors
+
+Every error is `{"error": {"code": <status>, "message": "…"}}`. The message
+names what to fix.
+
+| Status | When | Example `message` |
+|---|---|---|
+| `400` | the body is not JSON, or lacks `model` or `questions` | `the request needs 'questions'` |
+| `400` | a question is malformed | `question 'team': a choice question needs at least one criterion` |
+| `400` | a limit is exceeded | `too many questions (65 > 64)` |
+| `400` | `state` is a number, boolean or null | `'state' must be a string, an object or an array` |
+| `400` | the model is not one of the ids above | `unknown model "gpt-5"; use one of kai, typesafe/jev-1.13, ~typesafe/jev-latest` |
+| `422` | a question's options do not fit the model's window | names the question |
+| `503` | the model is known but not served by this deployment | `model "kai" is not served here: …` |
+| upstream `4xx` | Jev refused the request; its status and message pass through | e.g. `429` |
+| `502` | Jev failed, could not be reached, or answered in a shape that fails the check | `upstream 502: answer "team" is missing` |
+| `500` | a fault in the runtime | `decision failed`; the detail stays in the operator's log |
+
+[Kai](/docs/models/kai) covers the model, how it was measured, and Decision
+Programs: questions composed into a graph that policy governs.

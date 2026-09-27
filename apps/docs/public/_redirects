@@ -218,8 +218,8 @@
 
 # The model families live under /docs/models: one page each for Zen, Enso and
 # Kai. /docs/enso was the Enso tier page before Enso was the router; the other
-# three are the addresses a reader guesses for a family.
+# two are the addresses a reader guesses for a family. /docs/decisions is a page
+# of its own, the endpoint, so it is not redirected.
 /docs/enso         /docs/models/enso      301
 /docs/zen          /docs/models/zen       301
 /docs/kai          /docs/models/kai       301
-/docs/decisions    /docs/models/kai       301

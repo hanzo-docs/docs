@@ -17,11 +17,10 @@ and your policy keeps the last word.
 | [Drive an agent loop](/docs/guides/cookbook/loop) | the loop's control flow as programs — preflight, generate, check done — not as prompts | Kai runtime + `api.hanzo.ai` |
 
 **Kai runtime**: `POST /v1/decisions` is served by the decision runtime,
-`decision serve`, which listens on `127.0.0.1:8080` by default. It is not
-public yet and `api.hanzo.ai` does not serve the route yet — see
-[status](/docs/models/kai#status). The Kai responses quoted in these recipes
-are real, from that runtime serving the `kai-1` baseline on CPU, not from a
-trained Kai checkpoint.
+`decision serve`, which listens on `127.0.0.1:8080` by default; the public
+route is [`api.hanzo.ai/v1/decisions`](/docs/decisions), being added to the
+gateway. The decision responses quoted in these recipes are real, from that
+runtime serving the baseline (`laya`, `laya-agent`) on CPU, not from Kai.
 
 ```bash
 export HANZO_API_KEY=...                  # console.hanzo.ai

@@ -1,130 +1,91 @@
 ---
 title: Kai
-description: "Kai decides: typed, calibrated answers to bounded questions at POST /v1/decisions, composed into Decision Programs that policy governs."
+description: "Kai decides: Hanzo's decision model, answering typed questions with calibrated distributions at POST /v1/decisions, composed into Decision Programs that policy governs."
 icon: Scale
 ---
 
-**After this page you can write a decision request, read its typed answers,
-run the same questions as a program under a policy gate, and tell what ships
-today from what is still being built.**
+**After this page you know what Kai computes, how to call it, how it measured
+against the baselines, and what ships today from what is still being built.**
 
-Kai is the decision model. A bounded question — which team, which tool, allow or
-deny, is this done — has a known answer space, so Kai answers it with a
-distribution over that space instead of generated text. Nothing is parsed out of
-prose, the same input gives the same answer, and `usage.output_tokens` is 0.
-Zen stays for open work; Kai takes bounded judgment; policy keeps authority.
+Kai is Hanzo's decision model. A bounded question — which team, which tool,
+allow or deny, is this done — has a known answer space, so Kai answers it with
+a distribution over that space instead of generated text. Nothing is parsed
+out of prose, the same input gives the same answer, and `usage.output_tokens`
+is 0. Zen stays for open work; Kai takes bounded judgment; policy keeps
+authority.
 
 **Hanzo Decision** is the capability around it: questions, Decision Programs,
-Decision Packages and policy, served at one endpoint, `POST /v1/decisions`.
+Decision Packages and policy, served at one endpoint,
+[`POST /v1/decisions`](/docs/decisions).
+
+## What Kai computes
+
+Kai reads the state with a multilingual encoder. Each option is encoded on its
+own and scored against the state and its evidence, rather than packed beside
+the others into one sequence. So:
+
+- **Option count and order are not bounded by one sequence.** A question's
+  options do not compete for one encoder window.
+- **The answer does not depend on option order.** Listing the labels in
+  another order gives the same distribution over them.
+- **`noul` is label-symmetric.** P(true) is σ(s(true) − s(false)): both sides
+  are scored by the same function.
+- **`score` is ordinal.** Levels are scored with a cumulative link, so the
+  probabilities respect the order the levels were given in.
+
+Kai runs in pure Rust on [hanzo-ml](https://github.com/hanzoai/ml), on CPU,
+Metal, CUDA and ROCm. Its encoder starts from the multilingual weights of
+Laya, the baseline below.
+
+## Call it
+
+```bash
+curl https://api.hanzo.ai/v1/decisions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "kai",
+    "state": "Mi pedido llegó roto y quiero que me devuelvan el dinero.",
+    "questions": {
+      "intent": {"type": "choice", "instructions": "What does the customer want?",
+                 "criteria": {"refund": "money back",
+                              "replacement": "a new item",
+                              "status": "where the order is"}}
+    }
+  }'
+```
+
+The state is Spanish and the question English; one model reads both.
+[Decisions](/docs/decisions) documents the three question types, the response
+field by field, the errors, and how the same request reaches Jev.
+
+Every answer's `routing` names the checkpoint that produced it: its revision,
+the SHA-256 of its weights and the hash of its calibration tables.
+
+## Results
+
+On the frozen 12-suite harness, Kai (training stage a5) scores a macro
+accuracy of **0.851** over 11 suites, against 0.702 for Laya and 0.770 for Jev,
+and is the best of the three in 8 of the 12 suites, counting only backends that
+did not train on a suite's rows. It does not lead everywhere: Jev leads on
+jailbreak and MASSIVE, and Laya leads on typed decisions and email spam.
+Checkpoint, data, fit and per-suite scores:
+[hanzoai/benchmarks `decision/results/kai-a5`](https://github.com/hanzoai/benchmarks/blob/b07ba42/decision/results/kai-a5/README.md)
+(commit `b07ba42`).
 
 ## Status
 
 | Part | Status |
 |---|---|
-| **Kai**, the model (`hanzoai/kai`, one checkpoint line) | in training; no checkpoint released |
-| **Baseline**: [`kai-1`](https://huggingface.co/hanzoai/kai-1), [`kai-1-multilingual`](https://huggingface.co/hanzoai/kai-1-multilingual), [`kai-1-agent`](https://huggingface.co/hanzoai/kai-1-agent) — the Laya weights, unmodified, Apache-2.0 | served natively by the runtime, at parity with the reference implementation |
-| **Runtime**: `decision serve` — `POST /v1/decisions`, `GET /v1/models`, `GET /health` | in progress; not yet public, and `api.hanzo.ai` does not serve the route yet |
+| **Kai**, the model (`hanzoai/kai`, one checkpoint line, a revision per training stage) | stage a5 measured above; weights not published |
+| **Endpoint**: `POST https://api.hanzo.ai/v1/decisions`, serving `kai` and Jev | being added to the gateway; see [Decisions](/docs/decisions) |
+| **Baseline**: Laya's released checkpoints, [`kai-1`](https://huggingface.co/hanzoai/kai-1), [`kai-1-multilingual`](https://huggingface.co/hanzoai/kai-1-multilingual) and [`kai-1-agent`](https://huggingface.co/hanzoai/kai-1-agent), unmodified, Apache-2.0 | served natively by the runtime as `laya`, `laya-multilingual` and `laya-agent`, at parity with the reference implementation |
 | **Decision Programs, Packages, policy gates** | landed, as a library |
 | **Programs on the wire** (`"program": "agent.preflight@1"`) | specified in HIP-1332 §17; not served |
 | **Kai inside Enso** | in progress; the agent programs are written, each set to `shadow` or `advisory`, and not yet wired into Enso |
 
 The `kai-1` repositories hold the baseline Kai is measured against, not a Kai
-release. Every answer names the checkpoint, revision and weights hash it came
-from, so the difference is always on the record.
-
-## Ask questions
-
-A request is a model, a state and up to 64 typed questions about it.
-
-| `type` | Answer | `criteria` |
-|---|---|---|
-| `noul` | `noul`: P(true), a calibrated boolean | optional `{"true": …, "false": …}` |
-| `choice` | `choice`: one label, with `probabilities` over all of them | `{label: description}` |
-| `score` | `score`: the expected level Σ i·pᵢ, with `probabilities` per level | an ordered list, lowest first |
-
-```bash
-curl -s http://127.0.0.1:8080/v1/decisions \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "kai",
-    "state": {"message": "I was charged twice for my March invoice and the second charge is still pending."},
-    "questions": {
-      "is_bug": {"type": "noul", "instructions": "Is this a product defect?",
-                 "criteria": {"true": "a defect", "false": "working as intended"}},
-      "team":   {"type": "choice", "instructions": "Which team should handle it?",
-                 "criteria": {"account": "logins and profiles",
-                              "payments": "charges, invoices and refunds",
-                              "product": "features and bugs"}},
-      "urgency": {"type": "score", "instructions": "How urgent is it?",
-                  "criteria": ["later", "this week", "today", "now"]}
-    }
-  }'
-```
-
-`127.0.0.1:8080` is where `decision serve` listens by default. This is the
-answer it gave, on CPU, from the baseline:
-
-```json
-{
-  "id": "dec_f72187dcd467c4494da1499510ed4e84",
-  "model": "kai-1",
-  "provider": "Hanzo",
-  "answers": {
-    "is_bug": {"type": "noul", "noul": 0.3095, "answer_confidence": 0.6905,
-               "action": {"act_probability": 1.0}},
-    "team": {"type": "choice", "choice": "payments", "confidence": 0.9725,
-             "probabilities": {"account": 0.01, "payments": 0.9817, "product": 0.0083},
-             "answer_confidence": 0.9817, "action": {"act_probability": 1.0}},
-    "urgency": {"type": "score", "score": 1.5306, "confidence": 0.1077,
-                "legend": {"0": "later", "1": "this week", "2": "today", "3": "now"},
-                "probabilities": {"0": 0.2352, "1": 0.3299, "2": 0.1042, "3": 0.3308},
-                "answer_confidence": 0.3308, "action": {"act_probability": 1.0}}
-  },
-  "usage": {"input_tokens": 157, "output_tokens": 0},
-  "routing": {
-    "backend": "kai", "checkpoint": "kai-1",
-    "revision": "b50502c28537df49a3621f6fa543f9e8521e8a9c",
-    "sha256": "891102d372688fc2a094dac56a384bc537b87c63f21f9f3dac0be2b7cbc8d86c",
-    "calibration": "cal_ad93eae1cf0e34a6", "device": "cpu",
-    "reason": "English Latin text"
-  },
-  "state_hash": "sha256:3893b9038056e7104d3c76ffa6f703dea7ce1d0b4bb8be153e4adbc3432b212b",
-  "latency_ms": 542.64
-}
-```
-
-Read it this way:
-
-- **`team`** is settled: `payments` holds 0.98 of the mass.
-- **`urgency`** is not: `confidence` 0.11 says the four levels are close to
-  even. A caller acts on `team` and escalates `urgency` — to a person, or to a
-  generative model — rather than trusting a number the model does not stand
-  behind. Thresholds make that rule explicit (below).
-- **`confidence`** is `(n·p_max − 1)/(n − 1)`: 0 when every option is equally
-  likely, 1 when one takes all the mass, so one threshold means the same thing
-  for 3 options or 30. **`answer_confidence`** is `p_max` itself.
-- **`routing`** names the checkpoint, its revision, the SHA-256 of its weights
-  and the calibration table. `model: "kai"` routes by language: this state read
-  as English and went to `kai-1`; the same question in Spanish went to
-  `kai-1-multilingual` with `"reason": "Latin script but language looks like 'es', not English"`.
-- **`state_hash`** is the hash of the state as the model read it, so two
-  decisions over the same input are provably over the same input.
-
-| Field | Limit |
-|---|---|
-| `model` | `kai`, `kai-1`, `kai-1-multilingual`, `kai-1-agent` |
-| `state` | a string, object or array; at most 50,000 characters |
-| `questions` | at most 64 |
-| `session_id`, `user` | optional; at most 256 characters each |
-| `trace` | optional; carried through |
-
-Errors answer `{"error": {"code": …, "message": …}}`: 400 for an invalid body
-or unknown model, 422 when the options exceed the model's window, 503 for a
-model this runtime does not serve, 502 for an upstream failure.
-
-The request is the typed-decisions shape other decision APIs already use, so a
-client written for one works here; `routing`, `state_hash`, `latency_ms`,
-`answer_confidence` and `action` are additions such a client ignores.
+release.
 
 ## Run a program
 
@@ -138,13 +99,15 @@ of the run.
 
 The smallest program is the agent form — a model, a mode, typed questions,
 thresholds and an optional verdict rule. This one gates a shell command before
-an agent runs it:
+an agent runs it. The agent programs pin `laya-agent`, the baseline's
+typed-decisions checkpoint, and its calibration, because a gate's thresholds
+hold only for the probabilities they were validated on.
 
 ```json title="agent.command-risk@1"
 {
   "id": "agent.command-risk@1",
   "description": "Before an agent runs a shell command: allow it, ask the user, or deny it.",
-  "model": "kai-1-agent",
+  "model": "laya-agent",
   "mode": "advisory",
   "calibration": "cal_6dbb072f8109a222",
   "questions": {
@@ -224,8 +187,8 @@ equal task success is specified in HIP-1332 §18.1 and has not reported.
 
 ## Not claimed
 
-No trained Kai checkpoint, no Kai-against-baseline result, no multimodal
-accuracy and no Enso savings are claimed here. Each lands with the harness run
+The text suites above are the only Kai result claimed here. No multimodal
+accuracy, no latency and no Enso savings are claimed; each lands with the run
 that measures it.
 
 Specification: [HIP-1332](https://hips.hanzo.ai/docs/hip-1332-kai-the-decision-model).

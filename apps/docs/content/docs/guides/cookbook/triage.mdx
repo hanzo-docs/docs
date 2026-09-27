@@ -12,7 +12,7 @@ open text: Zen writes it.
 ```bash
 cat > ticket.json <<'EOF'
 {
-  "model": "kai",
+  "model": "laya",
   "state": {"message": "I was charged twice for my March invoice and the second charge is still pending."},
   "questions": {
     "is_bug":  {"type": "noul", "instructions": "Is this a product defect?",
@@ -30,8 +30,9 @@ d=$(curl -s "$DECISIONS/v1/decisions" -H "Content-Type: application/json" -d @ti
 ```
 
 The baseline answered `team: payments` at 0.98, `is_bug` P(true) 0.31, and
-`urgency` with `confidence` 0.11 — four levels close to even. The full response
-is on the [Kai](/docs/models/kai#ask-questions) page. `usage.output_tokens` is 0.
+`urgency` with `confidence` 0.11 — four levels close to even.
+`usage.output_tokens` is 0. Send `"model": "kai"` for Kai; the response shape is
+on [Decisions](/docs/decisions#response).
 
 ## 2. Act on what is settled
 

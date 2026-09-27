@@ -22,7 +22,7 @@ programs in [Hanzo Decision](/docs/models/kai#kai-inside-enso):
 ```bash
 cat > preflight.json <<'EOF'
 {
-  "model": "kai-1-agent",
+  "model": "laya-agent",
   "questions": {
     "model_tier": {"type": "choice", "instructions": "Which model tier should handle the task?",
                    "criteria": {"cheap": "a small fast model is enough: lookup, formatting, short answers",
@@ -35,7 +35,7 @@ cat > preflight.json <<'EOF'
 EOF
 cat > complete.json <<'EOF'
 {
-  "model": "kai-1-agent",
+  "model": "laya-agent",
   "questions": {
     "done":     {"type": "noul", "instructions": "Has the agent finished everything the user asked for?"},
     "verified": {"type": "noul", "instructions": "Is the result backed by evidence in the transcript, such as passing tests or command output?"}
@@ -86,7 +86,8 @@ claimed.
 
 ## What the baseline answered
 
-The Kai half, run against the `kai-1-agent` baseline:
+The decision half, run against `laya-agent`, the baseline checkpoint the agent
+programs pin:
 
 | State | Answer |
 |---|---|
