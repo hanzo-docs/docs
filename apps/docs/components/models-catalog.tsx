@@ -5,7 +5,12 @@
 // the current models/prices without a rebuild. Grouped by family, searchable,
 // theme-aware via Fumadocs fd-* tokens.
 import { useEffect, useMemo, useState } from 'react';
-import { Search, Copy, Check, Cpu, Sparkle, Zap, Box } from 'lucide-react';
+import { Text, XStack, YStack } from '@hanzo/gui';
+import { Field } from '@/components/field';
+import { Copy, Check, Cpu, Sparkle, Zap, Box } from '@hanzogui/lucide-icons-2';
+import { Figure, Pre } from '@/components/mdx/code';
+import { Table, Tbody, Td, Th, Thead, Tr } from '@/components/mdx/prose';
+import { muted } from '@/lib/ink';
 import { PROVIDER_ICONS, providerKey } from '@/components/provider-icons';
 
 const ENDPOINT = 'https://api.hanzo.ai/v1/models';
@@ -65,55 +70,56 @@ function initials(name: string): string {
   return name.replace(/[^\p{L}\p{N}]/gu, '').slice(0, 2).toUpperCase() || '?';
 }
 function ProviderChip({ name }: { name: string }) {
-  // Real brand logo (mono, currentColor) when we have one; monogram otherwise.
   const svg = PROVIDER_ICONS[providerKey(name)];
-  if (svg) {
+  if (svg)
     return (
-      <span
+      <XStack
         aria-hidden
-        className="inline-flex size-5 shrink-0 items-center justify-center text-fd-foreground [&>svg]:size-[18px]"
-        dangerouslySetInnerHTML={{ __html: svg }}
+        width={18}
+        height={18}
+        shrink={0}
+        color="$color12"
+        dangerouslySetInnerHTML={{ __html: svg.replace('<svg', '<svg width="100%" height="100%"') }}
       />
     );
-  }
   const hue = hashHue(name.toLowerCase());
   return (
-    <span
-      aria-hidden
-      className="inline-flex size-5 shrink-0 items-center justify-center rounded text-[9px] font-semibold leading-none"
-      style={{
-        background: `hsl(${hue} 55% 92%)`,
-        color: `hsl(${hue} 60% 32%)`,
-        boxShadow: `inset 0 0 0 1px hsl(${hue} 45% 82%)`,
-      }}
-    >
-      {initials(name)}
-    </span>
+    <XStack aria-hidden width={20} height={20} shrink={0} rounded={4} items="center" justify="center" style={{ background: `hsl(${hue} 55% 92%)` }}>
+      <Text fontSize={9} fontWeight="600" style={{ color: `hsl(${hue} 60% 32%)` }}>
+        {initials(name)}
+      </Text>
+    </XStack>
   );
 }
 
 function CopyId({ id }: { id: string }) {
   const [done, setDone] = useState(false);
   return (
-    <button
+    <XStack
+      render="button"
       type="button"
-      onClick={() => {
+      title="Copy model id"
+      onPress={() => {
         navigator.clipboard?.writeText(id).then(() => {
           setDone(true);
           setTimeout(() => setDone(false), 1200);
         });
       }}
-      className="group inline-flex items-center gap-1.5 font-mono text-xs text-fd-muted-foreground hover:text-fd-foreground transition-colors"
-      title="Copy model id"
+      gap={6}
+      items="center"
+      bg="transparent"
+      borderWidth={0}
+      p={0}
+      cursor="pointer"
     >
-      <span>{id}</span>
-      {done ? <Check className="size-3 text-green-500" /> : <Copy className="size-3 opacity-0 group-hover:opacity-60" />}
-    </button>
+      <Text fontFamily="$mono" fontSize={12} {...muted}>
+        {id}
+      </Text>
+      {done ? <Check size={12} color="$green10" /> : <Copy size={12} color="$color9" />}
+    </XStack>
   );
 }
 
-// What the catalogue actually says a model can do. It publishes booleans, not a
-// `features` list, so the chips are derived from those rather than left empty.
 function capabilities(m: Model): string[] {
   if (m.features?.length) return m.features;
   const out: string[] = [];
@@ -125,29 +131,35 @@ function capabilities(m: Model): string[] {
 function ModelRow({ m }: { m: Model }) {
   const p = m.pricing;
   return (
-    <tr className="border-t border-fd-border/60 hover:bg-fd-muted/40 transition-colors">
-      <td className="py-2.5 pr-4 align-top">
-        <div className="font-medium text-fd-foreground">{m.fullName || m.name || m.id}</div>
-        <CopyId id={m.id} />
-        {m.tier ? (
-          <span className="ml-2 rounded bg-fd-primary/10 px-1.5 py-0.5 text-[11px] font-medium text-fd-primary align-middle">
-            {m.tier}
-          </span>
-        ) : null}
-      </td>
-      <td className="py-2.5 px-3 text-right align-top tabular-nums text-fd-muted-foreground">{ctx(m.context_window)}</td>
-      <td className="py-2.5 px-3 text-right align-top tabular-nums">{price(p?.input)}</td>
-      <td className="py-2.5 px-3 text-right align-top tabular-nums">{price(p?.output)}</td>
-      <td className="py-2.5 pl-3 align-top">
-        <div className="flex flex-wrap gap-1 justify-end">
+    <Tr>
+      <Td>
+        <YStack gap={2} items="flex-start">
+          <Text fontSize={14} fontWeight="500" color="$color12">
+            {m.fullName || m.name || m.id}
+          </Text>
+          <XStack gap={8} items="center" flexWrap="wrap">
+            <CopyId id={m.id} />
+            {m.tier ? (
+              <Text fontSize={11} fontWeight="500" px={6} rounded={4} bg="$hover" color="$color12">
+                {m.tier}
+              </Text>
+            ) : null}
+          </XStack>
+        </YStack>
+      </Td>
+      <Td align="right">{ctx(m.context_window)}</Td>
+      <Td align="right">{price(p?.input)}</Td>
+      <Td align="right">{price(p?.output)}</Td>
+      <Td align="right">
+        <XStack gap={4} flexWrap="wrap" justify="flex-end">
           {capabilities(m).slice(0, 4).map((f) => (
-            <span key={f} className="rounded border border-fd-border px-1.5 py-0.5 text-[10px] text-fd-muted-foreground">
+            <Text key={f} fontSize={10} px={6} py={1} rounded={4} borderWidth={1} borderColor="$borderColor" {...muted}>
               {f}
-            </span>
+            </Text>
           ))}
-        </div>
-      </td>
-    </tr>
+        </XStack>
+      </Td>
+    </Tr>
   );
 }
 
@@ -218,87 +230,97 @@ export function ModelsCatalog() {
 
   if (err)
     return (
-      <div className="my-4 rounded-lg border border-fd-border bg-fd-card p-4 text-sm text-fd-muted-foreground">
-        <p className="mt-0">
-          Couldn’t load the live catalog ({err}). <code>GET /v1/models</code> requires a bearer token, and this page
-          has none to send — so read it with your own key instead:
-        </p>
-        <pre className="overflow-x-auto rounded bg-fd-muted/60 p-3 text-xs">
-          {`curl -s ${ENDPOINT} \\\n  -H "Authorization: Bearer $HANZO_API_KEY"`}
-        </pre>
-        <p className="mb-0">
-          <a className="text-fd-primary underline" href="/docs/api-keys">
-            Mint a key →
-          </a>
-        </p>
-      </div>
+      <YStack gap={10} p={16} rounded="$5" borderWidth={1} borderColor="$borderColor" bg="$panel">
+        <Text fontSize={14} lineHeight={22} whiteSpace="normal" {...muted}>
+          Couldn’t load the live catalog ({err}). GET /v1/models requires a bearer token, and this page has none to
+          send — so read it with your own key instead:
+        </Text>
+        <Figure>
+          <Pre>
+            <code>{`curl -s ${ENDPOINT} \\\n  -H "Authorization: Bearer $HANZO_API_KEY"`}</code>
+          </Pre>
+        </Figure>
+        <Text render="a" href="/docs/api-keys" fontSize={14} color="$color12" textDecorationLine="underline">
+          Mint a key →
+        </Text>
+      </YStack>
     );
   if (!cat)
     return (
-      <div className="my-4 space-y-2" aria-busy>
+      <YStack gap={8} aria-busy>
         {[0, 1, 2].map((i) => (
-          <div key={i} className="h-12 animate-pulse rounded-md bg-fd-muted/60" />
+          <YStack key={i} height={48} rounded="$3" bg="$hover" />
         ))}
-      </div>
+      </YStack>
     );
 
   const s = cat.summary ?? {};
   return (
-    <div className="not-prose my-6">
-      {/* Summary + search */}
-      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-fd-muted-foreground">
-          <span className="font-medium text-fd-foreground">{s.totalModels ?? cat.data.length} models</span>
-          {s.zenModels ? <span>{s.zenModels} Zen</span> : null}
-          {s.ensoModels ? <span>{s.ensoModels} Enso</span> : null}
-          {cat.updated ? <span>updated {new Date(cat.updated).toLocaleDateString()}</span> : null}
-        </div>
-        <label className="relative flex items-center">
-          <Search className="pointer-events-none absolute left-2.5 size-4 text-fd-muted-foreground" />
-          <input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="Filter models…"
-            className="w-full rounded-md border border-fd-border bg-fd-background py-1.5 pl-8 pr-3 text-sm outline-none focus:border-fd-primary sm:w-64"
-          />
-        </label>
-      </div>
+    <YStack gap={24}>
+      <XStack gap={12} justify="space-between" items="center" flexWrap="wrap">
+        <XStack gap={16} flexWrap="wrap" items="center">
+          <Text fontSize={14} fontWeight="500" color="$color12">
+            {s.totalModels ?? cat.data.length} models
+          </Text>
+          {s.zenModels ? <Text fontSize={14} {...muted}>{s.zenModels} Zen</Text> : null}
+          {s.ensoModels ? <Text fontSize={14} {...muted}>{s.ensoModels} Enso</Text> : null}
+          {cat.updated ? (
+            <Text fontSize={14} {...muted}>
+              updated {DAY.format(new Date(cat.updated))}
+            </Text>
+          ) : null}
+        </XStack>
+        <Field value={q} onChange={setQ} placeholder="Filter models…" width={260} />
+      </XStack>
 
       {groups.map((f) => {
         const isProvider = f.id.startsWith('provider-');
         const Icon = FAMILY_ICON[f.icon ?? ''] ?? Box;
         return (
-          <section key={f.id} className="mb-8">
-            <div className="mb-1 flex items-center gap-2">
-              {isProvider ? <ProviderChip name={f.name} /> : <Icon className="size-4 text-fd-primary" />}
-              <h3 className="m-0 text-base font-semibold text-fd-foreground">{f.name}</h3>
-              <span className="text-xs text-fd-muted-foreground">({f.resolved.length})</span>
-            </div>
-            {f.description ? <p className="mb-2 mt-0 text-sm text-fd-muted-foreground">{f.description}</p> : null}
-            <div className="overflow-x-auto rounded-lg border border-fd-border">
-              <table className="w-full border-collapse text-sm">
-                <thead>
-                  <tr className="text-xs text-fd-muted-foreground">
-                    <th className="py-2 pr-4 text-left font-medium">Model</th>
-                    <th className="py-2 px-3 text-right font-medium">Context</th>
-                    <th className="py-2 px-3 text-right font-medium">Input /1M</th>
-                    <th className="py-2 px-3 text-right font-medium">Output /1M</th>
-                    <th className="py-2 pl-3 text-right font-medium">Capabilities</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {f.resolved.map((m) => (
-                    <ModelRow key={m.id} m={m} />
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </section>
+          <YStack key={f.id} render="section" gap={8}>
+            <XStack gap={8} items="center">
+              {isProvider ? <ProviderChip name={f.name} /> : <Icon size={16} color="$color12" />}
+              <Text render="h3" fontSize={16} fontWeight="600" color="$color12">
+                {f.name}
+              </Text>
+              <Text fontSize={12} {...muted}>
+                ({f.resolved.length})
+              </Text>
+            </XStack>
+            {f.description ? (
+              <Text fontSize={14} whiteSpace="normal" {...muted}>
+                {f.description}
+              </Text>
+            ) : null}
+            <Table>
+              <Thead>
+                <Tr>
+                  <Th>Model</Th>
+                  <Th align="right">Context</Th>
+                  <Th align="right">Input /1M</Th>
+                  <Th align="right">Output /1M</Th>
+                  <Th align="right">Capabilities</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {f.resolved.map((m) => (
+                  <ModelRow key={m.id} m={m} />
+                ))}
+              </Tbody>
+            </Table>
+          </YStack>
         );
       })}
-      {!groups.length ? <p className="text-sm text-fd-muted-foreground">No models match “{q}”.</p> : null}
-    </div>
+      {!groups.length ? (
+        <Text fontSize={14} {...muted}>
+          No models match “{q}”.
+        </Text>
+      ) : null}
+    </YStack>
   );
 }
+
+// Fixed locale and zone, so every reader sees the same date for the same data.
+const DAY = new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeZone: 'UTC' });
 
 export default ModelsCatalog;

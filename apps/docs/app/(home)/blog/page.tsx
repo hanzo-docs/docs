@@ -1,64 +1,31 @@
-import Link from 'next/link';
 import { blog } from '@/lib/source';
 import { PathUtils } from '@hanzo/docs/core/source';
+import { Posts } from '@/components/posts';
 
-// Blog frontmatter type (matches source.config.ts schema)
+// Blog frontmatter (source.config.ts). A post with no date is dated by its file.
 interface BlogData {
   title: string;
   description?: string;
-  author: string;
-  date: string | Date;
+  date?: string | Date;
 }
 
-function getName(path: string) {
-  return PathUtils.basename(path, PathUtils.extname(path));
-}
+const DAY = new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeZone: 'UTC' });
 
 export default function Page() {
-  const posts = [...blog.getPages()].sort(
-    (a, b) =>
-      new Date((b.data as unknown as BlogData).date ?? getName(b.path)).getTime() -
-      new Date((a.data as unknown as BlogData).date ?? getName(a.path)).getTime(),
-  );
+  const posts = blog
+    .getPages()
+    .map((page) => {
+      const data = page.data as unknown as BlogData;
+      const when = new Date(data.date ?? PathUtils.basename(page.path, PathUtils.extname(page.path)));
+      return { page, data, when };
+    })
+    .sort((a, b) => b.when.getTime() - a.when.getTime())
+    .map(({ page, data, when }) => ({
+      url: page.url,
+      title: data.title,
+      description: data.description,
+      date: DAY.format(when),
+    }));
 
-  return (
-    <main className="mx-auto w-full max-w-page px-4 pb-12 md:py-12">
-      {/* The backdrop is the brand's own architectural grid — @hanzo/brand's
-          hero treatment, drawn in CSS. It replaced 2.2 MB of upstream orange
-          gradient art that came through the fork and matched no Hanzo palette. */}
-      <div className="relative dark mb-2 overflow-hidden rounded-2xl border border-fd-border bg-fd-card p-8 z-2 md:p-12">
-        <div
-          aria-hidden
-          className="absolute inset-0 -z-1"
-          style={{
-            backgroundImage:
-              'linear-gradient(to right, rgba(255,255,255,0.07) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.07) 1px, transparent 1px)',
-            backgroundSize: '50px 50px',
-          }}
-        />
-        <h1 className="mb-4 text-3xl text-landing-foreground font-mono font-medium">
-          Hanzo Docs Blog
-        </h1>
-        <p className="text-sm font-mono text-landing-foreground-200">
-          Latest announcements and updates.
-        </p>
-      </div>
-      <div className="grid grid-cols-1 gap-2 md:grid-cols-3 xl:grid-cols-4">
-        {posts.map((post) => (
-          <Link
-            key={post.url}
-            href={post.url}
-            className="flex flex-col bg-fd-card rounded-2xl border shadow-sm p-4 transition-colors hover:bg-fd-accent hover:text-fd-accent-foreground"
-          >
-            <p className="font-medium">{post.data.title}</p>
-            <p className="text-sm text-fd-muted-foreground">{post.data.description}</p>
-
-            <p className="mt-auto pt-4 text-xs text-fd-muted-foreground">
-              {new Date((post.data as unknown as BlogData).date ?? getName(post.path)).toDateString()}
-            </p>
-          </Link>
-        ))}
-      </div>
-    </main>
-  );
+  return <Posts posts={posts} />;
 }

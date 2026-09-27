@@ -11,7 +11,12 @@
 // catalog is usable without leaving the page: a framework that installs from npm
 // shows the npm line, one that ships a tag shows the tag.
 import { useMemo, useState } from 'react';
-import { Search, Check, Copy } from 'lucide-react';
+import { Text, XStack, YStack } from '@hanzo/gui';
+import { Check, Copy } from '@hanzogui/lucide-icons-2';
+import { Grid } from '@hanzo/ui/grid';
+import { Chips } from '@/components/chips';
+import { Field } from '@/components/field';
+import { muted } from '@/lib/ink';
 
 type Kind = 'web' | 'mobile' | 'server' | 'llm';
 
@@ -77,44 +82,54 @@ const TARGETS: Target[] = [
   { id: 'mcp', label: 'MCP', kind: 'llm', install: 'npx @hanzo/mcp', docs: '/docs/mcp' },
 ];
 
-const KINDS: { id: Kind | 'all'; label: string }[] = [
-  { id: 'all', label: 'All' },
-  { id: 'web', label: 'Web' },
-  { id: 'mobile', label: 'Mobile' },
-  { id: 'server', label: 'Server' },
-  { id: 'llm', label: 'LLM' },
+const KINDS: { value: Kind | 'all'; label: string }[] = [
+  { value: 'all', label: 'All' },
+  { value: 'web', label: 'Web' },
+  { value: 'mobile', label: 'Mobile' },
+  { value: 'server', label: 'Server' },
+  { value: 'llm', label: 'LLM' },
 ];
 
 function Row({ t }: { t: Target }) {
   const [copied, setCopied] = useState(false);
   return (
-    <div className="flex flex-col gap-2 rounded-lg border border-fd-border bg-fd-card p-4">
-      <div className="flex items-center justify-between gap-2">
-        <span className="font-medium">{t.label}</span>
+    <YStack gap={8} p={14} rounded="$4" borderWidth={1} borderColor="$borderColor" bg="$panel">
+      <XStack justify="space-between" items="center" gap={8}>
+        <Text fontSize={14} fontWeight="500" color="$color12">
+          {t.label}
+        </Text>
         {t.docs ? (
-          <a href={t.docs} className="text-xs text-fd-muted-foreground underline-offset-2 hover:underline">
+          <Text render="a" href={t.docs} fontSize={12} {...muted} hoverStyle={{ textDecorationLine: 'underline' }}>
             docs
-          </a>
+          </Text>
         ) : null}
-      </div>
-      <button
+      </XStack>
+      <XStack
+        render="button"
         type="button"
-        onClick={() => {
+        aria-label={`Copy install for ${t.label}`}
+        onPress={() => {
           void navigator.clipboard.writeText(t.install);
           setCopied(true);
           setTimeout(() => setCopied(false), 1200);
         }}
-        className="group flex items-center justify-between gap-2 rounded border border-fd-border bg-fd-secondary/40 px-2 py-1.5 text-left font-mono text-xs"
-        aria-label={`Copy install for ${t.label}`}
+        justify="space-between"
+        items="center"
+        gap={8}
+        px={8}
+        py={6}
+        rounded="$2"
+        borderWidth={1}
+        borderColor="$borderColor"
+        bg="$background"
+        cursor="pointer"
       >
-        <code className="truncate">{t.install}</code>
-        {copied ? (
-          <Check className="size-3.5 shrink-0" aria-hidden />
-        ) : (
-          <Copy className="size-3.5 shrink-0 opacity-0 transition-opacity group-hover:opacity-60" aria-hidden />
-        )}
-      </button>
-    </div>
+        <Text fontFamily="$mono" fontSize={12} numberOfLines={1} color="$color12">
+          {t.install}
+        </Text>
+        {copied ? <Check size={13} color="$color11" /> : <Copy size={13} color="$color9" />}
+      </XStack>
+    </YStack>
   );
 }
 
@@ -132,61 +147,27 @@ export function InstallCatalog() {
   }, [q, kind]);
 
   return (
-    <div className="not-prose flex flex-col gap-4">
-      <div className="flex flex-wrap items-center gap-2">
-        <div className="relative flex-1 min-w-[12rem]">
-          <Search className="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-fd-muted-foreground" aria-hidden />
-          <input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="Search frameworks and platforms"
-            aria-label="Search frameworks and platforms"
-            className="w-full rounded-md border border-fd-border bg-fd-background py-1.5 pl-8 pr-2 text-sm"
-          />
-        </div>
-        <div className="flex flex-wrap gap-1">
-          {KINDS.map((k) => (
-            <button
-              key={k.id}
-              type="button"
-              onClick={() => setKind(k.id)}
-              aria-pressed={kind === k.id}
-              className={
-                'rounded-md px-2.5 py-1 text-sm ' +
-                (kind === k.id
-                  ? 'bg-fd-primary text-fd-primary-foreground'
-                  : 'text-fd-muted-foreground hover:bg-fd-secondary')
-              }
-            >
-              {k.label}
-            </button>
-          ))}
-        </div>
-      </div>
+    <YStack gap={16}>
+      <XStack gap={10} flexWrap="wrap" items="center">
+        <YStack flex={1} minW={200}>
+          <Field value={q} onChange={setQ} placeholder="Search frameworks and platforms" />
+        </YStack>
+        <Chips items={KINDS} value={kind} onChange={setKind} />
+      </XStack>
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <Grid columns={{ min: 240 }} gap={12}>
         {shown.map((t) => (
           <Row key={t.id} t={t} />
         ))}
-      </div>
+      </Grid>
 
-      {shown.length === 0 ? (
-        <p className="text-sm text-fd-muted-foreground">
-          Nothing matches “{q}”. Every stack can use the{' '}
-          <a href="/docs/openapi" className="underline underline-offset-2">
-            HTTP API
-          </a>
-          .
-        </p>
-      ) : (
-        <p className="text-sm text-fd-muted-foreground">
-          {shown.length} of {TARGETS.length}. Anything not listed reaches the same endpoints over the{' '}
-          <a href="/docs/openapi" className="underline underline-offset-2">
-            HTTP API
-          </a>
-          .
-        </p>
-      )}
-    </div>
+      <Text fontSize={14} whiteSpace="normal" {...muted}>
+        {shown.length === 0 ? `Nothing matches “${q}”. Every stack can use the ` : `${shown.length} of ${TARGETS.length}. Anything not listed reaches the same endpoints over the `}
+        <Text render="a" href="/docs/openapi" color="$color12" textDecorationLine="underline">
+          HTTP API
+        </Text>
+        .
+      </Text>
+    </YStack>
   );
 }

@@ -1,4 +1,3 @@
-import { buildRegistry } from '@/scripts/build-registry';
 import { genOpenapiPages } from './gen-openapi-pages';
 import { genFlowPages } from './gen-flow-pages';
 import { genMcpPages } from './gen-mcp-pages';
@@ -58,7 +57,6 @@ async function main() {
   // reads /v1/pricing, so it neither needs nor blocks the three above.
   await genPricingPage();
 
-  await buildRegistry();
   // Ported project docs are NOT fetched here. They are a committed snapshot
   // (content/docs/projects/, tracked), refreshed on purpose by
   // `pnpm --filter docs sync:projects` and read in a diff before it ships. A

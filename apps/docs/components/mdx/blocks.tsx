@@ -4,6 +4,15 @@ import Link from 'next/link';
 import { Children, useState, type ReactNode } from 'react';
 import { Text, XStack, YStack } from '@hanzo/gui';
 import {
+  Boxes,
+  Code,
+  Key,
+  LayoutGrid,
+  Package,
+  Rocket,
+  Sparkle,
+  Sparkles,
+  Terminal,
   ChevronRight,
   CircleCheck,
   CircleX,
@@ -15,6 +24,7 @@ import {
   TriangleAlert,
 } from '@hanzogui/lucide-icons-2';
 import { muted } from '@/lib/ink';
+import { Grid } from '@hanzo/ui/grid';
 import { Lead, Small, flow } from '@/components/mdx/prose';
 
 /**
@@ -57,11 +67,17 @@ export function Callout({ type = 'info', title, icon, children }: { type?: Kind;
 
 export function Cards({ children }: { children: ReactNode }) {
   return (
-    <YStack gap={12} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(260px, 100%), 1fr))' }}>
+    <Grid columns={{ min: 260 }} gap={12}>
       {children}
-    </YStack>
+    </Grid>
   );
 }
+
+/**
+ * A card's icon, named in the content (`<Card icon="Rocket">`). Content
+ * cannot hand a drawn icon across to a client part, so it names one of these.
+ */
+const GLYPH = { Boxes, Code, Key, LayoutGrid, Package, Rocket, Sparkle, Sparkles, Terminal } as const;
 
 export function Card({
   title,
@@ -73,7 +89,7 @@ export function Card({
   title: ReactNode;
   description?: ReactNode;
   href?: string;
-  icon?: ReactNode;
+  icon?: ReactNode | keyof typeof GLYPH;
   external?: boolean;
   children?: ReactNode;
 }) {
@@ -92,7 +108,10 @@ export function Card({
     >
       {icon ? (
         <XStack width={30} height={30} mb={4} rounded="$3" borderWidth={1} borderColor="$borderColor" items="center" justify="center">
-          {icon}
+          {typeof icon === 'string' ? (() => {
+            const Glyph = GLYPH[icon as keyof typeof GLYPH];
+            return Glyph ? <Glyph size={15} color="$color11" /> : null;
+          })() : icon}
         </XStack>
       ) : null}
       <Text fontSize={15} lineHeight={22} fontWeight="600" color="$color12" whiteSpace="normal">

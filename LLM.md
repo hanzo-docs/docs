@@ -362,6 +362,7 @@ excluded — it is upstream's):
 |---|---|---|---|
 | `apps/docs` app+components+lib, before phase 1 | 2,189 / 52 | 2 | 0 |
 | `apps/docs` after phase 1 | 1,906 / 37 | 2 | 0 |
+| `apps/docs` after phase 3 | 0 / 0 | 0 | 0 |
 | `packages/base-ui` (@hanzo/docs-base-ui) | 2,774 / 76 | 0 | 10 |
 | `packages/radix-ui` (@hanzo/docs-ui, via openapi/twoslash/typescript) | 2,568 / 71 | 9 | 0 |
 | `packages/openapi` | 794 / 23 | 3 | 0 |
@@ -380,7 +381,7 @@ Folds: plain state + gui stacks. Icons: `@hanzogui/lucide-icons-2`. Theme:
 |---|---|---|---|
 | 1 | Chrome on every page: rail, tree, bar, outline, page header, search trigger, account, theme | base-ui `DocsLayout`/`DocsPage`/sidebar/toc, next-themes, the corner dock | shipped (f11eb49dc2) |
 | 2 | Page bodies: markdown's elements (`components/mdx/prose.tsx`), the parts content names — Callout, Cards, Tabs, Steps, Accordion, Files, code blocks and code tabs (`blocks.tsx`, `tabs.tsx`, `code.tsx`) — and `Example`; content imports none of them; ported and studio pages reach them through the `parts` aliases in next.config | Tailwind typography, base-ui MDX components, shiki.css, the HoverCard link preview (a `title` now) | shipped |
-| 3 | App pages and app parts: landing, catalogs, product sections, provider strip, hero, feedback, search dialog + AI search, 404, blog (HomeLayout), login/callback | base-ui search dialog, `RootProvider`, the remaining Tailwind in `app/` and `components/` | next |
+| 3 | App pages and app parts: landing (on the theme now, no forced dark), hero, product sections, provider strip, catalogs, search (`search.tsx` + `finder.tsx`, ⌘K), feedback (a real `docs.feedback` event, not a console stub), 404, blog (in the shell, on the page frame), sign-in screens | base-ui search dialog, `RootProvider`, HomeLayout, the registry build and the dead preview / AI-search / API-page modules | shipped |
 | 4 | The build: drop `@import 'tailwindcss'`, the presets, `@tailwindcss/postcss` + `postcss.config.mjs`, `tailwind-merge`, `cva`, every `@radix-ui/*` and `@base-ui/*`, `@hanzo/docs-base-ui`/`@hanzo/docs-ui` from `apps/docs`; delete what nothing else consumes (`packages/gui` stub, the registry build) | — | |
 
 **Known gap in @hanzo/ui (8.27.18):** its `.d.ts` augments `@hanzogui/web`

@@ -1,19 +1,18 @@
 import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import type { ComponentProps } from 'react';
 import { createMetadata } from '@/lib/metadata';
 import { source } from '@/lib/source';
 import { inlineCode } from '@/lib/inline-code';
 import { Mermaid } from '@/components/mdx/mermaid';
-import { PageFeedback } from '@/components/feedback';
+import { Feedback } from '@/components/feedback';
 import { getMDXComponents } from '@/components/mdx';
 import { A, Body } from '@/components/mdx/prose';
 import { Card, Cards } from '@/components/mdx/blocks';
 import { Page as Frame } from '@/components/page';
 import { getBreadcrumbItems } from '@hanzo/docs-core/breadcrumb';
 import { findNeighbour, findSiblings } from '@hanzo/docs-core/page-tree';
-import { NotFound } from '@/components/layouts/not-found';
 import { MdxErrorBoundary } from '@/components/mdx-error-boundary';
-import { getSuggestions } from './suggestions';
 import { PathUtils } from '@hanzo/docs-core/source';
 
 export const revalidate = false;
@@ -22,12 +21,9 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   const params = await props.params;
   const page = source.getPage(params.slug);
 
-  if (!page)
-    return (
-      <NotFound
-        getSuggestions={async () => (params.slug ? getSuggestions(params.slug.join(' ')) : [])}
-      />
-    );
+  // The export holds only the pages the source lists; any other address is the
+  // site's 404 (app/not-found.tsx).
+  if (!page) notFound();
 
   const { body: Mdx, toc, lastModified } = await page.data.load();
   const tree = source.getPageTree();
@@ -65,7 +61,7 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
         </MdxErrorBoundary>
         {page.data.index ? <DocsCategory url={page.url} /> : null}
       </Body>
-      <PageFeedback />
+      <Feedback />
     </Frame>
   );
 }

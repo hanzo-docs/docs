@@ -1,7 +1,11 @@
 'use client';
 
 import { AnalyticsProvider, usePageview } from '@hanzo/event/react';
+
+/** The client, for a page that sends an event of its own. */
+export { useAnalytics } from '@hanzo/event/react';
 import { usePathname } from 'next/navigation';
+import type { ReactNode } from 'react';
 
 /** The ONE Hanzo Cloud telemetry front door — POST api.hanzo.ai/v1/event. Cloud
  *  fans the one batched stream out to the web (analytics), product (insights) and
@@ -36,9 +40,10 @@ function Pageview() {
 }
 
 /**
- * Telemetry for a Hanzo docs site — mount once in the root layout:
+ * Telemetry for a Hanzo docs site — mount once in the root layout, around the
+ * app when a page sends events of its own (`useAnalytics` from @hanzo/event/react):
  *
- *     <Analytics product="zen-docs" />
+ *     <Analytics product="zen-docs">{app}</Analytics>
  *
  * The provider owns the ONE @hanzo/event client: it fires the first pageview,
  * registers auto error capture (window.onerror + unhandledrejection), and flushes
@@ -47,12 +52,13 @@ function Pageview() {
  * here is docs-specific except the default host and consent gate — `product` is
  * the only knob, because Cloud derives everything else server-side.
  */
-export function Analytics({ product }: { product: string }) {
+export function Analytics({ product, children }: { product: string; children?: ReactNode }) {
   return (
     <AnalyticsProvider
       config={{ product, host: HOST, ingestKey: INGEST_KEY, enabled: consented() }}
     >
       <Pageview />
+      {children}
     </AnalyticsProvider>
   );
 }

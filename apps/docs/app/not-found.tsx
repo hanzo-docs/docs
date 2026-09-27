@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Shell } from '@/components/shell';
 import { Footer } from '@/components/footer';
-import { NotFound } from '@/components/layouts/not-found';
+import { Missing } from '@/components/missing';
 
 // The export writes this page as 404.html, and the edge serves it for any path
 // the site does not hold (ingress staticFiles errorPage404). A miss is answered
@@ -17,18 +17,18 @@ export const metadata: Metadata = {
 // Static, because a static export has no request to reason about: the path that
 // missed is not known at build time.
 const suggestions = [
-  { id: 'docs', href: '/docs', title: 'Documentation' },
-  { id: 'quickstart', href: '/docs/quickstart', title: 'Quickstart' },
-  { id: 'openapi', href: '/docs/openapi', title: 'API reference' },
-  { id: 'sdks', href: '/docs/sdks', title: 'SDKs' },
-  { id: 'mcp', href: '/docs/mcp', title: 'MCP' },
+  { href: '/docs', title: 'Documentation' },
+  { href: '/docs/quickstart', title: 'Quickstart' },
+  { href: '/docs/openapi', title: 'API reference' },
+  { href: '/docs/sdks', title: 'SDKs' },
+  { href: '/docs/mcp', title: 'MCP' },
 ];
 
 export default function Page() {
   return (
     <>
       <Shell>
-        <NotFound getSuggestions={async () => suggestions} />
+        <Missing suggestions={suggestions} />
       </Shell>
       <Footer />
     </>

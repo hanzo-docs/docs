@@ -11,7 +11,12 @@
 // Rendered inline in the docs (never a link-out). Same lazy-island + fd-token
 // pattern as <ModelsCatalog/>.
 import { useEffect, useMemo, useState } from 'react';
-import { Search, Plug, Boxes, ArrowUpRight } from 'lucide-react';
+import { Text, XStack, YStack } from '@hanzo/gui';
+import { Plug, Boxes, ArrowUpRight } from '@hanzogui/lucide-icons-2';
+import { Grid } from '@hanzo/ui/grid';
+import { Action } from '@/components/action';
+import { Field } from '@/components/field';
+import { muted } from '@/lib/ink';
 
 const MCP_REGISTRY = 'https://registry.modelcontextprotocol.io/v0/servers?limit=100';
 
@@ -48,10 +53,12 @@ export function ConnectorsCatalog() {
     fetch(cur ? `${MCP_REGISTRY}&cursor=${encodeURIComponent(cur)}` : MCP_REGISTRY)
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
       .then((d: { servers: RegItem[]; metadata?: { nextCursor?: string } }) => {
+        // The registry lists a server once per published version, so a name is
+        // kept once, across pages and within one.
         setServers((prev) => {
-          const seen = new Set(prev.map((s) => s.name));
-          const fresh = d.servers.map((i) => i.server).filter((s) => s.name && !seen.has(s.name));
-          return [...prev, ...fresh];
+          const byName = new Map(prev.map((s) => [s.name, s]));
+          for (const { server } of d.servers) if (server.name && !byName.has(server.name)) byName.set(server.name, server);
+          return [...byName.values()];
         });
         setCursor(d.metadata?.nextCursor ?? null);
       })
@@ -72,88 +79,109 @@ export function ConnectorsCatalog() {
   }, [q]);
 
   return (
-    <div className="not-prose my-6">
-      <label className="relative mb-5 flex items-center">
-        <Search className="pointer-events-none absolute left-2.5 size-4 text-fd-muted-foreground" />
-        <input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="Search connectors and MCP servers…"
-          className="w-full rounded-md border border-fd-border bg-fd-background py-2 pl-8 pr-3 text-sm outline-none focus:border-fd-primary"
-        />
-      </label>
+    <YStack gap={28}>
+      <Field value={q} onChange={setQ} placeholder="Search connectors and MCP servers…" />
 
-      {/* Native connectors */}
       {nativeFiltered.length > 0 && (
-        <section className="mb-8">
-          <div className="mb-2 flex items-center gap-2">
-            <Plug className="size-4 text-fd-primary" />
-            <h3 className="m-0 text-base font-semibold text-fd-foreground">Native connectors</h3>
-            <span className="text-xs text-fd-muted-foreground">link once in the console</span>
-          </div>
-          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-            {nativeFiltered.map((c) => {
-              return (
-                <div key={c.id} className="rounded-lg border border-fd-border bg-fd-card p-3">
-                  <div className="flex items-center gap-2">
-                    <Plug className="size-4 text-fd-foreground" />
-                    <span className="font-medium text-fd-foreground">{c.label}</span>
-                    <span className="ml-auto rounded border border-fd-border px-1.5 py-0.5 text-[10px] text-fd-muted-foreground">{c.method}</span>
-                  </div>
-                  <p className="mt-1.5 mb-0 text-sm text-fd-muted-foreground">{c.blurb}</p>
-                </div>
-              );
-            })}
-          </div>
-        </section>
+        <YStack render="section" gap={10}>
+          <Heading icon={<Plug size={16} color="$color12" />} title="Native connectors" note="link once in the console" />
+          <Grid columns={{ min: 220 }} gap={8}>
+            {nativeFiltered.map((c) => (
+              <YStack key={c.id} gap={6} p={12} rounded="$4" borderWidth={1} borderColor="$borderColor" bg="$panel">
+                <XStack gap={8} items="center">
+                  <Plug size={14} color="$color12" />
+                  <Text flex={1} fontSize={14} fontWeight="500" color="$color12">
+                    {c.label}
+                  </Text>
+                  <Badge>{c.method}</Badge>
+                </XStack>
+                <Text fontSize={14} whiteSpace="normal" {...muted}>
+                  {c.blurb}
+                </Text>
+              </YStack>
+            ))}
+          </Grid>
+        </YStack>
       )}
 
       {/* MCP servers — live from the official registry */}
-      <section>
-        <div className="mb-2 flex items-center gap-2">
-          <Boxes className="size-4 text-fd-primary" />
-          <h3 className="m-0 text-base font-semibold text-fd-foreground">MCP servers</h3>
-          <span className="text-xs text-fd-muted-foreground">
-            {servers.length ? `${servers.length}+ indexed · Model Context Protocol registry` : 'loading the registry…'}
-          </span>
-        </div>
-
+      <YStack render="section" gap={10}>
+        <Heading
+          icon={<Boxes size={16} color="$color12" />}
+          title="MCP servers"
+          note={servers.length ? `${servers.length}+ indexed · Model Context Protocol registry` : 'loading the registry…'}
+        />
         {err ? (
-          <p className="text-sm text-fd-muted-foreground">
+          <Text fontSize={14} whiteSpace="normal" {...muted}>
             Couldn’t reach the MCP registry ({err}). Browse it at{' '}
-            <a className="text-fd-primary underline" href="https://registry.modelcontextprotocol.io">registry.modelcontextprotocol.io</a>.
-          </p>
+            <Text render="a" href="https://registry.modelcontextprotocol.io" color="$color12" textDecorationLine="underline">
+              registry.modelcontextprotocol.io
+            </Text>
+            .
+          </Text>
         ) : (
           <>
-            <div className="overflow-hidden rounded-lg border border-fd-border">
+            <YStack rounded="$4" borderWidth={1} borderColor="$borderColor" overflow="hidden">
               {filtered.map((s, i) => (
-                <div key={s.name} className={`flex items-start gap-3 p-3 ${i > 0 ? 'border-t border-fd-border/60' : ''}`}>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="truncate font-medium text-fd-foreground">{s.title || s.name}</span>
-                      <span className="rounded border border-fd-border px-1.5 py-0.5 text-[10px] text-fd-muted-foreground">{connectVia(s)}</span>
-                    </div>
-                    <div className="truncate font-mono text-xs text-fd-muted-foreground">{s.name}</div>
-                    {s.description ? <p className="mt-1 mb-0 line-clamp-2 text-sm text-fd-muted-foreground">{s.description}</p> : null}
-                  </div>
-                </div>
+                <YStack key={s.name} gap={2} p={12} borderTopWidth={i ? 1 : 0} borderColor="$borderColor">
+                  <XStack gap={8} items="center">
+                    <Text fontSize={14} fontWeight="500" color="$color12" numberOfLines={1}>
+                      {s.title || s.name}
+                    </Text>
+                    <Badge>{connectVia(s)}</Badge>
+                  </XStack>
+                  <Text fontFamily="$mono" fontSize={12} numberOfLines={1} {...muted}>
+                    {s.name}
+                  </Text>
+                  {s.description ? (
+                    <Text fontSize={14} numberOfLines={2} whiteSpace="normal" {...muted}>
+                      {s.description}
+                    </Text>
+                  ) : null}
+                </YStack>
               ))}
-              {!filtered.length && !loading ? <div className="p-4 text-sm text-fd-muted-foreground">No servers match “{q}”.</div> : null}
-            </div>
+              {!filtered.length && !loading ? (
+                <Text p={16} fontSize={14} {...muted}>
+                  No servers match “{q}”.
+                </Text>
+              ) : null}
+            </YStack>
             {!q && cursor ? (
-              <button
-                type="button"
-                onClick={() => loadPage(cursor)}
-                disabled={loading}
-                className="mt-3 inline-flex items-center gap-1.5 rounded-md border border-fd-border px-3 py-1.5 text-sm text-fd-foreground hover:bg-fd-muted disabled:opacity-50"
-              >
-                {loading ? 'Loading…' : 'Load more'} <ArrowUpRight className="size-3.5" />
-              </button>
+              <XStack>
+                <Action tone="line" render="button" type="button" onPress={() => loadPage(cursor)} disabled={loading} opacity={loading ? 0.5 : 1}>
+                  <Text fontSize={13} color="$color12">
+                    {loading ? 'Loading…' : 'Load more'}
+                  </Text>
+                  <ArrowUpRight size={13} color="$color12" />
+                </Action>
+              </XStack>
             ) : null}
           </>
         )}
-      </section>
-    </div>
+      </YStack>
+    </YStack>
+  );
+}
+
+function Heading({ icon, title, note }: { icon: React.ReactNode; title: string; note: string }) {
+  return (
+    <XStack gap={8} items="center" flexWrap="wrap">
+      {icon}
+      <Text render="h3" fontSize={16} fontWeight="600" color="$color12">
+        {title}
+      </Text>
+      <Text fontSize={12} {...muted}>
+        {note}
+      </Text>
+    </XStack>
+  );
+}
+
+function Badge({ children }: { children: React.ReactNode }) {
+  return (
+    <Text fontSize={10} px={6} py={1} rounded={4} borderWidth={1} borderColor="$borderColor" {...muted}>
+      {children}
+    </Text>
   );
 }
 

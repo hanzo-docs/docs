@@ -3,7 +3,7 @@ import * as Prose from '@/components/mdx/prose';
 import { Code, CodeBlockTab, CodeBlockTabs, CodeBlockTabsList, CodeBlockTabsTrigger } from '@/components/mdx/code';
 import { Tab, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/mdx/tabs';
 import { Accordion, Accordions, Callout, Card, Cards, File, Files, Folder, Step, Steps } from '@/components/mdx/blocks';
-import { ModelsCatalog, ConnectorsCatalog, InstallCatalog } from '@/components/preview/lazy';
+import { ModelsCatalog, ConnectorsCatalog, InstallCatalog } from '@/components/catalogs';
 import { DocsHero } from '@/components/docs-hero';
 import { ProductSection, ProductSections } from '@/components/product-section';
 import { ProviderStrip } from '@/components/provider-strip';

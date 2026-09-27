@@ -37,12 +37,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${Zen.variable} ${ZenMono.variable} t_dark`} suppressHydrationWarning>
       <body>
-        <NextProvider>
-          <TreeProvider tree={clientTree()}>
-            <Provider>{children}</Provider>
-          </TreeProvider>
-        </NextProvider>
-        <Analytics product="docs" />
+        <Analytics product="docs">
+          <NextProvider>
+            <TreeProvider tree={clientTree()}>
+              <Provider>{children}</Provider>
+            </TreeProvider>
+          </NextProvider>
+        </Analytics>
       </body>
     </html>
   );

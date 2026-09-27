@@ -181,7 +181,7 @@ export const blog = defineCollections({
           id: 'package-manager',
         },
       },
-      remarkPlugins: isLint ? [remarkElementIds] : [remarkSteps, remarkParts],
+      remarkPlugins: isLint ? [remarkElementIds] : [remarkTitle, remarkSteps, remarkParts],
     })(environment);
   },
 });

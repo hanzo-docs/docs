@@ -7,7 +7,7 @@ import { Text, XStack, YStack } from '@hanzo/gui';
 import { Moon, PanelLeft, Search, Sun, X } from '@hanzogui/lucide-icons-2';
 import { useThemeSetting } from '@hanzogui/next-theme';
 import { Sheet, SheetContent, SheetTitle } from '@hanzo/ui';
-import { useSearchContext } from '@hanzo/docs-base-ui/contexts/search';
+import { useSearch } from '@/components/search';
 import { Account } from '@/components/account';
 import { Tool } from '@/components/action';
 import { Brand } from '@/components/brand';
@@ -133,7 +133,7 @@ function Panel({ drawer = false, close }: { drawer?: boolean; close: React.React
  * the dialog mounted.
  */
 function Find({ drawer }: { drawer: boolean }) {
-  const { setOpenSearch } = useSearchContext();
+  const search = useSearch();
   const { setOpen } = useShell();
 
   return (
@@ -142,7 +142,7 @@ function Find({ drawer }: { drawer: boolean }) {
       type="button"
       onPress={() => {
         if (drawer) setOpen(false);
-        setOpenSearch(true);
+        search.setOpen(true);
       }}
       height={36}
       px={10}

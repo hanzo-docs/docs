@@ -2,6 +2,9 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { Text, XStack, YStack } from '@hanzo/gui';
+import { Action } from '@/components/action';
+import { muted } from '@/lib/ink';
 
 // The masthead. Three doors, one model, and nothing else above the fold.
 //
@@ -70,136 +73,100 @@ const PATHS = [
 // description, and a hero that printed them again made /docs say its name twice.
 export function DocsHero() {
   const [active, setActive] = useState<string>(PATHS[0].id);
-
   const path = PATHS.find((d) => d.id === active) ?? PATHS[0];
 
-
   return (
-    <div className="not-prose mb-12">
-      {/* Entrance and panel motion. Colocated rather than pushed into globals.css:
-          these keyframes have exactly one consumer, and globals.css is where the
-          font-token overrides live — not a file to touch for a decoration.
-          Everything is gated on prefers-reduced-motion, which resolves the whole
-          block to no animation rather than a faster one. */}
-      <style>{`
-        @keyframes hanzo-rise {
-          from { opacity: 0; transform: translateY(12px); }
-          to   { opacity: 1; transform: none; }
-        }
-        .hanzo-rise {
-          opacity: 0;
-          animation: hanzo-rise .55s cubic-bezier(.16,1,.3,1) forwards;
-          animation-delay: var(--d, 0ms);
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .hanzo-rise { animation: none; opacity: 1; }
-        }
-      `}</style>
-
+    <YStack gap={16}>
       {/* The three doors. Each is a tab: hovering or focusing selects it, so the
           panel below follows the pointer and a reader compares paths by moving
           across them rather than by clicking three times. */}
-      <div className="mb-4 grid gap-3 sm:grid-cols-3">
-        {PATHS.map((d, i) => {
+      <XStack gap={12} $max-sm={{ flexDirection: 'column' }}>
+        {PATHS.map((d) => {
           const on = d.id === active;
           return (
-            <button
+            <YStack
               key={d.id}
+              render="button"
               type="button"
-              onMouseEnter={() => setActive(d.id)}
+              onHoverIn={() => setActive(d.id)}
               onFocus={() => setActive(d.id)}
-              onClick={() => setActive(d.id)}
+              onPress={() => setActive(d.id)}
               aria-pressed={on}
-              className={[
-                'hanzo-rise group flex flex-col rounded-xl border p-5 text-left',
-                'transition-[transform,border-color,background-color] duration-200',
-                'hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fd-ring',
-                on
-                  ? 'border-fd-foreground/30 bg-fd-accent/50'
-                  : 'border-fd-border bg-fd-card/40 hover:border-fd-foreground/20',
-              ].join(' ')}
-              style={{ ['--d' as string]: `${180 + i * 70}ms` }}
+              flex={1}
+              gap={6}
+              p={18}
+              rounded="$5"
+              borderWidth={1}
+              borderColor={on ? '$color8' : '$borderColor'}
+              bg={on ? '$hover' : '$panel'}
+              items="flex-start"
+              cursor="pointer"
+              hoverStyle={{ borderColor: '$color8' }}
             >
-              <span className="mb-2 text-xs font-medium text-fd-muted-foreground">
+              <Text fontSize="$1" fontWeight="500" {...muted}>
                 {d.eyebrow}
-              </span>
-              <span className="mb-1.5 flex items-center gap-1.5 text-base font-semibold text-fd-foreground">
-                {d.title}
-                <span
-                  aria-hidden
-                  className={[
-                    'transition-[transform,opacity] duration-200',
-                    on ? 'translate-x-0.5 opacity-100' : 'opacity-40',
-                  ].join(' ')}
-                >
-                  →
-                </span>
-              </span>
-              <span className="text-sm leading-relaxed text-fd-muted-foreground">{d.body}</span>
-            </button>
+              </Text>
+              <Text fontSize={15} fontWeight="600" color="$color12">
+                {d.title} {on ? '→' : ''}
+              </Text>
+              <Text fontSize="$2" lineHeight={20} text="left" whiteSpace="normal" {...muted}>
+                {d.body}
+              </Text>
+            </YStack>
           );
         })}
-      </div>
+      </XStack>
 
-      {/* The selected path's real first step. Keyed on the path id so React
-          remounts it and the entrance animation replays on every switch — the
-          movement is what tells you the panel answers the thing you just hovered. */}
-      <div
-        className="hanzo-rise mb-8 overflow-hidden rounded-xl border border-fd-border bg-fd-card/40"
-        style={{ ['--d' as string]: '400ms' }}
-      >
-        <div className="flex items-center justify-between gap-3 border-b border-fd-border px-4 py-2.5">
-          <span className="text-xs font-medium text-fd-muted-foreground">
+      {/* The selected path's real first step. */}
+      <YStack rounded="$5" borderWidth={1} borderColor="$borderColor" bg="$panel" overflow="hidden">
+        <XStack justify="space-between" items="center" gap={12} px={16} py={10} borderBottomWidth={1} borderColor="$borderColor">
+          <Text fontSize="$1" fontWeight="500" {...muted}>
             {path.lang}
-          </span>
-          <Link
-            href={path.href}
-            {...(path.external ? { target: '_blank', rel: 'noreferrer' } : {})}
-            className="text-xs text-fd-muted-foreground underline-offset-4 transition-colors hover:text-fd-foreground hover:underline"
+          </Text>
+          <Text
+            render={path.external ? <a href={path.href} target="_blank" rel="noreferrer" /> : <Link href={path.href} prefetch={false} />}
+            fontSize="$1"
+            {...muted}
+            hoverStyle={{ color: '$color12' }}
           >
             {path.cta} →
-          </Link>
-        </div>
-        <pre key={path.id} className="hanzo-rise overflow-x-auto px-4 py-3.5 text-[13px] leading-relaxed text-fd-foreground">
-          <code>{path.code}</code>
-        </pre>
-      </div>
+          </Text>
+        </XStack>
+        <Text render="pre" fontFamily="$mono" fontSize={13} lineHeight={21} px={16} py={14} whiteSpace="pre" overflowX="auto" color="$color12">
+          {path.code}
+        </Text>
+      </YStack>
 
       {/* The models, because they are the reason to choose the platform at all. */}
-      <Link
-        href="/docs/models"
-        className="hanzo-rise group mb-8 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl border border-fd-border bg-fd-card/40 px-5 py-4 transition-colors hover:border-fd-foreground/25 hover:bg-fd-accent/40"
-        style={{ ['--d' as string]: '460ms' }}
+      <XStack
+        render={<Link href="/docs/models" prefetch={false} />}
+        flexWrap="wrap"
+        items="center"
+        gap={12}
+        px={18}
+        py={14}
+        rounded="$5"
+        borderWidth={1}
+        borderColor="$borderColor"
+        bg="$panel"
+        hoverStyle={{ bg: '$hover' }}
       >
-        <span className="rounded border border-fd-border px-1.5 py-0.5 text-[11px] font-medium text-fd-muted-foreground">
+        <Text fontSize={11} fontWeight="500" px={6} py={1} rounded={6} borderWidth={1} borderColor="$borderColor" {...muted}>
           Models
-        </span>
-        <span className="text-sm font-medium text-fd-foreground">
+        </Text>
+        <Text fontSize="$3" fontWeight="500" color="$color12">
           Zen generates, Enso routes, Kai decides
-        </span>
-        <span className="text-sm text-fd-muted-foreground">
-          Open weights, one router, typed decisions.{' '}
-          <span className="text-fd-foreground/70 underline-offset-4 group-hover:underline">
-            See the models →
-          </span>
-        </span>
-      </Link>
+        </Text>
+        <Text fontSize="$3" {...muted}>
+          Open weights, one router, typed decisions. See the models →
+        </Text>
+      </XStack>
 
-      {/* The action row, in the order a reader needs it: start, hand the docs to an
-          assistant, or — for anyone who would rather be shown than told — go build
-          something that plays. */}
-      <div
-        className="hanzo-rise flex flex-wrap items-center gap-3"
-        style={{ ['--d' as string]: '520ms' }}
-      >
-        <Link
-          href="/docs/quickstart"
-          className="inline-flex h-10 items-center rounded-full bg-fd-primary px-6 text-sm font-medium text-fd-primary-foreground transition-opacity hover:opacity-90"
-        >
+      <XStack>
+        <Action tone="loud" render={<Link href="/docs/quickstart" prefetch={false} />} height={40} px={22} rounded={999}>
           Get started
-        </Link>
-
-      </div>
-    </div>
+        </Action>
+      </XStack>
+    </YStack>
   );
 }

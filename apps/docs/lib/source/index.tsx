@@ -1,7 +1,6 @@
 import { type LoaderPlugin, loader } from '@hanzo/docs-core/source';
 import { blog as blogPosts, docs } from 'collections/server';
 import { createSource } from '@hanzo/docs-mdx/runtime/server';
-import { lucideIconsPlugin } from '@hanzo/docs-core/source/lucide-icons';
 import { inlineCode } from '@/lib/inline-code';
 
 // ONE REFERENCE.
@@ -29,10 +28,9 @@ export const source = loader(
   },
   {
     baseUrl: '/docs',
-    plugins: [
-      pageTreeCodeTitles(),
-      lucideIconsPlugin(),
-    ],
+    // No icon plugin: the rail draws no icons, and each one it resolved was an
+    // SVG element tree serialised into every page's copy of the tree.
+    plugins: [pageTreeCodeTitles()],
   },
 );
 

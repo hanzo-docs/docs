@@ -71,6 +71,7 @@
     "react-force-graph-2d": "catalog:",
     "react-native-web": "catalog:",
     "rehype-katex": "catalog:",
+    "rehype-raw": "catalog:",
     "remark": "catalog:",
     "remark-gfm": "catalog:",
     "remark-math": "catalog:",

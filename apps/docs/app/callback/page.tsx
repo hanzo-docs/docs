@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react'
 
+import { Action } from '@/components/action'
+import { Status } from '@/components/status'
 import { iam } from '@/lib/iam'
 
 export default function CallbackPage() {
@@ -16,29 +18,18 @@ export default function CallbackPage() {
       .catch(() => setError('Authentication failed. Please try again.'))
   }, [])
 
-  if (error) {
+  if (error)
     return (
-      <div className="flex min-h-screen items-center justify-center bg-neutral-950">
-        <div className="text-center">
-          <h2 className="mb-2 text-lg font-semibold text-white">Sign In Failed</h2>
-          <p className="mb-4 text-sm text-neutral-400">{error}</p>
-          <a
-            href="/login"
-            className="inline-block rounded-full bg-white px-4 py-1.5 text-sm font-medium text-black hover:bg-neutral-200 transition-colors"
-          >
-            Try Again
-          </a>
-        </div>
-      </div>
+      <Status
+        title="Sign in failed"
+        note={error}
+        action={
+          <Action tone="loud" render="a" href="/login" mt={6} rounded={999}>
+            Try again
+          </Action>
+        }
+      />
     )
-  }
 
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-neutral-950">
-      <div className="text-center">
-        <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-white border-t-transparent" />
-        <p className="text-sm text-neutral-400">Signing in...</p>
-      </div>
-    </div>
-  )
+  return <Status note="Signing in…" />
 }
