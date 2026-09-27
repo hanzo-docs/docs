@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Docs } from '@/components/layouts/docs';
+import { Shell } from '@/components/shell';
 import { Footer } from '@/components/footer';
 import { NotFound } from '@/components/layouts/not-found';
 
@@ -27,12 +27,10 @@ const suggestions = [
 export default function Page() {
   return (
     <>
-      <Docs>
+      <Shell>
         <NotFound getSuggestions={async () => suggestions} />
-      </Docs>
-      <div className="pt-16 md:pt-24">
-        <Footer />
-      </div>
+      </Shell>
+      <Footer />
     </>
   );
 }

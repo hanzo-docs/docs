@@ -33,14 +33,14 @@ const assetPrefix = sectionAssetPrefix[process.env.DOCS_SECTION ?? ''];
 // Used as the resolution target for unresolvable upstream doc platform packages.
 const emptyProjectModule = path.resolve(__dirname, 'lib/empty-project-module.js');
 
-// On the web `react-native` IS `react-native-web`. @hanzo/gui is cross-platform
-// and its packages name `react-native` (@hanzogui/scroll-view 8.3.5, under the
-// landing page's cards, imports it outright); resolved as written, the bundler
-// parses react-native's Flow source and `/` fails to compile with "Expected
-// 'from', got 'typeOf'". @hanzo/ui/next states the mapping once, for every app on
-// the stack; both bundlers below take it from there. The module ships no types.
+// @hanzo/gui is cross-platform, so its graph names `react-native` and ships
+// `.web.*` siblings beside native entries (react-native-svg under the icons is
+// the one that bites: resolved natively it is Flow source and the build dies on
+// "Expected ',', got '{'"). @hanzo/ui/next is the one statement of what a web
+// build needs — the alias, `.web.*` first, and the gui graph transpiled — for
+// both bundlers at once; the export below wraps this config in it.
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const { GUI_ALIAS } = require('@hanzo/ui/next') as { GUI_ALIAS: Record<string, string> };
+const withGui = require('@hanzo/ui/next') as <T>(config: T, dir: string) => T;
 
 const isExport = process.env.NEXT_EXPORT === '1';
 
@@ -69,7 +69,6 @@ const config: NextConfig = {
   turbopack: {
     resolveAlias: {
       ...collectionsAlias,
-      ...GUI_ALIAS,
       // Ported docs written against the upstream framework name still say
       // `fumadocs-ui`; those components are ours, under our name. They resolve to
       // the base-ui adapter because that is the one this site renders with — the
@@ -147,7 +146,6 @@ const config: NextConfig = {
     // ------------------------------------------------------------------ //
     config.resolve.alias = {
       ...config.resolve.alias,
-      ...GUI_ALIAS,
 
       // Virtual collection modules (internal). Both the namespaced specifier
       // and the bare `collections/*` specifier resolve to the generated source
@@ -272,10 +270,6 @@ const config: NextConfig = {
     '@hanzo/docs-openapi',
     '@hanzogui/shell',
     '@hanzo/brand',
-    // @hanzo/ui ships 'use client' ESM against React 19; the app build has to
-    // compile it for the client/server split and the JSX runtime to resolve,
-    // the same reason the shell above is listed.
-    '@hanzo/ui',
   ],
   serverExternalPackages: [
     'ts-morph',
@@ -319,4 +313,4 @@ const withMDX = createMDX();
 // identical types are nominally distinct here. (The comment this replaces blamed
 // a next@16-vs-next@15 skew that no longer exists — both are on 16.2.12.)
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default withAnalyzer(withMDX(config as any) as any);
+export default withAnalyzer(withMDX(withGui(config, __dirname) as any) as any);

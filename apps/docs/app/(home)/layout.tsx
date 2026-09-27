@@ -39,7 +39,7 @@ export default function Layout({ children }: LayoutProps<'/'>) {
           its links at 4.19:1. It sits on the same dark ground the landing gives
           it, with the site's foreground as @hanzo/ui's --text-primary (its ramp
           has no `.dark`; see the landing layout). */}
-      <div className="dark bg-fd-background text-fd-foreground [--text-primary:var(--color-fd-foreground)]">
+      <div className="t_dark bg-fd-background text-fd-foreground [--text-primary:var(--color-fd-foreground)]">
         <HanzoPreFooterCTA surface="hanzo.ai" />
       </div>
       <Footer />

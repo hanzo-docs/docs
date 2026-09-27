@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import { Card, CardContent, CardTitle, XStack } from '@hanzo/ui';
 import { Grid } from '@hanzo/ui/grid';
-import { AgentActions } from '@/components/agent-actions';
+import { Agent } from '@/components/agent';
 import { Tabs, Tab } from '@hanzo/docs-base-ui/components/tabs';
 import { HeroField } from '@/components/hero-field';
 import { CodeBlock } from '@/components/code-block';
@@ -225,7 +225,7 @@ export default function Page() {
             of contents, which is where the doc pages host it, so without this the
             the landing page offered no way to hand anything to an agent at all. */}
         <div className="relative mt-6" style={{ display: 'grid', justifyItems: 'center', rowGap: 8 }}>
-          <AgentActions />
+          <Agent />
           <p className="text-xs text-neutral-400">
             Or hand this to your agent — it installs the CLI, the MCP server and
             the{' '}

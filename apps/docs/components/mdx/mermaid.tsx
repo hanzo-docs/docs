@@ -1,7 +1,7 @@
 'use client';
 
 import { use, useEffect, useId, useState } from 'react';
-import { useTheme } from 'next-themes';
+import { useThemeSetting } from '@hanzogui/next-theme';
 
 export function Mermaid({ chart }: { chart: string }) {
   const [mounted, setMounted] = useState(false);
@@ -27,7 +27,7 @@ function cachePromise<T>(key: string, setPromise: () => Promise<T>): Promise<T> 
 
 function MermaidContent({ chart }: { chart: string }) {
   const id = useId();
-  const { resolvedTheme } = useTheme();
+  const { resolvedTheme } = useThemeSetting();
   const { default: mermaid } = use(cachePromise('mermaid', () => import('mermaid')));
 
   mermaid.initialize({

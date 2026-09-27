@@ -51,7 +51,7 @@ function pageTreeCodeTitles(): LoaderPlugin {
           return {
             ...node,
             name: (
-              <code key="0" className="text-[0.8125rem]">
+              <code key="0" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8125rem' }}>
                 {node.name}
               </code>
             ),

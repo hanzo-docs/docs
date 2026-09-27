@@ -19,7 +19,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@hanzo/docs-base-ui/com
 import { ArrowRight, Check, ChevronDown, Sparkle } from 'lucide-react';
 import { buttonVariants } from '@hanzo/docs-base-ui/components/ui/button';
 import { cn } from '@/lib/cn';
-import { useTreeContext } from '@hanzo/docs-base-ui/contexts/tree';
+import { useTree } from '@/lib/tree';
 import type { Item, Node } from '@hanzo/docs/core/page-tree';
 import { useRouter } from 'next/navigation';
 
@@ -60,7 +60,7 @@ export default function CustomSearchDialog(props: SharedProps) {
     from: '/api/search',
     tag,
   });
-  const { full } = useTreeContext();
+  const { tree: full } = useTree();
   const router = useRouter();
   const searchMap = useMemo(() => {
     const map = new Map<string, Item>();

@@ -12,7 +12,7 @@ export function inlineCode(s: string | undefined): ReactNode {
   if (parts.length < 3 || parts.length % 2 === 0) return s;
   return parts.map((part, i) =>
     i % 2 ? (
-      <code key={i} className="font-mono text-[0.9em]">
+      <code key={i} style={{ fontFamily: 'var(--font-mono)', fontSize: '0.9em' }}>
         {part}
       </code>
     ) : (

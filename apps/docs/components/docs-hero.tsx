@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { PROVIDER_ICONS } from '@/components/provider-icons';
 
 // The masthead. Three doors, one model, and nothing else above the fold.
 //
@@ -67,25 +66,9 @@ const PATHS = [
   },
 ] as const;
 
-function BrandIcon({ name, className = 'size-4' }: { name: string; className?: string }) {
-  const svg = PROVIDER_ICONS[name];
-  if (!svg) return null;
-  return (
-    <span
-      aria-hidden
-      className={`inline-flex items-center justify-center ${className} [&>svg]:size-full`}
-      dangerouslySetInnerHTML={{ __html: svg }}
-    />
-  );
-}
-
-export function DocsHero({
-  title = 'Build Anything with Hanzo',
-  description = 'Over 400 models, one platform. Pick how much you want to type.',
-}: {
-  title?: string;
-  description?: string;
-}) {
+// No title of its own: the page header above it prints the page's title and
+// description, and a hero that printed them again made /docs say its name twice.
+export function DocsHero() {
   const [active, setActive] = useState<string>(PATHS[0].id);
 
   const path = PATHS.find((d) => d.id === active) ?? PATHS[0];
@@ -112,24 +95,6 @@ export function DocsHero({
           .hanzo-rise { animation: none; opacity: 1; }
         }
       `}</style>
-
-      <div className="hanzo-rise mb-4 flex items-center gap-2.5">
-        <BrandIcon name="hanzo" />
-      </div>
-
-      <h1
-        className="hanzo-rise mb-3 text-4xl font-semibold tracking-tight text-fd-foreground md:text-5xl"
-        style={{ ['--d' as string]: '60ms' }}
-      >
-        {title}
-      </h1>
-
-      <p
-        className="hanzo-rise mb-8 max-w-xl text-base text-fd-muted-foreground md:text-lg"
-        style={{ ['--d' as string]: '120ms' }}
-      >
-        {description}
-      </p>
 
       {/* The three doors. Each is a tab: hovering or focusing selects it, so the
           panel below follows the pointer and a reader compares paths by moving

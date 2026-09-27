@@ -12,18 +12,14 @@ import { Mermaid } from '@/components/mdx/mermaid';
 import { PageFeedback, PageFeedbackBlock } from '@/components/feedback';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@hanzo/docs-base-ui/components/ui/hover-card';
 import Link from '@hanzo/docs-core/link';
-import { findSiblings } from '@hanzo/docs-core/page-tree';
 import { Card, Cards } from '@hanzo/docs-base-ui/components/card';
 import { getMDXComponents } from '@/components/mdx';
 import { Banner } from '@hanzo/docs-base-ui/components/banner';
-import { AgentActions } from '@/components/agent-actions';
 import { Installation } from '@/components/preview/installation';
 import { Customization } from '@/components/preview/customization';
-import {
-  DocsBody,
-  DocsPage,
-  PageLastUpdate,
-} from '@hanzo/docs-base-ui/layouts/docs/page';
+import { Page as Frame } from '@/components/page';
+import { getBreadcrumbItems } from '@hanzo/docs-core/breadcrumb';
+import { findNeighbour, findSiblings } from '@hanzo/docs-core/page-tree';
 import { NotFound } from '@/components/layouts/not-found';
 import { MdxErrorBoundary } from '@/components/mdx-error-boundary';
 import { getSuggestions } from './suggestions';
@@ -52,31 +48,21 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
     );
 
   const { body: Mdx, toc, lastModified } = await page.data.load();
+  const tree = source.getPageTree();
+  const { previous, next } = findNeighbour(tree, page.url);
 
   return (
-    <DocsPage
+    <Frame
+      title={page.data.title}
+      description={inlineCode(page.data.description)}
+      crumbs={getBreadcrumbItems(page.url, tree)}
       toc={toc}
-      tableOfContent={{
-        style: 'clerk',
-        // At the HEAD of the right rail, not floating in the bar above the
-        // article. The header is its own grid area — "sidebar header toc" — so
-        // it stops exactly where the TOC column starts, and a control rendered
-        // there can never line up with the column beside it however it is
-        // padded. Put in the TOC's own header slot it shares that column: its
-        // left edge is "On this page"'s left edge, and the two read as one rail.
-        //
-        // It also follows the rail rather than the bar: below xl the TOC folds
-        // into a popover and this goes with it, which is where a reader on a
-        // narrow window looks for what acts on the page.
-        header: <AgentActions />,
-      }}
+      previous={previous && { name: previous.name, url: previous.url }}
+      next={next && { name: next.name, url: next.url }}
+      updated={lastModified ? DAY.format(new Date(lastModified)) : undefined}
     >
-      <h1 className="text-[1.75em] font-semibold">{page.data.title}</h1>
-      <p className="text-lg text-fd-muted-foreground mb-2">{inlineCode(page.data.description)}</p>
-      {/* No page actions under the title: AgentActions is one control at the
-          head of the right rail, reachable from every page rather than only
-          from under a heading, and one row of chrome instead of two. */}
-      <div className="border-b pb-6" />
+      {/* The body is still Tailwind's typography until the MDX components move
+          onto @hanzo/gui (LLM.md, "Moving onto @hanzo/gui", phase 3). */}
       <div className="prose flex-1 text-fd-foreground/90">
         {page.data.preview && <PreviewRenderer preview={page.data.preview} />}
         <MdxErrorBoundary>
@@ -126,10 +112,13 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
         {page.data.index ? <DocsCategory url={page.url} /> : null}
       </div>
       <PageFeedback />
-      {lastModified && <PageLastUpdate date={lastModified} />}
-    </DocsPage>
+    </Frame>
   );
 }
+
+// One formatter, fixed locale and zone, so the export and the browser print the
+// same date and hydration has nothing to disagree about.
+const DAY = new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeZone: 'UTC' });
 
 function DocsCategory({ url }: { url: string }) {
   return (

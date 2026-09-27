@@ -11,6 +11,7 @@ import { visit } from 'unist-util-visit';
 import type { Transformer } from 'unified';
 import type { Root } from 'mdast';
 import { remarkFixInternalLinks } from './lib/remark-fix-links';
+import { remarkTitle } from './lib/remark-title';
 import { rehypeExample } from './lib/rehype-example';
 
 const isLint = process.env.LINT === '1';
@@ -124,6 +125,7 @@ export const docs = defineDocs({
         remarkPlugins: isLint
           ? [remarkElementIds]
           : [
+              remarkTitle,
               remarkFixInternalLinks,
               remarkPassthroughUnknownJsx,
               remarkSteps,

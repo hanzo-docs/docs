@@ -72,9 +72,9 @@ at docs.hanzo.ai/docs/contributing/docs-architecture). Summary:
   exist, which is why a single-tool MCP product is published as a page and not a
   directory. **API reference and
   SDKs are separated surfaces** (`/docs/openapi`, `/docs/sdks`) reached via the
-  top nav (`components/layouts/shared.tsx`), deliberately NOT in the root
+  top nav (`lib/nav.ts`), deliberately NOT in the root
   sidebar descent. The landing (`app/(landing)/page.tsx` — its own route group,
-  because it carries the docs chrome from `components/layouts/docs.tsx` while
+  because it carries the docs chrome from `components/shell.tsx` while
   `(home)` keeps the marketing chrome for /blog) + docs home
   (`content/docs/index.mdx`) lead with the decentralized spine ("the AI cloud
   you can run yourself"); `content/docs/network.mdx` = self-host/hanzo.network,
@@ -288,44 +288,36 @@ export const source = loader({
 });
 ```
 
-### Page Component
-```tsx
-import { DocsPage, DocsBody } from '@hanzo/docs-ui/layouts/docs/page';
-import defaultMdxComponents from '@hanzo/docs-ui/mdx';
-```
+### The chrome is @hanzo/gui (apps/docs)
 
-### The docs grid is three columns
+Every docs page sits in `components/shell.tsx`: the rail (`rail.tsx` — brand,
+search, `tree.tsx`, account and theme at the foot), and a column holding the bar
+(`bar.tsx`) and the page (`page.tsx` — breadcrumb, title, description, the
+"Use agent" menu `agent.tsx`, body, previous/next; `toc.tsx` beside it). All of
+it is gui stacks and text on theme tokens; no class names.
 
-`layouts/docs/slots/container.tsx` (both UI packages — they are parallel forks,
-so a change to one without the other diverges them): `var(--fd-sidebar-col)
-minmax(0, 1fr) var(--fd-toc-width)`. Rails pin to the edges, the page takes what
-is between them.
-
-It was five columns, with `minmax(min-content, 1fr)` gutters centring a band
-capped at `--fd-layout-width`, and the sidebar AREA spanned the leading gutter as
-well as its own column. Measured on the live site at `/docs/api-keys`: at 1920
-the columns were `176.5 232 1052 268 176.5` and the nav — 232px, right-aligned in
-its area by `items-end` — began 176px from the left edge; at 2560 it began 496px
-in. The empty strip was inside the sidebar's own bordered, filled card, so every
-pixel a wider display gained went there. Now `232 1405 268` and `232 2045 268`,
-nav at x=0.
-
-`--fd-layout-width` no longer bounds this grid. It was doing two jobs at once —
-bounding the reading measure and bounding the band — and the page slot already
-owns the first (`max-w-[900px]`), so what was left was only the job that made the
-gap. The article therefore stays 900px and does not move; what moved is the nav
-(flush left) and the toc (flush right), and the page COLUMN absorbed the gutters.
-Widening the article past 900px is a separate typography decision, untaken.
-
-Narrow viewports are unchanged by construction: below `md`, `--fd-sidebar-width`
-is 0 and the sidebar is a fixed drawer outside the grid, and `--fd-toc-width` is
-0 until a toc exists.
-
-### Layouts
-- `@hanzo/docs-ui/layouts/docs` - Standard docs layout
-- `@hanzo/docs-ui/layouts/home` - Homepage layout
-- `@hanzo/docs-ui/layouts/notebook` - Notebook layout
-- `@hanzo/docs-ui/layouts/flux` - Alternative flux layout (new)
+- **Widths are media props, never JS.** `$max-md`, `$xl` compile to CSS media
+  rules, so the markup a phone hydrates is the markup the export wrote. Rail
+  264px, bar 56px, article 880px with the outline 240px beside it from 1280px;
+  below 768px the rail is a Sheet opened from the bar.
+- **First paint is styled with no script.** gui emits each component's atomic
+  rules as `<style precedence>` during SSR, React hoists them, and `<html>` ships
+  `t_dark`. Check it: render any page with JavaScript off.
+- **One theme authority: `t_dark`/`t_light` on `<html>`.** gui's
+  `NextThemeProvider` (`@hanzogui/next-theme`) writes it before paint and
+  `<Hanzo theme>` follows it (`app/provider.tsx`). The Tailwind `dark:` variant
+  and base-ui's shiki rules answer `.t_dark` until they are gone.
+- **Muted text is `lib/ink.ts`.** gui's grey ramp is not symmetric (light step 10
+  is #333), so muted names step 10 dark / 9 light. Chrome text measures >= 7.5:1
+  in both themes.
+- **gui v5 is shorthand-only.** `bg p px items justify rounded minW maxH t z`
+  exist; `w`/`h` do NOT (use `width`/`height`) — an unknown prop is dropped
+  silently and the box takes its content's size.
+- **One title per page.** The header prints the frontmatter `title`;
+  `lib/remark-title.ts` drops a body's leading `# heading`.
+- **The tree narrows by path, not address.** `lib/tree.tsx` resolves an
+  operation page (not in the tree) to its product page, so the rail opens the
+  reference it belongs to.
 
 ## Build
 
@@ -345,69 +337,57 @@ Build tool: `tsdown` (all packages except `hanzo-docs` wrapper which uses `tsup`
 
 - Next.js 15-16+ with App Router
 - React 19+
-- Tailwind CSS 4+ (see "UI framework debt" — this is the thing being removed)
+- Tailwind CSS 4+ (being removed — "Moving onto @hanzo/gui")
 - pnpm 10+
 
-## UI framework debt — where the tailwind actually is
+## Moving onto @hanzo/gui — the plan
 
-House rule is that `@hanzo/gui` is the only UI framework: it compiles to React
-Native, so an app built on it runs on web, iOS and Android. Tailwind classes and
-Radix primitives are DOM-only and cap an app at the browser. This repo is the
-furthest thing from compliant, and the reason is structural, so measure before
-planning anything.
+House rule: `@hanzo/gui` is the only UI framework (it renders on web, iOS and
+Android; Tailwind classes and Radix/Base UI are DOM-only). docs.hanzo.ai is being
+moved onto it in four phases, each shipped to main when verified live.
 
-**Tailwind here is LIVE, not inert.** 21 apps each carry a real
-`postcss.config.mjs` with `@tailwindcss/postcss`, 60 CSS entrypoints begin
-`@import "tailwindcss"`, and 66 package.json files declare a tailwind dep. Two of
-those entrypoints — `packages/radix-ui/css/style.css` and
-`packages/base-ui/css/style.css` — ship inside the published npm tarballs, so the
-framework's *product* is tailwind. Counted with a utility-token regex over tracked
-files: **39,433 class tokens across 537 source files.**
+**Inventory of what docs.hanzo.ai renders** (Tailwind's own scanner, counting only
+tokens Tailwind would emit CSS for, in class contexts; `content/docs/projects/**`
+excluded — it is upstream's):
 
-**The blocker is that the UI layer is two parallel forks of Fumadocs.**
-`packages/radix-ui` publishes as `@hanzo/docs-ui` (Radix) and `packages/base-ui`
-as `@hanzo/docs-base-ui` (Base UI) — ~110 files / 13.5k lines each, the same
-components twice, kept in step by `.cursor/skills/radix-base-ui-sync`. Both names
-are banned by the house rule, `apps/docs` depends on **both at once**, and every
-app and example in the workspace consumes them. Complying means rebuilding that
-layer once on `@hanzo/gui` and deleting both — a Fumadocs rewrite, not a patch.
-Do not start it piecemeal: swapping one primitive inside a component whose markup
-is still tailwind lowers a grep count and changes nothing real.
+| Area | Tailwind tokens / files | Radix files | Base UI files |
+|---|---|---|---|
+| `apps/docs` app+components+lib, before phase 1 | 2,189 / 52 | 2 | 0 |
+| `apps/docs` after phase 1 | 1,906 / 37 | 2 | 0 |
+| `packages/base-ui` (@hanzo/docs-base-ui) | 2,774 / 76 | 0 | 10 |
+| `packages/radix-ui` (@hanzo/docs-ui, via openapi/twoslash/typescript) | 2,568 / 71 | 9 | 0 |
+| `packages/openapi` | 794 / 23 | 3 | 0 |
+| `packages/story` / `twoslash` | 212 / 4, 3 / 1 | 1, 1 | 0 |
+| authored MDX (`content/docs`, mostly code samples) | 63 / 56 | 0 | 0 |
 
-**Radix → @hanzo/gui primitive map** (checked against `~/work/hanzo/gui/pkgs/ui`,
-not guessed). Present: `presence`→`animate-presence`, `popover`, `select`,
-`dialog`, `accordion`, `tabs`, `collapsible`, `tooltip`, `direction`→
-`core/use-direction`. **Genuinely missing: `navigation-menu` and `scroll-area`**
-(`scroll-view` is the React Native scroller, not a custom-scrollbar area). Those
-two must be built in `@hanzo/gui` before `packages/radix-ui` can be retired.
-`collapsible` exists but `apps/gui-docs` has no page for it — a docs gap here,
-not a missing primitive.
+Plus the CSS: `app/global.css` imports `tailwindcss`, the base-ui, openapi,
+story and twoslash presets, and `tailwindcss-animate`.
 
-**`@zenlm/ui` ships classes that style nothing.** `packages/zenlm-ui` publishes
-`dist/` as JS + d.ts with **no CSS at all**, declares no tailwind dep and has no
-postcss config, yet styles its four components entirely with tailwind utilities
-(and shadcn's `bg-muted` / `text-muted-foreground` tokens). Inside `apps/zen-docs`
-they happen to resolve because that app compiles tailwind; for any other npm
-consumer they are dead strings. Note `apps/zen-docs` pins `@zenlm/ui: ^1.0.6` from
-the registry, not `workspace:*`, so pnpm 11 (`link-workspace-packages` defaults to
-false) serves the published tarball — editing `packages/zenlm-ui` does not change
-what zen-docs renders until a release. Converting it to `@hanzo/gui` style props
-is the highest-value next increment and fixes the inertness by construction,
-because style props travel with the component.
+**What replaces what.** Layout, rail, bar, outline and page header: our own gui
+stacks (done). Drawer: `@hanzo/ui` Sheet. Menus: `@hanzo/ui` DropdownMenu.
+Folds: plain state + gui stacks. Icons: `@hanzogui/lucide-icons-2`. Theme:
+`@hanzogui/next-theme`. Tree/TOC logic stays in `@hanzo/docs-core` (headless).
+
+| Phase | Scope | Replaces | Status |
+|---|---|---|---|
+| 1 | Chrome on every page: rail, tree, bar, outline, page header, search trigger, account, theme | base-ui `DocsLayout`/`DocsPage`/sidebar/toc, next-themes, the corner dock | shipped |
+| 2 | MDX components: Callout, Cards, Tabs, Steps, Accordion, CodeBlock (+ shiki vars), Files, TypeTable, Banner, Heading, ImageZoom, InlineTOC, link hover card; `getMDXComponents` ours; the `@hanzo/docs-base-ui/components/*` imports in content aliased to ours | base-ui/radix components, `twoslash` popover, openapi UI | next |
+| 3 | Page bodies and app pages: prose typography, landing, catalogs, product sections, feedback, search dialog + AI search, 404, blog (HomeLayout), login/callback | Tailwind typography, base-ui search dialog, `RootProvider` | |
+| 4 | The build: drop `@import 'tailwindcss'`, the presets, `@tailwindcss/postcss` + `postcss.config.mjs`, `tailwind-merge`, `cva`, every `@radix-ui/*` and `@base-ui/*`, `@hanzo/docs-base-ui`/`@hanzo/docs-ui` from `apps/docs`; delete what nothing else consumes (`packages/gui` stub, the registry build) | — | |
+
+**Known gap in @hanzo/ui (8.27.18):** its `.d.ts` augments `@hanzogui/web`
+without depending on it, so in this workspace the augmentation lands on the
+hoisted 8.1.1 copy while `@hanzo/gui` 8.3.5 uses 8.3.5 — every gui shorthand
+fails typecheck here (runtime is correct; `ignoreBuildErrors` is on). The fix is
+@hanzo/ui declaring `@hanzogui/web`/`core` as dependencies of the same train.
 
 **Out of scope when counting:** `content/docs/projects/**` is a snapshot of
-upstream repos, so tailwind there is upstream's and a refresh overwrites edits.
-Two more grep hits are not tailwind at all —
-the Java/Spring IAM guide uses **Bootstrap** in a Thymeleaf template, and the IAM
-login-customization guide uses custom class names with their own `<style>` blocks.
+upstream repos. The Java/Spring IAM guide uses Bootstrap in a Thymeleaf template
+and the IAM login-customization guide uses its own `<style>` blocks — not Tailwind.
 
-**Shadcn is gone** (`packages/shadcn` + `examples/next-shadcn` deleted). It
-existed to emit `npx shadcn@latest add ...` into rendered docs, which puts a
-DOM-only library in the reader's app.
-
-**Authored docs are converted.** The commerce recipes/storefront pages and
-`zen5.mdx` teach `@hanzo/gui` now. Keep it that way: a snippet teaching tailwind
-produces tailwind in someone's app, so examples count as shipping surface.
+**`@zenlm/ui` ships classes that style nothing** (`packages/zenlm-ui`: Tailwind
+utilities, no CSS, no Tailwind dep); `apps/zen-docs` pins the published tarball.
+Converting it to gui style props fixes it by construction.
 
 ### Baseline when touching this repo
 
