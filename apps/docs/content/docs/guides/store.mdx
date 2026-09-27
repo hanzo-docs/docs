@@ -3,8 +3,6 @@ title: "Store"
 description: "KV round-trip — create a store, read it back, delete it."
 ---
 
-import { Tab, Tabs } from '@hanzo/docs-base-ui/components/tabs'
-
 **KV round-trip — create a store, read it back, delete it.**
 
 > The delete belongs in the language's finally/defer, so a failed read still cleans up instead of leaving the store for the next run to collide with. This is the provisioning plane — create a KV STORE, read it, drop it — at its served address, /v1/provisioning/kv. The bare /v1/kv spellings are the legacy dialect the binary itself tags compat, and the publication drops a compat operation by that declaration — so the day this file named them it would have named ids the published document does not have, which is exactly what test_flows.py went red on. Probed at api.hanzo.ai: GET /v1/provisioning/kv answers 403 while /v1/provisioning/kv-zzq9 answers 404, which is the existence proof this file requires (auth runs before the handler; only a mounted route can refuse).

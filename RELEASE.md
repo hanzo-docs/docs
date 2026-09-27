@@ -27,16 +27,24 @@ queue there (Actions is also disabled on hanzo-docs/docs).
 
 ## Fire it
 
-A push to `main` touching `apps/docs/**`, `packages/**`, `pnpm-lock.yaml`,
-`scripts/check-export.sh` or the workflow itself. The forge pulls this repo every
-10 minutes; `POST /v1/repos/hanzoai/docs/mirror-sync` pulls it now. To rebuild an
-unchanged tree, dispatch it:
+Push to GitHub `main`, then pull the forge and dispatch. Nothing does either on
+its own today, measured 2026-09-27: the forge's copy of `main` sat at
+`da72bf0527` for a day while GitHub moved (its `update_mirrors` cron logs every
+ten minutes and moves nothing), the repo carries no Actions unit so a push
+queues no run, and every recent deploy run is a `workflow_dispatch`.
 
 ```sh
+curl -X POST -H "Authorization: token $FORGE_TOKEN" \
+  https://git.hanzo.ai/v1/repos/hanzoai/docs/mirror-sync
 curl -X POST -H "Authorization: token $FORGE_TOKEN" \
   https://git.hanzo.ai/v1/repos/hanzoai/docs/actions/workflows/deploy.yml/dispatches \
   -d '{"ref":"refs/heads/main"}'
 ```
+
+`FORGE_TOKEN` is minted on the forge pod, as the git user:
+`gitd admin user generate-access-token --username <you> --token-name <name>
+--scopes write:repository --raw`. Run status: `action_run` in the forge's
+Postgres (status 1 ok, 2 failed, 6 running).
 
 One publish runs at a time (`concurrency: deploy-docs`, no cancel): a newer push
 waits for the running one, and the newest waiting commit is the one that

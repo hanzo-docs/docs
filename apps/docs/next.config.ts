@@ -42,6 +42,19 @@ const emptyProjectModule = path.resolve(__dirname, 'lib/empty-project-module.js'
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const withGui = require('@hanzo/ui/next') as <T>(config: T, dir: string) => T;
 
+// Content written against a docs framework's parts by name — ported upstream
+// pages say `fumadocs-ui`, the studio submodule says `@hanzo/docs-ui` and
+// `@hanzo/docs-base-ui` — gets this site's gui parts under those names, the
+// same ones components/mdx.tsx hands every page. One set of parts, so a Tabs
+// nested inside another sees its parent's context.
+const parts = {
+  'fumadocs-ui/components/callout': './components/mdx/blocks.tsx',
+  'fumadocs-ui/components/tabs': './components/mdx/tabs.tsx',
+  '@hanzo/docs-ui/components/callout': './components/mdx/blocks.tsx',
+  '@hanzo/docs-ui/components/tabs': './components/mdx/tabs.tsx',
+  '@hanzo/docs-base-ui/components/card': './components/mdx/blocks.tsx',
+};
+
 const isExport = process.env.NEXT_EXPORT === '1';
 
 const config: NextConfig = {
@@ -69,21 +82,7 @@ const config: NextConfig = {
   turbopack: {
     resolveAlias: {
       ...collectionsAlias,
-      // Ported docs written against the upstream framework name still say
-      // `fumadocs-ui`; those components are ours, under our name. They resolve to
-      // the base-ui adapter because that is the one this site renders with — the
-      // layout, the provider and the MDX map all come from it. Aliasing to the
-      // radix adapter pulled a second copy of the component library into the
-      // bundle, and a Tabs from the other copy cannot see this one's context, so
-      // a nested Tabs drew its own frame instead of tucking under its parent.
-      'fumadocs-ui/components/callout': '@hanzo/docs-base-ui/components/callout',
-      'fumadocs-ui/components/tabs': '@hanzo/docs-base-ui/components/tabs',
-      // Content that still names the radix adapter (`@hanzo/docs-ui`) — the studio
-      // submodule's pages — resolves to the same base-ui components, for the same
-      // reason: this site renders on ONE adapter, and this package is not one of
-      // its dependencies since every docs site moved onto the same chrome.
-      '@hanzo/docs-ui/components/callout': '@hanzo/docs-base-ui/components/callout',
-      '@hanzo/docs-ui/components/tabs': '@hanzo/docs-base-ui/components/tabs',
+      ...parts,
       '@docusaurus': './lib/empty-project-module.js',
       '@theme': './lib/empty-project-module.js',
       '@theme/Tabs': './lib/empty-project-module.js',
@@ -157,12 +156,8 @@ const config: NextConfig = {
       'collections/browser': path.resolve(__dirname, '.docs/browser.ts'),
       'collections/dynamic': path.resolve(__dirname, '.docs/dynamic.ts'),
 
-      // (a) Upstream framework name -> the same components under ours,
-      //     on the base-ui adapter this site renders with (see turbopack above)
-      'fumadocs-ui/components/callout': '@hanzo/docs-base-ui/components/callout',
-      'fumadocs-ui/components/tabs': '@hanzo/docs-base-ui/components/tabs',
-      '@hanzo/docs-ui/components/callout': '@hanzo/docs-base-ui/components/callout',
-      '@hanzo/docs-ui/components/tabs': '@hanzo/docs-base-ui/components/tabs',
+      // (a) Content written against a framework's own parts -> ours
+      ...Object.fromEntries(Object.entries(parts).map(([name, file]) => [name, path.resolve(__dirname, file)])),
 
       // Other doc-platform packages -> no-op stub
       '@docusaurus': emptyProjectModule,

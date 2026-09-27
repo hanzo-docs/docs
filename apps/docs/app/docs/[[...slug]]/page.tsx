@@ -1,22 +1,13 @@
 import type { Metadata } from 'next';
-import { type ComponentProps, type FC, type ReactNode } from 'react';
-import * as Twoslash from '@hanzo/docs-twoslash/ui';
-import { Callout } from '@hanzo/docs-base-ui/components/callout';
-import { TypeTable } from '@hanzo/docs-base-ui/components/type-table';
-import * as Preview from '@/components/preview';
+import type { ComponentProps } from 'react';
 import { createMetadata } from '@/lib/metadata';
 import { source } from '@/lib/source';
 import { inlineCode } from '@/lib/inline-code';
-import { Wrapper } from '@/components/preview/wrapper';
 import { Mermaid } from '@/components/mdx/mermaid';
-import { PageFeedback, PageFeedbackBlock } from '@/components/feedback';
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@hanzo/docs-base-ui/components/ui/hover-card';
-import Link from '@hanzo/docs-core/link';
-import { Card, Cards } from '@hanzo/docs-base-ui/components/card';
+import { PageFeedback } from '@/components/feedback';
 import { getMDXComponents } from '@/components/mdx';
-import { Banner } from '@hanzo/docs-base-ui/components/banner';
-import { Installation } from '@/components/preview/installation';
-import { Customization } from '@/components/preview/customization';
+import { A, Body } from '@/components/mdx/prose';
+import { Card, Cards } from '@/components/mdx/blocks';
 import { Page as Frame } from '@/components/page';
 import { getBreadcrumbItems } from '@hanzo/docs-core/breadcrumb';
 import { findNeighbour, findSiblings } from '@hanzo/docs-core/page-tree';
@@ -24,15 +15,6 @@ import { NotFound } from '@/components/layouts/not-found';
 import { MdxErrorBoundary } from '@/components/mdx-error-boundary';
 import { getSuggestions } from './suggestions';
 import { PathUtils } from '@hanzo/docs-core/source';
-
-function PreviewRenderer({ preview }: { preview: string }): ReactNode {
-  if (preview && preview in Preview) {
-    const Comp = Preview[preview as keyof typeof Preview];
-    return <Comp />;
-  }
-
-  return null;
-}
 
 export const revalidate = false;
 
@@ -61,56 +43,28 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
       next={next && { name: next.name, url: next.url }}
       updated={lastModified ? DAY.format(new Date(lastModified)) : undefined}
     >
-      {/* The body is still Tailwind's typography until the MDX components move
-          onto @hanzo/gui (LLM.md, "Moving onto @hanzo/gui", phase 3). */}
-      <div className="prose flex-1 text-fd-foreground/90">
-        {page.data.preview && <PreviewRenderer preview={page.data.preview} />}
+      <Body>
         <MdxErrorBoundary>
           <Mdx
             components={getMDXComponents({
-              ...Twoslash,
-              a({ href, ...props }) {
+              // A link to another page here says where it goes before it is
+              // followed: its title and description, as the link's own title.
+              a({ href, ...props }: ComponentProps<'a'>) {
                 const found = source.getPageByHref(href ?? '', {
                   dir: PathUtils.dirname(page.path),
                 });
-
-                if (!found) return <Link href={href} {...props} />;
-
-                return (
-                  <HoverCard>
-                    <HoverCardTrigger
-                      href={found.hash ? `${found.page.url}#${found.hash}` : found.page.url}
-                      {...props}
-                    >
-                      {props.children}
-                    </HoverCardTrigger>
-                    <HoverCardContent className="text-sm">
-                      <p className="font-medium">{found.page.data.title}</p>
-                      <p className="text-fd-muted-foreground">{inlineCode(found.page.data.description)}</p>
-                    </HoverCardContent>
-                  </HoverCard>
-                );
+                if (!found) return <A href={href} {...props} />;
+                const to = found.hash ? `${found.page.url}#${found.hash}` : found.page.url;
+                const about = [found.page.data.title, found.page.data.description].filter(Boolean).join(' — ');
+                return <A href={to} title={about} {...props} />;
               },
-              FeedbackBlock: ({ children, ...props }) => (
-                <PageFeedbackBlock {...props}>
-                  {children}
-                </PageFeedbackBlock>
-              ),
-              Banner,
               Mermaid,
-              TypeTable,
-              Wrapper,
-              blockquote: Callout as unknown as FC<ComponentProps<'blockquote'>>,
-              DocsCategory: ({ url }) => {
-                return <DocsCategory url={url ?? page.url} />;
-              },
-              Installation,
-              Customization,
+              DocsCategory: ({ url }: { url?: string }) => <DocsCategory url={url ?? page.url} />,
             })}
           />
         </MdxErrorBoundary>
         {page.data.index ? <DocsCategory url={page.url} /> : null}
-      </div>
+      </Body>
       <PageFeedback />
     </Frame>
   );

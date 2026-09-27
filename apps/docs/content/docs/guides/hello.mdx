@@ -3,8 +3,6 @@ title: "Hello"
 description: "Identity — prove the key works and print who it belongs to."
 ---
 
-import { Tab, Tabs } from '@hanzo/docs-base-ui/components/tabs'
-
 **Identity — prove the key works and print who it belongs to.**
 
 > Verified with a nonsense-sibling control: GET /v1/account/keys answers 403 &#123;"code":"forbidden","error":"sign in to manage API keys"&#125; with NO key and with a bogus one, while GET /v1/account/keys-zzq9 answers 404 — so the 403 is this route refusing, not a wildcard route. With a real key it returns the caller's own keys. An SDK's hello must be the call that says no.

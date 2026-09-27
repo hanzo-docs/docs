@@ -269,8 +269,6 @@ function render(p: Pricing): string {
     )}`,
     '---',
     '',
-    "import { Callout } from '@hanzo/docs-base-ui/components/callout'",
-    "import { Cards, Card } from '@hanzo/docs-base-ui/components/card'",
     "import { Sparkle, Boxes, Key, Code } from 'lucide-react'",
     '',
     '# Pricing',

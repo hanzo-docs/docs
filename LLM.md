@@ -7,7 +7,7 @@ Fork of [Hanzo Docs](https://github.com/hanzoai/docs) with all packages renamed 
 **Runbook: [`RELEASE.md`](./RELEASE.md).** One lane:
 
     push  ->  github.com/hanzo-docs/docs         origin; GitHub Actions is OFF here
-      ->  git.hanzo.ai/hanzoai/docs              a pull mirror, 10-minute interval
+      ->  git.hanzo.ai/hanzoai/docs              a pull mirror; sync + dispatch (RELEASE.md)
           .github/workflows/deploy.yml           the forge reads this directory natively
       ->  pnpm build --filter=docs               NEXT_EXPORT=1 -> apps/docs/out
       ->  hanzoai/ci .github/actions/site        Sites project `docs`
@@ -315,6 +315,14 @@ it is gui stacks and text on theme tokens; no class names.
   silently and the box takes its content's size.
 - **One title per page.** The header prints the frontmatter `title`;
   `lib/remark-title.ts` drops a body's leading `# heading`.
+- **Page bodies are gui too.** MDX hands each markdown tag to
+  `components/mdx.tsx`; blocks are spaced by `Body`'s gap, never their own
+  margins, so a list inside a callout keeps its own rhythm. Running text sets
+  `whiteSpace: normal` (gui text keeps whitespace, markdown hard-wraps). Tables
+  keep the browser's table layout through `style.display`. Code tokens carry
+  `color: light-dark(…)` (`lib/shiki.ts`), so `color-scheme` picks the palette
+  and no stylesheet knows the theme. Steps are the `Steps`/`Step` parts
+  (`lib/remark-parts.ts` renames remark-steps' marked divs).
 - **The tree narrows by path, not address.** `lib/tree.tsx` resolves an
   operation page (not in the tree) to its product page, so the rail opens the
   reference it belongs to.
@@ -370,9 +378,9 @@ Folds: plain state + gui stacks. Icons: `@hanzogui/lucide-icons-2`. Theme:
 
 | Phase | Scope | Replaces | Status |
 |---|---|---|---|
-| 1 | Chrome on every page: rail, tree, bar, outline, page header, search trigger, account, theme | base-ui `DocsLayout`/`DocsPage`/sidebar/toc, next-themes, the corner dock | shipped |
-| 2 | MDX components: Callout, Cards, Tabs, Steps, Accordion, CodeBlock (+ shiki vars), Files, TypeTable, Banner, Heading, ImageZoom, InlineTOC, link hover card; `getMDXComponents` ours; the `@hanzo/docs-base-ui/components/*` imports in content aliased to ours | base-ui/radix components, `twoslash` popover, openapi UI | next |
-| 3 | Page bodies and app pages: prose typography, landing, catalogs, product sections, feedback, search dialog + AI search, 404, blog (HomeLayout), login/callback | Tailwind typography, base-ui search dialog, `RootProvider` | |
+| 1 | Chrome on every page: rail, tree, bar, outline, page header, search trigger, account, theme | base-ui `DocsLayout`/`DocsPage`/sidebar/toc, next-themes, the corner dock | shipped (f11eb49dc2) |
+| 2 | Page bodies: markdown's elements (`components/mdx/prose.tsx`), the parts content names — Callout, Cards, Tabs, Steps, Accordion, Files, code blocks and code tabs (`blocks.tsx`, `tabs.tsx`, `code.tsx`) — and `Example`; content imports none of them; ported and studio pages reach them through the `parts` aliases in next.config | Tailwind typography, base-ui MDX components, shiki.css, the HoverCard link preview (a `title` now) | shipped |
+| 3 | App pages and app parts: landing, catalogs, product sections, provider strip, hero, feedback, search dialog + AI search, 404, blog (HomeLayout), login/callback | base-ui search dialog, `RootProvider`, the remaining Tailwind in `app/` and `components/` | next |
 | 4 | The build: drop `@import 'tailwindcss'`, the presets, `@tailwindcss/postcss` + `postcss.config.mjs`, `tailwind-merge`, `cva`, every `@radix-ui/*` and `@base-ui/*`, `@hanzo/docs-base-ui`/`@hanzo/docs-ui` from `apps/docs`; delete what nothing else consumes (`packages/gui` stub, the registry build) | — | |
 
 **Known gap in @hanzo/ui (8.27.18):** its `.d.ts` augments `@hanzogui/web`

@@ -3,8 +3,6 @@ title: "Agent"
 description: "Create an agent, run it, read the run back."
 ---
 
-import { Tab, Tabs } from '@hanzo/docs-base-ui/components/tabs'
-
 **Create an agent, run it, read the run back.**
 
 > `ref` accepts the public id (agent_...) OR the org-unique name, which is why run and read can both use the name just created without waiting for an id. Names are org-unique, so an example must not hardcode one. The last step is the RUN list, not the agent read: a run is asynchronous, so the example polls it until the run it started is terminal.

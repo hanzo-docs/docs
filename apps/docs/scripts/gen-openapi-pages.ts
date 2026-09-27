@@ -485,8 +485,6 @@ function renderOperation(
   );
   L.push('---');
   L.push('');
-  L.push("import { Tab, Tabs } from '@hanzo/docs-base-ui/components/tabs'");
-  L.push('');
   L.push(`\`${code(address)}\``);
   L.push('');
   if (op.deprecated) {
@@ -674,8 +672,6 @@ function renderProduct(
   );
   L.push('---');
   L.push('');
-  L.push("import { Tab, Tabs } from '@hanzo/docs-base-ui/components/tabs'");
-  L.push('');
   L.push(
     synopsis
       ? prose(synopsis)
@@ -764,10 +760,6 @@ function renderIndex(
   );
   L.push('icon: Boxes');
   L.push('---');
-  L.push('');
-  L.push("import { Cards, Card } from '@hanzo/docs-base-ui/components/card'");
-  L.push('');
-  L.push('# Every capability');
   L.push('');
   L.push(
     `One cloud, one credential. **${total} capabilities**, and each is one word that names the same thing everywhere — its address, its command group, its client class, its MCP tool, this page and its HIP. ${products.length} of them speak REST over HTTPS and carry **${ops} operations**, generated straight from the OpenAPI document that also generates the SDKs, the CLI and the MCP tools.`,

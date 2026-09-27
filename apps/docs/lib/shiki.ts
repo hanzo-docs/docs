@@ -44,9 +44,20 @@ export const CODE_COLORS = {
   'github-light-default': { '#6e7781': '#59636e' },
 }
 
-/** Shape shiki/rehype-code want: `{ themes, colorReplacements }`. One object, so
- *  no caller spells the pair. */
-export const shikiConfig = { themes: CODE_THEME, colorReplacements: CODE_COLORS }
+/**
+ * Shape shiki/rehype-code want: `{ themes, colorReplacements, defaultColor }`.
+ * One object, so no caller spells the pair.
+ *
+ * `light-dark()` writes each token as `color: light-dark(<light>, <dark>)`, so
+ * the page's `color-scheme` — set by the theme class on <html> — chooses the
+ * palette in the browser. No stylesheet has to know which theme is on, which is
+ * what lets the code block be a gui part with no rules of its own.
+ */
+export const shikiConfig = {
+  themes: CODE_THEME,
+  colorReplacements: CODE_COLORS,
+  defaultColor: 'light-dark()',
+} as const
 
 /** The former name. Kept because `source.config.ts` imports it. */
 export const defaultShikiOptions = shikiConfig

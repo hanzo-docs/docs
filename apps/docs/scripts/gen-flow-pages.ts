@@ -137,8 +137,6 @@ function renderFlow(
   L.push(`description: ${JSON.stringify(flow.summary)}`);
   L.push('---');
   L.push('');
-  L.push("import { Tab, Tabs } from '@hanzo/docs-base-ui/components/tabs'");
-  L.push('');
   L.push(`**${text(flow.summary)}**`);
   L.push('');
   L.push(...doorNotice(doc, reach));
@@ -181,10 +179,6 @@ function renderIndex(flows: Flow[], doc: Document): string {
   );
   L.push('icon: Rocket');
   L.push('---');
-  L.push('');
-  L.push("import { Cards, Card } from '@hanzo/docs-base-ui/components/card'");
-  L.push('');
-  L.push('# Guides');
   L.push('');
   // No counts in the prose. A number here is a fact about today's document that
   // reads as a claim about the product, and it is wrong the next time the

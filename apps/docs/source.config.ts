@@ -12,6 +12,7 @@ import type { Transformer } from 'unified';
 import type { Root } from 'mdast';
 import { remarkFixInternalLinks } from './lib/remark-fix-links';
 import { remarkTitle } from './lib/remark-title';
+import { remarkParts } from './lib/remark-parts';
 import { rehypeExample } from './lib/rehype-example';
 
 const isLint = process.env.LINT === '1';
@@ -129,6 +130,7 @@ export const docs = defineDocs({
               remarkFixInternalLinks,
               remarkPassthroughUnknownJsx,
               remarkSteps,
+              remarkParts,
               remarkMath,
               [remarkBlockId, { addDataAttribute: 'feedback' }],
               [remarkAutoTypeTable, typeTableOptions],
@@ -179,7 +181,7 @@ export const blog = defineCollections({
           id: 'package-manager',
         },
       },
-      remarkPlugins: isLint ? [remarkElementIds] : [remarkSteps],
+      remarkPlugins: isLint ? [remarkElementIds] : [remarkSteps, remarkParts],
     })(environment);
   },
 });

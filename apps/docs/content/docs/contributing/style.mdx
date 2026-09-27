@@ -83,10 +83,10 @@ interchangeable and the choice is mechanical:
   tab="Python"`). Consecutive tabbed fences merge into one group, with no import
   and no JSX. A fence in the run that omits `tab` ends the group.
 
-- *Tabs whose bodies carry prose, or nested tabs* — the JSX form, which needs
-  `import { Tab, Tabs } from '@hanzo/docs-base-ui/components/tabs'` in the same
-  file. The element is `<Tab value="…">`. There is no `<TabsContent>`; a page
-  using it renders nothing, which is how it went unnoticed.
+- *Tabs whose bodies carry prose, or nested tabs* — the JSX form,
+  `<Tabs items={[…]}>` with a `<Tab value="…">` per item. Tabs, Callout,
+  Cards, Steps and the other parts are provided to every page, so a file
+  imports none of them (`components/mdx.tsx` is the list).
 
 Order the languages the same way everywhere: `curl`, CLI, TypeScript, Python,
 Go, Rust, then the rest.
