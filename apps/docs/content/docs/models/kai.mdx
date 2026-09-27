@@ -34,8 +34,8 @@ the others into one sequence. So:
   probabilities respect the order the levels were given in.
 
 Kai runs in pure Rust on [hanzo-ml](https://github.com/hanzoai/ml), on CPU,
-Metal, CUDA and ROCm. Its encoder starts from the multilingual weights of
-Laya, the baseline below.
+Metal, CUDA and ROCm. Its encoder starts from Laya's multilingual weights
+(Apache-2.0).
 
 ## Call it
 
@@ -73,19 +73,23 @@ Checkpoint, data, fit and per-suite scores:
 [hanzoai/benchmarks `decision/results/kai-a5`](https://github.com/hanzoai/benchmarks/blob/b07ba42/decision/results/kai-a5/README.md)
 (commit `b07ba42`).
 
+Two of those suites are drawn from rows Laya trained on. On held-out rows none
+of the models trained on, Laya leads both: phishing 0.922 against Kai's 0.900,
+and support triage 0.580 against 0.417, where Kai sends pricing and payment
+questions to billing. Suites, deduplication and scores:
+[`decision/held`](https://github.com/hanzoai/benchmarks/blob/6273430/decision/held/README.md)
+(commit `6273430`).
+
 ## Status
 
 | Part | Status |
 |---|---|
 | **Kai**, the model (`hanzoai/kai`, one checkpoint line, a revision per training stage) | stage a5 measured above; weights not published |
 | **Endpoint**: `POST https://api.hanzo.ai/v1/decisions`, serving `kai` and Jev | being added to the gateway; see [Decisions](/docs/decisions) |
-| **Baseline**: Laya's released checkpoints, [`kai-1`](https://huggingface.co/hanzoai/kai-1), [`kai-1-multilingual`](https://huggingface.co/hanzoai/kai-1-multilingual) and [`kai-1-agent`](https://huggingface.co/hanzoai/kai-1-agent), unmodified, Apache-2.0 | served natively by the runtime as `laya`, `laya-multilingual` and `laya-agent`, at parity with the reference implementation |
 | **Decision Programs, Packages, policy gates** | landed, as a library |
 | **Programs on the wire** (`"program": "agent.preflight@1"`) | specified in HIP-1332 §17; not served |
 | **Kai inside Enso** | in progress; the agent programs are written, each set to `shadow` or `advisory`, and not yet wired into Enso |
 
-The `kai-1` repositories hold the baseline Kai is measured against, not a Kai
-release.
 
 ## Run a program
 
@@ -99,17 +103,17 @@ of the run.
 
 The smallest program is the agent form — a model, a mode, typed questions,
 thresholds and an optional verdict rule. This one gates a shell command before
-an agent runs it. The agent programs pin `laya-agent`, the baseline's
-typed-decisions checkpoint, and its calibration, because a gate's thresholds
-hold only for the probabilities they were validated on.
+an agent runs it. The agent programs pin `kai` and stage a5's calibration,
+because a gate's thresholds hold only for the probabilities they were validated
+on; answered under another calibration, a program falls back to `shadow`.
 
 ```json title="agent.command-risk@1"
 {
   "id": "agent.command-risk@1",
   "description": "Before an agent runs a shell command: allow it, ask the user, or deny it.",
-  "model": "laya-agent",
+  "model": "kai",
   "mode": "advisory",
-  "calibration": "cal_6dbb072f8109a222",
+  "calibration": "cal_47711d44267fdbdd",
   "questions": {
     "verdict": {"type": "choice", "instructions": "Should the agent run this shell command?",
                 "criteria": {"allow": "read-only, or confined to the working repository",
