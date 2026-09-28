@@ -192,8 +192,10 @@ tuned on Jev's `confidence` is to be tuned again.
 ## Speed
 
 A call to Kai through `api.hanzo.ai` takes longer than a call to Jev through
-OpenRouter, and most of it is spent outside the model. Timed as the harness
-timed Jev, each call on a new connection:
+OpenRouter. About 400 ms of each call (p50) is spent outside the model, in the
+network and the gateway, and five questions over a typed-decision state take
+835 ms in the model, on CPU. Timed as the harness timed Jev, each call on a new
+connection:
 
 | Requests | Jev, whole call | Kai, whole call | Kai, in the model (`latency_ms`) |
 |---|---|---|---|
@@ -202,11 +204,10 @@ timed Jev, each call on a new connection:
 
 Jev's column is the harness's, from
 [`kai-a7/scores.json`](https://github.com/hanzoai/benchmarks/blob/c61361f/decision/results/kai-a7/scores.json).
-Kai's is `api.hanzo.ai` measured from one client on 2026-09-28, with the model
-on CPU; a call's time past `latency_ms` is the network and the gateway. AG News
-counts the 287 calls that were the first of their request, since a repeated
-request was answered in about 8 ms in the model. Typed decisions leaves out 9
-calls the gateway answered `502` or `503`, which were sent again.
+Kai's is `api.hanzo.ai`, measured from one client on 2026-09-28. AG News counts
+the 287 calls that were the first of their request, since a repeated request
+was answered in about 8 ms in the model. Typed decisions leaves out 9 calls the
+gateway answered `502` or `503`, which were sent again.
 
 ## What does not carry
 
