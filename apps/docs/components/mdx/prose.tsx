@@ -52,11 +52,13 @@ export const Lead = createContext(false);
 
 /**
  * A part's children as blocks: a bare string (`<Callout>Text</Callout>`) is set
- * as text, everything else is already a block.
+ * as text, everything else is already a block. The newlines MDX leaves between
+ * blocks are dropped — as blocks they are empty, and the stack's gap still
+ * spaces them, which pushes the first line below its icon.
  */
 export function flow(children: ReactNode, size: 'body' | 'small' = 'body') {
   return Children.map(children, (child) =>
-    typeof child === 'string' || typeof child === 'number' ? (
+    typeof child === 'string' && !child.trim() ? null : typeof child === 'string' || typeof child === 'number' ? (
       <Text {...(size === 'body' ? TEXT : SMALL)}>{child}</Text>
     ) : (
       child
@@ -233,7 +235,15 @@ export function Table({ children }: ComponentProps<'table'>) {
   );
 }
 
+/** Only text counts: a header row of empty cells (`| | |` over a key/value table) is not drawn. */
+function blank(node: ReactNode): boolean {
+  return Children.toArray(node).every((child) =>
+    typeof child === 'string' ? !child.trim() : isValidElement<{ children?: ReactNode }>(child) && blank(child.props.children),
+  );
+}
+
 export function Thead({ children }: ComponentProps<'thead'>) {
+  if (blank(children)) return null;
   return (
     <YStack render="thead" bg="$panel" style={{ display: 'table-header-group' }}>
       {children}
