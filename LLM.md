@@ -305,8 +305,8 @@ it is gui stacks and text on theme tokens; no class names.
   `t_dark`. Check it: render any page with JavaScript off.
 - **One theme authority: `t_dark`/`t_light` on `<html>`.** gui's
   `NextThemeProvider` (`@hanzogui/next-theme`) writes it before paint and
-  `<Hanzo theme>` follows it (`app/provider.tsx`). The Tailwind `dark:` variant
-  and base-ui's shiki rules answer `.t_dark` until they are gone.
+  `<Hanzo theme>` follows it (`app/provider.tsx`). The only CSS that reads it is
+  `color-scheme` in `app/global.css`, which is what picks the code palette.
 - **Muted text is `lib/ink.ts`.** gui's grey ramp is not symmetric (light step 10
   is #333), so muted names step 10 dark / 9 light. Chrome text measures >= 7.5:1
   in both themes.
