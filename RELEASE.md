@@ -43,8 +43,13 @@ curl -X POST -H "Authorization: token $FORGE_TOKEN" \
 
 `FORGE_TOKEN` is minted on the forge pod, as the git user:
 `gitd admin user generate-access-token --username <you> --token-name <name>
---scopes write:repository --raw`. Run status: `action_run` in the forge's
-Postgres (status 1 ok, 2 failed, 6 running).
+--scopes write:repository --raw`. The forge also takes your Hanzo IAM login in
+its place, `curl -u "<you>:$(hanzo auth token)"`, which carries
+`write:repository` and was answered 200 on `mirror-sync` and 204 on the
+dispatch (2026-09-28). KMS `deploy/FORGE_TOKEN` is `read:repository` only, and
+`mirror-sync` refuses it with 403. Run status: `GET
+/v1/repos/hanzoai/docs/actions/runs/<id>` with either credential, or
+`action_run` in the forge's Postgres (status 1 ok, 2 failed, 6 running).
 
 One publish runs at a time (`concurrency: deploy-docs`, no cancel): a newer push
 waits for the running one, and the newest waiting commit is the one that
