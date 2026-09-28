@@ -415,6 +415,12 @@ in tsc. `zen5.mdx` typechecked clean while the loader skipped the entire page
 (`<50ms` in a table parses as a JSX tag; fence such values in backticks). Run the
 app and look at it.
 
+`remark-math` is on, so two `$` in one paragraph or list item typeset the text
+between them as math: `migrate/stripe.mdx`'s "floor $1 and ceiling $5,000"
+renders as KaTeX on the live site. Write each amount as `\$0.021` where a
+paragraph holds two; a table cell, a code span and frontmatter are each their
+own context and need no escape.
+
 ## Landing Apps (Moved Out)
 
 Landing page apps were moved to their ecosystem repos:

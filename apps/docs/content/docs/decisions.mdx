@@ -18,6 +18,8 @@ POST https://api.hanzo.ai/v1/decisions
 
 The wire is OpenRouter's Decisions API. A client written for Jev works
 unchanged: set its base URL to `https://api.hanzo.ai/v1` and send a Hanzo key.
+[Migrate from Jev](/docs/guides/migrate/jev) lists every field that changes,
+with the same request sent both ways.
 
 ## Request
 
@@ -192,8 +194,9 @@ and each call is a row in the org's usage (`GET /v1/billing/usage`, model
 | `kai` | $0.021 per million input tokens (`usage.input_tokens`); output is free |
 | `typesafe/jev-1.13`, `~typesafe/jev-latest` | $0.03 per call |
 
-Kai's rate is its row in the model price list (`GET https://pricing.hanzo.ai/v1/pricing/models`),
-the same list every model is billed from. A refused or failed call is not billed.
+Kai's rate is its row in the model catalogue every model is billed from:
+`GET https://api.hanzo.ai/v1/models` lists `kai` with `pricing.input` 0.021 and
+`pricing.output` 0. A refused or failed call is not billed.
 
 ## Errors
 
@@ -202,11 +205,12 @@ The gateway every model endpoint shares answers first:
 | Status | When |
 |---|---|
 | `401` | no `Authorization: Bearer <key>`, or a key that does not resolve |
-| `402` | the org's balance cannot cover the call |
-| `429` | a plan's usage window is full; the message says when it resets |
+| `402` | the org has no plan that covers paid models (`code` `plan_required`, with a link to pick one), or its balance cannot cover the call |
+| `403` | a publishable key (`pk-`): a decision takes a secret key (`sk-`) |
+| `429` | the key sent requests faster than its per-minute rate (`Retry-After` gives the seconds to wait), or a plan's usage window is full (the message says when it resets) |
 
-Their bodies are the gateway's (`{"status": "error", "msg": "…"}` for 401 and
-402, `{"error": {"message", "type", "code"}}` for 429); the status is the
+Their bodies are the gateway's, in one of two shapes (`{"status": "error",
+"msg": "…"}` or `{"error": {"message", "type", "code"}}`); the status is the
 contract. Past the gateway, every error is `{"error": {"code": <status>,
 "message": "…"}}`, and the message names what to fix.
 

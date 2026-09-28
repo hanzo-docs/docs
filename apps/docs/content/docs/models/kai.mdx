@@ -57,26 +57,47 @@ curl https://api.hanzo.ai/v1/decisions \
 
 The state is Spanish and the question English; one model reads both.
 [Decisions](/docs/decisions) documents the three question types, the response
-field by field, the errors, and how the same request reaches Jev.
+field by field, the errors, and how the same request reaches Jev. A call is
+billed its `usage.input_tokens` at $0.021 per million; output is free. Coming
+from Jev: [Migrate from Jev](/docs/guides/migrate/jev) changes a base URL, a key
+and a model id.
 
 Every answer's `routing` names the checkpoint that produced it: its revision,
 the SHA-256 of its weights and the hash of its calibration tables.
 
 ## Results
 
-On the frozen 12-suite harness, Kai (training stage a5) scores a macro
-accuracy of **0.851** over 11 suites, against 0.702 for Laya and 0.770 for Jev,
-and is the best of the three in 8 of the 12 suites, counting only backends that
-did not train on a suite's rows. It does not lead everywhere: Jev leads on
-jailbreak and MASSIVE, and Laya leads on typed decisions and email spam.
-Checkpoint, data, fit and per-suite scores:
-[hanzoai/benchmarks `decision/results/kai-a5`](https://github.com/hanzoai/benchmarks/blob/b07ba42/decision/results/kai-a5/README.md)
-(commit `b07ba42`).
+On the frozen 12-suite harness, Kai stage a7, the checkpoint `/v1/decisions`
+serves (weights SHA-256 `0834a74f…`), leads Laya and Jev on 7 suites, ties
+Laya on email spam, and trails on 4: AG News and support triage behind Laya,
+jailbreak behind Jev, typed decisions behind Laya's typed checkpoint.
+
+| Suite | Kai a7 | Laya | Jev |
+|---|---|---|---|
+| AG News | 0.943 | **0.950** | 0.860 |
+| emotion | **0.935** | 0.595 | 0.603 |
+| Banking77 | **0.907** | 0.425 | 0.835 |
+| support triage | 0.443 | **0.502** | 0.365 |
+| email spam | **0.998** | **0.998** | 0.978 |
+| phishing | **0.990** | 0.983 | 0.900 |
+| jailbreak | 0.920 | 0.705 | **0.940** |
+| toxicity | **0.802** | 0.530 | 0.662 |
+| RAG relevance | **0.675** | 0.625 | 0.620 |
+| routing | **1.000** | 0.639 | 0.977 |
+| typed decisions | 0.759 | **0.766** (its typed checkpoint) | 0.736 |
+| MASSIVE, 51 languages | **0.909** | 0.382 | 0.890 |
+
+Accuracy; the best of the three is in bold. Kai trained on these suites' train
+splits and is scored on their test splits. Checkpoint, data, fit, calibration
+and per-suite scores:
+[hanzoai/benchmarks `decision/results/kai-a7`](https://github.com/hanzoai/benchmarks/blob/c61361f/decision/results/kai-a7/README.md)
+(commit `c61361f`).
 
 Two of those suites are drawn from rows Laya trained on. On held-out rows none
-of the models trained on, Laya leads both: phishing 0.922 against Kai's 0.900,
-and support triage 0.580 against 0.417, where Kai sends pricing and payment
-questions to billing. Suites, deduplication and scores:
+of the models trained on, measured for stage a5, Laya leads both: phishing
+0.922 against Kai's 0.900, and support triage 0.580 against 0.417, where Kai
+sends pricing and payment questions to billing. Suites, deduplication and
+scores:
 [`decision/held`](https://github.com/hanzoai/benchmarks/blob/6273430/decision/held/README.md)
 (commit `6273430`).
 
@@ -84,7 +105,7 @@ questions to billing. Suites, deduplication and scores:
 
 | Part | Status |
 |---|---|
-| **Kai**, the model (`hanzoai/kai`, one checkpoint line, a revision per training stage) | stage a5 measured above; weights not published |
+| **Kai**, the model (`hanzoai/kai`, one checkpoint line, a revision per training stage) | stage a7, measured above and served as `kai`; weights not published |
 | **Endpoint**: `POST https://api.hanzo.ai/v1/decisions`, serving `kai` and Jev | live: `kai` is stage a7 (calibration `cal_e23c27a1f768bff7`), served from Hanzo's own infrastructure at $0.021 per million input tokens; see [Decisions](/docs/decisions) |
 | **Decision Programs, Packages, policy gates** | landed, as a library |
 | **Programs on the wire** (`"program": "agent.preflight@1"`) | specified in HIP-1332 §17; not served |
@@ -105,7 +126,9 @@ The smallest program is the agent form — a model, a mode, typed questions,
 thresholds and an optional verdict rule. This one gates a shell command before
 an agent runs it. The agent programs pin `kai` and stage a5's calibration,
 because a gate's thresholds hold only for the probabilities they were validated
-on; answered under another calibration, a program falls back to `shadow`.
+on; answered under another calibration, a program falls back to `shadow`. The
+endpoint serves stage a7 (`cal_e23c27a1f768bff7`), so its answers run these
+programs in `shadow`.
 
 ```json title="agent.command-risk@1"
 {
@@ -191,8 +214,10 @@ equal task success is specified in HIP-1332 §18.1 and has not reported.
 
 ## Not claimed
 
-The text suites above are the only Kai result claimed here. No multimodal
-accuracy, no latency and no Enso savings are claimed; each lands with the run
+The text suites above are the only Kai accuracy claimed here, and the live
+endpoint's latency, measured in
+[Migrate from Jev](/docs/guides/migrate/jev#speed), the only speed. No
+multimodal accuracy and no Enso savings are claimed; each lands with the run
 that measures it.
 
 Specification: [HIP-1332](https://hips.hanzo.ai/docs/hip-1332-kai-the-decision-model).

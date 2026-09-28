@@ -13,7 +13,7 @@ ones you can download, and which ids the gateway serves right now.**
 |---|---|---|---|---|
 | **[Zen](/docs/models/zen)** | generates: reasoning, code, language, vision, speech, embeddings | open, on [Hugging Face](https://huggingface.co/zenlm) | `zen*` ids on `/v1/chat/completions` | shipped |
 | **[Enso](/docs/models/enso)** | routes and orchestrates: picks the model, context and tools per request | router code open ([hanzoai/engine](https://github.com/hanzoai/engine)); family SKUs hosted | `model: "auto"` and `enso-*` ids | shipped |
-| **[Kai](/docs/models/kai)** | decides: typed, calibrated answers to bounded questions | in training; the baseline it starts from is open | `POST /v1/decisions` | in progress |
+| **[Kai](/docs/models/kai)** | decides: typed, calibrated answers to bounded questions | hosted, not published; the baseline it starts from is open ([hanzoai/kai-1-multilingual](https://huggingface.co/hanzoai/kai-1-multilingual)) | `model: "kai"` on [`POST /v1/decisions`](/docs/decisions) | live: stage a7, $0.021 per million input tokens |
 | **Policy** | governs: deterministic allow / ask / deny | — | your rules, in every Decision Program | a part of Hanzo Decision, not a model |
 
 The split is by the shape of the answer. An open question — write, explain,
@@ -36,7 +36,9 @@ action, and a model can make a verdict stricter, never looser.
 ## The live catalogue
 
 Every model below answers on one address with one key. Pass the `id` as `model`
-and the rest of the request is the same whichever you pick.
+and the rest of the request is the same whichever you pick. The one exception
+is `kai`, listed with `"outputs": ["decision"]`: it answers typed questions on
+[`POST /v1/decisions`](/docs/decisions), not chat.
 
 ```bash
 curl https://api.hanzo.ai/v1/chat/completions \

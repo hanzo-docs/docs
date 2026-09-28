@@ -1,0 +1,231 @@
+---
+title: Jev
+description: "Jev answers typed questions through OpenRouter's Decisions API. Here that is POST /v1/decisions with model kai: the same request body at a new base URL with a Hanzo key, billed $0.021 per million input tokens against Jev's $0.042."
+---
+
+Jev is TypeSafe's decision model. Through OpenRouter it is
+`POST https://openrouter.ai/api/alpha/decisions` with
+`"model": "typesafe/jev-1.13"`. Hanzo serves the same wire at
+[`POST https://api.hanzo.ai/v1/decisions`](/docs/decisions), where `kai` is
+Hanzo's decision model. The question types, their `criteria` and the answers
+are the Decisions API's on both sides, so a Jev request becomes a Kai request
+when three things change: the base URL, the key and `model`.
+
+## Start here
+
+```bash
+# 1. mint a key — a decision takes a secret key; a pk- is refused with 403
+curl -sS -X POST https://api.hanzo.ai/v1/account/keys \
+  -H "Authorization: Bearer $HANZO_SESSION" \
+  -H 'Content-Type: application/json' \
+  -d '{"type":"secret"}'
+
+# 2. a Jev request with its base URL, key and model changed
+curl -sS https://api.hanzo.ai/v1/decisions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '{"model": "kai",
+       "state": "The second charge on my March invoice is still pending.",
+       "questions": {"is_bug": {"type": "noul", "instructions": "Is this a product defect?"}}}'
+
+# 3. kai's row in the model catalogue, with its price; no key needed
+curl -sS https://api.hanzo.ai/v1/models | jq '.data[] | select(.id == "kai")'
+```
+
+Step 2 needs an org whose plan covers paid models; without one it answers
+`402` with `"code": "plan_required"` and a link to pick a plan. Step 3 answers
+`"outputs": ["decision"]` and `"pricing": {"input": 0.021, "output": 0}`: the
+dollars per million input tokens every `kai` call is billed at.
+
+## What changes
+
+The Jev column is OpenRouter's wire as the benchmark harness called it for
+11,099 questions
+([`three_way.py`](https://github.com/hanzoai/benchmarks/blob/c61361f/decision/harness/three_way.py));
+the Kai column is what `api.hanzo.ai` answers.
+
+| | Jev on OpenRouter | Kai on Hanzo |
+|---|---|---|
+| Endpoint | `POST https://openrouter.ai/api/alpha/decisions` | `POST https://api.hanzo.ai/v1/decisions` |
+| Key | an OpenRouter key | a Hanzo secret key, `sk-`; see [API keys](/docs/api-keys) |
+| `model` in the request | `typesafe/jev-1.13` | `kai` |
+| `model` in the answer | the dated snapshot that served, `typesafe/jev-1.13-20260917` in the harness's run | `kai`; the checkpoint is `routing.checkpoint`, `a7` |
+| `id` | OpenRouter's | `dec_` and 32 hex digits |
+| `provider` | the provider OpenRouter routed to | `Hanzo` |
+| `usage.output_tokens` | as OpenRouter counts them, not billed | `0`: Kai generates nothing |
+| `usage.cost` | the call's price in dollars | not sent: the price is `usage.input_tokens` at $0.021 per million, and each call is a row in `GET /v1/billing/usage` |
+| Fields only Hanzo sends | — | `answer_confidence` on each answer; `routing`, `state_hash` and `latency_ms` on the response ([Decisions](/docs/decisions#response)) |
+| Price | $0.042 per million input tokens | $0.021 per million input tokens |
+
+Hanzo checks a request before any work: at most 64 questions, at most 50,000
+characters of state as the model reads it, and at most 256 characters of
+`session_id` or `user`. A key that sends faster than its per-minute rate is
+answered `429` with `Retry-After`. The [errors](/docs/decisions#errors) are
+listed on Decisions.
+
+## The call
+
+Jev, on OpenRouter:
+
+```bash
+curl https://openrouter.ai/api/alpha/decisions \
+  -H "Authorization: Bearer $OPENROUTER_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "typesafe/jev-1.13",
+    "state": {"message": "I was charged twice for my March invoice and the second charge is still pending."},
+    "questions": {
+      "is_bug":  {"type": "noul", "instructions": "Is this a product defect?",
+                  "criteria": {"true": "a defect", "false": "working as intended"}},
+      "team":    {"type": "choice", "instructions": "Which team should handle it?",
+                  "criteria": {"account": "logins and profiles",
+                               "payments": "charges, invoices and refunds",
+                               "product": "features and bugs"}},
+      "urgency": {"type": "score", "instructions": "How urgent is it?",
+                  "criteria": ["later", "this week", "today", "now"]}
+    }
+  }'
+```
+
+Kai, on Hanzo: the same body, with `model` changed.
+
+```bash
+curl https://api.hanzo.ai/v1/decisions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "kai",
+    "state": {"message": "I was charged twice for my March invoice and the second charge is still pending."},
+    "questions": {
+      "is_bug":  {"type": "noul", "instructions": "Is this a product defect?",
+                  "criteria": {"true": "a defect", "false": "working as intended"}},
+      "team":    {"type": "choice", "instructions": "Which team should handle it?",
+                  "criteria": {"account": "logins and profiles",
+                               "payments": "charges, invoices and refunds",
+                               "product": "features and bugs"}},
+      "urgency": {"type": "score", "instructions": "How urgent is it?",
+                  "criteria": ["later", "this week", "today", "now"]}
+    }
+  }'
+```
+
+Kai's answer, as `api.hanzo.ai` returned it on 2026-09-28:
+
+```json
+{
+  "id": "dec_ed1fbe82dd2e77f85dd751dda4b08b2d",
+  "model": "kai",
+  "provider": "Hanzo",
+  "answers": {
+    "is_bug":  {"type": "noul", "noul": 0.4023, "answer_confidence": 0.5977},
+    "team":    {"type": "choice", "choice": "payments", "confidence": 0.9998,
+                "probabilities": {"account": 0.0, "payments": 0.9999, "product": 0.0001},
+                "answer_confidence": 0.9999},
+    "urgency": {"type": "score", "score": 1.7883, "confidence": 0.0797,
+                "legend": {"0": "later", "1": "this week", "2": "today", "3": "now"},
+                "probabilities": {"0": 0.1215, "1": 0.2687, "2": 0.3098, "3": 0.3},
+                "answer_confidence": 0.3098}
+  },
+  "usage": {"input_tokens": 165, "output_tokens": 0},
+  "routing": {
+    "backend": "kai",
+    "checkpoint": "a7",
+    "sha256": "0834a74f2d140642a453373da09e5a128e3d2c8d9e8bb1dcaf86d7210a4ecdfc",
+    "calibration": "cal_e23c27a1f768bff7",
+    "device": "cpu",
+    "reason": "explicit model='kai'"
+  },
+  "state_hash": "sha256:3893b9038056e7104d3c76ffa6f703dea7ce1d0b4bb8be153e4adbc3432b212b",
+  "latency_ms": 148.752925
+}
+```
+
+`team` is settled. `urgency` is not: no level holds more than 0.31, and its
+`confidence` is 0.0797. The call was billed its 165 input tokens: 165 ×
+\$0.021 / 1,000,000 = \$0.000003465, the amount its row in
+`GET /v1/billing/usage` records.
+
+## What stays the same
+
+- **The request.** `model`, `state` and `questions`, and the optional
+  `provider`, `session_id`, `user` and `trace`. Kai accepts the optional four
+  and uses none of them.
+- **The questions.** `choice`, `noul` and `score`, each with `type`,
+  `instructions` and `criteria`: a choice maps each label to its description, a
+  noul may describe `true` and `false`, a score lists its levels lowest first.
+- **The answers.** `choice`, `noul`, `score`, `confidence`, `probabilities` and
+  `legend`, in the same shapes, under the names you gave. `confidence` is
+  `(n·p_max − 1)/(n − 1)` on both, so a threshold carries over as arithmetic.
+  What a threshold buys is the model's own calibration, so tune it again on your
+  outcomes.
+- **`usage.input_tokens`** and **`usage.output_tokens`**.
+- **Errors past the gateway**: `{"error": {"code", "message"}}` on both.
+
+## What you gain
+
+**Half the price per input token.** Kai is billed \$0.021 per million input
+tokens and Jev \$0.042, with output free on both. Each model counts tokens with
+its own tokenizer, and Kai counts per question: each question is read with the
+state beside it, so a five-question call counts its state five times. The same
+800 requests, billed each way:
+
+| Requests | Jev on OpenRouter | Kai on Hanzo |
+|---|---|---|
+| AG News: 400 calls, one question each | 163,075 input tokens, $0.00685 | 42,246 input tokens, $0.000887 |
+| Typed decisions: 400 calls, five questions each | 377,758 input tokens, $0.01587 | 616,075 input tokens, $0.01294 |
+
+Jev's column is what OpenRouter billed the benchmark harness
+([`kai-a7/scores.json`](https://github.com/hanzoai/benchmarks/blob/c61361f/decision/results/kai-a7/scores.json));
+Kai's is what `api.hanzo.ai` metered for the same requests on 2026-09-28. One
+question a call costs 7.7 times less on Kai; five questions a call, 1.2 times
+less.
+
+**Higher accuracy on 11 of 12 suites.** On the frozen harness, Kai a7 is more
+accurate than Jev on every suite but jailbreak, 0.920 against 0.940, and on 30
+of the 51 MASSIVE languages, equal on 5 and lower on 16. Suite by suite:
+[Kai's results](/docs/models/kai#results). Its probabilities are less well
+calibrated than Jev's on four suites (expected calibration error, Kai against
+Jev): typed decisions 0.172 against 0.047, toxicity 0.191 against 0.177,
+jailbreak 0.072 against 0.047 and Banking77 0.076 against 0.073. A threshold
+tuned on Jev's `confidence` is to be tuned again.
+
+## Speed
+
+A call to Kai through `api.hanzo.ai` takes longer than a call to Jev through
+OpenRouter, and most of it is spent outside the model. Timed as the harness
+timed Jev, each call on a new connection:
+
+| Requests | Jev, whole call | Kai, whole call | Kai, in the model (`latency_ms`) |
+|---|---|---|---|
+| AG News, one question | p50 227 ms, p95 334 ms (the first 50 calls, one at a time) | p50 464 ms, p95 645 ms (287 calls, one at a time) | p50 56 ms, p95 98 ms |
+| Typed decisions, five questions | p50 255 ms, p95 341 ms (400 calls, eight at a time) | p50 1,252 ms, p95 1,859 ms (391 calls, one at a time) | p50 835 ms, p95 1,271 ms |
+
+Jev's column is the harness's, from
+[`kai-a7/scores.json`](https://github.com/hanzoai/benchmarks/blob/c61361f/decision/results/kai-a7/scores.json).
+Kai's is `api.hanzo.ai` measured from one client on 2026-09-28, with the model
+on CPU; a call's time past `latency_ms` is the network and the gateway. AG News
+counts the 287 calls that were the first of their request, since a repeated
+request was answered in about 8 ms in the model. Typed decisions leaves out 9
+calls the gateway answered `502` or `503`, which were sent again.
+
+## What does not carry
+
+**A long state.** Kai reads at most 1,024 tokens for each question: the
+question, then as much of the state as fits. The rest of the state is dropped
+and the call still answers; `usage.input_tokens` shows what was read, and a
+40,000-character state was read as 1,044 tokens with its two options. An option
+is read up to its first 48 tokens. Jev's window is 32,000 tokens
+([OpenRouter](https://openrouter.ai/typesafe/jev-1.13)). Put what decides the
+question first in `state`, or split a long document across calls.
+
+**`usage.cost`.** Jev's answer states its price; Kai's states
+`usage.input_tokens`, billed at \$0.021 per million. The org's spend is
+`GET /v1/billing/usage`, one row per call, model `kai`.
+
+**Self-hosting.** Kai runs at `api.hanzo.ai` only: its weights and its runtime
+are not published, so it cannot be self-hosted today.
+
+**Jev's ids on Hanzo are billed per call.** `typesafe/jev-1.13` sent to
+`api.hanzo.ai` is forwarded to OpenRouter and billed \$0.03 a call
+([pricing](/docs/decisions#pricing)); on OpenRouter the AG News calls above
+cost \$0.0000171 each.
