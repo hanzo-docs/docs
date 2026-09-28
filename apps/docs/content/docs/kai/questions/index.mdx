@@ -1,0 +1,116 @@
+---
+title: Question types
+description: Pick choice, score or noul for a judgment, write the question, and ask several questions about one state in one call.
+---
+
+**Three types. Each returns a probability for every answer the question
+allows.**
+
+| `type` | Asks | Returns | Fits when |
+|---|---|---|---|
+| [`choice`](/docs/kai/questions/choice) | which of these labels | `choice`, `probabilities` by label, `confidence`, `answer_confidence` | the answer is one of a set, in no order |
+| [`score`](/docs/kai/questions/score) | which level of this scale | `score`, the expected level; `probabilities` by level; `legend`; `confidence`; `answer_confidence` | the answer is a position on steps you can name |
+| [`noul`](/docs/kai/questions/noul) | does this statement hold | `noul`, P(true); `confidence`; `answer_confidence` | the answer is true or false |
+
+## Write a question
+
+A question sits under a name you choose, and its answer comes back under the same
+name. Kai never sees the name.
+
+| Field | Holds |
+|---|---|
+| `type` | `choice`, `score` or `noul` |
+| `instructions` | The question in words: text, an object or an array. Optional, and worth sending every time: it is the one place the question itself is stated. |
+| `criteria` | `choice`: `{label: description}` (a description may be `null`), or a list of labels. `score`: a list of levels, lowest first, none `null`. `noul`: optional `{"true": …, "false": …}`. |
+
+A request carries 1 to 100 questions. A choice has no fixed cap on labels, nor a
+score on levels ([Large option sets](/docs/kai/programs/options)).
+[Decisions](/docs/decisions) is the full wire reference.
+
+## Pick the type
+
+- **Several outcomes, no order**: `choice`. Add an `other` label when the list
+  may not cover every input, or Kai has to put the probability somewhere else.
+- **A position on a scale**: `score`, with a level for each step you can
+  describe.
+- **One statement, true or false**: `noul`, written as a statement, with both
+  sides described in `criteria`. When the statement is one of several natural
+  alternatives, a `choice` that names them separated the cases better in our
+  [measurement](/docs/kai/questions/noul#phrasing-measured).
+- **A value you cannot list** (an amount, a date, a name, a reply): not Kai.
+  Find the candidates in code and ask a `choice` among them, or have a
+  [Zen](/docs/models/zen) model write the value.
+
+## One call, many questions
+
+Ask every question about a state in one call. Each is read beside the state on
+its own and answered independently, so no answer becomes context for another.
+Three questions, asked together and then one at a time:
+
+```python
+from hanzo_kai import Kai, Noul, Score, Choice
+
+state = {
+    "message": "My new card arrived yesterday but the app will not activate it. It says the code is invalid, and I fly on Friday."
+}
+questions = {
+    "intent": Choice(
+        instructions="What does `message` ask for?",
+        criteria={
+            "activate_card": "turn on a new card",
+            "lost_card": "report a lost or stolen card",
+            "refund": "money back for a payment",
+            "transfer": "send or receive money",
+            "other": "anything else",
+        },
+    ),
+    "urgency": Score(
+        instructions="How soon does `message` need an answer?",
+        criteria=["routine: no deadline", "soon: a deadline this week", "urgent: blocked now or losing money"],
+    ),
+    "app_error": Noul(
+        instructions="`message` reports an error in the app.",
+        criteria={"true": "the app shows an error, crashes or refuses an action", "false": "the app works as expected"},
+    ),
+}
+
+with Kai() as kai:
+    together = kai.decide(state=state, questions=questions)
+    apart = {name: kai.decide(state=state, questions={name: q}) for name, q in questions.items()}
+
+for name in questions:
+    same = together.answers[name] == apart[name].answers[name]
+    print(f"{name:9} same answer together and apart: {same}   input_tokens apart: {apart[name].usage.input_tokens}")
+print("input_tokens together:", together.usage.input_tokens)
+print("input_tokens apart, summed:", sum(d.usage.input_tokens for d in apart.values()))
+```
+
+What `api.hanzo.ai` answered on 2026-09-28:
+
+{/* out: python/independence.py */}
+```text
+intent    same answer together and apart: True   input_tokens apart: 91
+urgency   same answer together and apart: True   input_tokens apart: 82
+app_error same answer together and apart: True   input_tokens apart: 72
+input_tokens together: 245
+input_tokens apart, summed: 245
+```
+
+Each answer is the same either way. The bill differs: asked together, the state
+is counted once for the call; asked apart, once for each call. A question whose
+answer your code may not use costs only its own instructions and options, so ask
+it and ignore the answer when it does not apply.
+
+## When one answer shapes the next question
+
+Questions in one call cannot see each other's answers. When the next question
+depends on an answer (which labels to offer, which part of the case to send),
+ask it in a second call once your code has the first answer.
+[Dependent questions](/docs/kai/programs/dependent) covers how Kai's runtime
+schedules such chains in process.
+
+## Next
+
+- [Choice questions](/docs/kai/questions/choice): one label of many.
+- [Score questions](/docs/kai/questions/score): a level on an ordered scale.
+- [Noul questions](/docs/kai/questions/noul): whether a statement holds.

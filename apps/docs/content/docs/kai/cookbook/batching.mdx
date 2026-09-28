@@ -1,0 +1,114 @@
+---
+title: Batch questions
+description: "Ask every question about one state in a single call, and know what that saves and what it leaves unchanged."
+---
+
+**One call carries every question about a state.** The script asks twelve
+questions about one support ticket in a single call, then asks the same twelve
+in twelve calls of one, and prints the answers, the calls and the billed input
+tokens both ways.
+
+## The idea
+
+Kai answers each question as its own sequence: the question, then the state. A
+state asked twelve questions is read twelve times, whether the questions arrive
+together or apart, so batching does not change the work the model does or any
+answer it gives.
+
+What batching changes is the request. `usage.input_tokens` counts a request's
+text once: the state once, each question's instructions and options once. Twelve
+calls send the state twelve times and are billed for it twelve times; one call
+sends it once. Twelve calls are also twelve requests against the key's rate
+limit, twelve responses to handle, and twelve `state_hash` values that each
+cover one answer instead of one that covers all twelve.
+
+## The code
+
+The questions are ordinary `Choice`, `Noul` and `Score` objects in one dict.
+Three of the twelve:
+
+```python
+QUESTIONS = {
+    "team": Choice(
+        instructions="Which team should handle `body`?",
+        criteria={
+            "billing": "charges, invoices and refunds",
+            "platform": "deploys, builds and clusters",
+            "account": "logins, keys and members",
+            "sales": "plans, pricing and upgrades",
+        },
+    ),
+    "refund": Noul(
+        instructions="The sender asks for money back.",
+        criteria={"true": "a refund or credit is requested", "false": "no refund or credit is requested"},
+    ),
+    "urgency": Score(instructions="How urgent is `body`?", criteria=["can wait", "this week", "today", "now"]),
+    # ... nine more
+}
+```
+
+The same dict goes out once whole and once a question at a time:
+
+```python
+with Kai(retry=RetryPolicy(max_retries=20)) as kai:
+    batched = kai.decide(TICKET, QUESTIONS)
+    single = {name: kai.decide(TICKET, {name: question}) for name, question in QUESTIONS.items()}
+
+once = batched.usage.input_tokens
+each = sum(d.usage.input_tokens for d in single.values())
+```
+
+The whole script is
+[`batching.py`](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/batching.py).
+What it printed against `api.hanzo.ai` on 2026-09-28:
+
+{/* out: python/batching.py */}
+```text
+question                         one call                one call each
+team                       platform 0.963               platform 0.963
+intent                          fix 0.585                    fix 0.585
+environment                    both 0.815                   both 0.815
+language                     german 0.306                 german 0.306
+refund                         true 0.568                   true 0.568
+outage                         true 0.592                   true 0.592
+blocked                        true 0.565                   true 0.565
+human                          true 0.662                   true 0.662
+urgency                       today 0.534                  today 0.534
+sentiment                   pleased 0.533                pleased 0.533
+churn                        likely 0.452                 likely 0.452
+severity        broken for everyone 0.377    broken for everyone 0.377
+
+calls                          1  against  12
+billed input tokens         1456  against  1456
+largest probability gap between the two ways: 0.000000
+```
+
+## What the numbers say
+
+- **The answers are the same both ways.** Every probability matches: a question
+  gets the same answer whatever else rides in its request.
+- **One request instead of twelve.** The single calls bill the state twelve
+  times and the batched call once, so the batched call bills eleven copies of
+  the state fewer. Each question's own instructions and options are billed once
+  either way.
+- **Batching fixes no answer.** Three answers are wrong both ways. `language`
+  says german, at 0.306, for a ticket written in English; `environment` says
+  both at 0.815, though the ticket says staging still works; `sentiment` says
+  pleased, at 0.533, for a customer blocked before a launch. A question Kai
+  answers badly alone, it answers badly in a batch.
+  [Limits](/docs/kai/limits) lists what the current checkpoint gets wrong.
+
+## Adapt it
+
+- Batch by state. A call holds one state; questions about different states go
+  in different calls, and there is nothing to share between them.
+- Ask what any branch of your code might need, in the same call, and read only
+  the answers the branch uses: [speculative fan-out](/docs/kai/patterns/fanout).
+- Name each question for the code that reads it. Answers come back under the
+  names the request used.
+
+## Next
+
+- [Speculative fan-out](/docs/kai/patterns/fanout)
+- [State](/docs/kai/state)
+- [Pricing](/docs/decisions#pricing)

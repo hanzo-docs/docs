@@ -1,0 +1,151 @@
+---
+title: Tool and model router
+description: Pick a model or a tool from a fixed set with one typed choice, fall back to a default model or a question to the user when Kai is unsure, and keep authorization in the host.
+---
+
+**Kai picks from the set you allow; the host decides what runs. On 50
+labelled requests from our public harness, the model router matched every
+domain. On six tool requests written for this page, Kai picked the expected
+tool three times, and each wrong pick fell under the floor, so the user was
+asked instead.**
+
+## How it works
+
+- A model route is the harness's own domain question and a table from domain
+  to model. A wrong model costs money or quality, so an unsure answer takes a
+  default model.
+- A tool route is a choice over the tools the host allows, plus `none`. A wrong
+  tool is an action, so an unsure answer runs nothing and asks the user what
+  they need.
+- Kai answers with one of the labels it was given, never another string. The
+  SDK types the answer as their union, so every table lookup is checked by the
+  compiler.
+- Authorization stays in the host. `GRANT` says which tools may run on a pick
+  and which wait for the user, whatever Kai's confidence. The script prints
+  each plan and executes nothing.
+
+## The code
+
+Models, and the default for an unsure answer:
+
+```ts
+const DOMAINS = {
+  code: "software engineering, programming, refactoring, architecture, debugging",
+  math_or_logic: "mathematics, logic puzzles, proofs, complex calculation",
+  writing: "creative writing, essays, emails, blog posts, copywriting",
+  factual_lookup: "facts, definitions, trivia, history",
+  data_analysis: "statistics, SQL, data manipulation, metrics",
+  chitchat: "casual conversation, greetings, small talk",
+} as const;
+type Domain = keyof typeof DOMAINS;
+const domain = choice("What domain does `request` belong to?", DOMAINS);
+const MODEL: Record<Domain, string> = {
+  code: "zen6", math_or_logic: "zen6", data_analysis: "zen5",
+  writing: "zen5", factual_lookup: "zen5-mini", chitchat: "zen5-mini",
+};
+const DEFAULT = "zen5";
+const MODEL_FLOOR = 0.6;
+```
+
+Tools, and the host's rules:
+
+```ts
+const TOOLS = {
+  search_docs: "look up how the product works in its documentation",
+  query_metrics: "read numbers such as signups, revenue or usage from the analytics store",
+  open_ticket: "file a bug report or a request for the engineering team",
+  send_email: "send an email on the user's behalf",
+  none: "answer from the conversation alone; no tool is needed",
+} as const;
+type Tool = keyof typeof TOOLS;
+const tool = choice("Which tool should handle `request`?", TOOLS);
+const TOOL_FLOOR = 0.7;
+// The host's policy, not the model's: which tools run on a pick and which wait for the user.
+const GRANT: Record<Tool, "run" | "confirm"> = {
+  search_docs: "run", query_metrics: "run", open_ticket: "run", send_email: "confirm", none: "run",
+};
+```
+
+The two decisions:
+
+```ts
+const a = (await kai.decide({ state, questions: { domain } })).answers.domain;
+const sure = a.confidence >= MODEL_FLOOR;
+const model = sure ? MODEL[a.choice] : DEFAULT;
+```
+
+```ts
+const sure = a.confidence >= TOOL_FLOOR;
+const outcome =
+  !sure ? "ask the user what they need; no tool"
+  : GRANT[a.choice] === "confirm" ? `hold ${a.choice} until the user confirms`
+  : a.choice === "none" ? "answer directly"
+  : `hand ${a.choice} to the host's executor`;
+```
+
+The full script is
+[`router.ts`](https://github.com/hanzo-js/kai/blob/main/examples/router.ts).
+It caches the pinned harness file in your temp directory.
+
+```bash
+npm i @hanzo/kai
+export HANZO_API_KEY=sk-...
+npx tsx router.ts
+```
+
+## The run
+
+What `api.hanzo.ai` answered on 2026-09-28:
+
+{/* out: ts/router.ts */}
+```text
+app.model_routing_domain, 50 requests, seed 7: domain accuracy 1.00 (50/50)
+  confidence >= 0.6: 50 routed by domain (50 right), 0 to zen5
+  models used: zen6 31, zen5-mini 19
+
+request                                                                  pick           conf  outcome
+How do I rotate my API key?                                              none           0.47  ask the user what they need; no tool  (want: search_docs)
+How many new signups did we get last week?                               open_ticket    0.14  ask the user what they need; no tool  (want: query_metrics)
+The CSV export button crashes the page every time. Can someone fix it?   none           0.45  ask the user what they need; no tool  (want: open_ticket)
+Email the March invoice to finance@acme.example.                         send_email     0.93  hold send_email until the user confirms
+What is 15% of 240?                                                      none           0.82  answer directly
+Can you take care of the thing from yesterday?                           none           0.48  ask the user what they need; no tool
+3 of 6 as expected; 3 of 3 misses stopped at the floor, 0 passed it
+```
+
+## What the numbers say
+
+- **The model router is measured, on half of its labels.** 50 of 50 domains
+  were right, all at confidence 0.6 or more. The harness's 399 routing cases
+  use three of the six domains: math, code and factual lookup. Writing, data
+  analysis and small talk were not measured here, and
+  [Limits](/docs/kai/limits#label-sets-no-suite-measured) shows requests for
+  them answered wrongly at high confidence. Label those before routing on them.
+- **The tool router is unmeasured, and it shows.** These tools and their
+  descriptions are ours, and no suite covers them. Three picks were wrong: key
+  rotation and the crashing export went to `none`, the signup count to
+  `open_ticket`. All three were under 0.7, so the user was asked and no wrong
+  tool ran.
+- **The host's rule held where Kai was sure.** The email request was right at
+  0.93 and still waits for the user, because `GRANT` says so. The vague request
+  stayed under the floor and was asked back, as intended.
+- **The floor carried the safety, not Kai's accuracy.** With the floor at 0.4,
+  the two wrong `none` picks, at 0.47 and 0.45, would have been answered
+  directly instead of asked.
+
+## Adapt it
+
+- Put your models in `MODEL` and your tools in `TOOLS`. Keep a way out, like
+  `none`, in every tool set.
+- Measure a tool set on 50 to 100 labelled requests from your logs before any
+  tool runs on a pick. Until then, put every tool on `confirm`.
+- Set each floor from those labels: higher where a wrong pick acts, lower where
+  it only costs money.
+- Log each route with its confidence and what the user did next. That log is
+  the labelled set for the next floor.
+
+## Next
+
+- [Intent routing](/docs/kai/patterns/intents)
+- [Confidence gates](/docs/kai/patterns/gating)
+- [Review agent proposals](/docs/kai/cookbook/proposals)

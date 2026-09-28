@@ -1,0 +1,184 @@
+---
+title: Call typed functions
+description: "Map a request to an ordinary typed function with closed-set arguments, run it only when the call is settled, and ask back otherwise."
+---
+
+**Kai names the function, code reads the arguments, and confidence decides
+whether the call runs.** The functions are plain Python with `Literal` types.
+The script builds its questions from their signatures, maps thirteen cloud
+operations requests to calls, and counts the calls that ran right, ran wrong,
+or went back to the user.
+
+## The idea
+
+A function name is a label, and picking one for a request is a choice question.
+Each argument here is a closed set too: a service, an environment, a replica
+count. The run tries two ways to fill the arguments: a choice question per
+argument, answered by Kai, and a match in code against the words of the
+request. Either way the call runs only when the function's `confidence` clears
+0.5 and every argument is settled; anything else goes back to the user as a
+question.
+
+## The code
+
+The functions are ordinary code. Their docstrings describe each option, and
+their `Literal` types list the values:
+
+```python
+Service = Literal["api", "console", "iam", "kms", "docs"]
+Env = Literal["staging", "production"]
+Replicas = Literal[1, 2, 3, 5, 10]
+
+
+def deploy(service: Service, env: Env) -> str:
+    """deploy a service"""
+    return f"deploy({service!r}, {env!r})"
+
+# rollback(service, env), scale(service, replicas) and logs(service, env) alike
+```
+
+The questions come from the signatures, so adding a function adds its option:
+
+```python
+FUNCTIONS = {f.__name__: f for f in (deploy, rollback, scale, logs)}
+VALUES = {name: typing.get_args(hint) for f in FUNCTIONS.values() for name, hint in inspect.get_annotations(f).items() if name != "return"}
+QUESTIONS = {
+    "function": Choice(
+        instructions="What is the user asking for in `utterance`?",
+        criteria={name: f.__doc__ for name, f in FUNCTIONS.items()} | {"none": "something else"},
+    ),
+    **{name: Choice(instructions=PROMPTS[name], criteria=[str(v) for v in values]) for name, values in VALUES.items()},
+}
+```
+
+`PROMPTS` holds each argument's question, such as "Which service is the user
+asking about in `utterance`?". `plan` turns one decision into a call or a
+question back:
+
+```python
+def literal(text, values):
+    """The one value the text names outright, or None."""
+    said = {WORDS.get(w, int(w) if w.isdigit() else w) for w in re.findall(r"[a-z0-9]+", text.lower())}
+    found = [v for v in values if v in said]
+    return found[0] if len(found) == 1 else None
+
+
+def plan(decision, request, arguments):
+    """The call to make, or what to ask: arguments come from Kai's answers or from the words of the request."""
+    function = decision.choices["function"]
+    if function.confidence < 0.5:
+        return "ask"
+    if function.choice == "none":
+        return "none"
+    args = {}
+    for name in inspect.signature(FUNCTIONS[function.choice]).parameters:
+        if arguments == "kai":
+            answer = decision.choices[name]
+            value = type(VALUES[name][0])(answer.choice) if answer.confidence >= 0.5 else None
+        else:
+            value = literal(request, VALUES[name])
+        if value is None:
+            return "ask"
+        args[name] = value
+    return FUNCTIONS[function.choice](**args)
+```
+
+`WORDS` maps the few words that name a value indirectly: `prod` to
+`production`, `ten` to `10`. The whole script is
+[`functions.py`](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/functions.py).
+What it printed against `api.hanzo.ai` on 2026-09-28:
+
+{/* out: python/functions.py */}
+```text
+ship the latest iam build to staging
+    function rollback 0.37 (gold deploy); service docs 0.64, env production 0.92, replicas 3 0.23
+    arguments from kai  : ask                                asked back, gold deploy('iam', 'staging')
+    arguments from words: ask                                asked back, gold deploy('iam', 'staging')
+prod console broke after today's release, put the previous one back
+    function deploy 0.45 (gold rollback); service api 0.27, env production 0.98, replicas 1 0.21
+    arguments from kai  : ask                                asked back, gold rollback('console', 'production')
+    arguments from words: ask                                asked back, gold rollback('console', 'production')
+we need five copies of the api
+    function scale 0.21 (gold scale); service api 0.45, env production 0.45, replicas 2 0.07
+    arguments from kai  : ask                                asked back, gold scale('api', 5)
+    arguments from words: ask                                asked back, gold scale('api', 5)
+show me the kms logs from staging
+    function none 0.45 (gold logs); service api 0.48, env production 0.93, replicas 3 0.48
+    arguments from kai  : ask                                asked back, gold logs('kms', 'staging')
+    arguments from words: ask                                asked back, gold logs('kms', 'staging')
+push docs to production
+    function rollback 0.41 (gold deploy); service api 0.31, env production 0.81, replicas 3 0.09
+    arguments from kai  : ask                                asked back, gold deploy('docs', 'production')
+    arguments from words: ask                                asked back, gold deploy('docs', 'production')
+undo the last api release on staging
+    function rollback 0.18 (gold rollback); service docs 0.26, env production 0.25, replicas 3 0.09
+    arguments from kai  : ask                                asked back, gold rollback('api', 'staging')
+    arguments from words: ask                                asked back, gold rollback('api', 'staging')
+scale iam down to a single replica
+    function scale 0.23 (gold scale); service api 0.59, env staging 0.19, replicas 2 0.21
+    arguments from kai  : ask                                asked back, gold scale('iam', 1)
+    arguments from words: ask                                asked back, gold scale('iam', 1)
+tail the production api logs
+    function rollback 0.37 (gold logs); service api 0.32, env production 0.63, replicas 3 0.22
+    arguments from kai  : ask                                asked back, gold logs('api', 'production')
+    arguments from words: ask                                asked back, gold logs('api', 'production')
+give the console ten replicas
+    function scale 0.90 (gold scale); service api 0.59, env production 0.19, replicas 2 0.24
+    arguments from kai  : ask                                asked back, gold scale('console', 10)
+    arguments from words: scale('console', 10)               right, gold scale('console', 10)
+the login service on prod needs its previous release back
+    function rollback 0.59 (gold rollback); service api 0.58, env staging 0.65, replicas 3 0.12
+    arguments from kai  : rollback('api', 'staging')         WRONG, gold rollback('iam', 'production')
+    arguments from words: ask                                asked back, gold rollback('iam', 'production')
+roll it back
+    function rollback 0.55 (gold rollback); service api 0.43, env staging 0.55, replicas 1 0.12
+    arguments from kai  : ask                                right, gold ask
+    arguments from words: ask                                right, gold ask
+deploy to staging
+    function deploy 0.79 (gold deploy); service console 0.52, env staging 0.91, replicas 1 0.13
+    arguments from kai  : deploy('console', 'staging')       WRONG, gold ask
+    arguments from words: ask                                right, gold ask
+what's the weather in Kyoto?
+    function deploy 0.28 (gold none); service iam 0.96, env production 0.82, replicas 3 0.35
+    arguments from kai  : ask                                asked back, gold none
+    arguments from words: ask                                asked back, gold none
+
+function named right: 7 of 13
+arguments from kai  : 1 right, 2 wrong, 10 asked back, of 13
+arguments from words: 3 right, 0 wrong, 10 asked back, of 13
+```
+
+## What the numbers say
+
+- **The gate held.** Every function answer that cleared 0.5 was right: four of
+  them. Below the line Kai named the right function three times in nine, and
+  none of those ran.
+- **Most requests went back to the user.** With arguments read from the words,
+  twelve of thirteen requests ended as a question: nine because the function's
+  confidence sat under 0.5, three because a needed argument was not in the
+  words, two of them rightly (`roll it back` and `deploy to staging` name no
+  service). `give the console ten replicas` is the one call that ran. On this
+  checkpoint the gate is safe more than it is useful.
+- **Kai's argument answers are not safe to run.** They were wrong at high
+  confidence: `iam` at 0.96 as the service for a question about the weather,
+  `production` at 0.92 for a request that says staging. Two wrong calls ran from
+  them, `rollback('api', 'staging')` and `deploy('console', 'staging')`. The
+  arguments read from the words ran no wrong call.
+- **Words miss what is not said outright.** `the login service on prod` names
+  iam without the word, so code asked back where a person would have known.
+
+## Adapt it
+
+- Keep the argument lists closed and read them in code when the request names
+  them. Add the indirect names your users write to `WORDS`, and nothing else.
+- Keep Kai on the part code cannot do, which operation is meant, and keep the
+  gate. Set its line from your own labelled requests, as
+  [confidence gates](/docs/kai/patterns/gating) does, not from 0.5.
+- Ask back with the question the gate stopped on: which operation, or which
+  argument is missing.
+
+## Next
+
+- [Confidence gates](/docs/kai/patterns/gating)
+- [Intent routing](/docs/kai/patterns/intents)
+- [Limits](/docs/kai/limits)

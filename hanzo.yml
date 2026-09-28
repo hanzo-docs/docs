@@ -48,7 +48,8 @@ test:
     # generator's own derivation, and the MCP tool names are MCP's own, both
     # asserted against real generated clients and a real tools/list answer. A
     # drift in either naming rule fails here rather than teaching a call that
-    # does not exist.
+    # does not exist. scripts/parity.test.ts holds parity/jev.yaml: every Jev
+    # asset names a Kai page that exists, or why none does.
     run: pnpm install --frozen-lockfile && pnpm test
 
 # NOTE — the export gate is not declared here, and not because it was forgotten.

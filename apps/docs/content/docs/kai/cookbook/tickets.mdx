@@ -1,0 +1,188 @@
+---
+title: Support triage
+description: Route a support ticket to a queue, a reply deadline and what the customer asks for with typed answers, after measuring the routing on labelled tickets.
+---
+
+**Three typed questions route a ticket: which queue, how soon, and what the
+customer asks for. The labels are TypeScript types, so a routing table that
+misses a queue does not compile. Measured first on 50 labelled tickets
+from our public harness: 16 queues right, where always answering the most
+common queue gets 13.**
+
+## How it works
+
+- `queue` is the harness's own question: ten labels, each described. `choice()`
+  keeps the labels as a type, so `d.answers.queue.choice` is a `Queue` and
+  `DESK[q.choice]` is checked by the compiler.
+- `urgency` is a `score` over four reply deadlines, lowest first. The answer
+  carries every level's probability and the expected level.
+- `wants` names what a customer can ask for: a refund, a fix, an answer or a
+  change. Labels that name the outcomes read better than yes and no on the
+  current checkpoint ([Limits](/docs/kai/limits#yes-or-no-questions)). A
+  refund review opens only when `refund` clears the floor.
+- Code acts on an answer at confidence 0.5 or more. Below that, a person
+  decides.
+- First the script samples 50 of the 400 tickets in `app.support_triage`
+  (seed 7) and scores the queue answers against their labels. That suite asks
+  exactly the `queue` question above, and the script stops if it ever asks
+  another.
+
+## The code
+
+The questions, and the tables code owns:
+
+```ts
+const QUEUES = {
+  "Technical Support": "technical problems, bugs, outages, integrations",
+  "Product Support": "help using a product or feature",
+  "Customer Service": "general account or service questions",
+  "IT Support": "internal IT, devices, access, networks",
+  "Billing and Payments": "invoices, charges, refunds, payment methods",
+  "Returns and Exchanges": "returning or exchanging an item",
+  "Service Outages and Maintenance": "downtime, outages, scheduled maintenance",
+  "Sales and Pre-Sales": "pricing, quotes, buying",
+  "Human Resources": "employment, payroll, leave, hiring",
+  "General Inquiry": "anything else",
+} as const;
+type Queue = keyof typeof QUEUES;
+
+const LEVELS = [
+  "within a few days: a question or request with no deadline",
+  "within a day: something is degraded or a deadline is near",
+  "within hours: the customer cannot work or is losing money",
+  "now: an outage, data loss or a security problem",
+] as const;
+
+const queue = choice("Which support queue should handle this ticket?", QUEUES);
+const urgency = score("How soon does this ticket need a first reply?", LEVELS);
+const wants = choice("What does the customer ask for?", {
+  refund: "money back: a refund, a credit or a reversed charge",
+  fix: "a problem fixed",
+  answer: "information or an explanation",
+  change: "a change to an account, a plan or an order",
+});
+
+// Adding a queue without a desk is a compile error: the answer's type is the label union.
+const DESK: Record<Queue, string> = {
+  "Technical Support": "eng", "IT Support": "eng", "Service Outages and Maintenance": "eng",
+  "Product Support": "success", "Customer Service": "success", "General Inquiry": "success",
+  "Billing and Payments": "billing", "Returns and Exchanges": "billing",
+  "Sales and Pre-Sales": "sales", "Human Resources": "people",
+};
+const REPLY = ["3 days", "24 hours", "4 hours", "1 hour"];
+```
+
+Scoring against the labels, and what a floor keeps:
+
+```ts
+const rows: { i: number; gold: Queue; pick: Queue; confidence: number }[] = [];
+for (const i of sample(suite.length, N, SEED)) {
+  const [state, , gold] = suite[i];
+  const d = await kai.decide({ state, questions: { queue } });
+  rows.push({ i, gold: labels[gold.queue.idx], pick: d.answers.queue.choice, confidence: d.answers.queue.confidence });
+}
+
+const right = (rs: typeof rows) => rs.filter((r) => r.pick === r.gold).length;
+console.log(`app.support_triage, ${N} tickets, seed ${SEED}: accuracy ${(right(rows) / N).toFixed(2)} (${right(rows)}/${N})`);
+const common = labels.map((l) => [l, rows.filter((r) => r.gold === l).length] as const).reduce((x, y) => (y[1] > x[1] ? y : x));
+console.log(`  baseline: always "${common[0]}", the sample's most common queue, gets ${common[1]}/${N}`);
+for (const floor of [FLOOR, 0.8]) {
+  const kept = rows.filter((r) => r.confidence >= floor);
+  const acc = kept.length ? (right(kept) / kept.length).toFixed(2) : "-";
+  console.log(`  confidence >= ${floor}: ${kept.length} routed, accuracy ${acc}; ${N - kept.length} to a person`);
+}
+```
+
+One ticket, three questions, one call:
+
+```ts
+// One ticket, three typed questions in one call: the first sampled billing ticket.
+const walk = rows.find((r) => r.gold === "Billing and Payments") ?? rows[0];
+const ticket = suite[walk.i][0];
+const d = await kai.decide({ state: ticket, questions: { queue, urgency, wants } });
+const { queue: q, urgency: u, wants: w } = d.answers;
+const top = Object.entries(u.probabilities).reduce((x, y) => (y[1] > x[1] ? y : x));
+const act = (confidence: number, then: string) => (confidence >= FLOOR ? then : "a person decides");
+console.log(`\nticket ${walk.i}, "${ticket.subject}" (gold: ${walk.gold})`);
+console.log(`  queue    ${q.choice}, confidence ${q.confidence.toFixed(3)} -> ${act(q.confidence, `desk ${DESK[q.choice]}`)}`);
+console.log(`  urgency  "${LEVELS[+top[0]].split(":")[0]}" at p ${top[1].toFixed(2)}, expected level ${u.score.toFixed(2)}, confidence ${u.confidence.toFixed(3)} -> ${act(u.confidence, `first reply within ${REPLY[+top[0]]}`)}`);
+console.log(`  wants    ${w.choice} at p ${w.probabilities[w.choice].toFixed(2)}, confidence ${w.confidence.toFixed(3)} -> ${act(w.confidence, w.choice === "refund" ? "open a refund review" : "no refund review")}`);
+```
+
+The full script, with the data loader and the seeded sampler, is
+[`tickets.ts`](https://github.com/hanzo-js/kai/blob/main/examples/tickets.ts).
+It caches the pinned harness file in your temp directory.
+
+```bash
+npm i @hanzo/kai
+export HANZO_API_KEY=sk-...
+npx tsx tickets.ts
+```
+
+## The run
+
+What `api.hanzo.ai` answered on 2026-09-28:
+
+{/* out: ts/tickets.ts */}
+```text
+app.support_triage, 50 tickets, seed 7: accuracy 0.32 (16/50)
+  baseline: always "Technical Support", the sample's most common queue, gets 13/50
+  confidence >= 0.5: 41 routed, accuracy 0.37; 9 to a person
+  confidence >= 0.8: 32 routed, accuracy 0.41; 18 to a person
+  most frequent misses, gold -> Kai:
+    4  Technical Support -> IT Support
+    3  Technical Support -> Product Support
+    3  Technical Support -> Service Outages and Maintenance
+
+ticket 287, "Inquiry for Comprehensive Details on the Billing Procedure" (gold: Billing and Payments)
+  queue    Billing and Payments, confidence 1.000 -> desk billing
+  urgency  "within a few days" at p 0.34, expected level 1.27, confidence 0.119 -> a person decides
+  wants    refund at p 0.62, confidence 0.496 -> a person decides
+  usage    659 input tokens, 0 output tokens
+```
+
+## What the numbers say
+
+- **16 of 50 is a weak score.** Always answering Technical Support gets 13 of
+  these 50. Fifty tickets carry a margin of about ±0.13 at 95%, so read 0.32
+  as a range. The whole suite, and how Kai and Jev compare on it, is in the
+  published [kai-a7 results](https://github.com/hanzoai/benchmarks/tree/c61361f/decision/results/kai-a7).
+- **The misses cluster.** 10 of the 34 misses are tickets labelled Technical
+  Support that Kai sent to IT Support, Product Support, or Service Outages and
+  Maintenance, queues whose descriptions overlap: "outages" appears in two of
+  them. Tickets 67, 222 and 377 report outages and went to Service Outages and
+  Maintenance; ticket 368, a laptop that keeps dropping Wi-Fi, went to IT
+  Support. Those answers fit the queue descriptions as well as the labels do.
+- **Confidence barely separates right from wrong on this label set.** Routing
+  only the answers at 0.8 or more keeps 32 tickets and gets 0.41 of them right,
+  against 0.32 overall. The floor sends work to a person; it does not make
+  what is routed trustworthy.
+- **On the walked ticket, the floor caught the mistake.** The queue is right at
+  confidence 1.000. Urgency is spread, its top level at 0.34, so a person sets
+  the deadline. What the customer asks for is wrong: the ticket asks how
+  billing, adjustments and disputes work, and Kai's top answer is `refund` at
+  0.62. Its confidence, 0.496, sits just under the floor, so a person decides
+  and no refund review opens.
+- **Asked as yes or no, the same mistake was confident.** In a run the same
+  day, "does the customer ask for money back?" with a described `yes` and `no`
+  got `yes` at 0.99 on this ticket, far over any floor. Naming the outcomes
+  turned a confident error into an unsure one; it did not make the answer
+  right.
+
+## Adapt it
+
+- Put your queues in `QUEUES` and your desks in `DESK`. The compiler names any
+  queue left without a desk.
+- Swap the harness for 50 to 100 of your own labelled tickets. The loop stays
+  the same with your labels as `gold`; pick each question's floor where the
+  accuracy of what gets routed is one you accept.
+- Keep refund reviews behind a person until `wants` holds up on your labelled
+  tickets. Here the floor kept one from opening by 0.004.
+- Once the route is settled, a Zen model can write the reply, as in
+  [Triage with Kai, reply with Zen](/docs/guides/cookbook/triage).
+
+## Next
+
+- [Confidence and thresholds](/docs/kai/confidence)
+- [Confidence gates](/docs/kai/patterns/gating)
+- [Limits](/docs/kai/limits)

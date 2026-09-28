@@ -1,0 +1,109 @@
+---
+title: Confidence and thresholds
+description: Tell a probability from confidence and answer_confidence, read what a spread answer means, and set the threshold below which your code escalates.
+---
+
+**Every answer carries its own uncertainty. Code acts on the answers above a
+threshold it has tested, and hands the rest to a person or a rule.**
+
+## Three numbers
+
+| Field | On | Is | Range |
+|---|---|---|---|
+| `probabilities`, `noul` | choice and score; noul | the probability of each option; P(true) | 0 to 1 |
+| `answer_confidence` | every answer | the probability of the reported answer, p_max; for a noul, max(p, 1 − p) | 1/n to 1 |
+| `confidence` | every answer | (n·p_max − 1)/(n − 1) over n options; for a noul, \|2p − 1\| | 0 to 1 |
+
+`answer_confidence` is a probability, so it can be checked against how often
+such answers turn out right. `confidence` rescales it so that 0 means no better
+than a uniform guess, whatever the number of options: a top probability of 0.5
+is confidence 0 for two labels and 0.375 for five. One threshold on `confidence`
+therefore means the same for a yes/no question and a thirty-way choice.
+
+## A clear case and an unclear one
+
+One question, two messages, and a desk that acts at confidence 0.6:
+
+```python
+from hanzo_kai import Kai, Choice
+
+need = Choice(
+    instructions="What does `message` need from IT?",
+    criteria={
+        "password": "reset a password or unlock an account",
+        "access": "permission to a system, folder or app",
+        "hardware": "a broken or missing laptop, monitor or phone",
+        "network": "Wi-Fi, VPN or internet problems",
+        "other": "anything else",
+    },
+)
+messages = [
+    "I got locked out after too many attempts, can you unlock my account?",
+    "Since the Wi-Fi password changed I cannot open the shared drive.",
+]
+THRESHOLD = 0.6  # the desk acts on answers at or above this confidence
+
+with Kai() as kai:
+    for text in messages:
+        a = kai.decide(state={"message": text}, questions={"need": need}).choices["need"]
+        top = sorted(a.probabilities.items(), key=lambda kv: -kv[1])[:3]
+        action = f"route to {a.choice}" if a.confidence >= THRESHOLD else "ask a person"
+        print(text)
+        print(f"  top three {[(label, round(p, 4)) for label, p in top]}")
+        print(f"  answer_confidence {a.answer_confidence:.4f}  confidence {a.confidence:.4f}  -> {action}")
+```
+
+What `api.hanzo.ai` answered on 2026-09-28:
+
+{/* out: python/confidence.py */}
+```text
+I got locked out after too many attempts, can you unlock my account?
+  top three [('password', 0.9999), ('access', 0.0), ('hardware', 0.0)]
+  answer_confidence 0.9999  confidence 0.9999  -> route to password
+Since the Wi-Fi password changed I cannot open the shared drive.
+  top three [('access', 0.3756), ('password', 0.3261), ('hardware', 0.1637)]
+  answer_confidence 0.3756  confidence 0.2195  -> ask a person
+```
+
+The lockout is plain, and the desk acts. The Wi-Fi message touches several
+labels at once, and Kai spreads its answer across them instead of picking one
+with false certainty. Its confidence is under the line, so a person decides.
+
+## Reading a spread
+
+- **Two labels close at the top**: the case fits both. It may really be about
+  both; handle both, or ask.
+- **Probability across many labels**: no label fits, or the state lacks what
+  decides. Add a label, or send the part of the case that settles it.
+- **A score split between neighbouring levels**: the state sits between them.
+  Split between distant levels, the scale mixes two things, or the case is
+  ambiguous.
+
+## Set the threshold from your outcomes
+
+1. Take a few hundred cases from your own traffic, each with the answer a person
+   gave.
+2. Ask Kai the questions you will ship, worded as you will ship them.
+3. For each candidate threshold, measure how often the answers at or above it are
+   right, and what share of cases they cover.
+4. Pick the lowest threshold whose accuracy covers the cost of acting wrongly.
+   Below it, escalate.
+5. Measure again when `routing.checkpoint` or `routing.calibration` changes, or
+   when you reword a question.
+
+A threshold scales with what the action costs: routing a ticket to a queue can
+act on less confidence than unlocking an account.
+
+Kai's probabilities were calibrated on held-out data from its training suites,
+and per-suite calibration error is published with its
+[harness results](https://github.com/hanzoai/benchmarks/tree/c61361fedc5882b0d83b2f5d5a6a35c56ffeb3c3/decision/results/kai-a7).
+On questions unlike those suites it can be confident and wrong: one wording of a
+routing question sent a request to write a note to `code` at 0.67
+([Choice questions](/docs/kai/questions/choice#measured-wording-moves-answers)).
+That is why the threshold comes from your outcomes, not from the number alone.
+
+## Next
+
+- [Building with Kai](/docs/kai/build): thresholds inside a workflow, joined with policy.
+- [Noul questions](/docs/kai/questions/noul): two thresholds for a yes/no.
+- [Question types](/docs/kai/questions): what each answer holds.

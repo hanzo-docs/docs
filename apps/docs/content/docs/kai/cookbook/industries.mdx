@@ -1,0 +1,110 @@
+---
+title: Fine label or group
+description: "Classify into fine labels, fall back to their parent group when Kai is not sure of the label, send the rest to review, and read coverage and accuracy at each level."
+---
+
+**Report the fine label when Kai is sure of it, the group above it when only
+the group is clear, and nothing when neither is.** The group's probability is
+the sum of its labels' probabilities, so the fallback costs no extra question.
+On 60 Banking77 messages the top label was right 53 times and its group 57
+times, but Kai was so confident that the fallback only engaged at a label
+threshold of 0.99 and above.
+
+## The idea
+
+Banking77 has 77 intents, and several differ by a hair: `card arrival` and
+`card delivery estimate`, `exchange rate` and `card payment wrong exchange
+rate`. Many applications can act on a coarser answer ("a card question", "a
+currency question") when the fine one is uncertain. The script groups the 77
+labels into nine groups of our own:
+
+| Group | Labels | For example |
+|---|---|---|
+| card | 12 | card arrival, card delivery estimate, activate my card |
+| broken card | 6 | card not working, contactless not working |
+| security | 6 | lost or stolen card, pin blocked |
+| payment | 10 | extra charge on statement, pending card payment |
+| cash | 7 | pending cash withdrawal, atm support |
+| transfer | 11 | transfer timing, failed transfer |
+| top up | 11 | automatic top up, top up failed |
+| currency | 6 | exchange rate, fiat currency support |
+| account | 8 | verify my identity, terminate account |
+
+One call per message asks the harness's own 77-way question. Code then decides
+the level: the label if its confidence clears a threshold, else the most
+probable group if that group's summed probability is at least 0.8, else
+review.
+
+## The code
+
+```python
+def place(answer, fine: float, coarse: float = 0.8) -> tuple[str, str | None]:
+    """The level Kai can answer at, and the answer: a label, its group, or nothing for review."""
+    if answer.confidence >= fine:
+        return "label", answer.choice
+    mass = Counter()
+    for label, p in answer.probabilities.items():
+        mass[PARENT[label]] += p
+    group, p = mass.most_common(1)[0]
+    return ("group", group) if p >= coarse else ("review", None)
+```
+
+`PARENT` maps each label to its group. The script, with the groups and a draw
+of six messages for each of the harness's ten gold labels, is
+[`industries.py`](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/industries.py).
+What it printed against `api.hanzo.ai` on 2026-09-28:
+
+{/* out: python/industries.py */}
+```text
+60 messages, 10 gold labels, 77 labels in 9 groups
+
+label at    label: n  right   group: n  right   review    (group when its probability is at least 0.8)
+  0.0000        60     53         0      0        0
+  0.9000        58     53         0      0        2
+  0.9900        56     52         2      2        2
+  0.9990        54     51         4      3        2
+  0.9999        47     46        11     10        2
+the group of the top label, always: 57/60 right
+
+wrong label                              gold                             kai, confidence, same group
+Can I space out how often money is trans automatic top up                 transfer timing, 0.6009, no
+Is there a way to know when my card will card arrival                     card delivery estimate, 0.9998, yes
+How do I know when my card will arrive?  card arrival                     card delivery estimate, 1.0000, yes
+Why am I being charged more ?            card payment wrong exchange rate card payment fee charged, 0.9915, no
+It's been two weeks, why has the transac extra charge on statement        transfer not received by recipient, 0.5667, no
+Can I exchange currencies?               fiat currency support            exchange via app, 0.9994, yes
+My account was charged for a withdraw I  pending cash withdrawal          cash withdrawal charge, 0.9882, yes
+```
+
+## What the numbers say
+
+- **Kai's confidence on this suite sits near 1.** Only two answers fell under
+  0.9, both wrong, and both went to review because neither group reached 0.8
+  either. Up to a label threshold of 0.9, no answer falls back to a group.
+- **At 0.9999 the fallback does its job.** 47 answers stay labels (46 right), 11
+  fall back to their group (10 right), 2 go to review: 56 of the 58 answered
+  are right, against 53 of 60 with no fallback.
+- **Four of the seven wrong labels are in the right group**, and three of those
+  four are at 0.999 or above. `card arrival` against `card delivery estimate` is
+  a split Banking77 draws finely: "How do I know when my card will arrive?" is
+  labelled arrival, and Kai said estimate at 1.0000.
+- **The group of the top label alone** was right for 57 of 60. When a group is
+  all you act on, report it and skip the thresholds.
+- **The threshold that works here was found by sweeping it on labelled data.**
+  With probabilities this close to 1, pick it from a sweep like the table's on
+  your own labelled messages, not by feel.
+
+## Adapt it
+
+- Define groups by what your application does next, not by how labels are
+  spelled: one group per queue, team or reply.
+- Sum probabilities up the tree for any depth; a node's probability is the sum
+  of its children's.
+- Run the sweep on your own labelled messages and pick the pair of thresholds
+  whose coverage and accuracy you can live with at each level.
+
+## Next
+
+- [Classify down a tree](/docs/kai/cookbook/hierarchy)
+- [Confidence and thresholds](/docs/kai/confidence)
+- [Confidence gates](/docs/kai/patterns/gating)

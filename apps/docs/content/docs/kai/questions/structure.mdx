@@ -1,0 +1,166 @@
+---
+title: Structured questions
+description: Put objects and arrays into instructions, choice descriptions, score levels and noul sides, and know what Kai does and does not do with them.
+---
+
+**`instructions`, choice descriptions, score levels and noul sides each take
+text, an object or an array. Kai reads an object or an array as its JSON text.**
+
+## Where structure goes
+
+| Field | Takes | Kai reads |
+|---|---|---|
+| `instructions` | text, an object or an array | the question's type, then the text: `choice question: …`, beside the state |
+| a choice description | text, an object, an array or `null` | `label: …` |
+| a score level | text, an object or an array | `level i: …` |
+| a noul side | text, an object, an array or `null` | `true: …` and `false: …` |
+
+JSON text is one line with a space after each comma and colon, keys in the
+order you sent them and non-ASCII characters as they are. The instructions share
+the state's window, and a state that no longer fits beside them is refused with
+`state_too_long`. Each option is read whole up to 512 tokens and refused past
+that with `option_too_long`.
+
+## Instructions as an object
+
+An object keeps the question in one field and what goes with it in others:
+
+```bash
+curl -sS https://api.hanzo.ai/v1/decisions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "kai",
+    "state": {"message": "I need edit rights on the finance shared drive for the audit."},
+    "questions": {
+      "need": {"type": "choice",
+               "instructions": {"question": "What does `message` need from IT?",
+                                "note": "judge the underlying problem, not the words used"},
+               "criteria": {"password": "reset a password or unlock an account",
+                            "access": "permission to a system, folder or app",
+                            "hardware": "a broken or missing laptop, monitor or phone",
+                            "network": "Wi-Fi, VPN or internet problems",
+                            "other": "anything else"}}
+    }
+  }' | jq '.answers'
+```
+
+What `api.hanzo.ai` answered on 2026-09-28:
+
+{/* out: sh/structure.sh */}
+```json
+{
+  "need": {
+    "type": "choice",
+    "choice": "access",
+    "confidence": 0.6607,
+    "probabilities": {
+      "password": 0.0013,
+      "access": 0.7285,
+      "hardware": 0.0065,
+      "network": 0.0131,
+      "other": 0.2506
+    },
+    "answer_confidence": 0.7285
+  }
+}
+```
+
+## Measured: structure against plain text
+
+Four requests a person would file as `password`, `network`, `access` and
+`hardware`, asked three ways: plain one-line descriptions, descriptions as
+`{covers, not}` objects, and plain descriptions with an object for
+instructions.
+
+```python
+question = "What does `message` need from IT?"
+plain = {
+    "password": "reset a password or unlock an account",
+    "access": "permission to a system, folder or app",
+    "hardware": "a broken or missing laptop, monitor or phone",
+    "network": "Wi-Fi, VPN or internet problems",
+    "other": "anything else",
+}
+objects = {
+    "password": {"covers": "forgotten passwords, locked accounts", "not": "Wi-Fi keys"},
+    "access": {"covers": "new permissions to a system, folder or app", "not": "a login that used to work"},
+    "hardware": {"covers": "broken or missing laptops, monitors, phones", "not": "software"},
+    "network": {"covers": "Wi-Fi, VPN, internet", "not": "account logins"},
+    "other": "anything else",
+}
+questions = {
+    "plain": Choice(instructions=question, criteria=plain),
+    "objects": Choice(instructions=question, criteria=objects),
+    "note": Choice(
+        instructions={"question": question, "note": "judge the underlying problem, not the words used"}, criteria=plain
+    ),
+}
+```
+
+{/* out: python/structure.py */}
+```text
+a person says             plain         objects            note
+password          password 1.00     access 0.63   password 0.94
+network            network 0.73    network 0.41    network 0.67
+access              access 0.68    network 0.49     access 0.73
+hardware          hardware 0.75   hardware 0.92   hardware 0.65
+```
+
+The plain descriptions get all four right. The objects get two: the lockout goes
+to `access` and the drive request to `network`. The object instructions answer
+as the plain question does. On this checkpoint, start each label with one line
+of plain text, and use structure where a question needs data beside it.
+
+## Structure is read, not computed
+
+Kai reads the fields of an object as words. It does not compare them, sum them
+or look them up. Here the payment's amount and reference match one invoice
+exactly:
+
+```bash
+curl -sS https://api.hanzo.ai/v1/decisions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "kai",
+    "state": {"payment": {"amount": "EUR 1,250.00", "payer": "ACME LTD", "reference": "INV2291 SEPT"}},
+    "questions": {
+      "invoice": {"type": "choice",
+                  "instructions": {"question": "Which open invoice does `payment` settle?",
+                                   "rule": "match on amount first, then on the reference"},
+                  "criteria": {"INV-2290": {"customer": "Acme Ltd", "amount": "EUR 980.00"},
+                               "INV-2291": {"customer": "Acme Ltd", "amount": "EUR 1,250.00"},
+                               "INV-2305": {"customer": "Apex Media", "amount": "EUR 1,250.00"},
+                               "none": "no open invoice matches"}}
+    }
+  }' | jq '.answers'
+```
+
+{/* out: sh/invoice.sh */}
+```json
+{
+  "invoice": {
+    "type": "choice",
+    "choice": "none",
+    "confidence": 0.1895,
+    "probabilities": {
+      "INV-2290": 0.2352,
+      "INV-2291": 0.2238,
+      "INV-2305": 0.1489,
+      "none": 0.3921
+    },
+    "answer_confidence": 0.3921
+  }
+}
+```
+
+Kai spreads the probability and ranks the right invoice below a wrong one.
+Matching an amount is code's work: filter the invoices in code, then ask Kai
+what code cannot read, such as whether the payer's note disputes the charge.
+
+## Next
+
+- [What Kai reads](/docs/kai/state): the state's forms and its window.
+- [Choice questions](/docs/kai/questions/choice): labels and descriptions.
+- [Building with Kai](/docs/kai/build): what goes to code and what goes to Kai.

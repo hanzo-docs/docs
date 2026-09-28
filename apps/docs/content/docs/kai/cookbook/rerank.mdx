@@ -1,0 +1,117 @@
+---
+title: Rerank a shortlist
+description: "Reorder a retriever's shortlist with one relevance question per candidate in a single call, and check the new order against labelled queries before trusting it."
+---
+
+**A retriever hands over twenty candidates; Kai rates each one against the
+question, all in one call.** The script reranks keyword shortlists of the
+docs.hanzo.ai pages for twelve questions whose answering page is known, and
+scores three orders: the incoming one, Kai's relevance nouls, and Kai's score
+questions.
+
+## The idea
+
+Reranking is a relevance judgment per candidate, and a call can carry one
+question per candidate. The query is the state; each candidate rides in its own
+question's instructions. Kai answers each question as its own sequence, so
+twenty candidates cost twenty reads of the query and the candidate, not one
+read of everything at once.
+
+The run asks the relevance question two ways:
+
+- **a relevance noul**, ``Does `passage` help answer `query`?``: the question
+  Kai's RAG relevance suite trains and measures;
+- **a score question** over four levels, from "unrelated" to "answers it".
+
+The incoming order is BM25 over each page's title and description in the docs
+index. The labels are ours: for each question, the one page that answers it.
+
+## The code
+
+```python
+nouls = {
+    f"c{i}": Noul(instructions={"passage": docs[path], "question": "Does `passage` help answer `query`?"})
+    for i, path in enumerate(candidates)
+}
+scores = {
+    f"c{i}": Score(instructions={"page": docs[path], "question": "How well does `page` answer `query`?"}, criteria=LEVELS)
+    for i, path in enumerate(candidates)
+}
+by_noul = kai.decide({"query": query}, nouls).nouls
+by_score = kai.decide({"query": query}, scores).scores
+noul_order = sorted(candidates, key=lambda p: -by_noul[f"c{candidates.index(p)}"].noul)
+score_order = sorted(candidates, key=lambda p: -by_score[f"c{candidates.index(p)}"].score)
+```
+
+A sort in Python is stable, so candidates Kai rates alike keep their incoming
+order. The whole script, with the shortlist and the twelve labelled questions,
+is [`rerank.py`](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/rerank.py).
+What it printed against `api.hanzo.ai` on 2026-09-28:
+
+{/* out: python/rerank.py */}
+```text
+My key leaked. How do I revoke it and get a new one?       incoming 1  nouls 11  scores 9
+                                                           nouls' first: /docs/guides/integrations
+Which package do I install for a Next.js app?              incoming 1  nouls 1  scores 20
+                                                           nouls' first: /docs/sdks/typescript
+How do I check that a webhook request really came from you incoming None  nouls None  scores None
+                                                           nouls' first: /docs/guides/migrate/upstash
+Can I run the whole cloud on my own machines?              incoming 1  nouls 6  scores 16
+                                                           nouls' first: /docs/startups
+I am moving off Pinecone. What replaces my vector index?   incoming 1  nouls 7  scores 13
+                                                           nouls' first: /docs/sdks/python
+What does a request cost per token?                        incoming 1  nouls 2  scores 11
+                                                           nouls' first: /docs/guides/migrate/jev
+We raised a seed round. Can we get free credits?           incoming 3  nouls 2  scores 18
+                                                           nouls' first: /docs/referrals
+Point LangGraph at your API                                incoming 3  nouls 1  scores 11
+                                                           nouls' first: /docs/guides/integrations/langgraph
+Where is the list of every error code and its HTTP status? incoming 1  nouls 1  scores 18
+                                                           nouls' first: /docs/errors
+Use Hanzo inside Excel and Word                            incoming 1  nouls 1  scores 20
+                                                           nouls' first: /docs/apps/office
+Earn money when people deploy my open-source template      incoming 1  nouls 1  scores 19
+                                                           nouls' first: /docs/templates/kickbacks
+Run Hanzo Dev without the TUI in a CI job                  incoming 2  nouls 1  scores 20
+                                                           nouls' first: /docs/dev/usage/exec
+
+254 pages, a shortlist of 20 per question; rank of the page that answers (None: not shortlisted)
+order             first  top 3    MRR
+incoming              8     11  0.764
+relevance nouls       6      8  0.617
+score questions       0      0  0.062
+```
+
+## What the numbers say
+
+- **The incoming order was the best order.** BM25 put the answering page first
+  for eight of twelve questions (MRR 0.764). Kai's relevance nouls put it first
+  for six (MRR 0.617).
+- **The nouls fixed two and broke four.** They moved the LangGraph page from
+  third to first and the headless Hanzo Dev page from second to first. They
+  moved four pages that were already first down the list: the key rotation
+  page to eleventh, the Pinecone page to seventh.
+- **Do not rerank with score questions.** They put the answering page last of
+  twenty for three questions and never higher than ninth (MRR 0.062): the
+  order came out close to reversed.
+- **No reranker finds what the retriever missed.** The webhook signing page
+  was not in its shortlist, so every order missed it.
+
+On this checkpoint Kai does not improve this retriever. That is a measurement
+on twelve questions, not a rule: run your own labelled queries through both
+orders before switching.
+
+## Adapt it
+
+- Rerank with the relevance noul, one per candidate, and keep your incoming
+  order as the tie-break.
+- Keep a labelled set of queries with their answering document, and compare
+  first place and MRR for the incoming order against the reranked one whenever
+  either side changes.
+- Shortlist wide enough that the answer is in it; a reranker only reorders.
+
+## Next
+
+- [Filter RAG passages](/docs/kai/cookbook/rag)
+- [Search a page by line](/docs/kai/cookbook/search)
+- [Limits](/docs/kai/limits)

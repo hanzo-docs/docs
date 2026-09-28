@@ -1,0 +1,104 @@
+---
+title: Extract dates
+description: "Find date expressions with regular expressions, let Kai check which one gives the date you want and what it counts from, resolve relative dates in code, and send the unsure ones to review."
+---
+
+**Code finds the dates, Kai says which one answers, code does the arithmetic.**
+Over nine messages of ours, the five answers the script acted on were all
+right, including one that had to count 30 days from a date named elsewhere in
+the message; four went to review, and one of those was wrong.
+
+## The idea
+
+A message about a payment names several dates: when the invoice was issued,
+when goods ship, when payment is due. Some are calendar dates, some are relative
+("30 days after the invoice date", "yesterday", "by Friday"). The work splits
+three ways:
+
+1. **Code finds candidates.** Regular expressions match calendar dates and a
+   small set of relative forms.
+2. **Kai checks each candidate.** For each one the script asks whether the
+   message implies "The payment due date is 30 days after the invoice date.",
+   and keeps the candidate with the highest probability of entailment. That is
+   the premise-and-hypothesis question [Check citations](/docs/kai/cookbook/citations)
+   uses. When the winning expression counts from a named event ("the invoice
+   date", "the kickoff"), a second round of checks asks which calendar date
+   that event is.
+3. **Code resolves.** Counting days, finding the next Friday and fixing the
+   year are arithmetic, and code does them against the day the message was
+   sent.
+
+An answer is automatic when every check it rests on reached 0.7; below 0.3 the
+answer is that the message does not give the date; anything between goes to a
+person with what Kai supported.
+
+## The code
+
+```python
+def best(kai: Kai, text: str, hypotheses: dict[str, str]) -> tuple[str, float]:
+    """The key whose hypothesis the text supports most, with its P(entailment): one check per hypothesis."""
+    support = {
+        key: kai.decide(state={"premise": text, "hypothesis": hypothesis}, questions={"check": CHECK})
+        .choices["check"]
+        .probabilities["entailment"]
+        for key, hypothesis in hypotheses.items()
+    }
+    return max(support.items(), key=lambda item: item[1])
+```
+
+`CHECK` is the three-way relation question, `spans` runs the regular
+expressions, `phrase` extends "30 days after" to the end of its clause, and
+`resolve` does the calendar arithmetic. They and the nine labelled messages are
+in [`dates.py`](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/dates.py).
+What it printed against `api.hanzo.ai` on 2026-09-28:
+
+{/* out: python/dates.py */}
+```text
+payment due date            30 days after the invoice date 0.78; the invoice date = February 27 0.76 2026-03-29 auto   ok
+deadline for the slides     two days before the kickoff 0.51; the kickoff = March 13 0.57  2026-03-11 review ok
+last day of the trial       in 14 days 0.68                                                2026-04-15 review ok
+latest date for the refund  within 7 days 0.78                                             2026-04-17 auto   ok
+date the package shipped    yesterday 0.74                                                 2026-06-02 auto   ok
+deadline for questions      Friday 0.65                                                    2026-06-19 review ok
+appointment date            2026-07-14 0.74                                                2026-07-14 auto   ok
+last day of the warranty    May 2 0.39                                                     2026-05-02 review wrong
+delivery date               none (best: July 28 0.21)                                      -          auto   ok
+
+5 of 5 automatic answers right; 4 sent to review
+```
+
+## What the numbers say
+
+- **Every automatic answer was right.** That includes the due date, where Kai
+  picked "30 days after the invoice date" over both calendar dates and then
+  matched "the invoice date" to February 27, and the delivery date, which the
+  message does not give: its best candidate, the payment date, reached only
+  0.21.
+- **Review caught the one wrong answer.** For the warranty, Kai preferred the
+  purchase date (0.39) to "90 days from purchase"; under 0.7, it went to a
+  person.
+- **Three reviews carry the right date.** The kickoff moved from March 10 to
+  March 13, and Kai matched it to the new date, at 0.57. The trial and the
+  Friday deadline were right at 0.68 and 0.65. On these nine messages a line
+  at 0.5 would have automated all three and still held the warranty; nine
+  messages are too few to set a line by, so set yours on labelled messages of
+  your own.
+- **One choice over all the expressions does worse.** Asked which expression
+  gives the date as a single choice, Kai tends to pick a calendar date over the
+  relative expression that answers. [Extract values](/docs/kai/cookbook/values)
+  measures a single choice against a check per candidate.
+
+## Adapt it
+
+- Add the relative forms your messages use to `RELATIVE`, with their arithmetic
+  in `resolve`. What Kai checks stays the same.
+- Resolve in the sender's time zone and calendar; business days, holidays and
+  "end of month" are rules for code, not questions for Kai.
+- Keep the evidence with the answer (`why` in the script), so the person
+  reviewing sees which expression and which anchor Kai supported.
+
+## Next
+
+- [Extract values](/docs/kai/cookbook/values)
+- [Check citations](/docs/kai/cookbook/citations)
+- [Confidence and thresholds](/docs/kai/confidence)

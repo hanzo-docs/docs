@@ -1,0 +1,148 @@
+---
+title: Search a page by line
+description: "Find the line of a page that answers a question, and whether the page answers it at all, with each method measured against labelled questions."
+---
+
+**One page, one question: which line answers it, and does the page answer it
+at all.** The script splits the Credits & billing page of these docs into
+lines, asks eleven questions of it, eight with a known answering line and
+three the page does not answer, and finds the line three ways.
+
+## The idea
+
+A line is a sentence, a table row, a heading or a list item of the page. Three
+ways to find the one that answers:
+
+- **a relevance noul per line**, ``Does `line` help answer `query`?``, all
+  thirty-five in one call: the RAG relevance question Kai is trained and
+  measured on;
+- **one choice over the line ids**, each id's description the line's text;
+- **keyword search**: BM25 over the lines, in code, with no model.
+
+Whether the page answers at all is a question about the whole page, so it is
+asked once, with the page in the state: a noul stated as
+`` `document` answers `query`. `` with both sides described. Kai reads up to
+1,024 tokens per question, state and question together, and this page fits.
+
+## The code
+
+```python
+if not CACHE.exists():
+    CACHE.parent.mkdir(exist_ok=True)
+    urllib.request.urlretrieve(PAGE, CACHE)
+page = lines(CACHE.read_text())
+document = "\n".join(f"{key} {line}" for key, line in page.items())
+answered = Noul(
+    instructions="`document` answers `query`.",
+    criteria={"true": "a line of the document gives the answer", "false": "the document does not cover it"},
+)
+pick = Choice(instructions="Which line of `document` answers `query`?", criteria=page)
+per_line = {key: Noul(instructions={"line": line, "question": "Does `line` help answer `query`?"}) for key, line in page.items()}
+
+for query, gold in QUERIES:
+    nouls = kai.decide({"query": query}, per_line)
+    whole = kai.decide({"query": query, "document": document}, {"line": pick, "answered": answered})
+```
+
+The per-line call carries only the query as its state: each noul reads the
+query and its own line. The whole script, with the line splitter and the
+eleven labelled questions, is
+[`search.py`](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/search.py).
+What it printed against `api.hanzo.ai` on 2026-09-28:
+
+{/* out: python/search.py */}
+```text
+35 lines. For each question: the line nouls' best line, the keyword best line, the choice's best line.
+
+Do I pay anything in a month when I send no requests?
+  gold ['L03']   the page answers it: p=0.424
+  line nouls: L33 p=0.280   keywords: L27   one choice: L08 p=0.055
+  nouls' line: Pricing — the rates, per million tokens and per call.
+
+Which address tells me what a unit costs before I spend it?
+  gold ['L06']   the page answers it: p=0.515
+  line nouls: L06 p=0.450   keywords: L06   one choice: L08 p=0.057
+  nouls' line: Pricing what a unit costs, before you spend it `/v1/pricing`
+
+Is my balance a number someone keeps by hand?
+  gold ['L12']   the page answers it: p=0.431
+  line nouls: L19 p=0.512   keywords: L12   one choice: L08 p=0.047
+  nouls' line: It is how an org hands a project, a key or a member a budget without handing over the whole balance.
+
+How is an allowance different from my balance?
+  gold ['L15', 'L16', 'L18', 'L19']   the page answers it: p=0.468
+  line nouls: L21 p=0.411   keywords: L19   one choice: L08 p=0.050
+  nouls' line: It resets continuously rather than at a boundary: spend older than the window drops out of the trail
+
+Is there a monthly spending cliff?
+  gold ['L21']   the page answers it: p=0.485
+  line nouls: L12 p=0.468   keywords: L21   one choice: L19 p=0.043
+  nouls' line: Credits are bought — or granted — at `https://api.hanzo.ai/v1/billing/credits`, and every draw-down 
+
+Will the error tell me I am out of credit rather than that my key is bad?
+  gold ['L25']   the page answers it: p=0.406
+  line nouls: L21 p=0.592   keywords: L25   one choice: L35 p=0.061
+  nouls' line: It resets continuously rather than at a boundary: spend older than the window drops out of the trail
+
+Is listing my projects free?
+  gold ['L29']   the page answers it: p=0.360
+  line nouls: L29 p=0.505   keywords: L29   one choice: L08 p=0.065
+  nouls' line: A capability declares its price beside its code — free, flat, or metered — and the free ones are the
+
+What kinds of calls cost money?
+  gold ['L30']   the page answers it: p=0.341
+  line nouls: L27 p=0.469   keywords: L27   one choice: L19 p=0.055
+  nouls' line: Which calls cost anything
+
+How do I add a teammate to my org?
+  gold none   the page answers it: p=0.298
+  line nouls: L10 p=0.522   keywords: L19   one choice: L25 p=0.071
+  nouls' line: Read them in that order and the whole economy is one sentence: pricing says the rate, usage says the
+
+Which regions can I run a sandbox in?
+  gold none   the page answers it: p=0.348
+  line nouls: L30 p=0.452   keywords: L35   one choice: L25 p=0.068
+  nouls' line: What is metered is what consumes a real resource — inference tokens, sandbox seconds, an outbound SM
+
+How many requests per minute may one key send?
+  gold none   the page answers it: p=0.346
+  line nouls: L23 p=0.300   keywords: L35   one choice: L25 p=0.070
+  nouls' line: What happens at zero
+
+line nouls  answer line first: 2 of 8   in the top three: 5 of 8
+keywords    answer line first: 6 of 8   in the top three: 6 of 8
+one choice  answer line first: 0 of 8   in the top three: 1 of 8
+```
+
+## What the numbers say
+
+- **Keyword search found the line best.** BM25 put the answering line first
+  for six of the eight answerable questions. Kai's line nouls put it first for
+  two and in the top three for five. The single choice over the 35 line ids put
+  it first for none: its top line, `L08` five times, held 4 to 7% of the
+  probability, against 2.9% for an even spread.
+- **The line nouls rank, but their values do not say whether a line answers.**
+  The best line scored between 0.280 and 0.592 across all eleven questions,
+  and for two of the three questions the page does not answer, some line
+  reached 0.45.
+- **The page noul nearly separates answered from unanswered.** It gave the
+  eight answerable questions 0.341 to 0.515 and the other three 0.298 to
+  0.348. Every unanswered question fell below 0.35, and so did one answered
+  question. A line drawn there rests on three questions; draw yours on your
+  own.
+
+## Adapt it
+
+- Find the line with keyword search, or with the retriever you already run,
+  over the page's lines.
+- Ask Kai whether the page answers at all, with the page in the state, and set
+  the threshold on questions you know the page does and does not answer.
+- Keep the page within what Kai reads, 1,024 tokens per question with the
+  state. Split a longer page by section and ask the page question of each.
+- Do not ask one choice over dozens of line ids.
+
+## Next
+
+- [Rerank a shortlist](/docs/kai/cookbook/rerank)
+- [State](/docs/kai/state)
+- [Limits](/docs/kai/limits)

@@ -1,0 +1,99 @@
+---
+title: Rebuild lost structure
+description: "Recover which lines of a flattened README belong together and what each block is, and see where the current checkpoint reads layout and where it does not."
+---
+
+**Text copied out of a terminal or a PDF keeps its words and loses its
+structure.** The script flattens one of our READMEs, then asks two questions
+of the result: does each line continue the block before it, and what kind of
+block is each one. The original README is the answer key.
+
+## The idea
+
+The README is [Hanzo Base's](https://github.com/hanzoai/base/blob/4506925bff6d89aafbf7433bc0abec0d6131865e/README.md),
+pinned to a commit. Flattening drops every marker (`#`, `-`, code fences),
+every blank line, the table and the image, and wraps the prose at 64
+characters, the way a terminal copy does. What is left is a list of lines, each still tagged in
+the script with the block it came from.
+
+Rebuilding is two decisions:
+
+- **join or break**, per boundary between two lines: does the second continue
+  the block the first is in? One choice per boundary, the two lines in its
+  instructions, fifty boundaries to a call.
+- **what kind**, per block of the original: heading, paragraph, list item or
+  code. One choice per block, all in one call, so a wrong join cannot spoil
+  the kind.
+
+Beside Kai, one rule in code: a line that nearly fills the wrap width was
+wrapped, so it joins the next.
+
+## The code
+
+```python
+questions = {
+    f"b{i}": Choice(
+        instructions={"line": a[1], "next": b[1], "question": "Does `next` continue the block that `line` is in?"},
+        criteria=JOIN,
+    )
+    for i, (a, b) in enumerate(pairs[start : start + 50], start)
+}
+d = kai.decide({"source": f"a README whose markdown markers and blank lines were lost, wrapped at {WIDTH} characters"}, questions)
+```
+
+```python
+kinds = kai.decide(
+    {"source": "blocks of a README whose markdown markers were lost"},
+    {f"k{i}": Choice(instructions={"block": text[:300], "question": "What kind of block is `block`?"}, criteria=KINDS)
+     for i, (kind, text) in enumerate(original)},
+)
+width = [len(a[1]) >= WIDTH - 12 for a, _ in pairs]
+```
+
+The whole script, with the flattening, is
+[`reformat.py`](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/reformat.py).
+What it printed against `api.hanzo.ai` on 2026-09-28:
+
+{/* out: python/reformat.py */}
+```text
+23 blocks flattened to 80 lines: 79 boundaries, 57 inside a block, 22 between blocks
+                                        right  breaks found  false breaks
+Kai, one choice per boundary               56       3 of 22             4
+code: a line near full width joins         40      19 of 22            36
+
+what each block is: Kai right on 6 of 23
+    heading      6 blocks, Kai said: code 6
+    paragraph    9 blocks, Kai said: list 2, code 7
+    list         2 blocks, Kai said: code 2
+    code         6 blocks, Kai said: code 6
+```
+
+## What the numbers say
+
+- **Kai joins nearly every line.** It marked 3 of the 22 real breaks and added
+  4 where there is none. Its 56 right of 79 is no better than answering "same"
+  at every boundary, which scores 57.
+- **Kai calls every block code.** It got 6 of 23 right, the six code blocks;
+  every heading, paragraph and list item was labelled code as well.
+- **The width rule finds the paragraphs.** A line near the 64-character wrap
+  width was wrapped, so it joins the next: that marked 19 of the 22 breaks. Of
+  its 36 false breaks, 34 are lines inside code blocks, which are short by
+  nature, and two are prose lines cut short before a long token.
+
+On this checkpoint Kai reads no layout. Rebuild structure in code.
+
+## Adapt it
+
+- Join prose by the wrap width, as the rule here does, and treat a run of short
+  lines as one block rather than as many.
+- Tell code from prose by its characters, in code, and check the rule against
+  a document whose structure you know, as this script checks against the
+  original README.
+- Keep this script as the test for the next checkpoint: it prints the same
+  counts, and a model that reads layout will move them.
+
+## Next
+
+- [State](/docs/kai/state)
+- [Question structure](/docs/kai/questions/structure)
+- [Limits](/docs/kai/limits)

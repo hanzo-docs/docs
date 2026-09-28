@@ -1,0 +1,123 @@
+---
+title: Classify down a tree
+description: "Classify into a label tree with a beam over Kai's choice probabilities, parent first, then children, and measure it against one flat choice at each level."
+---
+
+**A tree classifier asks for the parent first, keeps the likeliest few, then
+asks for a child under each and multiplies the probabilities.** On 50 MASSIVE
+utterances with gold labels, the tree was right on 42 intents and the flat
+choice over all 59 on 44. The tree lost on the parent question: for 6
+utterances the right scenario was not among its two best.
+
+## The idea
+
+MASSIVE files every intent under a scenario, and its names say which:
+`alarm_set` sits under `alarm`, `iot_cleaning` under `iot`. The script builds
+the tree from the harness's `massive.en` suite (59 intents under 18 scenarios)
+and classifies each utterance two ways:
+
+- **Flat**: one choice over all 59 intents.
+- **Tree, beam of two**: one choice over the 18 scenarios, then, for the two
+  most probable, one choice over each one's intents. A path's probability is
+  P(scenario) × P(intent | scenario), and the best path wins. A scenario with a
+  single intent needs no second question.
+
+Two calls per utterance: the first carries the scenario question and the flat
+choice together, the second carries the kept scenarios' intent questions. A
+scenario's description is its intents' descriptions joined, taken as they are
+from the harness.
+
+## The code
+
+```python
+ASK = "What is the user asking for in `utterance`?"
+SCENARIO = Choice(
+    instructions="Which part of a voice assistant is `utterance` for?",
+    criteria={scenario: ", ".join(DESCRIBE[i] for i in intents) for scenario, intents in TREE.items()},
+)
+INTENT = {
+    s: Choice(instructions=ASK, criteria={i: DESCRIBE[i] for i in intents})
+    for s, intents in TREE.items()
+    if len(intents) > 1
+}
+FLAT = Choice(instructions=ASK, criteria=DESCRIBE)
+
+
+def classify(kai: Kai, state: dict) -> tuple[str, str, list[str], int]:
+    """The flat answer, the tree's answer, the scenarios kept, and how many second-level questions it took."""
+    first = kai.decide(state=state, questions={"scenario": SCENARIO, "flat": FLAT}).choices
+    beam = sorted(first["scenario"].probabilities.items(), key=lambda kv: -kv[1])[:WIDTH]
+    asks = {scenario: INTENT[scenario] for scenario, _ in beam if scenario in INTENT}
+    second = kai.decide(state=state, questions=asks).choices if asks else {}
+    paths = [
+        (p * (second[scenario].probabilities[intent] if scenario in second else 1.0), intent)
+        for scenario, p in beam
+        for intent in TREE[scenario]
+    ]
+    return first["flat"].choice, max(paths)[1], [scenario for scenario, _ in beam], len(asks)
+```
+
+The script, which draws 50 of the suite's 100 utterances with a fixed seed, is
+[`hierarchy.py`](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/hierarchy.py).
+What it printed against `api.hanzo.ai` on 2026-09-28:
+
+{/* out: python/hierarchy.py */}
+```text
+59 intents under 18 scenarios; 50 utterances
+
+                               scenario  intent
+flat: one choice of 59            46/50   44/50
+tree: beam of 2 scenarios         43/50   42/50
+
+gold scenario inside the beam: 44/50; second-level questions asked: 87
+
+utterance                                gold                 flat                 tree
+what is the exchange rate of us dollar t news_query           qa_currency          qa_currency
+hoover the hallway                       iot_cleaning         iot_hue_lightoff     news_query
+i can't hear you                         audio_volume_up      audio_volume_mute    audio_volume_mute
+what's sensational in time of india      news_query           datetime_query       news_query
+i want the status on my screen brightnes general_quirky       iot_hue_lightup      general_quirky
+turn on the vacuum cleaner               iot_cleaning         iot_cleaning         play_audiobook
+it's dirty here make some noise          iot_cleaning         music_likeness       music_likeness
+turn the smart plug on                   iot_wemo_on          iot_wemo_on          play_audiobook
+start a vacuum cleaner                   iot_cleaning         iot_cleaning         play_audiobook
+enable my plug                           iot_wemo_on          iot_wemo_on          play_audiobook
+```
+
+## What the numbers say
+
+- **The flat choice won at both levels**: 44 intents right against 42, and 46
+  scenarios against 43.
+- **The tree's losses come from its first question.** The right scenario was
+  outside the beam for 6 of 50 utterances, and nothing below can recover a
+  scenario the beam dropped. Four of the tree's misses are the same mistake:
+  "turn on the vacuum cleaner" and "enable my plug" landed on
+  `play_audiobook`, where the flat choice had them right.
+- **The parent descriptions are the likely cause, not measured here.** The
+  `iot` scenario is described by its intents' names joined: "iot cleaning, iot
+  coffee, iot hue lightchange, …, iot wemo on". Nothing in that says vacuum or
+  plug to a reader, and the scenario question read it the same way.
+- **The tree fixed two of the flat choice's misses**, "what's sensational in
+  time of india" and "i want the status on my screen brightness", by
+  committing to a scenario first.
+- **One gold label is arguable.** MASSIVE files "what is the exchange rate of
+  us dollar to pound sterling" under `news_query`; both methods said
+  `qa_currency`.
+
+## Adapt it
+
+- Try the flat choice first. A tree earns its extra call when the flat label
+  set is too long to describe well, or when your labels nest by meaning, not by
+  a naming convention.
+- Describe each parent in the words users say ("robot vacuum, smart plugs,
+  lights, the coffee machine"), and measure the parent question alone: its
+  "gold inside the beam" rate caps the whole tree.
+- Widen the beam where the parent is often uncertain; each kept parent adds
+  one question to the second call, not a call.
+- Deeper trees repeat the second step per level, one call per level.
+
+## Next
+
+- [Fine label or group](/docs/kai/cookbook/industries)
+- [Intent routing](/docs/kai/patterns/intents)
+- [Choice questions](/docs/kai/questions/choice)

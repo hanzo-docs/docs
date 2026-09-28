@@ -1,0 +1,65 @@
+---
+title: Why calibrated decisions
+description: Understand why Kai answers with calibrated probabilities over options you define instead of generated text, and what calibration does and does not promise.
+---
+
+**A generative model answers a bounded question by writing text. Kai answers it
+with a probability for each answer you allow, which code can branch on, sort and
+gate without parsing anything.**
+
+## Text is the wrong output for a decision
+
+| Generated text | A typed decision |
+|---|---|
+| The answer sits somewhere in prose, and may not match any label you expected. | The answer is one of your options, with a probability for each. |
+| Asked how sure it is, the model writes more text, and nothing ties that number to how often it is right. | The probabilities are fitted to how often answers turn out right. |
+| Every word written is paid for. | Nothing is written: `usage.output_tokens` is 0. |
+| The same prompt can come back worded differently. | The same request comes back with the same answer ([Typed decisions](/docs/kai/concepts)). |
+
+## What Kai computes
+
+Kai reads the question and the state with a multilingual encoder, reads each
+option on its own, and scores every option against them. A choice's
+probabilities are a softmax over its options' scores. A noul compares the score
+of its true side with that of its false side. A score's levels are options, and
+`score` is the expected level. Nothing is generated and nothing is sampled.
+[Kai](/docs/models/kai) describes the model.
+
+## Calibration
+
+A model is **calibrated** when, of the answers it gives a probability p, about a
+share p are right. It describes many answers, not one: an answer at 0.8 is wrong
+about one time in five, and that is the model working as intended.
+
+- **Training.** Kai learns from labelled decisions under the log loss and the
+  Brier score. Both are proper scoring rules: their expected value is lowest
+  when the stated probability equals the true rate. On ordered levels, the
+  ranked probability score takes the Brier score's place.
+- **Fitting.** After training, one temperature per question type and option
+  count is fitted on held-out validation data. `routing.calibration` names the
+  fitted tables behind each answer.
+- **Measuring.** Expected calibration error groups answers by their stated
+  probability, compares each group's average probability with its accuracy, and
+  averages the gaps by group size. Kai's per-suite accuracy and calibration error
+  are published with its
+  [harness results](https://github.com/hanzoai/benchmarks/tree/c61361fedc5882b0d83b2f5d5a6a35c56ffeb3c3/decision/results/kai-a7):
+  on that harness, Kai (checkpoint a7) is more accurate than Jev on 11 of 12
+  suites, and Jev leads jailbreak detection, 0.940 to 0.920.
+
+Calibration holds on data like the data it was fitted on. Questions worded
+differently or about other cases can move it, so check it on your own outcomes
+before a threshold goes live: [Confidence and thresholds](/docs/kai/confidence).
+
+## When text is the right output
+
+When the answer cannot be listed in advance (a reply, a summary, code, an
+explanation), the output is text, and a [Zen](/docs/models/zen) model writes it
+through the same API. The two compose: Kai decides whether a case needs writing
+and where it goes, and Zen writes it
+([Triage with Kai, reply with Zen](/docs/guides/cookbook/triage)).
+
+## Next
+
+- [Typed decisions](/docs/kai/concepts): the answer types and who owns what.
+- [Confidence and thresholds](/docs/kai/confidence): calibration put to work.
+- [Kai](/docs/models/kai): the model and its measured results.

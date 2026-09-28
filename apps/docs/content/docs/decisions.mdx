@@ -16,10 +16,12 @@ is the endpoint that serves these questions:
 POST https://api.hanzo.ai/v1/decisions
 ```
 
-The wire is OpenRouter's Decisions API. A client written for Jev works
+The wire is OpenRouter's Decisions API. A client written for it works
 unchanged: set its base URL to `https://api.hanzo.ai/v1` and send a Hanzo key.
-[Migrate from Jev](/docs/guides/migrate/jev) lists every field that changes,
-with the same request sent both ways.
+TypeSafe's own SDKs work with three environment variables, and Hanzo's are
+`hanzo-kai` and `@hanzo/kai`. [Migrate from Jev](/docs/guides/migrate/jev)
+lists every field that changes, with the same request sent both ways;
+[Kai](/docs/kai) has the guides and recipes.
 
 ## Request
 

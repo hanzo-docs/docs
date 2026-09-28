@@ -1,0 +1,478 @@
+---
+title: TypeScript SDK
+description: "Call Kai from TypeScript with every answer typed by its question, and handle retries, timeouts, errors, logging and the Jev layer."
+---
+
+**`@hanzo/kai` sends typed questions to Kai and types each answer from the
+question that asked it.** It has no runtime dependencies, runs wherever `fetch`
+does, and retries what can be retried. The outputs on this page are what
+`api.hanzo.ai` returned on 2026-09-28.
+
+## Install
+
+```bash
+npm i @hanzo/kai
+```
+
+Node 20 or newer, or any runtime with `fetch`. The package ships ESM and
+CommonJS builds with their types:
+
+```ts
+import { Kai, choice, noul, score } from "@hanzo/kai";
+```
+
+```js
+const { Kai, choice, noul, score } = require("@hanzo/kai");
+```
+
+## Client
+
+```ts
+const kai = new Kai(); // reads HANZO_API_KEY
+```
+
+| option | environment | default |
+|---|---|---|
+| `apiKey` | `HANZO_API_KEY` | none; the constructor throws `KaiError` without one |
+| `baseURL` | `HANZO_BASE_URL` | `https://api.hanzo.ai` |
+| `model` | `KAI_MODEL` | `kai` |
+| `logLevel` | `KAI_LOG_LEVEL` | `warn` |
+| `timeout` | | 60000 ms per attempt |
+| `retry` | | [retry policy](#retries-timeouts-and-cancellation) |
+| `defaultHeaders` | | sent with every request |
+| `fetch` | | the global `fetch` |
+| `logger` | | the console, each line prefixed `[kai]` |
+| `dangerouslyAllowBrowser` | | `false`, see [Browsers](#browsers) |
+
+An option beats its variable, and a blank variable counts as unset. The key is
+held privately: it is not a property of the client and never reaches a log.
+
+## Decide
+
+`kai.decide({ state, questions })` posts to
+[`/v1/decisions`](/docs/decisions) and returns one answer per question, under the
+name you gave it.
+
+```ts
+// Three questions about one support ticket; each answer comes back typed by its question.
+import { Kai, choice, noul, score } from "@hanzo/kai";
+
+const kai = new Kai();
+
+const d = await kai.decide({
+  state: { ticket: "I was charged twice for my March invoice. Please refund the duplicate." },
+  questions: {
+    team: choice("Which team should handle `ticket`?", {
+      billing: "charges, invoices and refunds",
+      technical: "bugs, errors and outages",
+      account: "sign-in and profile settings",
+    }),
+    refund: noul("`ticket` asks for money back.", {
+      true: "a refund or reversal is requested",
+      false: "no money is requested back",
+    }),
+    urgency: score("How urgent is `ticket`?", ["later", "this week", "today", "now"]),
+  },
+});
+
+const { team, refund, urgency } = d.answers;
+console.log(team.choice, team.confidence, team.probabilities);
+console.log(refund.noul, refund.confidence);
+console.log(urgency.score, urgency.legend[3], urgency.probabilities);
+console.log(d.id, d.model, d.usage, d.routing.checkpoint);
+```
+
+{/* out: ts/sdk_decide.ts */}
+```text
+billing 0.999 { billing: 0.9993, technical: 0.0007, account: 0 }
+0.5503 undefined
+1.5556 now { '0': 0.1865, '1': 0.319, '2': 0.2471, '3': 0.2475 }
+dec_58fbc7436ac5d857cabee7f875408ebb kai { input_tokens: 175, output_tokens: 0 } a7
+```
+
+[sdk_decide.ts](https://github.com/hanzo-js/kai/blob/main/examples/sdk_decide.ts)
+
+- **`team` is settled**: billing takes 0.9993 of the probability.
+- **`refund` is not.** It sits at 0.55, near even odds, though the ticket asks for
+  its money back outright. Yes/no questions are a measured weakness of the
+  current checkpoint ([Limits](/docs/kai/limits#yes-or-no-questions)): read an
+  answer this close to 0.5 as undecided, or name the outcomes in a `choice`.
+- **`urgency` spreads over all four levels**, so its expected level of 1.56 carries
+  little. `urgency.legend[3]` is level 3's description, typed from the rubric.
+- **`refund.confidence` prints `undefined`.** The contract gives a noul
+  `confidence` = |2p − 1|; `api.hanzo.ai` does not send it yet.
+
+### Answers typed by their questions
+
+`decide` infers every answer's type from its question. A choice's labels and a
+score's levels become literal types, so a mistyped label is a compile error, not
+a branch that never runs:
+
+```ts
+if (d.answers.team.choice === "biling") console.log("refund desk");
+```
+
+`tsc` 7.0.2 on that line:
+
+```text
+typo.ts(23,5): error TS2367: This comparison appears to be unintentional because the types '"account" | "billing" | "technical"' and '"biling"' have no overlap.
+```
+
+So do `d.answers.team.probabilities.sales`, `d.answers.urgency.legend[4]` and a
+name you never asked (`d.answers.tone`). Every answer is read-only.
+
+## Questions
+
+| builder | criteria | answer fields |
+|---|---|---|
+| `choice(instructions, criteria)` | `{ label: description \| null }` or `[label, …]`, at least 2 | `choice`, `confidence`, `answer_confidence`, `probabilities` |
+| `noul(instructions, criteria?, labels?)` | `{ true?: description, false?: description }` | `noul`, `confidence`, `answer_confidence` |
+| `score(instructions, criteria)` | `[level0, level1, …]`, lowest first, none `null` | `score`, `confidence`, `answer_confidence`, `legend`, `probabilities` |
+
+- **Instructions, descriptions and levels** take text, a JSON object or a JSON
+  array.
+- **Instructions are optional** in the contract, and a builder given `null` or
+  `undefined` sends none. `api.hanzo.ai` does not accept a question without
+  instructions yet.
+- **Nouls**: phrase one as a statement and describe both sides, as `refund` does
+  above, or name the outcomes in a `choice`.
+- **`labels`** names a noul's two sides in the text Kai reads, as
+  `{ true: "refund", false: "no refund" }`; their meaning stays yes and no. Only
+  `/v1/decisions` takes them.
+- **A plain object is a question too**:
+  `{ type: "choice", instructions: "Tone?", criteria: ["calm", "angry"] }` is
+  typed like `choice("Tone?", ["calm", "angry"])`.
+
+The SDK throws `KaiError` before sending when there are no questions, when a
+score's criteria are not a list, or when a choice's are neither a map nor a
+list. Every other rule belongs to the server: 1 to 100 questions, at least 2
+labels, at least 1 level and none `null`, and a state that fits what Kai reads.
+
+## Decisions and answers
+
+| decision field | |
+|---|---|
+| `id` | `dec_` and 32 hex digits |
+| `model` | the model as asked |
+| `provider` | `Hanzo` |
+| `answers` | one answer per question, under its name |
+| `usage` | `input_tokens` billed, `output_tokens` always 0, `cost` in USD when reported |
+| `routing` | `backend`, `checkpoint`, the weights' `sha256`, `calibration`, `device`, `reason` |
+| `state_hash` | `sha256:` of the state as Kai read it |
+| `latency_ms` | the service's time for the decision |
+
+| answer field | noul | choice | score |
+|---|---|---|---|
+| value | `noul`: P(true) | `choice`: the most probable label | `score`: Σ i·pᵢ, may fall between levels |
+| `confidence` | \|2p − 1\| | (n·p_max − 1)/(n − 1) | (n·p_max − 1)/(n − 1) |
+| `answer_confidence` | P of the likelier side | p_max | p_max |
+| `probabilities` | | by label | by level, keyed `"0"`, `"1"`, … |
+| `legend` | | | each level's description, keyed the same way |
+
+Every distribution sums to 1. An answer of a type this SDK does not know is
+dropped with a warning; fields it does not know are kept on the object.
+
+## Responses
+
+`decide` and `models.list` return an `APIPromise`. Awaiting it gives the parsed
+result; `withResponse()` adds the HTTP response and its request id;
+`asResponse()` gives the response alone, its body unread.
+
+```ts
+// The parsed decision with its HTTP response, then the raw response alone.
+import { Kai, score } from "@hanzo/kai";
+
+const kai = new Kai();
+const request = {
+  state: "The export button does nothing since this morning's update, and the team cannot send reports.",
+  questions: { severity: score("How severe is the problem in `state`?", ["cosmetic", "degraded", "blocked"]) },
+};
+
+const { data, response, requestId } = await kai.decide(request).withResponse();
+console.log(response.status, requestId, data.answers.severity.score);
+
+const raw = await kai.decide(request).asResponse();
+console.log(raw.status, raw.headers.get("content-type"), Object.keys(await raw.json()));
+```
+
+{/* out: ts/sdk_response.ts */}
+```text
+200 42cbb637ec39de29a5b62655883e2130 1.2288
+200 application/json [
+  'id',
+  'model',
+  'provider',
+  'answers',
+  'usage',
+  'routing',
+  'state_hash',
+  'latency_ms'
+]
+```
+
+[sdk_response.ts](https://github.com/hanzo-js/kai/blob/main/examples/sdk_response.ts)
+
+`requestId` is the response's `x-request-id`; an error carries it too, as
+`e.requestId`. A status outside 2xx rejects every path with an `APIError`.
+
+## Models
+
+```ts
+// The models that answer decisions.
+import { Kai } from "@hanzo/kai";
+
+const kai = new Kai();
+for (const m of await kai.models.list()) console.log(m.id, m.owned_by, m.pricing);
+```
+
+{/* out: ts/sdk_models.ts */}
+```text
+hanzo/kai hanzo { input: 0.021, output: 0 }
+kai hanzo { input: 0.021, output: 0 }
+```
+
+[sdk_models.ts](https://github.com/hanzo-js/kai/blob/main/examples/sdk_models.ts)
+
+`models.list()` reads `GET /v1/models` and keeps the models whose outputs include
+decisions. `pricing` is USD per million tokens.
+
+## Retries, timeouts and cancellation
+
+| `retry` field | default |
+|---|---|
+| `maxRetries` | 2 |
+| `backoffInitialMs` | 500, doubled on each retry |
+| `backoffMaxMs` | 8000 |
+| `backoffJitter` | 0.25: up to a quarter of each wait taken off at random |
+| `httpStatuses` | 408, 409, 429 and 500 to 599, 529 among them |
+| `respectRetryAfter` | `true`: wait as long as `Retry-After` or `retry-after-ms` asks |
+| `maxRetryAfterMs` | 60000; a longer ask is capped |
+| `apiConnectionError` | `true`: retry when no response arrived |
+| `apiTimeoutError` | `true`: retry an attempt that timed out |
+
+A partial policy fills in the rest: on the client from these defaults, on one
+call from the client's policy.
+Each retry sends `X-Kai-Retry-Count`. `timeout` bounds each attempt, body
+included. A call's `signal` aborts the request and any wait before a retry,
+and an abort is never retried.
+
+```ts
+// Retry settings on the client, then a timeout and an abort on single calls.
+import { APITimeoutError, APIUserAbortError, Kai, choice } from "@hanzo/kai";
+
+const kai = new Kai({ retry: { maxRetries: 4, httpStatuses: new Set([429, 503, 529]) } });
+console.log(kai.retry.maxRetries, [...kai.retry.httpStatuses], kai.timeout);
+
+const state = { message: "Third time asking. Fix my login." };
+const questions = { tone: choice("What is the tone of `message`?", { calm: null, frustrated: null, angry: null }) };
+
+const d = await kai.decide({ state, questions }, { timeout: 30_000 });
+console.log(d.answers.tone.choice);
+
+try {
+  await kai.decide({ state, questions }, { timeout: 1, retry: { maxRetries: 0 } });
+} catch (e) {
+  if (!(e instanceof APITimeoutError)) throw e;
+  console.log(e.name, e.message);
+}
+
+try {
+  await kai.decide({ state, questions }, { signal: AbortSignal.timeout(5) });
+} catch (e) {
+  if (!(e instanceof APIUserAbortError)) throw e;
+  console.log(e.name, e.message);
+}
+```
+
+{/* out: ts/sdk_limits.ts */}
+```text
+4 [ 429, 503, 529 ] 60000
+frustrated
+APITimeoutError request timed out after 1 ms
+APIUserAbortError request aborted
+```
+
+[sdk_limits.ts](https://github.com/hanzo-js/kai/blob/main/examples/sdk_limits.ts)
+
+## Errors
+
+| status | when | class |
+|---|---|---|
+| 400 | malformed JSON, unknown model | `BadRequestError` |
+| 401 | the key does not resolve | `AuthenticationError` |
+| 402 | insufficient balance | `PaymentRequiredError` |
+| 403 | a key of a kind that may not decide, as a publishable `pk-` key | `PermissionDeniedError` |
+| 404 | no such route | `NotFoundError` |
+| 422 | outside the schema; `code` `state_too_long` when the state does not fit | `UnprocessableEntityError` |
+| 429 | rate limited or the queue is full | `RateLimitError` |
+| 500 and above | failed (500), upstream failed (502), not served here (503), overloaded (529) | `InternalServerError` |
+| any other | | `APIError` |
+
+Each extends `APIError`, which extends `KaiError`, and carries `status`, `code`,
+`message` (the server's sentence), `requestId`, `body`, `retryAfter` in seconds
+and `headers`. When no response arrives the SDK throws `APIConnectionError`,
+`APITimeoutError` past the timeout, and `APIUserAbortError` when your signal
+aborts. The contract's 422 `state_too_long` is not live yet: today an oversize
+state is a 400 that names its length.
+
+```ts
+// Two refusals: a model that does not exist, and a key that does not resolve.
+import { APIError, Kai, noul } from "@hanzo/kai";
+
+const questions = {
+  spam: noul("`message` is unsolicited advertising.", {
+    true: "it sells something nobody asked for",
+    false: "it is a message someone meant to send",
+  }),
+};
+
+for (const [kai, model] of [
+  [new Kai(), "kai-0"],
+  [new Kai({ apiKey: "sk-not-a-key" }), "kai"],
+] as const) {
+  try {
+    await kai.decide({ state: { message: "Win a free cruise, reply now" }, questions, model });
+  } catch (e) {
+    if (!(e instanceof APIError)) throw e;
+    console.log(e.name, e.status, e.code, e.requestId);
+    console.log(" ", e.message);
+  }
+}
+```
+
+{/* out: ts/sdk_errors.ts */}
+```text
+BadRequestError 400 400 45e5f39dcbddbbf0b4ad9cbe31be30cb
+  unknown model "kai-0"; use one of hanzo/kai, kai, typesafe/jev-1.13, ~typesafe/jev-latest
+AuthenticationError 401 undefined 45736cda4270b3b033e0efa3879a0544
+  API key validation failed: API key sk-not-a-… does not resolve — mint a new one at https://console.hanzo.ai/api-keys
+```
+
+[sdk_errors.ts](https://github.com/hanzo-js/kai/blob/main/examples/sdk_errors.ts)
+
+## Logging
+
+`logLevel` is `debug`, `info`, `warn` (the default), `error` or `off`. `info`
+logs one line per attempt with its status, time and request id; `debug` adds
+the request's headers and both bodies. The values of `authorization`,
+`proxy-authorization`, `cookie`, `set-cookie` and `x-api-key` are masked. Any
+object with `debug`, `info`, `warn` and `error` methods can be the `logger`;
+`console` is one.
+
+```ts
+// Debug logging through a logger of your own; every credential in it is masked.
+import { Kai, type Logger, noul } from "@hanzo/kai";
+
+const lines: [string, ...unknown[]][] = [];
+const keep = (message: string, ...args: unknown[]) => void lines.push([message, ...args]);
+const logger: Logger = { debug: keep, info: keep, warn: keep, error: keep };
+
+const kai = new Kai({ logger, logLevel: "debug", defaultHeaders: { "X-Api-Key": "xk-demo-0123456789" } });
+await kai.decide({
+  state: { message: "Win a free cruise, reply now" },
+  questions: {
+    spam: noul("`message` is unsolicited advertising.", {
+      true: "it sells something nobody asked for",
+      false: "it is a message someone meant to send",
+    }),
+  },
+});
+
+for (const [message] of lines) console.log(message);
+const [, sent] = lines[0] as [string, { headers: Record<string, string> }];
+console.log(sent.headers);
+```
+
+{/* out: ts/sdk_logging.ts */}
+```text
+#1 POST /v1/decisions -> https://api.hanzo.ai/v1/decisions
+#1 POST /v1/decisions <- 200 in 567 ms (request 4603b6041744d7692e218ac7fb559eca)
+#1 POST /v1/decisions <- body
+{
+  accept: 'application/json',
+  authorization: 'Bearer ***',
+  'content-type': 'application/json',
+  'user-agent': '@hanzo/kai/0.1.0',
+  'x-api-key': '***',
+  'x-kai-runtime': 'node/24.19.0 (linux; arm64)'
+}
+```
+
+[sdk_logging.ts](https://github.com/hanzo-js/kai/blob/main/examples/sdk_logging.ts)
+
+## Browsers
+
+In a browser page the constructor throws `KaiError`, because anyone using the
+page could read the key. Call Kai from a server. `dangerouslyAllowBrowser: true`
+turns the check off for those who accept that.
+
+## Jev compatibility
+
+`@hanzo/kai/jev` is for programs written for TypeSafe's SDK. Its `Client` has
+TypeSafe's `systemOne` call and answers in Jev's shapes from
+`POST /v1/systemone`, so the port is the import line:
+
+```ts
+import { choice, noul, score, Client as TypeSafeClient } from "@hanzo/kai/jev";
+```
+
+- **Only Kai answers.** The default model is `kai`. A Jev id such as
+  `jev-latest` is refused with 400 `Unknown model: jev-latest`, never mapped to
+  Kai.
+- **Jev's shapes**: `{ model, answers, usage }` with no Kai metadata; a noul is
+  `{ type, noul }`, a choice `{ type, choice, confidence, probabilities }`, a
+  score `{ type, score, confidence, legend, probabilities }`, its confidence by
+  Jev's formula. The answers are typed per question, as with `decide`.
+- **The rest is shared**: `HANZO_API_KEY`, `HANZO_BASE_URL`, retries, timeouts
+  and the error classes, with FastAPI's `detail` read as the message.
+  `models.list()` reads the `models` key: `name`, `description`, `release_date`.
+
+<Callout title="Not available yet">
+`/v1/systemone` answers 404 on `api.hanzo.ai` today, and the `models` key of
+`/v1/models` is empty. The output below is today's.
+</Callout>
+
+```ts
+// A program written for TypeSafe's SDK, answered by Kai: the import is the only change.
+import { APIError, choice, noul, score, Client as TypeSafeClient } from "@hanzo/kai/jev";
+
+const client = new TypeSafeClient();
+const state = { ticket: "I was charged twice for my March invoice. Please refund the duplicate." };
+const questions = {
+  team: choice("Which team should handle `ticket`?", {
+    billing: "charges, invoices and refunds",
+    technical: "bugs, errors and outages",
+  }),
+  refund: noul("`ticket` asks for money back.", {
+    true: "a refund or reversal is requested",
+    false: "no money is requested back",
+  }),
+  urgency: score("How urgent is `ticket`?", ["later", "this week", "today", "now"]),
+};
+
+for (const model of ["kai", "jev-latest"]) {
+  try {
+    const r = await client.systemOne({ state, questions, model });
+    console.log(r.model, JSON.stringify(r.answers), r.usage);
+  } catch (e) {
+    if (!(e instanceof APIError)) throw e;
+    console.log(model, e.name, e.status, e.message);
+  }
+}
+console.log(await client.models.list());
+```
+
+{/* out: ts/sdk_jev.ts */}
+```text
+kai NotFoundError 404 not found
+jev-latest NotFoundError 404 not found
+[]
+```
+
+[sdk_jev.ts](https://github.com/hanzo-js/kai/blob/main/examples/sdk_jev.ts)
+
+## Next
+
+- [Python SDK](/docs/kai/sdk/python): the same surface in Python.
+- [Decisions API](/docs/decisions): the request and response this SDK sends.
+- [Migrate from Jev](/docs/guides/migrate/jev): every route from Jev to Kai.

@@ -1,0 +1,149 @@
+---
+title: Compare A and B
+description: Ask the same questions of two versions of an input to see each answer move, and score Kai live against Jev's recorded answers on the same harness cases.
+---
+
+**Hold the questions fixed and change one thing. Two drafts of a reply, one
+curt and one that apologizes and offers a credit, moved no answer by more
+than 0.05, where a reader sees the tone turn around. On 60 pinned harness
+cases, Kai answered 49 right against 43 for Jev's recorded answers, with Jev
+ahead on jailbreak.**
+
+## How it works
+
+- **Two inputs, one question set.** The same three questions go to two drafts
+  of a reply to one complaint. For each choice the script prints both picks
+  and the label whose probability moved most; for the score, both expected
+  levels. Beside them sits how the author reads each draft, written before the
+  run.
+- **Two models, one set of cases.** The script samples 20 cases from each of
+  three suites of our public harness (seed 7), asks Kai live, and reads Jev's
+  answers from the benchmark run recorded beside the cases, pinned to one
+  commit. Jev is never called. A case is right when its most probable option
+  is the labelled one; the last four columns split the cases by who was right.
+
+## The code
+
+Two drafts, the questions, and the author's reading:
+
+```ts
+// (a) The same questions over two drafts of one reply.
+const questions = {
+  tone: choice("How does `reply` sound to the customer?", {
+    warm: "friendly and personal",
+    neutral: "matter-of-fact",
+    curt: "short, cold or dismissive",
+  }),
+  resolves: score("How far does `reply` get the customer toward a resolution?", [
+    "it offers nothing",
+    "it explains the situation but offers nothing",
+    "it offers an alternative or a workaround",
+    "it solves the problem",
+  ]),
+  next: choice("What will the customer most likely do after `reply`?", {
+    accept: "accept it and move on",
+    ask: "write back with a question",
+    escalate: "complain again, dispute the charge or ask for a manager",
+  }),
+};
+const complaint = "I was charged $49 for a yearly renewal I never asked for. I want my money back.";
+const DRAFTS = {
+  A: "Refunds are only possible within 30 days of purchase. Your renewal is outside that window.",
+  B: "Sorry the renewal caught you off guard. It is past our 30-day refund window, so I can't refund it, but I've added a $20 credit to your account, and you can turn off renewal under Settings > Billing.",
+};
+// How the author reads each draft, A -> B, to hold Kai's shift against.
+const READING = { tone: "curt -> warm", next: "escalate -> accept", resolves: "1 -> 2" };
+```
+
+Both models scored on the same cases, with options in the harness's order:
+
+```ts
+// The harness's option order for a question: noul [false, true], score by level, choice by label.
+const order = (q: Question): string[] =>
+  q.type === "noul" ? ["false", "true"]
+  : q.type === "score" ? q.criteria.map((_, i) => String(i))
+  : Array.isArray(q.criteria) ? [...q.criteria] : Object.keys(q.criteria);
+const argmax = (v: number[]) => v.indexOf(Math.max(...v));
+```
+
+```ts
+for (const i of sample(cases.length, PER, SEED)) {
+  const [state, qs, gold] = cases[i];
+  const d = await kai.decide({ state, questions: qs });
+  for (const [name, q] of Object.entries(qs)) {
+    const ans = d.answers[name];
+    const kv = ans.type === "noul" ? [1 - ans.noul, ans.noul] : order(q).map((k) => (ans.probabilities as Record<string, number>)[k]);
+    const k = argmax(kv), j = argmax(jev[suite].p[`${i}/${name}`]), g = gold[name].idx;
+    t[0]++; t[1] += +(k === g); t[2] += +(j === g); t[3] += +(k === j); t[4] += +(k === g && j === g); t[5] += +(k !== g && j !== g);
+  }
+}
+```
+
+The full script is
+[`compare.ts`](https://github.com/hanzo-js/kai/blob/main/examples/compare.ts).
+It caches the pinned cases and Jev's recorded answers in your temp directory.
+
+```bash
+npm i @hanzo/kai
+export HANZO_API_KEY=sk-...
+npx tsx compare.ts
+```
+
+## The run
+
+What `api.hanzo.ai` answered on 2026-09-28, against Jev's recorded answers:
+
+{/* out: ts/compare.ts */}
+```text
+question  A                 B                 largest move      author's reading
+tone      neutral 0.57      neutral 0.55      warm +0.03        curt -> warm
+next      escalate 0.63     escalate 0.68     escalate +0.05    escalate -> accept
+resolves  level 1.94        level 1.94        +0.00             1 -> 2
+
+suite                     n    Kai   Jev   agree  both  Kai-only  Jev-only  neither
+jev.emotion               20   0.95  0.60  0.60   12    7         0         1
+app.guardrails_jailbreak  20   0.80  1.00  0.80   16    0         4         0
+app.rag_relevance         20   0.70  0.55  0.75   10    4         1         5
+all                       60   0.82  0.72  0.72   38    11        5         6
+```
+
+## What the numbers say
+
+- **The drafts barely moved Kai.** It read both as `neutral`, at 0.57 and
+  0.55, and both as likely to escalate, at 0.63 and then 0.68, the wrong way.
+  The expected resolution level stayed at 1.94. Draft B apologizes, adds a \$20
+  credit and says how to turn renewal off; the author reads it as warm, as an
+  alternative offered, and as likely accepted. The current checkpoint does not
+  judge reply quality, so do not gate replies on these questions. An A/B like
+  this is how you find that out before it ships.
+- **On the pinned cases Kai was right more often.** Emotion 19 of 20 against
+  12, RAG relevance 14 against 11; on jailbreak Jev was right on all 20 and Kai
+  on 16. Where only one of the two was right, Kai was right 11 times and Jev
+  5, four of those five on jailbreak.
+- **Twenty cases a suite is a small sample.** Over every case of the harness,
+  Kai a7 is more accurate than Jev on 11 of 12 suites, and Jev leads jailbreak
+  0.940 to 0.920
+  ([kai-a7 results](https://github.com/hanzoai/benchmarks/tree/c61361f/decision/results/kai-a7)).
+- **Price:** Kai has a 50% lower input-token list price (\$0.021 vs \$0.042 per
+  1M). The two count tokens differently, so that is a list price, not a saving
+  per request.
+
+## Adapt it
+
+- For an A/B of inputs, first run A against a light rewording of A. The move
+  you see there is the noise; a smaller move between A and B is no move.
+- Change one thing between A and B, and write down what you expect before the
+  run, as `READING` does.
+- For an A/B of models, change `SUITES` and `PER` to cover other suites of the
+  pinned file; the script handles choice, noul and score questions. For cases
+  of your own, record each model's answers as a probability per option, in
+  the question's order, keyed by case and question: the shape of
+  `jev/preds.json.gz`.
+- Score both models on exactly the same cases, as the script does, never on
+  two samples.
+
+## Next
+
+- [Jev](/docs/guides/migrate/jev)
+- [Limits](/docs/kai/limits#where-jev-is-ahead)
+- [Kai](/docs/models/kai)

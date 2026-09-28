@@ -1,0 +1,117 @@
+---
+title: Decision Programs
+description: "Know what a Decision Program is, which of Kai's native features run on api.hanzo.ai today, and how to run a program's questions and policy yourself."
+---
+
+**A Decision Program is a decision written down as a graph.** Its nodes are
+typed: deterministic expressions, Kai questions, Zen prompts, solvers, human
+approvals and policy gates. A run turns evidence into a ranked, gated result
+and a hashed record of how it got there.
+
+Programs run in process, in Hanzo's runtime. `POST /v1/decisions` answers
+questions, not programs; program requests will arrive on the same endpoint.
+Until then, send a program's questions and apply its thresholds and verdict
+rule in your code, as [Gate an agent's command](/docs/guides/cookbook/gate)
+does.
+
+## What runs where
+
+| Kai-native | Today |
+|---|---|
+| [A choice over more than 255 options](/docs/kai/programs/options), which Jev refuses | on `api.hanzo.ai` |
+| [The same answer for the same question and state, and a `state_hash` you can compute](/docs/kai/programs/cache) | on `api.hanzo.ai` |
+| [Dependent questions](/docs/kai/programs/dependent) | in process; over HTTP as chained calls |
+| [Repair](/docs/kai/programs/repair) of answers that break a rule | in process; over HTTP in your code |
+| Programs, Decision Packages and policy gates | in process |
+| [The runtime on your own machine](/docs/kai/programs/local) | not available |
+
+## Nodes
+
+| Kind | Output | Answered by |
+|---|---|---|
+| `expr` | a number per option | a deterministic expression over the options' attributes and the node's inputs |
+| `kai` | a distribution, or one per option | a typed question to Kai: once over the state, or once per option with the option added |
+| `zen` | text | a generative model |
+| `solver` | JSON | a named solver |
+| `human` | an approval | a person in the named role |
+| `policy` | a ruling | a gate over the program's Kai answers and your deterministic verdict |
+
+A node reads its inputs (evidence, assumptions or other nodes), and the
+executor runs the nodes in dependency order. Around them a program declares
+its options, objectives, hard constraints, assumptions, risks and bias checks.
+The constraints drop infeasible options; each remaining option scores its
+objectives' weighted metrics, each metric scaled over the feasible options,
+less the likelihood times the severity of every risk that names it. The run
+also reports where the ranking would flip, for each weight, bound, risk and
+assumption.
+
+## Hashes
+
+Programs, inputs and results are hashed as canonical JSON: keys sorted, no
+whitespace, each number as the shortest decimal that reads back to the same
+double and never in exponent form, then SHA-256, written `sha256:<hex>`. A
+node is cached under the hash of its definition, its inputs' hashes and its
+backend's revision, so a re-run whose upstream outputs did not change leaves
+every node below them cached.
+
+## The Decision Package
+
+A run returns a Decision Package: the program and the hash of everything it
+read, the evidence as read, every node's output (a Kai node's full
+distribution), measurements, constraint checks, the ranking and the
+selection, each gate's ruling and the joined verdict, sensitivity and flip
+points, overrides, approvals, each backend's revision and a replay manifest.
+Its `hash` covers all of it but itself and the timing trace. A replay re-runs
+the Kai and solver nodes and takes Zen and human outputs from the record; under
+the same revisions it reproduces the hash.
+
+## Policy
+
+Verdicts are ordered `allow < ask < deny`. A gate reads the program's Kai
+answers against per-question thresholds: a noul holds when P(true) reaches its
+threshold (0.5 unless set); a choice or score counts when its top probability
+reaches its threshold. Kai's verdict is the label of the `from` choice
+(`allow`, `ask` or `deny`) when it counts, raised by every escalation noul
+that holds. Your deterministic verdict, the evidence `base`, then meets it by
+mode:
+
+| Mode | Effective verdict |
+|---|---|
+| `shadow` | yours; Kai's is recorded |
+| `advisory` | yours; Kai's is shown beside it |
+| `enforced` | the stricter of the two |
+
+Kai can tighten a verdict and never loosen one. A gate pinned to a
+calibration runs in `shadow` when an answer came from another calibration,
+because its thresholds were set for those probabilities. A question under its
+threshold defers where the program says: left unknown, sent to Zen, or sent to
+a person.
+
+## Shipped programs
+
+Twenty-nine programs ship with the runtime, every one on model `kai`:
+
+| Family | Programs | Mode |
+|---|---|---|
+| agent | `agent.preflight@1`, `agent.model-route@1`, `agent.context@1`, `agent.tool-select@1`, `agent.progress@1`, `agent.complete@1`, `agent.command-risk@1` | `advisory` for preflight, progress, complete and command-risk; `shadow` for the rest |
+| Enso control | `router.model@1`, `reasoning.budget@1`, `context.select@1`, `tools.select@1`, `action.risk@1` | `advisory` for `action.risk@1`; `shadow` for the rest |
+| marketing | `marketing.intent@1`, `marketing.segment@1`, `marketing.next-action@1`, `marketing.channel@1`, `marketing.offer@1`, `marketing.cadence@1` | `shadow` |
+| sales | `sales.enrich@1`, `sales.lead-score@1`, `sales.followup@1`, `sales.escalate@1`, `sales.demo-readiness@1` | `shadow` |
+| commerce | `commerce.recommend@1`, `commerce.bundle@1`, `commerce.discount@1`, `commerce.cross-sell@1`, `commerce.checkout-recovery@1`, `commerce.next-offer@1` | `shadow` |
+
+The agent and control programs pin stage a5's calibration,
+`cal_47711d44267fdbdd`. `/v1/decisions` serves stage a7
+(`cal_e23c27a1f768bff7`), so on its answers those gates run in `shadow`.
+
+The marketing, sales and commerce gates join a contact policy to your
+verdict: all of consent, opt-out, suppression, frequency caps, quiet hours,
+jurisdiction, age and sensitive attributes where the decision contacts
+someone on a channel, fewer where it does not. Three commerce programs rank
+candidates retrieved from a product graph.
+[Kai](/docs/models/kai#run-a-program) shows `agent.command-risk@1` in full.
+
+## Next
+
+- [Gate an agent's command](/docs/guides/cookbook/gate): a program's questions and gate, run today.
+- [Dependent questions](/docs/kai/programs/dependent): questions that read another's answer.
+- [HIP-1332](https://hips.hanzo.ai/docs/hip-1332-kai-the-decision-model): the specification, §5 programs, §12 packages, §17 the API.

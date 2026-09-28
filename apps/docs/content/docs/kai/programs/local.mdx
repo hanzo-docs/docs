@@ -1,0 +1,28 @@
+---
+title: Local runtime
+description: "Know whether you can run Kai on your own machine today, and what serves /v1/decisions."
+---
+
+**You cannot run Kai on your own machine today.** The runtime that serves
+`/v1/decisions`, its container image and Kai's weights are not public. Use
+`https://api.hanzo.ai`.
+
+## What serves /v1/decisions
+
+The runtime is `decision serve`, a Rust binary built on
+[hanzo-ml](https://github.com/hanzoai/ml). It loads its models, then answers
+`POST /v1/decisions`, `GET /v1/models` and `GET /health`, and can answer the
+same decisions on a Unix socket. Hanzo runs it on its own infrastructure;
+every answer's `routing.device` names the device it ran on. The gateway in
+front of it, `api.hanzo.ai`, adds keys, billing and rate limits.
+
+Running Kai on your own hardware (a cluster, on premises, disconnected or at
+the edge) is specified in
+[HIP-1332](https://hips.hanzo.ai/docs/hip-1332-kai-the-decision-model) §20.
+It is not offered today.
+
+## Next
+
+- [Quickstart](/docs/kai/quickstart): a key, then one decision.
+- [Decisions](/docs/decisions): the HTTP reference.
+- [SDKs](/docs/kai/sdk): the Python and TypeScript clients.

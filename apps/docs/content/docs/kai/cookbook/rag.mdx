@@ -1,0 +1,115 @@
+---
+title: Filter RAG passages
+description: "Keep or drop each retrieved passage before it reaches the answering model, and choose the threshold from accuracy and kept share measured on labelled passages."
+---
+
+**Every retrieved passage gets one question before generation: does it help
+answer the query?** Code keeps the passages above a threshold and drops the
+rest. The script measures that filter on 100 labelled passages from the public
+decision harness, at three thresholds, beside Jev's recorded answers to the
+same passages.
+
+## The idea
+
+A passage the answering model should not read costs tokens and can steer the
+answer wrong. Whether a passage helps answer a query is a yes/no question with
+a probability attached, so the filter is one noul per passage and a threshold
+in code.
+
+The data is the harness's RAG relevance suite: 400 query and passage pairs, half
+of them relevant, each labelled, pinned to a commit of
+[hanzoai/benchmarks](https://github.com/hanzoai/benchmarks/tree/039fbfe5fa5dcb1483407594d829fa822d78974a/decision/results).
+Kai's accuracy on the whole suite is 0.675, and Jev's 0.620
+([kai-a7 results](https://github.com/hanzoai/benchmarks/tree/c61361fedc5882b0d83b2f5d5a6a35c56ffeb3c3/decision/results/kai-a7)).
+The script draws 100 of the 400 with a fixed seed and asks two questions of
+each:
+
+- the harness's own question, verbatim: ``Does `passage` help answer `query`?``;
+- the same judgment stated as a statement, with both sides described.
+
+Jev's answers are the ones the harness recorded for the same cases; no Jev call
+is made.
+
+## The code
+
+```python
+STATEMENT = Noul(
+    instructions="`passage` helps answer `query`.",
+    criteria={"true": "the passage gives facts the answer needs", "false": "the passage is off topic or leaves the question open"},
+)
+
+for case in picked:
+    state, questions, gold = suite[case]
+    decision = kai.decide(state, {**questions, "statement": STATEMENT})
+```
+
+`state` is the harness case as it is, `{"query": ..., "passage": ...}`, and
+`questions` is the harness's own question. The filter is a comparison:
+
+```python
+keep = [row[who] >= threshold for row in rows]
+```
+
+The whole script is
+[`rag.py`](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/rag.py).
+What it printed against `api.hanzo.ai` on 2026-09-28:
+
+{/* out: python/rag.py */}
+```text
+100 passages, 52 of them relevant
+who                      keep if p >=  accuracy   kept  precision  recall
+Kai, harness question             0.3      0.68   0.74       0.64    0.90
+Kai, harness question             0.5      0.74   0.60       0.72    0.83
+Kai, harness question             0.7      0.61   0.25       0.76    0.37
+Kai, statement                    0.3      0.59   0.85       0.56    0.92
+Kai, statement                    0.5      0.73   0.61       0.70    0.83
+Kai, statement                    0.7      0.53   0.11       0.73    0.15
+Jev, recorded                     0.3      0.59   0.87       0.56    0.94
+Jev, recorded                     0.5      0.63   0.81       0.59    0.92
+Jev, recorded                     0.7      0.67   0.75       0.63    0.90
+```
+
+Accuracy counts a kept relevant passage and a dropped irrelevant one as right.
+Kept is the share of passages the filter lets through, precision the share of
+those that are relevant, recall the share of relevant passages it lets through.
+
+## What the numbers say
+
+- **At 0.5, Kai's filter was right on about three passages in four.** With
+  the harness question it kept 60% of the passages; 72% of what it kept was
+  relevant, and it kept 83% of the relevant ones: accuracy 0.74. Its accuracy
+  on all 400 cases is 0.675, so read 0.74 as this sample's number, not a new
+  one.
+- **Jev's recorded answers keep most passages.** At 0.5 Jev let through 81%
+  of the passages, with precision 0.59 and recall 0.92: accuracy 0.63. Its best
+  row is 0.67 at 0.7, where it still keeps 75%.
+- **The threshold trades recall for precision.** Moving Kai's line from 0.3 to
+  0.7 raised precision from 0.64 to 0.76 and cut recall from 0.90 to 0.37.
+  Pick it from what each mistake costs: a dropped relevant passage leaves the
+  answering model without a fact; a kept irrelevant one costs its tokens and
+  can pull the answer off course.
+- **Ask the harness's own question.** Stated as a statement with both sides
+  described, the question did as well at 0.5 (0.73) and worse at every other
+  line: its probabilities bunch between 0.3 and 0.7, so at 0.7 it kept 11% of
+  the passages. The bare question is the one the RAG relevance suite trains
+  and measures. A bare yes/no question Kai was not trained on can do far
+  worse: [limits](/docs/kai/limits).
+
+## Adapt it
+
+- Send each passage as the state beside its query, under the keys `query` and
+  `passage`, and ask the harness question verbatim: that is the form these
+  numbers measure.
+- Label a few hundred of your own retrieved passages, run the same table, and
+  set the threshold from it. Half of the harness passages are relevant; a real
+  retriever returns fewer, which makes precision matter more.
+- Each passage is its own state, so each is its own call. The
+  [rerank recipe](/docs/kai/cookbook/rerank) puts one query's passages in one
+  call instead, a passage per question; measure that form on your data before
+  you filter with it.
+
+## Next
+
+- [Rerank a shortlist](/docs/kai/cookbook/rerank)
+- [Confidence gates](/docs/kai/patterns/gating)
+- [Kai results](/docs/models/kai)

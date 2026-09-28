@@ -1,0 +1,120 @@
+---
+title: What Kai reads
+description: Write a state Kai can read well, know how much of it fits beside a question, and see what unneeded text does to an answer.
+---
+
+**Send the part of the case the questions are about, and little else. Kai reads
+the state beside every question, and text a question does not need moves its
+answer.**
+
+## Forms
+
+| `state` | Kai reads | Use it for |
+|---|---|---|
+| a string | the text as it is | one message or passage |
+| an object | its JSON text, keys in the order you sent them | named parts: a message, a record, a policy |
+| an array | its JSON text | a list of messages or records |
+
+JSON text here means one line with a space after each comma and colon, and
+non-ASCII characters kept as they are. A number, a boolean or `null` is refused
+as a state.
+
+Name the part a question is about in its `instructions`, in backticks: "What
+does `latest` ask for?", or a nested part by its path, "`ticket.body`".
+
+## How much fits
+
+Kai reads each question's `instructions` and the state together, in one window
+of the served checkpoint. A state that does not fit beside a question is refused
+with `422` and code `state_too_long`, and the message names the tokens needed
+and the limit. Nothing is cut short to make it fit. The wire takes up to 128k
+tokens of state; the window you meet is the checkpoint's, and
+[Limits](/docs/kai/limits) gives today's.
+
+Each option (a label with its description, a score level, a noul side) is read
+whole, on its own, up to 512 tokens; a longer one is refused with `422` and code
+`option_too_long`.
+
+When a case is longer than the window, send each question the part it needs:
+the latest message rather than the thread, one section of a contract at a time,
+or the passage your own retrieval picked.
+
+## Measured: text the question does not need
+
+A lost-card message, with a history of unrelated account events before it or
+after it, asked the same question as the history grows:
+
+```python
+from hanzo_kai import Kai, Choice, UnprocessableEntityError
+
+latest = "I lost my card on the train this morning. Please block it."
+events = [
+    "signed in from the mobile app",
+    "downloaded the August statement",
+    "changed the mailing address",
+    "sent EUR 40.00 to a saved contact",
+    "enabled notifications",
+    "viewed the savings goal",
+]
+intent = Choice(
+    instructions="What does `latest` ask for?",
+    criteria={
+        "activate_card": "turn on a new card",
+        "lost_card": "report a lost or stolen card",
+        "refund": "money back for a payment",
+        "transfer": "send or receive money",
+        "other": "anything else",
+    },
+)
+
+with Kai() as kai:
+    for lines in (0, 10, 40, 160):
+        history = [f"2026-09-{1 + i % 28:02d} {events[i % len(events)]}" for i in range(lines)]
+        for first in ("latest", "history"):
+            state = {"latest": latest, "history": history}
+            if first == "history":
+                state = {"history": history, "latest": latest}
+            try:
+                a = kai.decide(state=state, questions={"intent": intent}).choices["intent"]
+            except UnprocessableEntityError as error:
+                print(f"{lines:3} lines, {first:7} first: refused, {error.status}: {error.message}")
+                continue
+            print(f"{lines:3} lines, {first:7} first: {a.choice:9} p(lost_card)={a.probabilities['lost_card']:.4f}")
+```
+
+What `api.hanzo.ai` answered on 2026-09-28:
+
+{/* out: python/context.py */}
+```text
+  0 lines, latest  first: lost_card p(lost_card)=1.0000
+  0 lines, history first: lost_card p(lost_card)=1.0000
+ 10 lines, latest  first: lost_card p(lost_card)=0.3659
+ 10 lines, history first: lost_card p(lost_card)=0.7472
+ 40 lines, latest  first: refund    p(lost_card)=0.2395
+ 40 lines, history first: lost_card p(lost_card)=0.4587
+160 lines, latest  first: refund    p(lost_card)=0.3194
+160 lines, history first: transfer  p(lost_card)=0.0329
+```
+
+With no history, `lost_card` takes all the probability. Ten lines of account
+events pull it down to 0.37 or 0.75, by order; at forty lines the message placed
+first is answered `refund`. At 160 lines the state no longer fits beside the
+question, and the request is refused rather than read in part. Order mattered
+less than size: the message alone was the best state.
+[Limits](/docs/kai/limits) collects this and other measured weak spots.
+
+## Structure it
+
+- **One case per decision.** Questions about different cases go in different
+  calls.
+- **Named parts.** An object whose keys name each part lets a question point at
+  the part it judges.
+- **Facts stay in code.** An order total, a date or an account flag is data your
+  code already has; put it in the state only when a question must weigh it
+  against the language.
+
+## Next
+
+- [Question types](/docs/kai/questions): what to ask about the state.
+- [Structured questions](/docs/kai/questions/structure): JSON in instructions and options.
+- [Confidence and thresholds](/docs/kai/confidence): when an answer is good enough to act on.

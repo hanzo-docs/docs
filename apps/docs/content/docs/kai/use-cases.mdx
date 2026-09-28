@@ -1,0 +1,58 @@
+---
+title: Use cases
+description: "Find the recipe that runs the decision your industry makes over and over, and see whether it was measured on labelled data."
+---
+
+**Kai fits wherever software makes the same bounded judgment many times:
+which queue, which of these, is this safe, how severe.** Each row below is a
+decision and the recipe or pattern that runs it end to end against
+`api.hanzo.ai`. Where a recipe uses labelled cases from the public benchmark
+harness, the last column names the suite, and the recipe prints how often Kai
+was right.
+
+| Industry | Decision | Recipe | Labelled data |
+|---|---|---|---|
+| Customer support | which queue a ticket goes to | [Tickets](/docs/kai/cookbook/tickets) | support triage |
+| | a dozen questions about one ticket, in one call | [Batching](/docs/kai/cookbook/batching) | |
+| | answer, point to the docs, hand to a person, or ask for detail | [Ask](/docs/kai/cookbook/ask) | |
+| | numbers from conversations, for a model that predicts an outcome | [Features](/docs/kai/cookbook/features) | typed decisions |
+| Banking | a fine intent when Kai is sure, its group when only the group is clear | [Industries](/docs/kai/cookbook/industries) | Banking77 |
+| | phishing, with the uncertain middle sent to review | [Nouls](/docs/kai/cookbook/nouls) | phishing |
+| Finance operations | invoice fields extracted by Zen, each checked by Kai | [Cascade](/docs/kai/cookbook/cascade) | |
+| | the amount, email or phone asked for, among those code found | [Values](/docs/kai/cookbook/values) | |
+| | which date answers, and what it counts from | [Dates](/docs/kai/cookbook/dates) | |
+| Commerce | whether two supplier listings are one product, and which fields disagree | [Alignment](/docs/kai/cookbook/alignment) | |
+| Trust and safety | pass, review or block a message screened for hazards | [Guardrails](/docs/kai/cookbook/guardrails) | jailbreak, toxicity |
+| | moderation with an explicit uncertain outcome | [Choices](/docs/kai/cookbook/choices) | toxicity |
+| | whether each claim is supported by the sentence it cites | [Citations](/docs/kai/cookbook/citations) | |
+| Security operations | close an alert, open an incident, or hand it to an analyst | [Confidence gates](/docs/kai/patterns/gating) | typed decisions |
+| AI products | which model or tool takes a request | [Router](/docs/kai/cookbook/router) | routing |
+| | a request turned into a typed function call, or a question back | [Functions](/docs/kai/cookbook/functions) | |
+| | at most one skill for an agent's turn | [Skills](/docs/kai/cookbook/skills) | |
+| | the passages that reach the answering model | [RAG](/docs/kai/cookbook/rag) | RAG relevance |
+| | two versions of an input compared, and Kai against Jev's recorded answers | [Compare](/docs/kai/cookbook/compare) | jailbreak, RAG relevance, emotion |
+| Agent platforms | whether a table lets an agent's proposed action run | [Proposals](/docs/kai/cookbook/proposals) | |
+| | which agent runs a person should review first | [Composite scores](/docs/kai/patterns/composite) | typed decisions |
+| Developer docs | a shortlist of pages in order; the line that answers | [Rerank](/docs/kai/cookbook/rerank), [Search](/docs/kai/cookbook/search) | |
+| | a document's lost structure rebuilt | [Reformat](/docs/kai/cookbook/reformat) | |
+| | writing checked against separate rules | [Writing](/docs/kai/cookbook/writing) | |
+| Assistants | a scenario, then an intent inside it | [Hierarchy](/docs/kai/cookbook/hierarchy) | MASSIVE, English |
+| | a spoken request to one command; risky ones wait for a spoken yes | [Home](/docs/kai/cookbook/home) | |
+| Media | tips routed to a desk after spam and phishing checks | [Speculative fan-out](/docs/kai/patterns/fanout) | |
+| Internal help desks | a request handed to code, Zen or a person | [Intent routing](/docs/kai/patterns/intents) | |
+
+## Adapting one
+
+1. **Name the decision and its options.** If the options are open-ended, the
+   work belongs to a generative model; Kai picks among options you can list.
+2. **Put what decides it in `state`.** The text, and the facts that change
+   the answer as separate keys; nothing else
+   ([limits](/docs/kai/limits#unrelated-context)).
+3. **Run labelled cases before code acts.** Accuracy on a suite covers its
+   own labels and wording. A label set, rubric or yes/no question no suite
+   measured can do far worse ([limits](/docs/kai/limits)).
+4. **Keep the policy in code.** Thresholds, the order of checks and who gets
+   the uncertain rest are yours ([patterns](/docs/kai/patterns)).
+
+Next: [Cookbook](/docs/kai/cookbook) · [Patterns](/docs/kai/patterns) ·
+[Limits](/docs/kai/limits)

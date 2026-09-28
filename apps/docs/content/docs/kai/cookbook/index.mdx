@@ -1,0 +1,65 @@
+---
+title: Cookbook
+description: "Recipes that run against api.hanzo.ai: each one a task, its code, the output it printed and what the numbers say, including where the current checkpoint loses."
+---
+
+**Every recipe is a runnable program and the output it printed.** Each asks
+Kai typed questions for one task, measures the answers on labelled data where
+the task allows it, and says plainly where Kai is wrong or a simpler method
+wins. The code is in [hanzoai/python-sdk](https://github.com/hanzoai/python-sdk/tree/main/pkg/hanzo-kai/examples)
+and [hanzo-js/kai](https://github.com/hanzo-js/kai/tree/main/examples); run
+one with `HANZO_API_KEY` set.
+
+## Classify and route
+
+| Recipe | What it does | Code |
+|---|---|---|
+| [Support triage](/docs/kai/cookbook/tickets) | Route a support ticket to a queue, a reply deadline and what the customer asks for with typed answers, after measuring the routing on labelled tickets. | TypeScript |
+| [Tool and model router](/docs/kai/cookbook/router) | Pick a model or a tool from a fixed set with one typed choice, fall back to a default model or a question to the user when Kai is unsure, and keep authorization in the host. | TypeScript |
+| [Call typed functions](/docs/kai/cookbook/functions) | Map a request to an ordinary typed function with closed-set arguments, run it only when the call is settled, and ask back otherwise. | Python |
+| [Pick one skill](/docs/kai/cookbook/skills) | Choose at most one skill from the Hanzo skills catalog for an agent's turn with a shortlist and a re-check, and see which shortlist to trust on the current checkpoint. | Python |
+| [Classify down a tree](/docs/kai/cookbook/hierarchy) | Classify into a label tree with a beam over Kai's choice probabilities, parent first, then children, and measure it against one flat choice at each level. | Python |
+| [Fine label or group](/docs/kai/cookbook/industries) | Classify into fine labels, fall back to their parent group when Kai is not sure of the label, send the rest to review, and read coverage and accuracy at each level. | Python |
+| [Home assistant](/docs/kai/cookbook/home) | Map a spoken request to one command from the house's closed set, hold risky commands for a spoken yes, and ask again when Kai is unsure. | TypeScript |
+
+## Check and gate
+
+| Recipe | What it does | Code |
+|---|---|---|
+| [Guard an LLM app](/docs/kai/cookbook/guardrails) | Screen each message into or out of an LLM app for instruction override, toxicity, personal data and harm in one request, and turn the answers into pass, review or block in code. | Python |
+| [Writing checks](/docs/kai/cookbook/writing) | Run six writing checks as separate typed questions, flag each one against its own threshold, and re-flag at new thresholds without another call. | TypeScript |
+| [Review agent proposals](/docs/kai/cookbook/proposals) | Have a Zen model propose one action, ask Kai three narrow questions about it, and let a fixed table in code approve it, hold it for a person or refuse it, with nothing executed. | TypeScript |
+| [Check citations](/docs/kai/cookbook/citations) | Check each claim against the sentence it cites with one three-way question, and look in the whole document when the cited sentence says nothing. | Python |
+| [Band a yes or no](/docs/kai/cookbook/nouls) | Act on a yes/no answer only when its probability is near 0 or 1, send the middle band to review with the probability on the record, and measure what each band costs in automation and buys in accuracy. | Python |
+| [An uncertain outcome](/docs/kai/cookbook/choices) | Give a moderation decision a third outcome, uncertain, set in code from the answer's confidence, and compare how much it automates with how often it agrees with labels. | Python |
+| [Ask gate](/docs/kai/cookbook/ask) | Route each question in a community channel to an earlier answer, a docs page, a person or a request for more context, citing the passage relied on, with template replies only. | TypeScript |
+
+## Retrieve and rank
+
+| Recipe | What it does | Code |
+|---|---|---|
+| [Filter RAG passages](/docs/kai/cookbook/rag) | Keep or drop each retrieved passage before it reaches the answering model, and choose the threshold from accuracy and kept share measured on labelled passages. | Python |
+| [Rerank a shortlist](/docs/kai/cookbook/rerank) | Reorder a retriever's shortlist with one relevance question per candidate in a single call, and check the new order against labelled queries before trusting it. | Python |
+| [Search a page by line](/docs/kai/cookbook/search) | Find the line of a page that answers a question, and whether the page answers it at all, with each method measured against labelled questions. | Python |
+| [Match catalog entries](/docs/kai/cookbook/alignment) | Ask whether two catalog listings are the same product and which fields disagree, and read how far the current checkpoint can be trusted with it. | Python |
+
+## Extract
+
+| Recipe | What it does | Code |
+|---|---|---|
+| [Extract values](/docs/kai/cookbook/values) | Find emails, phone numbers and amounts with regular expressions, let Kai check which candidate is the one asked for, and normalise the verbatim span in code. | Python |
+| [Extract dates](/docs/kai/cookbook/dates) | Find date expressions with regular expressions, let Kai check which one gives the date you want and what it counts from, resolve relative dates in code, and send the unsure ones to review. | Python |
+| [Extraction cascade](/docs/kai/cookbook/cascade) | Extract fields with one Zen model, check each field against its source with Kai, send the invoices that fail to a second Zen model, and count what each stage handled and read. | Python |
+| [Rebuild lost structure](/docs/kai/cookbook/reformat) | Recover which lines of a flattened README belong together and what each block is, and see where the current checkpoint reads layout and where it does not. | Python |
+
+## Measure
+
+| Recipe | What it does | Code |
+|---|---|---|
+| [Batch questions](/docs/kai/cookbook/batching) | Ask every question about one state in a single call, and know what that saves and what it leaves unchanged. | Python |
+| [Compare A and B](/docs/kai/cookbook/compare) | Ask the same questions of two versions of an input to see each answer move, and score Kai live against Jev's recorded answers on the same harness cases. | TypeScript |
+| [Features from text](/docs/kai/cookbook/features) | Turn free text into numeric features with Kai's yes/no and score answers, fit a small regressor on labelled data, and compare it with simple baselines on held-out cases. | Python |
+
+Recipes that combine Kai with Zen and Enso in one loop (route a request,
+triage then reply, gate an agent's command, drive an agent from programs) are
+in the [platform cookbook](/docs/guides/cookbook).

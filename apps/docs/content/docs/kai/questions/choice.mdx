@@ -1,0 +1,188 @@
+---
+title: Choice questions
+description: Ask Kai to pick one label from a set, read the probability of every label, and write labels that separate well.
+---
+
+**A `choice` returns the most probable of your labels and a probability for
+each one.**
+
+## Ask
+
+```bash
+curl -sS https://api.hanzo.ai/v1/decisions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "kai",
+    "state": {"message": "The VPN drops every few minutes when I work from home."},
+    "questions": {
+      "need": {"type": "choice", "instructions": "What does `message` need from IT?",
+               "criteria": {"password": "reset a password or unlock an account",
+                            "access": "permission to a system, folder or app",
+                            "hardware": "a broken or missing laptop, monitor or phone",
+                            "network": "Wi-Fi, VPN or internet problems",
+                            "other": "anything else"}}
+    }
+  }' | jq '.answers'
+```
+
+What `api.hanzo.ai` answered on 2026-09-28:
+
+{/* out: sh/choice.sh */}
+```json
+{
+  "need": {
+    "type": "choice",
+    "choice": "network",
+    "confidence": 0.6624,
+    "probabilities": {
+      "password": 0.0023,
+      "access": 0.05,
+      "hardware": 0.1969,
+      "network": 0.7299,
+      "other": 0.0208
+    },
+    "answer_confidence": 0.7299
+  }
+}
+```
+
+| Field | Meaning |
+|---|---|
+| `choice` | The label with the highest probability. |
+| `probabilities` | One probability per label, keyed by label, in the order you gave them; they sum to 1. |
+| `answer_confidence` | The probability of `choice`. |
+| `confidence` | (n·p_max − 1)/(n − 1) over n labels: 0 when all are equally likely, 1 when one holds everything. Here (5 × 0.7299 − 1)/4 = 0.6624. |
+
+`network` leads and `hardware` holds most of the rest: a dropping VPN reads as a
+network fault, with some doubt about the laptop.
+
+## Labels
+
+- **A map or a list.** `{label: description}` describes each label with text, an
+  object or an array, or `null` when the name says enough.
+  `["network", "hardware"]` lists names only. There is no fixed cap on labels:
+  a wide choice is narrowed by retrieval over every label, bounded only by the
+  request's token budget ([Large option sets](/docs/kai/programs/options)).
+- **One option at a time.** Kai reads each label with its description as its own
+  text, `label: description`, and scores it against the question and the state.
+  Listing the labels in another order returns the same probability for each.
+- **Whole options.** An option is read whole up to 512 tokens; a longer one is
+  refused with `422` and code `option_too_long`.
+- **A place for the rest.** Without an `other` label, a case that fits no label
+  still lands on one, because the probabilities must sum to 1.
+
+## Measured: what separates two options
+
+Two service-desk queues, described three ways: a short sentence each, the same
+sentences ahead of a long description both share, and the same sentences after
+it.
+
+```python
+from hanzo_kai import Kai, Choice
+
+shared = (
+    "The queue for staff who write to the service desk, by email, chat or phone, about a company laptop, "
+    "desktop or phone issued in the last three years, including devices bought through a partner, devices "
+    "shared between several people, and devices used both in the office and at home, and"
+)
+variants = {
+    "short": {
+        "queue_a": "Staff who need a password reset or an unlocked account.",
+        "queue_b": "Staff whose Wi-Fi, VPN or internet is failing.",
+    },
+    "long, difference first": {
+        "queue_a": "Staff who need a password reset or an unlocked account. " + shared,
+        "queue_b": "Staff whose Wi-Fi, VPN or internet is failing. " + shared,
+    },
+    "long, difference last": {
+        "queue_a": shared + " who need a password reset or an unlocked account.",
+        "queue_b": shared + " whose Wi-Fi, VPN or internet is failing.",
+    },
+}
+
+with Kai() as kai:
+    for name, criteria in variants.items():
+        d = kai.decide(
+            state={"message": "The VPN drops every few minutes when I work from home."},
+            questions={"queue": Choice(instructions="Which queue should take `message`?", criteria=criteria)},
+        )
+        p = d.choices["queue"].probabilities
+        print(f"{name:23} queue_a {p['queue_a']:.4f}  queue_b {p['queue_b']:.4f}")
+```
+
+{/* out: python/prefix.py */}
+```text
+short                   queue_a 0.0050  queue_b 0.9950
+long, difference first  queue_a 0.2801  queue_b 0.7199
+long, difference last   queue_a 0.5088  queue_b 0.4912
+```
+
+The short descriptions separate the queues best. Keep a description to the words
+that tell its label from the others, and put those words first.
+
+## Measured: wording moves answers
+
+Five requests, one question, two sets of descriptions for the same five labels:
+
+```python
+from hanzo_kai import Kai, Choice
+
+requests = [
+    "Our checkout page throws a TypeError when the cart is empty. Find the bug in this function and fix it.",
+    "Write a short, friendly note telling our customers that the office is closed on Monday.",
+    "What is the probability of rolling at least one six in four throws of a fair die?",
+    "Compare what three recent studies found about remote work and productivity.",
+    "hey, how is your day going?",
+]
+instructions = "What kind of work does `request` ask for?"
+wordings = {
+    "A": Choice(
+        instructions=instructions,
+        criteria={
+            "code": "write, fix or explain software",
+            "math": "calculate, prove or solve a problem",
+            "writing": "draft, edit or translate prose",
+            "research": "find and compare sources on a topic",
+            "chat": "small talk or a quick fact",
+        },
+    ),
+    "B": Choice(
+        instructions=instructions,
+        criteria={
+            "code": "programs, bugs, errors and APIs",
+            "math": "numbers, equations, probability and proofs",
+            "writing": "emails, notes, posts and other prose",
+            "research": "studies, sources and comparisons",
+            "chat": "greetings and small talk",
+        },
+    ),
+}
+
+with Kai() as kai:
+    for text in requests:
+        d = kai.decide(state={"request": text}, questions=wordings)
+        cells = [f"{name}: {a.choice:8} {a.answer_confidence:.2f}" for name, a in d.choices.items()]
+        print(" | ".join(cells), "|", text[:40])
+```
+
+{/* out: python/wording.py */}
+```text
+A: research 0.41 | B: code     0.45 | Our checkout page throws a TypeError whe
+A: code     0.67 | B: writing  0.81 | Write a short, friendly note telling our
+A: math     0.96 | B: math     0.84 | What is the probability of rolling at le
+A: code     0.33 | B: research 0.57 | Compare what three recent studies found 
+A: chat     0.75 | B: code     0.53 | hey, how is your day going?
+```
+
+Only the descriptions differ, and four of the five answers changed. Set A gets
+two of five right: the note goes to `code`, whose description starts with
+"write". Set B gets four right and sends the greeting to `code`. Wording is
+part of the question: measure a label set on examples you have labelled before
+you act on it, and see [Limits](/docs/kai/limits) for what else is known.
+
+## Next
+
+- [Score questions](/docs/kai/questions/score): a level on an ordered scale.
+- [Structured questions](/docs/kai/questions/structure): objects and lists in descriptions.
+- [Confidence and thresholds](/docs/kai/confidence): acting on a spread answer.

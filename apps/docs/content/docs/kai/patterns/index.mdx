@@ -1,0 +1,32 @@
+---
+title: Decision patterns
+description: "Pick the right shape for code around Kai: ask speculatively, gate on confidence, combine scores, route by intent."
+---
+
+**Kai answers; your code decides what the answers mean.** Each pattern below is
+one way to split that work, shown as a Python script that ran against
+`api.hanzo.ai`, with its output as printed.
+
+| Pattern | Kai answers | Code owns | Run on |
+|---|---|---|---|
+| [Speculative fan-out](/docs/kai/patterns/fanout) | every question any branch might need, in one call | which answers to read, and in what order | six newsroom emails |
+| [Confidence gates](/docs/kai/patterns/gating) | one question, with a probability | the threshold, measured on labelled cases, and who gets the rest | 40 labelled security alerts |
+| [Composite scores](/docs/kai/patterns/composite) | several parts of one judgment | the weights, changed without a new call | 12 labelled agent runs |
+| [Intent routing](/docs/kai/patterns/intents) | which kind of request this is | the handler for each kind: code, a Zen model or a person | six help-desk messages |
+
+Three rules hold across all four:
+
+- **One call per state.** Put every question about a state in one request, up
+  to 100. Each is answered against the state alone, so asking one more does
+  not move the others.
+- **Code owns control flow.** Kai returns distributions. Branches, thresholds,
+  weights and handlers are data in your code, versioned and reviewed like any
+  other.
+- **Measure before you act.** A threshold, a weight or a label set is right for
+  the questions and cases it was checked on. The checkpoint behind `kai` today
+  is accurate on the kinds of questions it was measured on and can be wrong,
+  with high confidence, on others. [Limits](/docs/kai/limits) lists what was
+  measured.
+
+Next: [Speculative fan-out](/docs/kai/patterns/fanout) ·
+[Confidence](/docs/kai/confidence) · [Cookbook](/docs/kai/cookbook)

@@ -1,0 +1,162 @@
+---
+title: Writing checks
+description: Run six writing checks as separate typed questions, flag each one against its own threshold, and re-flag at new thresholds without another call.
+---
+
+**Each check is its own question with its own probability, threshold and
+flag, so a weak check can be retuned or dropped without touching the others.
+On three texts written with eight known faults, Kai flagged three of them at
+0.5 and raised six false flags. Two other phrasings of the same checks did no
+better, and one check that separated the texts in one phrasing inverted in
+another: the current checkpoint has not learned writing style.**
+
+## How it works
+
+- Six checks, one call per text. Four are choices between two named outcomes:
+  plain or hedged, main point first or late, nothing to cut or padding, actors
+  named or hidden. The register is a four-way choice, and the next step a
+  four-level score.
+- Code reads P(issue) from each typed answer: the probability of `hedged`,
+  `late`, `padding`, `hidden` and `mixed`, and of the two lowest levels of the
+  next step.
+- A check flags a text when P(issue) reaches that check's threshold. The
+  thresholds live in code, so moving one is arithmetic on answers already
+  held.
+
+## The code
+
+The checks:
+
+```ts
+// Each check names the outcomes a text can have, never a bare yes and no.
+const checks = {
+  hedging: choice("How does the text state its claims?", {
+    plain: "plainly, or with a qualifier only where it gives a reason for doubt",
+    hedged: "softened by words like might, perhaps, somewhat or I think, with no reason for doubt given",
+  }),
+  lead: choice("Where does the text give its main point or request?", {
+    first: "in the first two sentences",
+    late: "after the first two sentences, or nowhere",
+  }),
+  filler: choice("What could be deleted from the text without losing meaning?", {
+    nothing: "nothing: every phrase carries information",
+    padding: "throat-clearing such as 'it is worth mentioning', 'at the end of the day' or 'basically'",
+  }),
+  passive: choice("How does the text say who does what?", {
+    named: "the sentences name who acts",
+    hidden: "several actions have no named actor, as in 'mistakes were made' or 'it was decided'",
+  }),
+  tone: choice("Which register does the text keep?", {
+    plain: "direct and neutral throughout",
+    formal: "formal throughout",
+    casual: "relaxed and conversational throughout",
+    mixed: "switches between formal and casual",
+  }),
+  next: score("How clearly does the text say what the reader should do next?", [
+    "it asks the reader for nothing",
+    "it asks for something, but not who should act or by when",
+    "it asks for something and says who acts or by when",
+    "it asks for something and says who acts and by when",
+  ]),
+};
+type Check = keyof typeof checks;
+```
+
+Where the issue lives in each answer, and each check's threshold:
+
+```ts
+const issue = (a: Awaited<ReturnType<typeof ask>>): Record<Check, number> => ({
+  hedging: a.hedging.probabilities.hedged,
+  lead: a.lead.probabilities.late,
+  filler: a.filler.probabilities.padding,
+  passive: a.passive.probabilities.hidden,
+  tone: a.tone.probabilities.mixed,
+  next: a.next.probabilities["0"] + a.next.probabilities["1"],
+});
+const threshold: Record<Check, number> = { hedging: 0.5, lead: 0.5, filler: 0.5, passive: 0.5, tone: 0.5, next: 0.5 };
+```
+
+New thresholds over the same answers:
+
+```ts
+// Moving a threshold re-flags from the answers already held: no new call.
+const wanted = Object.values(TEXTS).reduce((n, t) => n + t.want.length, 0);
+for (const at of [0.3, 0.5, 0.7]) {
+  let caught = 0, extra = 0;
+  for (const [t, { want }] of Object.entries(TEXTS))
+    for (const c of names) if (p[t][c] >= at) want.includes(c) ? caught++ : extra++;
+  console.log(`every threshold at ${at}: ${caught} of ${wanted} written-in issues flagged, ${extra} other flags`);
+}
+```
+
+The full script, with the three texts and the faults written into each, is
+[`writing.ts`](https://github.com/hanzo-js/kai/blob/main/examples/writing.ts).
+
+```bash
+npm i @hanzo/kai
+export HANZO_API_KEY=sk-...
+npx tsx writing.ts
+```
+
+## The run
+
+What `api.hanzo.ai` answered on 2026-09-28:
+
+{/* out: ts/writing.ts */}
+```text
+P(issue) per check and text; * flagged at the check's threshold; 'want' = written in on purpose
+check     thr   hedged        crisp         buried
+hedging   0.50  0.20  want    0.13          0.60*
+lead      0.50  0.67*         0.82*         0.36  want
+filler    0.50  0.25  want    0.45          0.79*
+passive   0.50  0.95* want    0.82*         0.99* want
+tone      0.50  0.22  want    0.21          0.62*
+next      0.50  0.42  want    0.44          0.53* want
+every threshold at 0.3: 5 of 8 written-in issues flagged, 8 other flags
+every threshold at 0.5: 3 of 8 written-in issues flagged, 6 other flags
+every threshold at 0.7: 2 of 8 written-in issues flagged, 3 other flags
+```
+
+## What the numbers say
+
+- **Thresholds move without a call.** At 0.5 the checks flag 3 of the 8
+  written-in faults and raise 6 false flags. At 0.3 they find 5 and raise 8;
+  at 0.7, 2 and 3. All three lines come from the same three answers.
+- **No check gets all three texts right.** `passive` flags all three, the
+  crisp text included. `tone` calls the formal memo mixed and the hedged note
+  consistent. `lead` flags the two texts that open with their point and passes
+  the one that buries it.
+- **Three texts demonstrate; they do not measure.** A check earns a place by
+  separating labelled texts of your own.
+
+Wording moved the answers more than the texts did. The four two-way checks,
+asked three ways on the same day:
+
+| The four two-way checks, asked as | Faults flagged at 0.5 | False flags | `lead`, P(issue): hedged, crisp, buried |
+|---|---|---|---|
+| nouls, statements with `criteria` | 3 of 8 | 4 | 0.51, 0.52, 0.48 |
+| a described `yes` and `no` | 4 of 8 | 3 | 0.35, 0.39, 0.86 |
+| named outcomes, as in this script | 3 of 8 | 6 | 0.67, 0.82, 0.36 |
+
+Only the buried memo should flag `lead`. The yes-and-no phrasing got it right,
+the named outcomes got it backwards, and the nouls sat at 0.5. When a
+rephrasing moves an answer more than the text does, the check is not reading
+the text ([Limits](/docs/kai/limits#wording)).
+
+## Adapt it
+
+- Write checks from your style guide. Each needs a question, its outcomes
+  described, and the outcome that counts as the issue.
+- Label 30 to 50 of your texts per check. Try two phrasings of each check on
+  them and keep the one that separates the texts; set each threshold where
+  flags and misses trade the way your editors want.
+- Drop any check that separates nothing: a check that flags everything spends
+  an editor's time on nothing.
+- Rerun the labelled texts after a model change, check by check. A new
+  checkpoint can reorder which phrasing works.
+
+## Next
+
+- [Composite scores](/docs/kai/patterns/composite)
+- [Limits](/docs/kai/limits#wording)
+- [Confidence and thresholds](/docs/kai/confidence)

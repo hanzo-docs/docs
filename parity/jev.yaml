@@ -1,0 +1,693 @@
+# Every public asset of TypeSafe's Jev and the Kai page that answers it, or why none does.
+# apps/docs/scripts/parity.test.ts fails when a listed page stops existing.
+assets:
+  - jev: "https://docs.typesafe.ai/introduction"
+    kind: doc
+    kai: /docs/kai
+  - jev: "https://docs.typesafe.ai/introduction/quickstart"
+    kind: doc
+    kai: /docs/kai/quickstart
+  - jev: "https://docs.typesafe.ai/introduction/coding-agents"
+    kind: doc
+    kai: /docs/kai/agents
+  - jev: "https://docs.typesafe.ai/concepts/use-case-map"
+    kind: doc
+    kai: /docs/kai/use-cases
+  - jev: "https://docs.typesafe.ai/concepts/system-one"
+    kind: doc
+    kai: /docs/kai/concepts
+  - jev: "https://docs.typesafe.ai/concepts/state"
+    kind: doc
+    kai: /docs/kai/state
+  - jev: "https://docs.typesafe.ai/primitives"
+    kind: doc
+    kai: /docs/kai/questions
+  - jev: "https://docs.typesafe.ai/primitives/choice"
+    kind: doc
+    kai: /docs/kai/questions/choice
+  - jev: "https://docs.typesafe.ai/primitives/score"
+    kind: doc
+    kai: /docs/kai/questions/score
+  - jev: "https://docs.typesafe.ai/primitives/noul"
+    kind: doc
+    kai: /docs/kai/questions/noul
+  - jev: "https://docs.typesafe.ai/primitives/advanced"
+    kind: doc
+    kai: /docs/kai/questions/structure
+  - jev: "https://docs.typesafe.ai/confidence"
+    kind: doc
+    kai: /docs/kai/confidence
+  - jev: "https://docs.typesafe.ai/concepts/how-to-build-with-system-one"
+    kind: doc
+    kai: /docs/kai/build
+  - jev: "https://docs.typesafe.ai/introduction/machine-learning-primer"
+    kind: doc
+    kai: /docs/kai/primer
+  - jev: "https://docs.typesafe.ai/patterns"
+    kind: doc
+    kai: /docs/kai/patterns
+  - jev: "https://docs.typesafe.ai/patterns/fan-out"
+    kind: doc
+    kai: /docs/kai/patterns/fanout
+  - jev: "https://docs.typesafe.ai/patterns/confidence-routing"
+    kind: doc
+    kai: /docs/kai/patterns/gating
+  - jev: "https://docs.typesafe.ai/patterns/composite-scoring"
+    kind: doc
+    kai: /docs/kai/patterns/composite
+  - jev: "https://docs.typesafe.ai/patterns/intent-routing"
+    kind: doc
+    kai: /docs/kai/patterns/intents
+  - jev: "https://docs.typesafe.ai/cookbooks"
+    kind: doc
+    kai: /docs/kai/cookbook
+  - jev: "https://docs.typesafe.ai/cookbooks/consistency_noul_cookbook"
+    kind: doc
+    kai: /docs/kai/cookbook/nouls
+  - jev: "https://docs.typesafe.ai/cookbooks/consistency_choice_cookbook"
+    kind: doc
+    kai: /docs/kai/cookbook/choices
+  - jev: "https://docs.typesafe.ai/cookbooks/parallel_questions"
+    kind: doc
+    kai: /docs/kai/cookbook/batching
+  - jev: "https://docs.typesafe.ai/cookbooks/rerank_typesafe"
+    kind: doc
+    kai: /docs/kai/cookbook/rerank
+  - jev: "https://docs.typesafe.ai/cookbooks/semantic_find"
+    kind: doc
+    kai: /docs/kai/cookbook/search
+  - jev: "https://docs.typesafe.ai/cookbooks/autoformat"
+    kind: doc
+    kai: /docs/kai/cookbook/reformat
+  - jev: "https://docs.typesafe.ai/cookbooks/function_calling"
+    kind: doc
+    kai: /docs/kai/cookbook/functions
+  - jev: "https://docs.typesafe.ai/cookbooks/skill_suggestion"
+    kind: doc
+    kai: /docs/kai/cookbook/skills
+  - jev: "https://docs.typesafe.ai/cookbooks/entity_alignment"
+    kind: doc
+    kai: /docs/kai/cookbook/alignment
+  - jev: "https://docs.typesafe.ai/cookbooks/classifying_rag_passages"
+    kind: doc
+    kai: /docs/kai/cookbook/rag
+  - jev: "https://docs.typesafe.ai/cookbooks/citation_check"
+    kind: doc
+    kai: /docs/kai/cookbook/citations
+  - jev: "https://docs.typesafe.ai/cookbooks/llm_guardrails"
+    kind: doc
+    kai: /docs/kai/cookbook/guardrails
+  - jev: "https://docs.typesafe.ai/cookbooks/sde_cascade"
+    kind: doc
+    kai: /docs/kai/cookbook/cascade
+  - jev: "https://docs.typesafe.ai/cookbooks/date_extraction_cookbook"
+    kind: doc
+    kai: /docs/kai/cookbook/dates
+  - jev: "https://docs.typesafe.ai/cookbooks/pre_parsed_value_extraction_cookbook"
+    kind: doc
+    kai: /docs/kai/cookbook/values
+  - jev: "https://docs.typesafe.ai/cookbooks/hierarchical_classification"
+    kind: doc
+    kai: /docs/kai/cookbook/hierarchy
+  - jev: "https://docs.typesafe.ai/cookbooks/autoresearch_feature_discovery"
+    kind: doc
+    kai: /docs/kai/cookbook/features
+  - jev: "https://docs.typesafe.ai/cookbooks/classification_using_confidence"
+    kind: doc
+    kai: /docs/kai/cookbook/industries
+  - jev: "https://docs.typesafe.ai/demos"
+    kind: doc
+    kai: /docs/kai/cookbook
+  - jev: "https://docs.typesafe.ai/demos/smart-home"
+    kind: doc
+    kai: /docs/kai/cookbook/home
+  - jev: "https://docs.typesafe.ai/models"
+    kind: doc
+    kai: /docs/models/kai
+  - jev: "https://docs.typesafe.ai/api"
+    kind: doc
+    kai: /docs/decisions
+  - jev: "https://docs.typesafe.ai/agent-skill"
+    kind: doc
+    kai: /docs/kai/agents
+  - jev: "https://docs.typesafe.ai/legal"
+    kind: doc
+    none: "TypeSafe's own terms and policies; Hanzo's are at hanzo.ai and are not a Kai page"
+  - jev: "https://docs.typesafe.ai/model-jaggedness/jev-1.13"
+    kind: doc
+    kai: /docs/kai/limits
+  - jev: "https://docs.typesafe.ai/sdk"
+    kind: doc
+    kai: /docs/kai/sdk
+  - jev: "https://docs.typesafe.ai/sdk/python"
+    kind: doc
+    kai: /docs/kai/sdk/python
+  - jev: "https://docs.typesafe.ai/sdk/python/usage"
+    kind: doc
+    kai: /docs/kai/sdk/python
+  - jev: "https://docs.typesafe.ai/sdk/python/changelog"
+    kind: doc
+    kai: /docs/kai/sdk/python
+  - jev: "https://docs.typesafe.ai/sdk/python/api"
+    kind: doc
+    kai: /docs/kai/sdk/python
+  - jev: "https://docs.typesafe.ai/sdk/python/api/clients/async"
+    kind: doc
+    kai: /docs/kai/sdk/python
+  - jev: "https://docs.typesafe.ai/sdk/python/api/clients/sync"
+    kind: doc
+    kai: /docs/kai/sdk/python
+  - jev: "https://docs.typesafe.ai/sdk/python/api/types/questions"
+    kind: doc
+    kai: /docs/kai/sdk/python
+  - jev: "https://docs.typesafe.ai/sdk/python/api/types/responses"
+    kind: doc
+    kai: /docs/kai/sdk/python
+  - jev: "https://docs.typesafe.ai/sdk/python/api/retries"
+    kind: doc
+    kai: /docs/kai/sdk/python
+  - jev: "https://docs.typesafe.ai/sdk/python/api/types/common"
+    kind: doc
+    kai: /docs/kai/sdk/python
+  - jev: "https://docs.typesafe.ai/sdk/python/api/exceptions"
+    kind: doc
+    kai: /docs/kai/sdk/python
+  - jev: "https://docs.typesafe.ai/sdk/python/api/constants"
+    kind: doc
+    kai: /docs/kai/sdk/python
+  - jev: "https://docs.typesafe.ai/sdk/javascript"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/changelog"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/classes/APIConnectionError"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/classes/APIError"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/classes/APIPromise"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/classes/APITimeoutError"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/classes/APIUserAbortError"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/classes/AuthenticationError"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/classes/BadRequestError"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/classes/InternalServerError"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/classes/NotFoundError"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/classes/PermissionDeniedError"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/classes/RateLimitError"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/classes/TypeSafeClient"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/classes/TypeSafeError"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/classes/UnprocessableEntityError"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/interfaces/ChoiceQuestion"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/interfaces/ChoiceResponse"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/interfaces/Logger"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/interfaces/ModelCard"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/interfaces/Models"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/interfaces/NoulQuestion"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/interfaces/NoulResponse"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/interfaces/Questions"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/interfaces/RequestOptions"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/interfaces/RetryPolicy"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/interfaces/ScoreQuestion"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/interfaces/ScoreResponse"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/interfaces/SystemOneRequest"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/interfaces/SystemOneRequestPayload"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/interfaces/SystemOneResult"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/interfaces/TypeSafeClientConfig"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/interfaces/Usage"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/interfaces/WithResponse"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/type-aliases/ChoiceCriteria"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/type-aliases/Description"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/type-aliases/EntryType"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/type-aliases/EnvVar"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/type-aliases/Fetch"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/type-aliases/JsonValue"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/type-aliases/LogLevel"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/type-aliases/Question"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/type-aliases/ResultFor"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/type-aliases/ScoreCriteria"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/type-aliases/ScoreLegend"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/type-aliases/ScoreOf"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/variables/ENV"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/variables/LOG_LEVELS"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/variables/VERSION"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/functions/choice"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/functions/noul"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://docs.typesafe.ai/sdk/javascript/api/functions/score"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://github.com/typesafe-ai/typesafe-sdk-python TypeSafeClient.system_one"
+    kind: api
+    kai: /docs/kai/sdk/python
+  - jev: "https://github.com/typesafe-ai/typesafe-sdk-python AsyncTypeSafeClient.system_one"
+    kind: api
+    kai: /docs/kai/sdk/python
+  - jev: "https://github.com/typesafe-ai/typesafe-sdk-python client.models.list"
+    kind: api
+    kai: /docs/kai/sdk/python
+  - jev: "https://github.com/typesafe-ai/typesafe-sdk-python Choice, Noul, Score and dict questions"
+    kind: api
+    kai: /docs/kai/questions
+  - jev: "https://github.com/typesafe-ai/typesafe-sdk-python SystemOneResponse, NoulAnswer, ChoiceAnswer, ScoreAnswer, Usage"
+    kind: api
+    kai: /docs/kai/sdk/python
+  - jev: "https://github.com/typesafe-ai/typesafe-sdk-python response_model typed responses"
+    kind: api
+    kai: /docs/kai/sdk/python
+  - jev: "https://github.com/typesafe-ai/typesafe-sdk-python RetryPolicy"
+    kind: api
+    kai: /docs/kai/sdk/python
+  - jev: "https://github.com/typesafe-ai/typesafe-sdk-python TypeSafeError and the API error family"
+    kind: api
+    kai: /docs/kai/sdk/python
+  - jev: "https://github.com/typesafe-ai/typesafe-sdk-python constants and TYPESAFE_* environment"
+    kind: api
+    kai: /docs/kai/sdk/python
+  - jev: "https://github.com/typesafe-ai/typesafe-sdk-python README quickstart: ticket category"
+    kind: example
+    kai: /docs/kai/quickstart
+  - jev: "https://github.com/typesafe-ai/typesafe-sdk-python docstring examples: billing noul and tone choice"
+    kind: example
+    kai: /docs/kai/cookbook/tickets
+  - jev: "https://github.com/typesafe-ai/typesafe-sdk-python docs/changelog.md"
+    kind: doc
+    none: "TypeSafe's release history; hanzo-kai's lives in hanzoai/python-sdk"
+  - jev: "https://github.com/typesafe-ai/typesafe-sdk-js TypeSafeClient.systemOne"
+    kind: api
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://github.com/typesafe-ai/typesafe-sdk-js client.models.list"
+    kind: api
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://github.com/typesafe-ai/typesafe-sdk-js choice, noul, score builders"
+    kind: api
+    kai: /docs/kai/questions
+  - jev: "https://github.com/typesafe-ai/typesafe-sdk-js typed answer inference (ResultFor, ScoreOf, ScoreLegend)"
+    kind: api
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://github.com/typesafe-ai/typesafe-sdk-js APIPromise withResponse and asResponse"
+    kind: api
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://github.com/typesafe-ai/typesafe-sdk-js error classes"
+    kind: api
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://github.com/typesafe-ai/typesafe-sdk-js retry policy and timeouts"
+    kind: api
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://github.com/typesafe-ai/typesafe-sdk-js ENV, LOG_LEVELS, VERSION, runtime header"
+    kind: api
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://github.com/typesafe-ai/typesafe-sdk-js examples/demo.ts: ticket billing, sentiment, urgency, refund risk"
+    kind: example
+    kai: /docs/kai/cookbook/tickets
+  - jev: "https://github.com/typesafe-ai/typesafe-sdk-js README quickstart: ticket category"
+    kind: example
+    kai: /docs/kai/quickstart
+  - jev: "https://github.com/typesafe-ai/typesafe-sdk-js docs: TypeDoc guide and changelog"
+    kind: doc
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://github.com/typesafe-ai/skills skill typesafe-ai"
+    kind: skill
+    kai: /docs/kai/agents
+  - jev: "https://github.com/typesafe-ai/skills Claude Code plugin and marketplace"
+    kind: skill
+    kai: /docs/kai/agents
+  - jev: "https://github.com/typesafe-ai/skills README install guide"
+    kind: doc
+    kai: /docs/kai/agents
+  - jev: "https://github.com/typesafe-ai/system-one-adapter-python SystemOneAdapterClient (LLM-backed system_one)"
+    kind: api
+    kai: /docs/kai/cookbook/compare
+  - jev: "https://github.com/typesafe-ai/system-one-adapter-python OpenAI, Anthropic and Gemini providers"
+    kind: api
+    kai: /docs/kai/cookbook/compare
+  - jev: "https://github.com/typesafe-ai/system-one-adapter-python README examples"
+    kind: example
+    kai: /docs/kai/cookbook/compare
+  - jev: "https://github.com/TypeSafeAI/jev-harness validateProposal, schema, path and diff checks"
+    kind: api
+    kai: /docs/kai/cookbook/proposals
+  - jev: "https://github.com/TypeSafeAI/jev-harness buildReviewPayload and the four review questions"
+    kind: api
+    kai: /docs/kai/cookbook/proposals
+  - jev: "https://github.com/TypeSafeAI/jev-harness reviewProposal and the decide() verdict table"
+    kind: api
+    kai: /docs/kai/cookbook/proposals
+  - jev: "https://github.com/TypeSafeAI/jev-harness routing contract: createCatalog, routeTools, assembleContext, prepareToolContext"
+    kind: api
+    kai: /docs/kai/cookbook/router
+  - jev: "https://github.com/TypeSafeAI/jev-harness bound receipts: createBoundReceipt, replayBoundReceipt"
+    kind: api
+    kai: /docs/kai/programs
+  - jev: "https://github.com/TypeSafeAI/jev-harness benchmark, fixtures and mock transport"
+    kind: example
+    kai: /docs/kai/cookbook/proposals
+  - jev: "https://github.com/TypeSafeAI/jev-harness host transport createJevChoiceRouter"
+    kind: api
+    kai: /docs/kai/cookbook/router
+  - jev: "https://github.com/TypeSafeAI/jev-harness examples/integration host"
+    kind: example
+    kai: /docs/kai/cookbook/router
+  - jev: "https://github.com/TypeSafeAI/jev-harness examples/routing experiment"
+    kind: example
+    kai: /docs/kai/cookbook/router
+  - jev: "https://github.com/TypeSafeAI/jev-harness examples/review experiment"
+    kind: example
+    kai: /docs/kai/cookbook/proposals
+  - jev: "https://github.com/TypeSafeAI/jev-harness agent arena app"
+    kind: app
+    kai: /docs/kai/cookbook/router
+  - jev: "https://github.com/TypeSafeAI/jev-harness docs: integration, architecture, routing, review experiment"
+    kind: doc
+    kai: /docs/kai/cookbook/proposals
+  - jev: "https://github.com/TypeSafeAI/jev-harness docs/hardening notes"
+    kind: doc
+    kai: /docs/kai/build
+  - jev: "https://github.com/TypeSafeAI/typesafe-router createRouter and fallback policies"
+    kind: api
+    kai: /docs/kai/cookbook/router
+  - jev: "https://github.com/TypeSafeAI/typesafe-router routeWithJev, resolveFallback, request builders"
+    kind: api
+    kai: /docs/kai/cookbook/router
+  - jev: "https://github.com/TypeSafeAI/typesafe-router model and tool router configs"
+    kind: example
+    kai: /docs/kai/cookbook/router
+  - jev: "https://github.com/TypeSafeAI/typesafe-router mockCallJev keyword simulator"
+    kind: api
+    none: "a keyless simulation; every Kai recipe runs live instead"
+  - jev: "https://github.com/TypeSafeAI/typesafe-router /api/route server boundary"
+    kind: api
+    kai: /docs/kai/cookbook/router
+  - jev: "https://github.com/TypeSafeAI/typesafe-router Router Lab"
+    kind: app
+    kai: /docs/kai/cookbook/router
+  - jev: "https://github.com/TypeSafeAI/typesafe-router README and REFERENCE"
+    kind: doc
+    kai: /docs/kai/cookbook/router
+  - jev: "https://github.com/TypeSafeAI/clarity-judge seven writing checks"
+    kind: api
+    kai: /docs/kai/cookbook/writing
+  - jev: "https://github.com/TypeSafeAI/clarity-judge custom checks and evidence pass"
+    kind: api
+    kai: /docs/kai/cookbook/writing
+  - jev: "https://github.com/TypeSafeAI/clarity-judge runJudgment pipeline and threshold"
+    kind: api
+    kai: /docs/kai/cookbook/writing
+  - jev: "https://github.com/TypeSafeAI/clarity-judge sample texts"
+    kind: example
+    kai: /docs/kai/cookbook/writing
+  - jev: "https://github.com/TypeSafeAI/clarity-judge judge app"
+    kind: app
+    kai: /docs/kai/cookbook/writing
+  - jev: "https://github.com/TypeSafeAI/clarity-judge README"
+    kind: doc
+    kai: /docs/kai/cookbook/writing
+  - jev: "https://github.com/TypeSafeAI/typesafe-playground /api/run server-side key proxy"
+    kind: api
+    kai: /docs/kai/sdk/typescript
+  - jev: "https://github.com/TypeSafeAI/typesafe-playground LangChain routing tool"
+    kind: api
+    none: "no LangChain adapter; the same closed-set step choice is the router recipe"
+  - jev: "https://github.com/TypeSafeAI/typesafe-playground vendored harness contract"
+    kind: api
+    kai: /docs/kai/cookbook/proposals
+  - jev: "https://github.com/TypeSafeAI/typesafe-playground example builder and A/B inputs"
+    kind: app
+    kai: /docs/kai/cookbook/compare
+  - jev: "https://github.com/TypeSafeAI/typesafe-playground Jev Chat"
+    kind: app
+    kai: /docs/kai/patterns/intents
+  - jev: "https://github.com/TypeSafeAI/typesafe-playground conversation lab"
+    kind: app
+    kai: /docs/kai/cookbook/ask
+  - jev: "https://github.com/TypeSafeAI/typesafe-playground document extraction"
+    kind: app
+    kai: /docs/kai/cookbook/values
+  - jev: "https://github.com/TypeSafeAI/typesafe-playground YouTube extract"
+    kind: app
+    kai: /docs/kai/cookbook/search
+  - jev: "https://github.com/TypeSafeAI/typesafe-playground vector reranker"
+    kind: app
+    kai: /docs/kai/cookbook/rerank
+  - jev: "https://github.com/TypeSafeAI/typesafe-playground meme lab"
+    kind: app
+    kai: /docs/kai/cookbook/writing
+  - jev: "https://github.com/TypeSafeAI/typesafe-playground ask gate"
+    kind: app
+    kai: /docs/kai/cookbook/ask
+  - jev: "https://github.com/TypeSafeAI/typesafe-playground workflow chat"
+    kind: app
+    kai: /docs/kai/patterns/gating
+  - jev: "https://github.com/TypeSafeAI/typesafe-playground tool router"
+    kind: app
+    kai: /docs/kai/cookbook/router
+  - jev: "https://github.com/TypeSafeAI/typesafe-playground LangChain lab"
+    kind: app
+    none: "no LangChain adapter; the same closed-set step choice is the router recipe"
+  - jev: "https://github.com/TypeSafeAI/typesafe-playground clean-room rebuild"
+    kind: app
+    none: "an app-rebuild demo; not ported"
+  - jev: "https://github.com/TypeSafeAI/typesafe-playground browser agent and native browser"
+    kind: app
+    none: "browser-agent demos; the step choice they make is the router recipe"
+  - jev: "https://github.com/TypeSafeAI/typesafe-playground PR review"
+    kind: app
+    kai: /docs/kai/cookbook/proposals
+  - jev: "https://github.com/TypeSafeAI/typesafe-playground proposal review"
+    kind: app
+    kai: /docs/kai/cookbook/proposals
+  - jev: "https://github.com/TypeSafeAI/typesafe-playground AST governance"
+    kind: app
+    kai: /docs/kai/cookbook/proposals
+  - jev: "https://github.com/TypeSafeAI/typesafe-playground SMT solver"
+    kind: app
+    kai: /docs/kai/programs
+  - jev: "https://github.com/TypeSafeAI/typesafe-playground games: Doom, MicroDuck, chess, IQ test, Snake, Breakout, Meteor dodge"
+    kind: app
+    none: "game demos; not ported"
+  - jev: "https://github.com/TypeSafeAI/typesafe-playground example packs: support, social, security, invoices, commerce, sales, product, content, documents, engineering"
+    kind: example
+    kai: /docs/kai/use-cases
+  - jev: "https://github.com/TypeSafeAI/typesafe-playground fairness pack"
+    kind: example
+    kai: /docs/kai/cookbook/compare
+  - jev: "https://github.com/TypeSafeAI/typesafe-playground puzzle, dilemma and framing packs"
+    kind: example
+    none: "reasoning puzzles, not bounded decisions over known options; not ported"
+  - jev: "https://github.com/TypeSafeAI/typesafe-playground review fixtures and benches"
+    kind: example
+    kai: /docs/kai/cookbook/proposals
+  - jev: "https://github.com/TypeSafeAI/typesafe-playground workspace guides"
+    kind: doc
+    kai: /docs/kai/cookbook
+  - jev: "https://github.com/TypeSafeAI/typesafe-playground run-playground skill"
+    kind: skill
+    none: "a skill for running the playground app itself"
+  - jev: "https://github.com/TypeSafeAI/typesafe-ui JevContract and JevResult components"
+    kind: api
+    none: "React components for rendering Jev contracts; no Kai UI kit"
+  - jev: "https://github.com/TypeSafeAI/typesafe-ui Lab scenes"
+    kind: app
+    kai: /docs/kai/cookbook
+  - jev: "https://github.com/TypeSafeAI/typesafe-ui Jev Labs guide"
+    kind: doc
+    kai: /docs/kai/cookbook
+  - jev: "https://github.com/TypeSafeAI/modex auto-routing judge"
+    kind: api
+    kai: /docs/kai/cookbook/router
+  - jev: "https://github.com/TypeSafeAI/modex routing policy"
+    kind: api
+    kai: /docs/kai/cookbook/router
+  - jev: "https://github.com/TypeSafeAI/modex jev CLI and HTTP transports"
+    kind: api
+    none: "Kai has no CLI; the hanzo CLI has no decide command yet"
+  - jev: "https://github.com/TypeSafeAI/modex desktop app"
+    kind: app
+    none: "a desktop shell for coding-agent CLIs, not a decision asset"
+  - jev: "https://github.com/TypeSafeAI/modex docs/auto-routing.md"
+    kind: doc
+    kai: /docs/kai/cookbook/router
+  - jev: "https://github.com/sebderhy/jevlab /decide across engines"
+    kind: app
+    kai: /docs/kai/cookbook/compare
+  - jev: "https://github.com/sebderhy/jevlab local clones server"
+    kind: api
+    kai: /docs/kai/programs/local
+  - jev: "https://github.com/sebderhy/jevlab demo.py email triage"
+    kind: example
+    kai: /docs/kai/cookbook/tickets
+  - jev: "https://github.com/sebderhy/jevlab calibration bench"
+    kind: example
+    kai: /docs/kai/confidence
+  - jev: "https://github.com/sebderhy/jevlab cascade bench"
+    kind: example
+    kai: /docs/kai/cookbook/cascade
+  - jev: "https://github.com/sebderhy/jevlab token meter"
+    kind: example
+    kai: /docs/kai/cookbook/batching
+  - jev: "https://github.com/sebderhy/jevlab drone and car control demos"
+    kind: app
+    none: "real-time control demos; not ported"
+  - jev: "https://github.com/sebderhy/jevlab vendored typesafe-ai skill"
+    kind: skill
+    kai: /docs/kai/agents
+  - jev: "https://github.com/sebderhy/jevlab README benchmark report"
+    kind: doc
+    kai: /docs/kai/cookbook/compare
+  - jev: "https://github.com/typesafe-ai/daggerverse Dagger modules: uv, github, twingate, zizmor, deptry, ruff"
+    kind: tooling
+    none: "CI modules with no Jev in them; Hanzo's CI is hanzoai/ci"
+  - jev: "https://github.com/Anil-matcha/awesome-jev-by-typesafe README field guide"
+    kind: list
+    kai: /docs/kai
+  - jev: "https://github.com/Anil-matcha/awesome-jev-by-typesafe use-case playbook"
+    kind: doc
+    kai: /docs/kai/use-cases
+  - jev: "https://github.com/Anil-matcha/awesome-jev-by-typesafe coding-agent use cases"
+    kind: doc
+    kai: /docs/kai/agents
+  - jev: "https://github.com/Anil-matcha/awesome-jev-by-typesafe quickstarts"
+    kind: example
+    kai: /docs/kai/quickstart
+  - jev: "https://github.com/Anil-matcha/awesome-jev-by-typesafe triage_ticket"
+    kind: example
+    kai: /docs/kai/cookbook/tickets
+  - jev: "https://github.com/Anil-matcha/awesome-jev-by-typesafe guardrail_questions"
+    kind: example
+    kai: /docs/kai/cookbook/guardrails
+  - jev: "https://github.com/Anil-matcha/awesome-jev-by-typesafe score_rag_passage and rag_decision"
+    kind: example
+    kai: /docs/kai/cookbook/rag
+  - jev: "https://github.com/Anil-matcha/awesome-jev-by-typesafe composite_candidate_score and weighted_score"
+    kind: example
+    kai: /docs/kai/patterns/composite
+  - jev: "https://github.com/Anil-matcha/awesome-jev-by-typesafe gate_action"
+    kind: example
+    kai: /docs/kai/patterns/gating
+  - jev: "https://github.com/AbdelStark/awesome-typesafe-jev README field guide"
+    kind: list
+    kai: /docs/kai
+  - jev: "https://github.com/AbdelStark/awesome-typesafe-jev first-decision snippets"
+    kind: example
+    kai: /docs/kai/quickstart
+  - jev: "https://github.com/AbdelStark/awesome-typesafe-jev resource directory"
+    kind: list
+    none: "a community directory of third-party projects; there is none for Kai yet"
+  - jev: "https://github.com/AbdelStark/awesome-typesafe-jev question designer and threshold widgets"
+    kind: app
+    kai: /docs/kai/questions
+  - jev: "https://github.com/AbdelStark/awesome-typesafe-jev skill awesome-jev"
+    kind: skill
+    kai: /docs/kai/agents
+  - jev: "https://github.com/AbdelStark/awesome-typesafe-jev list maintenance scripts"
+    kind: tooling
+    none: "scripts that maintain that list"
+  - jev: "https://github.com/TypeSafeAI/community-blog note: typed contracts"
+    kind: doc
+    kai: /docs/kai/concepts
+  - jev: "https://github.com/TypeSafeAI/community-blog note: tool boundaries"
+    kind: doc
+    kai: /docs/kai/cookbook/router
+  - jev: "https://github.com/TypeSafeAI/.github org profile and project directory"
+    kind: list
+    none: "a community org profile"
+  - jev: "https://github.com/typesafe-ai/typesafe-ai.github.io landing page"
+    kind: doc
+    none: "TypeSafe's landing page"

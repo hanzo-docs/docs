@@ -1,0 +1,110 @@
+---
+title: An uncertain outcome
+description: "Give a moderation decision a third outcome, uncertain, set in code from the answer's confidence, and compare how much it automates with how often it agrees with labels."
+---
+
+**A moderation decision needs a third outcome besides remove and keep: not
+sure, so hold it for a person.** Code sets it from the answer's confidence,
+and the threshold trades automation for agreement. On 80 labelled posts from
+the harness's toxicity suite the trade depended on how the question was asked:
+as a yes/no choice, holding the least confident quarter barely moved agreement
+(0.700 to 0.717); as the noul the suite trains, it held three posts, all three
+of them wrong answers.
+
+## The idea
+
+A choice answer carries a `confidence`, (n·p_max − 1)/(n − 1): 0 when the
+labels are equally likely, 1 when one takes all the probability. For two
+labels that is 2·p_max − 1, the same number as |2p − 1| on a noul's P(yes).
+Below a threshold, the post is held:
+
+```python
+def outcome(yes: float, confidence: float, threshold: float) -> str:
+    """remove or keep when the confidence clears the threshold, else uncertain."""
+    if confidence < threshold:
+        return "uncertain"
+    return "remove" if yes >= 0.5 else "keep"
+```
+
+There is another way to get a third outcome: offer it as a label and let Kai
+pick it. The script measures that too, and asks the toxicity question in the
+harness's words three ways, all in the same call per post:
+
+```python
+ASK = "Is `post` toxic: rude, disrespectful or likely to make someone leave the discussion?"  # the harness's words
+YESNO = {"yes": "it is toxic", "no": "it is not toxic"}
+QUESTIONS = {
+    "moderate": Choice(instructions=ASK, criteria=YESNO),
+    "unsure": Choice(instructions=ASK, criteria=YESNO | {"unsure": "it could be read either way"}),
+    "noul": Noul(instructions=ASK),
+    "labels": Choice(
+        instructions="How should a moderator label `post`?",
+        criteria={
+            "acceptable": "polite, neutral or merely blunt",
+            "toxic": "rude, disrespectful or likely to make someone leave the discussion",
+        },
+    ),
+}
+```
+
+The 80 posts are drawn with a fixed seed from `app.moderation_toxicity`; the
+labels are the suite's. The whole script is
+[`choices.py`](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/choices.py).
+What it printed against `api.hanzo.ai` on 2026-09-28:
+
+{/* out: python/choices.py */}
+```text
+80 posts, 41 toxic by gold
+
+the same question, three ways             agrees with gold
+noul, P(yes) at 0.5                        67/80 = 0.838
+choice yes/no                              56/80 = 0.700
+choice acceptable/toxic                    35/80 = 0.438
+
+uncertain below a confidence   choice yes/no           noul, confidence |2p - 1|
+confidence at least        automated  agrees         automated  agrees
+                0.0     80/80   56/80 = 0.700     80/80   67/80 = 0.838
+                0.2     78/80   54/78 = 0.692     80/80   67/80 = 0.838
+                0.4     73/80   52/73 = 0.712     80/80   67/80 = 0.838
+                0.6     69/80   50/69 = 0.725     77/80   67/77 = 0.870
+                0.8     60/80   43/60 = 0.717     77/80   67/77 = 0.870
+
+`unsure` as a third label: chosen 11 times; the rest agree with gold  47/69 = 0.681
+```
+
+## What the numbers say
+
+- **How the question is asked matters more than the threshold.** The same
+  words as the noul the suite trains agreed on 67 of 80. As a yes/no choice,
+  56. Relabelled as acceptable or toxic, 35: worse than a coin, on two
+  balanced labels.
+- **On the yes/no choice, holding posts buys almost nothing.** Holding
+  everything under 0.8 automates 60 of 80, and agreement moves from 0.700 to
+  0.717: the choice's wrong answers are about as confident as its right ones.
+- **On the noul, the hold works as intended.** At 0.6 it holds three posts, and
+  all three were wrong answers: agreement on the rest rises from 0.838 to 0.870.
+  Above 0.6 nothing more is held, so on this suite a band cannot trade further.
+- **An `unsure` label is not a substitute.** Kai picked it for 11 posts, and
+  the other 69 agree with the labels less often (0.681) than the choice without
+  it (0.700).
+- **On the whole suite, Kai's noul is ahead of Jev**: 0.802 against 0.662 over
+  all 400 posts
+  ([benchmark results](https://github.com/hanzoai/benchmarks/tree/c61361fedc5882b0d83b2f5d5a6a35c56ffeb3c3/decision/results/kai-a7)).
+
+## Adapt it
+
+- Ask a question in the shape and words it was measured in when you have them,
+  and put the uncertain outcome in code on top, as `outcome` does.
+- Pick the threshold from a table like this on posts your moderators have
+  labelled: the share automated against agreement on what was automated.
+- Route held posts to a person with the probability attached, and feed their
+  decisions back as labels for the next threshold.
+- Measure new wording before you use it for a question the checkpoint knows
+  in other words: here, new labels and a new sentence agreed on 32 fewer posts
+  than the noul.
+
+## Next
+
+- [Band a yes or no](/docs/kai/cookbook/nouls)
+- [Guard an LLM app](/docs/kai/cookbook/guardrails)
+- [Confidence gates](/docs/kai/patterns/gating)

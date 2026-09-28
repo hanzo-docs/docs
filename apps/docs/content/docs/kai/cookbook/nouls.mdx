@@ -1,0 +1,103 @@
+---
+title: Band a yes or no
+description: "Act on a yes/no answer only when its probability is near 0 or 1, send the middle band to review with the probability on the record, and measure what each band costs in automation and buys in accuracy."
+---
+
+**A noul's answer is a probability, so the decision rule is two numbers: act
+above the high one, act the other way below the low one, and send what falls
+between to a person.** On 80 labelled emails from the harness's phishing suite,
+Kai answered every one near 0 or 1, so every band automated all 80, with 78
+right. Both misses were confident, and no band would have caught them.
+
+## The idea
+
+A yes/no answer is P(yes). Rounding it at 0.5 throws away what the model says
+about its own certainty; a band keeps it. The record of each decision carries
+the raw probability beside the route, so a reviewer, an audit or a later
+threshold change can use it.
+
+The script asks the harness's own question, word for word, about 80 emails
+drawn with a fixed seed from `app.phishing`:
+"Is this email a phishing or scam attempt to steal money, credentials, or
+personal data?", with criteria for both sides. It then routes every answer
+under five bands, from none (act on everything at 0.5) to (0.01, 0.99), and
+counts what each automates and how often the automated answer matches the
+label.
+
+## The code
+
+```python
+def route(p: float, low: float, high: float) -> str:
+    """Where an email goes: automatic at either end of the band, a person in between."""
+    return "phishing" if p >= high else "legitimate" if p <= low else "review"
+```
+
+```python
+        p = ask(kai, state["email"], questions)  # the harness's own question
+        records.append({"case": index, "p": p, "route": route(p, 0.1, 0.9), "gold": gold[NAME]["idx"] == 1})
+```
+
+Kai reads 1,024 tokens per question on this checkpoint. If the API refuses an
+email as longer than that (`422`, `state_too_long`), `ask` halves the email and
+asks again. The whole script is
+[`nouls.py`](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/nouls.py).
+What it printed against `api.hanzo.ai` on 2026-09-28:
+
+{/* out: python/nouls.py */}
+```text
+80 emails, 32 phishing by gold
+
+P(phishing)    emails  phishing by gold
+[0.00, 0.05)      48                 1
+[0.05, 0.20)       0                 0
+[0.20, 0.50)       0                 0
+[0.50, 0.80)       0                 0
+[0.80, 0.95)       0                 0
+[0.95, 1.00]      32                31
+
+review band    automated  right among automated
+none            80/80    78/80 = 0.975
+(0.2, 0.8)      80/80    78/80 = 0.975
+(0.1, 0.9)      80/80    78/80 = 0.975
+(0.05, 0.95)    80/80    78/80 = 0.975
+(0.01, 0.99)    80/80    78/80 = 0.975
+
+records at (0.1, 0.9) that are wrong or held for review:
+{'case': 49, 'p': 0.9994, 'route': 'phishing', 'gold': False}
+{'case': 68, 'p': 0.0009, 'route': 'legitimate', 'gold': True}
+```
+
+## What the numbers say
+
+- **Kai left nothing in the middle.** All 80 probabilities are under 0.05 or at
+  0.95 and above, so every band from none to (0.01, 0.99) automates all 80 and
+  gets 78 right. On this suite a band costs nothing and buys nothing.
+- **Both misses are confident.** Case 49 is an email whose whole text is the
+  word "empty", labelled legitimate; Kai gave it 0.9994. Case 68 is a paragraph
+  of aphorisms the dataset labels phishing; Kai gave it 0.0009. A band catches
+  uncertain answers, never confident wrong ones.
+- **On the whole suite Kai is more accurate than Jev here**: 0.990 against
+  0.900 over all 400 emails
+  ([benchmark results](https://github.com/hanzoai/benchmarks/tree/c61361fedc5882b0d83b2f5d5a6a35c56ffeb3c3/decision/results/kai-a7)).
+  Its probabilities sit at the ends on this question; on a question where they
+  spread, the same band trades automation for accuracy, as
+  [An uncertain outcome](/docs/kai/cookbook/choices) shows on toxicity.
+
+## Adapt it
+
+- Keep `p` on every record, automated or not. It is what lets you move a band
+  later, and what an auditor needs to see.
+- Set the band from a table like this on your own labelled traffic: the share
+  automated against the accuracy of what was automated.
+- Sample a few automated answers for a person too. The confident misses above
+  are only found that way.
+- Measure a yes/no question of your own on labelled cases before it gates
+  anything. The phishing question is one the harness trains; on a new one,
+  [Known limits](/docs/kai/limits#yes-or-no-questions) found a choice whose
+  labels name the outcomes more reliable than a noul.
+
+## Next
+
+- [An uncertain outcome](/docs/kai/cookbook/choices)
+- [Noul questions](/docs/kai/questions/noul)
+- [Confidence and thresholds](/docs/kai/confidence)

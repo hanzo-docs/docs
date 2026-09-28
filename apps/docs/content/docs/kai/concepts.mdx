@@ -1,0 +1,92 @@
+---
+title: Typed decisions
+description: Know what a typed decision is, what Kai returns for one, and which part of your system owns each step.
+---
+
+**A typed decision is a question whose possible answers you write down before
+you ask. Kai returns a probability for each of them and writes no text.**
+
+## One decision, sent twice
+
+A customer writes in German; the question is in English. The same request goes
+out twice:
+
+```bash
+for i in 1 2; do
+  curl -sS https://api.hanzo.ai/v1/decisions \
+    -H "Authorization: Bearer $HANZO_API_KEY" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "model": "kai",
+      "state": {"message": "Ich habe meine Karte im Zug verloren. Bitte sperren Sie sie sofort."},
+      "questions": {
+        "intent": {"type": "choice", "instructions": "What does `message` ask for?",
+                   "criteria": {"activate_card": "turn on a new card",
+                                "lost_card": "report a lost or stolen card",
+                                "refund": "money back for a payment",
+                                "transfer": "send or receive money",
+                                "other": "anything else"}}
+      }
+    }' | jq -c '{id, probabilities: .answers.intent.probabilities, output_tokens: .usage.output_tokens, state_hash}'
+done
+```
+
+What `api.hanzo.ai` answered on 2026-09-28:
+
+{/* out: sh/repeat.sh */}
+```text
+{"id":"dec_ee7106e7d5a6a032f151a350ff10be0b","probabilities":{"activate_card":0.0497,"lost_card":0.8733,"refund":0.0311,"transfer":0.0251,"other":0.0208},"output_tokens":0,"state_hash":"sha256:054a85462414213b9cf828b661581a3d1194c8cf6bb1a22579c4ddc51c7145b1"}
+{"id":"dec_b7c58bef26096a54d9c6c72ef810aa19","probabilities":{"activate_card":0.0497,"lost_card":0.8733,"refund":0.0311,"transfer":0.0251,"other":0.0208},"output_tokens":0,"state_hash":"sha256:054a85462414213b9cf828b661581a3d1194c8cf6bb1a22579c4ddc51c7145b1"}
+```
+
+| Property | What the two lines show |
+|---|---|
+| **The answers are yours** | Every label you listed gets a probability and nothing else can come back, so there is no text to parse. |
+| **Nothing is written** | `usage.output_tokens` is 0. Kai reads the state and scores each option; it generates no tokens. |
+| **Same input, same answer** | Two ids; identical probabilities and `state_hash`. |
+
+An answer also does not depend on what else is in the batch it was computed in,
+and question names never reach the model: they only label the answers for your
+code.
+
+## Terms
+
+| Term | Meaning |
+|---|---|
+| state | What the questions are about: text, or a JSON object or array that Kai reads as its JSON text. [What Kai reads](/docs/kai/state) |
+| question | A `type`, the `instructions` that say what is asked, and the `criteria` that list the allowed answers, under a name you choose. [Question types](/docs/kai/questions) |
+| answer | A distribution over the question's options and the most probable of them: a `choice`, a `score` or a `noul`. |
+| `confidence`, `answer_confidence` | How strongly the distribution backs the reported answer. [Confidence and thresholds](/docs/kai/confidence) |
+| `usage` | The input tokens billed; output is always 0. |
+| `routing` | The checkpoint, the SHA-256 of its weights and the calibration that answered. |
+| `state_hash` | The SHA-256 of the state as Kai read it, so two decisions can be shown to share an input. |
+
+## Who owns what
+
+| Part | Owns |
+|---|---|
+| Your code | The workflow: which step runs when, facts it can look up, arithmetic, side effects. |
+| Kai | Bounded judgments about language: which label, which level, whether a statement holds. |
+| Policy | What is allowed, as deterministic rules outside any model. |
+| Zen or a person | Open work, such as a reply or a summary, and every answer Kai is unsure of. |
+
+A model's verdict joins a policy's on `allow` &lt; `ask` &lt; `deny`: it can
+make a verdict stricter, never looser. [Building with Kai](/docs/kai/build)
+shows the join in code.
+
+## What Kai does not do
+
+- **Invent an answer.** It cannot return a name, an amount or a reply that is
+  not among the options. Find the candidates in code and ask Kai to choose, or
+  ask a [Zen](/docs/models/zen) model to write.
+- **Carry one answer into the next question.** The questions in a call are
+  answered independently. When a question depends on an answer, ask it in a
+  second call ([Dependent questions](/docs/kai/programs/dependent)).
+- **Read past its window.** A state too long for the checkpoint is refused, not
+  cut short ([What Kai reads](/docs/kai/state)).
+
+## Next
+
+- [What Kai reads](/docs/kai/state): what to put in `state`.
+- [Question types](/docs/kai/questions): choice, score and noul.
+- [Building with Kai](/docs/kai/build): code in control, Kai as a function call.

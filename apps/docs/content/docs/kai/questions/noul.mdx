@@ -1,0 +1,146 @@
+---
+title: Noul questions
+description: Ask whether a statement about the state holds, read P(true) and its confidence, and phrase the statement in a form the current checkpoint reads well.
+---
+
+**A `noul` returns the probability that a statement about the state is true.**
+
+## Ask
+
+```bash
+curl -sS https://api.hanzo.ai/v1/decisions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "kai",
+    "state": {"message": "The app crashes every time I open the statements tab."},
+    "questions": {
+      "app_error": {"type": "noul", "instructions": "`message` reports that the app is not working.",
+                    "criteria": {"true": "the app shows an error, crashes or refuses an action",
+                                 "false": "the app works, or the message is about something else"}}
+    }
+  }' | jq '.answers'
+```
+
+What `api.hanzo.ai` answered on 2026-09-28:
+
+{/* out: sh/noul.sh */}
+```json
+{
+  "app_error": {
+    "type": "noul",
+    "noul": 0.6077,
+    "answer_confidence": 0.6077
+  }
+}
+```
+
+| Field | Meaning |
+|---|---|
+| `noul` | P(true), from 0 to 1. |
+| `answer_confidence` | The probability of the likelier side, max(p, 1 − p). |
+| `confidence` | \|2p − 1\|: the choice formula (n·p_max − 1)/(n − 1) with n = 2, so 0 at even odds and 1 at certainty. |
+
+The statement leans true, and only just. The message states a crash outright; a
+person would not hesitate. The measurement below shows how often this happens.
+
+## How Kai reads a noul
+
+A noul is two options scored against the question and the state: `false:`
+followed by the `false` criterion, and `true:` followed by the `true` one.
+Without `criteria`, the sides read "no, the statement does not hold" and "yes,
+the statement holds". P(true) is σ(s(true) − s(false)), so both sides are scored
+by the same function. `criteria` takes the keys `true` and `false`, either or
+both; any other key is refused.
+
+## Phrasing, measured
+
+Eight messages to a bank's support desk, four about a failing app and four
+about something else, asked whether the app is failing in four forms: a bare
+question, a statement with both sides described, a yes/no `choice`, and a
+five-way `choice` in which the failing app is one label among the things a
+message can be about.
+
+```python
+messages = [
+    (True, "My new card came yesterday but the app will not let me activate it. It keeps saying the code is invalid."),
+    (True, "The app crashes every time I open the statements tab."),
+    (True, "I tried to send money three times and the app just shows a spinning wheel and then an error."),
+    (True, "Since the last update I cannot log in to the app, it says something went wrong."),
+    (False, "How long does a transfer to a German bank account usually take?"),
+    (False, "I lost my card on the train this morning, please block it."),
+    (False, "Can I raise my daily ATM withdrawal limit?"),
+    (False, "Thanks, the refund arrived today. Great service!"),
+]
+broken = "the app shows an error, crashes or refuses an action"
+working = "the app works, or the message is about something else"
+forms = {
+    "question": Noul(instructions="Is the app broken?"),
+    "statement": Noul(
+        instructions="`message` reports that the app is not working.", criteria={"true": broken, "false": working}
+    ),
+    "yes/no": Choice(
+        instructions="Does `message` report that the app is not working?", criteria={"yes": broken, "no": working}
+    ),
+    "five-way": Choice(
+        instructions="What does `message` report?",
+        criteria={
+            "app_error": broken,
+            "card": "a card is lost, stolen, blocked or needs activating",
+            "transfer": "sending or receiving money",
+            "limits": "limits, fees or account settings",
+            "other": "thanks, feedback or anything else",
+        },
+    ),
+}
+```
+
+P(the app is failing) by form:
+
+{/* out: python/phrasing.py */}
+```text
+truth   question  statement     yes/no   five-way
+True        0.56       0.50       0.66       0.04
+True        0.52       0.61       0.96       0.95
+True        0.36       0.64       0.99       0.99
+True        0.52       0.55       0.74       0.64
+False       0.00       0.64       0.47       0.02
+False       0.47       0.49       0.65       0.00
+False       0.14       0.44       0.52       0.06
+False       0.19       0.54       0.73       0.16
+right        7/8        5/8        5/8        7/8
+```
+
+- **The bare question** is right on seven, but three of its true answers sit
+  between 0.52 and 0.56: a small shift in wording could flip them.
+- **The statement with both sides described** never leaves 0.44 to 0.64,
+  true or false: on this statement it barely tells the cases apart.
+- **The yes/no `choice`** calls three of the four false messages true.
+- **The five-way `choice`** separates the cases widely and misses one: it files
+  the card that the app will not activate under `card`, which also fits.
+
+So on this checkpoint:
+
+- Write a noul as a statement and describe both sides in `criteria`, so each
+  answer has a stated meaning. On everyday questions a bare question can come
+  back inverted.
+- When the statement is one of several things a case can be about, ask a
+  `choice` that names them all and read the probability of the one you need.
+- Check a noul on cases whose answer you know before you threshold it. Values
+  that stay near 0.5 for true and false cases alike mean the question is not
+  being read; rephrase it or change its form.
+
+[Limits](/docs/kai/limits) collects what else is known about this checkpoint.
+
+## Act on it
+
+Two thresholds split a noul three ways: act on yes above the upper one, on no
+below the lower one, and hand the middle to a person or a rule. Where they sit
+depends on what a wrong yes and a wrong no each cost you, measured on your own
+cases: [Confidence and thresholds](/docs/kai/confidence).
+
+## Next
+
+- [Confidence and thresholds](/docs/kai/confidence): where to put the line.
+- [Choice questions](/docs/kai/questions/choice): the form that separated best here.
+- [Structured questions](/docs/kai/questions/structure): objects as the two sides.

@@ -1,0 +1,144 @@
+---
+title: Building with Kai
+description: Structure an application so code owns the workflow, Kai answers bounded questions, and a deterministic policy keeps the final say.
+---
+
+**Write the workflow in code. Call Kai where code has to read language. Keep
+what is allowed in a policy that Kai can tighten and never loosen.**
+
+## The split
+
+| Part | Owns | In the desk below |
+|---|---|---|
+| Code | the steps, the facts, the side effects | looks up the account, unlocks it |
+| Kai | reading language | what the message needs |
+| Policy | what may happen without a person, as fixed rules | admins are never unlocked automatically; an unverified user needs a person |
+| A person | what the other three leave open | the queue |
+
+## Five steps
+
+1. Write the workflow as ordinary code, and mark each place where it has to read
+   language.
+2. Turn each place into a typed question whose answers are the branches your
+   code already has.
+3. Ask a state's questions in one call, with the part of the case they need.
+4. Act on an answer only above a threshold you have tested; below it, escalate.
+5. Join what the answer supports with your policy on `allow` &lt; `ask` &lt;
+   `deny`, and keep the stricter.
+
+## An IT desk that unlocks accounts
+
+The desk unlocks an account only when its own rules allow it and Kai reads the
+message as a clear password request:
+
+```python
+from hanzo_kai import Kai, Choice
+
+VERDICTS = ["allow", "ask", "deny"]
+ACTIONS = {"allow": "unlock the account", "ask": "queue for a person", "deny": "refuse"}
+NEED = Choice(
+    instructions="What does `message` need from IT?",
+    criteria={
+        "password": "reset a password or unlock an account",
+        "access": "permission to a system, folder or app",
+        "hardware": "a broken or missing laptop, monitor or phone",
+        "network": "Wi-Fi, VPN or internet problems",
+        "other": "anything else",
+    },
+)
+
+
+def policy(account):
+    """The desk's rules for an automatic unlock, decided without a model."""
+    if account["admin"]:
+        return "deny"
+    if not account["verified"]:
+        return "ask"
+    return "allow"
+
+
+def judged(need):
+    """What Kai's answer supports: an unlock only for a clear password request."""
+    return "allow" if need.choice == "password" and need.confidence >= 0.6 else "ask"
+
+
+def join(*verdicts):
+    """The strictest verdict, on allow < ask < deny."""
+    return max(verdicts, key=VERDICTS.index)
+
+
+tickets = [
+    (
+        {"user": "ana", "admin": False, "verified": True},
+        "I got locked out after too many attempts, can you unlock my account?",
+    ),
+    (
+        {"user": "ops", "admin": True, "verified": True},
+        "I got locked out after too many attempts, can you unlock my account?",
+    ),
+    (
+        {"user": "lee", "admin": False, "verified": False},
+        "I got locked out after too many attempts, can you unlock my account?",
+    ),
+    (
+        {"user": "ben", "admin": False, "verified": True},
+        "Since the Wi-Fi password changed I cannot open the shared drive.",
+    ),
+]
+
+with Kai() as kai:
+    for account, text in tickets:
+        rule = policy(account)
+        if rule == "deny":
+            print(f"{account['user']}: policy deny; Kai not asked -> {ACTIONS['deny']}")
+            continue
+        need = kai.decide(state={"message": text}, questions={"need": NEED}).choices["need"]
+        verdict = join(rule, judged(need))
+        print(
+            f"{account['user']}: policy {rule}, Kai {judged(need)} ({need.choice}, confidence {need.confidence:.2f})"
+            f" -> {verdict}: {ACTIONS[verdict]}"
+        )
+```
+
+What `api.hanzo.ai` answered on 2026-09-28:
+
+{/* out: python/helpdesk.py */}
+```text
+ana: policy allow, Kai allow (password, confidence 1.00) -> allow: unlock the account
+ops: policy deny; Kai not asked -> refuse
+lee: policy ask, Kai allow (password, confidence 1.00) -> ask: queue for a person
+ben: policy allow, Kai ask (access, confidence 0.22) -> ask: queue for a person
+```
+
+- **ana**: the rules and Kai both allow, so the desk unlocks.
+- **ops** is an admin. The rules deny before any model is asked, since no answer
+  could change the outcome.
+- **lee** is unverified. Kai would allow; the rules say ask, and the stricter
+  verdict stands.
+- **ben**'s message is unclear. The rules allow; Kai is unsure and says ask, and
+  the stricter verdict stands.
+
+The join is the whole contract between the model and the rules: a verdict from
+Kai can move the outcome toward `deny` and never toward `allow`. Decision
+Programs apply the same join, with a mode per program that decides whether
+Kai's verdict is recorded, shown or applied
+([Kai](/docs/models/kai#modes-and-policy), [Decision Programs](/docs/kai/programs)).
+
+## Where Kai does not fit
+
+| Task | Use |
+|---|---|
+| Write a reply, a summary or an explanation | a [Zen](/docs/models/zen) model through the same API |
+| Produce a value that is not in a list: an amount, a date, a name | code, or Zen; then Kai to choose among the candidates |
+| Compute, compare, look up | code |
+| Read a document longer than the window | split it, or retrieve the part a question needs |
+| Reach an answer through several steps of reasoning | questions whose answers code combines, or a reasoning model |
+
+[Triage with Kai, reply with Zen](/docs/guides/cookbook/triage) runs both in one
+flow.
+
+## Next
+
+- [Confidence and thresholds](/docs/kai/confidence): where the line sits.
+- [Patterns](/docs/kai/patterns): fan-out, gating, composite scores, intent routing.
+- [Cookbook](/docs/kai/cookbook): recipes that run end to end.

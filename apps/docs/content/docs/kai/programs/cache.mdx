@@ -1,0 +1,95 @@
+---
+title: Answer caching
+description: "Know what Kai reuses between requests, why a question over a state answers the same each time, and how to cache answers on your side by state_hash."
+---
+
+**Kai answers a question from the state and that question alone.** Under one
+checkpoint, the same pair answers the same every time: alone, beside other
+questions, or under another name. So a cache on your side, keyed by the state
+and the question, is exact.
+
+## What the service keeps
+
+The service keeps what its encoder computed for text it has already read,
+option texts and each question with its state, and reuses it when the same
+text comes back. It is automatic, and it changes neither answers nor billing.
+
+Holding an encoded state between requests, so that a later decision skips the
+encoder, is not part of the public API today.
+
+## Cache on your side
+
+`state_hash` in every response is the SHA-256 of the state as Kai read it: a
+string as itself, anything else as Python's
+`json.dumps(state, ensure_ascii=False)` writes it, keys in the order you sent
+them. You can compute it before you call. Key a cache by three things:
+
+| Key part | Why |
+|---|---|
+| `state_hash` | the state, exactly as Kai reads it |
+| the question's definition, not its name | the name never reaches the model |
+| `routing.sha256` and `routing.calibration` | a new checkpoint or calibration answers differently; drop the cache when a live answer names one |
+
+```python
+def state_hash(state) -> str:
+    """The response's state_hash, computed locally: a string as itself, anything else as json.dumps writes it."""
+    text = state if isinstance(state, str) else json.dumps(state, ensure_ascii=False)
+    return "sha256:" + hashlib.sha256(text.encode()).hexdigest()
+
+
+def definition(question: Choice) -> str:
+    return json.dumps(question.model_dump(), sort_keys=True)
+
+
+class Memo:
+    """Answers kept by state_hash and question; an answer from another checkpoint or calibration clears them."""
+
+    def __init__(self, kai: Kai):
+        self.kai, self.kept, self.checkpoint, self.calls = kai, {}, None, 0
+
+    def decide(self, state, questions: dict[str, Choice]) -> dict[str, dict[str, float]]:
+        h = state_hash(state)
+        missing = {n: q for n, q in questions.items() if (h, definition(q)) not in self.kept}
+        if missing:
+            d = self.kai.decide(state=state, questions=missing)
+            self.calls += 1
+            now = (d.routing["sha256"], d.routing["calibration"])
+            if self.checkpoint not in (None, now):
+                self.kept, self.checkpoint = {}, now
+                return self.decide(state, questions)
+            self.checkpoint = now
+            self.kept.update({(h, definition(q)): d.choices[n].probabilities for n, q in missing.items()})
+        return {n: self.kept[(h, definition(q))] for n, q in questions.items()}
+```
+
+The full script:
+[`native_cache.py`](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/native_cache.py).
+It checks the hash, asks `team` four ways, then asks through the cache. What
+`api.hanzo.ai` answered on 2026-09-28:
+
+{/* out: python/native_cache.py */}
+```text
+state_hash, local    sha256:5334b0b1d33b2f1dd2a3bf81f4dc7d5a5c9f14af9cd1da8a59ebc77e768dda48
+state_hash, returned sha256:5334b0b1d33b2f1dd2a3bf81f4dc7d5a5c9f14af9cd1da8a59ebc77e768dda48
+team, alone        {'billing': 0.7808, 'technical': 0.1001, 'account': 0.1191}  input_tokens 59
+team, alone, again {'billing': 0.7808, 'technical': 0.1001, 'account': 0.1191}  input_tokens 59
+team, beside today {'billing': 0.7808, 'technical': 0.1001, 'account': 0.1191}  input_tokens 107
+team, named queue  {'billing': 0.7808, 'technical': 0.1001, 'account': 0.1191}  input_tokens 59
+memo, asked for team: calls to Kai so far 1
+memo, asked for team, today: calls to Kai so far 2
+memo, asked for team, today: calls to Kai so far 2
+```
+
+## What the run shows
+
+- **The local hash is the returned one.**
+- **`team` answers the same** alone, again, beside `today`, and under the name
+  `queue`.
+- **The cache asks only for what it lacks.** Asked for `team` and `today`
+  after `team`, it sends Kai `today` alone; asked again, it sends nothing.
+
+## Next
+
+- [Decision Programs](/docs/kai/programs): a program caches each node by the hash of its definition and inputs.
+- [Decisions](/docs/decisions#response): every response field, `routing` and `state_hash` among them.
+- [Python SDK](/docs/kai/sdk/python): the client this page uses.

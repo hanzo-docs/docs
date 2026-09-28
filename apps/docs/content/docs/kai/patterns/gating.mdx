@@ -1,0 +1,135 @@
+---
+title: Confidence gates
+description: "Act on an answer only when its confidence clears a threshold you measured on labelled cases, and send the rest to a person."
+---
+
+**The answer says what; its confidence says whether to act on it.** Code acts
+above a threshold and hands everything below it to a person. The threshold
+comes from a labelled sample you run, not from a round number.
+
+## The case
+
+A security team closes false positives and opens incidents for real ones.
+Closing a real intrusion is the expensive mistake, so an alert Kai is unsure
+about goes to an analyst.
+
+The sample is the first 40 security alerts in the public
+[decision harness](https://github.com/hanzoai/benchmarks/tree/039fbfe5fa5dcb1483407594d829fa822d78974a/decision),
+pinned to a commit, each labelled true or false positive. The question is the
+harness's own. `TARGET` is the accuracy the team wants on the alerts the gate
+acts on.
+
+```python
+HARNESS = ("https://raw.githubusercontent.com/hanzoai/benchmarks/"
+           "039fbfe5fa5dcb1483407594d829fa822d78974a/decision/results/states.json.gz")
+QUESTION = {
+    "true_positive": Noul(
+        instructions="This alert reflects genuinely malicious or unauthorised activity.",
+        criteria={
+            "true": "The underlying behaviour is malicious or unauthorised.",
+            "false": "Benign activity, a misconfiguration, or a known false positive.",
+        },
+    )
+}
+TARGET = 0.95
+```
+
+Use your own cases the same way: the alerts your team already closed or
+escalated, with what it decided.
+
+## Measure, then pick the line
+
+For each threshold, count the alerts the gate would act on and how many of
+those Kai got right. For a noul, `max(p, 1 - p)` is the probability of the
+side Kai picked; a choice uses its `confidence` the same way
+([Confidence](/docs/kai/confidence)).
+
+```python
+with urllib.request.urlopen(HARNESS) as response:
+    suites = json.loads(gzip.decompress(response.read()))
+alerts = [case for case in suites["typed_decisions"] if case[2]["_wf"] == "security_incidents"]
+sample, unseen = alerts[:40], alerts[40]
+
+with Kai(retry=RetryPolicy(max_retries=8)) as kai:
+    answers = []
+    for state, _, gold in sample:
+        d = kai.decide(state=state, questions=QUESTION)
+        answers.append((d.nouls["true_positive"].noul, gold["true_positive"]["idx"] == 1))
+    calibration = d.routing["calibration"]
+
+    print(f"{len(answers)} alerts, {sum(truth for _, truth in answers)} of them true positives, {calibration}\n")
+    print("threshold  acted  right  accuracy  to analyst")
+    threshold = None
+    for line in (0.5, 0.6, 0.7, 0.8, 0.9):
+        acted = [(p >= 0.5) == truth for p, truth in answers if max(p, 1 - p) >= line]
+        accuracy = sum(acted) / len(acted) if acted else float("nan")
+        print(f"{line:>9}  {len(acted):>5}  {sum(acted):>5}  {accuracy:>8.3f}  {len(answers) - len(acted):>10}")
+        if threshold is None and acted and accuracy >= TARGET:
+            threshold = line
+    print(f"\nlowest threshold with accuracy >= {TARGET}: {threshold}")
+```
+
+## Gate every alert after that
+
+The gate keeps the calibration it was measured under. `routing.calibration`
+names the calibration tables behind every answer; when it changes, the same
+probability means something else, so the gate sends everything to an analyst
+until the sample is run again. The script ends by gating alert 41, the first
+one outside the sample:
+
+```python
+    def triage(alert):
+        """incident, close or analyst for one alert, under the threshold and calibration measured above."""
+        d = kai.decide(state=alert, questions=QUESTION)
+        p = d.nouls["true_positive"].noul
+        if threshold is None or d.routing["calibration"] != calibration or max(p, 1 - p) < threshold:
+            return "analyst", p
+        return ("incident" if p >= 0.5 else "close"), p
+
+    verdict, p = triage(unseen[0])
+    label = "true positive" if unseen[2]["true_positive"]["idx"] == 1 else "false positive"
+    print(f"alert 41, outside the sample: P(true) {p:.4f} -> {verdict}; the harness labels it a {label}")
+```
+
+The whole script is
+[`pattern_gating.py`](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/pattern_gating.py).
+What it printed against `api.hanzo.ai` on 2026-09-28:
+
+{/* out: python/pattern_gating.py */}
+```text
+40 alerts, 30 of them true positives, cal_e23c27a1f768bff7
+
+threshold  acted  right  accuracy  to analyst
+      0.5     40     33     0.825           0
+      0.6     30     29     0.967          10
+      0.7     16     16     1.000          24
+      0.8      6      6     1.000          34
+      0.9      0      0       nan          40
+
+lowest threshold with accuracy >= 0.95: 0.6
+alert 41, outside the sample: P(true) 0.4381 -> analyst; the harness labels it a true positive
+```
+
+- **Opening an incident for every alert is right 30 times in 40.** Acting on
+  every Kai answer is right 33 times. A gate has to beat both.
+- **At 0.6 the gate acts on 30 alerts and gets 29 right.** Each step up buys
+  accuracy with analyst time: at 0.7 it was right every time it acted, and
+  sent 24 of the 40 to a person.
+- **No answer reached 0.9.** On these questions Kai's probabilities run below
+  its accuracy: across the harness's typed decisions its mean top probability
+  is 0.590 and its accuracy 0.759
+  ([limits](/docs/kai/limits#where-jev-is-ahead)). Trust the accuracy measured
+  above the line, not the probability alone.
+- **Alert 41 went to an analyst.** Kai leaned false positive at 0.56, under the
+  line. Acting on it would have closed a real intrusion.
+
+## Before you enforce it
+
+40 cases is a small sample. One more wrong answer at 0.6 would have left 28 of
+30, 0.933, and moved the line to 0.7. Measure on as many labelled cases as you
+have, set a line per question, and run the sample again when
+`routing.calibration` changes. A threshold measured on Jev does not carry over
+to Kai.
+
+Next: [Composite scores](/docs/kai/patterns/composite) ·
+[Confidence](/docs/kai/confidence) · [Limits](/docs/kai/limits)

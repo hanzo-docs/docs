@@ -1,0 +1,162 @@
+---
+title: Pick one skill
+description: "Choose at most one skill from the Hanzo skills catalog for an agent's turn with a shortlist and a re-check, and see which shortlist to trust on the current checkpoint."
+---
+
+**An agent's turn needs one skill loaded, or none.** The catalog is the 201
+skills in the `hanzo` and `core` sections of
+[hanzoskills.com](https://hanzoskills.com), built in code from its published
+index. The script picks a skill for twelve labelled turns, nine that a skill
+fits and three that need none, in two passes: a shortlist of five, then a
+re-check of each candidate.
+
+## The idea
+
+Two hundred options is a wide choice. The first pass narrows it to five; the
+second asks, candidate by candidate, whether the skill helps with the turn, and
+loads the best one only if it clears a threshold. Below the threshold the
+answer is no skill, which is the right answer for a turn no skill fits.
+
+The run measures two shortlists for the first pass:
+
+- **Kai's choice**: one choice question over all 201 skills, each described by
+  the first 200 characters of its index entry. The top five by probability.
+- **BM25**: keyword search in code over each skill's name and description. The
+  top five by score.
+
+The re-check is the RAG relevance noul, ``Does `passage` help answer `query`?``,
+with the skill's entry as the passage and the turn as the query: the question
+Kai's RAG relevance suite trains and measures. One call carries every
+candidate from both shortlists.
+
+## The code
+
+```python
+skills = catalog()
+choose = Choice(instructions="Which skill does this task need?", criteria={name: text[:200] for name, text in skills.items()})
+
+for turn, gold in TURNS:
+    ranked = kai.decide({"task": turn}, {"skill": choose}).choices["skill"].probabilities
+    by_kai = sorted(ranked, key=ranked.get, reverse=True)
+    by_words = lexical(turn, skills)
+    both = list(dict.fromkeys(by_kai[:5] + by_words))
+    check = {
+        f"s{i}": Noul(instructions={"passage": f"{name}: {skills[name]}", "question": "Does `passage` help answer `query`?"})
+        for i, name in enumerate(both)
+    }
+    answers = kai.decide({"query": turn}, check).nouls
+    relevance = {name: answers[f"s{i}"].noul for i, name in enumerate(both)}
+
+
+def pick(shortlist, relevance, threshold):
+    """The shortlisted skill the re-check rates highest, or None when none clears the threshold."""
+    best = max(shortlist, key=relevance.get)
+    return best if relevance[best] >= threshold else None
+```
+
+The whole script, with the catalog reader and BM25, is
+[`skills.py`](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/skills.py).
+What it printed against `api.hanzo.ai` on 2026-09-28:
+
+{/* out: python/skills.py */}
+```text
+The payment API throws 500s in prod. Set up error tracking so we gold: hanzo-sentry
+    Kai's choice over 201: gold ranked 114; first hanzo-billing
+    BM25 top 5: hanzo-o11y, cloud-host, hanzo-payments, hanzo-sentry, api
+    re-check, highest: hanzo-billing 0.37, hanzo-reconciliation 0.35, hanzo-payments 0.35
+Store our Stripe live key so only the billing service can read i gold: hanzo-kms
+    Kai's choice over 201: gold ranked 70; first hanzo-billing
+    BM25 top 5: hanzo-cloud-architecture, hanzo-kv, hanzo-mpc, hanzo-billing, hanzo-live
+    re-check, highest: hanzo-live 0.40, hanzo-kv 0.38, claude-api 0.35
+Add similarity search over our product embeddings.               gold: hanzo-datastore, hanzo-vector, hanzo-vector-go
+    Kai's choice over 201: gold ranked 21; first algorithmic-art
+    BM25 top 5: hanzo-datastore, product, hanzo-search, hanzo-search-go, hanzo-memory
+    re-check, highest: hanzo-datastore 0.51, product 0.50, hanzo-memory 0.45
+Write a browser check that the signup page loads and the form su gold: webapp-testing
+    Kai's choice over 201: gold ranked 36; first hanzo-faucet
+    BM25 top 5: hanzo-form, internal-comms, academy-guide, webapp-testing, hanzo-extension
+    re-check, highest: hanzo-form 0.43, internal-comms 0.39, hanzo-vllm 0.38
+Move our Rails backend onto Go and the Hanzo stack.              gold: app-port, hanzo-base
+    Kai's choice over 201: gold ranked 43; first hanzo-cloud
+    BM25 top 5: app-port, hanzo-coursework-fullstack-go-cloud, hanzo-base, hanzo-tutorial-realtime-sse-backend, skill
+    re-check, highest: app-port 0.77, hanzo-coursework-fullstack-go-cloud 0.58, hanzo-tutorial-realtime-sse-backend 0.47
+Keep wallet balances in a double-entry ledger.                   gold: hanzo-ledger, hanzo-treasury
+    Kai's choice over 201: gold ranked 2; first hanzo-agent
+    BM25 top 5: hanzo-ledger, hanzo-treasury, hanzo-reconciliation, hanzo-ingress, hanzo-tutorial-realtime-sse-backend
+    re-check, highest: hanzo-treasury 0.46, hanzo-ledger 0.36, hanzo-form 0.31
+Make an animated GIF for the release announcement in Slack.      gold: slack-gif-creator
+    Kai's choice over 201: gold ranked 68; first skill-prompt-discovery
+    BM25 top 5: slack-gif-creator, deployment, hanzo-payments, hanzo-base, hanzo-deploy
+    re-check, highest: slack-gif-creator 0.56, frontend-design 0.43, skill-prompt-discovery 0.42
+Send the contractor agreement out for electronic signature.      gold: hanzo-sign
+    Kai's choice over 201: gold ranked 82; first hanzo-reconciliation
+    BM25 top 5: hanzo-sign, hanzo-contracts, hanzo-iam, hanzo-hips, skill-creation
+    re-check, highest: hanzo-billing 0.38, hanzo-payments 0.35, hanzo-contracts 0.31
+Build an MCP server that exposes our ticket database to agents.  gold: hanzo-mcp, mcp-builder
+    Kai's choice over 201: gold ranked 58; first hanzo-sentry
+    BM25 top 5: hanzo-mcp, hanzo-documentdb, mcp-builder, hanzo-chat, build-systems
+    re-check, highest: hanzo-mcp 0.34, hanzo-chat 0.34, deployment 0.29
+thanks, that fixed it                                            gold: none
+    Kai's choice over 201: gold ranked -; first workflow
+    BM25 top 5: brand-guidelines, discernment-nudge, cloud-host, hanzo-vault, hanzo-sho
+    re-check, highest: discernment-nudge 0.35, workflow 0.31, skill 0.29
+What time is it in Tokyo right now?                              gold: none
+    Kai's choice over 201: gold ranked -; first hanzo-hke
+    BM25 top 5: hanzo-metrics, hanzo-live, cloud-host, discernment-nudge, hanzo-ledger
+    re-check, highest: discernment-nudge 0.49, cloud-kubernetes-deployment 0.49, hanzo-terraform 0.48
+good morning!                                                    gold: none
+    Kai's choice over 201: gold ranked -; first networking
+    BM25 top 5: ai-development-guide, go-sdk, hanzo-aci, hanzo-agent, hanzo-analytics
+    re-check, highest: observability 0.49, networking 0.47, workflow 0.43
+
+gold in the top 5, of 9 turns a skill fits: Kai's choice 1, BM25 8
+right, of 12 turns (no skill is right when none fits):
+    Kai's choice alone, first skill: 0
+    BM25 alone, first skill: 6
+    Kai's top 5, re-checked: 1 keeping p >= 0.4, 3 keeping p >= 0.5
+    BM25 top 5, re-checked: 5 keeping p >= 0.4, 6 keeping p >= 0.5
+```
+
+## What the numbers say
+
+- **Kai's choice over the catalog is not a shortlist.** It put a fitting skill
+  in its top five for one turn of nine, the ledger turn. Elsewhere the right
+  skill ranked between 21st and 114th, and its first pick for the payment
+  errors turn was `hanzo-billing`, for the MCP server turn `hanzo-sentry`.
+  Re-checking its shortlist got three turns right at 0.5, the three that need
+  no skill. Do not ask the current checkpoint to choose among two hundred
+  skills.
+- **BM25's top five held a fitting skill for eight turns of nine.** The miss is
+  the Stripe key turn, whose words do not name secrets.
+- **The re-check says no skill when none fits, and too often when one does.**
+  Over BM25's shortlist at 0.5 it got six turns of twelve right: all three that
+  need no skill, and three that do, `app-port` at 0.77, `slack-gif-creator` at
+  0.56 and `hanzo-datastore` at 0.51. For the other six, no candidate reached
+  0.5, so they got no skill. It loaded no wrong skill.
+- **BM25 alone gets as many right and loads six wrong ones.** Loading its
+  first result every time is right for six turns of twelve too, but it loads a
+  skill for all three turns that need none and the wrong skill for three
+  more. At 0.4 the re-check sits between the two: four skills right, two wrong
+  skills loaded, and a skill loaded for two of the three turns that need none.
+- **The re-check misses skills its shortlist holds.** For the signature turn
+  BM25 had `hanzo-sign` in its five, and the re-check rated `hanzo-contracts`
+  higher; for the browser check it rated `hanzo-form` over `webapp-testing`.
+
+On this checkpoint, shortlist in code and use Kai as the veto: the re-check is
+worth its call where loading a wrong skill costs more than loading none.
+
+## Adapt it
+
+- Shortlist with keyword search or your own retriever over the catalog, not
+  with a choice over the whole catalog.
+- Re-check the shortlist with the relevance noul in one call, and set the
+  threshold from your own labelled turns: it trades skills loaded for turns
+  left without one.
+- Load at most one: `pick` returns the best candidate that clears the
+  threshold, or none.
+
+## Next
+
+- [Rerank a shortlist](/docs/kai/cookbook/rerank)
+- [Kai from coding agents](/docs/kai/agents)
+- [Limits](/docs/kai/limits)

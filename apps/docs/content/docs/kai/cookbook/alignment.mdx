@@ -1,0 +1,130 @@
+---
+title: Match catalog entries
+description: "Ask whether two catalog listings are the same product and which fields disagree, and read how far the current checkpoint can be trusted with it."
+---
+
+**Two suppliers list the same GPUs under different names; code needs to know
+which listings are one product.** The script puts twelve labelled pairs to Kai
+with one relation question, one score and a noul per field, and counts what
+each got right.
+
+## The idea
+
+Entity alignment is a pair question: do these two records describe one thing,
+and if not, where do they differ. The pairs are written the way two feeds
+write them. Supplier A spells out the vendor and runs the fields together;
+supplier B abbreviates and adds its own details. Six pairs are one product.
+Six are a different product that looks close: another form factor, another
+memory size, the previous generation, a sibling model.
+
+Each pair goes out as a premise and a hypothesis, which lets one call carry
+three kinds of question:
+
+- **relation:** the natural-language-inference choice Kai was trained on,
+  entailment, neutral or contradiction. Entailment means the second listing
+  follows from the first: the same product.
+- **same:** a score from "different products" to "the same product".
+- **model, memory, form:** a noul per field, phrased as a statement that the
+  field differs, with both sides described.
+
+## The code
+
+```python
+PAIRS = [
+    ("NVIDIA H100 SXM5 80GB HBM3", "H100 80 GB, SXM form factor", True, (False, False, False)),
+    ("NVIDIA H100 SXM5 80GB", "H100 PCIe, 80 GB", False, (False, False, True)),
+    ("NVIDIA L40S 48GB", "L40, 48 GB", False, (True, False, False)),
+    # ... nine more: supplier A, supplier B, one product, which fields differ
+]
+FIELDS = {
+    "model": ("name different GPU models", "the model names differ, not just their spelling"),
+    "memory": ("give different memory sizes", "the memory sizes differ"),
+    "form": ("give different form factors", "one is SXM or OAM and the other PCIe, or similar"),
+}
+QUESTIONS = {
+    "relation": Choice(
+        instructions="How does `hypothesis` relate to `premise`?",
+        criteria={
+            "entailment": "the premise implies the hypothesis",
+            "neutral": "the premise neither implies nor contradicts the hypothesis",
+            "contradiction": "the premise contradicts the hypothesis",
+        },
+    ),
+    "same": Score(
+        instructions="Do `premise` and `hypothesis` describe the same product?",
+        criteria=["different products", "probably different", "probably the same", "the same product"],
+    ),
+    **{
+        name: Noul(
+            instructions=f"`premise` and `hypothesis` {what}.",
+            criteria={"true": differ, "false": "they agree, or one of them does not say"},
+        )
+        for name, (what, differ) in FIELDS.items()
+    },
+}
+
+for a, b, same, differ in PAIRS:
+    state = {"premise": f"Supplier A lists the {a}.", "hypothesis": f"Supplier A lists the {b}."}
+    d = kai.decide(state, QUESTIONS)
+```
+
+The whole script is
+[`alignment.py`](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/alignment.py).
+What it printed against `api.hanzo.ai` on 2026-09-28:
+
+{/* out: python/alignment.py */}
+```text
+supplier A                           supplier B                          same      relation  score  differs: model memory form
+NVIDIA H100 SXM5 80GB HBM3           H100 80 GB, SXM form factor         True    entailment   1.36           0.60   0.39   0.70 
+NVIDIA A100 80GB PCIe                A100 PCIe card, 80 GB HBM2e         True       neutral   1.76           0.27   0.27   0.24 
+NVIDIA L40S 48GB GDDR6               L40S, 48 GB, PCIe, Ada Lovelace     True       neutral   1.63           0.30   0.30   0.32 
+AMD Instinct MI300X 192GB HBM3       MI300X OAM module, 192 GB           True    entailment   1.59           0.38   0.32   0.43 
+NVIDIA RTX 6000 Ada Generation 48GB  RTX 6000 Ada, 48 GB GDDR6 ECC       True       neutral   1.72           0.33   0.33   0.31 
+NVIDIA T4 16GB                       Tesla T4, 16 GB, low profile PCIe   True contradiction   1.86           0.18   0.20   0.21 
+NVIDIA H100 SXM5 80GB                H100 PCIe, 80 GB                   False contradiction   1.71           0.29   0.38   0.37*
+NVIDIA A100 80GB PCIe                A100 PCIe card, 40 GB              False contradiction   1.78           0.17   0.25*  0.15 
+NVIDIA RTX 6000 Ada Generation 48GB  RTX A6000, 48 GB, Ampere           False       neutral   1.61           0.29*  0.38   0.30 
+NVIDIA L40S 48GB                     L40, 48 GB                         False    entailment   1.27           0.80*  0.54   0.91 
+AMD Instinct MI300X 192GB            MI250X OAM, 128 GB                 False contradiction   1.67           0.15*  0.14*  0.15 
+NVIDIA H200 SXM 141GB                H100 SXM, 80 GB                    False contradiction   2.03           0.17*  0.14*  0.12 
+
+* marks a field that really differs.
+same product, right of 12 pairs: by the relation (entailment is same) 7, by the score (1.5 or more is same) 6
+model  differs in 4 of 12 pairs; its noul reached 0.5 on 1 of those and on 1 of the 8 others
+memory differs in 3 of 12 pairs; its noul reached 0.5 on 0 of those and on 1 of the 9 others
+form   differs in 1 of 12 pairs; its noul reached 0.5 on 0 of those and on 2 of the 11 others
+```
+
+## What the numbers say
+
+- **The relation leans to contradiction and rarely finds a match.** On the six
+  different pairs it said contradiction four times, neutral once and entailment
+  once, taking the L40S and the L40 for one product. On the six same pairs it
+  said entailment twice, neutral three times and contradiction once, for the
+  T4. Seven of twelve right.
+- **The score does not separate the pairs.** Every score fell between 1.27 and
+  2.03, and the highest went to an H200 against an H100: six of twelve right at
+  1.5, a coin toss.
+- **The field nouls do not find the field.** Model, memory and form differ in
+  eight places across the twelve pairs; the nouls reached 0.5 on one of them,
+  the L40S against the L40, and on four fields that agree. A field that
+  differs by one token, `SXM` against `PCIe` or `80 GB` against `40 GB`, is the
+  case they miss.
+
+Do not build an alignment on these answers with the current checkpoint.
+[Limits](/docs/kai/limits) tracks what it gets wrong.
+
+## Adapt it
+
+- Compare structured fields in code. Memory is a number, form factor is one of
+  a few tokens, a model number is a string: parse them and compare exactly.
+- Put the rest to Kai as a relation question, premise and hypothesis, and treat
+  its contradiction as a reason to look, not a verdict. Measure it on pairs
+  labelled from your own catalogs before it decides anything.
+- Keep a person on the pairs code and Kai disagree about.
+
+## Next
+
+- [Composite scoring](/docs/kai/patterns/composite)
+- [Confidence](/docs/kai/confidence)
+- [Limits](/docs/kai/limits)

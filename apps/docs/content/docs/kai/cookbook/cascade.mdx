@@ -1,0 +1,143 @@
+---
+title: Extraction cascade
+description: "Extract fields with one Zen model, check each field against its source with Kai, send the invoices that fail to a second Zen model, and count what each stage handled and read."
+---
+
+**A cascade lets a first model do the work and pays a second one only where a
+check fails.** Here `zen5.8-spark` extracts five fields from each of eight
+invoices, Kai checks every field against its invoice, and an invoice with any
+field under a line goes to `zen6`. In this run the first model got 39 of 40
+fields right, and Kai's check did not flag its one miss.
+
+## The idea
+
+Three stages, each counted:
+
+1. **Extract.** The first Zen model reads an invoice and returns the vendor,
+   the invoice number, the amount still to pay, its currency and its due date
+   as JSON.
+2. **Check.** Kai checks each field as a statement about the invoice: does the
+   invoice imply "The amount still to pay is 3000.00."? That is the
+   premise-and-hypothesis question from [Check citations](/docs/kai/cookbook/citations),
+   and its probability of entailment is the field's support.
+3. **Escalate.** An invoice whose weakest field is under the line goes to the
+   second model, and the second model's fields replace the first's.
+
+The eight invoices and their labels are ours, with the usual traps: a subtotal
+beside the total, a balance after a part payment, a late fee, two invoices on
+one statement, a German invoice with `2.150,00` and `15.05.2026`, and one with
+no due date.
+
+To make every line of the table exact, the script runs both Zen models once on
+every invoice and builds each line from the same answers: under a line, the
+cascade pays the second model only for the invoices it sends. Prices come from
+the catalogue, `GET /v1/models`. `zen5.8-spark` and `zen6` both list at \$0 per
+million tokens today, so the cost column is Kai's alone, and the token columns
+are what a priced pair would bill. For models priced p_in and p_out per
+million, a line costs
+
+```text
+(Zen input × p_in + Zen output × p_out) / 1,000,000  +  Kai input × 0.021 / 1,000,000
+```
+
+## The code
+
+```python
+rows, checked = [], 0  # one row per invoice; the input tokens Kai read
+with Kai(retry=RetryPolicy(max_retries=10)) as kai:
+    for document, values in DOCS:
+        draft, drafting = extract(FIRST, document)
+        support = {}
+        for name in FIELDS:
+            state = {"premise": document, "hypothesis": claim(name, draft.get(name))}
+            check = kai.decide(state=state, questions={"check": CHECK})
+            checked += check.usage.input_tokens
+            support[name] = check.choices["check"].probabilities["entailment"]
+        redo, redoing = extract(SECOND, document)
+        gold = dict(zip(FIELDS, values, strict=True))
+        rows.append((gold, draft, support, redo, drafting, redoing))
+```
+
+A line decides which invoices go on, and its tokens and dollars follow from
+what each model read:
+
+```python
+    goes = [line is None or min(row[2].values()) < line for row in rows]
+```
+
+```python
+    used = [
+        (drafting if line is not None else (0, 0), redoing if go else (0, 0))
+        for (*_, drafting, redoing), go in zip(rows, goes, strict=True)
+    ]
+    tokens = [sum(a[i] + b[i] for a, b in used) for i in (0, 1)]
+    spent = sum(cost(FIRST, a) + cost(SECOND, b) for a, b in used) + (checking if line is not None else 0)
+```
+
+The whole script, with the invoices, the extraction prompt and the rate-limit
+handling, is
+[`cascade.py`](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/cascade.py).
+What it printed against `api.hanzo.ai` on 2026-09-28:
+
+{/* out: python/cascade.py */}
+```text
+fields either model got wrong, with Kai's P(entailment) for zen5.8-spark's value: 1
+invoice 3 vendor   zen5.8-spark Klarwerk GmbH, Berlin P 0.68  zen6 Klarwerk GmbH  gold Klarwerk GmbH
+
+P(entailment) of zen5.8-spark's 39 right fields: lowest 0.26, median 0.57
+
+Kai read 5448 input tokens for 40 checks: 0.000114 USD at 0.021 per million
+an invoice goes to zen6 when any of its fields is under the line
+line          invoices sent  fields right  Zen input  Zen output  cost, USD
+0.0                       0        39/40       2402        2300  0.000114
+0.3                       1        40/40       2708        2593  0.000114
+0.5                       8        40/40       4804        4638  0.000114
+0.7                       8        40/40       4804        4638  0.000114
+0.9                       8        40/40       4804        4638  0.000114
+zen6 alone                8        40/40       2402        2338  0.000000
+```
+
+## What the numbers say
+
+- **The first model's one miss passed Kai's check.** It gave the vendor as
+  "Klarwerk GmbH, Berlin", city included, and Kai supported that at 0.68, more
+  than the median right field. A line low enough to keep the right fields
+  would not have caught it.
+- **Kai's check doubts right answers.** Over the 39 right fields, support had
+  a median of 0.57 and a low of 0.26. The two lowest were the German
+  invoice's total and due date, right values written in another format than
+  the invoice's `2.150,00` and `15.05.2026`.
+- **The 0.3 line fixed the miss, by way of those two doubts.** It sent only the
+  German invoice, and `zen6` returned all its fields right, vendor included: 40
+  of 40 for 306 more input tokens and 293 more output tokens than the first
+  model alone.
+- **At 0.5 and above every invoice went on**, for about twice the Zen tokens
+  of either model alone and the same 40 of 40 as the 0.3 line. `zen6` alone also
+  got 40 of 40.
+- **Generation varies between runs.** Run the script again and the first
+  model's misses move. Kai's support for a field changes only when the value it
+  is asked about changes.
+
+On these invoices, then, Kai's field check is weak evidence: the cascade got
+40 of 40 at the 0.3 line because an unrelated field was doubted. Kai checked
+40 fields for 5,448 input tokens.
+
+## Adapt it
+
+- Put the cheaper model first. The second model earns its price only on the
+  invoices the line sends to it, so sweep the line on labelled documents of
+  your own, as the table does, and pick the lowest line that holds accuracy.
+- Add the checks code can make and a model cannot miss: a total that must equal
+  the sum of its lines, a date that must parse, a vendor name that must appear
+  in the document as extracted.
+- Ask Kai about a value in the source's own format when you can, and normalise
+  after the check: its lowest support here went to right values that had been
+  reformatted.
+- Validate what a model returns before it counts: parse the JSON, reject
+  unknown keys, and treat a missing key as a failed field.
+
+## Next
+
+- [Check citations](/docs/kai/cookbook/citations)
+- [Extract values](/docs/kai/cookbook/values)
+- [Building with Kai](/docs/kai/build)

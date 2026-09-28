@@ -1,0 +1,143 @@
+---
+title: Extract values
+description: "Find emails, phone numbers and amounts with regular expressions, let Kai check which candidate is the one asked for, and normalise the verbatim span in code."
+---
+
+**Regular expressions find every value of a kind; Kai decides which one was
+asked for; code turns the verbatim span into a clean value.** Over fifteen
+requests on eight texts of ours, checking each candidate put the right value
+first for 9 of the 13 whose value is in the text, and acted on only 5, with
+one wrong. Asking one choice over the same candidates did worse: it answered
+`none` 10 times, 6 of them confidently while the value was there.
+
+## The idea
+
+A support message carries two phone numbers, an order total and a charged
+amount. A regular expression finds all of them; it cannot tell the callback
+number from the front desk. That is the part Kai answers, and the value itself
+never passes through a model: the span is copied from the text, and code
+normalises it to lowercase email, E.164 phone number, or ISO currency and two
+decimals.
+
+The script asks Kai two ways, on the same candidates:
+
+- **One check per candidate.** Does the text imply "The number to call the
+  customer back on is (415) 555-0134."? That is the premise-and-hypothesis
+  question from [Check citations](/docs/kai/cookbook/citations). The candidate
+  with the highest probability of entailment wins; at 0.7 or more the script
+  acts on it, under 0.3 the answer is that the text does not give the value, and
+  anything between goes to review.
+- **One choice over all candidates and `none`**, acted on at confidence 0.5 or
+  more, kept for comparison.
+
+When the text holds no candidate of the kind asked for, code answers `none`
+without asking.
+
+## The code
+
+```python
+def check(kai: Kai, text: str, want: str, spans: list[str]) -> tuple[str, float, str]:
+    """One check per candidate: the best-supported span, its P(entailment), and whether to act on it."""
+    support = {
+        span: kai.decide(
+            state={"premise": text, "hypothesis": f"{want[0].upper()}{want[1:]} is {span}."},
+            questions={"check": CHECK},
+        )
+        .choices["check"]
+        .probabilities["entailment"]
+        for span in spans
+    }
+    span, p = max(support.items(), key=lambda item: item[1])
+    return (span, p, "auto") if p >= 0.7 else ("none", p, "auto") if p < 0.3 else (span, p, "review")
+```
+
+```python
+def normal(kind: str, span: str) -> str:
+    """One canonical form per kind: lowercase email, E.164 phone, ISO currency and two decimals."""
+    if kind == "email":
+        return span.lower()
+    if kind == "phone":
+        digits = re.sub(r"\D", "", span)
+        return "+" + digits if span.startswith("+") else "+1" + digits
+    return f"{CURRENCY[span[0]]} {Decimal(span[1:].strip().replace(',', '')):.2f}"
+```
+
+The regular expressions, the one-choice version, the texts and their labels are
+in [`values.py`](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/values.py).
+What it printed against `api.hanzo.ai` on 2026-09-28:
+
+{/* out: python/values.py */}
+```text
+the number to call the customer back on, gold +14155550134
+    check  (415) 555-0134 0.70 review            choice none 0.21 review
+the amount charged to the card, gold USD 1824.50
+    check  $1,824.50 0.74 ok                     choice none 0.58 WRONG
+the order total, gold USD 1284.50
+    check  $1,284.50 0.81 ok                     choice none 0.84 WRONG
+the customer's email address, gold j.smith@fabrikam.example
+    check  ops@contoso.example 0.57 review       choice none 0.95 WRONG
+the refund amount, gold EUR 89.00
+    check  €89.00 0.57 review                    choice none 1.00 WRONG
+the amount to pay, gold USD 486.00
+    check  $36.00 0.64 review                    choice $450.00 0.09 review
+the tax, gold USD 36.00
+    check  $36.00 0.79 ok                        choice $486.00 0.08 review
+the new phone number, gold +442079460321
+    check  +44 20 7946 0958 0.74 WRONG           choice none 0.50 review
+the shipping fee the customer paid, gold GBP 25.00
+    check  £25 0.66 review                       choice £25 0.29 review
+the customer's phone number, gold none
+    check  none no candidate ok                  choice none no candidate ok
+the customer's mobile number, gold none
+    check  212 555 0199 0.36 review              choice none 0.85 ok
+the customer's email address, gold maria.lopez@example.org
+    check  maria.lopez@example.org 0.43 review   choice maria.lopez@example.org 0.87 ok
+the balance due, gold USD 1250.00
+    check  $1,250 0.60 review                    choice none 0.74 WRONG
+the deposit, gold USD 500.00
+    check  $1,250 0.45 review                    choice none 0.78 WRONG
+the address to write to for help, gold help@shop.example
+    check  help@shop.example 0.62 review         choice none 0.37 review
+
+check   4 of 5 automatic answers right; 10 of 15 sent to review
+choice  3 of 9 automatic answers right; 6 of 15 sent to review
+```
+
+## What the numbers say
+
+- **Kai checks better than it points.** As one choice, Kai answered `none` for
+  10 of the 14 requests it was asked, 6 of them at 0.58 or more while the value
+  was in the text. Checked one candidate at a time, the best-supported candidate
+  was the right one for 9 of the 13 requests whose value is in the text.
+- **The checks are rarely sure.** Four checks reached 0.7; with the request
+  that had no candidate, the script acted on 5 of 15 and sent 10 to review. The
+  callback number's 0.70 is 0.6952 before rounding, so it went to review too.
+  Of the ten, six carry the right value.
+- **The one automatic error is a direction error.** "Please change my phone
+  number from +44 20 7946 0958 to +44 20 7946 0321": Kai supported the old
+  number as the new one, at 0.74.
+- **Every other miss went to review**: the forwarding address taken for the
+  customer's (0.57), the tax taken for the amount to pay (0.64), the balance
+  taken for the deposit (0.45), and the office line offered for a mobile number
+  the text does not give (0.36).
+
+This is a small set, fifteen requests written for the recipe. Treat the
+numbers as a direction, and label a few dozen of your own before you let any
+answer through unreviewed.
+
+## Adapt it
+
+- Add the value kinds you need to `PATTERNS`, each with its normal form. Kai's
+  part does not change.
+- Put order-sensitive rules in code: in "from X to Y", the new value follows
+  "to".
+- Write `want` the way a person would say it; it becomes the hypothesis Kai
+  checks.
+- Keep the checks and not the one choice: on this checkpoint the choice's
+  `none` absorbed answers it should have given.
+
+## Next
+
+- [Extract dates](/docs/kai/cookbook/dates)
+- [Extraction cascade](/docs/kai/cookbook/cascade)
+- [Known limits](/docs/kai/limits)

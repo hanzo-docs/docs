@@ -1,0 +1,128 @@
+---
+title: Large option sets
+description: "Ask one choice over hundreds or thousands of labels on /v1/decisions, read what comes back, and know what has been measured and what has not."
+---
+
+**A choice on `/v1/decisions` takes any number of labels.** Jev's Decisions
+API refuses a choice over more than 255. In the harness's cardinality suite
+every Jev call past 255 labels came back `HTTP 400` with
+`Too many choices. Must have at most 255 choices.`: 450 of 450 cases at
+K = 1,000, 10,000 and 100,000
+([recorded results](https://github.com/hanzoai/benchmarks/blob/039fbfe5fa5dcb1483407594d829fa822d78974a/decision/capability/results/cardinality.json)).
+
+Kai encodes each option on its own and scores it against the state, so labels
+never compete for room in one sequence, and a label's score does not depend
+on which others are listed. A long list is first ranked by retrieval
+over every label; Kai's head scores the top of that ranking, and every other
+label keeps its retrieval probability. Every label comes back with a
+probability. The bound is the token budget: each label's text is encoded and
+billed as input tokens.
+
+## Ask it
+
+The labels are a support taxonomy: 10 product areas, 10 objects in each and
+10 actions, 1,000 labels, each with a one-line description, such as
+`billing.invoice.error`: "an error when using the invoice, in billing". The
+first run asks over three areas, 300 labels; the second over all 1,000. After
+each 1,000-label answer the script asks again over its top 20.
+
+```python
+def taxonomy(areas: list[str]) -> dict[str, str]:
+    """Every object of each area crossed with every action, as label: description."""
+    return {
+        f"{area}.{obj.replace(' ', '-')}.{action}": f"{text.format(o=obj)}, in {area}"
+        for area in areas
+        for obj in AREAS[area]
+        for action, text in ACTIONS.items()
+    }
+
+
+with Kai(retry=RetryPolicy(max_retries=10), timeout=120) as kai:
+    for areas in (["billing", "identity", "storage"], list(AREAS)):
+        labels = taxonomy(areas)
+        for ticket, expected in TICKETS:
+            if expected not in labels:
+                continue
+            d = kai.decide(state={"ticket": ticket}, questions={"category": Choice(instructions=ASK, criteria=labels)})
+            a = d.choices["category"]
+            order = sorted(a.probabilities, key=a.probabilities.__getitem__, reverse=True)
+            print(
+                f"{len(labels)} labels, {len(a.probabilities)} probabilities, input_tokens {d.usage.input_tokens}\n"
+                f"  answer   {a.choice} p={a.answer_confidence} confidence={a.confidence}\n"
+                f"  expected {expected} p={a.probabilities[expected]} rank {order.index(expected) + 1}"
+            )
+            if len(labels) == 1000:
+                top = {label: labels[label] for label in order[:20]}
+                again = kai.decide(state={"ticket": ticket}, questions={"category": Choice(instructions=ASK, criteria=top)})
+                b = again.choices["category"]
+                print(f"  top 20 re-asked: {b.choice} p={b.answer_confidence}")
+```
+
+The full script, with the taxonomy and the three tickets:
+[`native_options.py`](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/native_options.py).
+What `api.hanzo.ai` answered on 2026-09-28:
+
+{/* out: python/native_options.py */}
+```text
+300 labels, 300 probabilities, input_tokens 5819
+  answer   billing.receipt.cost p=0.0697 confidence=0.0666
+  expected billing.invoice.error p=0.0166 rank 19
+300 labels, 300 probabilities, input_tokens 5822
+  answer   storage.folder.recover p=0.236 confidence=0.2334
+  expected storage.bucket.recover p=0.0239 rank 11
+1000 labels, 1000 probabilities, input_tokens 19749
+  answer   billing.receipt.cost p=0.0602 confidence=0.0592
+  expected billing.invoice.error p=0.0143 rank 20
+  top 20 re-asked: billing.receipt.cost p=0.1488
+1000 labels, 1000 probabilities, input_tokens 19752
+  answer   storage.folder.recover p=0.1369 confidence=0.1361
+  expected storage.bucket.recover p=0.0138 rank 15
+  top 20 re-asked: storage.folder.recover p=0.3305
+1000 labels, 1000 probabilities, input_tokens 19745
+  answer   compliance.privacy-policy.cost p=0.0932 confidence=0.0923
+  expected compute.gpu-node.cost p=0.0127 rank 19
+  top 20 re-asked: compliance.privacy-policy.cost p=0.219
+```
+
+## What the run shows
+
+- **Every call answered**, with a probability for every label, and the input
+  tokens grew with the labels.
+- **The top label was wrong for all three tickets**, at 300 labels and at
+  1,000. Each wrong answer came with a low `answer_confidence`, 0.24 at most,
+  and the expected label sat between 11th and 20th.
+- **Narrowing keeps the order.** Asked again over its own top 20, Kai chose the
+  same label each time. Each label is scored on its own, so removing labels
+  did not re-rank the rest, and a second, shorter question over the same
+  state did not fix a wrong first pick.
+
+On this taxonomy, where labels share an area and differ in one word, the
+served checkpoint's top label is not an answer to act on. Its probabilities
+are still a ranking, and the low confidence says the top label barely stands
+out: at 1,000 labels a uniform guess is 0.001, and `confidence` measures the
+top label against it.
+
+## What the harness has measured
+
+The cardinality suite asks one choice over K labels, K = 4 to 100,000; from
+K = 1,000 up the labels come from WordNet
+([suite](https://github.com/hanzoai/benchmarks/blob/039fbfe5fa5dcb1483407594d829fa822d78974a/decision/capability/README.md)).
+It has been run on stage A, an earlier Kai checkpoint, and not on stage a7,
+the one `kai` serves. Stage A answered every case at every K. It was right on
+1 of 200 cases at K = 1,000 and on none at K = 10,000 or 100,000. How
+accurately the served checkpoint chooses among more than 255 labels has not
+been measured.
+
+## Use it
+
+- Measure first: run your label set over cases whose answer you know, and set
+  the threshold from what held there.
+- Act on the top label only above that threshold; below it, hand the top of
+  the ranking to a person or to a generative model to pick from.
+- Keep label texts short and distinct: every label is billed on every call.
+
+## Next
+
+- [Confidence](/docs/kai/confidence): turning `answer_confidence` into act or escalate.
+- [Limits](/docs/kai/limits): what the current checkpoint gets wrong, measured.
+- [Dependent questions](/docs/kai/programs/dependent): asking a second question that depends on the first.

@@ -1,0 +1,141 @@
+---
+title: Score questions
+description: Place a state on levels you order, read the expected level beside the most probable one, and test how your levels are worded.
+---
+
+**A `score` returns where the state sits on levels you define, lowest first,
+with a probability for each level.**
+
+## Ask
+
+```bash
+curl -sS https://api.hanzo.ai/v1/decisions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "kai",
+    "state": {"review": "The blender is loud and the lid cracked after a month, but it still makes a decent smoothie."},
+    "questions": {
+      "sentiment": {"type": "score", "instructions": "How positive is `review`?",
+                    "criteria": ["very negative", "negative", "neutral", "positive", "very positive"]}
+    }
+  }' | jq '.answers'
+```
+
+What `api.hanzo.ai` answered on 2026-09-28:
+
+{/* out: sh/score.sh */}
+```json
+{
+  "sentiment": {
+    "type": "score",
+    "score": 2.3293,
+    "confidence": 0.2425,
+    "legend": {
+      "0": "very negative",
+      "1": "negative",
+      "2": "neutral",
+      "3": "positive",
+      "4": "very positive"
+    },
+    "probabilities": {
+      "0": 0.0315,
+      "1": 0.1484,
+      "2": 0.3527,
+      "3": 0.394,
+      "4": 0.0734
+    },
+    "answer_confidence": 0.394
+  }
+}
+```
+
+| Field | Meaning |
+|---|---|
+| `score` | The expected level, Σ i·pᵢ, from 0 for the first level to n − 1 for the last. It can fall between levels. |
+| `probabilities` | One probability per level, keyed by the level's index as a string, `"0"` first; they sum to 1. The Python SDK keys them by integer. |
+| `legend` | Each index with its level as you sent it. |
+| `answer_confidence` | The probability of the most probable level. |
+| `confidence` | (n·p_max − 1)/(n − 1) over n levels. |
+
+The review is mixed, and Kai splits it between neutral and positive. Its two
+readings disagree: the expected level, 2.33, rounds to neutral, while the most
+probable level is positive at 0.39. Branch on the most probable level and its
+`answer_confidence`; rank many states by `score`.
+
+## Levels
+
+- **A list, lowest first.** Each level is text, an object or an array. A `null`
+  level is refused: every level needs words.
+- **Read one at a time.** Kai reads each level as its own text, `level i: …`,
+  and scores it against the question and the state. `score` is only as ordered as
+  your list.
+- **One dimension.** A level that mixes two things ("fast and friendly") has no
+  place for a state that is one and not the other; ask two scores and combine
+  them in code.
+
+## Measured: how levels are worded
+
+Six reviews a person would place from very negative to very positive, scored
+against short level names and against one-sentence levels:
+
+```python
+from hanzo_kai import Kai, Score
+
+reviews = [
+    ("very negative", "Arrived broken, support never answered, and the refund took six weeks. Avoid."),
+    ("negative", "Not worth the price. It works, but the motor already sounds tired."),
+    ("neutral", "It is fine. Nothing special, nothing wrong."),
+    ("mixed", "The blender is loud and the lid cracked after a month, but it still makes a decent smoothie."),
+    ("positive", "Does exactly what it says. Quiet, fast, easy to clean. I would buy it again."),
+    ("very positive", "Best purchase this year. My kids love it and I use it every single morning!"),
+]
+questions = {
+    "names": Score(
+        instructions="How positive is `review`?",
+        criteria=["very negative", "negative", "neutral", "positive", "very positive"],
+    ),
+    "sentences": Score(
+        instructions="How does the writer of `review` feel about the product?",
+        criteria=[
+            "Very negative: angry, would warn others away.",
+            "Negative: disappointed, more bad than good.",
+            "Mixed or neutral: good and bad balance out, or no opinion.",
+            "Positive: satisfied, more good than bad.",
+            "Very positive: delighted, would recommend.",
+        ],
+    ),
+}
+
+with Kai() as kai:
+    print("a person says   level names   sentences")
+    for label, text in reviews:
+        d = kai.decide(state={"review": text}, questions=questions)
+        names, sentences = d.scores["names"], d.scores["sentences"]
+        print(f"{label:15} {names.score:11.2f}   {sentences.score:9.2f}")
+```
+
+{/* out: python/levels.py */}
+```text
+a person says   level names   sentences
+very negative          1.49        1.62
+negative               1.51        1.89
+neutral                1.47        1.69
+mixed                  2.33        2.64
+positive               2.42        2.13
+very positive          3.15        2.37
+```
+
+Neither wording orders all six. With level names, the three reviews a person
+rates neutral or lower all score under 1.6 and the three rated mixed or higher
+all score over 2.3, though the lower three are out of order among themselves.
+With sentences, the mixed review outscores both positive ones. Every score
+stays between 1.4 and 3.2 of the 0 to 4 range: on a scale of your own, Kai
+rarely commits to the ends. Test your levels on states whose level you know
+before you act on them; [Limits](/docs/kai/limits) has more of what is known.
+
+## Next
+
+- [Noul questions](/docs/kai/questions/noul): whether a statement holds.
+- [Confidence and thresholds](/docs/kai/confidence): acting on a spread answer.
+- [Structured questions](/docs/kai/questions/structure): objects as levels.

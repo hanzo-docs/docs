@@ -1,0 +1,30 @@
+---
+title: SDKs
+description: "Call Kai from Python or TypeScript with typed questions and answers, retries and errors, or keep TypeSafe's call shapes through the compatibility layer."
+---
+
+**Two clients, one surface.** Both call
+[`POST /v1/decisions`](/docs/decisions) with a Hanzo key from
+`HANZO_API_KEY`, default to the model `kai`, retry what can be retried, and
+raise one error class per status.
+
+| | Python | TypeScript |
+|---|---|---|
+| Install | `pip install hanzo-kai` | `npm i @hanzo/kai` |
+| Runtime | Python 3.12 or newer, sync and async | Node 20 or newer, ESM and CommonJS |
+| Client | `Kai`, `AsyncKai` | `Kai` |
+| Call | `kai.decide(state=..., questions=...)` | `kai.decide({ state, questions })` |
+| Questions | `Choice`, `Noul`, `Score` | `choice()`, `noul()`, `score()` |
+| Answer types | from the response | inferred from each question, labels as literal types |
+| Jev compatibility | `hanzo_kai.jev` | `@hanzo/kai/jev` |
+| Source | [hanzoai/python-sdk](https://github.com/hanzoai/python-sdk/tree/main/pkg/hanzo-kai) | [hanzo-js/kai](https://github.com/hanzo-js/kai) |
+
+<Cards>
+  <Card title="Python" href="/docs/kai/sdk/python">Clients, questions, answers, retries, errors and the compatibility layer.</Card>
+  <Card title="TypeScript" href="/docs/kai/sdk/typescript">The same, with each answer typed from its question.</Card>
+</Cards>
+
+The compatibility layer keeps TypeSafe's method names and Jev's response shapes
+on `/v1/systemone`, so a program written for TypeSafe's SDK ports by changing
+one import line. [Migrate from Jev](/docs/guides/migrate/jev) covers both
+routes, and keeping TypeSafe's own SDK with two settings.

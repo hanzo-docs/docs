@@ -1,0 +1,149 @@
+---
+title: Intent routing
+description: "Classify a request once, then hand it to code, a Zen model or a person through a table your code owns."
+---
+
+**One choice picks the handler; code, a Zen model or a person does the
+work.** Kai decides which kind of request this is. What happens to each kind,
+and what happens when Kai is unsure, is a table in your code.
+
+## The case
+
+An employee help desk takes messages in a chat box. Each intent has one
+handler, chosen by what the answer needs:
+
+| Intent | Handler | Why |
+|---|---|---|
+| `pto_balance` | code: a lookup | the number is in the HR system |
+| `payday` | code: a date rule | a date is arithmetic |
+| `insurance` | [Zen](/docs/models/zen), reading the benefits policy | the answer is a sentence |
+| `pto_request` | the employee's manager | it needs an approval |
+| `direct_deposit` | payroll, who call the employee | changing where pay goes needs a check no model can make |
+| `other`, or confidence under 0.5 | the help desk | nobody guesses |
+
+The question names each intent by what the message asks for, plus `other`:
+
+```python
+INTENT = Choice(
+    instructions="What is the employee asking for in `message`?",
+    criteria={
+        "pto_balance": "how many vacation days are left",
+        "pto_request": "book days off",
+        "payday": "when the salary is paid",
+        "insurance": "health, dental or vision cover and benefits",
+        "direct_deposit": "change the bank account the salary goes to",
+        "other": "anything else",
+    },
+)
+FLOOR = 0.5
+```
+
+## Handlers
+
+Code answers what code can answer exactly. Zen writes only where the answer is
+text, and reads the policy instead of recalling one. A person gets whatever
+needs authority.
+
+```python
+def balance(employee, message):
+    return f"code: {BALANCES[employee]} vacation days left"
+
+
+def payday(employee, message):
+    """The last weekday of this month, or of next month once it has passed."""
+    today = datetime.date.today()
+    for months in (1, 2):
+        end = (today.replace(day=1) + datetime.timedelta(days=32 * months)).replace(day=1) - datetime.timedelta(days=1)
+        while end.weekday() > 4:
+            end -= datetime.timedelta(days=1)
+        if end >= today:
+            return f"code: next payday is {end:%A %d %B %Y}"
+
+
+def benefits(employee, message):
+    reply = httpx.post(
+        f"{BASE}/v1/chat/completions",
+        headers={"Authorization": f"Bearer {os.environ['HANZO_API_KEY']}"},
+        json={
+            "model": "zen6",
+            "messages": [
+                {"role": "system", "content": "Answer from this policy only, in at most two sentences. " + POLICY},
+                {"role": "user", "content": message},
+            ],
+        },
+        timeout=120,
+    )
+    reply.raise_for_status()
+    return "zen6: " + reply.json()["choices"][0]["message"]["content"].strip()
+
+
+def person(team):
+    return lambda employee, message: f"person: queued for {team}"
+
+
+HANDLERS = {
+    "pto_balance": balance,
+    "payday": payday,
+    "insurance": benefits,
+    "pto_request": person("the employee's manager"),
+    "direct_deposit": person("payroll, who confirm the new account by phone"),
+    "other": person("the help desk"),
+}
+```
+
+## The run
+
+```python
+with Kai(retry=RetryPolicy(max_retries=8)) as kai:
+    for message in MESSAGES:
+        intent = kai.decide(state={"message": message}, questions={"intent": INTENT}).choices["intent"]
+        handler = HANDLERS[intent.choice] if intent.confidence >= FLOOR else person("the help desk")
+        print(f"{message}\n  {intent.choice} ({intent.confidence:.2f}) -> {handler('e-1042', message)}\n")
+```
+
+The whole script, with the policy text and the six messages, is
+[`pattern_intents.py`](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/pattern_intents.py).
+What it printed against `api.hanzo.ai` on 2026-09-28:
+
+{/* out: python/pattern_intents.py */}
+```text
+How many days of holiday do I still have this year?
+  pto_balance (1.00) -> code: 7 vacation days left
+
+I'd like to take the 23rd to the 27th of December off.
+  pto_request (1.00) -> person: queued for the employee's manager
+
+When is the next payday?
+  payday (0.98) -> code: next payday is Wednesday 30 September 2026
+
+Does our dental plan cover braces for my son?
+  insurance (0.99) -> zen6: Yes, the dental plan covers orthodontics for children under 18, providing 50% coverage up to $1,500 per child for life.
+
+I switched banks, please send my pay to my new account from next month.
+  direct_deposit (1.00) -> person: queued for payroll, who confirm the new account by phone
+
+The printer on the third floor is jammed again.
+  insurance (0.25) -> person: queued for the help desk
+```
+
+- **Five messages reached their handler at confidence 0.98 or more.** One call
+  to Kai each; one Zen call, for the one message whose answer is prose.
+- **The printer message got the wrong label and the right outcome.** Kai chose
+  `insurance`, not `other`, at confidence 0.25. The floor sent it to the help
+  desk. Here the floor did the work the `other` label was meant to do.
+- **The bank change went to payroll at confidence 1.00.** A person handles it
+  at any confidence: payroll above the floor, the help desk below it. The
+  table, not the model, decides that a change of account gets a phone call.
+
+## Before you rely on it
+
+This label set is not one a benchmark suite measured, and the current
+checkpoint's accuracy on a new label set varies: five of six here, one of four
+on a finance-inbox set
+([limits](/docs/kai/limits#label-sets-no-suite-measured)). Run your own
+messages through the question, labelled, before the table acts on its
+answers, and set the floor the way
+[Confidence gates](/docs/kai/patterns/gating) does.
+
+Next: [Confidence gates](/docs/kai/patterns/gating) ·
+[Choice questions](/docs/kai/questions/choice) · [Limits](/docs/kai/limits)

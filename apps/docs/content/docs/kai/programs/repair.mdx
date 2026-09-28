@@ -1,0 +1,119 @@
+---
+title: Repairing answers
+description: "Keep answers consistent with rules between them: what Kai's runtime does in process, and the projection you run over /v1/decisions answers today."
+---
+
+**Questions asked together are answered independently, so their top answers
+can break a rule that links them:** access granted to a request that gives no
+reason. Repair keeps the most probable set of answers that breaks no rule.
+
+Kai's runtime repairs answers in process; `/v1/decisions` does not take rules
+and does not repair. Today, ask the questions in one request and project the
+answers onto your rules in your code, as below.
+
+## In Kai's runtime
+
+A rule links two answers: one rules out the other, or one requires the other.
+
+| Path | How it repairs |
+|---|---|
+| per-question answers, the model `/v1/decisions` serves | after the [dependency passes](/docs/kai/programs/dependent), a selector picks the most probable joint answer among each question's likeliest options that keeps every rule; a projection over every option then moves any answer that still breaks one |
+| the joint slot decoder, a pilot | one decode proposes options for every question; a selector with the rules as hard constraints picks the joint answer, exactly when the program's graph is narrow enough and by beam search when it is not; a verifier checks the rules; if one breaks, only the conflicting questions are decoded again, once; projection last |
+
+The projection is an exact search, and it refuses rather than guesses when the
+search would pass 2^20 steps. Neither path is served over HTTP.
+
+## Project it today
+
+Ask every question in one request. If the top answers break a rule, keep the
+joint answer with the highest product of probabilities among those that break
+none.
+
+```python
+RULES = [  # (if, then not): when the first answer holds, the second may not
+    ({"production": "yes"}, {"decision": "grant"}),
+    ({"reason": "no"}, {"decision": "grant"}),
+]
+
+
+def holds(x: dict[str, str], part: dict[str, str]) -> bool:
+    return all(x[name] == label for name, label in part.items())
+
+
+def words(part: dict[str, str]) -> str:
+    return " and ".join(f"{name}={label}" for name, label in part.items())
+
+
+def broken(x: dict[str, str]) -> list[str]:
+    """The rules a joint answer breaks, in words."""
+    return [f"{words(a)} rules out {words(b)}" for a, b in RULES if holds(x, a) and holds(x, b)]
+
+
+def project(p: dict[str, dict[str, float]]) -> dict[str, str]:
+    """The joint answer of highest probability, one label per question, that breaks no rule."""
+    names = list(p)
+    joint = (dict(zip(names, labels)) for labels in itertools.product(*(p[n] for n in names)))
+    return max((x for x in joint if not broken(x)), key=lambda x: sum(math.log(max(p[n][x[n]], 1e-12)) for n in names))
+
+
+with Kai(retry=RetryPolicy(max_retries=10)) as kai:
+    for request in REQUESTS:
+        d = kai.decide(state={"request": request}, questions=QUESTIONS)
+        p = {name: answer.probabilities for name, answer in d.choices.items()}
+        top = {name: answer.choice for name, answer in d.choices.items()}
+        print(request)
+        print("  answers   " + ", ".join(f"{n}={top[n]} ({p[n][top[n]]})" for n in top))
+        if not broken(top):
+            print("  keeps every rule")
+            continue
+        fixed = project(p)
+        print(f"  breaks    {'; '.join(broken(top))}")
+        print("  projected " + ", ".join(f"{n}={fixed[n]}" for n in fixed))
+```
+
+The full script, with the three questions:
+[`native_repair.py`](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/native_repair.py).
+What `api.hanzo.ai` answered on 2026-09-28:
+
+{/* out: python/native_repair.py */}
+```text
+Please add me to the #design Slack channel so I can follow the rebrand.
+  answers   decision=grant (0.6876), production=no (0.7325), reason=yes (0.7197)
+  keeps every rule
+Need read access to the production orders database to debug ticket 4411.
+  answers   decision=grant (0.4461), production=no (0.5329), reason=no (0.6574)
+  breaks    reason=no rules out decision=grant
+  projected decision=ask, production=no, reason=no
+Give me admin on the billing Stripe account.
+  answers   decision=ask (0.5174), production=no (0.5046), reason=no (0.7442)
+  keeps every rule
+Add Jane to the analytics dashboard viewers; she joins the growth team Monday.
+  answers   decision=grant (0.5316), production=yes (0.5879), reason=no (0.552)
+  breaks    production=yes rules out decision=grant; reason=no rules out decision=grant
+  projected decision=ask, production=yes, reason=no
+```
+
+## What the run shows
+
+- **Two requests kept every rule**, and the projection had nothing to do.
+- **Two broke a rule** with `decision=grant`, and the projection moved each to
+  `ask`, the most probable decision the rules allow; the other answers stayed.
+- **Projection enforces the rules, not the truth.** The production-database
+  request names a production system and a reason, yet Kai answered
+  `production=no` and `reason=no`. Its `ask` follows from the misread reason,
+  not from the production access. Repair makes answers consistent; only
+  better answers make them right.
+
+How often the served checkpoint's answers break rules has not been measured
+by the harness.
+
+The search above tries every combination: three questions of 3, 2 and 2
+options are 12 joint answers, but ten questions of five options are close to
+ten million. For programs that large, search only each question's few
+likeliest options, as the runtime's selector does.
+
+## Next
+
+- [Dependent questions](/docs/kai/programs/dependent): questions that read another's answer.
+- [Decision Programs](/docs/kai/programs): rules and policy gates inside a program.
+- [Gate an agent's command](/docs/guides/cookbook/gate): joining Kai's verdict with your policy.

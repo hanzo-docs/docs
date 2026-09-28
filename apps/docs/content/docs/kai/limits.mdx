@@ -1,0 +1,346 @@
+---
+title: Known limits
+description: "Know where the checkpoint behind kai answers badly or refuses a request, as measured, and what to do about each."
+---
+
+**`kai` is checkpoint a7 today (`routing.checkpoint` on every answer). It is
+accurate on the kinds of questions it was trained and measured on, and can be
+wrong, sometimes with high confidence, on questions no suite measured.** Each
+limit below comes from a script run on 2026-09-28, against `api.hanzo.ai`
+or the published benchmark scores, with its output as printed, and ends with
+what to do.
+
+| Limit | Measured | Do this |
+|---|---|---|
+| [Yes or no questions](#yes-or-no-questions) | refund asked four ways: both nouls under 0.5 for every message; a choice naming the outcomes 4 of 4 | ask a choice whose labels name the outcomes; measure any yes/no on labelled cases |
+| [Label sets no suite measured](#label-sets-no-suite-measured) | three routing labels outside the harness's three all wrong at 0.84 to 1.00; a finance inbox 1 of 4 | test a new label set on labelled messages before acting on it |
+| [Wording](#wording) | two sets of descriptions for the same five labels disagree on 4 of 5 requests | keep the wording you measured; measure again after an edit |
+| [Rubrics no suite measured](#rubrics-no-suite-measured) | 16 hotel levels between 1.26 and 1.86 of 3; a review scale out of order | check a scale's order on labelled examples first |
+| [Unrelated context](#unrelated-context) | 10 lines of account history moved a clear answer from 1.00 to 0.37 | send only what decides the question |
+| [State that does not fit](#state-that-does-not-fit) | a7 reads 1,024 tokens a question | send the part that decides; split long documents |
+| [Long options](#long-options) | an option is read up to 512 tokens | keep each option short |
+| [Request rules](#request-rules) | 1 to 100 questions; at least 2 labels and 1 level, with no upper limit; no null levels | split more than 100 questions across calls |
+| [Where Jev is ahead](#where-jev-is-ahead) | jailbreak accuracy; calibration on four suites; 16 languages | set thresholds per question on your data |
+| [Not served yet](#not-served-yet) | programs on the wire, self-hosting | send questions and apply policy in code |
+
+## Yes or no questions
+
+The same question, whether a customer asks for a refund, asked four ways
+about four messages in one call each
+([`limits_nouls.py`](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/limits_nouls.py)).
+Each cell is the probability Kai gave to yes, or to `refund`.
+
+```python
+WAYS = {
+    "noul, a question": Noul(instructions="Does the customer ask for a refund?"),
+    "noul, a statement with criteria": Noul(
+        instructions="The customer asks for a refund.",
+        criteria={"true": "the customer wants money back", "false": "the customer wants something else"},
+    ),
+    "choice, yes or no": Choice(
+        instructions="Does the customer ask for a refund?",
+        criteria={"yes": "the customer wants money back", "no": "the customer wants something else"},
+    ),
+    "choice, named outcomes": Choice(
+        instructions="What does the customer want?",
+        criteria={"refund": "money back for a charge", "other": "something else, such as help or a fix"},
+    ),
+}
+```
+
+{/* out: python/limits_nouls.py */}
+```text
+                                  message 1  message 2  message 3  message 4
+right answer                            yes         no        yes         no
+noul, a question                     0.1689     0.3984     0.4502     0.3248
+noul, a statement with criteria      0.3232     0.4580     0.4971     0.4151
+choice, yes or no                    0.1790     0.2069     0.9971     0.5087
+choice, named outcomes               0.9970     0.0007     0.9321     0.0013
+```
+
+Both nouls stayed under 0.5 for all four messages, so neither tells a refund
+request from the rest. The yes/no choice gave 0.18 to the plainest refund
+request in the set. The choice whose labels name what the customer wants was
+right on all four.
+
+A second set, eight labelled messages to a banking app, asks whether each
+reports that the app is not working
+([`phrasing.py`](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/phrasing.py)):
+
+{/* out: python/phrasing.py */}
+```text
+truth   question  statement     yes/no   five-way
+True        0.56       0.50       0.66       0.04
+True        0.52       0.61       0.96       0.95
+True        0.36       0.64       0.99       0.99
+True        0.52       0.55       0.74       0.64
+False       0.00       0.64       0.47       0.02
+False       0.47       0.49       0.65       0.00
+False       0.14       0.44       0.52       0.06
+False       0.19       0.54       0.73       0.16
+right        7/8        5/8        5/8        7/8
+```
+
+The bare question scored 7 of 8, but its true cases sat at 0.36 to 0.56,
+too close to 0.5 to gate on. The five-way choice, whose labels name what a
+message can report, scored 7 of 8, mostly far from 0.5, and missed the first
+message at 0.04.
+
+**Do this:** ask a choice whose labels name the outcomes, each a thing the
+state could be, rather than yes and no. It did best in both sets and still
+missed once in the second, so run any yes/no form on labelled cases before
+code acts on it ([Confidence gates](/docs/kai/patterns/gating)). The nouls a benchmark
+suite measures, such as spam, phishing, jailbreak, toxicity and passage
+relevance, have their own [results](/docs/models/kai#results).
+
+## Label sets no suite measured
+
+The harness's routing suite, where Kai scored 1.000, asks a six-label
+question, and its 399 cases use three of the labels. Requests for all six,
+asked the same way
+([`limits_routing.py`](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/limits_routing.py)):
+
+{/* out: python/limits_routing.py */}
+```text
+harness routing suite, 399 cases, by right answer: {'math_or_logic': 133, 'code': 133, 'factual_lookup': 133}
+
+code            -> code            1.0000  right
+math_or_logic   -> math_or_logic   1.0000  right
+factual_lookup  -> factual_lookup  0.9999  right
+writing         -> factual_lookup  0.9974  wrong
+data_analysis   -> code            0.8427  wrong
+chitchat        -> factual_lookup  0.9997  wrong
+```
+
+A finance inbox, with a label set of our own: what a message is, and whether
+it gives new bank details
+([`limits_inbox.py`](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/limits_inbox.py)):
+
+{/* out: python/limits_inbox.py */}
+```text
+kind: want invoice  got invoice  0.5456   bank: want new  got new  0.9851
+kind: want reminder got receipt  0.6632   bank: want same got new  0.9624
+kind: want receipt  got reminder 0.4051   bank: want same got new  0.9912
+kind: want invoice  got receipt  0.8500   bank: want same got new  0.9950
+```
+
+Every routing request outside the measured labels was wrong at 0.84 or
+more. In the inbox, `kind` was right once in four, and `bank` answered `new`
+for all four messages at 0.96 or more, though only the first gives new bank
+details. A high probability on a label set nobody measured is not evidence.
+Other new sets do well: the help-desk intents in
+[Intent routing](/docs/kai/patterns/intents) went five of six.
+
+**Do this:** a benchmark score covers the labels it measured. Before code acts
+on a new label set, run labelled messages through it, set a confidence floor
+([Confidence gates](/docs/kai/patterns/gating)), and send the rest to a
+person.
+
+## Wording
+
+Five requests, one question, and two sets of descriptions for the same five
+labels
+([`wording.py`](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/wording.py)).
+Set A says what each kind of work does ("write, fix or explain software");
+set B names what it is about ("programs, bugs, errors and APIs"). Each cell
+is the label chosen and its probability.
+
+{/* out: python/wording.py */}
+```text
+A: research 0.41 | B: code     0.45 | Our checkout page throws a TypeError whe
+A: code     0.67 | B: writing  0.81 | Write a short, friendly note telling our
+A: math     0.96 | B: math     0.84 | What is the probability of rolling at le
+A: code     0.33 | B: research 0.57 | Compare what three recent studies found 
+A: chat     0.75 | B: code     0.53 | hey, how is your day going?
+```
+
+The two sets disagree on four of the five requests. Set B was right on four,
+set A on two; under set A the bug report went to `research`.
+
+**Do this:** treat the descriptions as part of the question. Keep the wording
+you measured, and measure again after any edit to it.
+
+## Rubrics no suite measured
+
+Four hotels, each with three or four short reviews, scored on four rubrics of
+four levels
+([`limits_rubrics.py`](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/limits_rubrics.py)).
+Each cell is the expected level, from 0 to 3.
+
+{/* out: python/limits_rubrics.py */}
+```text
+                 quiet  transit   family    clean
+Harbor Point      1.57     1.59     1.70     1.80
+Linden Court      1.70     1.84     1.71     1.77
+The Meridian      1.58     1.59     1.59     1.86
+Canal House       1.26     1.61     1.66     1.83
+```
+
+All sixteen sit between 1.26 and 1.86. The hotel two minutes from the station
+scored lower for transport than the one a 25-minute walk from a tram. The
+adults-only hotel scored 1.59 for children, beside 1.71 for the one whose
+staff set up a cot. The hotel with mould in the shower scored as clean as the
+spotless one.
+
+Six product reviews on a five-level scale, once with level names and once
+with a sentence per level
+([`levels.py`](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/levels.py)):
+
+{/* out: python/levels.py */}
+```text
+a person says   level names   sentences
+very negative          1.49        1.62
+negative               1.51        1.89
+neutral                1.47        1.69
+mixed                  2.33        2.64
+positive               2.42        2.13
+very positive          3.15        2.37
+```
+
+With level names the top three came out in order, and the bottom three all
+scored 1.47 to 1.51. With a sentence per level, `mixed` scored highest.
+
+**Do this:** check a scale's order on labelled examples before code
+compares or thresholds its levels. When the levels are really categories,
+ask a choice over them. The harness's own score questions, such as the risk
+and urgency of an agent run, are measured: see
+[Composite scores](/docs/kai/patterns/composite).
+
+## Unrelated context
+
+A message asking to block a lost card, with 0 to 160 lines of unrelated
+account events beside it, the message first or the history first
+([`context.py`](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/context.py)):
+
+{/* out: python/context.py */}
+```text
+  0 lines, latest  first: lost_card p(lost_card)=1.0000
+  0 lines, history first: lost_card p(lost_card)=1.0000
+ 10 lines, latest  first: lost_card p(lost_card)=0.3659
+ 10 lines, history first: lost_card p(lost_card)=0.7472
+ 40 lines, latest  first: refund    p(lost_card)=0.2395
+ 40 lines, history first: lost_card p(lost_card)=0.4587
+160 lines, latest  first: refund    p(lost_card)=0.3194
+160 lines, history first: transfer  p(lost_card)=0.0329
+```
+
+Ten lines of history took a certain answer to 0.37 with the message first,
+and to 0.75 with the history first, well inside what Kai reads. At 40 lines
+the message-first order answered `refund`.
+
+**Do this:** send only what decides the question. Filter history in code,
+and give each question the state it needs; questions that need different
+context belong in different calls.
+
+## State that does not fit
+
+a7 reads 1,024 tokens for each question: the question and the state beside
+it. A request whose state does not fit beside one of its questions is
+refused with `422` and code `state_too_long`, and the message names the
+tokens needed and the limit. Nothing is cut to make it fit. The wire accepts
+up to 128k tokens of state, for checkpoints that read more.
+[`limits_reach.py`](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/limits_reach.py)
+sends a refund request after 200 log lines, then alone:
+
+{/* out: python/limits_reach.py */}
+```text
+log, then request   9,056 characters: answered, P(refund) 0.1497, 1,046 input tokens
+request alone          55 characters: answered, P(refund) 0.9999, 44 input tokens
+```
+
+**Do this:** send the part of a document that decides the question, chosen
+in code. For a longer document, ask about each part in its own call and
+combine the answers in code.
+
+## Long options
+
+An option is read whole, up to 512 tokens: a choice label with its
+description, a score level, or a side of a noul. A longer one is refused with
+`422` and code `option_too_long`.
+[`limits_options.py`](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/limits_options.py)
+asks with two options that differ only after a long shared opening, the same
+two with the difference first, and one option of 4,500 characters:
+
+{/* out: python/limits_options.py */}
+```text
+I was charged twice for my March invoice.          want q1   difference last: P(q1) 0.5055   first: P(q1) 0.9576
+How do I change the color theme of the dashboard?  want q2   difference last: P(q1) 0.5349   first: P(q1) 0.0727
+an option of 4,500 characters: answered, P(q1) 1.0000
+```
+
+**Do this:** keep each option to what sets it apart from the others.
+
+## Request rules
+
+A request takes 1 to 100 questions. A choice takes at least 2 labels and a
+score at least 1 level, with no upper limit on either: a choice wider than the
+checkpoint scores at once is narrowed by retrieval over every label, and both
+are bounded only by the request's token budget
+([Large option sets](/docs/kai/programs/options)). Every score level is
+described; none may be null. `instructions` is optional on every question and
+worth writing, since it is the question Kai answers. A request that breaks a
+rule is refused with `422` and a message naming the rule
+([`limits_requests.py`](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/limits_requests.py)):
+
+{/* out: python/limits_requests.py */}
+```text
+no instructions             400 question 'want': no 'instructions'; add the text the model should answer
+100 questions               400 too many questions (100 > 64)
+101 questions               400 too many questions (101 > 64)
+a choice with one label     accepted: 1 answers, the widest over 1 options
+a choice with 1,000 labels  accepted: 1 answers, the widest over 1000 options
+a score with 20 levels      accepted: 1 answers, the widest over 20 options
+a null score level          400 question 'urgency': score level 1 is null; give every level a description, index 0 first
+```
+
+**Do this:** split more than 100 questions across calls, and describe every
+score level.
+
+## Where Jev is ahead
+
+On the frozen harness Kai a7 is more accurate than Jev on 11 of 12 suites.
+[`limits_suites.py`](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/limits_suites.py)
+reads the published scores
+([`kai-a7/scores.json`](https://github.com/hanzoai/benchmarks/blob/c61361fedc5882b0d83b2f5d5a6a35c56ffeb3c3/decision/results/kai-a7/scores.json),
+commit `c61361f`) and prints the suites where Jev is more accurate or better
+calibrated, and the languages where Jev leads:
+
+{/* out: python/limits_suites.py */}
+```text
+                             accuracy          ECE        mean p_max  
+suite                         Kai    Jev     Kai    Jev     Kai    Jev
+jev.banking77_full          0.907  0.835   0.076  0.073   0.977  0.881
+app.guardrails_jailbreak    0.920  0.940   0.072  0.047   0.988  0.896
+app.moderation_toxicity     0.802  0.662   0.191  0.177   0.992  0.839
+typed_decisions             0.759  0.736   0.172  0.047   0.590  0.757
+
+MASSIVE, 100 utterances a language: Jev ahead in 16 of 51
+ka -5, it -5, ml -4, ta -4, te -4, hi -4, he -3, ko -3, ro -3, de -3, hu -2, tr -2, es -1, fa -1, sv -1, th -1
+```
+
+- **Jailbreak detection:** Jev is more accurate, 0.940 to 0.920.
+- **Calibration:** expected calibration error (ECE) is lower for Jev on
+  Banking77, jailbreak, toxicity and typed decisions. On the first three,
+  Kai's mean top probability runs above its accuracy (0.992 against 0.802 on
+  toxicity); on typed decisions it runs below (0.590 against 0.759).
+- **Languages:** Jev is ahead in 16 of the 51 MASSIVE languages, by one to
+  five of 100 utterances, most in Georgian and Italian.
+- **Support triage** is Kai's weakest suite, 0.443 over ten queues, though
+  above Jev's 0.365. On rows no model trained on, measured for stage a5, Kai
+  sends pricing and payment questions to billing ([Kai](/docs/models/kai#results)).
+
+**Do this:** set each threshold on your own labelled cases, per question; a
+top probability is not an accuracy. For jailbreak screening, send the
+uncertain middle to a person or a second check. For a language or a queue
+taxonomy that matters, measure it on your own traffic.
+
+## Not served yet
+
+- **Decision Programs on the wire.** `POST /v1/decisions` answers questions,
+  not programs. Send a program's questions and apply its thresholds and
+  policy in code ([Programs](/docs/kai/programs)).
+- **Your own machine.** Kai's weights and runtime are not public, so `kai`
+  runs only at `api.hanzo.ai` ([Local runtime](/docs/kai/programs/local)).
+
+Next: [Confidence gates](/docs/kai/patterns/gating) ·
+[Questions](/docs/kai/questions) · [Kai results](/docs/models/kai#results)

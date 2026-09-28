@@ -1,0 +1,141 @@
+---
+title: Speculative fan-out
+description: "Ask every question a branch might need in one call, then let code read only the answers its branch uses."
+---
+
+**One call asks everything any branch could need; code reads what its branch
+uses.** No question waits for another's answer. They go out together, and the
+branch that runs picks its answers from the response.
+
+## The case
+
+A newsroom's tips inbox receives tips, marketing and scams. Every email is
+checked for phishing and for spam, and an email that passes both needs a topic
+to pick a desk. `topic` is speculative: asked about every email, read for
+some.
+
+```python
+QUESTIONS = {
+    "phishing": Noul(
+        instructions="This email is a phishing or scam attempt to steal money, credentials or personal data.",
+        criteria={"true": "phishing, scam or fraud", "false": "a legitimate email, even if promotional"},
+    ),
+    "spam": Noul(
+        instructions="This email is unsolicited spam or bulk marketing.",
+        criteria={"true": "spam or bulk marketing sent to many people", "false": "a message written to us personally"},
+    ),
+    # speculative: read only when both checks pass
+    "topic": Choice(
+        instructions="What is the topic of this email?",
+        criteria={
+            "world": "world news and international politics",
+            "sports": "sports",
+            "business": "business and economy",
+            "sci_tech": "science and technology",
+        },
+    ),
+}
+```
+
+The two checks ask what the benchmark harness's spam and phishing suites ask,
+written as statements with both sides described, and `topic` asks its
+news-topic question with the same four labels. Kai measured 0.998, 0.990 and
+0.943 on those suites ([results](/docs/models/kai#results)). A question no
+suite measures can do far worse:
+[measure it first](/docs/kai/limits#yes-or-no-questions).
+
+## Code picks the answers
+
+The branch order is policy: phishing is checked before spam, and an unsure
+topic goes to a person rather than to a guessed desk.
+
+```python
+def route(d):
+    """Where an email goes, and the answers that decided it."""
+    if d.nouls["phishing"].noul >= 0.5:
+        return "quarantine", ["phishing"]
+    if d.nouls["spam"].noul >= 0.5:
+        return "delete", ["phishing", "spam"]
+    topic = d.choices["topic"]
+    if topic.confidence < 0.5:
+        return "duty editor", ["phishing", "spam", "topic"]
+    return f"{topic.choice} desk", ["phishing", "spam", "topic"]
+```
+
+## The run
+
+Six emails, one call each; then the third email asked twice, with and without
+`topic`.
+
+```python
+with Kai(retry=RetryPolicy(max_retries=8)) as kai:
+    print(f"{'subject':<30} {'phishing':>8} {'spam':>6}  {'topic':<16} {'route':<14} read")
+    tokens = 0
+    for email in INBOX:
+        d = kai.decide(state=email, questions=QUESTIONS)
+        where, read = route(d)
+        topic = d.choices["topic"]
+        tokens += d.usage.input_tokens
+        print(f"{email['subject'][:30]:<30} {d.nouls['phishing'].noul:>8.4f} {d.nouls['spam'].noul:>6.4f}  "
+              f"{topic.choice + f' ({topic.confidence:.2f})':<16} {where:<14} {', '.join(read)}")
+    print(f"\n{len(INBOX)} calls, {tokens} input tokens")
+
+    guards = {name: QUESTIONS[name] for name in ("phishing", "spam")}
+    for asked in (QUESTIONS, guards):
+        d = kai.decide(state=INBOX[2], questions=asked)
+        print(f"third email, {len(asked)} questions: phishing {d.nouls['phishing'].noul:.4f}, "
+              f"spam {d.nouls['spam'].noul:.4f}, {d.usage.input_tokens} input tokens")
+```
+
+The whole script, with the six emails, is
+[`pattern_fanout.py`](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/pattern_fanout.py).
+What it printed against `api.hanzo.ai` on 2026-09-28:
+
+{/* out: python/pattern_fanout.py */}
+```text
+subject                        phishing   spam  topic            route          read
+LAST CHANCE: 80% off designer    1.0000 1.0000  sci_tech (0.92)  quarantine     phishing
+Your mailbox is full             0.8730 0.9915  sci_tech (0.51)  quarantine     phishing
+Tip: striker transfer            0.0000 0.0002  sports (0.83)    sports desk    phishing, spam, topic
+Tip: supermarket merger          0.0000 0.0000  business (0.28)  duty editor    phishing, spam, topic
+Tip: satellite launch slip       0.0000 0.0001  sci_tech (0.78)  sci_tech desk  phishing, spam, topic
+Tip: border talks                0.0001 0.0001  world (0.80)     world desk     phishing, spam, topic
+
+6 calls, 1533 input tokens
+third email, 3 questions: phishing 0.0000, spam 0.0002, 264 input tokens
+third email, 2 questions: phishing 0.0000, spam 0.0002, 174 input tokens
+```
+
+- **The scams stopped at the first check.** Their `topic` was answered,
+  `sci_tech` for a watch sale, and nothing read it.
+- **The watch sale scored 1.0000 as phishing and as spam.** Both hold, and the
+  code checks phishing first, so it went to quarantine rather than the bin.
+  That order is a decision in code, and it is the one to review.
+- **Three tips went to a desk.** The merger tip came back `business` at
+  confidence 0.28, under the 0.5 bar, so the duty editor gets it instead of a
+  guessed desk.
+- **Asking `topic` moved nothing else.** The third email's `phishing` and
+  `spam` are the same with two questions or three: each question is answered
+  against the state alone.
+
+## What it costs
+
+`usage.input_tokens` counts the state once per call, plus each question's
+instructions and options once. A speculative question adds its own text to
+every call, read or not; the last two lines show what `topic` adds for one
+email. Asking the checks first and `topic` in a second call would send the
+email twice. Fan out when a branch needs the extra answer often enough to pay
+for asking it on every call.
+
+## When to ask in two calls
+
+- **The question needs an answer to be written.** Kai answers every question
+  against the state alone and never sees another question's answer. When the
+  second question's text or options depend on the first answer, send it once
+  that answer is back. [Dependent questions](/docs/kai/programs/dependent)
+  covers the pattern.
+- **The branch that reads it almost never runs.** Then its text is billed on
+  every call for an answer that is thrown away.
+
+Next: [Confidence gates](/docs/kai/patterns/gating) ·
+[Questions](/docs/kai/questions) · [Limits](/docs/kai/limits)

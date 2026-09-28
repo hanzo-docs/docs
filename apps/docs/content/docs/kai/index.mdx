@@ -1,0 +1,124 @@
+---
+title: Kai
+description: "Kai answers typed questions about a state with a probability for every option you name. Start here for questions, patterns, recipes, SDKs, agent tools and the move from Jev."
+---
+
+**Kai decides; it does not write.** You send a state and named questions:
+which label, does a statement hold, which level. Kai returns a probability for
+every option, and your code acts on the answers. `usage.output_tokens` is
+always 0.
+
+```bash
+curl -sS https://api.hanzo.ai/v1/decisions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "kai",
+    "state": {"ticket": "I was charged twice for my March invoice. Please refund the duplicate today."},
+    "questions": {
+      "team":    {"type": "choice", "instructions": "Which team should handle `ticket`?",
+                  "criteria": {"billing": "charges, invoices and refunds",
+                               "technical": "bugs and outages",
+                               "account": "logins and profiles"}},
+      "urgency": {"type": "score", "instructions": "How urgent is `ticket`?",
+                  "criteria": ["later", "this week", "today", "now"]}
+    }
+  }' | jq 'del(.latency_ms)'
+```
+
+What `api.hanzo.ai` answered on 2026-09-28:
+
+{/* out: sh/index.sh */}
+```json
+{
+  "id": "dec_5b588dd6e978486df7c8e476ce8b5057",
+  "model": "kai",
+  "provider": "Hanzo",
+  "answers": {
+    "team": {
+      "type": "choice",
+      "choice": "billing",
+      "confidence": 0.9994,
+      "probabilities": {
+        "billing": 0.9996,
+        "technical": 0.0004,
+        "account": 0.0
+      },
+      "answer_confidence": 0.9996
+    },
+    "urgency": {
+      "type": "score",
+      "score": 1.5513,
+      "confidence": 0.0879,
+      "legend": {
+        "0": "later",
+        "1": "this week",
+        "2": "today",
+        "3": "now"
+      },
+      "probabilities": {
+        "0": 0.1903,
+        "1": 0.3159,
+        "2": 0.246,
+        "3": 0.2478
+      },
+      "answer_confidence": 0.3159
+    }
+  },
+  "usage": {
+    "input_tokens": 120,
+    "output_tokens": 0
+  },
+  "routing": {
+    "backend": "kai",
+    "checkpoint": "a7",
+    "sha256": "0834a74f2d140642a453373da09e5a128e3d2c8d9e8bb1dcaf86d7210a4ecdfc",
+    "calibration": "cal_e23c27a1f768bff7",
+    "device": "cpu",
+    "reason": "explicit model='kai'"
+  },
+  "state_hash": "sha256:493ede24a73b9b69e9eef557bf09e9d13cfe8e70f977d6996aaf1370c1406019"
+}
+```
+
+`team` is settled. `urgency` is not: no level holds more than 0.32 and its
+`confidence` is 0.09, although the ticket says "today". Act on the first,
+send the second to a person or ask a sharper question. That split is the whole
+programming model: [Confidence](/docs/kai/confidence) says how to set the line.
+
+## Call it
+
+| From | Install | Call |
+|---|---|---|
+| HTTP | nothing | `POST https://api.hanzo.ai/v1/decisions` ([reference](/docs/decisions)) |
+| Python | `pip install hanzo-kai` | `Kai().decide(state=..., questions=...)` ([SDK](/docs/kai/sdk/python)) |
+| TypeScript | `npm i @hanzo/kai` | `new Kai().decide({ state, questions })` ([SDK](/docs/kai/sdk/typescript)) |
+| MCP | `@hanzo/mcp` | `kai_decide`, `kai_choice`, `kai_score`, `kai_noul` ([agents](/docs/kai/agents)) |
+| Agent skill | `npx skills add https://hanzoskills.com/kai.md` | ([agents](/docs/kai/agents)) |
+
+Every call takes a Hanzo key ([API keys](/docs/api-keys)) and is billed to the
+key's org at \$0.021 per million input tokens; output is free.
+
+## Learn it
+
+<Cards>
+  <Card title="Quickstart" href="/docs/kai/quickstart">A key, then one decision four ways.</Card>
+  <Card title="Questions" href="/docs/kai/questions">Choice, score and noul, and asking several at once.</Card>
+  <Card title="Confidence" href="/docs/kai/confidence">When to act on an answer and when to escalate it.</Card>
+  <Card title="Patterns" href="/docs/kai/patterns">Fan-out, confidence gates, composite scores, intent routing.</Card>
+  <Card title="Cookbook" href="/docs/kai/cookbook">Recipes that run: triage, routing, guardrails, retrieval, extraction.</Card>
+  <Card title="Limits" href="/docs/kai/limits">What the current checkpoint gets wrong, measured.</Card>
+  <Card title="Programs" href="/docs/kai/programs">What Kai does beyond single calls: programs, caches, large option sets.</Card>
+  <Card title="Migrate from Jev" href="/docs/guides/migrate/jev">Keep your TypeSafe SDK and change three variables, or switch SDKs.</Card>
+</Cards>
+
+## Against Jev
+
+- **Price**: 50% lower input-token list price (\$0.021 vs \$0.042 per 1M).
+  Output is free on both.
+- **Accuracy**: on the frozen decision harness, Kai (checkpoint a7) is more
+  accurate than Jev on 11 of 12 suites; Jev leads jailbreak detection, 0.940
+  to 0.920 ([results](https://github.com/hanzoai/benchmarks/tree/c61361fedc5882b0d83b2f5d5a6a35c56ffeb3c3/decision/results/kai-a7),
+  [suite by suite](/docs/models/kai#results)).
+- **Wire**: the same question types and answer shapes, so a Jev request
+  becomes a Kai request when the base URL, the key and `model` change.

@@ -1,0 +1,129 @@
+---
+title: Features from text
+description: "Turn free text into numeric features with Kai's yes/no and score answers, fit a small regressor on labelled data, and compare it with simple baselines on held-out cases."
+---
+
+**Each question you ask Kai about a text is a number: a probability for a yes
+or no, an expected level for a score.** Six such numbers per support
+conversation, fed to a ridge regression, predicted the raters' churn risk
+better than the mean did (test RMSE 0.546 against 0.625). Kai's own answer to
+the harness's churn question did better than both (0.493).
+
+## The idea
+
+A model that must predict a number from text needs numbers to learn from. Ask
+Kai the questions a person would weigh ("is the customer upset?", "have they
+threatened to leave?") and use the answers as features: P(yes) for a noul, the
+expected level Σ i·pᵢ for a score. A small regressor then learns how much each
+matters for your target, from your labels.
+
+The labelled data is the harness's `typed_decisions` suite: its 100
+customer-service conversations, each rated by a panel for churn risk on four
+levels. The target is the raters' mean level, 0 to 3. The script fits on 60
+conversations and tests on the other 40, and compares four predictors:
+
+- the mean of the training labels;
+- Kai's answer to the harness's own churn question, as answered and refit with
+  a line;
+- the six features;
+- the six features and the churn answer together.
+
+## The code
+
+```python
+FEATURES = {
+    "upset": Noul(
+        instructions="The customer is upset.",
+        criteria={"true": "they sound angry, frustrated or anxious", "false": "they sound calm or satisfied"},
+    ),
+    "leave": Noul(
+        instructions="The customer threatens to leave.",
+        criteria={
+            "true": "they mention cancelling, switching, a chargeback, a dispute or a bad review",
+            "false": "no such threat",
+        },
+    ),
+    "again": Noul(
+        instructions="The problem has happened before.",
+        criteria={
+            "true": "they say it keeps happening, or was reported before and is still not fixed",
+            "false": "this is the first report",
+        },
+    ),
+    "money": Noul(
+        instructions="The customer has lost money.",
+        criteria={
+            "true": "a wrong, duplicate or unexpected charge, or a refund that has not arrived",
+            "false": "no money is at stake",
+        },
+    ),
+    "effort": Score(
+        instructions="How much effort has the customer spent on this problem?",
+        criteria=["almost none", "one message", "several messages or attempts", "repeated contacts over days"],
+    ),
+    "tone": Score(
+        instructions="How does the customer's last message sound?",
+        criteria=["pleased", "neutral", "annoyed", "furious"],
+    ),
+}
+```
+
+One call per conversation asks all six and the harness's churn question:
+
+```python
+        answers = kai.decide(state=state, questions=FEATURES | {"churn": questions["churn_risk"]})
+        x.append([value(answers, name) for name in FEATURES])
+        direct.append(answers.scores["churn"].score)
+        y.append(gold["churn_risk"]["gold_score"])  # raters' mean level, 0 to 3
+```
+
+The regressor is ridge regression in a few lines of numpy, in
+[`features.py`](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/features.py)
+with the rest of the script. What it printed against `api.hanzo.ai` on
+2026-09-28:
+
+{/* out: python/features.py */}
+```text
+100 conversations: 60 to fit, 40 to test; churn risk 0 to 3, mean 1.92
+
+predictor                          test RMSE  correlation
+mean of the training labels            0.625            -
+Kai's churn score, as answered         0.493         0.61
+Kai's churn score, refit               0.517         0.61
+six Kai features                       0.546         0.51
+six features and the churn score       0.535         0.57
+
+weights of the six-feature fit, per standard deviation of each feature:
+upset +0.018  leave +0.207  again -0.036  money -0.036  effort +0.024  tone +0.240
+```
+
+## What the numbers say
+
+- **The features carry signal.** Six answers per conversation cut the test
+  error from 0.625 to 0.546 and correlate 0.51 with the raters.
+- **Two features do the work.** A threat to leave (+0.207 per standard
+  deviation) and the tone of the last message (+0.240) carry the fit; upset,
+  repeat, money and effort add almost nothing once those two are in.
+- **A question Kai was trained on beats features built around it.** The
+  harness's churn question, answered as is, has the lowest error (0.493) and
+  the highest correlation (0.61). Refitting it on 60 labels made it slightly
+  worse (0.517), and adding it to the features did not reach it (0.535).
+- **Forty test conversations is a small test.** Treat the order of the last
+  four rows as provisional, and measure on more of your own labels before you
+  choose between them.
+
+## Adapt it
+
+- Use features when no question asks for your target directly: a revenue
+  forecast, a time to resolution, a score your own raters give.
+- Write each feature as one observable thing, a noul with criteria for both
+  sides or a score with described levels, and let the regressor weigh them.
+- Keep the answers as probabilities and expected levels; rounding them to yes
+  and no throws away what the regressor learns from.
+- Refit when your labels drift, and hold out conversations the fit never sees.
+
+## Next
+
+- [Composite scores](/docs/kai/patterns/composite)
+- [Score questions](/docs/kai/questions/score)
+- [Speculative fan-out](/docs/kai/patterns/fanout)

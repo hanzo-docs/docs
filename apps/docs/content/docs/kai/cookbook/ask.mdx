@@ -1,0 +1,157 @@
+---
+title: Ask gate
+description: Route each question in a community channel to an earlier answer, a docs page, a person or a request for more context, citing the passage relied on, with template replies only.
+---
+
+**Each question in a channel gets a route and a citation: an earlier message,
+one of six docs pages from a lexical shortlist of docs.hanzo.ai's `llms.txt`,
+or none. Replies are templates; nothing is generated. On six questions Kai's
+route matched none of the expected ones, every route came back at confidence
+0.35 or under, and the gate sent all six to a person.**
+
+## How it works
+
+- The corpus is every page docs.hanzo.ai lists in
+  [`llms.txt`](https://docs.hanzo.ai/llms.txt), one passage per page: its
+  title and its one-line description. A BM25 shortlist in code keeps six pages
+  per question.
+- One call asks two questions: a route over four outcomes, and a choice over
+  the candidate passages, which are the earlier messages, the six pages, and
+  `none`.
+- Code replies from a template only when the route and the citation both clear
+  the floor and agree: `answered` must cite a message, `docs` must cite a page.
+  Everything else goes to a person.
+- Each question sees only the messages above it.
+
+## The code
+
+The route, and the shortlist:
+
+```ts
+const route = choice("What should happen to `question`?", {
+  answered: "a message in `earlier` already answers it",
+  docs: "a page in `docs` answers it",
+  person: "it needs someone with access to the account, or a decision only staff can make",
+  context: "it is too vague to answer; the asker has to say more",
+});
+```
+
+```ts
+// The shortlist: BM25 over each page's title and description.
+const STOP = new Set("a an and are as at be but by can do does for from how i in is it its me my of on or our so that the this to what when which who why will with you your".split(" "));
+const words = (s: string) => (s.toLowerCase().match(/[a-z0-9]+/g) ?? []).filter((w) => !STOP.has(w)).map((w) => w.replace(/s$/, ""));
+function index(corpus: Passage[]) {
+  const docs = corpus.map((p) => words(`${p.title} ${p.text}`));
+  const df = new Map<string, number>();
+  for (const d of docs) for (const w of new Set(d)) df.set(w, (df.get(w) ?? 0) + 1);
+  const avg = docs.reduce((n, d) => n + d.length, 0) / docs.length;
+  return (query: string): Passage[] => {
+    const q = new Set(words(query));
+    const bm25 = (d: string[]) => [...q].reduce((s, w) => {
+      const f = d.filter((x) => x === w).length, n = df.get(w) ?? 0;
+      return f ? s + Math.log(1 + (docs.length - n + 0.5) / (n + 0.5)) * (f * 2.2) / (f + 1.2 * (0.25 + 0.75 * d.length / avg)) : s;
+    }, 0);
+    return corpus.map((p, i) => [p, bm25(docs[i])] as const).filter(([, s]) => s > 0)
+      .sort((x, y) => y[1] - x[1]).slice(0, K).map(([p], i) => ({ ...p, id: `d${i + 1}` }));
+  };
+}
+```
+
+The call, and the gate:
+
+```ts
+const found = search(msg.text);
+const passages = [...earlier, ...found];
+const source = choice("Which passage answers `question`?", {
+  ...Object.fromEntries(passages.map((p) => [p.id, `${p.title}: ${p.text}`.slice(0, 200)])),
+  none: "no passage answers it",
+});
+const state = {
+  question: msg.text,
+  earlier: earlier.map((m) => `${m.id} ${m.title}: ${m.text}`),
+  docs: found.map((d) => `${d.id} ${d.title} (${d.url}): ${d.text}`),
+};
+const { route: r, source: s } = (await kai.decide({ state, questions: { route, source } })).answers;
+const cited = passages.find((p) => p.id === s.choice);
+const reply =
+  r.confidence < FLOOR ? "to a person: the route is unsure"
+  : r.choice === "person" ? "to a person"
+  : r.choice === "context" ? "reply: which call did you make, what did you send, and what came back?"
+  : !cited || s.confidence < FLOOR ? "to a person: no passage Kai stands behind"
+  : r.choice === "answered" && cited.kind === "message" ? `reply: answered above, see ${cited.id}`
+  : r.choice === "docs" && cited.kind === "page" ? `reply: see "${cited.title}", ${cited.url}`
+  : "to a person: the route and the citation disagree";
+```
+
+The full script, with the channel and the route each question should get, is
+[`ask.ts`](https://github.com/hanzo-js/kai/blob/main/examples/ask.ts). It
+caches `llms.txt` in your temp directory.
+
+```bash
+npm i @hanzo/kai
+export HANZO_API_KEY=sk-...
+npx tsx ask.ts
+```
+
+## The run
+
+What `api.hanzo.ai` answered on 2026-09-28:
+
+{/* out: ts/ask.ts */}
+```text
+m3 sam: What does a Kai call cost?
+   route context 0.35 (want docs); cites d4 0.12 "Pricing"
+   to a person: the route is unsure
+m4 ines: Can Kai also write the reply to my customer?
+   route context 0.05 (want answered); cites none 0.05
+   to a person: the route is unsure
+m5 kofi: How do I rotate an API key?
+   route person 0.11 (want docs); cites none 0.13
+   to a person: the route is unsure
+m6 lee: Our org was charged twice in August. Can someone refund one of the charges?
+   route answered 0.13 (want person); cites d2 0.14 "Create payment"
+   to a person: the route is unsure
+m7 ana: it's broken again
+   route answered 0.08 (want context); cites m6 0.43 "lee"
+   to a person: the route is unsure
+m8 omar: My /v1/decisions request comes back 402. What does that mean?
+   route context 0.08 (want docs); cites m6 0.69 "lee"
+   to a person: the route is unsure
+0 of 6 routes as the author expected.
+```
+
+## What the numbers say
+
+- **Nothing was routed, and nothing wrong went out.** Every route came back at
+  confidence 0.35 or under, so every question went to a person. That is the
+  fallback doing its job; it is also a gate that answers nothing.
+- **The routes were wrong as well as unsure.** The answer to m4 sits two
+  messages above it, in m2; Kai routed it `context` and cited nothing. The
+  refund request, m6, was routed `answered`, citing a page about a company
+  formation fee.
+- **The one confident citation was wrong.** m8, about a 402, cited m6, a
+  refund request, at confidence 0.69.
+- **The shortlist failed once on its own.** The answer to m8 is in the error
+  table of [Decisions](/docs/decisions#errors), which `llms.txt` does not
+  carry. The shortlist offered x402, a pay-per-request API, because its line
+  shares "402". A gate can only cite what it is shown.
+- **No suite measures this judgment:** whether one of several passages answers
+  a question in a channel.
+
+## Adapt it
+
+- Give the shortlist full text. `llms-full.txt` carries every page's body;
+  split pages into sections and rank the sections.
+- Ask about one passage at a time with the question our harness measures,
+  ``Does `passage` help answer `query`?``, as a noul, and rank passages by
+  P(true) instead of one choice over all of them.
+- Label a few hundred questions from your channel's history with the route a
+  moderator took, and set the floor from them.
+- Keep replies as templates that link the cited message or page. A person
+  writes anything else.
+
+## Next
+
+- [Retrieved passages](/docs/kai/cookbook/rag)
+- [Confidence gates](/docs/kai/patterns/gating)
+- [Limits](/docs/kai/limits)

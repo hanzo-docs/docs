@@ -1,0 +1,283 @@
+---
+title: Kai quickstart
+description: Get a key and make one decision with Kai from curl, Python, TypeScript or an MCP client.
+---
+
+**One request: a customer message, two typed questions, a probability for
+every answer.** The outputs on this page are what `api.hanzo.ai` returned on
+2026-09-28.
+
+## Get a key
+
+A decision takes a secret key (`sk-`). Create one at
+[console.hanzo.ai](https://console.hanzo.ai) under **API Keys** and export it as
+`HANZO_API_KEY`; [Authentication](/docs/api-keys) covers both key types. A
+publishable key (`pk-`) is refused with `403`, and an org with no plan or no
+balance is refused with `402`.
+
+## Ask
+
+`intent` picks one of five labels. `urgency` places the message on three levels,
+lowest first.
+
+<Tabs items={['curl', 'Python', 'TypeScript', 'MCP']}>
+<Tab value="curl">
+```bash
+curl -sS https://api.hanzo.ai/v1/decisions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "kai",
+    "state": {"message": "My new card arrived yesterday but the app will not activate it. It says the code is invalid, and I fly on Friday."},
+    "questions": {
+      "intent": {"type": "choice", "instructions": "What does `message` ask for?",
+                 "criteria": {"activate_card": "turn on a new card",
+                              "lost_card": "report a lost or stolen card",
+                              "refund": "money back for a payment",
+                              "transfer": "send or receive money",
+                              "other": "anything else"}},
+      "urgency": {"type": "score", "instructions": "How soon does `message` need an answer?",
+                  "criteria": ["routine: no deadline",
+                               "soon: a deadline this week",
+                               "urgent: blocked now or losing money"]}
+    }
+  }' | jq 'del(.latency_ms)'
+```
+
+The response is under [Read the answer](#read-the-answer).
+</Tab>
+<Tab value="Python">
+```bash
+pip install hanzo-kai   # Python 3.12 or newer
+```
+
+```python
+from hanzo_kai import Kai, Score, Choice
+
+with Kai() as kai:
+    d = kai.decide(
+        state={
+            "message": "My new card arrived yesterday but the app will not activate it. It says the code is invalid, and I fly on Friday."
+        },
+        questions={
+            "intent": Choice(
+                instructions="What does `message` ask for?",
+                criteria={
+                    "activate_card": "turn on a new card",
+                    "lost_card": "report a lost or stolen card",
+                    "refund": "money back for a payment",
+                    "transfer": "send or receive money",
+                    "other": "anything else",
+                },
+            ),
+            "urgency": Score(
+                instructions="How soon does `message` need an answer?",
+                criteria=["routine: no deadline", "soon: a deadline this week", "urgent: blocked now or losing money"],
+            ),
+        },
+    )
+
+intent, urgency = d.choices["intent"], d.scores["urgency"]
+print(intent.choice, intent.confidence)
+print(urgency.score, urgency.confidence, urgency.probabilities)
+print(d.usage.input_tokens, d.routing["checkpoint"])
+```
+
+{/* out: python/quickstart.py */}
+```text
+activate_card 1.0
+0.7571 0.2256 {0: 0.4838, 1: 0.2753, 2: 0.2409}
+173 a7
+```
+
+[quickstart.py](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/quickstart.py)
+</Tab>
+<Tab value="TypeScript">
+```bash
+npm i @hanzo/kai   # Node 20 or newer
+```
+
+```ts
+import { Kai, choice, score } from "@hanzo/kai";
+
+const kai = new Kai();
+const d = await kai.decide({
+  state: { message: "My new card arrived yesterday but the app will not activate it. It says the code is invalid, and I fly on Friday." },
+  questions: {
+    intent: choice("What does `message` ask for?", {
+      activate_card: "turn on a new card",
+      lost_card: "report a lost or stolen card",
+      refund: "money back for a payment",
+      transfer: "send or receive money",
+      other: "anything else",
+    }),
+    urgency: score("How soon does `message` need an answer?", [
+      "routine: no deadline",
+      "soon: a deadline this week",
+      "urgent: blocked now or losing money",
+    ]),
+  },
+});
+
+const { intent, urgency } = d.answers;
+console.log(intent.choice, intent.confidence);
+console.log(urgency.score, urgency.confidence, urgency.probabilities);
+console.log(d.usage.input_tokens, d.routing?.checkpoint);
+```
+
+{/* out: ts/quickstart.ts */}
+```text
+activate_card 1
+0.7571 0.2256 { '0': 0.4838, '1': 0.2753, '2': 0.2409 }
+173 a7
+```
+
+[quickstart.ts](https://github.com/hanzo-js/kai/blob/main/examples/quickstart.ts)
+</Tab>
+<Tab value="MCP">
+Register `@hanzo/mcp` with your agent, with your key in its environment. For
+Claude Code:
+`claude mcp add hanzo -e HANZO_API_KEY=$HANZO_API_KEY -- npx -y @hanzo/mcp serve`.
+Ask in plain words, and the agent calls `kai_decide` with arguments like these:
+
+```json
+{
+  "state": {"message": "My new card arrived yesterday but the app will not activate it. It says the code is invalid, and I fly on Friday."},
+  "questions": {
+    "intent": {"type": "choice", "instructions": "What does `message` ask for?",
+               "criteria": {"activate_card": "turn on a new card",
+                            "lost_card": "report a lost or stolen card",
+                            "refund": "money back for a payment",
+                            "transfer": "send or receive money",
+                            "other": "anything else"}},
+    "urgency": {"type": "score", "instructions": "How soon does `message` need an answer?",
+                "criteria": ["routine: no deadline",
+                             "soon: a deadline this week",
+                             "urgent: blocked now or losing money"]}
+  }
+}
+```
+
+The tool returns the decision; its `answers` and `usage`:
+
+{/* out: sh/mcp.sh */}
+```json
+{
+  "answers": {
+    "intent": {
+      "type": "choice",
+      "choice": "activate_card",
+      "confidence": 1,
+      "probabilities": {
+        "activate_card": 1,
+        "lost_card": 0,
+        "refund": 0,
+        "transfer": 0,
+        "other": 0
+      },
+      "answer_confidence": 1
+    },
+    "urgency": {
+      "type": "score",
+      "score": 0.7571,
+      "confidence": 0.2256,
+      "legend": {
+        "0": "routine: no deadline",
+        "1": "soon: a deadline this week",
+        "2": "urgent: blocked now or losing money"
+      },
+      "probabilities": {
+        "0": 0.4838,
+        "1": 0.2753,
+        "2": 0.2409
+      },
+      "answer_confidence": 0.4838
+    }
+  },
+  "usage": {
+    "input_tokens": 173,
+    "output_tokens": 0
+  }
+}
+```
+
+[Agents](/docs/kai/agents) covers the four tools: `kai_decide`, `kai_choice`,
+`kai_score` and `kai_noul`.
+</Tab>
+</Tabs>
+
+## Read the answer
+
+The curl call's response:
+
+{/* out: sh/quickstart.sh */}
+```json
+{
+  "id": "dec_3a441ac90cdb3aa0b6ca22e4189d660c",
+  "model": "kai",
+  "provider": "Hanzo",
+  "answers": {
+    "intent": {
+      "type": "choice",
+      "choice": "activate_card",
+      "confidence": 1.0,
+      "probabilities": {
+        "activate_card": 1.0,
+        "lost_card": 0.0,
+        "refund": 0.0,
+        "transfer": 0.0,
+        "other": 0.0
+      },
+      "answer_confidence": 1.0
+    },
+    "urgency": {
+      "type": "score",
+      "score": 0.7571,
+      "confidence": 0.2256,
+      "legend": {
+        "0": "routine: no deadline",
+        "1": "soon: a deadline this week",
+        "2": "urgent: blocked now or losing money"
+      },
+      "probabilities": {
+        "0": 0.4838,
+        "1": 0.2753,
+        "2": 0.2409
+      },
+      "answer_confidence": 0.4838
+    }
+  },
+  "usage": {
+    "input_tokens": 173,
+    "output_tokens": 0
+  },
+  "routing": {
+    "backend": "kai",
+    "checkpoint": "a7",
+    "sha256": "0834a74f2d140642a453373da09e5a128e3d2c8d9e8bb1dcaf86d7210a4ecdfc",
+    "calibration": "cal_e23c27a1f768bff7",
+    "device": "cpu",
+    "reason": "explicit model='kai'"
+  },
+  "state_hash": "sha256:81f6b230bd735725056208cd450a96f020e1fe72e50a0c7b6270abd77a7a98e1"
+}
+```
+
+- **`intent` is settled.** `activate_card` takes effectively all the
+  probability, and `confidence` is at its ceiling of 1.
+- **`urgency` is not.** Kai leans to routine at 0.48, where a person would say
+  soon, and its `confidence` is 0.23. A low confidence is Kai saying it does not
+  know. Code routes such an answer to a rule or a person instead of acting on it:
+  [Confidence](/docs/kai/confidence).
+- **Nothing is generated.** `usage.output_tokens` is 0. The call is billed its
+  `usage.input_tokens` at \$0.021 per million
+  ([pricing](/docs/decisions#pricing)).
+- **The answer says what produced it.** `routing` names the checkpoint, the
+  SHA-256 of its weights and its calibration; `state_hash` is the SHA-256 of the
+  state as Kai read it.
+
+## Next
+
+- [Typed decisions](/docs/kai/concepts): what a decision is and what Kai returns.
+- [Question types](/docs/kai/questions): choice, score and noul, and asking several at once.
+- [Confidence and thresholds](/docs/kai/confidence): when to act on an answer.

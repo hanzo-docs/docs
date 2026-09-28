@@ -1,0 +1,25 @@
+{
+  "title": "Kai",
+  "description": "Typed decisions with calibrated probabilities: questions, patterns, recipes, SDKs and the Jev migration.",
+  "icon": "Target",
+  "pages": [
+    "index",
+    "quickstart",
+    "concepts",
+    "state",
+    "questions",
+    "confidence",
+    "build",
+    "primer",
+    "---Build---",
+    "patterns",
+    "cookbook",
+    "use-cases",
+    "---Use---",
+    "sdk",
+    "agents",
+    "limits",
+    "---Kai-native---",
+    "programs"
+  ]
+}

@@ -58,9 +58,10 @@ curl https://api.hanzo.ai/v1/decisions \
 The state is Spanish and the question English; one model reads both.
 [Decisions](/docs/decisions) documents the three question types, the response
 field by field, the errors, and how the same request reaches Jev. A call is
-billed its `usage.input_tokens` at $0.021 per million; output is free. Coming
-from Jev: [Migrate from Jev](/docs/guides/migrate/jev) changes a base URL, a key
-and a model id.
+billed its `usage.input_tokens` at $0.021 per million; output is free. From
+code: `pip install hanzo-kai` or `npm i @hanzo/kai`; questions, patterns and
+recipes are in [Kai](/docs/kai). Coming from Jev:
+[Migrate from Jev](/docs/guides/migrate/jev).
 
 Every answer's `routing` names the checkpoint that produced it: its revision,
 the SHA-256 of its weights and the hash of its calibration tables.
@@ -214,9 +215,7 @@ equal task success is specified in HIP-1332 §18.1 and has not reported.
 
 ## Not claimed
 
-The text suites above are the only Kai accuracy claimed here, and the live
-endpoint's latency, measured in
-[Migrate from Jev](/docs/guides/migrate/jev#speed), the only speed. No
+The text suites above are the only Kai accuracy claimed here. No latency, no
 multimodal accuracy and no Enso savings are claimed; each lands with the run
 that measures it.
 

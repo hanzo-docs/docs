@@ -1,0 +1,100 @@
+---
+title: Dependent questions
+description: "Ask a question that depends on another's answer: how Kai's runtime schedules dependent questions in process, and how to chain them over /v1/decisions today."
+---
+
+**A dependent question reads another question's answer.** "Which billing
+issue is it?" only makes sense once the team is billing. The parent's answer
+decides which child to ask, and the child can read that answer.
+
+Over `/v1/decisions` the questions of one request are answered independently
+of each other; a request cannot say that one depends on another. Chain calls
+instead, as below. Program requests will arrive on the same endpoint.
+
+## In Kai's runtime
+
+In process, a program's questions name their parents, and a scheduler asks
+them in passes:
+
+| Pass | What it asks |
+|---|---|
+| 1 | every question, nothing known; an answer whose top probability reaches a threshold is frozen and never asked again |
+| a wave per depth | every question whose parents have settled, in one pass, with the parents' answers added to the state as facts |
+| pairwise | for a parent still unsure, each of its likeliest answers set in turn, to see how each moves its children |
+| last | the most probable joint answer over the candidates, projected onto the program's rules ([Repair](/docs/kai/programs/repair)) |
+
+Questions on independent branches go in the same wave, so the number of
+passes follows the depth of the graph, at most depth + 2, not the number of
+questions. The joint slot decoder, which reads known answers directly in one
+decode, has been trained only as a pilot and is not served.
+
+## Chain it today
+
+Ask the parent. If its answer clears your threshold, ask the child question
+that goes with it, and put the parent's answer at the front of the state
+under `facts`, in the shape the scheduler uses: type, question, and the
+chosen option's text.
+
+```python
+def fact(question: Choice, label: str) -> dict:
+    """A parent's answer as the native scheduler states it to a child: type, question, and the chosen option's text."""
+    return {"type": "choice", "question": question.instructions, "answer": f"{label}: {question.criteria[label]}"}
+
+
+with Kai(retry=RetryPolicy(max_retries=10)) as kai:
+    for ticket in TICKETS:
+        state = {"ticket": ticket}
+        team = kai.decide(state=state, questions={"team": TEAM}).choices["team"]
+        print(f"{ticket}\n  team   {team.choice} p={team.answer_confidence}")
+        if team.answer_confidence < THRESHOLD:
+            print("  stop: the team is under its threshold; a person routes this one")
+            continue
+        child = {"issue": ISSUE[team.choice]}
+        told = kai.decide(state={"facts": {"team": fact(TEAM, team.choice)}, **state}, questions=child).choices["issue"]
+        blind = kai.decide(state=state, questions=child).choices["issue"]
+        print(f"  issue  {told.choice} p={told.answer_confidence} with the fact; {blind.choice} p={blind.answer_confidence} without")
+```
+
+The full script, with every child question:
+[`native_dependent.py`](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/native_dependent.py).
+It asks each child twice, with the fact and without it, to show what the fact
+changes. What `api.hanzo.ai` answered on 2026-09-28:
+
+{/* out: python/native_dependent.py */}
+```text
+I was charged twice for the March invoice.
+  team   billing p=0.9999
+  issue  double_charge p=0.9631 with the fact; double_charge p=0.9941 without
+Our card was declined when we tried to renew the annual plan.
+  team   billing p=0.7641
+  issue  declined p=0.6175 with the fact; declined p=0.9881 without
+The export to CSV times out after 30 seconds.
+  team   technical p=0.8308
+  issue  integration p=0.2775 with the fact; bug p=0.5376 without
+Please send a copy of last month's invoice with our VAT number on it.
+  team   billing p=0.9999
+  issue  invoice_copy p=0.9692 with the fact; invoice_copy p=0.9807 without
+New hires can't log in with Okta since this morning.
+  team   billing p=0.7348
+  issue  plan_change p=0.5442 with the fact; plan_change p=0.7204 without
+```
+
+## What the run shows
+
+- **The chain asks only the question that applies.** Four tickets reach the
+  right team and a child question written for it.
+- **A wrong parent sends the child to the wrong question.** The Okta sign-in
+  ticket goes to billing, above the 0.5 threshold, so the chain asks it a
+  billing question and gets `plan_change`. The threshold did not catch it; set
+  it from cases whose answer you know, not by guess.
+- **The fact did not help here.** Each child chose the same label with and
+  without it, except the CSV ticket, whose two answers were both wrong (it
+  times out, so `slow`), and the fact lowered the child's probability every
+  time. Keep the fact only if it helps on your own cases; the structure, one
+  child per parent answer, is what the chain buys.
+
+## Next
+
+- [Repair](/docs/kai/programs/repair): answers that break a rule between them.
+- [Hierarchy](/docs/kai/cookbook/hierarchy): a label tree, keeping more than one branch.
+- [Confidence](/docs/kai/confidence): setting the threshold a parent must clear.

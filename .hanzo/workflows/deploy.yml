@@ -112,6 +112,10 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      # Every Jev asset in parity/jev.yaml must still name a Kai page that exists.
+      - name: jev parity
+        run: pnpm exec vitest run --project docs apps/docs/scripts/parity.test.ts
+
       # The workspace packages first, on their own, so a failure here is not
       # read as a failure of the site. `docs^...` is turbo's word for "what docs
       # depends on, not docs".

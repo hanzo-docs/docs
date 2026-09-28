@@ -1,0 +1,554 @@
+---
+title: Python SDK
+description: "Install hanzo-kai, ask Kai typed questions from Python, read typed answers, and handle retries, timeouts and errors, or port a TypeSafe program with one import."
+---
+
+**`hanzo-kai` sends typed questions to [`POST /v1/decisions`](/docs/decisions)
+and returns typed answers, with retries, timeouts and one error class per
+status.** The outputs on this page are what `api.hanzo.ai` returned on
+2026-09-28.
+
+## Install
+
+```bash
+pip install hanzo-kai    # or: uv add hanzo-kai
+```
+
+Python 3.12 or newer. The package depends on `httpx` and `pydantic` 2.10 or
+newer, and nothing else. It reads a secret key (`sk-`) from `HANZO_API_KEY`;
+[Authentication](/docs/api-keys) covers keys.
+
+## A decision
+
+```python
+from hanzo_kai import Choice, Kai, Noul, Score
+
+with Kai() as kai:
+    d = kai.decide(
+        state={"ticket": "I was charged twice for my March invoice. Please refund the duplicate.", "plan": "pro"},
+        questions={
+            "team": Choice(
+                instructions="Which team should handle `ticket`?",
+                criteria={
+                    "billing": "charges, invoices, refunds",
+                    "tech": "bugs and outages",
+                    "sales": "plans and upgrades",
+                },
+            ),
+            "refund": Noul(
+                instructions="The customer asks for money back.",
+                criteria={"true": "the ticket asks for a refund", "false": "the ticket asks for something else"},
+            ),
+            "urgency": Score(
+                instructions="How soon does `ticket` need an answer?",
+                criteria=["this month", "this week", "today"],
+            ),
+        },
+    )
+
+team, refund, urgency = d.choices["team"], d.nouls["refund"], d.scores["urgency"]
+print(team.choice, team.confidence, team.probabilities)
+print(refund.noul, refund.answer_confidence)
+print(urgency.score, urgency.confidence, urgency.probabilities, urgency.legend[2])
+print(d.model, d.usage.input_tokens, d.usage.output_tokens, d.routing["checkpoint"])
+print(d.raw_http_response.status_code, d.request_id)
+```
+
+{/* out: python/sdk_decide.py */}
+```text
+billing 0.9993 {'billing': 0.9996, 'tech': 0.0004, 'sales': 0.0}
+0.537 0.537
+1.2004 0.1888 {0: 0.1702, 1: 0.4592, 2: 0.3706} today
+kai 182 0 a7
+200 4f15491a3b31f2e9ed5822501fe2a63f
+```
+
+[sdk_decide.py](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/sdk_decide.py)
+
+`d.answers` holds every answer by question name; `d.choices`, `d.nouls` and
+`d.scores` hold the same answers split by type. The noul is the weak answer
+here: the ticket asks for a refund outright, and `refund` leans yes at only
+0.537. That is Kai's measured weak spot on yes/no questions
+([Limits](/docs/kai/limits#yes-or-no-questions)); asked as a choice, the same
+question is decisive, as the [next example](#questions) shows.
+
+## Clients
+
+`Kai` is synchronous and `AsyncKai` runs on asyncio. They take the same
+arguments, and each closes its HTTP connections on `close()` (`aclose()` for
+`AsyncKai`) or at the end of a `with` (`async with`) block.
+
+| Argument | Default | Environment |
+|---|---|---|
+| `api_key` | none: required | `HANZO_API_KEY` |
+| `model` | `kai` | `KAI_MODEL` |
+| `base_url` | `https://api.hanzo.ai` | `HANZO_BASE_URL` |
+| `timeout` | 60 seconds per attempt | |
+| `retry` | `RetryPolicy()`, see [Retries](#retries) | |
+| `headers` | none | |
+| `transport` | httpx's | |
+| `http_client` | a new `httpx.Client` or `httpx.AsyncClient` | |
+
+An argument wins over its variable, and an empty variable counts as unset.
+`headers` go on every request but cannot replace `Authorization`, `Accept`,
+`User-Agent` or `X-Kai-Runtime`. Pass `transport` (such as
+`httpx.MockTransport` in tests) or `http_client` (your own configured client,
+whose timeout becomes the default), not both. Closing the SDK client closes an
+`http_client` you passed in too.
+
+Construction fails before any request: `KaiError` for a missing key, a key with
+whitespace or characters outside printable ASCII, a base URL that is not http or
+https, or a timeout that is not a positive number of seconds; `ValueError` for
+both `transport` and `http_client`.
+
+```python
+import asyncio
+
+from hanzo_kai import AsyncKai, Choice
+
+TICKETS = [
+    "I was charged twice for my March invoice.",
+    "The dashboard shows a blank page since this morning.",
+    "Can I move my team to the annual plan?",
+]
+TEAM = Choice(
+    instructions="Which team should handle `ticket`?",
+    criteria={"billing": "charges, invoices, refunds", "tech": "bugs and outages", "sales": "plans and upgrades"},
+)
+
+
+async def main() -> None:
+    async with AsyncKai() as kai:
+        decisions = await asyncio.gather(*(kai.decide({"ticket": ticket}, {"team": TEAM}) for ticket in TICKETS))
+    for ticket, d in zip(TICKETS, decisions, strict=True):
+        print(d.choices["team"].choice, d.choices["team"].confidence, ticket)
+
+
+asyncio.run(main())
+```
+
+{/* out: python/sdk_async.py */}
+```text
+billing 0.9988 I was charged twice for my March invoice.
+tech 0.7128 The dashboard shows a blank page since this morning.
+sales 0.6122 Can I move my team to the annual plan?
+```
+
+[sdk_async.py](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/sdk_async.py)
+
+## `decide`
+
+```python
+kai.decide(state, questions, *, model=None, retry=None, timeout=None,
+           extra_headers=None, extra_body=None, response_model=None)
+```
+
+| Argument | What it is |
+|---|---|
+| `state` | what the questions are about: text, a JSON object or an array; a pydantic model is sent as its JSON |
+| `questions` | at least one question, keyed by the name its answer comes back under |
+| `model`, `retry`, `timeout` | this call's model, retry policy and per-attempt timeout; each defaults to the client's |
+| `extra_headers` | headers for this call, over the client's |
+| `extra_body` | top-level body fields merged over `model`, `state` and `questions`, such as `session_id` and `user`; a key given here replaces the same key |
+| `response_model` | a pydantic model to read the body into, instead of `Decision` |
+
+The request body is `{"model", "state", "questions"}` with `extra_body` merged
+over it. The SDK checks only what the server cannot see, and raises `KaiError`
+before sending: no questions, a score whose `criteria` is not a list, a choice
+whose `criteria` is neither a mapping nor a list, or a body that is not JSON
+(NaN, a set, bytes). Every other rule is the server's, and its error says which
+one a request broke.
+
+A subclass of `Decision` types answers by name: a field named after a question
+holds that question's answer, and `answers` still holds all of them.
+
+```python
+from hanzo_kai import Choice, ChoiceAnswer, Decision, Kai, Noul, NoulAnswer
+
+
+class Triage(Decision):
+    team: ChoiceAnswer
+    refund: NoulAnswer
+
+
+with Kai() as kai:
+    t = kai.decide(
+        state={"ticket": "I was charged twice for my March invoice. Please refund the duplicate."},
+        questions={
+            "team": Choice(
+                instructions="Which team should handle `ticket`?",
+                criteria={"billing": "charges, invoices, refunds", "tech": "bugs and outages"},
+            ),
+            "refund": Noul(
+                instructions="The customer asks for money back.",
+                criteria={"true": "the ticket asks for a refund", "false": "the ticket asks for something else"},
+            ),
+        },
+        response_model=Triage,
+        extra_body={"session_id": "ticket-4411", "user": "agent-7"},
+    )
+
+print(type(t).__name__, t.team.choice, t.refund.noul)
+print(t.team == t.answers["team"], sorted(t.answers))
+```
+
+{/* out: python/sdk_typed.py */}
+```text
+Triage billing 0.5895
+True ['refund', 'team']
+```
+
+[sdk_typed.py](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/sdk_typed.py)
+
+Any other pydantic model reads the body as sent. A body that does not fit the
+model raises `APIResponseValidationError`, whose `field_path` names the first
+field that does not.
+
+## Questions
+
+| Builder | `criteria` | Answer |
+|---|---|---|
+| `Choice(instructions=, criteria=)` | `{label: description}`, a description may be `None`; or a list of labels | `ChoiceAnswer` |
+| `Noul(instructions=, criteria=, labels=)` | `{"true": ..., "false": ...}`; either side may be left out, and so may `criteria` | `NoulAnswer` |
+| `Score(instructions=, criteria=)` | a list of levels, level 0 first, none `None` | `ScoreAnswer` |
+
+`instructions`, descriptions and levels take text, a JSON object or an array.
+A question can also be a dict in the wire shape, `{"type": "choice",
+"instructions": ..., "criteria": ...}`, and the SDK sends it as given. The
+builders are pydantic models: an unknown field, a score's `criteria` given as
+text, or a noul side other than `true` and `false` fails when the question is
+built.
+
+`labels` is a `/v1/decisions` field for a noul: the words its two sides go by in
+the text Kai reads, `{"true": "refund", "false": "no refund"}`; the answer is
+still P(true).
+
+```python
+from hanzo_kai import Kai, Noul
+
+with Kai() as kai:
+    d = kai.decide(
+        state="Order 1182 arrived with a cracked screen. I want my money back, not a replacement.",
+        questions={
+            "refund": Noul(
+                instructions="The customer wants a refund.",
+                criteria={
+                    "true": "they ask for their money back",
+                    "false": "they ask for a repair, a replacement or nothing",
+                },
+                labels={"true": "refund", "false": "no refund"},
+            ),
+            "remedy": {
+                "type": "choice",
+                "instructions": "Which remedy does the customer ask for?",
+                "criteria": ["refund", "replacement", "repair"],
+            },
+            "mood": {
+                "type": "score",
+                "instructions": "How upset is the customer?",
+                "criteria": ["calm", "annoyed", "angry"],
+            },
+        },
+    )
+
+print(d.nouls["refund"].noul)
+print(d.choices["remedy"].choice, d.choices["remedy"].probabilities)
+print(d.scores["mood"].score, d.scores["mood"].probabilities)
+```
+
+{/* out: python/sdk_questions.py */}
+```text
+0.5219
+refund {'refund': 0.9728, 'replacement': 0.0267, 'repair': 0.0004}
+1.1624 {0: 0.2574, 1: 0.3228, 2: 0.4198}
+```
+
+[sdk_questions.py](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/sdk_questions.py)
+
+The noul and the choice ask the same thing of the same message. The noul sits
+near even at 0.5219; the choice puts 0.9728 on `refund`. When a yes or no
+drives an action, ask it as a choice.
+
+The service's request rules today and under the frozen contract; the SDK sends
+either as given:
+
+| Rule | Today | Under the contract |
+|---|---|---|
+| `instructions` | required: a question without it is refused with `400` | optional |
+| questions per request | at most 64 | 1 to 100 |
+| a choice with 1 label | answered | refused with `422` |
+| labels and levels on `/v1/decisions` | no cap: 256 labels and 11 levels were answered | no cap; the request's token budget bounds them |
+| a malformed question or a null `state` | `400` | `422` |
+
+## Answers
+
+A `Decision` has these fields:
+
+| Field | What it holds |
+|---|---|
+| `id` | `dec_` and 32 hex digits |
+| `model` | the model as the request named it |
+| `provider` | who served it: `Hanzo` |
+| `answers`, `choices`, `nouls`, `scores` | every answer by question name, then the same split by type |
+| `usage.input_tokens`, `usage.output_tokens` | billed input tokens, and output tokens: always 0 |
+| `routing` | the checkpoint, the SHA-256 of its weights, its calibration and the device |
+| `state_hash` | `sha256:` of the state as the server read it |
+| `raw_http_response`, `request_id` | the `httpx.Response`, and its `x-request-id` |
+
+| Answer | Fields |
+|---|---|
+| `ChoiceAnswer` | `choice`, the most probable label; `probabilities`, one per label; `confidence` = (n·p_max − 1)/(n − 1); `answer_confidence` = p_max |
+| `ScoreAnswer` | `score` = Σ i·pᵢ, the expected level; `probabilities` and `legend` keyed by int level, lowest first; `confidence` as for a choice; `answer_confidence` = p_max |
+| `NoulAnswer` | `noul` = P(true); `answer_confidence` = max(p, 1 − p); `confidence` = abs(2p − 1) under the contract |
+
+Three answer fields change with the contract:
+
+- **Probabilities are rounded to four decimals today**, as in the outputs above.
+  Under the contract they are unrounded and every distribution sums to 1 within
+  1e-6.
+- **A noul's `confidence` is `None` today.** Under the contract
+  `/v1/decisions` sends abs(2p − 1).
+- **`usage.input_tokens` counts the state with each question today:** one
+  question over a 400-word state billed 431 tokens, and five equal questions
+  billed 2,155
+  ([fixture](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/tests/conformance/usage.json)).
+  Under the contract the state and each question are counted once.
+
+An answer type newer than the SDK is skipped with a warning on the `hanzo_kai`
+logger, and the raw body keeps it. Fields the SDK does not model are kept, in
+`model_extra` and as attributes.
+
+## Models
+
+```python
+from hanzo_kai import Kai
+
+with Kai() as kai:
+    for model in kai.models.list():
+        print(model.id, model.owned_by, model.pricing.input, model.pricing.output)
+```
+
+{/* out: python/sdk_models.py */}
+```text
+hanzo/kai hanzo 0.021 0.0
+kai hanzo 0.021 0.0
+```
+
+[sdk_models.py](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/sdk_models.py)
+
+`models.list()` reads `GET /v1/models` and keeps the models whose outputs
+include decisions. `pricing` is in US dollars per million tokens.
+
+## Retries
+
+```python
+from hanzo_kai import Kai, RetryPolicy
+
+kai = Kai(retry=RetryPolicy(max_retries=5, http_statuses={429, 503}))
+```
+
+A policy on the client applies to every call; `retry=` on a call replaces it for
+that call, and `RetryPolicy(max_retries=0)` turns retrying off.
+
+| Field | Default | Meaning |
+|---|---|---|
+| `max_retries` | 2 | retries after the first attempt |
+| `backoff_initial`, `backoff_max` | 0.5 s, 8 s | the first wait, doubled for each retry up to the most |
+| `backoff_jitter` | 0.25 | share of each wait taken off at random |
+| `http_statuses` | 408, 409, 429, 500 to 599 | statuses retried; 529 is among them |
+| `respect_retry_after` | `True` | wait what `Retry-After` or `retry-after-ms` asks for, up to 60 s |
+| `api_connection_error`, `api_timeout_error` | `True`, `True` | retry a failed connection, and an attempt that timed out |
+| `exceptions`, `predicate` | none | more exception types to retry, and a function of the error that returns `True` to retry it |
+| `timeout` | `None` | seconds a call may spend across attempts and waits; `None` sets no limit |
+
+Every retry carries `X-Kai-Retry-Count`. When retries run out, the last error
+is raised.
+
+## Timeouts
+
+`timeout` bounds each attempt: seconds, or an `httpx.Timeout` for separate
+connect, read, write and pool limits. It defaults to 60 seconds, or to the
+timeout of an `http_client` you pass. `timeout=` on a call replaces it for that
+call. An attempt past it raises `APITimeoutError`, a `TimeoutError`, once
+retries run out.
+
+## Errors
+
+| Status | Class | When |
+|---|---|---|
+| 400 | `BadRequestError` | malformed JSON or an unknown model; today also a malformed question |
+| 401 | `AuthenticationError` | the key is missing, unknown or revoked |
+| 402 | `PaymentRequiredError` | the org has no plan or no balance |
+| 403 | `PermissionDeniedError` | the key may not call, such as a publishable `pk-` key |
+| 404 | `NotFoundError` | nothing is served at the path |
+| 422 | `UnprocessableEntityError` | under the contract: a malformed question, or a state that does not fit, with `code` `state_too_long` |
+| 429 | `RateLimitError` | rate limited or queue full; `retry_after` holds the wait in seconds |
+| 5xx | `InternalServerError` | 502 upstream failed, 503 model not served, 529 overloaded |
+| any other | `APIError` | |
+| no response | `APIConnectionError` | the connection failed; `APITimeoutError` when an attempt timed out |
+| success that does not fit | `APIResponseValidationError` | `field_path` names the field |
+| before sending | `KaiError` | a check in [`decide`](#decide) or in construction failed |
+
+Every status error is an `APIError` and carries `status`, `code`, `message`
+(the server's sentence), `request_id`, `body`, `headers`, `retry_after` and
+`endpoint`. `KaiError` is the base of every class here. `APIConnectionError` is
+not an `APIError`: no response came back.
+
+```python
+from hanzo_kai import AuthenticationError, BadRequestError, Kai, Noul
+
+QUESTIONS = {
+    "refund": Noul(
+        instructions="The customer asks for money back.",
+        criteria={"true": "the ticket asks for a refund", "false": "the ticket asks for something else"},
+    )
+}
+
+with Kai() as kai:
+    try:
+        kai.decide("Please refund the duplicate charge.", QUESTIONS, model="no-such-model")
+    except BadRequestError as error:
+        print(type(error).__name__, error.status, error.code, error.message)
+        print(error.request_id is not None, error.body)
+
+with Kai(api_key="sk-no-such-key") as kai:
+    try:
+        kai.decide("Please refund the duplicate charge.", QUESTIONS)
+    except AuthenticationError as error:
+        print(type(error).__name__, error.status, error.message)
+```
+
+{/* out: python/sdk_errors.py */}
+```text
+BadRequestError 400 400 unknown model "no-such-model"; use one of hanzo/kai, kai, typesafe/jev-1.13, ~typesafe/jev-latest
+True {'error': {'code': 400, 'message': 'unknown model "no-such-model"; use one of hanzo/kai, kai, typesafe/jev-1.13, ~typesafe/jev-latest'}}
+AuthenticationError 401 API key validation failed: API key sk-no-suc… does not resolve — mint a new one at https://console.hanzo.ai/api-keys
+```
+
+[sdk_errors.py](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/sdk_errors.py)
+
+A state longer than 50,000 characters is refused with `400` today. Under the
+contract a state that does not fit what Kai reads, with any one question, is
+refused with `422` and `code` `state_too_long`, naming the tokens it needs and
+the limit ([Limits](/docs/kai/limits#state-that-does-not-fit)).
+
+## Logging
+
+The SDK logs to the `hanzo_kai` logger. `KAI_LOG_LEVEL` sets its level:
+`debug`, `info`, `warn` (the default), `error` or `off`.
+
+| Level | What it logs |
+|---|---|
+| `info` | one line per attempt: method, URL, status and request id; one line per retry, with its wait and the error |
+| `debug` | each request's and response's headers and body |
+| `warning` | an answer type the SDK skipped |
+
+`Authorization`, `Cookie`, `Set-Cookie`, `X-Api-Key` and any header whose name
+contains `token` or `secret` are logged as `<redacted>`. Bodies are logged as
+sent, state included, so turn `debug` on only where the logs may hold your data.
+
+```python
+import logging
+
+logging.basicConfig(format="%(name)s %(levelname)s %(message)s")
+logging.getLogger("hanzo_kai").setLevel(logging.INFO)
+```
+
+## Raw responses and request ids
+
+`d.raw_http_response` is the `httpx.Response` a decision was read from: status,
+headers and body bytes. `d.request_id` and `error.request_id` read its
+`x-request-id`; quote it when you report a problem. The first example prints
+both.
+
+In tests, pass `transport=httpx.MockTransport(handler)` and nothing leaves the
+process:
+
+```python
+import httpx
+
+from hanzo_kai import Kai, Noul
+
+
+def handler(request: httpx.Request) -> httpx.Response:
+    answer = {"type": "noul", "noul": 0.9, "answer_confidence": 0.9}
+    body = {"id": "dec_test", "model": "kai", "answers": {"refund": answer}, "usage": {"input_tokens": 12, "output_tokens": 0}}
+    return httpx.Response(200, json=body)
+
+
+with Kai("sk-test", transport=httpx.MockTransport(handler)) as kai:
+    d = kai.decide("Please refund me.", {"refund": Noul(instructions="The customer asks for money back.")})
+assert d.nouls["refund"].noul == 0.9
+```
+
+## Jev compatibility: `hanzo_kai.jev`
+
+`hanzo_kai.jev` keeps the call shapes of TypeSafe's SDK on Kai's Jev-compatible
+path, `POST /v1/systemone`. A program written for TypeSafe's SDK changes one
+import line:
+
+```python
+from hanzo_kai.jev import Choice, Noul, Score, Client as TypeSafeClient
+```
+
+`/v1/systemone` is part of the frozen contract and is not served yet: today it
+answers `404`, as the run below shows. Until it is, call `Kai.decide`, or keep
+TypeSafe's SDK and point it at Hanzo ([Migrate from Jev](/docs/guides/migrate/jev)).
+
+| | `hanzo_kai` | `hanzo_kai.jev` |
+|---|---|---|
+| Path | `/v1/decisions` | `/v1/systemone` |
+| Call | `Kai.decide`, `AsyncKai.decide` | `Client.system_one`, `AsyncClient.system_one`, the same arguments |
+| Result | `Decision`: answers, usage, `id`, `routing`, `state_hash` | `Response`: `model`, `answers` and `usage`, Jev's shape |
+| Answers | Kai's fields, `answer_confidence` included | Jev's: a noul is `noul` alone; a score's `confidence` is Jev's formula |
+| Models | `kai` and its aliases | `kai` only; every Jev id, such as `jev-latest`, is refused with `400` `Unknown model: <id>` |
+| Choice and score caps | none | 255 labels and 10 levels, Jev's limits |
+| Errors | `{"error": {"code", "message"}}` | FastAPI's `{"detail": ...}`; the same classes and the server's message |
+| `models.list()` | `list[Model]`, from `data` | `ListModelsResponse`, from `models` |
+
+No TypeSafe brand name is exported. Exceptions take the names in
+[Errors](#errors), so a port renames `TypeSafeRateLimitError` to
+`RateLimitError`, `TypeSafeError` to `KaiError`, and so on. Settings come from `HANZO_API_KEY` and `HANZO_BASE_URL`, and
+the model defaults to `kai`.
+
+```python
+from hanzo_kai.jev import APIError, Choice, Noul, Score, Client as TypeSafeClient
+
+QUESTIONS = {
+    "team": Choice(instructions="Which team should handle this?", criteria={"billing": None, "tech": None}),
+    "refund": Noul(
+        instructions="The customer asks for money back.",
+        criteria={"true": "the ticket asks for a refund", "false": "the ticket asks for something else"},
+    ),
+    "urgency": Score(instructions="How soon does it need an answer?", criteria=["this month", "this week", "today"]),
+}
+
+with TypeSafeClient() as client:
+    for model in ("kai", "jev-latest"):
+        try:
+            result = client.system_one("I was charged twice. Please refund the duplicate.", QUESTIONS, model=model)
+            print(model, "->", result.model, result.choices["team"].choice, result.nouls["refund"].noul, result.usage)
+        except APIError as error:
+            print(model, "->", type(error).__name__, error.status, error.message)
+    print(client.models.list())
+```
+
+{/* out: python/sdk_jev.py */}
+```text
+kai -> NotFoundError 404 not found
+jev-latest -> NotFoundError 404 not found
+models=()
+```
+
+[sdk_jev.py](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/sdk_jev.py)
+
+Today both calls meet the `404`, and the `models` key of `GET /v1/models` is
+present and empty. Under the contract the first call answers in Jev's shape,
+the second is refused with `400` `Unknown model: jev-latest`, and the list holds
+`kai`.
+
+## Next
+
+- [Question types](/docs/kai/questions): choice, score and noul, and when to use each.
+- [Decisions](/docs/decisions): the HTTP request, response and errors.
+- [Migrate from Jev](/docs/guides/migrate/jev): both routes, and TypeSafe's SDK kept as is.

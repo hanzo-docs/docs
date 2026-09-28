@@ -1,0 +1,135 @@
+---
+title: Home assistant
+description: Map a spoken request to one command from the house's closed set, hold risky commands for a spoken yes, and ask again when Kai is unsure.
+---
+
+**A request becomes one command from the house's own list, or one of two ways
+out: several commands at once, or chat. Code holds unlocking, opening,
+disarming and heating behind a higher bar and a spoken yes. On nine requests
+Kai named the right command five times, mostly under the bar: three plans came
+out as expected, and nothing wrong would have run.**
+
+## How it works
+
+- One `choice` over every command the house accepts, written
+  `device.action`, plus `several` and `chat`. The labels are the valid
+  commands, so no answer can pair a device with an action it lacks.
+- Code owns the rules: act at confidence 0.5 or more; a status command
+  answers and changes nothing; four risky commands need 0.9 and a spoken yes
+  before the house controller acts.
+- Under the bar, the house asks again. It does not guess.
+
+## The code
+
+The commands:
+
+```ts
+const COMMANDS = {
+  "lights.on": "turn the lights on",
+  "lights.off": "turn the lights off",
+  "lights.up": "make the lights brighter",
+  "lights.down": "dim the lights",
+  "lights.status": "say whether the lights are on",
+  "thermostat.up": "make it warmer",
+  "thermostat.down": "make it cooler",
+  "thermostat.status": "say what the heating is set to",
+  "front_door.lock": "lock the front door",
+  "front_door.unlock": "unlock the front door",
+  "front_door.status": "say whether the front door is locked",
+  "garage.open": "open the garage door",
+  "garage.close": "close the garage door",
+  "garage.status": "say whether the garage door is open",
+  "oven.on": "turn the oven on or preheat it",
+  "oven.off": "turn the oven off",
+  "oven.status": "say whether the oven is on",
+  "alarm.arm": "turn the security alarm on",
+  "alarm.disarm": "turn the security alarm off",
+  "alarm.status": "say whether the alarm is on",
+  "speaker.on": "play music",
+  "speaker.off": "stop the music",
+  "speaker.up": "turn the music up",
+  "speaker.down": "turn the music down",
+  several: "two or more of these commands in one request",
+  chat: "small talk, or something the house cannot do",
+} as const;
+type Command = keyof typeof COMMANDS;
+```
+
+The house's rules:
+
+```ts
+// The house's rules, in code: which commands wait for a spoken yes, and how sure Kai must be.
+const RISKY = new Set<Command>(["front_door.unlock", "garage.open", "alarm.disarm", "oven.on"]);
+const SURE = 0.5;
+const RISKY_SURE = 0.9;
+
+function plan(a: { choice: Command; confidence: number }): string {
+  if (a.confidence < SURE) return "ask again";
+  if (a.choice === "several") return "one at a time";
+  if (a.choice === "chat") return "chat";
+  if (a.choice.endsWith(".status")) return `answer ${a.choice}`;
+  if (RISKY.has(a.choice)) return a.confidence >= RISKY_SURE ? `confirm ${a.choice}` : "ask again";
+  return `do ${a.choice}`;
+}
+```
+
+The full script, with the nine requests and the plan each should get, is
+[`home.ts`](https://github.com/hanzo-js/kai/blob/main/examples/home.ts).
+
+```bash
+npm i @hanzo/kai
+export HANZO_API_KEY=sk-...
+npx tsx home.ts
+```
+
+## The run
+
+What `api.hanzo.ai` answered on 2026-09-28:
+
+{/* out: ts/home.ts */}
+```text
+heard                                     command            p     conf  plan
+turn off the lights in the living room    garage.close       0.50  0.48  ask again  (want: do lights.off)
+unlock the front door                     oven.status        0.32  0.29  ask again  (want: confirm front_door.unlock)
+is the garage open                        garage.status      0.40  0.37  ask again  (want: answer garage.status)
+make it a bit warmer in here              thermostat.up      0.81  0.80  do thermostat.up
+open the garage and turn the alarm off    alarm.arm          0.45  0.43  ask again  (want: one at a time)
+preheat the oven to four hundred          oven.on            0.49  0.47  ask again  (want: confirm oven.on)
+arm the alarm we're heading out           alarm.arm          0.45  0.43  ask again  (want: do alarm.arm)
+tell me a joke                            chat               0.99  0.99  chat
+uh can you do the the door thing          garage.status      0.43  0.41  ask again
+3 of 9 plans as expected. Nothing ran: "do" and "confirm" go to the house controller.
+```
+
+## What the numbers say
+
+- **The bar did the work.** Three commands were wrong, and all three were
+  under it. "turn off the lights in the living room" came back as
+  `garage.close` at confidence 0.48, 0.02 under the bar: at 0.45 the house
+  would have closed the garage.
+- **Right answers came back unsure.** The garage question, the oven and the
+  alarm were right at confidence 0.37 to 0.47, so the house asked again. Only
+  "make it a bit warmer" and the joke cleared the bar.
+- **Unlocking was never reached.** "unlock the front door" came back as
+  `oven.status` at 0.29, so the spoken yes was never asked for.
+- **No suite measured this label set, and it reads that way.**
+  [Limits](/docs/kai/limits#label-sets-no-suite-measured) shows the same on
+  other new label sets.
+
+## Adapt it
+
+- Put the house's own commands in `COMMANDS`, one label for each thing the
+  controller can do, and keep `several` and `chat`.
+- Log what was heard, Kai's answer and what the person did next. Set the bar
+  per command from that log once it holds a few hundred requests; until then
+  keep it high.
+- Keep risky commands behind a spoken yes whatever the confidence. A higher
+  bar is not a confirmation.
+- When a request asks for several things, ask the person to say one at a
+  time, or split it with a Zen model and decide each part on its own.
+
+## Next
+
+- [Speculative fan-out](/docs/kai/patterns/fanout)
+- [Confidence gates](/docs/kai/patterns/gating)
+- [Tool and model router](/docs/kai/cookbook/router)
