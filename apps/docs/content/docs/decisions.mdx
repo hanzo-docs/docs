@@ -135,8 +135,7 @@ a recorded answer.
   "usage": {"input_tokens": 212, "output_tokens": 0},
   "routing": {
     "backend": "kai",
-    "checkpoint": "hanzoai/kai",
-    "revision": "<commit of the checkpoint>",
+    "checkpoint": "a7",
     "sha256": "<SHA-256 of the weights>",
     "calibration": "cal_<16 hex digits>",
     "device": "cpu",
@@ -161,7 +160,7 @@ Hanzo adds four fields, which a Decisions client ignores:
 | Field | Meaning |
 |---|---|
 | `answer_confidence` | on each answer: `p_max`, the calibrated probability of the reported answer |
-| `routing` | the backend (`kai` or `openrouter`), the checkpoint, its revision, the SHA-256 of its weights, the hash of the calibration tables, the device, and why the request went there |
+| `routing` | the backend (`kai` or `openrouter`), the checkpoint (a Kai training stage, e.g. `a7`), the SHA-256 of its weights, the hash of the calibration tables, the device, and why the request went there |
 | `state_hash` | SHA-256 of the state as the model read it, so two decisions over one input are provably over one input |
 | `latency_ms` | wall time of the decision, in milliseconds |
 
@@ -182,10 +181,34 @@ must come back answered, with its own type and, for a `choice`, a label the
 question has; a choice's `probabilities` are put back in label order. An answer
 that fails the check is a `502`.
 
+## Pricing
+
+A decision is billed to the org of the key that asked, once per answered call,
+and each call is a row in the org's usage (`GET /v1/billing/usage`, model
+`kai`).
+
+| `model` | Price |
+|---|---|
+| `kai` | $0.021 per million input tokens (`usage.input_tokens`); output is free |
+| `typesafe/jev-1.13`, `~typesafe/jev-latest` | $0.03 per call |
+
+Kai's rate is its row in the model price list (`GET https://pricing.hanzo.ai/v1/pricing/models`),
+the same list every model is billed from. A refused or failed call is not billed.
+
 ## Errors
 
-Every error is `{"error": {"code": <status>, "message": "…"}}`. The message
-names what to fix.
+The gateway every model endpoint shares answers first:
+
+| Status | When |
+|---|---|
+| `401` | no `Authorization: Bearer <key>`, or a key that does not resolve |
+| `402` | the org's balance cannot cover the call |
+| `429` | a plan's usage window is full; the message says when it resets |
+
+Their bodies are the gateway's (`{"status": "error", "msg": "…"}` for 401 and
+402, `{"error": {"message", "type", "code"}}` for 429); the status is the
+contract. Past the gateway, every error is `{"error": {"code": <status>,
+"message": "…"}}`, and the message names what to fix.
 
 | Status | When | Example `message` |
 |---|---|---|

@@ -85,7 +85,7 @@ questions to billing. Suites, deduplication and scores:
 | Part | Status |
 |---|---|
 | **Kai**, the model (`hanzoai/kai`, one checkpoint line, a revision per training stage) | stage a5 measured above; weights not published |
-| **Endpoint**: `POST https://api.hanzo.ai/v1/decisions`, serving `kai` and Jev | live: `kai` is stage a5 (calibration `cal_47711d44267fdbdd`), served from Hanzo's own infrastructure; see [Decisions](/docs/decisions) |
+| **Endpoint**: `POST https://api.hanzo.ai/v1/decisions`, serving `kai` and Jev | live: `kai` is stage a7 (calibration `cal_e23c27a1f768bff7`), served from Hanzo's own infrastructure at $0.021 per million input tokens; see [Decisions](/docs/decisions) |
 | **Decision Programs, Packages, policy gates** | landed, as a library |
 | **Programs on the wire** (`"program": "agent.preflight@1"`) | specified in HIP-1332 §17; not served |
 | **Kai inside Enso** | in progress; the agent programs are written, each set to `shadow` or `advisory`, and not yet wired into Enso |
