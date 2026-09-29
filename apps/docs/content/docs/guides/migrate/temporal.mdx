@@ -87,7 +87,7 @@ address. Creating does not arm the flow's trigger, which is what
 | Memo attached to an execution | `metadata` on `PATCH /v1/auto/flows/{id}` — opaque JSON, stored and returned verbatim |
 | Cloud metrics, and the history you read as telemetry | `/v1/o11y` (381) |
 | Audit log | `GET /v1/audit` — your own org's trail; a resume is recorded as `automations.run.resume` |
-| Web UI | console.hanzo.ai — where the step tree is built |
+| Web UI | platform.hanzo.ai — where the step tree is built |
 | Cloud users, service accounts, API keys | `/v1/iam` (159) — `/v1/iam/service-accounts`, `/v1/iam/keys` |
 | Codec server, payloads sealed before they are stored | `/v1/kms` (5) |
 | An activity whose whole job is telling another system | `/v1/webhook` (8), signed, with a per-attempt log at `.../deliveries`; `/v1/notify` (4) for email or SMS |

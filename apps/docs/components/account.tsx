@@ -9,7 +9,7 @@ import { Action } from '@/components/action';
 import { currentUser, iam, type DocsUser } from '@/lib/iam';
 import { muted } from '@/lib/ink';
 
-const CONSOLE = 'https://console.hanzo.ai';
+const CONSOLE = 'https://platform.hanzo.ai';
 
 /**
  * Who is signed in, asked once per page load and shared by the rail, the bar and

@@ -113,7 +113,7 @@ or bring a deleted account back.
 
 | WorkOS | Hanzo |
 |---|---|
-| Admin Portal (`POST /portal/generate_link`) | console.hanzo.ai — their own admin, in their own org |
+| Admin Portal (`POST /portal/generate_link`) | platform.hanzo.ai — their own admin, in their own org |
 | AuthKit hosted login | [hanzo.id](https://hanzo.id), branded by domain |
 | Magic Auth | `POST /v1/iam/send-verification-code`, then `POST /v1/iam/login` with the code |
 | MFA enrolment | `/v1/iam/mfa/setup/initiate`, then `/v1/iam/mfa/setup/enable` |
@@ -220,7 +220,7 @@ answer is synchronous: there is nothing to assemble.
 `sso`, `dsync`, `audit_logs` — good for five minutes, and you email it to somebody
 who has no account with you. Here the customer's admin has an account: invite them
 with `POST /v1/iam/invitations`, they sign in at hanzo.id and administer their own
-org in console.hanzo.ai. Better every day after the first, worse on the first.
+org in platform.hanzo.ai. Better every day after the first, worse on the first.
 
 **No SCIM Groups.** The directory provisions people and only people:
 `/v1/iam/scim/v2/Users` with nothing beside it. WorkOS's `directory_group` and its

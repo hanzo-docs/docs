@@ -291,5 +291,5 @@ If a check fails, diagnose and fix it before reporting completion.
 - Hanzo MCP source: \`https://github.com/hanzoai/mcp\`
 - Hanzo Dev installation: \`https://docs.hanzo.ai/docs/dev/getting-started/install\`
 - Hanzo Dev MCP commands: \`https://docs.hanzo.ai/docs/dev/reference/cli\`
-- Hanzo Console: \`https://console.hanzo.ai\`
+- Hanzo Console: \`https://platform.hanzo.ai\`
 `;

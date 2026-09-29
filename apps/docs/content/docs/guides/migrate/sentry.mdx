@@ -196,7 +196,7 @@ widget at.
 
 **Replay ingests through the API and plays back in the console.** `POST
 /v1/event/replay` takes the recording — 512 KiB per batch, so a recorder chunks
-a long session — and a player in console.hanzo.ai reads the derived summary.
+a long session — and a player in platform.hanzo.ai reads the derived summary.
 Pulling a raw recording out programmatically is not an API call. A reduced Hanzo
 Team workspace token is refused here with `insufficient_capability`, because a
 full-fidelity screen recording has no safe projected form for a guest to write

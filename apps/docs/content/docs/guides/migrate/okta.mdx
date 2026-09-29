@@ -118,7 +118,7 @@ right is what answers it.
 | Event Hooks | `/v1/webhook` (8) — signing secret returned once, deliveries counted per endpoint |
 | Okta Workflows | `/v1/auto` (17) — flows, connectors, and runs you can resume |
 | Access Gateway | `/v1/ingress` (18) — routes, header middlewares and TLS in front of the app |
-| Admin Console, and acting as a tenant | console.hanzo.ai; an operator steps in with `POST /v1/iam/assume`, which keeps naming the operator |
+| Admin Console, and acting as a tenant | platform.hanzo.ai; an operator steps in with `POST /v1/iam/assume`, which keeps naming the operator |
 
 `{owner}/{name}` is the address of everything in identity: the org, then the
 thing. It is why no request needs an org field, and why the second call below is

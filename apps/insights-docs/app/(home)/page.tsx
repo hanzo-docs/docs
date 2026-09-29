@@ -383,7 +383,7 @@ Insights.capture('button_clicked', {
             <FooterColumn title="Hanzo" links={[
               { text: 'Hanzo AI', href: 'https://hanzo.ai', external: true },
               { text: 'Hanzo Chat', href: 'https://hanzo.chat', external: true },
-              { text: 'Hanzo Console', href: 'https://console.hanzo.ai', external: true },
+              { text: 'Hanzo Console', href: 'https://platform.hanzo.ai', external: true },
               { text: 'Hanzo Analytics', href: 'https://analytics.hanzo.ai', external: true },
             ]} />
           </div>
@@ -451,7 +451,7 @@ const SDKS = [
 const ECOSYSTEM = [
   { title: 'Hanzo Analytics', description: 'Lightweight privacy-first web analytics. Script-based page tracking without cookies.', href: 'https://analytics.hanzo.ai', cta: 'View Analytics' },
   { title: 'Hanzo Chat',      description: 'Chat over 14 Zen models, with outside models and MCP tools on the same key.', href: 'https://hanzo.chat', cta: 'Open Chat' },
-  { title: 'Hanzo Console',   description: 'LLM observability, API key management, and usage analytics for AI applications.', href: 'https://console.hanzo.ai', cta: 'Open Console' },
+  { title: 'Hanzo Console',   description: 'LLM observability, API key management, and usage analytics for AI applications.', href: 'https://platform.hanzo.ai', cta: 'Open Console' },
   { title: 'Hanzo Flow',      description: 'Visual workflow builder for AI pipelines. Connect models, tools, and data sources.', href: 'https://flow.hanzo.ai', cta: 'Try Flow' },
 ];
 

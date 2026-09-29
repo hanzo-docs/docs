@@ -132,7 +132,7 @@ export default function DynamicPricing() {
             <li className="flex items-center gap-2"><Star className="h-3.5 w-3.5 text-fd-primary" /> OpenAI-compatible API</li>
             <li className="flex items-center gap-2"><Star className="h-3.5 w-3.5 text-fd-primary" /> 30-day expiry</li>
           </ul>
-          <a href="https://console.hanzo.ai" target="_blank" rel="noopener noreferrer"
+          <a href="https://platform.hanzo.ai" target="_blank" rel="noopener noreferrer"
             className="mt-6 block text-center rounded-lg bg-fd-primary px-4 py-2.5 text-sm font-medium text-fd-primary-foreground hover:opacity-90 transition">
             Get Started Free
           </a>
@@ -146,7 +146,7 @@ export default function DynamicPricing() {
             <li className="flex items-center gap-2"><Star className="h-3.5 w-3.5 text-fd-primary" /> Real-time usage tracking</li>
             <li className="flex items-center gap-2"><Star className="h-3.5 w-3.5 text-fd-primary" /> No surprise bills</li>
           </ul>
-          <a href="https://console.hanzo.ai" target="_blank" rel="noopener noreferrer"
+          <a href="https://platform.hanzo.ai" target="_blank" rel="noopener noreferrer"
             className="mt-6 block text-center rounded-lg border border-fd-border px-4 py-2.5 text-sm font-medium hover:bg-fd-muted transition">
             Add Credits
           </a>

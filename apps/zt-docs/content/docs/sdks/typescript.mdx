@@ -724,7 +724,7 @@ main().catch((err) => {
   }
   if (err instanceof InsufficientBalanceError) {
     console.error(`Insufficient balance: ${err.balance}`);
-    console.error('Add credits at https://console.hanzo.ai/billing');
+    console.error('Add credits at https://platform.hanzo.ai/billing');
     process.exit(1);
   }
   if (err instanceof ZtError) {

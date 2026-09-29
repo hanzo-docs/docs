@@ -410,7 +410,7 @@ export function Landing({ install, use }: { install: ReactNode; use: ReactNode }
             curl hanzo.sh | sh
           </Text>
           <XStack flexWrap="wrap" gap={12} justify="center">
-            <Action tone="loud" render="a" href="https://hanzo.id/signup?redirect_uri=https://console.hanzo.ai" height={44} px={28} rounded={999}>
+            <Action tone="loud" render="a" href="https://hanzo.id/signup?redirect_uri=https://platform.hanzo.ai" height={44} px={28} rounded={999}>
               Sign up free
             </Action>
             <Action tone="line" render={<Link href="/docs" prefetch={false} />} height={44} px={28} rounded={999}>

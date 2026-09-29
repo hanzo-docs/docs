@@ -70,7 +70,7 @@ export default function HomePage() {
                className="rounded-full border border-fd-border px-3 py-1 hover:bg-fd-muted transition text-fd-muted-foreground hover:text-fd-foreground">
               Hanzo App
             </a>
-            <a href="https://console.hanzo.ai" target="_blank" rel="noopener noreferrer"
+            <a href="https://platform.hanzo.ai" target="_blank" rel="noopener noreferrer"
                className="rounded-full border border-fd-border px-3 py-1 hover:bg-fd-muted transition text-fd-muted-foreground hover:text-fd-foreground">
               API Console
             </a>
@@ -322,7 +322,7 @@ print(r.choices[0].message.content)`}</code></pre>
         </p>
 
         <div className="flex flex-wrap gap-4 items-center">
-          <a href="https://console.hanzo.ai" target="_blank" rel="noopener noreferrer"
+          <a href="https://platform.hanzo.ai" target="_blank" rel="noopener noreferrer"
             className="inline-flex items-center gap-2 rounded-xl bg-fd-primary px-6 py-2.5 text-sm font-semibold text-fd-primary-foreground hover:opacity-90 transition">
             Get API key
           </a>
@@ -362,7 +362,7 @@ print(r.choices[0].message.content)`}</code></pre>
               className="inline-flex items-center justify-center gap-2.5 rounded-2xl border border-fd-border px-8 py-4 text-base font-semibold hover:bg-fd-muted transition">
               <Download className="h-5 w-5" /> Download weights
             </a>
-            <a href="https://console.hanzo.ai" target="_blank" rel="noopener noreferrer"
+            <a href="https://platform.hanzo.ai" target="_blank" rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2.5 rounded-2xl border border-fd-border px-8 py-4 text-base font-semibold hover:bg-fd-muted transition">
               <Terminal className="h-5 w-5" /> Get API key
             </a>
@@ -443,7 +443,7 @@ print(r.choices[0].message.content)`}</code></pre>
             ]} />
             <FooterColumn title="Build" links={[
               { text: 'API reference', href: '/docs/api' },
-              { text: 'Get API key', href: 'https://console.hanzo.ai', external: true },
+              { text: 'Get API key', href: 'https://platform.hanzo.ai', external: true },
               { text: 'Python SDK', href: 'https://github.com/hanzoai/python-sdk', external: true },
               { text: 'Pricing', href: '/docs/api/pricing' },
             ]} />
