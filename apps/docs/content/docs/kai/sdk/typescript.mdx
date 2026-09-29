@@ -47,6 +47,10 @@ const kai = new Kai(); // reads HANZO_API_KEY
 An option beats its variable, and a blank variable counts as unset. The key is
 held privately: it is not a property of the client and never reaches a log.
 
+`model` also takes Kai's versioned id: `kai-` and the first 12 hex digits of the
+weights' SHA-256, the `routing.sha256` of every decision, as `kai-a211cc701038`.
+The id names one set of weights. `api.hanzo.ai` does not take it yet.
+
 ## Decide
 
 `kai.decide({ state, questions })` posts to
@@ -303,17 +307,30 @@ APIUserAbortError request aborted
 | 402 | insufficient balance | `PaymentRequiredError` |
 | 403 | a key of a kind that may not decide, as a publishable `pk-` key | `PermissionDeniedError` |
 | 404 | no such route | `NotFoundError` |
-| 422 | outside the schema; `code` `state_too_long` when the state does not fit | `UnprocessableEntityError` |
+| 422 | outside the schema, or over reach, with `code` naming what is over | `UnprocessableEntityError` |
 | 429 | rate limited or the queue is full | `RateLimitError` |
 | 500 and above | failed (500), upstream failed (502), not served here (503), overloaded (529) | `InternalServerError` |
 | any other | | `APIError` |
 
 Each extends `APIError`, which extends `KaiError`, and carries `status`, `code`,
 `message` (the server's sentence), `requestId`, `body`, `retryAfter` in seconds
-and `headers`. When no response arrives the SDK throws `APIConnectionError`,
-`APITimeoutError` past the timeout, and `APIUserAbortError` when your signal
-aborts. The contract's 422 `state_too_long` is not live yet: today an oversize
-state is a 400 that names its length.
+and `headers`. `code` is the status, except on a refusal over reach, where it
+names what is over, on either path:
+
+| `code` of `UnprocessableEntityError` | refused |
+|---|---|
+| `state_too_long` | the state with any one question does not fit what the model reads; the wire carries at most 128k tokens of state |
+| `question_too_long` | a question, with its type line, takes more than half of what the model reads |
+| `option_too_long` | an option takes more than 512 tokens |
+| `request_too_long` | the body is over 16 MiB |
+
+The message says by how much, and nothing is cut to fit. These refusals are not
+live yet: today `api.hanzo.ai` answers an oversize state with a 400 that names
+its length, reads a long question or option in part, and answers a body over
+16 MiB with a 400.
+
+When no response arrives the SDK throws `APIConnectionError`, `APITimeoutError`
+past the timeout, and `APIUserAbortError` when your signal aborts.
 
 ```ts
 // Two refusals: a model that does not exist, and a key that does not resolve.
@@ -416,20 +433,26 @@ TypeSafe's `systemOne` call and answers in Jev's shapes from
 import { choice, noul, score, Client as TypeSafeClient } from "@hanzo/kai/jev";
 ```
 
-- **Only Kai answers.** The default model is `kai`. A Jev id such as
-  `jev-latest` is refused with 400 `Unknown model: jev-latest`, never mapped to
+- **`kai` answers as its versioned id.** The default model is `kai`, and the
+  answer's `model` is the versioned id, as `kai-a211cc701038`. A bare Jev id such
+  as `jev-latest` is refused with 400 `Unknown model: jev-latest`, never mapped to
   Kai.
+- **Jev answers under its own names.** `typesafe/jev-1.13` and
+  `~typesafe/jev-latest` reach Jev itself through OpenRouter, on this path and on
+  `/v1/decisions`, billed at \$0.042 per 1M input tokens against Kai's \$0.021.
 - **Jev's shapes**: `{ model, answers, usage }` with no Kai metadata; a noul is
   `{ type, noul }`, a choice `{ type, choice, confidence, probabilities }`, a
   score `{ type, score, confidence, legend, probabilities }`, its confidence by
   Jev's formula. The answers are typed per question, as with `decide`.
 - **The rest is shared**: `HANZO_API_KEY`, `HANZO_BASE_URL`, retries, timeouts
-  and the error classes, with FastAPI's `detail` read as the message.
-  `models.list()` reads the `models` key: `name`, `description`, `release_date`.
+  and the error classes, with FastAPI's `detail` read as the message and a reach
+  refusal's name, its `type`, as the `code`.
+- **`models.list()` reads the catalogue**: the decision models of
+  `GET /v1/models` as Jev's cards, `name` the model's id, `description` empty and
+  `release_date` the UTC day of its `created` time.
 
 <Callout title="Not available yet">
-`/v1/systemone` answers 404 on `api.hanzo.ai` today, and the `models` key of
-`/v1/models` is empty. The output below is today's.
+`/v1/systemone` answers 404 on `api.hanzo.ai` today. The output below is today's.
 </Callout>
 
 ```ts
@@ -466,7 +489,10 @@ console.log(await client.models.list());
 ```text
 kai NotFoundError 404 not found
 jev-latest NotFoundError 404 not found
-[]
+[
+  { name: 'hanzo/kai', description: '', release_date: '2026-09-29' },
+  { name: 'kai', description: '', release_date: '2026-09-29' }
+]
 ```
 
 [sdk_jev.ts](https://github.com/hanzo-js/kai/blob/main/examples/sdk_jev.ts)

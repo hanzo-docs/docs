@@ -295,6 +295,12 @@ A `Decision` has these fields:
 | `state_hash` | `sha256:` of the state as the server read it |
 | `raw_http_response`, `request_id` | the `httpx.Response`, and its `x-request-id` |
 
+`kai` names the served checkpoint. Its versioned id, `kai-` and the first 12 hex
+digits of its weights' SHA-256 (`"kai-" + d.routing["sha256"][:12]`), names one
+checkpoint: `kai-0834a74f2d14` answered on this page. Under the contract both
+paths accept the versioned id as `model`, to pin a checkpoint, and
+`/v1/systemone` answers with it; today it is refused as an unknown model.
+
 | Answer | Fields |
 |---|---|
 | `ChoiceAnswer` | `choice`, the most probable label; `probabilities`, one per label; `confidence` = (n·p_max − 1)/(n − 1); `answer_confidence` = p_max |
@@ -381,7 +387,7 @@ retries run out.
 | 402 | `PaymentRequiredError` | the org has no plan or no balance |
 | 403 | `PermissionDeniedError` | the key may not call, such as a publishable `pk-` key |
 | 404 | `NotFoundError` | nothing is served at the path |
-| 422 | `UnprocessableEntityError` | under the contract: a malformed question, or a state that does not fit, with `code` `state_too_long` |
+| 422 | `UnprocessableEntityError` | under the contract: a malformed question, with `code` 422; or a request past what Kai reads, with `code` naming the part, as below |
 | 429 | `RateLimitError` | rate limited or queue full; `retry_after` holds the wait in seconds |
 | 5xx | `InternalServerError` | 502 upstream failed, 503 model not served, 529 overloaded |
 | any other | `APIError` | |
@@ -427,10 +433,20 @@ AuthenticationError 401 API key validation failed: API key sk-no-suc… does not
 
 [sdk_errors.py](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/sdk_errors.py)
 
-A state longer than 50,000 characters is refused with `400` today. Under the
-contract a state that does not fit what Kai reads, with any one question, is
-refused with `422` and `code` `state_too_long`, naming the tokens it needs and
-the limit ([Limits](/docs/kai/limits#state-that-does-not-fit)).
+Under the contract nothing in a request is cut. What Kai would have to cut is
+refused with `422`, and `error.code` names the part, on both paths; the message
+names the tokens or bytes and the limit
+([Limits](/docs/kai/limits#state-that-does-not-fit)).
+
+| `code` | Refused when |
+|---|---|
+| `state_too_long` | the state, beside any one question, is past what Kai reads, or past 128k tokens |
+| `question_too_long` | a question takes more than half of what Kai reads |
+| `option_too_long` | an option, a label with its description, a level or a noul side, is past 512 tokens |
+| `request_too_long` | the body is past 16 MiB |
+
+Today a state over 50,000 characters and a body of 17 MiB are refused with
+`400`, and a question or an option of any length is answered.
 
 ## Logging
 
@@ -443,9 +459,10 @@ The SDK logs to the `hanzo_kai` logger. `KAI_LOG_LEVEL` sets its level:
 | `debug` | each request's and response's headers and body |
 | `warning` | an answer type the SDK skipped |
 
-`Authorization`, `Cookie`, `Set-Cookie`, `X-Api-Key` and any header whose name
-contains `token` or `secret` are logged as `<redacted>`. Bodies are logged as
-sent, state included, so turn `debug` on only where the logs may hold your data.
+Credentials never reach a log line: `Authorization`, `Cookie`, `Set-Cookie`,
+`X-Api-Key`, and every header with `token` or `secret` in its name print as
+`<redacted>`. Bodies print as sent, state included, so keep `debug` off where
+the logs should not hold your data.
 
 ```python
 import logging
@@ -501,10 +518,15 @@ TypeSafe's SDK and point it at Hanzo ([Migrate from Jev](/docs/guides/migrate/je
 | Call | `Kai.decide`, `AsyncKai.decide` | `Client.system_one`, `AsyncClient.system_one`, the same arguments |
 | Result | `Decision`: answers, usage, `id`, `routing`, `state_hash` | `Response`: `model`, `answers` and `usage`, Jev's shape |
 | Answers | Kai's fields, `answer_confidence` included | Jev's: a noul is `noul` alone; a score's `confidence` is Jev's formula |
-| Models | `kai` and its aliases | `kai` only; every Jev id, such as `jev-latest`, is refused with `400` `Unknown model: <id>` |
+| Models | `kai`, its versioned id and `hanzo/kai` | `kai` and its versioned id; a bare Jev id, such as `jev-latest`, is refused with `400` `Unknown model: <id>` |
 | Choice and score caps | none | 255 labels and 10 levels, Jev's limits |
 | Errors | `{"error": {"code", "message"}}` | FastAPI's `{"detail": ...}`; the same classes and the server's message |
-| `models.list()` | `list[Model]`, from `data` | `ListModelsResponse`, from `models` |
+| `models.list()` | `list[Model]`: the decision models of `data` | `ListModelsResponse`: the same models in Jev's shape |
+
+Jev itself stays one `model` away on both paths: the vendor-named ids
+`typesafe/jev-1.13` and `~typesafe/jev-latest` reach Jev through OpenRouter,
+and under the contract Jev is billed at its list price, \$0.042 per 1M input
+tokens.
 
 No TypeSafe brand name is exported. Exceptions take the names in
 [Errors](#errors), so a port renames `TypeSafeRateLimitError` to
@@ -526,7 +548,7 @@ QUESTIONS = {
 with TypeSafeClient() as client:
     for model in ("kai", "jev-latest"):
         try:
-            result = client.system_one("I was charged twice. Please refund the duplicate.", QUESTIONS, model=model)
+            result = client.system_one("I was charged twice for my March invoice. Please refund the duplicate.", QUESTIONS, model=model)
             print(model, "->", result.model, result.choices["team"].choice, result.nouls["refund"].noul, result.usage)
         except APIError as error:
             print(model, "->", type(error).__name__, error.status, error.message)
@@ -537,15 +559,19 @@ with TypeSafeClient() as client:
 ```text
 kai -> NotFoundError 404 not found
 jev-latest -> NotFoundError 404 not found
-models=()
+models=(ModelMetadata(name='hanzo/kai', description='', release_date='2026-09-29'), ModelMetadata(name='kai', description='', release_date='2026-09-29'))
 ```
 
 [sdk_jev.py](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/sdk_jev.py)
 
-Today both calls meet the `404`, and the `models` key of `GET /v1/models` is
-present and empty. Under the contract the first call answers in Jev's shape,
-the second is refused with `400` `Unknown model: jev-latest`, and the list holds
-`kai`.
+Today both calls meet the `404`. Under the contract the first answers in Jev's
+shape, with the versioned id as `model`, and the second is refused with `400`
+`Unknown model: jev-latest`.
+
+`models.list()` lists the decision models of `GET /v1/models` under `data`,
+where the `models` key stays empty on api.hanzo.ai, in Jev's shape: `name` is
+the id, `description` is empty, and `release_date` is the day of the entry's
+`created` time, which the gateway sets when it builds the listing.
 
 ## Next
 
