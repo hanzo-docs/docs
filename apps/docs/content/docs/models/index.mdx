@@ -54,14 +54,16 @@ needs no key:
 
 ```bash
 curl -s https://api.hanzo.ai/v1/models \
-  | jq -r '.data[] | select(.id | test("^(zen|enso)")) | "\(.id)\t\(.owned_by)\t\(.pricing.input)/\(.pricing.output)"'
+  | jq -r '.data[] | select(.id | test("^(zen|enso)")) | "\(.id)\t\(.owned_by)\t\(.pricing.input_per_million)/\(.pricing.output_per_million)"'
 ```
 
 <ModelsCatalog />
 
 ## What a rate means
 
-Rates are per million tokens, input and output priced separately, and they are
+Rates are per million tokens (`pricing.input_per_million`, `output_per_million`;
+`pricing.prompt` and `completion` state the same rates per token, as OpenRouter
+does), input and output priced separately, and they are
 the same whether you call from the CLI, an SDK, HTTP or an MCP tool — the price
 is a property of the model, not of the surface you reach it through.
 

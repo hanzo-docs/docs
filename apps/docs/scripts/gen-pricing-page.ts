@@ -177,12 +177,19 @@ async function fetchCatalogue(): Promise<Map<string, Rate & { context: number | 
       console.warn(`[pricing] catalogue answered ${r.status}`);
       return out;
     }
+    // `pricing.prompt`/`completion` are USD per token; the per-million rates this
+    // page prints sit under `input_per_million`/`output_per_million`.
     const d = (await r.json()) as {
-      data?: Array<{ id: string; context_window?: number | null; pricing?: Rate }>;
+      data?: Array<{
+        id: string;
+        context_window?: number | null;
+        pricing?: { input_per_million?: number; output_per_million?: number };
+      }>;
     };
     for (const m of d.data ?? []) {
-      if (m.pricing?.input == null) continue;
-      out.set(m.id, { ...m.pricing, context: m.context_window ?? null });
+      const input = m.pricing?.input_per_million;
+      if (input == null) continue;
+      out.set(m.id, { input, output: m.pricing?.output_per_million ?? null, context: m.context_window ?? null });
     }
   } catch (e) {
     console.warn(`[pricing] catalogue unreachable: ${(e as Error).message}`);

@@ -34,8 +34,9 @@ curl -sS https://api.hanzo.ai/v1/models | jq '.data[] | select(.id == "kai")'
 
 Step 2 needs an org whose plan covers paid models; without one it answers
 `402` with `"code": "plan_required"` and a link to pick a plan. Step 3 answers
-`"outputs": ["decision"]` and `"pricing": {"input": 0.021, "output": 0}`: the
-dollars per million input tokens every `kai` call is billed at.
+`"outputs": ["decision"]` and `"pricing"` with `"input_per_million": 0.021` and
+`"output_per_million": 0`: the dollars per million input tokens every `kai` call
+is billed at (`"prompt": "0.000000021"` is the same rate per token).
 
 ## What changes
 

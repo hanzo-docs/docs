@@ -15,7 +15,9 @@ import { PROVIDER_ICONS, providerKey } from '@/components/provider-icons';
 
 const ENDPOINT = 'https://api.hanzo.ai/v1/models';
 
-type Pricing = { input: number | null; output: number | null; cacheRead: number | null; cacheWrite: number | null };
+// `prompt`/`completion` are USD per token (OpenRouter's keys); the per-million
+// rates sit under keys that name the unit.
+type Pricing = { prompt?: string; completion?: string; input_per_million?: number; output_per_million?: number };
 type Model = {
   id: string;
   name: string;
@@ -41,7 +43,7 @@ const FAMILY_ICON: Record<string, typeof Sparkle> = { Sparkle, Zap, Cpu, Box };
 // catalogue's raw key; these are the names we use for them.
 const OURS: Record<string, string> = { hanzo: 'Hanzo', zenlm: 'Zen' };
 
-// Prices come back as USD per 1M tokens.
+// Prices shown are USD per 1M tokens.
 function price(v: number | null | undefined): string {
   if (v == null) return '—';
   if (v === 0) return 'Free';
@@ -148,8 +150,8 @@ function ModelRow({ m }: { m: Model }) {
         </YStack>
       </Td>
       <Td align="right">{ctx(m.context_window)}</Td>
-      <Td align="right">{price(p?.input)}</Td>
-      <Td align="right">{price(p?.output)}</Td>
+      <Td align="right">{price(p?.input_per_million)}</Td>
+      <Td align="right">{price(p?.output_per_million)}</Td>
       <Td align="right">
         <XStack gap={4} flexWrap="wrap" justify="flex-end">
           {capabilities(m).slice(0, 4).map((f) => (

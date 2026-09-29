@@ -75,7 +75,7 @@ needs no key:
 
 ```bash
 curl -s https://api.hanzo.ai/v1/models \
-  | jq -r '.data[] | select(.owned_by == "zenlm") | "\(.id)\t\(.context_window)\t\(.pricing.input)/\(.pricing.output)"'
+  | jq -r '.data[] | select(.owned_by == "zenlm") | "\(.id)\t\(.context_window)\t\(.pricing.input_per_million)/\(.pricing.output_per_million)"'
 ```
 
 The gateway is the source of truth for ids, windows and rates. If this page and
