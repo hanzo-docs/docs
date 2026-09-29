@@ -1,0 +1,79 @@
+---
+title: The Local Router
+description: One ZAP router per user, embedded in every process that speaks ZAP — no daemon
+---
+
+# The Local Router
+
+Every process that speaks ZAP on your machine — hanzo-mcp, the `dev` CLI, the
+desktop app, the IDE, the browser extension — is a **node** on one router. The
+router is not a daemon you install or start: it is the `zapd` library, embedded
+in each of those processes. One of them is elected by a kernel lock and serves;
+when it exits, another takes over and every node reconnects by itself.
+
+The design is [HIP-0069](https://hips.hanzo.ai/docs/hip-0069-service-discovery-and-auto-bridge/).
+
+## Connect the browser extension
+
+Pair once per browser. With hanzo-mcp installed:
+
+```bash
+hanzo-mcp pair
+# ws://127.0.0.1:21000/#3f9c…
+```
+
+Open the Hanzo extension's popup, paste the code into **Pair**, and press
+**Pair**. The status reads the number of tools the browser serves once the
+router lists it.
+
+The code names your router's loopback door (`20000 + uid mod 10000`) and a
+token. The token never leaves your machine: the router and the extension each
+prove they hold it, the router first, so neither talks to an impostor. Only
+the Hanzo extension's own origin is admitted; no web page can open the door.
+
+`hanzo-mcp pair --reset` issues a new token; every browser pairs again.
+
+## See what is connected
+
+```bash
+npm i -g @zap-proto/zapd
+zapd ls
+```
+
+```
+agent/dgx/hanzo-40211     consumer  hanzo
+browser/dgx/chrome-3fa2   provider  hanzo  browser.tabs,browser.navigate,browser.dom,browser.screenshot,browser.input
+dev/dgx/40388             consumer  hanzo
+```
+
+A node id is `<kind>/<host>/<name>`; the router stamps the host.
+
+## Embed the router
+
+Rust:
+
+```rust
+zapd::embed();   // stand for router; returns at once
+let me = zapd::Node::join("dev/4242", zapd::frame::ROLE_CONSUMER, "hanzo", &[]);
+let nodes = me.nodes(std::time::Duration::from_secs(2)).await?;
+```
+
+Python:
+
+```python
+import zapd
+zapd.embed()
+me = zapd.Node("agent/hanzo-4242")
+me.nodes()
+```
+
+## Files
+
+| path | holds |
+|---|---|
+| `$XDG_RUNTIME_DIR/zap/zapd.sock` | the socket every local node connects to (`0600`) |
+| `$XDG_RUNTIME_DIR/zap/zapd.lock` | the election lock |
+| `~/.local/state/zap/pair` | the pairing code (`0600`); delete it to rotate |
+
+On macOS the socket and lock live in `~/.zap/run/` and the pairing in
+`~/Library/Application Support/zap/`.
