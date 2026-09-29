@@ -165,6 +165,25 @@ page confidently wrong. Cloud's `apps/platform/secretshape.go` still lists `hk-`
 in its secret-DETECTION table — harmless, it only scans, but it is where the
 invention came from.
 
+## Kai section and Jev parity
+
+`content/docs/kai/` is Kai's section: concepts, questions, patterns, a cookbook,
+SDKs, agents, limits and Kai-native programs. `guides/migrate/jev.mdx` moves a
+Jev integration over and maps every Jev asset to its Kai page.
+
+- **`parity/jev.yaml`** (repo root) lists every public Jev asset — each
+  docs.typesafe.ai page, TypeSafe's SDK surface and skill, the community apps
+  and examples — with the Kai page that answers it or `none:` and why.
+  `apps/docs/scripts/parity.test.ts` fails when a listed page stops existing; it
+  runs in `pnpm test` and before the build in `.hanzo/workflows/deploy.yml`.
+- **Every output block on a Kai page is a program's stdout.** The line before
+  the fence is `{/* out: <lang>/<file> [args] */}`: `python/` files live in
+  hanzoai/python-sdk `pkg/hanzo-kai/examples/`, `ts/` in hanzo-js/kai
+  `examples/`; `sh/` (a curl) and `typesafe/` (TypeSafe's own SDK with
+  `TYPESAFE_BASE_URL=https://api.hanzo.ai`) are printed whole on their page.
+  Re-run the program to change the block; never edit a block by hand.
+- **`$` in prose is `\$`.** remark-math reads a `$…$` pair as math.
+
 ## Branch Convention
 
 - **`main`** — Production branch. A push here builds the export and publishes it
