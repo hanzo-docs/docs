@@ -49,7 +49,7 @@ held privately: it is not a property of the client and never reaches a log.
 
 `model` also takes Kai's versioned id: `kai-` and the first 12 hex digits of the
 weights' SHA-256, the `routing.sha256` of every decision, as `kai-a211cc701038`.
-The id names one set of weights. `api.hanzo.ai` does not take it yet.
+The id names one set of weights, on both paths.
 
 ## Decide
 
@@ -96,15 +96,19 @@ dec_58fbc7436ac5d857cabee7f875408ebb kai { input_tokens: 175, output_tokens: 0 }
 
 [sdk_decide.ts](https://github.com/hanzo-js/kai/blob/main/examples/sdk_decide.ts)
 
-- **`team` is settled**: billing takes 0.9993 of the probability.
-- **`refund` is not.** It sits at 0.55, near even odds, though the ticket asks for
-  its money back outright. Yes/no questions are a measured weakness of the
-  current checkpoint ([Limits](/docs/kai/limits#yes-or-no-questions)): read an
-  answer this close to 0.5 as undecided, or name the outcomes in a `choice`.
-- **`urgency` spreads over all four levels**, so its expected level of 1.56 carries
-  little. `urgency.legend[3]` is level 3's description, typed from the rubric.
-- **`refund.confidence` prints `undefined`.** The contract gives a noul
-  `confidence` = |2p − 1|; `api.hanzo.ai` does not send it yet.
+- **`team.choice`** is one of the three labels, typed as their union;
+  `team.probabilities` holds every label's probability, and `team.confidence`
+  how far the top label stands above an even spread.
+- **`refund.noul`** is the probability that the ticket asks for money back, and
+  `refund.confidence` is |2p − 1|: 0 at even odds, 1 when certain. Yes/no
+  questions are a measured weakness of the current checkpoint
+  ([Limits](/docs/kai/limits#yes-or-no-questions)): act on a noul only past a
+  threshold ([Confidence](/docs/kai/confidence)), or name the outcomes in a
+  `choice`.
+- **`urgency.score`** is the expected level, from 0 to 3, and may fall between
+  levels; `urgency.legend[3]` is level 3's description, typed from the rubric.
+- **`d.usage`** bills the request's own text once, `output_tokens` always 0, and
+  `d.routing.checkpoint` names the weights that answered.
 
 ### Answers typed by their questions
 
@@ -135,9 +139,8 @@ name you never asked (`d.answers.tone`). Every answer is read-only.
 
 - **Instructions, descriptions and levels** take text, a JSON object or a JSON
   array.
-- **Instructions are optional** in the contract, and a builder given `null` or
-  `undefined` sends none. `api.hanzo.ai` does not accept a question without
-  instructions yet.
+- **Instructions are optional**: a builder given `null` or `undefined` sends
+  none.
 - **Nouls**: phrase one as a statement and describe both sides, as `refund` does
   above, or name the outcomes in a `choice`.
 - **`labels`** names a noul's two sides in the text Kai reads, as
@@ -160,7 +163,7 @@ labels, at least 1 level and none `null`, and a state that fits what Kai reads.
 | `model` | the model as asked |
 | `provider` | `Hanzo` |
 | `answers` | one answer per question, under its name |
-| `usage` | `input_tokens` billed, `output_tokens` always 0, `cost` in USD when reported |
+| `usage` | `input_tokens` billed: the state once, each question's instructions and options once; `output_tokens` always 0; `cost` in USD when reported |
 | `routing` | `backend`, `checkpoint`, the weights' `sha256`, `calibration`, `device`, `reason` |
 | `state_hash` | `sha256:` of the state as Kai read it |
 | `latency_ms` | the service's time for the decision |
@@ -173,8 +176,9 @@ labels, at least 1 level and none `null`, and a state that fits what Kai reads.
 | `probabilities` | | by label | by level, keyed `"0"`, `"1"`, … |
 | `legend` | | | each level's description, keyed the same way |
 
-Every distribution sums to 1. An answer of a type this SDK does not know is
-dropped with a warning; fields it does not know are kept on the object.
+Probabilities are unrounded, and every distribution sums to 1 within 1e-6. An
+answer of a type this SDK does not know is dropped with a warning; fields it
+does not know are kept on the object.
 
 ## Responses
 
@@ -324,10 +328,7 @@ names what is over, on either path:
 | `option_too_long` | an option takes more than 512 tokens |
 | `request_too_long` | the body is over 16 MiB |
 
-The message says by how much, and nothing is cut to fit. These refusals are not
-live yet: today `api.hanzo.ai` answers an oversize state with a 400 that names
-its length, reads a long question or option in part, and answers a body over
-16 MiB with a 400.
+The message says by how much, and nothing is cut to fit.
 
 When no response arrives the SDK throws `APIConnectionError`, `APITimeoutError`
 past the timeout, and `APIUserAbortError` when your signal aborts.
@@ -450,10 +451,6 @@ import { choice, noul, score, Client as TypeSafeClient } from "@hanzo/kai/jev";
 - **`models.list()` reads the catalogue**: the decision models of
   `GET /v1/models` as Jev's cards, `name` the model's id, `description` empty and
   `release_date` the UTC day of its `created` time.
-
-<Callout title="Not available yet">
-`/v1/systemone` answers 404 on `api.hanzo.ai` today. The output below is today's.
-</Callout>
 
 ```ts
 // A program written for TypeSafe's SDK, answered by Kai: the import is the only change.

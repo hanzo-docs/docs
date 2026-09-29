@@ -66,11 +66,10 @@ kai 182 0 a7
 [sdk_decide.py](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/sdk_decide.py)
 
 `d.answers` holds every answer by question name; `d.choices`, `d.nouls` and
-`d.scores` hold the same answers split by type. The noul is the weak answer
-here: the ticket asks for a refund outright, and `refund` leans yes at only
-0.537. That is Kai's measured weak spot on yes/no questions
-([Limits](/docs/kai/limits#yes-or-no-questions)); asked as a choice, the same
-question is decisive, as the [next example](#questions) shows.
+`d.scores` hold the same answers split by type. A noul is Kai's weakest question
+type ([Limits](/docs/kai/limits#yes-or-no-questions)): give it criteria for both
+sides, as here, or ask it as a choice when the answer drives an action, as the
+[next example](#questions) compares.
 
 ## Clients
 
@@ -208,11 +207,12 @@ field that does not.
 
 | Builder | `criteria` | Answer |
 |---|---|---|
-| `Choice(instructions=, criteria=)` | `{label: description}`, a description may be `None`; or a list of labels | `ChoiceAnswer` |
+| `Choice(instructions=, criteria=)` | `{label: description}`, a description may be `None`; or a list of labels; at least 2 | `ChoiceAnswer` |
 | `Noul(instructions=, criteria=, labels=)` | `{"true": ..., "false": ...}`; either side may be left out, and so may `criteria` | `NoulAnswer` |
-| `Score(instructions=, criteria=)` | a list of levels, level 0 first, none `None` | `ScoreAnswer` |
+| `Score(instructions=, criteria=)` | a list of levels, level 0 first, at least 1, none `None` | `ScoreAnswer` |
 
-`instructions`, descriptions and levels take text, a JSON object or an array.
+`instructions` is optional; it, descriptions and levels take text, a JSON
+object or an array.
 A question can also be a dict in the wire shape, `{"type": "choice",
 "instructions": ..., "criteria": ...}`, and the SDK sends it as given. The
 builders are pydantic models: an unknown field, a score's `criteria` given as
@@ -265,20 +265,20 @@ refund {'refund': 0.9728, 'replacement': 0.0267, 'repair': 0.0004}
 
 [sdk_questions.py](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/sdk_questions.py)
 
-The noul and the choice ask the same thing of the same message. The noul sits
-near even at 0.5219; the choice puts 0.9728 on `refund`. When a yes or no
-drives an action, ask it as a choice.
+The noul and the choice ask the same thing of the same message; the choice
+spreads its probability over the remedies it names. When a yes or no drives an
+action, ask it as a choice.
 
-The service's request rules today and under the frozen contract; the SDK sends
-either as given:
+What a request may hold; the service refuses anything else with `422`, and its
+message names the rule:
 
-| Rule | Today | Under the contract |
-|---|---|---|
-| `instructions` | required: a question without it is refused with `400` | optional |
-| questions per request | at most 64 | 1 to 100 |
-| a choice with 1 label | answered | refused with `422` |
-| labels and levels on `/v1/decisions` | no cap: 256 labels and 11 levels were answered | no cap; the request's token budget bounds them |
-| a malformed question or a null `state` | `400` | `422` |
+| Part | Rule |
+|---|---|
+| `state` | a string, an object or an array; never null |
+| `questions` | 1 to 100 |
+| a choice | at least 2 labels; `/v1/decisions` sets no upper bound, the request's token budget does |
+| a score | at least 1 level, none null; `/v1/decisions` sets no upper bound |
+| an option | a label with its description, a level or a noul side, read whole up to 512 tokens |
 
 ## Answers
 
@@ -290,35 +290,26 @@ A `Decision` has these fields:
 | `model` | the model as the request named it |
 | `provider` | who served it: `Hanzo` |
 | `answers`, `choices`, `nouls`, `scores` | every answer by question name, then the same split by type |
-| `usage.input_tokens`, `usage.output_tokens` | billed input tokens, and output tokens: always 0 |
+| `usage.input_tokens`, `usage.output_tokens` | billed input tokens, the request's text counted once; output tokens, always 0 |
 | `routing` | the checkpoint, the SHA-256 of its weights, its calibration and the device |
 | `state_hash` | `sha256:` of the state as the server read it |
 | `raw_http_response`, `request_id` | the `httpx.Response`, and its `x-request-id` |
 
 `kai` names the served checkpoint. Its versioned id, `kai-` and the first 12 hex
 digits of its weights' SHA-256 (`"kai-" + d.routing["sha256"][:12]`), names one
-checkpoint: `kai-0834a74f2d14` answered on this page. Under the contract both
-paths accept the versioned id as `model`, to pin a checkpoint, and
-`/v1/systemone` answers with it; today it is refused as an unknown model.
+checkpoint: both paths accept it as `model`, to pin that checkpoint, and
+`/v1/systemone` answers with it.
 
 | Answer | Fields |
 |---|---|
 | `ChoiceAnswer` | `choice`, the most probable label; `probabilities`, one per label; `confidence` = (n·p_max − 1)/(n − 1); `answer_confidence` = p_max |
 | `ScoreAnswer` | `score` = Σ i·pᵢ, the expected level; `probabilities` and `legend` keyed by int level, lowest first; `confidence` as for a choice; `answer_confidence` = p_max |
-| `NoulAnswer` | `noul` = P(true); `answer_confidence` = max(p, 1 − p); `confidence` = abs(2p − 1) under the contract |
+| `NoulAnswer` | `noul` = P(true); `confidence` = abs(2p − 1); `answer_confidence` = max(p, 1 − p) |
 
-Three answer fields change with the contract:
-
-- **Probabilities are rounded to four decimals today**, as in the outputs above.
-  Under the contract they are unrounded and every distribution sums to 1 within
-  1e-6.
-- **A noul's `confidence` is `None` today.** Under the contract
-  `/v1/decisions` sends abs(2p − 1).
-- **`usage.input_tokens` counts the state with each question today:** one
-  question over a 400-word state billed 431 tokens, and five equal questions
-  billed 2,155
-  ([fixture](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/tests/conformance/usage.json)).
-  Under the contract the state and each question are counted once.
+Probabilities are unrounded, and every distribution sums to 1 within 1e-6.
+`usage.input_tokens` bills the request's own text once: the state once, and
+each question's instructions and options once, however many questions read the
+state.
 
 An answer type newer than the SDK is skipped with a warning on the `hanzo_kai`
 logger, and the raw body keeps it. Fields the SDK does not model are kept, in
@@ -382,12 +373,12 @@ retries run out.
 
 | Status | Class | When |
 |---|---|---|
-| 400 | `BadRequestError` | malformed JSON or an unknown model; today also a malformed question |
+| 400 | `BadRequestError` | malformed JSON or an unknown model |
 | 401 | `AuthenticationError` | the key is missing, unknown or revoked |
 | 402 | `PaymentRequiredError` | the org has no plan or no balance |
 | 403 | `PermissionDeniedError` | the key may not call, such as a publishable `pk-` key |
 | 404 | `NotFoundError` | nothing is served at the path |
-| 422 | `UnprocessableEntityError` | under the contract: a malformed question, with `code` 422; or a request past what Kai reads, with `code` naming the part, as below |
+| 422 | `UnprocessableEntityError` | a request that breaks a rule of [Questions](#questions), with `code` 422; or one past what Kai reads, with `code` naming the part, as below |
 | 429 | `RateLimitError` | rate limited or queue full; `retry_after` holds the wait in seconds |
 | 5xx | `InternalServerError` | 502 upstream failed, 503 model not served, 529 overloaded |
 | any other | `APIError` | |
@@ -433,10 +424,9 @@ AuthenticationError 401 API key validation failed: API key sk-no-suc… does not
 
 [sdk_errors.py](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/sdk_errors.py)
 
-Under the contract nothing in a request is cut. What Kai would have to cut is
-refused with `422`, and `error.code` names the part, on both paths; the message
-names the tokens or bytes and the limit
-([Limits](/docs/kai/limits#state-that-does-not-fit)).
+Nothing in a request is cut. What Kai would have to cut is refused with `422`,
+and `error.code` names the part, on both paths; the message names the tokens or
+bytes and the limit ([Limits](/docs/kai/limits#state-that-does-not-fit)).
 
 | `code` | Refused when |
 |---|---|
@@ -444,9 +434,6 @@ names the tokens or bytes and the limit
 | `question_too_long` | a question takes more than half of what Kai reads |
 | `option_too_long` | an option, a label with its description, a level or a noul side, is past 512 tokens |
 | `request_too_long` | the body is past 16 MiB |
-
-Today a state over 50,000 characters and a body of 17 MiB are refused with
-`400`, and a question or an option of any length is answered.
 
 ## Logging
 
@@ -508,9 +495,9 @@ import line:
 from hanzo_kai.jev import Choice, Noul, Score, Client as TypeSafeClient
 ```
 
-`/v1/systemone` is part of the frozen contract and is not served yet: today it
-answers `404`, as the run below shows. Until it is, call `Kai.decide`, or keep
-TypeSafe's SDK and point it at Hanzo ([Migrate from Jev](/docs/guides/migrate/jev)).
+`/v1/systemone` exists for programs moving from Jev; new code calls `Kai.decide`
+on `/v1/decisions`. A TypeSafe program can also keep TypeSafe's own SDK and point
+it at Hanzo ([Migrate from Jev](/docs/guides/migrate/jev)).
 
 | | `hanzo_kai` | `hanzo_kai.jev` |
 |---|---|---|
@@ -525,8 +512,7 @@ TypeSafe's SDK and point it at Hanzo ([Migrate from Jev](/docs/guides/migrate/je
 
 Jev itself stays one `model` away on both paths: the vendor-named ids
 `typesafe/jev-1.13` and `~typesafe/jev-latest` reach Jev through OpenRouter,
-and under the contract Jev is billed at its list price, \$0.042 per 1M input
-tokens.
+billed at Jev's list price, \$0.042 per 1M input tokens.
 
 No TypeSafe brand name is exported. Exceptions take the names in
 [Errors](#errors), so a port renames `TypeSafeRateLimitError` to
@@ -564,9 +550,9 @@ models=(ModelMetadata(name='hanzo/kai', description='', release_date='2026-09-29
 
 [sdk_jev.py](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/sdk_jev.py)
 
-Today both calls meet the `404`. Under the contract the first answers in Jev's
-shape, with the versioned id as `model`, and the second is refused with `400`
-`Unknown model: jev-latest`.
+The first call answers in Jev's shape, with Kai's versioned id as `model`. The
+second names a bare Jev id and is refused as an unknown model: no Jev id reaches
+Kai.
 
 `models.list()` lists the decision models of `GET /v1/models` under `data`,
 where the `models` key stays empty on api.hanzo.ai, in Jev's shape: `name` is
