@@ -237,8 +237,10 @@ context belong in different calls.
 a7 reads 1,024 tokens for each question: the question and the state beside
 it. A request whose state does not fit beside one of its questions is
 refused with `422` and code `state_too_long`, and the message names the
-tokens needed and the limit. Nothing is cut to make it fit. The wire accepts
-up to 128k tokens of state, for checkpoints that read more.
+tokens needed and the limit. Nothing is cut to make it fit. A question that
+alone takes more than half of the 1,024 is refused with `question_too_long`,
+and a body over 16 MiB with `request_too_long`. The wire accepts up to 128k
+tokens of state, for checkpoints that read more.
 [`limits_reach.py`](https://github.com/hanzoai/python-sdk/blob/main/pkg/hanzo-kai/examples/limits_reach.py)
 sends a refund request after 200 log lines, then alone:
 

@@ -52,7 +52,6 @@ with TypeSafeClient() as client:
             "urgency": Score(instructions="How urgent is `ticket`?", criteria=["later", "this week", "today", "now"]),
         },
     )
-    print([m.name for m in client.models.list().models])
 
 print(result.model, result.choices["team"].choice, result.nouls["refund"].noul, result.scores["urgency"].score, result.usage.input_tokens)
 ```
@@ -63,10 +62,13 @@ print(result.model, result.choices["team"].choice, result.nouls["refund"].noul, 
 
 The same program through `@typesafe-ai/sdk` prints the same answers. Checked
 with `typesafe-sdk` 0.7.2 and `@typesafe-ai/sdk` 0.6.0. `model` in the answer is
-Kai's versioned id. `kai` is the only model this path serves: a Jev id such as
-`jev-latest` answers `400` with `{"detail": "Unknown model: jev-latest"}`, so a
-program that still names Jev fails loudly instead of being answered by another
-model.
+Kai's versioned id, `kai-` and the first 12 hex digits of its weights' SHA-256,
+and a request may name that id to pin the checkpoint. `kai` is the only model
+this path serves: a Jev id such as `jev-latest` answers `400` with
+`{"detail": "Unknown model: jev-latest"}`, so a program that still names Jev
+fails loudly instead of being answered by another model.
+`client.models.list()` returns an empty list without error; Kai's catalogue
+rows are at `GET /v1/models`.
 
 ## Switch to hanzo-kai or @hanzo/kai
 
@@ -248,8 +250,11 @@ Kai's answer, as `api.hanzo.ai` returned it on 2026-09-28:
   "state_too_long"`, naming the tokens needed and the limit. An option (a label
   with its description, a score level, a noul side) is read whole up to 512
   tokens; a longer one is refused with `422` and `"code": "option_too_long"`.
-  Jev's window is 32,000 tokens, so a long document that Jev answered may need
-  to be split, or its deciding part sent alone, on Kai.
+  A question over half of what the checkpoint reads is refused with
+  `"code": "question_too_long"`, and a body over 16 MiB with
+  `"code": "request_too_long"`. Jev's window is 32,000 tokens, so a long
+  document that Jev answered may need to be split, or its deciding part sent
+  alone, on Kai.
 - **Every score level needs a description**; a `null` level is refused.
 - **Phrase a noul as a statement and give both sides in `criteria`, or ask a
   choice whose labels name the outcomes.** The current checkpoint answers
@@ -264,9 +269,10 @@ Kai's answer, as `api.hanzo.ai` returned it on 2026-09-28:
   (the state once, each question once) in Kai's tokenizer, which is not Jev's.
 - **Self-hosting**: Kai runs at `api.hanzo.ai` only; its weights and runtime
   are not published.
-- **Jev itself** stays reachable on `/v1/decisions` as `typesafe/jev-1.13`,
-  forwarded to OpenRouter and billed \$0.03 a call
-  ([pricing](/docs/decisions#pricing)); no Jev id is ever answered by Kai.
+- **Jev itself** stays reachable under its vendor-named ids,
+  `typesafe/jev-1.13` and `~typesafe/jev-latest`, on both paths: forwarded to
+  OpenRouter and billed at Jev's list price, \$0.042 per million input tokens
+  ([pricing](/docs/decisions#pricing)). No Jev id is ever answered by Kai.
 
 ## Price and accuracy
 

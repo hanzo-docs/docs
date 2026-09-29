@@ -47,14 +47,17 @@ curl https://api.hanzo.ai/v1/decisions \
 
 | Field | Type | Limit |
 |---|---|---|
-| `model` | `kai`, `typesafe/jev-1.13` or `~typesafe/jev-latest` | required |
-| `state` | a string, object or array: whatever the questions are about | required; at most 50,000 characters as the model reads it (a string as is, anything else as its JSON text) |
-| `questions` | `{name: question}`; answers come back under the same names, in the same order | required; at most 64 |
+| `model` | `kai`, or its versioned id `kai-` and 12 hex digits; `typesafe/jev-1.13` or `~typesafe/jev-latest` for Jev | required |
+| `state` | a string, object or array: whatever the questions are about | required; read with each question, and refused with `422` rather than cut when a question and the state do not fit together ([reach](#reach)); at most 128k tokens |
+| `questions` | `{name: question}`; answers come back under the same names, in the same order | required; 1 to 100 |
 | `session_id`, `user` | strings | optional; at most 256 characters each |
 | `provider`, `trace` | any JSON | optional; forwarded to OpenRouter on a Jev request |
 
-A question is `{type, instructions, criteria}`. `instructions` is the text the
-model answers. `criteria` depends on the type.
+A question is `{type, instructions, criteria}`. `instructions`, optional, is
+the text the model answers; `criteria` depends on the type. Instructions,
+labels, levels and a noul's sides may each be text, a JSON object or an array.
+A question's name is never shown to the model: renaming every question leaves
+every probability unchanged.
 
 ## The three types
 
@@ -77,7 +80,10 @@ accepted, for labels that need no description.
 ```
 
 `choice` is the most probable label. `probabilities` covers every label, in
-the order the question gave them.
+the order the question gave them. A choice takes at least two labels and no
+upper limit: a choice wider than the checkpoint scores directly is narrowed by
+retrieval over every label first
+([large option sets](/docs/kai/programs/options)).
 
 ### `noul`: does a statement hold
 
@@ -90,15 +96,17 @@ describes what each side means. Any other key is refused.
 ```
 
 ```json
-"is_bug": {"type": "noul", "noul": 0.12, "answer_confidence": 0.88}
+"is_bug": {"type": "noul", "noul": 0.12, "confidence": 0.76, "answer_confidence": 0.88}
 ```
 
-`noul` is P(true). `answer_confidence` is `max(p, 1 − p)`.
+`noul` is P(true). `confidence` is `|2p − 1|`: 0 at an even split, 1 when one
+side takes it all. `answer_confidence` is `max(p, 1 − p)`. A noul reads best as
+a statement with both sides described ([Limits](/docs/kai/limits)).
 
 ### `score`: an ordinal level
 
-`criteria` is the list of levels, lowest first. Every level needs a
-description.
+`criteria` is the list of levels, lowest first: at least one, and every level
+needs a description.
 
 ```json
 "urgency": {"type": "score", "instructions": "How urgent is it?",
@@ -127,7 +135,7 @@ a recorded answer.
   "model": "kai",
   "provider": "Hanzo",
   "answers": {
-    "is_bug":  {"type": "noul", "noul": 0.12, "answer_confidence": 0.88},
+    "is_bug":  {"type": "noul", "noul": 0.12, "confidence": 0.76, "answer_confidence": 0.88},
     "team":    {"type": "choice", "choice": "payments", "confidence": 0.91,
                 "probabilities": {"account": 0.03, "payments": 0.94, "product": 0.03},
                 "answer_confidence": 0.94},
@@ -157,13 +165,21 @@ fields, and so are an answer's `choice`, `noul`, `score`, `confidence`,
 `probabilities` and `legend`. `confidence`, on a `choice` or `score`, is
 `(n·p_max − 1)/(n − 1)` over n options: 0 when all are equally likely, 1 when
 one takes all the mass, so one threshold means the same thing for 3 options or
-30. Probabilities are rounded to four places.
+30. Probabilities are not rounded, and every distribution sums to 1 within
+10⁻⁶. The answers do not depend on how requests are batched: the same question
+over the same state answers the same, alone or beside others.
+
+`usage.input_tokens` is what the call is billed for: the request's own text
+counted once in Kai's tokenizer, the state once and each question's
+instructions and options once. `usage.output_tokens` is 0. Every response,
+answers and refusals alike, carries an `x-request-id` header.
 
 Hanzo adds four fields, which a Decisions client ignores:
 
 | Field | Meaning |
 |---|---|
 | `answer_confidence` | on each answer: `p_max`, the calibrated probability of the reported answer |
+| `confidence` on a noul | `|2p − 1|` |
 | `routing` | the backend (`kai` or `openrouter`), the checkpoint (a Kai training stage, e.g. `a7`), the SHA-256 of its weights, the hash of the calibration tables, the device, and why the request went there |
 | `state_hash` | SHA-256 of the state as the model read it, so two decisions over one input are provably over one input |
 | `latency_ms` | wall time of the decision, in milliseconds |
@@ -177,6 +193,7 @@ number the model does not stand behind.
 | `model` | Served by | Answers |
 |---|---|---|
 | `kai` | Hanzo, in process ([Kai](/docs/models/kai)) | `provider: "Hanzo"`; `usage.output_tokens` 0; `routing` names the checkpoint, weights hash and calibration |
+| `kai-` and 12 hex digits | the same, pinned: the digits are the first 12 of the weights' SHA-256, so the id names exact weights | as `kai` |
 | `typesafe/jev-1.13`, `~typesafe/jev-latest` | TypeSafe's Jev, through OpenRouter's Decisions API | `provider` as upstream reports it; `usage` as upstream bills it; `routing.upstream` is the upstream generation id |
 
 A Jev request goes upstream as it came in, `provider`, `session_id`, `user` and
@@ -193,8 +210,8 @@ and each call is a row in the org's usage (`GET /v1/billing/usage`, model
 
 | `model` | Price |
 |---|---|
-| `kai` | $0.021 per million input tokens (`usage.input_tokens`); output is free |
-| `typesafe/jev-1.13`, `~typesafe/jev-latest` | $0.03 per call |
+| `kai` | \$0.021 per million input tokens (`usage.input_tokens`); output is free |
+| `typesafe/jev-1.13`, `~typesafe/jev-latest` | \$0.042 per million input tokens, on the usage OpenRouter reports |
 
 Kai's rate is its row in the model catalogue every model is billed from:
 `GET https://api.hanzo.ai/v1/models` lists `kai` with `pricing.input` 0.021 and
@@ -213,21 +230,38 @@ The gateway every model endpoint shares answers first:
 
 Their bodies are the gateway's, in one of two shapes (`{"status": "error",
 "msg": "…"}` or `{"error": {"message", "type", "code"}}`); the status is the
-contract. Past the gateway, every error is `{"error": {"code": <status>,
-"message": "…"}}`, and the message names what to fix.
+contract. Past the gateway, every error is `{"error": {"code", "message"}}`:
+`code` is the HTTP status, or for a refusal over reach the name of what is
+over, and the message names what to fix. A `429` or `529` from the runtime
+carries `Retry-After` in seconds and `retry-after-ms` in milliseconds.
 
 | Status | When | Example `message` |
 |---|---|---|
-| `400` | the body is not JSON, or lacks `model` or `questions` | `the request needs 'questions'` |
-| `400` | a question is malformed | `question 'team': a choice question needs at least one criterion` |
-| `400` | a limit is exceeded | `too many questions (65 > 64)` |
-| `400` | `state` is a number, boolean or null | `'state' must be a string, an object or an array` |
-| `400` | the model is not one of the ids above | `unknown model "gpt-5"; use one of kai, typesafe/jev-1.13, ~typesafe/jev-latest` |
-| `422` | a question's options do not fit the model's window | names the question |
+| `400` | the body is not JSON, or the model is not one of the ids above | `unknown model "gpt-5"; use one of …` |
+| `422` | the request does not match the schema: a missing field, a question with no criteria, one label, a `null` level, a `state` that is a number, more than 100 questions | the path of each problem, e.g. `'questions' takes at most 100 questions, got 101` |
+| `422` | over [reach](#reach): `code` is `state_too_long`, `question_too_long`, `option_too_long` or `request_too_long` | the tokens or bytes needed and the limit |
+| `429` | the model's queue is full | `kai has a full queue; retry in 250 ms` |
+| `529` | queued work would not start in time | `kai is overloaded; retry in 900 ms` |
 | `503` | the model is known but not served by this deployment | `model "kai" is not served here: …` |
 | upstream `4xx` | Jev refused the request; its status and message pass through | e.g. `429` |
 | `502` | Jev failed, could not be reached, or answered in a shape that fails the check | `upstream 502: answer "team" is missing` |
 | `500` | a fault in the runtime | `decision failed`; the detail stays in the operator's log |
 
-[Kai](/docs/models/kai) covers the model, how it was measured, and Decision
-Programs: questions composed into a graph that policy governs.
+### Reach
+
+Kai reads a state beside each question, up to what the served checkpoint
+reads, and never cuts what it cannot read. A request over reach is refused with
+`422`, and `code` names the part:
+
+| `code` | When |
+|---|---|
+| `state_too_long` | the state and a question together do not fit what the checkpoint reads |
+| `question_too_long` | a question alone takes more than half of it |
+| `option_too_long` | an option (a label with its description, a score level, a noul side) is over 512 tokens |
+| `request_too_long` | the body is over 16 MiB |
+
+Put what decides a question first, send the part of a long document the
+question is about, or split the document across calls.
+
+[Kai](/docs/kai) has the guides, patterns and recipes;
+[Kai the model](/docs/models/kai) covers how it was trained and measured.

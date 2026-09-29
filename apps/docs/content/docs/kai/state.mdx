@@ -33,7 +33,9 @@ tokens of state; the window you meet is the checkpoint's, and
 
 Each option (a label with its description, a score level, a noul side) is read
 whole, on its own, up to 512 tokens; a longer one is refused with `422` and code
-`option_too_long`.
+`option_too_long`. A question that alone takes more than half the window is
+refused with `question_too_long`, and a body over 16 MiB with
+`request_too_long` ([reach](/docs/decisions#reach)).
 
 When a case is longer than the window, send each question the part it needs:
 the latest message rather than the thread, one section of a contract at a time,
