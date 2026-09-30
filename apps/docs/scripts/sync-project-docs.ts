@@ -451,6 +451,14 @@ function findDocsPath(repoPath: string, candidates: string[]): string | null {
   return null;
 }
 
+/**
+ * A repository's operator runbooks are for the people who run the service, and
+ * they live in the internal docs. The public site carries how to USE a project,
+ * so a `runbooks/` directory in a ported docs tree is left behind, whichever of
+ * the two copy paths (local checkout or remote tarball) brought the tree in.
+ */
+const OPERATOR_DIRS = new Set(['runbooks', 'runbook']);
+
 function copyDocs({ sourceDir, destDir, dryRun }: { sourceDir: string; destDir: string; dryRun: boolean }) {
   if (dryRun) return;
   fs.rmSync(destDir, { recursive: true, force: true });
@@ -461,6 +469,7 @@ function copyDocs({ sourceDir, destDir, dryRun }: { sourceDir: string; destDir: 
       const base = path.basename(filePath);
       if (base === 'node_modules' || base === '.git' || base === '.next') return false;
       if (base === 'dist' || base === 'build' || base === 'out') return false;
+      if (OPERATOR_DIRS.has(base.toLowerCase())) return false;
       return true;
     },
   });
