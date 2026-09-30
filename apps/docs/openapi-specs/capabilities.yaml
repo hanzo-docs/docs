@@ -68,8 +68,10 @@ domains:
     # `exec` runs code in a sandbox lease; `sandboxes` is the lease. `tool`
     # is the per-tenant tool plane an agent calls through; `lsp` is code
     # intelligence over a repository, which is why it files beside `code`.
-    tags: [ai, zen, engine, ml, agent, skills, eval, benchmark, research,
-           prompt, exec, sandbox, tool, ask, code, lsp, translate]
+    # `environment` is what a repository is before its agent starts — install,
+    # start and secrets — so it files beside `agent`.
+    tags: [ai, zen, engine, ml, agent, environment, skills, eval, benchmark,
+           research, prompt, exec, sandbox, tool, ask, code, lsp, translate]
 
   - id: data
     title: "Data"
