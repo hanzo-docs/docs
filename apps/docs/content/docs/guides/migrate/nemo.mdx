@@ -74,7 +74,7 @@ Five tables, one per NeMo concern.
 
 | NeMo | Hanzo |
 |---|---|
-| Nemotron, called through `integrate.api.nvidia.com/v1` | `zen6` and `zen6-coder`, with the `zen5.8` and `zen5` lines beside them, at `POST /v1/chat/completions`; `GET /v1/models` lists every Zen id |
+| Nemotron, called through `integrate.api.nvidia.com/v1` | `zen6` and `zen6-flash`, with the `zen5` line beside them, at `POST /v1/chat/completions`; `GET /v1/models` lists every Zen id |
 | NIM container serving `/v1/chat/completions` on your GPU | The same address, served. No container to pull; the model is a name in the catalogue |
 | NIM embedding and reranker microservices | `POST /v1/embeddings` with `zen-embedding`, `POST /v1/rerank` with `zen-rerank` |
 | Nemotron content-safety model | `zen-guard`, a 128K-context safety classifier, called like any other model |

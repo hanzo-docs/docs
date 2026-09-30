@@ -8,20 +8,20 @@ icon: Sparkle
 where its weights are, and which generation is current.**
 
 Zen is the open-weight generative family of Zen LM, from [Zoo Labs Foundation](https://zoo.ngo), a
-501(c)(3) non-profit, and served first-party on `api.hanzo.ai`. It is chosen for two jobs.
+501(c)(3) non-profit, and served on `api.hanzo.ai`. It is chosen for two jobs.
 
-**Agentic coding that runs locally.** `zen6-coder` is a mixture of 512 experts
-that sends each token through 10 of them, reads 262,144 tokens natively, and
-takes tool definitions in its chat template, so it can drive a coding loop over
-a whole repository on your own machine. A multi-token-prediction drafter ships
-beside it for faster decoding. The weights are GGUF for llama.cpp, 97.8 GB with
-the drafter; the model card reports prefill on an AMD Strix Halo machine with
-128 GB of unified memory. Hosted, the same id takes a 1,000,000-token context.
+**Agentic coding that runs locally.** `zen6` is a 27B dense model that reads
+262,144 tokens natively and 1,048,576 with YaRN, and ships a speculative drafter
+for faster decoding; its card reports 141 tokens a second on code completion on
+one DGX Spark. `zen6-flash` is the same generation in ternary weights, 5.95 GB,
+for an Apple Silicon laptop or one GPU. Hosted, both ids take a 1,000,000-token
+context.
 
 **Marketing work.** [`POST /v1/content/generate`](/docs/openapi/content/post-content-generate) drafts
 campaigns and social posts from a brief, with the brand-voice guidance you pass
-and the Zen model you name, and files each one in the CMS as a draft. `zen-vl`
-reads images, documents and charts. The Zen 3 weights make the images
+and the Zen model you name, and files each one in the CMS as a draft. `zen6`
+reads images and video beside the brief, and `zen-vl` reads images, documents
+and charts. The Zen 3 weights make the images
 (`zen3-image`) and speech (`zen3-tts`) that go with the copy.
 
 Weights are published under [huggingface.co/zenlm](https://huggingface.co/zenlm); each model card states its
@@ -33,8 +33,7 @@ license, base and serving instructions. The same ids answer hosted on
 | Generation | Models | Where | Status |
 |---|---|---|---|
 | **Zen 7** | — | no weights; no id to call | research preview · [Request access](https://hanzo.ai/research-access) · succeeds Satori |
-| **Zen 6** | `zen6`, `zen6-coder` — the new Zen architecture | hosted; weights at [`zenlm/zen6-coder`](https://huggingface.co/zenlm/zen6-coder) | available now |
-| **Zen 5.8** | `zen5.8`, `zen5.8-coder`, `zen5.8-evo`, `zen5.8-spark` | hosted | previous generation |
+| **Zen 6** | `zen6`, and `zen6-flash`, its ternary build | hosted; weights at [`zenlm/zen6`](https://huggingface.co/zenlm/zen6) and [`zenlm/zen6-flash`](https://huggingface.co/zenlm/zen6-flash) | available now |
 | **Zen 5** | `zen5`, `zen5-coder`, `zen5-flash`, `zen5-mini`, `zen5-pro`, `zen5-evo`, `zen5-spark` | hosted; GGUF builds on Hugging Face (`zen5-gguf`, `zen5-coder-gguf`, …) | earlier |
 | **Zen 3** | speech (`zen3-asr`, `zen3-tts`), image (`zen3-image`), `zen3-vl`, `zen3-omni`, `zen3-nano`, `zen3-guard` | weights on Hugging Face | shipped |
 
@@ -47,15 +46,17 @@ classifier, not a generator; the gateway also accepts its name as an alias for
 
 ## Zen 6 weights
 
-| | [`zenlm/zen6-coder`](https://huggingface.co/zenlm/zen6-coder) |
-|---|---|
-| Format | GGUF, IQ4_XS in three files, with a multi-token-prediction drafter |
-| Size | 97.8 GB with the drafter |
-| Experts | 512, 10 active per token |
-| Layers | 48 |
-| Context | 262,144 tokens |
-| Tools | tool definitions in the chat template |
-| Architecture | <span data-upstream>`qwen4exp`</span> (GGUF `general.architecture`) |
+| | [`zenlm/zen6`](https://huggingface.co/zenlm/zen6) | [`zenlm/zen6-flash`](https://huggingface.co/zenlm/zen6-flash) |
+|---|---|---|
+| Weights | 27.3B dense, NVFP4 MLP and LM head, FP8 attention | ternary: 1.77 bits per weight packed (5.95 GB), 2.14 in 2-bit slots (7.21 GB) |
+| Layers | 64: 48 linear-attention, 16 full-attention | the same 27B |
+| Attention | 24 query heads, 4 key/value, head size 256 | |
+| Vocabulary | 248,320 tokens | |
+| Context | 262,144 native; 1,048,576 with YaRN | 262,144 |
+| Inputs | text, images, video | text, images |
+| Drafter | bundled, block-diffusion | bundled, 2.06 GB |
+| Runs on | SGLang, NVIDIA Blackwell | llama.cpp, Metal or one GPU |
+| Architecture | <span data-upstream>`Qwen3_5ForConditionalGeneration` (`qwen3_5`)</span> | <span data-upstream>GGUF `qwen35`</span> |
 
 ## Call one
 
@@ -83,16 +84,13 @@ that command disagree, believe the command.
 ## Run one yourself
 
 ```bash
-hf download zenlm/zen6-coder --local-dir zen6-coder
+hf download zenlm/zen6 --local-dir zen6
+hf download zenlm/zen6-flash --local-dir zen6-flash
 ```
 
-Each card carries the serving command its model was built for: llama.cpp for
-`zen6-coder` and the GGUF builds. A server that speaks `/v1/chat/completions`
-takes the same request as above with its own base URL.
-
-Two more repositories carry the Zen 6 name, [`zenlm/zen6`](https://huggingface.co/zenlm/zen6)
-and [`zenlm/zen6-flash`](https://huggingface.co/zenlm/zen6-flash); each card
-says what it holds.
+Each card carries the serving command its model was built for: SGLang for
+`zen6`, llama.cpp for `zen6-flash` and the GGUF builds. A server that speaks
+`/v1/chat/completions` takes the same request as above with its own base URL.
 
 ## Where Zen sits
 
@@ -111,12 +109,10 @@ repository on Hugging Face holds.
 
 Each repository's own license governs its files; the model card names it.
 
-- `zenlm/zen6-coder`: `qwen-community-1.0`, as its card declares. Built with
-  Qwen3.8-Flash-Next by the Qwen team (`Qwen/Qwen3.8-Flash-Next`); GGUF
-  quantization by Unsloth (`unsloth/Qwen3.8-Flash-Next-GGUF`).
-- `zenlm/zen6`: Apache-2.0. Base models, as its card declares:
-  `RadixArk/Qwen3.8-27B-NVFP4` and `incoai/Qwen3.8-27B-DFlash2`.
-- `zenlm/zen6-flash`: Apache-2.0. Base models, as its card declares:
-  `prism-ml/Ternary-Bonsai-2-27B-gguf` and `ProCreations/Ternary-Bonsai-2-27B-DFlash2`.
+- `zenlm/zen6`: Apache-2.0. Built from Qwen3.8-27B by the Qwen team (Apache-2.0);
+  NVFP4 quantization `RadixArk/Qwen3.8-27B-NVFP4`, drafter `incoai/Qwen3.8-27B-DFlash2`.
+- `zenlm/zen6-flash`: Apache-2.0. Ternary Bonsai 2 27B by prism-ml
+  (`prism-ml/Ternary-Bonsai-2-27B-gguf`), built from Qwen3.8-27B; drafter
+  `ProCreations/Ternary-Bonsai-2-27B-DFlash2`.
 
 </section>

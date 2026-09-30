@@ -60,7 +60,7 @@ tier=$(jq -r --slurpfile p preflight.json \
   '.answers.model_tier | if .answer_confidence >= $p[0].thresholds.model_tier then .choice else "unsure" end' <<<"$pre")
 case $tier in
   cheap)     model=enso-flash ;;
-  zen-coder) model=zen6-coder ;;
+  zen-coder) model=zen6 ;;
   frontier)  model=enso-ultra ;;
   *)         model=auto ;;          # Kai is unsure: let Enso route
 esac
@@ -90,7 +90,7 @@ The decision half, run against `kai` (stage a5, calibration `cal_47711d44267fdbd
 
 | State | Answer |
 |---|---|
-| "Rename the variable usr to user in main.go." | `zen-coder` at 0.5182 → `zen6-coder` |
+| "Rename the variable usr to user in main.go." | `zen-coder` at 0.5182 → `zen6` |
 | "Fix the failing test in config_test.go: undefined parseConfig." | `frontier` at 0.3734 — under 0.5, so `auto` |
 | "Design a migration plan from our monolith to services, with rollback at every step." | `zen-coder` at 0.3641 — under 0.5, so `auto` |
 | "What is 2 + 2?" | `frontier` at 0.5634 → `enso-ultra` |

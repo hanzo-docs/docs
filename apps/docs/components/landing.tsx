@@ -103,9 +103,8 @@ const commands = [
 ];
 
 const zen = [
-  { name: 'zen6', spec: 'New architecture' },
-  { name: 'zen6-coder', spec: 'Local agentic code' },
-  { name: 'zen5.8', spec: 'Previous generation' },
+  { name: 'zen6', spec: '27B, reads images' },
+  { name: 'zen6-flash', spec: 'Ternary, fits a laptop' },
   { name: 'zen5', spec: 'Hosted' },
   { name: 'zen-embedding', spec: 'Retrieval' },
   { name: 'zen-guard', spec: 'Safety' },
