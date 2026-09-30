@@ -63,42 +63,23 @@ jobs:
         with:
           bun-version: 1.3.11
 
-      # The ingest key is public (it ships in the bundle) and lives in KMS so it
-      # rotates without a commit. Login and read are retried on a lost answer
-      # (000/429/5xx) and not on a refusal.
+      - run: pnpm install --frozen-lockfile
+
+      # The ingest key is the hanzo org's publishable key from @hanzo/event's
+      # keyring, which the page resolves from its own host (packages/analytics).
+      # This resolves it the same way for docs.hanzo.ai. A key that names a
+      # deleted project answers 403 while the site looks perfect, so ask the
+      # endpoint before building: a lost answer (000/429/5xx) warns, a refusal
+      # stops the run.
       - name: ingest key
-        env:
-          KMS_CLIENT_ID: ${{ secrets.KMS_CLIENT_ID }}
-          KMS_CLIENT_SECRET: ${{ secrets.KMS_CLIENT_SECRET }}
         run: |
           set -euo pipefail
-          KMS=https://api.hanzo.ai
-          [ -n "${KMS_CLIENT_ID:-}" ] && [ -n "${KMS_CLIENT_SECRET:-}" ] || {
-            echo "::error::KMS_CLIENT_ID/KMS_CLIENT_SECRET are unset on this forge org"; exit 1; }
-          ask() {  # ask <outfile> <curl args...> -> status code
-            local out="$1"; shift; local code=""
-            for wait in 0 5 15 45; do
-              [ "$wait" = 0 ] || sleep "$wait"
-              code="$(curl -s -o "$out" -w '%{http_code}' --max-time 30 "$@")" || code=000
-              case "$code" in 000|429|5*) continue ;; *) break ;; esac
-            done
-            printf '%s' "$code"
-          }
-          code="$(ask /tmp/login.json "$KMS/v1/kms/auth/login" -H 'Content-Type: application/json' \
-            -d "{\"clientId\":\"$KMS_CLIENT_ID\",\"clientSecret\":\"$KMS_CLIENT_SECRET\"}")"
-          [ "$code" = 200 ] || { echo "::error::KMS login answered $code"; exit 1; }
-          token="$(jq -r '.accessToken // empty' /tmp/login.json)"
-          [ -n "$token" ] || { echo "::error::KMS login returned no accessToken"; exit 1; }
-          code="$(ask /tmp/key.json "$KMS/v1/kms/secrets/deploy/PUBLISHABLE_KEY?env=prod" \
-            -H "Authorization: Bearer $token")"
-          [ "$code" = 200 ] || { echo "::error::reading deploy/PUBLISHABLE_KEY answered $code (403: this client may not read it; 404: not sealed)"; exit 1; }
-          key="$(jq -r '.value // empty' /tmp/key.json)"
-          rm -f /tmp/login.json /tmp/key.json
+          key="$(cd packages/analytics && node --input-type=module \
+            -e "import { keyFor } from '@hanzo/event'; process.stdout.write(keyFor('docs.hanzo.ai') ?? '')")"
           case "$key" in
             pk-*) ;;
-            *) echo "::error::deploy/PUBLISHABLE_KEY is empty or not a pk- key"; exit 1 ;;
+            *) echo "::error::@hanzo/event resolves no pk- key for docs.hanzo.ai"; exit 1 ;;
           esac
-          # A well-formed key can still name a deleted project: ask the endpoint.
           code="$(curl -s -o /tmp/ingest.json -w '%{http_code}' --max-time 20 \
             -X POST "https://api.hanzo.ai/v1/event?ingest_key=$key" \
             -H 'content-type: application/json' -d '{"batch":[]}')" || code=000
@@ -107,10 +88,7 @@ jobs:
             000|429|5*) echo "::warning::ingest endpoint answered $code; key unverified" ;;
             *) echo "::error::the ingest key is refused ($code): $(cat /tmp/ingest.json)"; exit 1 ;;
           esac
-          echo "::add-mask::$key"
-          echo "NEXT_PUBLIC_PUBLISHABLE_KEY=$key" >> "$GITHUB_ENV"
-
-      - run: pnpm install --frozen-lockfile
+          echo "INGEST_KEY=$key" >> "$GITHUB_ENV"
 
       # The workspace packages first, on their own, so a failure here is not
       # read as a failure of the site. `docs^...` is turbo's word for "what docs
@@ -159,7 +137,7 @@ jobs:
         run: |
           set -eu
           sh scripts/check-export.sh apps/docs/out
-          grep -rqF "$NEXT_PUBLIC_PUBLISHABLE_KEY" apps/docs/out \
+          grep -rqF "$INGEST_KEY" apps/docs/out \
             || { echo "::error::the ingest key is not in the export"; exit 1; }
 
       # The slug is the host's name, as hanzo-ai is hanzo.ai's and cloud-hanzo-ai

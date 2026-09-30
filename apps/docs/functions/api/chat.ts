@@ -87,7 +87,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     return new Response(
       JSON.stringify({
         error: response.status === 429
-          ? 'Rate limit exceeded. Sign in at hanzo.id for higher limits.'
+          ? 'Rate limit exceeded. Sign in at hanzo.ai/login for higher limits.'
           : `AI API error: ${response.status}`,
         detail: text,
       }),

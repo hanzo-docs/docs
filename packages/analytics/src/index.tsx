@@ -1,9 +1,12 @@
 'use client';
 
+import { keyForPage } from '@hanzo/event';
 import { AnalyticsProvider, usePageview } from '@hanzo/event/react';
 
-/** The client, for a page that sends an event of its own. */
+/** The client, for a page that sends an event of its own, and the catalog
+ *  (@hanzo/events) it takes the event's name from. */
 export { useAnalytics } from '@hanzo/event/react';
+export { EVENTS } from '@hanzo/event';
 import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
 
@@ -13,11 +16,13 @@ import type { ReactNode } from 'react';
  *  tenant server-side from the publishable ingest key. */
 const HOST = 'https://api.hanzo.ai';
 
-/** Publishable ingest key (pk_…), minted per org via POST /v1/ingest/keys. A docs
- *  site is read-only and logged out, so no bearer can ride the request — this
- *  write-only, bundle-safe key IS how anonymous pageviews and errors resolve to an
- *  org. Unset → events are best-effort and dropped at the edge. */
-const INGEST_KEY = process.env.NEXT_PUBLIC_PUBLISHABLE_KEY?.trim() || undefined;
+/** Publishable ingest key: the org's, from the keyring @hanzo/event carries,
+ *  resolved from the host the page is served on — docs.hanzo.ai is the hanzo
+ *  org's. A docs site is read-only and logged out, so no bearer can ride the
+ *  request — this write-only, bundle-safe key IS how anonymous pageviews and
+ *  errors resolve to an org. A host no brand claims gets none and reports
+ *  nothing, rather than filing its visitors under another org. */
+const INGEST_KEY = keyForPage();
 
 /** Honor an explicit browser opt-out (Global Privacy Control, then legacy DNT).
  *  SSR (no navigator) defaults to consented; the browser reads the real signal on

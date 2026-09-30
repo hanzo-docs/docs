@@ -58,17 +58,17 @@ completing a deployment reconciles the prefix against the manifest it sends.
 
 ## What the job proves before it publishes
 
-- **The ingest key resolves.** `deploy/PUBLISHABLE_KEY` (env `prod`) comes from
-  KMS — the org's Actions secrets carry only `KMS_CLIENT_ID`/`KMS_CLIENT_SECRET`
-  — and is POSTed to `/v1/event` before the build. A key that is present but
-  names a deleted project answers 403, and a site built on it loses every
-  pageview while looking perfect.
+- **The ingest key resolves.** The page sends the hanzo org's publishable key
+  from `@hanzo/event`'s keyring, resolved from its host (`packages/analytics`).
+  The job resolves the same key for `docs.hanzo.ai` and POSTs it to `/v1/event`
+  before the build. A key that names a deleted project answers 403, and a site
+  built on it loses every pageview while looking perfect.
 - **The export is a site.** `scripts/check-export.sh` refuses an export without
   `index.html`, `docs/index.html`, 50+ pages, a rendered nav, and every path in
   `apps/docs/export.require` — the sections that vanish without breaking anything
   else (`docs/studio/` is a submodule, `docs/openapi/` and `docs/mcp-tools/` are
   generated).
-- **The key is in the bytes.** A build-time env that never reached the bundle is
+- **The key is in the bytes.** A keyring that never reached the bundle is
   invisible everywhere except the warehouse, so the export is grepped for it.
 - **Every link resolves.** `build:post` walks the export, follows every anchor
   through the serving ladder (`/docs` -> `docs.html` -> `docs/index.html`) and

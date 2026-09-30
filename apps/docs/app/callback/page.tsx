@@ -24,7 +24,7 @@ export default function CallbackPage() {
         title="Sign in failed"
         note={error}
         action={
-          <Action tone="loud" render="a" href="/login" mt={6} rounded={999}>
+          <Action tone="loud" render="a" href="https://hanzo.ai/login" mt={6} rounded={999}>
             Try again
           </Action>
         }

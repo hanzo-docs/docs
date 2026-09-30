@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Text, XStack } from '@hanzo/gui';
 import { ChevronsUpDown } from '@hanzogui/lucide-icons-2';
@@ -10,6 +9,8 @@ import { currentUser, iam, type DocsUser } from '@/lib/iam';
 import { muted } from '@/lib/ink';
 
 const CONSOLE = 'https://platform.hanzo.ai';
+/** Sign-in is hanzo.ai's page. No surface sends a visitor to hanzo.id. */
+const LOGIN = 'https://hanzo.ai/login';
 
 /**
  * Who is signed in, asked once per page load and shared by the rail, the bar and
@@ -32,14 +33,12 @@ function useUser(): [DocsUser | null, (u: DocsUser | null) => void] {
 }
 
 function signOut(done: () => void) {
-  // The SDK owns the token store and clears every key it wrote.
-  iam()
-    .logout()
-    .catch(() => iam().clearTokens())
-    .finally(() => {
-      done();
-      window.location.reload();
-    });
+  // The session ends here, in this browser. The SDK's logout() would carry the
+  // reader on to the issuer's end-session page on hanzo.id, and no surface sends
+  // a visitor there. The SDK owns the token store and clears every key it wrote.
+  iam().clearTokens();
+  done();
+  window.location.reload();
 }
 
 /**
@@ -53,7 +52,7 @@ export function Account() {
   if (!user)
     return (
       <XStack gap={8}>
-        <Action tone="line" flex={1} render={<Link href="/login" prefetch={false} />}>
+        <Action tone="line" flex={1} render="a" href={LOGIN}>
           Sign in
         </Action>
         <Action tone="loud" flex={2} render="a" href={CONSOLE}>
@@ -113,7 +112,7 @@ export function Short() {
 
   return (
     <XStack gap={8} items="center">
-      <Action tone="quiet" render={<Link href="/login" prefetch={false} />} $max-sm={{ display: 'none' }}>
+      <Action tone="quiet" render="a" href={LOGIN} $max-sm={{ display: 'none' }}>
         Sign in
       </Action>
       <Action tone="loud" render="a" href={CONSOLE}>

@@ -137,6 +137,20 @@ zt-docs) predate the unified `content/docs/` model — migrate their content int
 `content/docs/<section>/` (or a `hanzo-docs/<team>` submodule) then archive the
 app.
 
+## Funnel
+
+- **No page sends a visitor to hanzo.id.** Sign-in is `https://hanzo.ai/login`
+  (`components/account.tsx`; `/login` is a rule in `public/_redirects`).
+  Sign-out clears the session in this browser and navigates nowhere.
+- **The conversion CTA reads "Choose plan"** and opens `https://hanzo.ai/pricing`,
+  firing `plan_clicked` `{ source: 'docs' }` (`components/landing.tsx`).
+- **Events are catalog names only** — `EVENTS` from @hanzo/events, re-exported
+  by `@hanzo/docs-analytics`. That package sends page views (first load and each
+  route change) to `api.hanzo.ai/v1/event` with the key `@hanzo/event`'s keyring
+  resolves from the page's host: `docs.hanzo.ai` is the hanzo org's, `localhost`
+  resolves none. The cold image lane's `PUBLISHABLE_KEY` build arg is no longer
+  read by any app.
+
 ## Build guards, and why prose needs them
 
 `scripts/pre-build.ts` ends with checks that fail the build. The first two exist for

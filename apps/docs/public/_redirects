@@ -26,9 +26,13 @@
 # Tutorials were merged into Guides.
 /tutorials         /docs/guides           301
 
+# Sign-in is hanzo.ai's page; this site no longer runs its own sign-in, whose
+# authorize step sent the reader to hanzo.id.
+/login             https://hanzo.ai/login 301
+
 # Top-level convenience aliases. docs.hanzo.ai is already the docs subdomain, so
 # bare product paths resolve to their canonical page under /docs. Explicit list
-# only — never a catch-all, which would shadow /, /blog, /showcase, /login.
+# only — never a catch-all, which would shadow /, /blog, /showcase.
 #
 # /cloud is where hanzo.id's Cloud card and every "Docs" button beside the
 # product send a reader, and Hanzo Cloud is not a section of this site — it is
