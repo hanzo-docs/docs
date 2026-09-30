@@ -164,7 +164,7 @@ function ApiClient() {
     if (!isValid) {
       currentToken = await refresh();
     }
-    const res = await fetch("/api/data", {
+    const res = await fetch("/v1/data", {
       headers: { Authorization: `Bearer ${currentToken}` },
     });
     return res.json();

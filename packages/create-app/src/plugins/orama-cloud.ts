@@ -43,23 +43,23 @@ See https://hanzoai.github.io/docs/docs/headless/search/orama-cloud for integrat
             prerender: true,
           });
           mod.removeRoute({
-            path: 'api/search.ts',
-            route: '/api/search',
+            path: 'v1/search.ts',
+            route: '/v1/search',
           });
         });
       } else if (template.value.startsWith('react-router')) {
         await reactRouterRoutes(this, (mod) => {
           mod.addRoute('static.json', 'routes/static.ts', route['react-router']);
-          mod.removeRoute('api/search');
+          mod.removeRoute('v1/search');
         });
       } else if (template.value.startsWith('+next')) {
         await Promise.all([
-          fs.unlink(path.join(appDir, 'app/api/search/route.ts')).catch(() => null),
+          fs.unlink(path.join(appDir, 'app/v1/search/route.ts')).catch(() => null),
           writeFile(path.join(appDir, 'app/static.json/route.ts'), route.next),
         ]);
       } else {
         await Promise.all([
-          fs.unlink(path.join(appDir, 'pages/_api/api/search.ts')).catch(() => null),
+          fs.unlink(path.join(appDir, 'pages/_api/v1/search.ts')).catch(() => null),
           writeFile(path.join(appDir, 'pages/_api/static.json.ts'), route.waku),
         ]);
       }

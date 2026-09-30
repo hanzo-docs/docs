@@ -5,7 +5,7 @@ import { createDocument, search, type Doc } from '../flexsearch/utils';
 
 export interface FlexsearchStaticOptions {
   /**
-   * @defaultValue `/api/search`
+   * @defaultValue `/v1/search`
    */
   from?: string;
   locale?: string;
@@ -21,7 +21,7 @@ function initDocument(data: Record<string, string>) {
 const cacheMap = new Map<string, Promise<Map<string, Document<Doc>>>>();
 
 export function flexsearchStaticClient(options: FlexsearchStaticOptions = {}): SearchClient {
-  const { from = '/api/search', locale = '', tag } = options;
+  const { from = '/v1/search', locale = '', tag } = options;
 
   let dbs = cacheMap.get(from);
   if (!dbs && typeof window !== 'undefined') {

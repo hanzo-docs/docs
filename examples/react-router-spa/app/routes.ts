@@ -3,7 +3,7 @@ import { index, route, type RouteConfig } from '@react-router/dev/routes';
 export default [
   index('routes/home.tsx'),
   route('docs/*', 'routes/docs.tsx'),
-  route('api/search', 'routes/search.ts'),
+  route('v1/search', 'routes/search.ts'),
 
   // LLM integration:
   route('llms.txt', 'llms/index.ts'),

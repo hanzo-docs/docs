@@ -10,7 +10,7 @@ export default {
     const paths: string[] = [];
     for (const path of getStaticPaths()) {
       // ignore dynamic document search
-      if (path === '/api/search') continue;
+      if (path === '/v1/search') continue;
       paths.push(path);
     }
 

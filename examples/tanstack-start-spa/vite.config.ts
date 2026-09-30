@@ -26,7 +26,7 @@ export default defineConfig({
           path: '/docs',
         },
         {
-          path: '/api/search',
+          path: '/v1/search',
         },
         {
           path: 'llms-full.txt',

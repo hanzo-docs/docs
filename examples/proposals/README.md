@@ -85,7 +85,7 @@ categories: [
 ```
 proposals/
 ├── app/
-│   ├── api/search/     # Search API endpoint
+│   ├── v1/search/     # Search API endpoint
 │   ├── docs/           # Documentation pages
 │   ├── (home)/         # Landing page
 │   ├── global.css      # Global styles

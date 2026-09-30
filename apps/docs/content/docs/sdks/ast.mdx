@@ -220,7 +220,7 @@ const ast = new AstClient({
   organizationId: 'org-hanzo',
 });
 
-app.post('/api/chat', async (req, res) => {
+app.post('/v1/chat', async (req, res) => {
   const { messages } = req.body;
 
   const completion = await llm.chat.completions.create({

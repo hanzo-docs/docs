@@ -17,7 +17,7 @@ import { AGENT_SETUP_PROMPT } from '@/lib/agent-setup-prompt';
 
 /**
  * The search dialog. Full text over every page (the static index at
- * /api/search), a jump straight to a page whose title starts with what was
+ * /v1/search), a jump straight to a page whose title starts with what was
  * typed, and — when the words land nowhere — the question handed to the
  * reader's own agent, set up for Hanzo. Arrows move, Enter opens, Esc closes.
  */
@@ -74,7 +74,7 @@ export default function Finder({ open, onOpenChange }: { open: boolean; onOpenCh
   const { tree } = useTree();
   const [tag, setTag] = useState<string | undefined>();
   const [asked, setAsked] = useState(false);
-  const { search, setSearch, query } = useDocsSearch({ type: 'flexsearch-static', from: '/api/search', tag });
+  const { search, setSearch, query } = useDocsSearch({ type: 'flexsearch-static', from: '/v1/search', tag });
   const titles = useMemo(() => pages(tree.children), [tree]);
 
   const items = useMemo<Item[] | null>(() => {

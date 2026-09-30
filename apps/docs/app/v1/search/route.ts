@@ -16,7 +16,7 @@ function sectionTags(slug: string | undefined): string | string[] {
 
 // Client-side static search for the static export (served by hanzoai/static).
 //
-// `staticGET` serializes the flexsearch index to /api/search; the browser
+// `staticGET` serializes the flexsearch index to /v1/search; the browser
 // (search dialog, `type: 'flexsearch-static'`) downloads it once and searches
 // locally — no server, no auth, works on a static host. This replaces the old
 // `GET` (dynamic search handler) which, under `dynamic = 'force-static'`, froze

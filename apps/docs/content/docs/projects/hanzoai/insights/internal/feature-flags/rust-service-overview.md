@@ -1,6 +1,6 @@
 # Rust feature flags service
 
-The Rust feature flags service (`rust/feature-flags/`) handles all runtime feature flag evaluation and local SDK evaluation. It serves the `/flags` and `/decide` endpoints for flag evaluation, and the `/flags/definitions` endpoint for local SDK evaluation. Django remains the admin API for flag CRUD operations (`/api/projects/{id}/feature_flags/`).
+The Rust feature flags service (`rust/feature-flags/`) handles all runtime feature flag evaluation and local SDK evaluation. It serves the `/flags` and `/decide` endpoints for flag evaluation, and the `/flags/definitions` endpoint for local SDK evaluation. Django remains the admin API for flag CRUD operations.
 
 ## Infrastructure routing
 
@@ -18,8 +18,6 @@ Contour / Envoy (path-based routing)
   ├── /decide/*              ──▶ insights-feature-flags:3001              (Rust, flags fleet)
   ├── /flags/?               ──▶ insights-feature-flags:3001              (Rust, flags fleet)
   ├── /flags/definitions     ──▶ insights-feature-flags-definitions:3001  (Rust, definitions fleet)
-  ├── /api/feature_flag/local_evaluation ──▶ insights-feature-flags-definitions:3001 (Rust, definitions fleet, legacy alias)
-  ├── /api/*                 ──▶ insights-web-django:8000                 (Django, catch-all)
   └── /*                     ──▶ insights-web-django:8000                 (Django, final catch-all)
 ```
 
@@ -38,7 +36,7 @@ The Rust service runs as two separate fleets controlled by the `SERVICE_MODE` en
 | Fleet                               | `SERVICE_MODE` | Routes                                                     | Purpose                                   |
 | ----------------------------------- | -------------- | ---------------------------------------------------------- | ----------------------------------------- |
 | `insights-feature-flags`             | `flags`        | `/flags`, `/decide`                                        | Runtime flag evaluation                   |
-| `insights-feature-flags-definitions` | `definitions`  | `/flags/definitions`, `/api/feature_flag/local_evaluation` | Flag definitions for local SDK evaluation |
+| `insights-feature-flags-definitions` | `definitions`  | `/flags/definitions` | Flag definitions for local SDK evaluation |
 
 Both fleets share the same Kubernetes secret (`insights-feature-flags`) via the `secretName` chart override.
 The `all` mode (default) registers all routes and is used for local development.
@@ -97,7 +95,6 @@ All routes are defined in `rust/feature-flags/src/router.rs`.
 | `/flags`                             | GET    | `endpoint::flags`                     | Returns minimal response with empty flags                                                 |
 | `/decide`                            | POST   | `endpoint::flags`                     | Same handler as `/flags`, response format varies via `X-Original-Endpoint: decide` header |
 | `/flags/definitions`                 | GET    | `flag_definitions::flags_definitions` | Flag definitions for local SDK evaluation (requires secret token or personal API key)     |
-| `/api/feature_flag/local_evaluation` | GET    | `flag_definitions::flags_definitions` | Legacy alias for `/flags/definitions` (backward compat with old SDK versions)             |
 | `/`                                  | GET    | `index`                               | Returns `"feature flags"` (basic health check)                                            |
 | `/_readiness`                        | GET    | `readiness`                           | Kubernetes readiness probe, tests all 4 DB pool connections                               |
 | `/_liveness`                         | GET    | `liveness`                            | Kubernetes liveness probe, heartbeat-based                                                |
@@ -133,7 +130,7 @@ The response format depends on the `v` query parameter and the endpoint:
 
 ### `/flags/definitions` endpoint
 
-This endpoint serves flag definitions for server-side SDKs that evaluate flags locally. It replaced the Django `/api/feature_flag/local_evaluation` endpoint (which is preserved as a Rust alias for backward compatibility). All 7 server-side SDKs (Python, Node, Go, Ruby, PHP, .NET, Rust) now poll this endpoint by default.
+This endpoint serves flag definitions for server-side SDKs that evaluate flags locally. All 7 server-side SDKs (Python, Node, Go, Ruby, PHP, .NET, Rust) now poll this endpoint by default.
 
 Authenticated via:
 
@@ -142,7 +139,7 @@ Authenticated via:
 
 Current implementation returns flag definitions with cohort data from HyperCache, with PostgreSQL fallback on cache miss. Supports ETag-based conditional requests (`If-None-Match` header) to avoid re-transferring unchanged definitions. Rate limited per team (default 600/minute).
 
-Billing quota enforcement matches Django's `/api/feature_flag/local_evaluation` behavior:
+Billing quota enforcement:
 
 - **Quota check**: Uses `FeatureFlagsLimiter.is_limited(token)` to verify the team hasn't exceeded their feature flag request quota. Returns HTTP 402 with a JSON body (`{"type": "quota_limited", "code": "payment_required", ...}`) when the quota is exceeded.
 - **Non-billable flag filtering**: Usage tracking skips requests where the response contains only non-billable flags — i.e., flags with keys starting with `survey-targeting-` or `product-tour-targeting-`. The shared `is_billable_flag_key()` predicate (in `flag_analytics.rs`) is used by both this endpoint and the `/flags` billing handler.

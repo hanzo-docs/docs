@@ -7,10 +7,10 @@ const server = createFromSource(source, {
   language: 'english',
 });
 
-export const Route = createFileRoute('/api/search')({
+export const Route = createFileRoute('/v1/search')({
   server: {
     handlers: {
-      GET: async ({ request }) => server.GET(request),
+      GET: () => server.staticGET(),
     },
   },
 });

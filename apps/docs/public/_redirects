@@ -7,8 +7,6 @@
 # /docs/openapi. Send every intuitive/guessed alias there so it always resolves.
 /docs/api          /docs/openapi          301
 /docs/api/*        /docs/openapi          301
-/api               /docs/openapi          301
-/api/*             /docs/openapi          301
 /api-reference     /docs/openapi          301
 /api-reference/*   /docs/openapi          301
 

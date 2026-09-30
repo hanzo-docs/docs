@@ -5,7 +5,7 @@ export interface FetchOptions {
   /**
    * API route for search endpoint, support absolute URLs.
    *
-   * @defaultValue '/api/search'
+   * @defaultValue '/v1/search'
    */
   api?: string;
 
@@ -25,7 +25,7 @@ export interface FetchOptions {
 const globalCache = new Map();
 
 export function fetchClient({
-  api = '/api/search',
+  api = '/v1/search',
   locale,
   tag,
   cache = globalCache,

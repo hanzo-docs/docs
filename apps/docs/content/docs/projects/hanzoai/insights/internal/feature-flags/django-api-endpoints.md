@@ -2,7 +2,7 @@
 
 Django serves the admin/management API for feature flags: CRUD operations, analytics, and organization-level operations. Runtime flag evaluation (`/flags`, `/decide`) is routed directly to the [Rust service](rust-service-overview.md) by Contour/Envoy at the Kubernetes infrastructure level -- these requests never reach Django. Django does make internal service-to-service HTTP calls to the Rust service for actions like `my_flags` and `evaluation_reasons`.
 
-The `/api/feature_flag/local_evaluation` endpoint was historically served by a dedicated Django deployment (`insights-local-evaluation`). All local evaluation traffic is now served by the Rust definitions fleet at `/flags/definitions` (see [Rust service overview](rust-service-overview.md)). The Django endpoint and deployment have been removed.
+The Django local-evaluation endpoint was historically served by a dedicated Django deployment (`insights-local-evaluation`). All local evaluation traffic is now served by the Rust definitions fleet at `/flags/definitions` (see [Rust service overview](rust-service-overview.md)). The Django endpoint and deployment have been removed.
 
 ## Architecture overview
 
@@ -118,7 +118,7 @@ Key things to know:
 
 ## Remote config endpoints
 
-Remote config (`/array/{token}/config`, `/array/{token}/config.js`, `/array/{token}/array.js`) and the surveys config endpoint (`/api/surveys`) are no longer served by Django. They are served by the Rust hypercache service, which reads from the same `RemoteConfig` model populated by Django via post-save signals. See [HyperCache system](hypercache-system.md).
+Remote config (`/array/{token}/config`, `/array/{token}/config.js`, `/array/{token}/array.js`) and the surveys config endpoint are no longer served by Django. They are served by the Rust hypercache service, which reads from the same `RemoteConfig` model populated by Django via post-save signals. See [HyperCache system](hypercache-system.md).
 
 ## See also
 

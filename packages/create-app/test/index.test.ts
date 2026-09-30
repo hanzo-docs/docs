@@ -52,7 +52,7 @@ test('transform react router routes: add routes', async () => {
 
 test('transform react router routes: filter routes', async () => {
   const sourceFile = await createSourceFile('fixtures/react-router-routes.txt');
-  filterReactRouterRoute(sourceFile, ({ path }) => path !== 'api/search');
+  filterReactRouterRoute(sourceFile, ({ path }) => path !== 'v1/search');
   await expect(sourceFile.getFullText()).toMatchFileSnapshot(
     'fixtures/react-router-routes(filter-routes).output.txt',
   );
@@ -60,7 +60,7 @@ test('transform react router routes: filter routes', async () => {
 
 test('transform react router config: remove exclude', async () => {
   const sourceFile = await createSourceFile('fixtures/react-router-config.txt');
-  filterReactRouterPrerenderArray(sourceFile, 'excluded', (v) => v !== '/api/search');
+  filterReactRouterPrerenderArray(sourceFile, 'excluded', (v) => v !== '/v1/search');
   await expect(sourceFile.getFullText()).toMatchFileSnapshot(
     'fixtures/react-router-config(remove-exclude).output.txt',
   );

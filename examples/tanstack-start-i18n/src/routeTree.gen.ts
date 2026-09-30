@@ -10,7 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LangIndexRouteImport } from './routes/$lang/index'
-import { Route as ApiSearchRouteImport } from './routes/api/search'
+import { Route as V1SearchRouteImport } from './routes/v1/search'
 import { Route as LangDocsSplatRouteImport } from './routes/$lang/docs/$'
 
 const LangIndexRoute = LangIndexRouteImport.update({
@@ -18,9 +18,9 @@ const LangIndexRoute = LangIndexRouteImport.update({
   path: '/$lang/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiSearchRoute = ApiSearchRouteImport.update({
-  id: '/api/search',
-  path: '/api/search',
+const V1SearchRoute = V1SearchRouteImport.update({
+  id: '/v1/search',
+  path: '/v1/search',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LangDocsSplatRoute = LangDocsSplatRouteImport.update({
@@ -30,31 +30,31 @@ const LangDocsSplatRoute = LangDocsSplatRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/api/search': typeof ApiSearchRoute
+  '/v1/search': typeof V1SearchRoute
   '/$lang/': typeof LangIndexRoute
   '/$lang/docs/$': typeof LangDocsSplatRoute
 }
 export interface FileRoutesByTo {
-  '/api/search': typeof ApiSearchRoute
+  '/v1/search': typeof V1SearchRoute
   '/$lang': typeof LangIndexRoute
   '/$lang/docs/$': typeof LangDocsSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/api/search': typeof ApiSearchRoute
+  '/v1/search': typeof V1SearchRoute
   '/$lang/': typeof LangIndexRoute
   '/$lang/docs/$': typeof LangDocsSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/api/search' | '/$lang/' | '/$lang/docs/$'
+  fullPaths: '/v1/search' | '/$lang/' | '/$lang/docs/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/api/search' | '/$lang' | '/$lang/docs/$'
-  id: '__root__' | '/api/search' | '/$lang/' | '/$lang/docs/$'
+  to: '/v1/search' | '/$lang' | '/$lang/docs/$'
+  id: '__root__' | '/v1/search' | '/$lang/' | '/$lang/docs/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  ApiSearchRoute: typeof ApiSearchRoute
+  V1SearchRoute: typeof V1SearchRoute
   LangIndexRoute: typeof LangIndexRoute
   LangDocsSplatRoute: typeof LangDocsSplatRoute
 }
@@ -68,11 +68,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LangIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/search': {
-      id: '/api/search'
-      path: '/api/search'
-      fullPath: '/api/search'
-      preLoaderRoute: typeof ApiSearchRouteImport
+    '/v1/search': {
+      id: '/v1/search'
+      path: '/v1/search'
+      fullPath: '/v1/search'
+      preLoaderRoute: typeof V1SearchRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/$lang/docs/$': {
@@ -86,7 +86,7 @@ declare module '@tanstack/react-router' {
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  ApiSearchRoute: ApiSearchRoute,
+  V1SearchRoute: V1SearchRoute,
   LangIndexRoute: LangIndexRoute,
   LangDocsSplatRoute: LangDocsSplatRoute,
 }

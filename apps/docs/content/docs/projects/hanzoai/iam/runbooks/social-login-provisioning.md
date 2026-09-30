@@ -44,12 +44,8 @@ Per app:
 9. Click **Generate a new client secret**. Record the **Client secret**
     (visible exactly once).
 
-> Note: the callback path is `/v1/iam/callback`. This is the canonical
-> path served by IAM's `routers.Callback` handler. Legacy
-> `/api/callback` (and `/callback`) are still rewritten to the same
-> handler by `path_rewrite_filter.go`, so registering either form works
-> — but new apps should use the canonical path so the audit log is
-> consistent.
+> Note: the callback path is `/v1/iam/callback`, served by IAM's
+> `routers.Callback` handler. Register that form.
 
 ## Google (3 OAuth client IDs)
 

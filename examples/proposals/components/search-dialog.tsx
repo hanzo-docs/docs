@@ -183,7 +183,7 @@ export function SearchDialog({ brand }: SearchDialogProps) {
     const searchTimeout = setTimeout(async () => {
       setLoading(true);
       try {
-        const response = await fetch(`/api/search?query=${encodeURIComponent(query)}`);
+        const response = await fetch(`/v1/search?query=${encodeURIComponent(query)}`);
         const data = await response.json();
         setResults(data);
       } catch (error) {

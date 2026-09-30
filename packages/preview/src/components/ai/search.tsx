@@ -18,7 +18,7 @@ import { type UIMessage, useChat, type UseChatHelpers } from '@ai-sdk/react';
 import { DefaultChatTransport, type Tool, type UIToolInvocation } from 'ai';
 import { Markdown } from '../markdown';
 import { Presence } from '@radix-ui/react-presence';
-import type { SearchTool } from '@/pages/_api/api/chat';
+import type { SearchTool } from '@/pages/_api/v1/chat';
 
 const Context = createContext<{
   open: boolean;
@@ -294,7 +294,7 @@ export function AISearch({ children }: { children: ReactNode }) {
   const chat = useChat({
     id: 'search',
     transport: new DefaultChatTransport({
-      api: '/api/chat',
+      api: '/v1/chat',
     }),
   });
 

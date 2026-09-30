@@ -9,7 +9,7 @@ export interface StaticOptions {
   /**
    * Where to download exported search indexes (URL)
    *
-   * @defaultValue '/api/search'
+   * @defaultValue '/v1/search'
    */
   from?: string;
 
@@ -82,7 +82,7 @@ async function loadDB(
 }
 
 function getDBCached(options: StaticOptions) {
-  const { from = '/api/search', initOrama } = options;
+  const { from = '/v1/search', initOrama } = options;
   const cacheKey = from;
   const cached = cache.get(cacheKey);
   if (cached) return cached;
