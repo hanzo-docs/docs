@@ -20,7 +20,6 @@ import {
   Workflow,
 } from '@hanzogui/lucide-icons-2';
 import { Grid } from '@hanzo/ui/grid';
-import { EVENTS, useAnalytics } from '@hanzo/docs-analytics';
 import { Action } from '@/components/action';
 import { Agent } from '@/components/agent';
 import { HeroField } from '@/components/hero-field';
@@ -144,7 +143,6 @@ function Tile({ name, spec, mono = false }: { name: string; spec: string; mono?:
 }
 
 export function Landing({ install, use }: { install: ReactNode; use: ReactNode }) {
-  const analytics = useAnalytics();
   return (
     <YStack render="main" minW={0} pb={48}>
       {/* The hero, centred over its halftone. */}
@@ -411,16 +409,8 @@ export function Landing({ install, use }: { install: ReactNode; use: ReactNode }
             curl hanzo.sh | sh
           </Text>
           <XStack flexWrap="wrap" gap={12} justify="center">
-            <Action
-              tone="loud"
-              render="a"
-              href="https://hanzo.ai/pricing"
-              onPress={() => analytics.capture(EVENTS.PLAN_CLICKED, { source: 'docs' })}
-              height={44}
-              px={28}
-              rounded={999}
-            >
-              Choose plan
+            <Action tone="loud" render="a" href="https://hanzo.ai/login" height={44} px={28} rounded={999}>
+              Try Hanzo
             </Action>
             <Action tone="line" render={<Link href="/docs" prefetch={false} />} height={44} px={28} rounded={999}>
               Browse documentation

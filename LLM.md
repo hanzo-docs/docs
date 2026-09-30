@@ -142,14 +142,16 @@ app.
 - **No page sends a visitor to hanzo.id.** Sign-in is `https://hanzo.ai/login`
   (`components/account.tsx`; `/login` is a rule in `public/_redirects`).
   Sign-out clears the session in this browser and navigates nowhere.
-- **The conversion CTA reads "Choose plan"** and opens `https://hanzo.ai/pricing`,
-  firing `plan_clicked` `{ source: 'docs' }` (`components/landing.tsx`).
-- **Events are catalog names only** — `EVENTS` from @hanzo/events, re-exported
-  by `@hanzo/docs-analytics`. That package sends page views (first load and each
-  route change) to `api.hanzo.ai/v1/event` with the key `@hanzo/event`'s keyring
+- **The conversion CTA reads "Try Hanzo"** and opens `https://hanzo.ai/login`;
+  payment comes after sign-in (`components/landing.tsx`). It sends no event of
+  its own: it is not a plan choice, and the page view and click cover it.
+- **Tracking is `@hanzo/docs-analytics`**: page views (first load and each route
+  change) to `api.hanzo.ai/v1/event`, and `<Hanzo>` (@hanzo/ui) autocaptures
+  `$click` onto the same client. The key is the one `@hanzo/event`'s keyring
   resolves from the page's host: `docs.hanzo.ai` is the hanzo org's, `localhost`
-  resolves none. The cold image lane's `PUBLISHABLE_KEY` build arg is no longer
-  read by any app.
+  resolves none. An event this site names itself comes from the @hanzo/events
+  catalog. The cold image lane's `PUBLISHABLE_KEY` build arg is no longer read
+  by any app.
 
 ## Build guards, and why prose needs them
 

@@ -3,10 +3,8 @@
 import { keyForPage } from '@hanzo/event';
 import { AnalyticsProvider, usePageview } from '@hanzo/event/react';
 
-/** The client, for a page that sends an event of its own, and the catalog
- *  (@hanzo/events) it takes the event's name from. */
+/** The client, for a page that sends an event of its own. */
 export { useAnalytics } from '@hanzo/event/react';
-export { EVENTS } from '@hanzo/event';
 import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
 
