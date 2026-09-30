@@ -38,14 +38,14 @@ curl https://api.hanzo.ai/v1/chat/completions \
   -H "Authorization: Bearer $HANZO_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "zen5",
+    "model": "zen6",
     "messages": [{"role": "user", "content": "Hello, Zen."}]
   }'
 ```
 
 ```bash tab="CLI"
 hanzo chat completions \
-  --model zen5 \
+  --model zen6 \
   --messages '[{"role":"user","content":"Hello, Zen."}]'
 ```
 
@@ -55,7 +55,7 @@ import { Hanzo } from '@hanzo/ai'
 const hanzo = new Hanzo({ secretKey: process.env.HANZO_API_KEY })
 
 const completion = await hanzo.chat.completions.create({
-  model: 'zen5',
+  model: 'zen6',
   messages: [{ role: 'user', content: 'Hello, Zen.' }],
 })
 console.log(completion.choices[0].message.content)
@@ -71,7 +71,7 @@ client = OpenAI(
 )
 
 response = client.chat.completions.create(
-    model="zen5",
+    model="zen6",
     messages=[{"role": "user", "content": "Hello, Zen."}]
 )
 print(response.choices[0].message.content)
@@ -80,7 +80,7 @@ print(response.choices[0].message.content)
 `/v1/chat/completions` takes and returns the chat-completions JSON shape, which
 is why the Python tab is the `openai` client with its base URL moved: any client
 already written against that shape works here unchanged. Model ids are not
-portable across vendors, though — `zen5` and `enso` exist only here. [The
+portable across vendors, though — `zen6` and `enso` exist only here. [The
 SDKs](/docs/sdks) covers what each language ships and when to reach past the
 chat route into the rest of `/v1`.
 

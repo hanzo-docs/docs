@@ -13,6 +13,7 @@ import { checkCapabilities, report as reportCapabilities } from './check-capabil
 import { checkRoutes, report as reportRoutes } from './check-routes';
 import { checkEndpoints, report } from './check-endpoints';
 import { checkKeys, report as reportKeys } from './check-keys';
+import { checkZen, report as reportZen } from './check-zen';
 
 async function main() {
   // The document first, then its projections: the reference (one page per
@@ -129,6 +130,16 @@ async function main() {
     `[keys] ${keys.checked} credential literals checked against ` +
       keys.keys.map((k) => k.prefix).join(' / '),
   );
+
+  // A Zen page tells Zen's story in Zen's names: an upstream model's name may
+  // stand only in a `data-upstream` element — the Architecture value and the
+  // License & attribution section. zen.upstream holds the names.
+  const zen = checkZen();
+  if (zen.found.length) {
+    reportZen(zen.found);
+    throw new Error(`${zen.found.length} upstream model name(s) in the read-through of a Zen page`);
+  }
+  console.log(`[zen] ${zen.pages.length} Zen pages read, no upstream name outside data-upstream`);
 }
 
 await main().catch((e) => {

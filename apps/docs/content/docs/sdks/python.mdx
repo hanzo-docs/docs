@@ -69,7 +69,7 @@ client = OpenAI(
 )
 
 answer = client.chat.completions.create(
-    model="zen5",
+    model="zen6",
     messages=[{"role": "user", "content": "Explain quantum computing"}],
 )
 print(answer.choices[0].message.content)

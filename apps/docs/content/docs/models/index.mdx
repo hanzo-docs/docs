@@ -11,7 +11,7 @@ ones you can download, and which ids the gateway serves right now.**
 
 | Family | Role | Weights | Reach it at | Status |
 |---|---|---|---|---|
-| **[Zen](/docs/models/zen)** | generates: reasoning, code, language, vision, speech, embeddings | open, on [Hugging Face](https://huggingface.co/zenlm) | `zen*` ids on `/v1/chat/completions` | shipped |
+| **[Zen](/docs/models/zen)** | generates: agentic coding that runs locally, marketing copy and assets; also vision, speech, embeddings | open, on [Hugging Face](https://huggingface.co/zenlm) | `zen*` ids on `/v1/chat/completions` | shipped |
 | **[Enso](/docs/models/enso)** | routes and orchestrates: picks the model, context and tools per request | router code open ([hanzoai/engine](https://github.com/hanzoai/engine)); family SKUs hosted | `model: "auto"` and `enso-*` ids | shipped |
 | **[Kai](/docs/models/kai)** | decides: typed, calibrated answers to bounded questions | hosted, not published; the baseline it starts from is open ([hanzoai/kai-1-multilingual](https://huggingface.co/hanzoai/kai-1-multilingual)) | `model: "kai"` on [`POST /v1/decisions`](/docs/decisions) | live: stage a7, $0.021 per million input tokens |
 | **Policy** | governs: deterministic allow / ask / deny | — | your rules, in every Decision Program | a part of Hanzo Decision, not a model |
@@ -27,8 +27,8 @@ action, and a model can make a verdict stricter, never looser.
 
 | Name | What it is | Status |
 |---|---|---|
-| **Zen7** | the next Zen generation; succeeds Satori | upcoming — no release, no weights |
-| **Satori** | a video-generation line, never trained | retiring; replaced by Zen7 |
+| **Zen 7** | the next Zen generation; succeeds Satori | research preview — no weights, no id to call · [Request access](https://hanzo.ai/research-access) |
+| **Satori** | a video-generation line, never trained | retiring; replaced by Zen 7 |
 | **Jin** | a multimodal model specified in [HIP-0003](https://hips.hanzo.ai/docs/hip-0003-jin-multimodal-ai-architecture) | not built; no weights |
 | **Enso Diffusion** | a sparse mixture-of-experts diffusion transformer, forked from DiT-MoE: [zenlm/enso](https://github.com/zenlm/enso) | research code, no released weights |
 | **Enso Browser** | a Firefox-based desktop browser | not released |
@@ -74,7 +74,7 @@ covers what happens when the balance runs out.
 |---|---|---|
 | [HIP-0511](https://hips.hanzo.ai/docs/hip-0511-model-families) | Model families: every line, its HIP, its API and where it runs | Living |
 | [HIP-0039](https://hips.hanzo.ai/docs/hip-0039-zen-model-architecture) | Zen model architecture | Final |
-| [HIP-0904](https://hips.hanzo.ai/docs/hip-0904-zen6) | Zen6: dense, coder and ternary checkpoints | Final |
+| [HIP-0904](https://hips.hanzo.ai/docs/hip-0904-zen6) | The `zenlm/zen6*` repositories on Hugging Face: what each holds | Final |
 | [HIP-0510](https://hips.hanzo.ai/docs/hip-0510-enso-learned-router) | Enso: learned per-request routing | Final |
 | [HIP-1332](https://hips.hanzo.ai/docs/hip-1332-kai-the-decision-model) | Kai: the decision model and the decision plane | Draft |
 | [HIP-0003](https://hips.hanzo.ai/docs/hip-0003-jin-multimodal-ai-architecture) | Jin: a multimodal model that was not built | Draft |

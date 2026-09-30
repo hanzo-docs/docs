@@ -18,7 +18,7 @@ const use = [
   ['Python', 'python', `# pip install hanzoai\nfrom hanzoai.cloud import AiApi, ApiClient, Configuration\n\nai = AiApi(ApiClient(Configuration()))\n\nprint(len(ai.get_models().data or []), "models")`],
   ['Go', 'go', `// go get github.com/hanzoai/go-sdk/v8\nimport hanzoai "github.com/hanzoai/go-sdk/v8"\n\nclient := hanzoai.NewAPIClient(hanzoai.NewConfiguration())\n\nmodels, _, err := client.AiAPI.GetModels(ctx).Execute()`],
   ['Rust', 'rust', `// cargo add hanzo-client\nuse hanzo_client::apis::{ai_api, configuration::Configuration};\n\nlet cfg = Configuration::new();\n\nlet models = ai_api::get_models(&cfg).await?;`],
-  ['HTTP', 'bash', `curl https://api.hanzo.ai/v1/chat/completions \\\n  -H "Authorization: Bearer $HANZO_API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d '{"model":"zen5","messages":[{"role":"user","content":"Hello!"}]}'`],
+  ['HTTP', 'bash', `curl https://api.hanzo.ai/v1/chat/completions \\\n  -H "Authorization: Bearer $HANZO_API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d '{"model":"zen6","messages":[{"role":"user","content":"Hello!"}]}'`],
 ] as const;
 
 function Group({ rows }: { rows: readonly (readonly [string, string, string])[] }) {

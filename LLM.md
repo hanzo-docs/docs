@@ -137,9 +137,9 @@ zt-docs) predate the unified `content/docs/` model — migrate their content int
 `content/docs/<section>/` (or a `hanzo-docs/<team>` submodule) then archive the
 app.
 
-## Two build guards, and why prose needs them
+## Build guards, and why prose needs them
 
-`scripts/pre-build.ts` ends with two checks that fail the build. Both exist for
+`scripts/pre-build.ts` ends with checks that fail the build. The first two exist for
 the same reason: a generated page cannot be wrong about the API, an authored one
 can, and a reader cannot tell which kind of page they are on.
 
@@ -149,6 +149,12 @@ can, and a reader cannot tell which kind of page they are on.
   and `api-keys.mdx` must teach every class the document carries. Both
   directions, so renaming, adding or removing a key class in cloud stops the
   build here instead of publishing a stale page.
+- **`check-zen.ts`** — a Zen page (`models/index.mdx`, `models/zen*`) names no
+  upstream base model outside a `data-upstream` element. Two places carry one:
+  the Architecture value (the loader string from the weights' own config) and
+  the License & attribution section. The names live in `apps/docs/zen.upstream`
+  and only there; title and description are read too, since they become the
+  meta and OG tags.
 
 The key classes come from `Document.keys` (`openapi-doc.ts`), read out of the
 `/v1/keys` prose — cloud's own Go doc comments, lifted by zipdoc. `secretKey(doc)`

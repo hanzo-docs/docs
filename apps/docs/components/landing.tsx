@@ -102,9 +102,9 @@ const commands = [
 ];
 
 const zen = [
-  { name: 'zen6', spec: '27B dense, 1M context' },
-  { name: 'zen6-coder', spec: 'Agentic code' },
-  { name: 'zen6-flash', spec: 'Ternary vision' },
+  { name: 'zen6', spec: 'New architecture' },
+  { name: 'zen6-coder', spec: 'Local agentic code' },
+  { name: 'zen5.8', spec: 'Previous generation' },
   { name: 'zen5', spec: 'Hosted' },
   { name: 'zen-embedding', spec: 'Retrieval' },
   { name: 'zen-guard', spec: 'Safety' },
@@ -381,7 +381,7 @@ export function Landing({ install, use }: { install: ReactNode; use: ReactNode }
             </Text>
           </XStack>
           <Text fontSize={14} lineHeight={22} maxW={672} whiteSpace="normal" {...muted}>
-            The generative family: reasoning, code, vision, speech, embeddings and safety. Weights on Hugging Face; the same ids hosted on api.hanzo.ai, routed by Enso.
+            The generative family, chosen for two jobs: agentic coding that runs on your own machine, and marketing work — copy in your brand's voice and the images and speech beside it. Weights on Hugging Face; the same ids hosted on api.hanzo.ai, routed by Enso.
           </Text>
           <Grid columns={{ min: 130, max: 6 }} gap={12}>
             {zen.map((m) => (

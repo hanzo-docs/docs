@@ -140,7 +140,7 @@ import { Hanzo } from '@hanzo/ai'
 const hanzo = new Hanzo({ secretKey: process.env.HANZO_API_KEY })
 
 const answer = await hanzo.chat.completions.create({
-  model: 'zen5',
+  model: 'zen6',
   messages: [{ role: 'user', content: 'Explain quantum computing' }],
 })
 ```

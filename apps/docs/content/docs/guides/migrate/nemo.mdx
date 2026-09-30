@@ -39,7 +39,7 @@ curl -sS -X POST https://api.hanzo.ai/v1/account/keys \
 curl -sS -X POST https://api.hanzo.ai/v1/chat/completions \
   -H "Authorization: Bearer $HANZO_API_KEY" \
   -H 'Content-Type: application/json' \
-  -d '{"model":"zen5","messages":[{"role":"user","content":"summarise Q3"}]}'
+  -d '{"model":"zen6","messages":[{"role":"user","content":"summarise Q3"}]}'
 
 # 3. Evaluator's benchmark mode, as an admission rather than a local run
 curl -sS -X POST https://api.hanzo.ai/v1/benchmark/runs \
@@ -50,7 +50,7 @@ curl -sS -X POST https://api.hanzo.ai/v1/benchmark/runs \
 
 Step 2 is the request your code already sends. NIM and the NVIDIA API are
 OpenAI-shaped, so the body is unchanged and the edit is the base URL, the key and
-the model name; `GET /v1/models` publishes the names, `zen5` among them. Step 3
+the model name; `GET /v1/models` publishes the names, `zen6` among them. Step 3
 answers 202 with a receipt, and the numbers appear on
 `GET /v1/benchmark/leaderboard` as the harness completes them — the same
 benchmarks `nel eval run --bench` would run on your machine, run for you.
@@ -74,7 +74,7 @@ Five tables, one per NeMo concern.
 
 | NeMo | Hanzo |
 |---|---|
-| Nemotron, called through `integrate.api.nvidia.com/v1` | `zen5`, `zen5-pro`, `zen5-coder`, `zen5-flash`, `zen5-mini` at `POST /v1/chat/completions` — 14 Zen models among the 432 that `GET /v1/models` lists |
+| Nemotron, called through `integrate.api.nvidia.com/v1` | `zen6` and `zen6-coder`, with the `zen5.8` and `zen5` lines beside them, at `POST /v1/chat/completions`; `GET /v1/models` lists every Zen id |
 | NIM container serving `/v1/chat/completions` on your GPU | The same address, served. No container to pull; the model is a name in the catalogue |
 | NIM embedding and reranker microservices | `POST /v1/embeddings` with `zen-embedding`, `POST /v1/rerank` with `zen-rerank` |
 | Nemotron content-safety model | `zen-guard`, a 128K-context safety classifier, called like any other model |
@@ -177,7 +177,7 @@ curl -sS -X POST https://api.hanzo.ai/v1/chat/completions \
 curl -sS -X POST https://api.hanzo.ai/v1/chat/completions \
   -H "Authorization: Bearer $HANZO_API_KEY" \
   -H 'Content-Type: application/json' \
-  -d '{"model":"zen5","messages":[{"role":"user","content":"summarise Q3"}]}'
+  -d '{"model":"zen6","messages":[{"role":"user","content":"summarise Q3"}]}'
 
 curl -sS "https://api.hanzo.ai/v1/o11y/llm/traces?limit=20" \
   -H "Authorization: Bearer $HANZO_API_KEY"
