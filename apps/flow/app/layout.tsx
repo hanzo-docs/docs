@@ -41,7 +41,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body className="antialiased">{children}
         <Footer />
         <Analytics product="flow" /></body>
-      <script defer src="https://analytics.hanzo.ai/script.js" data-website-id="811b5039-8438-453a-9c8a-e1f4cff05353" data-do-not-track="true" data-exclude-search="true" />
     </html>
   );
 }

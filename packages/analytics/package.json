@@ -23,7 +23,9 @@
     "types:check": "tsc --noEmit"
   },
   "dependencies": {
-    "@hanzo/event": "catalog:"
+    "@hanzo/event": "catalog:",
+    "@hanzo/gui": "catalog:",
+    "@hanzo/ui": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",

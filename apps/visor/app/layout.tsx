@@ -33,7 +33,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${Zen.variable} ${ZenMono.variable}`} suppressHydrationWarning>
       <head>
-        <script defer src="https://analytics.hanzo.ai/script.js" data-website-id="PLACEHOLDER" />
       </head>
       <Body>
         <NextProvider>

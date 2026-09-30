@@ -4370,6 +4370,12 @@ importers:
       '@hanzo/event':
         specifier: 'catalog:'
         version: 0.3.50(react@19.2.8)
+      '@hanzo/gui':
+        specifier: 'catalog:'
+        version: 8.3.5(react-dom@19.2.8(react@19.2.8))(react-native@0.86.2(@babel/core@7.29.7(supports-color@10.2.2))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@10.2.2))(supports-color@10.2.2))(@types/react@19.2.18)(react@19.2.8)(supports-color@10.2.2))(react@19.2.8)
+      '@hanzo/ui':
+        specifier: 'catalog:'
+        version: 8.27.35(ffc64b3d71a990f72cef419463133daf)
       react:
         specifier: '>=19.2.8'
         version: 19.2.8
@@ -24297,7 +24303,7 @@ snapshots:
 
   '@hanzo/observe@0.1.8(react@19.2.8)':
     dependencies:
-      '@hanzo/event': 0.3.41(react@19.2.8)
+      '@hanzo/event': 0.3.50(react@19.2.8)
     optionalDependencies:
       react: 19.2.8
 
@@ -26527,7 +26533,7 @@ snapshots:
 
   '@hanzogui/telemetry@8.3.5(react@19.2.8)':
     dependencies:
-      '@hanzo/event': 0.3.41(react@19.2.8)
+      '@hanzo/event': 0.3.50(react@19.2.8)
       '@hanzo/observe': 0.1.11(react@19.2.8)
       react: 19.2.8
 
