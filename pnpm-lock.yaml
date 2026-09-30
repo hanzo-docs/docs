@@ -58,8 +58,8 @@ catalogs:
       specifier: 1.4.8
       version: 1.4.8
     '@hanzo/event':
-      specifier: 0.3.37
-      version: 0.3.37
+      specifier: 0.3.50
+      version: 0.3.50
     '@hanzo/font':
       specifier: 1.9.2
       version: 1.9.2
@@ -76,8 +76,8 @@ catalogs:
       specifier: 0.2.6
       version: 0.2.6
     '@hanzo/ui':
-      specifier: 8.27.18
-      version: 8.27.18
+      specifier: ^8.27.35
+      version: 8.27.35
     '@hanzogui/lucide-icons-2':
       specifier: 8.3.5
       version: 8.3.5
@@ -916,7 +916,7 @@ importers:
         version: link:../../packages/mdx-runtime
       '@hanzo/ui':
         specifier: 'catalog:'
-        version: 8.27.18(69aa96667453d6f1bea96249b73f6d39)
+        version: 8.27.35(56bb0ee272e0d1b43ec0c84f12203a1e)
       '@hanzogui/shell':
         specifier: ^7.6.3
         version: 7.6.5(@hanzo/iam@0.13.8(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -1319,7 +1319,7 @@ importers:
         version: 0.21.17(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@hanzo/ui':
         specifier: 'catalog:'
-        version: 8.27.18(69aa96667453d6f1bea96249b73f6d39)
+        version: 8.27.35(ffc64b3d71a990f72cef419463133daf)
       '@hanzogui/lucide-icons-2':
         specifier: 'catalog:'
         version: 8.3.5(react-dom@19.2.8(react@19.2.8))(react-native-svg@15.15.5(react-native@0.86.2(@babel/core@7.29.7(supports-color@10.2.2))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@10.2.2))(supports-color@10.2.2))(@types/react@19.2.18)(react@19.2.8)(supports-color@10.2.2))(react@19.2.8))(react@19.2.8)
@@ -1512,7 +1512,7 @@ importers:
         version: link:../../packages/mdx-runtime
       '@hanzo/ui':
         specifier: 'catalog:'
-        version: 8.27.18(69aa96667453d6f1bea96249b73f6d39)
+        version: 8.27.35(56bb0ee272e0d1b43ec0c84f12203a1e)
       '@hanzogui/shell':
         specifier: ^7.6.3
         version: 7.6.5(@hanzo/iam@0.13.8(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -1688,7 +1688,7 @@ importers:
         version: link:../../packages/mdx
       '@hanzo/ui':
         specifier: 'catalog:'
-        version: 8.27.18(69aa96667453d6f1bea96249b73f6d39)
+        version: 8.27.35(56bb0ee272e0d1b43ec0c84f12203a1e)
       '@hanzogui/shell':
         specifier: ^7.6.3
         version: 7.6.5(@hanzo/iam@0.13.8(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -1767,7 +1767,7 @@ importers:
         version: link:../../packages/mdx-runtime
       '@hanzo/ui':
         specifier: 'catalog:'
-        version: 8.27.18(69aa96667453d6f1bea96249b73f6d39)
+        version: 8.27.35(56bb0ee272e0d1b43ec0c84f12203a1e)
       '@hanzogui/shell':
         specifier: ^7.6.3
         version: 7.6.5(@hanzo/iam@0.13.8(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -1994,7 +1994,7 @@ importers:
         version: link:../../packages/mdx
       '@hanzo/ui':
         specifier: 'catalog:'
-        version: 8.27.18(69aa96667453d6f1bea96249b73f6d39)
+        version: 8.27.35(56bb0ee272e0d1b43ec0c84f12203a1e)
       '@hanzogui/shell':
         specifier: ^7.6.3
         version: 7.6.5(@hanzo/iam@0.13.8(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -2085,7 +2085,7 @@ importers:
         version: link:../../packages/mdx-runtime
       '@hanzo/ui':
         specifier: 'catalog:'
-        version: 8.27.18(69aa96667453d6f1bea96249b73f6d39)
+        version: 8.27.35(56bb0ee272e0d1b43ec0c84f12203a1e)
       '@hanzogui/shell':
         specifier: ^7.6.3
         version: 7.6.5(@hanzo/iam@0.13.8(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -3348,7 +3348,7 @@ importers:
         version: 1.9.2(next@16.3.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.58.2)(@types/node@26.4.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
       '@hanzo/ui':
         specifier: 'catalog:'
-        version: 8.27.18(69aa96667453d6f1bea96249b73f6d39)
+        version: 8.27.35(ffc64b3d71a990f72cef419463133daf)
       gray-matter:
         specifier: 'catalog:'
         version: 4.0.3
@@ -4369,7 +4369,7 @@ importers:
     dependencies:
       '@hanzo/event':
         specifier: 'catalog:'
-        version: 0.3.37(react@19.2.8)
+        version: 0.3.50(react@19.2.8)
       react:
         specifier: '>=19.2.8'
         version: 19.2.8
@@ -6284,7 +6284,7 @@ importers:
     dependencies:
       '@hanzo/ui':
         specifier: 'catalog:'
-        version: 8.27.18(0f5a7bb8315b57e6133ce7dca7fd4cd4)
+        version: 8.27.35(2c2037aa8732523108f7bbb76885cd50)
       '@zenlm/models':
         specifier: 'catalog:'
         version: 1.0.4
@@ -8351,8 +8351,19 @@ packages:
       react:
         optional: true
 
+  '@hanzo/event@0.3.50':
+    resolution: {integrity: sha512-Jqnw9wAyDkcj6utE/d4C1oDqxxzAzY45VFgr4uv4GOXWuswkmaJbJYW2GaXpMI0aiBVnl91N4LQNySndj2SbYg==}
+    peerDependencies:
+      react: '>=19.2.8'
+    peerDependenciesMeta:
+      react:
+        optional: true
+
   '@hanzo/events@0.2.2':
     resolution: {integrity: sha512-jF800OFibLfnuEqMJUpTyLIs4fmezzXFKGGUPAHjK40FrTWsiAb4j3j1N5sbqBLAv5Ty7FA56dOo67Y+kUSqyA==}
+
+  '@hanzo/events@0.3.1':
+    resolution: {integrity: sha512-eGK1MTi5tW/luXhddLwrcyK8fq+GE41u/80oIjEKzxHGCfUs8LATiDAGCZ3dYM4D5sxiUS7x8BG2hGuD2gnIUA==}
 
   '@hanzo/font@1.9.2':
     resolution: {integrity: sha512-CXKXhfRgAj9SnhRJtraS6jEToGz74hbrMSJm85Kp8y6uN64zOH+IvohpWT/Surh9Qn1KWIGXsIx216JMa++X6A==}
@@ -8453,19 +8464,24 @@ packages:
       react:
         optional: true
 
-  '@hanzo/ui@8.27.18':
-    resolution: {integrity: sha512-yGiMj1/636pSaXEPmSdHfvP1XecxJg6X8anmcH5+QSdOzYIC33/X27Qr8vRDqC8lOADwrI9t00P1nlEHtWqncg==}
+  '@hanzo/ui@8.27.35':
+    resolution: {integrity: sha512-oDhmhjBFdMHigBeZa+opDvGV9NtJhaNY0VgNYk69aO7P5ousb+L03L9fPW2cvEZNtwF2O+mw5Tlv1pRDtebRzw==}
     peerDependencies:
       '@hanzo/canvas': '>=0.2.3'
       '@hanzo/cd': '>=0.1.2'
       '@hanzo/dashboard': '>=0.2.0'
       '@hanzo/data': '>=1.2.4'
+      '@hanzo/event': '>=0.3.48'
       '@hanzo/gui': ^8.3.5
+      '@hanzo/iam': '>=0.21.21'
+      '@hanzo/pay': '>=0.1.1'
+      '@hanzo/plans': '>=1.8.1'
       '@hanzo/usage': '>=0.1.13'
       '@hanzogui/animations-css': ^8.3.5
       '@hanzogui/config': ^8.3.5
       '@hanzogui/lucide-icons-2': ^8.3.5
       '@hanzogui/next-theme': ^8.3.5
+      '@hanzogui/shell': ^8.3.5
       '@hanzogui/telemetry': ^8.3.5
       '@hanzogui/toast': ^8.3.5
       next: '>=16.3.3'
@@ -8480,9 +8496,19 @@ packages:
         optional: true
       '@hanzo/dashboard':
         optional: true
+      '@hanzo/event':
+        optional: true
+      '@hanzo/iam':
+        optional: true
+      '@hanzo/pay':
+        optional: true
+      '@hanzo/plans':
+        optional: true
       '@hanzo/usage':
         optional: true
       '@hanzogui/next-theme':
+        optional: true
+      '@hanzogui/shell':
         optional: true
       next:
         optional: true
@@ -21910,7 +21936,7 @@ snapshots:
       '@babel/types': 7.29.8
       '@jridgewell/remapping': 2.3.5
       convert-source-map: 2.0.0
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@8.1.1)
       gensync: 1.0.0-beta.2
       json5: 2.2.3
       semver: 6.3.1
@@ -23090,7 +23116,7 @@ snapshots:
       '@babel/parser': 7.29.8
       '@babel/template': 7.29.7
       '@babel/types': 7.29.8
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@8.1.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -24037,7 +24063,15 @@ snapshots:
     optionalDependencies:
       react: 19.2.8
 
+  '@hanzo/event@0.3.50(react@19.2.8)':
+    dependencies:
+      '@hanzo/events': 0.3.1
+    optionalDependencies:
+      react: 19.2.8
+
   '@hanzo/events@0.2.2': {}
+
+  '@hanzo/events@0.3.1': {}
 
   '@hanzo/font@1.9.2(next@16.3.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.58.2)(@types/node@26.4.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))':
     dependencies:
@@ -24277,7 +24311,7 @@ snapshots:
       '@hanzogui/lucide-icons-2': 8.3.5(react-dom@19.2.8(react@19.2.8))(react-native-svg@15.15.5(react-native@0.86.2(@babel/core@7.29.7(supports-color@10.2.2))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@10.2.2))(supports-color@10.2.2))(@types/react@19.2.18)(react@19.2.8)(supports-color@10.2.2))(react@19.2.8))(react@19.2.8)
       react: 19.2.8
 
-  '@hanzo/ui@8.27.18(0f5a7bb8315b57e6133ce7dca7fd4cd4)':
+  '@hanzo/ui@8.27.35(2c2037aa8732523108f7bbb76885cd50)':
     dependencies:
       '@hanzo/appearance': 0.2.2(react@19.2.8)
       '@hanzo/brand': 1.4.8(react@19.2.8)
@@ -24299,14 +24333,16 @@ snapshots:
       react-native-svg: 15.15.5(react-native@0.86.2(@babel/core@7.29.7(supports-color@10.2.2))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@10.2.2))(supports-color@10.2.2))(@types/react@19.2.18)(react@19.2.8)(supports-color@10.2.2))(react@19.2.8)
       react-native-web: 0.21.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
     optionalDependencies:
+      '@hanzo/event': 0.3.50(react@19.2.8)
       '@hanzogui/next-theme': 8.3.5(next@16.3.4(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.58.2)(@types/node@26.4.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
+      '@hanzogui/shell': 8.3.5(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       next: 16.3.4(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.58.2)(@types/node@26.4.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       next-themes: 0.4.6(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
     transitivePeerDependencies:
       - encoding
       - react-native
 
-  '@hanzo/ui@8.27.18(69aa96667453d6f1bea96249b73f6d39)':
+  '@hanzo/ui@8.27.35(56bb0ee272e0d1b43ec0c84f12203a1e)':
     dependencies:
       '@hanzo/appearance': 0.2.2(react@19.2.8)
       '@hanzo/brand': 1.4.8(react@19.2.8)
@@ -24328,7 +24364,41 @@ snapshots:
       react-native-svg: 15.15.5(react-native@0.86.2(@babel/core@7.29.7(supports-color@10.2.2))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@10.2.2))(supports-color@10.2.2))(@types/react@19.2.18)(react@19.2.8)(supports-color@10.2.2))(react@19.2.8)
       react-native-web: 0.21.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
     optionalDependencies:
+      '@hanzo/event': 0.3.50(react@19.2.8)
       '@hanzogui/next-theme': 8.3.5(next@16.3.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.58.2)(@types/node@26.4.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
+      '@hanzogui/shell': 7.6.5(@hanzo/iam@0.13.8(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      next: 16.3.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.58.2)(@types/node@26.4.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      next-themes: 0.4.6(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+    transitivePeerDependencies:
+      - encoding
+      - react-native
+
+  '@hanzo/ui@8.27.35(ffc64b3d71a990f72cef419463133daf)':
+    dependencies:
+      '@hanzo/appearance': 0.2.2(react@19.2.8)
+      '@hanzo/brand': 1.4.8(react@19.2.8)
+      '@hanzo/data': 1.2.4(@hanzo/gui@8.3.5(react-dom@19.2.8(react@19.2.8))(react-native@0.86.2(@babel/core@7.29.7(supports-color@10.2.2))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@10.2.2))(supports-color@10.2.2))(@types/react@19.2.18)(react@19.2.8)(supports-color@10.2.2))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react-native-svg@15.15.5(react-native@0.86.2(@babel/core@7.29.7(supports-color@10.2.2))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@10.2.2))(supports-color@10.2.2))(@types/react@19.2.18)(react@19.2.8)(supports-color@10.2.2))(react@19.2.8))(react@19.2.8)
+      '@hanzo/design': 0.5.24
+      '@hanzo/font': 1.9.2(next@16.3.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.58.2)(@types/node@26.4.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
+      '@hanzo/gui': 8.3.5(react-dom@19.2.8(react@19.2.8))(react-native@0.86.2(@babel/core@7.29.7(supports-color@10.2.2))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@10.2.2))(supports-color@10.2.2))(@types/react@19.2.18)(react@19.2.8)(supports-color@10.2.2))(react@19.2.8)
+      '@hanzo/logo': 1.0.26(react@19.2.8)
+      '@hanzo/products': 0.2.6(@hanzogui/lucide-icons-2@8.3.5(react-dom@19.2.8(react@19.2.8))(react-native-svg@15.15.5(react-native@0.86.2(@babel/core@7.29.7(supports-color@10.2.2))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@10.2.2))(supports-color@10.2.2))(@types/react@19.2.18)(react@19.2.8)(supports-color@10.2.2))(react@19.2.8))(react@19.2.8))(react@19.2.8)
+      '@hanzogui/animations-css': 8.3.5(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@hanzogui/config': 8.3.5(react-dom@19.2.8(react@19.2.8))(react-native-reanimated@4.5.3(react-native-worklets@0.11.3(@babel/core@7.29.7(supports-color@10.2.2))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@10.2.2))(supports-color@10.2.2))(react-native@0.86.2(@babel/core@7.29.7(supports-color@10.2.2))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@10.2.2))(supports-color@10.2.2))(@types/react@19.2.18)(react@19.2.8)(supports-color@10.2.2))(react@19.2.8)(supports-color@10.2.2))(react-native@0.86.2(@babel/core@7.29.7(supports-color@10.2.2))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@10.2.2))(supports-color@10.2.2))(@types/react@19.2.18)(react@19.2.8)(supports-color@10.2.2))(react@19.2.8))(react@19.2.8)
+      '@hanzogui/lucide-icons-2': 8.3.5(react-dom@19.2.8(react@19.2.8))(react-native-svg@15.15.5(react-native@0.86.2(@babel/core@7.29.7(supports-color@10.2.2))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@10.2.2))(supports-color@10.2.2))(@types/react@19.2.18)(react@19.2.8)(supports-color@10.2.2))(react@19.2.8))(react@19.2.8)
+      '@hanzogui/telemetry': 8.3.5(react@19.2.8)
+      '@hanzogui/toast': 8.3.5(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@icons-pack/react-simple-icons': 13.15.1(react@19.2.8)
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      react-hook-form: 7.88.0(react@19.2.8)
+      react-native-svg: 15.15.5(react-native@0.86.2(@babel/core@7.29.7(supports-color@10.2.2))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@10.2.2))(supports-color@10.2.2))(@types/react@19.2.18)(react@19.2.8)(supports-color@10.2.2))(react@19.2.8)
+      react-native-web: 0.21.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+    optionalDependencies:
+      '@hanzo/event': 0.3.50(react@19.2.8)
+      '@hanzo/iam': 0.21.17(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@hanzogui/next-theme': 8.3.5(next@16.3.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.58.2)(@types/node@26.4.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
+      '@hanzogui/shell': 8.3.5(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       next: 16.3.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.58.2)(@types/node@26.4.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       next-themes: 0.4.6(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
     transitivePeerDependencies:
@@ -26445,7 +26515,7 @@ snapshots:
 
   '@hanzogui/telemetry@8.1.1(react@19.2.8)':
     dependencies:
-      '@hanzo/event': 0.3.37(react@19.2.8)
+      '@hanzo/event': 0.3.41(react@19.2.8)
       '@hanzo/observe': 0.1.8(react@19.2.8)
       react: 19.2.8
 
@@ -34007,10 +34077,6 @@ snapshots:
       supports-color: 8.1.1
     optional: true
 
-  debug@4.4.3:
-    dependencies:
-      ms: 2.1.3
-
   debug@4.4.3(supports-color@10.2.2):
     dependencies:
       ms: 2.1.3
@@ -37211,7 +37277,7 @@ snapshots:
   micromark@4.0.2:
     dependencies:
       '@types/debug': 4.1.12
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@8.1.1)
       decode-named-character-reference: 1.3.0
       devlop: 1.1.0
       micromark-core-commonmark: 2.0.3
