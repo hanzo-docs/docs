@@ -13,6 +13,16 @@ SDKs and the MCP tools are all generated from the same description of it. So
 there is nothing to wire up per service: get a key once and everything is
 reachable.
 
+### Instant Guest API Key
+
+Want to test immediately without installing anything or signing up? Use the guest temporary key directly in your terminal:
+
+```bash
+curl https://api.hanzo.ai/v1/chat/completions \
+  -H "Authorization: Bearer guest_temp_key" \
+  -d '{"model": "zen-free", "messages": [{"role": "user", "content": "hello"}]}'
+```
+
 ## 1. Install
 
 <Tabs items={['npm', 'Script', 'Homebrew', 'From source']}>

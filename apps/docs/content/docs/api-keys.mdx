@@ -45,6 +45,16 @@ not hand you a secret key because you asked for something it did not recognize â
 handing an `sk-` to someone who wanted a browser key is exactly the accident the
 refusal exists to prevent.
 
+### Guest temporary key (Instant testing)
+
+For quick local evaluation and testing without creating an account, developers can use the guest temporary key with `zen-free`:
+
+```bash
+curl https://api.hanzo.ai/v1/chat/completions \
+  -H "Authorization: Bearer guest_temp_key" \
+  -d '{"model": "zen-free", "messages": [{"role": "user", "content": "hello"}]}'
+```
+
 ## Creating keys
 
 ### In the console
