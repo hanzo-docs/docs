@@ -26,11 +26,12 @@ cat > ticket.json <<'EOF'
   }
 }
 EOF
-d=$(curl -s "$DECISIONS/v1/decisions" -H "Content-Type: application/json" -d @ticket.json)
+d=$(curl -s "$DECISIONS/v1/decisions" -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" -d @ticket.json)
 ```
 
-Kai (stage a5) answered `team: payments` at 0.99, `is_bug` P(true) 0.53, and
-`urgency` with `confidence` 0.03: four levels close to even.
+kai-1 answered `team: payments` at 0.9999, `is_bug` P(true) 0.40, and
+`urgency` with `confidence` 0.08: no level above 0.32.
 `usage.output_tokens` is 0. The response shape is on
 [Decisions](/docs/decisions#response).
 

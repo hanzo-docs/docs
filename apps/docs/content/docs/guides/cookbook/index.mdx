@@ -12,17 +12,16 @@ policy keeps the last word.
 | Recipe | What it shows | Runs on |
 |---|---|---|
 | [Route with Enso](/docs/guides/cookbook/route) | one request for every model, a price cap per call, the model that answered, feedback that trains the router | `api.hanzo.ai` |
-| [Triage with Kai, reply with Zen](/docs/guides/cookbook/triage) | three decisions with no generated tokens, then one generation | Kai runtime + `api.hanzo.ai` |
-| [Gate an agent's command](/docs/guides/cookbook/gate) | a Decision Program's thresholds and verdict rule, joined with your policy by mode | Kai runtime |
-| [Drive an agent loop](/docs/guides/cookbook/loop) | the loop's control flow as programs — preflight, generate, check done — not as prompts | Kai runtime + `api.hanzo.ai` |
+| [Triage with Kai, reply with Zen](/docs/guides/cookbook/triage) | three decisions with no generated tokens, then one generation | `api.hanzo.ai` |
+| [Gate an agent's command](/docs/guides/cookbook/gate) | a Decision Program's thresholds and verdict rule, joined with your policy by mode | `api.hanzo.ai` |
+| [Drive an agent loop](/docs/guides/cookbook/loop) | the loop's control flow as programs — preflight, generate, check done — not as prompts | `api.hanzo.ai` |
 
-**Kai runtime**: `POST /v1/decisions` is served by the decision runtime,
-`decision serve`, which listens on `127.0.0.1:8080` by default; the public
-route is [`api.hanzo.ai/v1/decisions`](/docs/decisions), the same runtime behind
-a Hanzo key. The decision responses quoted in these recipes are real, from that
-runtime serving `kai` (stage a5).
+**Kai**: decisions are [`POST api.hanzo.ai/v1/decisions`](/docs/decisions) with
+a Hanzo key; Kai is served by API only. The decision responses quoted in these
+recipes are kai-1's, the build that route serves, from its v0.3.14 runtime on
+CPU.
 
 ```bash
 export HANZO_API_KEY=...                  # platform.hanzo.ai
-export DECISIONS=http://127.0.0.1:8080    # decision serve
+export DECISIONS=https://api.hanzo.ai
 ```
