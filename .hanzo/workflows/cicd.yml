@@ -1,0 +1,31 @@
+name: CI/CD
+
+# Tests and publishes docs.hanzo.ai through hanzoai/ci, which reads hanzo.yml:
+# `test:` must pass, then `site:` builds apps/docs/out and publishes it to the
+# Sites plane. It runs on git.hanzo.ai (hanzoai/docs, a pull mirror of this
+# repo) with that org's KMS identity. RELEASE.md has the whole path.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# One publish at a time, and a push waits for the running one rather than
+# cancelling it: completing a deployment deletes the objects its manifest does
+# not name, so two publishes at once would each delete the other's files.
+# git.hanzo.ai applies this group to the run; it does not apply the reusable's
+# own job-level group.
+concurrency:
+  group: cicd-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  cicd:
+    uses: hanzoai/ci/.github/workflows/build.yml@v2
+    with:
+      # apps/docs/content/docs/studio is a submodule (hanzo-docs/studio-docs);
+      # scripts/check-export.sh refuses an export without its pages.
+      submodules: recursive
+    secrets:
+      KMS_CLIENT_ID: ${{ secrets.KMS_CLIENT_ID }}
+      KMS_CLIENT_SECRET: ${{ secrets.KMS_CLIENT_SECRET }}

@@ -1,14 +1,15 @@
 # Publishing docs.hanzo.ai
 
-One lane. A push to `main` builds the static export and publishes it to the
-Sites plane, and the bytes it uploads are what the site serves a second later.
-There is no image to tag and no pin to move.
+One lane. A push to `main` tests the docs app, builds the static export and
+publishes it to the Sites plane, and the bytes it uploads are what the site
+serves a second later. There is no image to tag and no pin to move.
 
-    push main
-      -> git.hanzo.ai/hanzoai/docs          a pull mirror of github.com/hanzo-docs/docs
-      -> .hanzo/workflows/deploy.yml        the forge reads this directory natively
-      -> pnpm build --filter=docs           NEXT_EXPORT=1 -> apps/docs/out
-      -> hanzoai/ci .github/actions/site    POST /v1/projects/docs-hanzo-ai/deployments
+    push main  ->  github.com/hanzo-docs/docs
+      -> git.hanzo.ai/hanzoai/docs          a pull mirror, Actions unit on
+      -> .hanzo/workflows/cicd.yml          hanzoai/ci .github/workflows/build.yml@v2
+      -> hanzo.yml `test:`                  vitest --project docs, on built packages
+      -> hanzo.yml `site:`                  bash scripts/site.sh -> apps/docs/out
+      -> hanzoai/ci bin/site                POST /v1/projects/docs-hanzo-ai/deployments
       -> s3://hanzo-sites/hanzo/docs-hanzo-ai   the prefix the docs.hanzo.ai route serves
 
 The route is an `IngressRoute` + `Middleware` pair in hanzoai/universe
@@ -18,46 +19,55 @@ replicas, no image. A site is files and a route.
 
 The project is named for its host, as `hanzo-ai` is hanzo.ai's. `docs` is a
 reserved label on the Sites plane (cloud `apps/sites/reserved.go`), so no project
-can be created with it: the publish step asks for the project first, and that ask
-answered 400 "slug is a reserved subdomain" the first time a run got that far.
+can be created with it.
 
 Every workflow lives in `.hanzo/workflows/` and runs on git.hanzo.ai, which reads
 that directory first. GitHub reads only `.github/workflows/`, so none of them can
 queue there (Actions is also disabled on hanzo-docs/docs).
 
+## The credential
+
+The publish job logs in to KMS with the forge `hanzoai` org's
+`KMS_CLIENT_ID`/`KMS_CLIENT_SECRET` (org-level Actions secrets on git.hanzo.ai,
+holder `hanzo-admin-agent`) and reads `HANZO_DEPLOY_TOKEN` at `/deploy`, env
+`prod`, in KMS org `hanzo`. KMS opens a value only to a holder that
+hanzoai/universe `charts/app/values/hanzo/kms-grants.yaml` grants it, and that
+holder is granted `/deploy` only: a read of the flat `/HANZO_DEPLOY_TOKEN`, which
+is what hanzoai/ci `.github/actions/site` does, answers 403 "may not read". No
+secret lives in this repo.
+
 ## Fire it
 
-Push to GitHub `main`, then pull the forge and dispatch. Nothing does either on
-its own today, measured 2026-09-27: the forge's copy of `main` sat at
-`da72bf0527` for a day while GitHub moved (its `update_mirrors` cron logs every
-ten minutes and moves nothing), the repo carries no Actions unit so a push
-queues no run, and every recent deploy run is a `workflow_dispatch`.
+A push to GitHub `main` reaches the forge on its 10-minute mirror tick, and the
+mirrored push runs `cicd.yml`. To move it now, or to re-run without a push:
 
 ```sh
 curl -X POST -H "Authorization: token $FORGE_TOKEN" \
   https://git.hanzo.ai/v1/repos/hanzoai/docs/mirror-sync
 curl -X POST -H "Authorization: token $FORGE_TOKEN" \
-  https://git.hanzo.ai/v1/repos/hanzoai/docs/actions/workflows/deploy.yml/dispatches \
-  -d '{"ref":"refs/heads/main"}'
+  https://git.hanzo.ai/v1/repos/hanzoai/docs/actions/workflows/cicd.yml/dispatches \
+  -d '{"ref":"main"}'
 ```
 
-`FORGE_TOKEN` is minted on the forge pod, as the git user:
-`gitd admin user generate-access-token --username <you> --token-name <name>
---scopes write:repository --raw`. The forge also takes your Hanzo IAM login in
-its place, `curl -u "<you>:$(hanzo auth token)"`, which carries
-`write:repository` and was answered 200 on `mirror-sync` and 204 on the
-dispatch (2026-09-28). KMS `deploy/FORGE_TOKEN` is `read:repository` only, and
-`mirror-sync` refuses it with 403. Run status: `GET
-/v1/repos/hanzoai/docs/actions/runs/<id>` with either credential, or
-`action_run` in the forge's Postgres (status 1 ok, 2 failed, 6 running).
+`FORGE_TOKEN` needs `write:repository`: mint one on the forge pod as the git user
+(`gitd admin user generate-access-token --username <you> --token-name <name>
+--scopes write:repository --raw`), or pass your Hanzo IAM login
+(`curl -u "<you>:$(hanzo auth token)"`). KMS `deploy/FORGE_TOKEN` is
+`read:repository` only, and `mirror-sync` refuses it with 403. Run status:
+`GET /v1/repos/hanzoai/docs/actions/runs?limit=20`, then `.../runs/<id>/jobs`
+and `.../actions/jobs/<job>/logs`.
 
-One publish runs at a time (`concurrency: deploy-docs`, no cancel): a newer push
+One publish runs at a time (`concurrency: cicd-<ref>`, no cancel): a newer push
 waits for the running one, and the newest waiting commit is the one that
-publishes. Two at once would each delete the other's files on completion, because
-completing a deployment reconciles the prefix against the manifest it sends.
+publishes. Two at once would each delete the other's files on completion,
+because completing a deployment reconciles the prefix against the manifest it
+sends.
 
 ## What the job proves before it publishes
 
+- **The docs tests pass.** `vitest --project docs` checks the SDK method names,
+  MCP tool names, CLI commands and models the pages print against real generated
+  clients, a real tools/list answer and the model catalogue.
 - **The ingest key resolves.** The page sends the hanzo org's publishable key
   from `@hanzo/event`'s keyring, resolved from its host (`packages/analytics`).
   The job resolves the same key for `docs.hanzo.ai` and POSTs it to `/v1/event`
@@ -89,16 +99,19 @@ object store serves it.
 
 ## The image lane is cold
 
-`ghcr.io/hanzoai/docs`, the root `Dockerfile`, `hanzo.yml`'s `images:` block and
-the `docs` app in hanzoai/universe are the previous way: an image wrapping the
+`ghcr.io/hanzoai/docs`, the root `Dockerfile` and the `docs` app in
+hanzoai/universe are the previous way: an image wrapping the
 same export, served by hanzoai/static in a pod. The pod still runs and **nothing
 routes to it** — the `docs.hanzo.ai` router names the Sites middleware. Do not
-build or pin it to publish; retiring it is a universe change.
+build or pin it to publish; hanzo.yml no longer declares the image, so no lane
+builds it. Retiring the pod is a universe change.
 
 ## Sibling sites in this repo
 
-`apps/cloud` publishes Sites project `hanzo-cloud` through the same action
-(`.hanzo/workflows/deploy-cloud.yml`). The remaining `deploy-*-docs.yml`
+`apps/cloud` publishes Sites project `hanzo-cloud` through hanzoai/ci
+`.github/actions/site@v1` (`.hanzo/workflows/deploy-cloud.yml`), which reads the
+deploy token at the KMS org root, so under this org's identity it answers 403
+until it moves to a `site:` lane of its own. The remaining `deploy-*-docs.yml`
 workflows still `wrangler pages deploy` their app; each is the only deploy of its
 host, so they stay until that host has a Sites project of its own. The path for
 each is the one above: give the app `output: 'export'`, publish a slug, then move

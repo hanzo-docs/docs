@@ -1,87 +1,35 @@
-# Canonical CI config for hanzo-docs/docs. THREE programs read this file:
-# hanzo/platform (the webhook lane that builds what is serving), hanzoai/ci (the
-# GitHub lane, .github/workflows/cicd.yml), and hanzoai/cloud's forge push
-# orchestrator. All three read `images:`; only ci reads `test:`. They do not agree
-# on the tag — see below, because that disagreement is the whole contract.
-#
-# The repo builds ONE image: the Fumadocs monorepo exported static and served by
-# hanzoai/static. The recipe lives in the Dockerfile and nowhere else — APP
-# selects the workspace, so every static site here is built the same way. This
-# file only declares WHAT is built; it does not restate the recipe.
-#
-# THE TAG CONTRACT. hanzoai/universe pins this image in
-# charts/app/values/hanzo/docs.yaml, and the five builders that can produce it do
-# not agree on what to call it:
-#
-#   platform webhook, THIS file   <sha40>-amd64-docs        ← what universe pins
-#   POST /v1/runner               whatever the caller names
-#   hanzoai/ci (buildx)           sha-<sha7>-amd64  + latest
-#   hanzoai/ci (mode: delegate)   sha-<sha7>-amd64
-#   forge push orchestrator       sha-<sha7>-amd64-docs      (dormant)
-#
-# Three of those are three programs reading THIS file and disagreeing twice over:
-# whether an absent `tag-suffix` falls back to `name` (platform: yes; cloud's
-# apps/git/build_on_push.go: yes; hanzoai/ci: no, it reads `."tag-suffix" // ""`),
-# and whether the sha is abbreviated (platform: no; the other two: yes). Adding
-# `tag-suffix: docs` below would close the first disagreement and not the second
-# — deliberately NOT done, because it changes the tag shape of lanes that have
-# never run. RELEASE.md has the table and the reasoning.
-#
-# Whichever one publishes, the pin has to be told its name — and the line that
-# actually decides what runs is `digest:`, not `tag:`, because the chart renders
-# repo:tag@digest and a digest beside a tag is what gets pulled. Read the tag off
-# the build you actually fired; RELEASE.md writes out the edit for each of the five.
-images:
-  - name: docs
-    context: .
-    dockerfile: Dockerfile
-    repo: ghcr.io/hanzoai/docs
-    # The KMS name IS the build-arg name. Without this the ci lane passes no key
-    # and the Dockerfile gate refuses the build — which is the point: the two
-    # lanes now either both supply it or both fail loudly.
-    build_secrets: [PUBLISHABLE_KEY]
+# CI config for hanzo-docs/docs, read by hanzoai/ci build.yml (called from
+# .hanzo/workflows/cicd.yml on git.hanzo.ai). It ships one thing: the static
+# export of apps/docs, published to the Sites plane and served at docs.hanzo.ai.
+# RELEASE.md has the whole path.
 
 test:
-  - name: unit
-    # vitest over packages/* and apps/docs. The apps/docs project is what pins
-    # the four surfaces: the SDK method names the docs print are openapi-
-    # generator's own derivation, and the MCP tool names are MCP's own, both
-    # asserted against real generated clients and a real tools/list answer. A
-    # drift in either naming rule fails here rather than teaching a call that
-    # does not exist.
-    run: pnpm install --frozen-lockfile && pnpm test
+  - name: docs
+    # The vitest project for apps/docs, against the workspace packages it
+    # imports, built first because their package exports resolve to dist/. It
+    # pins the surfaces the site prints: the SDK method names (openapi-
+    # generator's own derivation) and the MCP tool names, asserted against real
+    # generated clients and a real tools/list answer, plus the CLI commands and
+    # models the first-call pages name. A drift in any of them fails here rather
+    # than teaching a call that does not exist.
+    run: >-
+      pnpm install --frozen-lockfile &&
+      pnpm turbo run build --filter='docs^...' &&
+      pnpm vitest run --project docs
 
-# NOTE — the export gate is not declared here, and not because it was forgotten.
-#
-# A static-export site fails by exporting NOTHING, which no image build can
-# notice: the layer is valid and the site is empty. So the check has to happen
-# somewhere every builder passes through, and `test:` is not it — hanzoai/ci
-# runs `test:` AFTER `docker buildx --push`, and buildx builds and pushes in one
-# invocation with no step in between to hold. A gate declared here would report a
-# broken export that was already in the registry.
-#
-# The gate is therefore inside the Dockerfile (scripts/check-export.sh, plus
-# apps/docs/export.require naming the sections that must not vanish). A failing
-# export fails the build, so no builder reaches a push — including this one.
-#
-# That placement is also what caught the one thing the GitHub lane got wrong on
-# its own. apps/docs/content/docs/studio is a submodule (hanzo-docs/studio-docs),
-# and hanzoai/ci checked out with actions/checkout's default, which fetches none:
-# the section simply would not exist in the output while page count and nav both
-# stayed green. It is named in export.require, so that lane failed loudly instead
-# of shipping a hole — and the fix is upstream, where hanzoai/ci now takes a
-# `submodules` input (default unchanged) that .github/workflows/cicd.yml sets to
-# `recursive`. The gate stays, because it is what makes the next such hole loud.
+# The publish. hanzoai/ci runs `build` on its publish job, a fresh runner, after
+# `test` is green, then uploads `dir` as Sites project `slug`: prefix
+# s3://hanzo-sites/hanzo/docs-hanzo-ai, which the docs.hanzo.ai route serves.
+# The project is named for its host because `docs` is a reserved label on the
+# Sites plane (cloud apps/sites/reserved.go). scripts/site.sh installs, builds
+# and checks the export; the checkout carries the submodules it needs
+# (cicd.yml passes submodules: recursive).
+site:
+  slug: docs-hanzo-ai
+  dir: apps/docs/out
+  build: bash scripts/site.sh
+  on: [main]
 
-# No `deploy:` — ON PURPOSE, and this is not the usual "a human should review it".
-# docs.hanzo.ai is delivered by the hanzo/app chart with `cd.automated: true`, so
-# Argo is the sole writer of those objects and self-heals anything else that
-# touches them. A `deploy:` block here would have the platform patch a workload
-# that gets reverted on the next sync. The rollout IS the commit to universe.
-
-# The KMS tenant this repo's build_secrets come from. Without it the owner-prefix
-# derivation yields no tenant on git.hanzo.ai, PUBLISHABLE_KEY fetches empty, and
-# the Dockerfile refuses to build. Same override console.hanzo.ai carries.
+# The KMS tenant the publish job reads its deploy token from.
 kms:
   org: hanzo
-
