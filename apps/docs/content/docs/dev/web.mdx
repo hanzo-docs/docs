@@ -1,0 +1,79 @@
+---
+title: Dev on hanzo.ai
+description: Hanzo Dev in the browser — runs, templates, projects, your own machines, and what is paid.
+icon: Globe
+---
+
+Open [hanzo.ai](https://hanzo.ai) and choose **Dev**. Describe a task: Dev runs it in a
+Hanzo sandbox on the codebase you pick, pushes its work to a branch and opens a pull
+request. Every run streams its steps as it works, and **Recents** lists them newest first.
+
+## A run
+
+The composer under **New run** chooses where the run runs, the repository and branch it
+works on, the mode and the model.
+
+| Choice | What it does |
+|---|---|
+| Where the run runs | **Cloud** is a Hanzo sandbox, set up by the codebase's environment. Your own machines are listed too; one takes a run only while a runner on it claims runs. |
+| Repository | A repository on the forge (git.hanzo.ai). With none chosen, the run starts a new project from the ask. |
+| Mode | **Build** edits, commits and pushes a branch. **Plan** plans the change and writes nothing. |
+| Model | Enso by default. Premium models come with a paid plan. |
+
+## Templates
+
+**More → Templates** lists working apps to start from.
+
+- Narrow the list by **category**, by **stack** (the framework family: Next.js, React,
+  HTML, Expo, Tauri, three.js and more) and by searching what each says of itself.
+- Open a card to see what it is: its picture, stack, features and, where it has one, its
+  live demo.
+- **Use this template** copies its repository into a new project of yours — a private
+  repository in your organization's code workspace on git.hanzo.ai — builds it in a
+  sandbox, and publishes it at `https://<project>.hanzo.app`, usually within a couple of
+  minutes.
+- The project opens beside its preview. Ask for changes in its chat: each run works on the
+  project's repository, and publishes what it pushes. The project's runs are listed in
+  its chat.
+- When a build fails, the preview says why in the build's own words and offers
+  **Publish again**, and **Fix it with Dev**, which starts a run with that reason.
+
+## Your own machines
+
+**More → Machines** lists the computers linked to your organization: what each has, and
+whether it is online. Link one with the Hanzo CLI, on the machine:
+
+```bash
+curl -fsSL https://hanzo.sh | sh   # install the Hanzo CLI
+hanzo login                        # sign in through hanzo.id
+hanzo beat                         # keep it listed and online (free)
+hanzo link                         # or keep it online and share its shell
+```
+
+- `hanzo beat` beats every 30 seconds while it runs. Run it under a service manager — a
+  systemd user unit or a launchd agent — to keep the machine listed between sessions.
+- `hanzo link` also publishes a shell on the machine that only you can open. It needs
+  `ttyd` and `tmux` on the machine (`brew install ttyd tmux`) and is paid from your
+  balance.
+- Dev runs go to the Hanzo sandbox. A machine takes a Dev run only while a runner on it
+  claims runs; Machines and the run picker say when one does.
+- A machine can also be registered by hand under **Register one by hand**; it reads
+  *not seen yet* until it beats.
+
+## Plans and credit
+
+- **Free** has Hanzo's free models, and a daily and an hourly allowance of free sandboxes
+  for runs and template builds.
+- **Premium models** come with a paid plan. The account menu's **View all plans** opens
+  the plans; see [pricing](/docs/pricing).
+- **Sandbox time past the free allowance**, and a shared shell, are paid from your
+  organization's balance: **Settings → Usage → Add credit**. See [credits](/docs/credits).
+- When an action needs a plan or credit, Dev says so where it happened, with the one
+  button that answers it: **See plans** or **Add credit**.
+
+## These docs inside Dev
+
+**More → Docs** opens this page inside Dev. The search at the top of the page searches all
+of docs.hanzo.ai, and every page opens in place.
+
+For Hanzo Dev in the terminal, start with [installing it](/docs/dev/getting-started/install).

@@ -4,6 +4,7 @@
   "icon": "Terminal",
   "defaultOpen": false,
   "pages": [
+    "web",
     "getting-started",
     "usage",
     "configuration",
