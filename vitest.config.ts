@@ -23,6 +23,10 @@ export default defineConfig({
           name: 'docs',
           root: './apps/docs',
           exclude: ['**/node_modules/**', '**/dist/**', 'content/docs/projects/**', 'e2e/**'],
+          // Several tests parse the whole API document. A sandboxed CI runner
+          // takes longer than vitest's 5s default for that; a minute still
+          // catches a test that hangs.
+          testTimeout: 60_000,
         },
       },
       // The bot docs' converter, and nothing under content/: those pages are

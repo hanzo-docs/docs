@@ -15,11 +15,14 @@ const REPO = path.resolve(APP, '../..');
 const API_PATH = /(?<![A-Za-z0-9._~\-/])\/api(\/|(?![\w.\-]))/;
 
 // Not ours to hold: migration guides show the OTHER vendor's API on the left of
-// each table; projects/ mirrors other repos' docs; public/reference is vendored;
-// the rest states this very rule or is the SDK-owned segment the API documents.
+// each table; projects/ mirrors other repos' docs; studio/ is the
+// hanzo-docs/studio-docs submodule, edited in that repo; public/reference is
+// vendored; the rest states this very rule or is the SDK-owned segment the API
+// documents.
 const SKIP = [
   'content/docs/guides/migrate/',
   'content/docs/projects/',
+  'content/docs/studio/',
   'content/docs/contributing/style.mdx',
   'public/reference/',
   'openapi-specs/',
