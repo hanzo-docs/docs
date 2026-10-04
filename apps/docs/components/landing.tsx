@@ -12,6 +12,8 @@ import {
   Globe,
   LayoutGrid,
   Package,
+  Route,
+  Scale,
   Server,
   Shield,
   ShoppingCart,
@@ -26,9 +28,10 @@ import { HeroField } from '@/components/hero-field';
 import { muted } from '@/lib/ink';
 
 /**
- * The front page, drawn on the theme like every other route: the headline and
- * the two ways in (install the CLI, or hand it to an agent), the three doors,
- * the quick start, the nine domains, the tools, the models, the CLI and Zen.
+ * The front page, drawn on the theme like every other route: the headline, the
+ * three model families and the catalogue, the two ways in (install the CLI, or
+ * hand it to an agent), the three doors, the quick start, the nine domains, the
+ * tools, the models, the CLI and Zen.
  *
  * The quick start's code is highlighted on the server and handed in, so the
  * page ships tokens rather than a highlighter.
@@ -53,10 +56,23 @@ const tools = [
   { name: 'Architecture', desc: 'One binary, one contract', href: '/docs/architecture', Icon: Package },
 ];
 
-const doors = [
+/**
+ * What the landing states about the gateway's catalogue, read off
+ * `GET /v1/models` at build time (`scripts/gen-pricing-page.ts` writes it into
+ * `openapi-specs/pricing.json`). Nothing here is typed by hand.
+ */
+export type Catalogue = { models: number; makers: number; kai: { input?: number | null; output?: number | null } };
+
+/** "400+": floored to the hundred, so it stays true as the catalogue moves between builds. */
+const counted = (n: number) => `${Math.floor(n / 100) * 100}+`;
+
+/** USD per million tokens: "$0.021", "$3.00". */
+const usd = (v: number) => (v >= 1 ? `$${v.toFixed(2)}` : `$${+v.toPrecision(2)}`);
+
+const doors = (models: string) => [
   { eyebrow: 'No code', title: 'Build with App', body: 'Describe it in English and watch it build. Chat, agents and MCP tools in the browser.', href: 'https://hanzo.app' },
   { eyebrow: 'In your terminal', title: 'Build with Dev', body: 'Our coding agent, in your repo. Or bring Claude Code and Codex — they work here too.', href: '/docs/cli' },
-  { eyebrow: 'Lower level', title: 'Build with API', body: 'Over 400 models behind one REST endpoint, with SDKs for every language we ship.', href: '/docs/openapi' },
+  { eyebrow: 'Lower level', title: 'Build with API', body: `${models} models behind one REST endpoint, with SDKs for every language we ship.`, href: '/docs/openapi' },
 ];
 
 const providers = [
@@ -142,32 +158,134 @@ function Tile({ name, spec, mono = false }: { name: string; spec: string; mono?:
   );
 }
 
-export function Landing({ install, use }: { install: ReactNode; use: ReactNode }) {
+function Mono({ children }: { children: ReactNode }) {
+  return (
+    <Text fontFamily="$mono" fontSize={12} color="$color12" whiteSpace="nowrap">
+      {children}
+    </Text>
+  );
+}
+
+/**
+ * Three peers in one row, or one column — never two and an orphan. A track's
+ * floor is a third of the row once the row holds three cards of 220px and
+ * their gaps (692px), and the whole row below that: `(692px - 100%) * 999` is
+ * negative above the threshold and huge below it, so the width alone picks
+ * three columns or one.
+ */
+const TRIO = 'repeat(auto-fit, minmax(min(100%, max(calc((100% - 32px) / 3), calc((692px - 100%) * 999))), 1fr))';
+
+/** Enso, Kai and Zen, then the whole catalogue as one wide door beneath them. */
+function Families({ catalogue }: { catalogue: Catalogue }) {
+  const { kai } = catalogue;
+  const families = [
+    {
+      name: 'Enso',
+      verb: 'routes',
+      Icon: Route,
+      body: (
+        <>
+          The router. It picks the model for every request: send <Mono>model: "auto"</Mono> or an <Mono>enso-*</Mono> id.
+        </>
+      ),
+      docs: '/docs/models/enso',
+      site: 'https://hanzo.ai/enso',
+    },
+    {
+      name: 'Kai',
+      verb: 'decides',
+      Icon: Scale,
+      body: (
+        <>
+          The decision model. Typed answers with calibrated probabilities at <Mono>POST /v1/decisions</Mono>
+          {kai.input != null ? `, ${usd(kai.input)} per million input tokens` : ''}
+          {kai.output === 0 ? ', output free' : kai.output != null ? `, ${usd(kai.output)} per million output` : ''}.
+        </>
+      ),
+      docs: '/docs/models/kai',
+      site: 'https://hanzo.ai/kai',
+    },
+    {
+      name: 'Zen',
+      verb: 'reasons',
+      Icon: Sparkle,
+      body: <>The open-weight family: text, vision and audio, with the weights on Hugging Face.</>,
+      docs: '/docs/models/zen',
+      site: 'https://hanzo.ai/zen',
+    },
+  ];
+  return (
+    <YStack render="section" aria-label="Hanzo models" width="100%" gap={16}>
+      <Grid columns={TRIO} gap={16}>
+        {families.map(({ name, verb, Icon, body, docs, site }) => (
+          <YStack key={name} render="article" {...CARD} p={24} gap={10} minW={0}>
+            <XStack gap={10} items="center">
+              <XStack p={8} rounded={12} bg="$hover">
+                <Icon size={18} color="$color11" />
+              </XStack>
+              <Text render="h2" fontSize={20} lineHeight={26} fontWeight="700" letterSpacing={-0.4} color="$color12">
+                {name} {verb}.
+              </Text>
+            </XStack>
+            <Text flex={1} fontSize={14} lineHeight={22} whiteSpace="normal" {...muted}>
+              {body}
+            </Text>
+            <XStack gap={16} items="center" flexWrap="wrap">
+              <XStack render={<Link href={docs} prefetch={false} />} gap={4} items="center">
+                <Text fontSize={13} fontWeight="600" color="$color12">
+                  Docs
+                </Text>
+                <ArrowRight size={13} color="$color12" />
+              </XStack>
+              <Text render="a" href={site} target="_blank" rel="noreferrer" fontSize={13} {...muted} hoverStyle={{ color: '$color12' }}>
+                {site.replace('https://', '')} ↗
+              </Text>
+            </XStack>
+          </YStack>
+        ))}
+      </Grid>
+
+      <XStack
+        render={<Link href="/docs/models" prefetch={false} />}
+        {...CARD}
+        bg="$hover"
+        flexWrap="wrap"
+        items="center"
+        gap={24}
+        px={32}
+        py={28}
+        hoverStyle={{ borderColor: '$color8' }}
+        $max-md={{ px: 24, py: 24 }}
+      >
+        <Text fontSize={64} lineHeight={64} fontWeight="700" letterSpacing={-2} color="$color12">
+          {counted(catalogue.models)}
+        </Text>
+        <YStack flex={1} minW={240} gap={6}>
+          <Text fontSize={20} lineHeight={26} fontWeight="700" letterSpacing={-0.4} color="$color12">
+            All models
+          </Text>
+          <Text fontSize={14} lineHeight={22} whiteSpace="normal" {...muted}>
+            Every model the gateway serves, from {catalogue.makers} makers, on one key and one bill. The catalogue lists each id with its live rate.
+          </Text>
+        </YStack>
+        <XStack gap={6} items="center">
+          <Text fontSize={14} fontWeight="600" color="$color12">
+            Browse the catalogue
+          </Text>
+          <ArrowRight size={16} color="$color12" />
+        </XStack>
+      </XStack>
+    </YStack>
+  );
+}
+
+export function Landing({ install, use, catalogue }: { install: ReactNode; use: ReactNode; catalogue: Catalogue }) {
+  const models = counted(catalogue.models);
   return (
     <YStack render="main" minW={0} pb={48}>
       {/* The hero, centred over its halftone. */}
-      <YStack position="relative" items="center" px={24} pt={120} pb={80} $max-md={{ pt: 72, pb: 56 }}>
+      <YStack position="relative" items="center" px={24} pt={72} pb={80} $max-md={{ pt: 48, pb: 56 }}>
         <HeroField />
-        <XStack
-          render={<Link href="/docs/models" prefetch={false} />}
-          position="relative"
-          items="center"
-          gap={8}
-          mb={32}
-          px={16}
-          py={8}
-          rounded={999}
-          borderWidth={1}
-          borderColor="$borderColor"
-          bg="$panel"
-          hoverStyle={{ borderColor: '$color8' }}
-        >
-          <YStack width={6} height={6} rounded={999} bg="$color12" />
-          <Text fontSize={14} {...muted}>
-            Zen generates · Enso routes · Kai decides
-          </Text>
-          <ArrowRight size={14} color="$color10" />
-        </XStack>
         <Text
           render="h1"
           position="relative"
@@ -198,8 +316,13 @@ export function Landing({ install, use }: { install: ReactNode; use: ReactNode }
           Every model. Every tool. One key. Start in the browser, ship from your terminal, and when you want it on your own hardware, take the whole thing with you — it is the same software we run in production.
         </Text>
 
+        {/* The models first: they are the reason to choose the platform at all. */}
+        <YStack position="relative" mt={40} width="100%" maxW={896}>
+          <Families catalogue={catalogue} />
+        </YStack>
+
         {/* The main call: install the CLI. */}
-        <YStack position="relative" mt={40} width="100%" maxW={512} gap={12} items="center">
+        <YStack position="relative" mt={48} width="100%" maxW={512} gap={12} items="center">
           <XStack {...CARD} width="100%" p={4}>
             <XStack flex={1} gap={12} items="center" px={20} py={16} rounded={12} bg="$background">
               <Text fontFamily="$mono" fontSize={14} select="none" {...muted}>
@@ -231,7 +354,7 @@ export function Landing({ install, use }: { install: ReactNode; use: ReactNode }
         {/* The three doors, in descending order of how much you type. */}
         <YStack position="relative" mt={48} width="100%" maxW={896}>
           <Grid columns={{ min: 260, max: 3 }} gap={16}>
-            {doors.map((d) => (
+            {doors(models).map((d) => (
               <YStack key={d.title} render={go(d.href)} {...CARD} p={24} gap={6} hoverStyle={{ bg: '$hover', borderColor: '$color8' }}>
                 <Text fontSize={12} fontWeight="500" {...muted}>
                   {d.eyebrow}
@@ -309,7 +432,7 @@ export function Landing({ install, use }: { install: ReactNode; use: ReactNode }
           </Grid>
         </Section>
 
-        <Section title="Every model, one API" lead="Over 400 models across every major provider — call any of them with one credential, one request shape.">
+        <Section title="Every model, one API" lead={`${models} models across every major provider — call any of them with one credential, one request shape.`}>
           <Grid columns={{ min: 120, max: 8 }} gap={12}>
             {providers.map((p) => (
               <Tile key={p.name} name={p.name} spec={p.spec} />
@@ -380,7 +503,7 @@ export function Landing({ install, use }: { install: ReactNode; use: ReactNode }
             </Text>
           </XStack>
           <Text fontSize={14} lineHeight={22} maxW={672} whiteSpace="normal" {...muted}>
-            The generative family, chosen for two jobs: agentic coding that runs on your own machine, and marketing work — copy in your brand's voice and the images and speech beside it. Weights on Hugging Face; the same ids hosted on api.hanzo.ai, routed by Enso.
+            The open-weight family, chosen for two jobs: agentic coding that runs on your own machine, and marketing work — copy in your brand's voice and the images and speech beside it. Weights on Hugging Face; the same ids hosted on api.hanzo.ai, routed by Enso.
           </Text>
           <Grid columns={{ min: 130, max: 6 }} gap={12}>
             {zen.map((m) => (

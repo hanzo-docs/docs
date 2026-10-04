@@ -1,6 +1,7 @@
 import { Landing } from '@/components/landing';
 import { Example } from '@/components/example';
 import { Tab, Tabs } from '@/components/mdx/tabs';
+import pricing from '@/openapi-specs/pricing.json';
 
 // The install and first-call tabs are the same two steps /docs/quickstart shows,
 // highlighted here on the server so the page ships tokens, not a highlighter.
@@ -34,5 +35,5 @@ function Group({ rows }: { rows: readonly (readonly [string, string, string])[] 
 }
 
 export default function Page() {
-  return <Landing install={<Group rows={install} />} use={<Group rows={use} />} />;
+  return <Landing install={<Group rows={install} />} use={<Group rows={use} />} catalogue={pricing.catalogue} />;
 }

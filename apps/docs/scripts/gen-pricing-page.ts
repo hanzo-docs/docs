@@ -77,6 +77,19 @@ interface Tool {
   price: number;
 }
 
+/**
+ * What the docs landing prints about the gateway's catalogue, read off
+ * `GET /v1/models` with the rates: how many models it serves (each id once),
+ * how many makers they come from (`owned_by`, without OpenRouter's `~` alias
+ * mark), and Kai's rate, the one price the landing states.
+ */
+interface Catalogue {
+  models: number;
+  makers: number;
+  kai: Rate;
+  captured: string;
+}
+
 interface Pricing {
   updated?: string;
   summary?: Record<string, number>;
@@ -84,6 +97,7 @@ interface Pricing {
   tools?: Tool[];
   freeModels?: string[];
   providers?: Record<string, { total: number; free: number; paid: number }>;
+  catalogue?: Catalogue;
   meta?: { captured: string; source: 'live' | 'snapshot' };
 }
 
@@ -165,9 +179,15 @@ async function fetchPricing(): Promise<Pricing | null> {
   }
 }
 
-/** The gateway catalogue, keyed by the id you pass as `model`. */
-async function fetchCatalogue(): Promise<Map<string, Rate & { context: number | null }>> {
-  const out = new Map<string, Rate & { context: number | null }>();
+type Rates = Map<string, Rate & { context: number | null }>;
+
+/**
+ * The gateway catalogue: each id's rate, keyed by the id you pass as `model`,
+ * and the landing's summary of it. The summary is null when the catalogue gave
+ * no answer, so a build that cannot reach it keeps the committed one.
+ */
+async function fetchCatalogue(): Promise<{ rates: Rates; summary: Catalogue | null }> {
+  const rates: Rates = new Map();
   try {
     const r = await fetch(MODELS_ENDPOINT, {
       headers: { Accept: 'application/json' },
@@ -175,26 +195,41 @@ async function fetchCatalogue(): Promise<Map<string, Rate & { context: number | 
     });
     if (!r.ok) {
       console.warn(`[pricing] catalogue answered ${r.status}`);
-      return out;
+      return { rates, summary: null };
     }
     // `pricing.prompt`/`completion` are USD per token; the per-million rates this
     // page prints sit under `input_per_million`/`output_per_million`.
     const d = (await r.json()) as {
       data?: Array<{
         id: string;
+        owned_by?: string;
+        family?: string;
         context_window?: number | null;
         pricing?: { input_per_million?: number; output_per_million?: number };
       }>;
     };
-    for (const m of d.data ?? []) {
+    const rows = d.data ?? [];
+    for (const m of rows) {
       const input = m.pricing?.input_per_million;
       if (input == null) continue;
-      out.set(m.id, { input, output: m.pricing?.output_per_million ?? null, context: m.context_window ?? null });
+      rates.set(m.id, { input, output: m.pricing?.output_per_million ?? null, context: m.context_window ?? null });
     }
+    const kai = rows.find((m) => m.family === 'kai' && m.pricing?.input_per_million != null);
+    if (!rows.length || !kai) {
+      console.warn('[pricing] catalogue answered without Kai');
+      return { rates, summary: null };
+    }
+    const summary: Catalogue = {
+      models: new Set(rows.map((m) => m.id)).size,
+      makers: new Set(rows.map((m) => (m.owned_by ?? '').replace(/^~/, '').toLowerCase()).filter(Boolean)).size,
+      kai: { input: kai.pricing!.input_per_million, output: kai.pricing!.output_per_million ?? null },
+      captured: new Date().toISOString().slice(0, 10),
+    };
+    return { rates, summary };
   } catch (e) {
     console.warn(`[pricing] catalogue unreachable: ${(e as Error).message}`);
+    return { rates, summary: null };
   }
-  return out;
 }
 
 /**
@@ -203,7 +238,7 @@ async function fetchCatalogue(): Promise<Map<string, Rate & { context: number | 
  * figure to be about, and overwriting one with the other prints a rate that
  * nobody is charged.
  */
-function applyCatalogue(p: Pricing, catalogue: Awaited<ReturnType<typeof fetchCatalogue>>): number {
+function applyCatalogue(p: Pricing, catalogue: Rates): number {
   let changed = 0;
   for (const m of p.hanzoModels ?? []) {
     const c = catalogue.get(m.name);
@@ -230,13 +265,14 @@ function load(): Pricing {
  * sync with no change to the page, and bury a real Enso price change in noise.
  * A section that starts being rendered gets added here at the same time.
  */
-const project = (p: Pricing, meta: Pricing['meta']): Pricing => ({
+const project = (p: Pricing, catalogue: Catalogue | undefined, meta: Pricing['meta']): Pricing => ({
   updated: p.updated,
   summary: p.summary,
   hanzoModels: p.hanzoModels,
   tools: p.tools,
   freeModels: p.freeModels,
   providers: p.providers,
+  catalogue,
   meta,
 });
 
@@ -455,12 +491,15 @@ function render(p: Pricing): string {
 // -------------------------------------------------------------------- main
 
 export async function genPricingPage(): Promise<void> {
-  const [live, catalogue] = await Promise.all([fetchPricing(), fetchCatalogue()]);
+  const [live, { rates, summary }] = await Promise.all([fetchPricing(), fetchCatalogue()]);
   const have = fs.existsSync(VENDORED) ? load() : null;
+  const catalogue = summary ?? have?.catalogue;
+  if (!catalogue) throw new Error(`[pricing] catalogue unreachable and no snapshot at ${VENDORED}`);
+  if (!summary) console.log(`[pricing] no usable /v1/models — the landing states the catalogue as of ${catalogue.captured}`);
 
   let pricing: Pricing;
   if (live) {
-    pricing = project(live, { captured: new Date().toISOString().slice(0, 10), source: 'live' });
+    pricing = project(live, catalogue, { captured: new Date().toISOString().slice(0, 10), source: 'live' });
   } else {
     if (!have) throw new Error(`[pricing] api unreachable and no snapshot at ${VENDORED}`);
     // Say it in the build log, loudly: this build's page states the rates as
@@ -468,9 +507,9 @@ export async function genPricingPage(): Promise<void> {
     console.log(
       `[pricing] no usable /v1/pricing — rendering the vendored copy captured ${have.meta?.captured ?? '(undated)'}`,
     );
-    pricing = project(have, { ...have.meta!, source: 'snapshot' });
+    pricing = project(have, catalogue, { ...have.meta!, source: 'snapshot' });
   }
-  const corrected = applyCatalogue(pricing, catalogue);
+  const corrected = applyCatalogue(pricing, rates);
   if (corrected) console.log(`[pricing] ${corrected} rate(s) corrected from ${MODELS_ENDPOINT}`);
   fs.writeFileSync(VENDORED, JSON.stringify(pricing, null, 2) + '\n');
 

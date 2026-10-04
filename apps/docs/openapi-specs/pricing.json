@@ -4,6 +4,7 @@
     "catalogMode": "all-providers",
     "cloudPlans": 11,
     "cloudRegions": 4,
+    "decisionModels": 4,
     "doAiModels": 18,
     "ensoModels": 3,
     "featuredModels": 11,
@@ -12,7 +13,7 @@
     "openRouterModels": 340,
     "providers": 57,
     "thirdPartyModels": 397,
-    "totalModels": 432,
+    "totalModels": 436,
     "zenModels": 14
   },
   "hanzoModels": [
@@ -67,8 +68,8 @@
       "pricing": {
         "cacheRead": 0,
         "cacheWrite": null,
-        "input": 0.6,
-        "output": 0.6
+        "input": 0,
+        "output": 0
       },
       "provider": "Hanzo",
       "tier": "starter"
@@ -157,8 +158,8 @@
       "pricing": {
         "cacheRead": 0,
         "cacheWrite": null,
-        "input": 0.66,
-        "output": 1.98
+        "input": 0,
+        "output": 0
       },
       "provider": "Hanzo",
       "tier": "pro",
@@ -198,8 +199,8 @@
       "pricing": {
         "cacheRead": 0.42,
         "cacheWrite": null,
-        "input": 2.52,
-        "output": 7.92
+        "input": 0,
+        "output": 0
       },
       "provider": "Hanzo",
       "specs": {
@@ -224,8 +225,8 @@
       "pricing": {
         "cacheRead": 0.42,
         "cacheWrite": null,
-        "input": 2.52,
-        "output": 7.92
+        "input": 0,
+        "output": 0
       },
       "provider": "Hanzo",
       "specs": {
@@ -250,8 +251,8 @@
       "pricing": {
         "cacheRead": 0.05292,
         "cacheWrite": null,
-        "input": 0.45,
-        "output": 1.8
+        "input": 0,
+        "output": 0
       },
       "provider": "Hanzo",
       "specs": {
@@ -261,7 +262,7 @@
       "tier": "starter"
     },
     {
-      "context": 131072,
+      "context": 1000000,
       "description": "Frontier agentic at the lowest cost in the family. Built on a 230B agentic MoE (10B active) (230B MoE / 10B active, released Feb 2026). 80.2% SWE-Bench Verified, 76.3% BrowseComp; trained on 200K+ real-world environments via large-scale RL.",
       "family": "zen",
       "features": [
@@ -277,8 +278,8 @@
       "pricing": {
         "cacheRead": 0.09,
         "cacheWrite": null,
-        "input": 0.075,
-        "output": 0.3
+        "input": 0,
+        "output": 0
       },
       "provider": "Hanzo",
       "specs": {
@@ -304,8 +305,8 @@
       "pricing": {
         "cacheRead": 0.010875,
         "cacheWrite": null,
-        "input": 1.65,
-        "output": 4.95
+        "input": 0,
+        "output": 0
       },
       "provider": "Hanzo",
       "specs": {
@@ -714,8 +715,8 @@
       "pricing": {
         "cacheRead": null,
         "cacheWrite": null,
-        "input": 0.42,
-        "output": 1.5
+        "input": 0,
+        "output": 0
       },
       "provider": "Hanzo",
       "tier": "pro"
@@ -734,11 +735,109 @@
       "pricing": {
         "cacheRead": null,
         "cacheWrite": null,
-        "input": 6,
-        "output": 30
+        "input": 0,
+        "output": 0
       },
       "provider": "Hanzo",
       "tier": "ultra max"
+    },
+    {
+      "category": "specialty",
+      "context": null,
+      "description": "Hanzo's decision model. $0.021 per million input tokens, half of Jev's $0.042. Output is free.",
+      "endpoint": "/v1/decisions",
+      "features": [
+        "Decisions",
+        "Calibrated probabilities"
+      ],
+      "fullName": "Kai",
+      "name": "kai",
+      "owned_by": "hanzo",
+      "pricing": {
+        "cacheRead": null,
+        "cacheWrite": null,
+        "input": 0.021,
+        "output": 0
+      },
+      "pricingUnit": "token",
+      "provider": "Hanzo",
+      "specs": {
+        "arch": "decision"
+      },
+      "tier": "starter"
+    },
+    {
+      "category": "specialty",
+      "context": null,
+      "description": "Hanzo's decision model. $0.021 per million input tokens, half of Jev's $0.042. Output is free.",
+      "endpoint": "/v1/decisions",
+      "features": [
+        "Decisions",
+        "Calibrated probabilities"
+      ],
+      "fullName": "Kai",
+      "name": "hanzo/kai",
+      "owned_by": "hanzo",
+      "pricing": {
+        "cacheRead": null,
+        "cacheWrite": null,
+        "input": 0.021,
+        "output": 0
+      },
+      "pricingUnit": "token",
+      "provider": "Hanzo",
+      "specs": {
+        "arch": "decision"
+      },
+      "tier": "starter"
+    },
+    {
+      "category": "specialty",
+      "context": null,
+      "description": "TypeSafe's decision model, reached through OpenRouter, at its list price: $0.042 per million input tokens. Output is free.",
+      "endpoint": "/v1/decisions",
+      "features": [
+        "Decisions"
+      ],
+      "fullName": "Jev 1.13",
+      "name": "typesafe/jev-1.13",
+      "owned_by": "typesafe",
+      "pricing": {
+        "cacheRead": null,
+        "cacheWrite": null,
+        "input": 0.042,
+        "output": 0
+      },
+      "pricingUnit": "token",
+      "provider": "TypeSafe",
+      "specs": {
+        "arch": "decision"
+      },
+      "tier": "starter"
+    },
+    {
+      "category": "specialty",
+      "context": null,
+      "description": "TypeSafe's decision model, reached through OpenRouter, at its list price: $0.042 per million input tokens. Output is free.",
+      "endpoint": "/v1/decisions",
+      "features": [
+        "Decisions"
+      ],
+      "fullName": "Jev",
+      "name": "~typesafe/jev-latest",
+      "owned_by": "typesafe",
+      "pricing": {
+        "cacheRead": null,
+        "cacheWrite": null,
+        "input": 0.042,
+        "output": 0
+      },
+      "pricingUnit": "token",
+      "provider": "TypeSafe",
+      "specs": {
+        "arch": "decision"
+      },
+      "tier": "starter"
     }
   ],
   "tools": [
@@ -1141,8 +1240,17 @@
       "total": 6
     }
   },
+  "catalogue": {
+    "models": 495,
+    "makers": 60,
+    "kai": {
+      "input": 0.021,
+      "output": 0
+    },
+    "captured": "2026-10-04"
+  },
   "meta": {
-    "captured": "2026-09-26",
+    "captured": "2026-10-04",
     "source": "live"
   }
 }
