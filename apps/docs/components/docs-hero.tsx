@@ -60,12 +60,12 @@ const PATHS = [
     id: 'api',
     eyebrow: 'Lower level',
     title: 'Build with API',
-    body: 'Over 400 models behind one REST endpoint. Test instantly with a guest temporary key — no signup required.',
+    body: 'Over 400 models behind one REST endpoint. One bearer token works across every service we run.',
     href: '/docs/openapi',
     external: false,
     cta: 'Read the API reference',
     lang: 'Request',
-    code: 'curl https://api.hanzo.ai/v1/chat/completions \\\n  -H "Authorization: Bearer guest_temp_key" \\\n  -d \'{"model": "zen-free", "messages": [{"role": "user", "content": "hello"}]}\'',
+    code: 'curl https://api.hanzo.ai/v1/chat/completions \\\n  -H "Authorization: Bearer sk-..." \\\n  -d \'{"model":"enso","messages":[...]}\'',
   },
 ] as const;
 
