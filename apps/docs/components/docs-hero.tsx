@@ -155,10 +155,10 @@ export function DocsHero() {
           Models
         </Text>
         <Text fontSize="$3" fontWeight="500" color="$color12">
-          Zen generates, Enso routes, Kai decides
+          Enso routes, Kai decides, Zen reasons
         </Text>
         <Text fontSize="$3" {...muted}>
-          Open weights, one router, typed decisions. See the models →
+          One router, typed decisions, open weights. See the models →
         </Text>
       </XStack>
 

@@ -1,10 +1,10 @@
 {
   "title": "Models",
-  "description": "Zen generates, Enso routes, Kai decides, Policy governs.",
+  "description": "Enso routes, Kai decides, Zen reasons, Policy governs.",
   "icon": "Boxes",
   "pages": [
-    "zen",
     "enso",
-    "kai"
+    "kai",
+    "zen"
   ]
 }
