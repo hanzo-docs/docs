@@ -183,7 +183,17 @@ curl -si https://api.hanzo.ai/v1/chat/completions \
   -d '{"model": "auto", "messages": [{"role": "user", "content": "Summarize this changelog in one line."}]}'
 ```
 
-### How it picks
+The rewrite happens before provider, pricing and billing are resolved, so the
+request is priced, metered and reported as exactly the model that served it.
+That model is in the `X-Routed-Model` response header and in the body's
+`model` field; the two always match. `zen-router` is accepted as an alias for
+`auto`.
+
+An `enso-*` id is not rewritten: the answer keeps the id you sent in its
+`model` field, and the `X-Hanzo-Served` response header names the Hanzo model
+that answered it. `X-Routed-Model` is set only when `auto` was resolved.
+
+## How it picks
 
 1. **Classify.** Media, length and keywords put the request in one task class:
    `code`, `reasoning`, `math`, `creative`, `vision`, `long_context`,
