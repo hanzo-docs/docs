@@ -55,7 +55,7 @@ catalog:
   '@hanzo/docs-core': '17.0.1'
   '@hanzo/docs-mdx': '15.0.10'
   '@hanzo/docs-ui': '17.0.5'
-  '@hanzo/event': '0.3.50'
+  '@hanzo/event': '0.3.57'
   '@hanzo/font': '1.9.2'
   '@hanzo/gui': '8.3.5'
   '@hanzo/iam': '0.21.17'
@@ -330,7 +330,7 @@ catalog:
 minimumReleaseAgeExclude:
   - '@hanzo/font@1.9.2'
   - '@hanzo/ui@8.25.0 || 8.27.18 || 8.27.35 || 8.27.83'
-  - '@hanzo/event@0.3.50'
+  - '@hanzo/event@0.3.50 || 0.3.57'
   - '@hanzo/events@0.3.1'
   - '@hanzo/design@0.5.35'
 overrides:
