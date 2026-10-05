@@ -334,9 +334,14 @@ function readKeyTypes(raw: any, item: any): KeyType[] {
   // Every sentence the key resource carries: its operations, their parameters,
   // and the schemas they send and return. Naming one schema would tie this to a
   // Go type name; walking what the path item reaches ties it to the resource.
+  //
+  // Eight deep, because that is where a field's own sentence sits: operation,
+  // requestBody, content, media type, schema, properties, the field. Cloud
+  // states the classes on the `type` field it reads and the one it returns,
+  // and a walk that stopped at six read every schema and none of its fields.
   const said: string[] = [];
   const collect = (node: any, depth = 0) => {
-    if (!node || typeof node !== 'object' || depth > 6) return;
+    if (!node || typeof node !== 'object' || depth > 8) return;
     const d = deref(raw, node, 0);
     if (typeof d?.description === 'string') said.push(d.description);
     for (const v of Object.values(d)) if (v && typeof v === 'object') collect(v, depth + 1);
