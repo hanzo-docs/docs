@@ -1,7 +1,7 @@
 ---
 icon: KeyRound
 title: Authentication
-description: How a request proves who it is — the two Hanzo key types, which one may ship in a browser, and how to create, rotate and revoke them.
+description: How a request proves who it is — the two Hanzo key types, which one may ship in a browser, and how to create, limit, edit and revoke keys.
 ---
 
 # Authentication
@@ -33,12 +33,16 @@ A publishable key minted alongside a project names that project rather than the
 organization, so beacons from two sites attribute separately. It is the same
 spelling and the same rules.
 
-### They are two rows, not two halves of one key
+### Every key is its own credential
 
-A user holds at most one key of each type, and IAM stores them as separate rows.
-So rotating the key in your browser bundle does not sign your servers out, and
-rotating your server key does not blank the event stream on your site. They fail
-independently, which is the point of having two.
+You hold as many keys as you like, of either type, and each is its own row in
+IAM with its own name, permissions, budget, rate and expiry. Creating a key
+never touches another, so a new key for a new service leaves every running
+integration working, and revoking one stops only that one.
+
+A key belongs to the organization it was created in and names the person who
+created it. A member sees and manages their own keys; an admin of the
+organization sees and can revoke every key it holds.
 
 Asking for a type that does not exist is an error, not a default. The API will
 not hand you a secret key because you asked for something it did not recognize —
@@ -50,55 +54,72 @@ refusal exists to prevent.
 ### In the console
 
 1. Go to [platform.hanzo.ai](https://platform.hanzo.ai)
-2. Open **API Keys**
-3. Create a key and choose its type
-4. Copy a secret key immediately — it is shown once and never again
+2. Open **API Keys** and choose **Create new secret key**
+3. Name it, and set its permissions, budget, rate and expiry if it needs them
+4. Copy the secret immediately — it is shown once and never again
 
 A publishable key is the exception: you can read it back at any time, because it
 is public by construction and useless to you if you cannot.
 
 ### Over the API
 
-Keys are one resource, `/v1/account/keys`, and the type is a field on it. There is no
-separate mint endpoint and no separate revoke endpoint — the HTTP method says
-which you mean.
+Keys are one resource, `/v1/account/keys`, and the type is a field on it. The HTTP
+method says what you mean, and a key is addressed by its `id`.
 
 ```bash
-# Mint (or rotate) a key. The response carries it once.
+# Create a key. The response carries the secret, once, in `key`.
 curl -X POST https://api.hanzo.ai/v1/account/keys \
   -H "Authorization: Bearer sk-your-key" \
   -H "Content-Type: application/json" \
-  -d '{"type":"publishable"}'
+  -d '{"name":"production","type":"secret"}'
 
-# List what you hold. No secret material comes back — a secret key is
-# represented by its prefix; a publishable key by its full value.
+# List the keys you may see. No secret material comes back — a secret key is
+# named by its prefix (`sk-live-1a2b…`); a publishable key by its full value.
 curl https://api.hanzo.ai/v1/account/keys -H "Authorization: Bearer sk-your-key"
 
-# Revoke one type without touching the other.
-curl -X DELETE "https://api.hanzo.ai/v1/account/keys?type=publishable" \
+# Change a key's name or policy. Its secret is unchanged and keeps working.
+curl -X PATCH https://api.hanzo.ai/v1/account/keys/KEY_ID \
+  -H "Authorization: Bearer sk-your-key" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"production-eu"}'
+
+# Revoke exactly one key. It stays listed as revoked, with who and when.
+curl -X DELETE https://api.hanzo.ai/v1/account/keys/KEY_ID \
   -H "Authorization: Bearer sk-your-key"
 ```
 
-Creating is how you rotate: you hold one key per type, so minting the same type
-again replaces it and the old credential stops working. Omitting `type` means
-`secret`, which is what every caller meant before publishable keys existed.
+Each listed key carries its `id`, `name`, `type`, `prefix`, `status` (`active`,
+`expired` or `revoked`), `creator`, `created`, and when set its `expires`,
+`limit`, `budget` and `rate`, what it has spent (`spend`) and when it was last
+`used`.
+Omitting `type` means `secret`. An organization holds at most 1,000 live keys.
 
 ## Limiting what a key may reach
 
 A key reaches whatever its holder reaches. For a key that lives in one deployed
-service that is more authority than the service needs, so a key can be narrowed
-to a model, a project or a product:
+service that is more authority than the service needs, so a key can be narrowed:
 
 ```bash
 curl -X POST https://api.hanzo.ai/v1/account/keys \
   -H "Authorization: Bearer sk-your-key" \
   -H "Content-Type: application/json" \
-  -d '{"type":"secret","limit":["model:zen5","project:acme"]}'
+  -d '{"name":"trainer","limit":["product:train","read:billing","model:zen5"]}'
 ```
 
-The entries are `kind:name`, and `kind:*` is the whole kind. Three kinds are
-enforced — `model`, `project` and `product` — and a kind outside that set is
-refused when you create the key rather than stored. A limit nothing consults
+The entries are `kind:name`, and `kind:*` is the whole kind:
+
+| Entry | The key may |
+|-------|-------------|
+| `product:train` | read and write `/v1/train` |
+| `read:billing` | only read `/v1/billing` (`GET`, `HEAD`, `OPTIONS`) |
+| `read:*` | only read, anywhere: a read-only key |
+| `model:zen5` | call only that model |
+| `project:acme` | act only in that project |
+
+A key naming no `product:` or `read:` entry may reach every service; naming any
+of them, it reaches only those, and a request anywhere else is refused `403`
+saying what the key may not do. The services are the ones `GET /v1` lists. A kind
+outside this set is refused when you create the key rather than stored. A limit nothing consults
 would be worse than no limit: it would read as a restriction everywhere you
 look and be one nowhere.
 
@@ -117,13 +138,35 @@ different limits at the same time. And an admin's limited key is still limited:
 a restriction you could shed by being an admin would not be one.
 
 `GET /v1/account/keys` reports each key's `limit`, so you can see what a key reaches
-without minting a new one to find out.
+without minting a new one to find out, and `PATCH` changes it in place.
+
+A request made with a limited key — one with a limit, a budget or a rate — may
+revoke keys but not create or edit them, so no key can mint a wider one.
+
+### Budget, rate and expiry
+
+```bash
+curl -X POST https://api.hanzo.ai/v1/account/keys \
+  -H "Authorization: Bearer sk-your-key" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"batch","budget":{"month":5000,"total":0},"rate":60,"expires":"2027-01-01T00:00:00Z"}'
+```
+
+- **`budget`** caps what the key spends on models, in cents: `month` per calendar
+  month (UTC) and `total` over its life; `0` is no cap. Past either, the key's
+  model requests are refused `402` with code `key_budget`, naming the budget,
+  while your other keys keep working. The listing shows `spend` beside it.
+- **`rate`** caps the key's requests a minute; past it, `429`. It applies besides
+  any limit your organization sets, never instead of one.
+- **`expires`** (RFC 3339) is when the key stops working; a request with an
+  expired key is refused `401` saying it expired. A revoked key is refused `401`
+  saying so.
 
 Two things worth knowing before you automate this. A browser session must echo
-an anti-CSRF token — `GET /v1/csrf`, then send it back as `X-CSRF-Token` — while
-a bearer caller does not, because a bearer request cannot be forged by a
-cross-site page. And revocation reaches IAM immediately but the gateway caches
-key lookups for a few minutes, so a request that beat the cache may still be
+an anti-CSRF token — `GET /v1/account/csrf`, then send it back as `X-CSRF-Token` —
+while a bearer caller does not, because a bearer request cannot be forged by a
+cross-site page. And revocation reaches IAM immediately but cloud caches a
+resolved key for up to a minute, so a request inside that minute may still be
 served.
 
 The full request and response shapes are in the [Keys
@@ -252,9 +295,9 @@ https://api.hanzo.ai/v1/event/overview?range=30d` — see
    site, not on a calendar.
 2. **Keep production keys in [KMS](/docs/openapi/kms).** Never in source, never
    in a committed `.env`.
-3. **Mint before you revoke.** Mint the replacement, deploy it, watch it work,
-   then revoke. Note that minting the same type again IS the revoke — so for
-   zero-downtime you cut over between two identities, not two keys of one.
+3. **Create before you revoke.** Create the replacement, deploy it, watch it
+   work, then revoke the old key by its id. The two run side by side, so the cut
+   over needs no downtime.
 4. **One identity per service.** Blast radius, and audit logs you can read.
 5. **Watch spend.** `/v1/billing/usage` or the console. An unfamiliar spend
    pattern is what a leaked key looks like from the inside.
@@ -297,9 +340,10 @@ removing the sync does not take a running workload down with it.
 
 ## Revoking
 
-From the console: **API Keys → Revoke**. Over the API:
-`DELETE /v1/account/keys?type=secret`. IAM drops the credential immediately and calls
-made with it fail `401` once the gateway's cache lapses.
+From the console: **API Keys**, then the revoke button on the key's row. Over the
+API: `DELETE /v1/account/keys/{id}`. IAM stops the credential immediately, calls
+made with it fail `401` within a minute, and every other key keeps working. The
+key stays listed as revoked, with who revoked it and when.
 
 ## Rules
 
