@@ -12,9 +12,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/mdx/tabs'
  * A code block: a surface, an optional title bar, and a copy control.
  *
  * rehype-code hands the `pre` its tokens already coloured — each span carries
- * `color: light-dark(light, dark)` (lib/shiki.ts, `defaultColor`) — so the
- * theme class on <html> picks the palette through `color-scheme` and no rule
- * here has to know which theme is on.
+ * `color: light-dark(light, dark)` (lib/shiki.ts, `defaultColor`) — and the
+ * `pre` itself carries the theme's ground and ink the same way. The code area
+ * paints that ground, so a block is Dracula in the dark and GitHub's light in
+ * the light, and the theme class on <html> picks between them through
+ * `color-scheme`; no rule here has to know which theme is on.
  */
 
 /** Blocks inside a code-tab group sit flush in its frame instead of framing themselves. */
@@ -23,10 +25,13 @@ const Grouped = createContext(false);
 export function Figure({
   title,
   icon,
+  ground,
   children,
 }: {
   title?: ReactNode;
   icon?: ReactNode | string;
+  /** The theme's background for the code area, as the highlighter wrote it. */
+  ground?: string;
   children: ReactNode;
 }) {
   const grouped = use(Grouped);
@@ -59,14 +64,23 @@ export function Figure({
           {copy}
         </XStack>
       )}
-      <YStack ref={area as never} role="region" tabIndex={0} overflow="auto" maxH={600} py={14}>
+      <YStack
+        ref={area as never}
+        role="region"
+        tabIndex={0}
+        overflow="auto"
+        maxH={600}
+        py={14}
+        style={ground ? { backgroundColor: ground } : undefined}
+      >
         {children}
       </YStack>
     </YStack>
   );
 }
 
-export function Pre({ children }: ComponentProps<'pre'>) {
+/** The `pre` itself. `ink` is the theme's foreground, for text no token colours. */
+export function Pre({ ink, children }: { ink?: string; children?: ReactNode }) {
   return (
     <Block value>
       <Text
@@ -78,7 +92,7 @@ export function Pre({ children }: ComponentProps<'pre'>) {
         minW="100%"
         whiteSpace="pre"
         color="$color12"
-        style={{ width: 'max-content' }}
+        style={{ width: 'max-content', ...(ink ? { color: ink } : {}) }}
       >
         {children}
       </Text>
@@ -106,13 +120,23 @@ function Copy({ area }: { area: React.RefObject<HTMLElement | null> }) {
   );
 }
 
-/** The MDX `pre`: rehype-code's element, framed. Its own props (the shiki
- *  classes, the inline background) are dropped — the frame is the surface. */
-export function Code({ title, icon, children }: ComponentProps<'pre'> & { icon?: string }) {
+/** The MDX `pre`: rehype-code's element, framed. Of its own props only the
+ *  theme's ground and ink are kept; the shiki classes are dropped. */
+export function Code({ title, icon, style, children }: ComponentProps<'pre'> & { icon?: string }) {
   return (
-    <Figure title={title} icon={icon}>
-      <Pre>{children}</Pre>
+    <Figure title={title} icon={icon} ground={style?.backgroundColor}>
+      <Pre ink={style?.color}>{children}</Pre>
     </Figure>
+  );
+}
+
+/** A highlighted `pre` with no frame, for a part that draws its own: the
+ *  theme's ground and ink, and the code scrolling under them. */
+export function Listing({ style, children }: ComponentProps<'pre'>) {
+  return (
+    <YStack overflow="auto" py={14} style={{ backgroundColor: style?.backgroundColor }}>
+      <Pre ink={style?.color}>{children}</Pre>
+    </YStack>
   );
 }
 

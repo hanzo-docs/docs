@@ -345,6 +345,14 @@ it is gui stacks and text on theme tokens; no class names.
   `color: light-dark(…)` (`lib/shiki.ts`), so `color-scheme` picks the palette
   and no stylesheet knows the theme. Steps are the `Steps`/`Step` parts
   (`lib/remark-parts.ts` renames remark-steps' marked divs).
+- **One code theme: `codeTheme` from `@hanzo/ui/core`** (Dracula dark, GitHub
+  Light light), the same on hanzo.ai, platform and ui.hanzo.ai. `lib/shiki.ts`
+  passes it to rehype-code and `Example`; every app's `source.config.ts` imports
+  it, never a theme literal. A block's code area paints the theme's own ground
+  and ink from the `pre` shiki wrote (`#282a36` dark, `#fff` light). A client
+  part never runs shiki: it takes the code already highlighted — `snippet` and
+  `request` are `<Example lang code />` props in the MDX, and the hero is
+  `components/hero.tsx`, a server part that highlights its three doors.
 - **The tree narrows by path, not address.** `lib/tree.tsx` resolves an
   operation page (not in the tree) to its product page, so the rail opens the
   reference it belongs to.

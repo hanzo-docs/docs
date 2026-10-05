@@ -57,7 +57,9 @@ curl -s https://api.hanzo.ai/v1/models \
   | jq -r '.data[] | select(.id | test("^(zen|enso)")) | "\(.id)\t\(.owned_by)\t\(.pricing.input_per_million)/\(.pricing.output_per_million)"'
 ```
 
-<ModelsCatalog />
+<ModelsCatalog
+  request={<Example lang="bash" code={'curl -s https://api.hanzo.ai/v1/models \\\n  -H "Authorization: Bearer $HANZO_API_KEY"'} />}
+/>
 
 ## What a rate means
 

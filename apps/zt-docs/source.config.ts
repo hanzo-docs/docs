@@ -8,6 +8,7 @@ import {
 import { z } from 'zod';
 import jsonSchema from '@hanzo/docs-mdx/plugins/json-schema';
 import lastModified from '@hanzo/docs-mdx/plugins/last-modified';
+import { codeTheme } from '@hanzo/ui/core';
 
 export const docs = defineDocs({
   docs: {
@@ -32,10 +33,7 @@ export const docs = defineDocs({
         rehypeCodeOptions: {
           langs: ['ts', 'js', 'go', 'rust', 'python', 'cpp', 'c', 'bash', 'json', 'yaml', 'toml', 'cmake', 'typescript'],
           inline: 'tailing-curly-colon',
-          themes: {
-            light: 'github-light',
-            dark: 'github-dark',
-          },
+          themes: codeTheme,
           transformers: [
             ...(rehypeCodeDefaultOptions.transformers ?? []),
           ],

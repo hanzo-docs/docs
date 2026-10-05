@@ -62,7 +62,7 @@ catalog:
   '@hanzo/logo': '1.0.26'
   '@hanzo/mdx': '14.2.6'
   '@hanzo/products': '0.2.6'
-  '@hanzo/ui': '^8.27.35'
+  '@hanzo/ui': '^8.27.83'
   '@hanzogui/lucide-icons-2': '8.3.5'
   '@hanzogui/next-theme': '8.3.5'
   '@hanzogui/shell': '8.3.5'
@@ -329,9 +329,10 @@ catalog:
 
 minimumReleaseAgeExclude:
   - '@hanzo/font@1.9.2'
-  - '@hanzo/ui@8.25.0 || 8.27.18 || 8.27.35'
+  - '@hanzo/ui@8.25.0 || 8.27.18 || 8.27.35 || 8.27.83'
   - '@hanzo/event@0.3.50'
   - '@hanzo/events@0.3.1'
+  - '@hanzo/design@0.5.35'
 overrides:
   '@noble/hashes': '1.8.0'
   'zod': '^4.5.2'

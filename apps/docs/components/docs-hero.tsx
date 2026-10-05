@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { Text, XStack, YStack } from '@hanzo/gui';
 import { Action } from '@/components/action';
@@ -24,56 +24,24 @@ import { muted } from '@/lib/ink';
 // hsl(0,0%,4%)). Nothing here introduces a hue the rest of the site does not use;
 // the only emphasis available is weight, border and motion, so those carry it.
 
-/** Assistants a reader might paste the prompt into, from our own icon set. */
-
-// The clipboard payload lives in lib/agent-setup-prompt.ts — see the note there
-// for why it instructs the AGENT rather than describing steps to a human.
-
-/**
- * The three paths, ordered by how much you type. Each carries its real first
- * step — these are commands that work, not illustrative pseudocode.
- */
-const PATHS = [
-  {
-    id: 'app',
-    eyebrow: 'No code',
-    title: 'Build with App',
-    body: 'Describe what you want in English. Chat, agents and MCP tools in the browser — nothing to install.',
-    href: 'https://hanzo.app',
-    external: true,
-    cta: 'Open hanzo.app',
-    lang: 'You type',
-    code: 'Build me a multiplayer snake game with a\nleaderboard, and deploy it.',
-  },
-  {
-    id: 'cli',
-    eyebrow: 'In your terminal',
-    title: 'Build with Dev',
-    body: 'Our coding agent, in your repo. It reads the codebase, writes the change and runs the tests.',
-    href: '/docs/cli',
-    external: false,
-    cta: 'Read the CLI docs',
-    lang: 'Terminal',
-    code: 'curl -fsSL https://hanzo.sh | sh\nhanzo auth login\nhanzo dev "add a leaderboard to the game"',
-  },
-  {
-    id: 'api',
-    eyebrow: 'Lower level',
-    title: 'Build with API',
-    body: 'Over 400 models behind one REST endpoint. One bearer token works across every service we run.',
-    href: '/docs/openapi',
-    external: false,
-    cta: 'Read the API reference',
-    lang: 'Request',
-    code: 'curl https://api.hanzo.ai/v1/chat/completions \\\n  -H "Authorization: Bearer sk-..." \\\n  -d \'{"model":"enso","messages":[...]}\'',
-  },
-] as const;
+/** A door: what it is, where it leads, and its first step, already highlighted (components/hero.tsx). */
+export interface Door {
+  id: string;
+  eyebrow: string;
+  title: string;
+  body: string;
+  href: string;
+  external: boolean;
+  cta: string;
+  lang: string;
+  sample: ReactNode;
+}
 
 // No title of its own: the page header above it prints the page's title and
 // description, and a hero that printed them again made /docs say its name twice.
-export function DocsHero() {
-  const [active, setActive] = useState<string>(PATHS[0].id);
-  const path = PATHS.find((d) => d.id === active) ?? PATHS[0];
+export function DocsHero({ doors }: { doors: Door[] }) {
+  const [active, setActive] = useState<string>(doors[0].id);
+  const path = doors.find((d) => d.id === active) ?? doors[0];
 
   return (
     <YStack gap={16}>
@@ -81,7 +49,7 @@ export function DocsHero() {
           panel below follows the pointer and a reader compares paths by moving
           across them rather than by clicking three times. */}
       <XStack gap={12} $max-sm={{ flexDirection: 'column' }}>
-        {PATHS.map((d) => {
+        {doors.map((d) => {
           const on = d.id === active;
           return (
             <YStack
@@ -132,9 +100,7 @@ export function DocsHero() {
             {path.cta} →
           </Text>
         </XStack>
-        <Text render="pre" fontFamily="$mono" fontSize={13} lineHeight={21} px={16} py={14} whiteSpace="pre" overflowX="auto" color="$color12">
-          {path.code}
-        </Text>
+        {path.sample}
       </YStack>
 
       {/* The models, because they are the reason to choose the platform at all. */}

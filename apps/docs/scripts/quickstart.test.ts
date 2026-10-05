@@ -33,8 +33,9 @@ const served = new Set<string>(
 );
 
 /**
- * Every fenced code block on the first-call pages, and the page's snippet props,
- * which are shell. `shell` says whether a line of it is a command a reader types.
+ * Every fenced code block on the first-call pages, and every `<Example>` (the
+ * home page's snippets). `shell` says whether a line of it is a command a reader
+ * types.
  */
 const code = PAGES.flatMap((page) => {
   const src = read(page);
@@ -42,8 +43,11 @@ const code = PAGES.flatMap((page) => {
     text: m[2],
     shell: ['bash', 'sh', 'shell', ''].includes(m[1]),
   }));
-  const props = [...src.matchAll(/snippet="([^"]*)"/g)].map((m) => ({ text: m[1], shell: true }));
-  return [...blocks, ...props].map((b) => ({ page, ...b }));
+  const examples = [...src.matchAll(/<Example lang="([a-z]*)" code="([^"]*)"/g)].map((m) => ({
+    text: m[2],
+    shell: ['bash', 'sh', 'shell'].includes(m[1]),
+  }));
+  return [...blocks, ...examples].map((b) => ({ page, ...b }));
 });
 
 /** A shell line with its continuations joined, split into words, quotes kept whole. */

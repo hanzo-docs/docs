@@ -22,6 +22,7 @@
     "@hanzo/font": "catalog:",
     "@hanzo/logo": "catalog:",
     "@hanzo/mdx-runtime": "workspace:*",
+    "@hanzo/ui": "catalog:",
     "@hanzogui/shell": "^7.6.3",
     "@shikijs/rehype": "catalog:",
     "@shikijs/transformers": "catalog:",

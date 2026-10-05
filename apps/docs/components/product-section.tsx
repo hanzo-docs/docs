@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { Children, cloneElement, isValidElement, type ReactElement, type ReactNode } from 'react';
 import { Text, XStack, YStack } from '@hanzo/gui';
-import { Figure, Pre } from '@/components/mdx/code';
 import { Small, flow } from '@/components/mdx/prose';
 import { muted } from '@/lib/ink';
 
@@ -33,8 +32,9 @@ export function ProductSection({
   title: string;
   href: string;
   children: ReactNode;
-  /** The shortest true call into this domain — one runnable line, or nothing. */
-  snippet?: string;
+  /** The shortest true call into this domain — one runnable line, highlighted
+   *  (an `Example` from the page), or nothing. */
+  snippet?: ReactNode;
   action?: { label: string; href: string };
   links?: ProductLink[];
 }) {
@@ -64,13 +64,7 @@ export function ProductSection({
       </YStack>
 
       <YStack flex={1} minW={0} gap={16}>
-        {snippet ? (
-          <Figure>
-            <Pre>
-              <code>{snippet}</code>
-            </Pre>
-          </Figure>
-        ) : null}
+        {snippet}
         {links?.length ? (
           <XStack render="ul" flexWrap="wrap" items="center" rowGap={8} style={{ listStyleType: 'none' }}>
             {links.map((l, i) => (

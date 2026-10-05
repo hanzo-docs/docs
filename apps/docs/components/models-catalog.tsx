@@ -4,11 +4,10 @@
 // Fetches the real gateway catalog at runtime so a static export always shows
 // the current models/prices without a rebuild. Grouped by family, searchable,
 // theme-aware via Fumadocs fd-* tokens.
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Text, XStack, YStack } from '@hanzo/gui';
 import { Field } from '@/components/field';
 import { Copy, Check, Cpu, Sparkle, Zap, Box } from '@hanzogui/lucide-icons-2';
-import { Figure, Pre } from '@/components/mdx/code';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@/components/mdx/prose';
 import { muted } from '@/lib/ink';
 import { PROVIDER_ICONS, providerKey } from '@/components/provider-icons';
@@ -165,7 +164,9 @@ function ModelRow({ m }: { m: Model }) {
   );
 }
 
-export function ModelsCatalog() {
+/** `request` is the call to read the catalogue with your own key, highlighted by
+ *  the page (an `Example`); it is shown only when the live fetch fails. */
+export function ModelsCatalog({ request }: { request?: ReactNode }) {
   const [cat, setCat] = useState<Catalog | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [q, setQ] = useState('');
@@ -237,11 +238,7 @@ export function ModelsCatalog() {
           Couldn’t load the live catalog ({err}). GET /v1/models requires a bearer token, and this page has none to
           send — so read it with your own key instead:
         </Text>
-        <Figure>
-          <Pre>
-            <code>{`curl -s ${ENDPOINT} \\\n  -H "Authorization: Bearer $HANZO_API_KEY"`}</code>
-          </Pre>
-        </Figure>
+        {request}
         <Text render="a" href="/docs/api-keys" fontSize={14} color="$color12" textDecorationLine="underline">
           Mint a key →
         </Text>

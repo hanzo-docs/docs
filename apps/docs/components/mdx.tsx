@@ -4,7 +4,7 @@ import { Code, CodeBlockTab, CodeBlockTabs, CodeBlockTabsList, CodeBlockTabsTrig
 import { Tab, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/mdx/tabs';
 import { Accordion, Accordions, Callout, Card, Cards, File, Files, Folder, Step, Steps } from '@/components/mdx/blocks';
 import { ModelsCatalog, ConnectorsCatalog, InstallCatalog } from '@/components/catalogs';
-import { DocsHero } from '@/components/docs-hero';
+import { Hero } from '@/components/hero';
 import { ProductSection, ProductSections } from '@/components/product-section';
 import { ProviderStrip } from '@/components/provider-strip';
 import { Example } from '@/components/example';
@@ -61,7 +61,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     File,
     Folder,
     // The docs masthead and the domain sections under it.
-    DocsHero,
+    DocsHero: Hero,
     ProductSection,
     ProductSections,
     ProviderStrip,

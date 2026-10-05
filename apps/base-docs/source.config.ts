@@ -7,6 +7,7 @@ import {
 } from '@hanzo/docs-mdx/config';
 import { z } from 'zod';
 import lastModified from '@hanzo/docs-mdx/plugins/last-modified';
+import { codeTheme } from '@hanzo/ui/core';
 
 export const docs = defineDocs({
   docs: {
@@ -31,10 +32,7 @@ export const docs = defineDocs({
         rehypeCodeOptions: {
           langs: ['ts', 'js', 'go', 'rust', 'python', 'bash', 'json', 'yaml', 'sql', 'typescript', 'javascript', 'shell'],
           inline: 'tailing-curly-colon',
-          themes: {
-            light: 'github-light',
-            dark: 'github-dark',
-          },
+          themes: codeTheme,
           transformers: [
             ...(rehypeCodeDefaultOptions.transformers ?? []),
           ],

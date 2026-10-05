@@ -25,7 +25,7 @@ one domain. Nothing is duplicated, so nothing is ambiguous.
 <ProductSection
   title="Intelligence"
   href="/docs/openapi/ai"
-  snippet="hanzo run 'summarize this repo'"
+  snippet={<Example lang="bash" code="hanzo run 'summarize this repo'" />}
   action={{ label: 'Make your first call', href: '/docs/quickstart' }}
   links={[
     { name: 'Models', href: '/docs/models' },
@@ -44,7 +44,7 @@ one domain. Nothing is duplicated, so nothing is ambiguous.
 <ProductSection
   title="Identity & trust"
   href="/docs/openapi/iam"
-  snippet="hanzo auth login && hanzo account keys create"
+  snippet={<Example lang="bash" code="hanzo auth login && hanzo account keys create" />}
   action={{ label: 'Set up an org', href: '/docs/openapi/iam' }}
   links={[
     { name: 'IAM', href: '/docs/openapi/iam' },
@@ -61,7 +61,7 @@ one domain. Nothing is duplicated, so nothing is ambiguous.
 <ProductSection
   title="Data"
   href="/docs/openapi/base"
-  snippet="hanzo kv set greeting hello && hanzo kv get greeting"
+  snippet={<Example lang="bash" code="hanzo kv set greeting hello && hanzo kv get greeting" />}
   action={{ label: 'Store something', href: '/docs/openapi/base' }}
   links={[
     { name: 'Index', href: '/docs/openapi/index' },
@@ -79,7 +79,7 @@ one domain. Nothing is duplicated, so nothing is ambiguous.
 <ProductSection
   title="Streams"
   href="/docs/openapi/pubsub"
-  snippet="hanzo pubsub publish orders '{ &quot;id&quot;: 1 }'"
+  snippet={<Example lang="bash" code="hanzo pubsub publish orders '{ &quot;id&quot;: 1 }'" />}
   action={{ label: 'Move a message', href: '/docs/openapi/pubsub' }}
   links={[
     { name: 'PubSub', href: '/docs/openapi/pubsub' },
@@ -95,7 +95,7 @@ one domain. Nothing is duplicated, so nothing is ambiguous.
 <ProductSection
   title="Observability"
   href="/docs/openapi/o11y"
-  snippet="hanzo o11y query 'sum(rate(http_requests_total[5m]))'"
+  snippet={<Example lang="bash" code="hanzo o11y query 'sum(rate(http_requests_total[5m]))'" />}
   action={{ label: 'See what is happening', href: '/docs/openapi/o11y' }}
   links={[
     { name: 'O11y', href: '/docs/openapi/o11y' },
@@ -112,7 +112,7 @@ one domain. Nothing is duplicated, so nothing is ambiguous.
 <ProductSection
   title="Commerce"
   href="/docs/openapi/commerce"
-  snippet="hanzo billing balance"
+  snippet={<Example lang="bash" code="hanzo billing balance" />}
   action={{ label: 'Meter usage', href: '/docs/openapi/commerce' }}
   links={[
     { name: 'Commerce', href: '/docs/openapi/commerce' },
@@ -128,7 +128,7 @@ one domain. Nothing is duplicated, so nothing is ambiguous.
 <ProductSection
   title="Platform"
   href="/docs/openapi/gateway"
-  snippet="hanzo deploy ."
+  snippet={<Example lang="bash" code="hanzo deploy ." />}
   action={{ label: 'Ship your code', href: '/docs/openapi/gateway' }}
   links={[
     { name: 'Gateway', href: '/docs/openapi/gateway' },
@@ -144,7 +144,7 @@ one domain. Nothing is duplicated, so nothing is ambiguous.
 <ProductSection
   title="Applications"
   href="/docs/chat"
-  snippet="hanzo dev"
+  snippet={<Example lang="bash" code="hanzo dev" />}
   action={{ label: 'Open the apps', href: '/docs/chat' }}
   links={[
     { name: 'Chat', href: '/docs/chat' },
