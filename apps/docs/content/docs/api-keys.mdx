@@ -42,7 +42,9 @@ integration working, and revoking one stops only that one.
 
 A key belongs to the organization it was created in and names the person who
 created it. A member sees and manages their own keys; an admin of the
-organization sees and can revoke every key it holds.
+organization sees and can revoke every key it holds. Only the person a key
+belongs to can edit it, and an admin's revoke of someone else's key is recorded
+in the organization's audit trail.
 
 Asking for a type that does not exist is an error, not a default. The API will
 not hand you a secret key because you asked for something it did not recognize —
@@ -141,7 +143,9 @@ a restriction you could shed by being an admin would not be one.
 without minting a new one to find out, and `PATCH` changes it in place.
 
 A request made with a limited key — one with a limit, a budget or a rate — may
-revoke keys but not create or edit them, so no key can mint a wider one.
+revoke keys but not create or edit them, so no key can mint a wider one. For the
+same reason a limited key cannot log in to the container registry: the registry
+does not enforce limits, so only an unlimited key works there.
 
 ### Budget, rate and expiry
 
@@ -155,7 +159,9 @@ curl -X POST https://api.hanzo.ai/v1/account/keys \
 - **`budget`** caps what the key spends on models, in cents: `month` per calendar
   month (UTC) and `total` over its life; `0` is no cap. Past either, the key's
   model requests are refused `402` with code `key_budget`, naming the budget,
-  while your other keys keep working. The listing shows `spend` beside it.
+  while your other keys keep working. The listing shows `spend` beside it. The
+  budget is checked when a request starts, so requests already running can carry
+  a key past it by their own cost.
 - **`rate`** caps the key's requests a minute; past it, `429`. It applies besides
   any limit your organization sets, never instead of one.
 - **`expires`** (RFC 3339) is when the key stops working; a request with an
