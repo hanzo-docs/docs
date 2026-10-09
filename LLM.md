@@ -14,7 +14,7 @@ Fork of [Hanzo Docs](https://github.com/hanzoai/docs) with all packages renamed 
       ->  s3://hanzo-sites/hanzo/docs            what docs.hanzo.ai serves
 
 The host is a route, not a workload: `Host(docs.hanzo.ai)` -> Middleware
-`docs-static` -> that S3 prefix, declared in hanzoai/universe
+`docs-static` -> that S3 prefix, declared in hanzo-inc/universe
 `charts/app/values/hanzo/static-sites.yaml`. Nothing is pinned and nothing rolls;
 the publish IS the deploy.
 

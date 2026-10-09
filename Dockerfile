@@ -9,7 +9,7 @@
 #
 # The siblings still reach Cloudflare Pages through their own workflows in
 # .hanzo/workflows/. This is the path they move onto, one host at a time, as each
-# gets a verified App CR in hanzoai/universe (see LLM.md).
+# gets a verified App CR in hanzo-inc/universe (see LLM.md).
 #
 # Built by the platform-native fabric (POST /v1/runner → buildkit Job with this
 # repo as the git context) and deployed as the docs-landing Service CR at

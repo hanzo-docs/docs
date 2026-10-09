@@ -12,7 +12,7 @@ serves a second later. There is no image to tag and no pin to move.
       -> hanzoai/ci bin/site                POST /v1/projects/docs-hanzo-ai/deployments
       -> s3://hanzo-sites/hanzo/docs-hanzo-ai   the prefix the docs.hanzo.ai route serves
 
-The route is an `IngressRoute` + `Middleware` pair in hanzoai/universe
+The route is an `IngressRoute` + `Middleware` pair in hanzo-inc/universe
 (`charts/app/values/hanzo/static-sites.yaml`): `Host(docs.hanzo.ai)` ->
 `docs-static` -> `root: s3://hanzo-sites/hanzo/docs-hanzo-ai`. No pod, no
 replicas, no image. A site is files and a route.
@@ -31,7 +31,7 @@ The publish job logs in to KMS with the forge `hanzoai` org's
 `KMS_CLIENT_ID`/`KMS_CLIENT_SECRET` (org-level Actions secrets on git.hanzo.ai,
 holder `hanzo-admin-agent`) and reads `HANZO_DEPLOY_TOKEN` at `/deploy`, env
 `prod`, in KMS org `hanzo`. KMS opens a value only to a holder that
-hanzoai/universe `charts/app/values/hanzo/kms-grants.yaml` grants it, and that
+hanzo-inc/universe `charts/app/values/hanzo/kms-grants.yaml` grants it, and that
 holder is granted `/deploy` only: a read of the flat `/HANZO_DEPLOY_TOKEN`, which
 is what hanzoai/ci `.github/actions/site` does, answers 403 "may not read". No
 secret lives in this repo.
@@ -100,7 +100,7 @@ object store serves it.
 ## The image lane is cold
 
 `ghcr.io/hanzoai/docs`, the root `Dockerfile` and the `docs` app in
-hanzoai/universe are the previous way: an image wrapping the
+hanzo-inc/universe are the previous way: an image wrapping the
 same export, served by hanzoai/static in a pod. The pod still runs and **nothing
 routes to it** — the `docs.hanzo.ai` router names the Sites middleware. Do not
 build or pin it to publish; hanzo.yml no longer declares the image, so no lane
