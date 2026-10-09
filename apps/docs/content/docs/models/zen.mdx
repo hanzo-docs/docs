@@ -39,7 +39,10 @@ license, base and serving instructions. The same ids answer hosted on
 
 Task lines sit beside the generations: `zen-embedding` and `zen-reranker`
 (0.6B, 4B, 8B) for retrieval, `zen-guard` for safety, `zen-vl`
-for vision. `zen-free` and `hanzo/zen` answer on the gateway too.
+for vision. `zen-embedding-2` embeds text in 768 dimensions and takes `dimensions`
+of 512, 256 or 128 for shorter vectors; a query prefix (`task: search result | query: `)
+and a document prefix (`title: none | text: `) belong in the text. Its vectors are not
+`zen-embedding`'s, so an index is built with one of the two. `zen-free` and `hanzo/zen` answer on the gateway too.
 [`zen-router`](https://huggingface.co/zenlm/zen-router) is a
 classifier, not a generator; the gateway also accepts its name as an alias for
 [`auto`](/docs/models/enso).
@@ -114,5 +117,7 @@ Each repository's own license governs its files; the model card names it.
 - `zenlm/zen6-flash`: Apache-2.0. Ternary Bonsai 2 27B by prism-ml
   (`prism-ml/Ternary-Bonsai-2-27B-gguf`), built from Qwen3.8-27B; drafter
   `ProCreations/Ternary-Bonsai-2-27B-DFlash2`.
+- `zen-embedding-2`: Apache-2.0. EmbeddingGemma 2 by Google DeepMind
+  (`google/embeddinggemma-2`), served unchanged.
 
 </section>
