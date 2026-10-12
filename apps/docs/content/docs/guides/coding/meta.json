@@ -1,0 +1,13 @@
+{
+  "$schema": "../../../../.docs/json-schema/docs.meta.json",
+  "title": "Coding tools",
+  "description": "Run Claude Code, Codex, Cursor or Antigravity from the Hanzo CLI, and see what each session used.",
+  "icon": "Terminal",
+  "pages": [
+    "index",
+    "claude-code",
+    "codex",
+    "cursor",
+    "antigravity"
+  ]
+}

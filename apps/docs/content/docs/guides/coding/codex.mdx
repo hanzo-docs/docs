@@ -1,0 +1,46 @@
+---
+title: Codex
+description: "Run Codex through api.hanzo.ai with `hanzo code codex`: what is routed, what is not, and how to keep your own plan."
+---
+
+## Set up
+
+```bash
+curl -fsSL hanzo.sh | sh
+hanzo login
+hanzo code codex
+```
+
+Give it a task as one quoted argument to run it headless: `hanzo code codex "port this module to the new store"`. Codex is its own tool here, never an alias of Hanzo Dev (`hanzo code dev`), which shares its driver.
+
+## What goes through Hanzo
+
+With a signed-in account and no `--no-route`:
+
+- **Model calls** go through Codex's `hanzo` provider at `https://api.hanzo.ai/v1`, with your Hanzo token in `HANZO_USER_KEY`. The model is `enso-auto` unless you set another with `--model` or in `~/.hanzo/settings.json`.
+- **Usage** is metered into your org at api.hanzo.ai.
+- **The Hanzo toolset** and your org's cloud tools are added as MCP servers through Codex's `-c mcp_servers.*` overrides. Your own `config.toml`, your servers and your `codex login` are untouched, because the wrapper never repoints `CODEX_HOME`.
+- **The session** is registered in the cloud and, for a headless run, its events stream there. Pass `--no-link` to keep it local.
+
+## What does not
+
+- Your `config.toml` wins where it sets a value. The wrapper adds `approval_policy` and `sandbox_mode` only when your file leaves them unset, and it keeps the workspace sandbox. `--no-sandbox` drops the sandbox and approvals for one run; `--ask` leaves Codex asking.
+
+## See usage and savings
+
+A linked headless run prints the tokens Codex reported, the cached share and the cost at the listed price when it ends. Any other routed run prints the cloud's count for the session window. Then:
+
+```bash
+hanzo console          # press 6 for Savings
+hanzo usage summary --range 7d
+```
+
+[How to read the numbers →](/docs/guides/coding)
+
+## Keep your own plan
+
+```bash
+hanzo code codex --no-route
+```
+
+Codex uses its own login, ChatGPT plan or API key, and the wrapper leaves its environment alone. Hanzo meters none of that traffic.

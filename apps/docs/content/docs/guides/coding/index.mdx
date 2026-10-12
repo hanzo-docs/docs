@@ -1,0 +1,58 @@
+---
+title: Coding tools
+description: "Start Claude Code, Codex, Cursor or Antigravity from `hanzo code`, and read what a session used."
+icon: Terminal
+---
+
+`hanzo code <tool>` starts a coding tool you already use, in the repository you are standing in, and ties the run to your Hanzo account. What that means differs by tool, and each page below says exactly what the wrapper does and does not do.
+
+```bash
+curl -fsSL hanzo.sh | sh      # install the Hanzo CLI
+hanzo login                   # sign in with your Hanzo account
+hanzo code claude             # or: codex, cursor, agy
+```
+
+## What each tool gets
+
+| | Claude Code | Codex | Cursor | Antigravity |
+| --- | --- | --- | --- | --- |
+| Command | `hanzo code claude` | `hanzo code codex` | `hanzo code cursor` | `hanzo code agy` |
+| Model calls go through api.hanzo.ai | yes | yes | no | no |
+| Metered into your org's usage | yes | yes | no | no |
+| Hanzo toolset attached (MCP) | yes | yes | no | no |
+| Session shown in the cloud | yes | yes | yes | yes |
+| Keeps the tool's own plan with `--no-route` | yes | yes | always | always |
+
+Routing needs `hanzo login`. Signed out, or with `--no-route`, the tool runs on its own account exactly as if you had started it yourself.
+
+## Read what a session used
+
+- **When a session ends**, `hanzo code` prints one block: duration, tokens in and out, the cached share, cost, and a link to the session in the cloud.
+- **`hanzo console`**, then `6`, is the Savings page. It shows your org's usage from the cloud and, when one is running on your machine, a kai-gateway's savings. `t` steps the range through 24 hours, 7 days and 30 days, and `r` reads again.
+- **`hanzo usage summary`** prints the cloud's usage summary as JSON. `--range 7d` or `--range 30d` sets the window; `--range custom --start <time> --end <time>` takes RFC 3339 times.
+- **[platform.hanzo.ai](https://platform.hanzo.ai)** is the same usage in the console, and [Hanzo Usage](/docs/usage) lists your linked provider accounts beside it.
+
+### How to read the numbers
+
+Every figure is labelled with where it came from, and the three kinds are never added together.
+
+- **Reported.** Tokens the tool itself disclosed, which only a linked headless run (`hanzo code claude "task"`, without `--no-link`) does. An interactive run is the tool's own screen, and nothing of its traffic passes through the wrapper.
+- **Listed price.** Those tokens priced at the rates `GET https://api.hanzo.ai/v1/models` lists: input, output, and the cache-read rate for tokens served from the provider's prompt cache. This is an estimate of what the tokens cost at the list. It is not a charge, and it says nothing about what a subscription you pay for actually billed. A model listed as free is `$0.00`, and one the list does not name is not priced.
+- **Metered.** The cloud's own count of what your org sent through api.hanzo.ai in the session's time window, shown for a routed run whose tool reported nothing. It includes any other session of your org running in that window, and it can trail the session by a little while.
+
+Fields the cloud does not send are left out of the console and the block. Nothing is shown as zero because it was not reported.
+
+### Savings
+
+A cache saving is the provider's prompt cache at work: tokens read from the cache cost the cache-read rate, not the full input rate, and the saving is the difference. It is the provider's cache, and the wrapper reports it; it does not cause it.
+
+If a kai-gateway is running on your machine (it listens on ports 8787 to 8793), the console reads its savings too, and shows a second, separately labelled figure. When Kai answers a tool's question without a model call, the gateway estimates what the call it did not make would have cost, priced as the range's average measured call. That is a counterfactual, and the console shows it in its own colour and never adds it to the measured columns. Nothing here claims a tool got faster.
+
+## Keep your own plan
+
+`--no-route` leaves the tool on its own login and billing. The wrapper still starts it, attaches the Hanzo toolset where it supports one, and streams the session to the cloud unless you also pass `--no-link`.
+
+```bash
+hanzo code claude --no-route            # Claude Code on your Claude plan
+hanzo code claude --no-route --no-link  # and nothing about the session leaves the machine
+```
