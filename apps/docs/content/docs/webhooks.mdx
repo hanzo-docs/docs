@@ -8,6 +8,12 @@ description: Register an https endpoint, pick events by subject wildcard, and ve
 **After this page you can receive Hanzo events on your own server and prove each
 one came from us.**
 
+```bash
+curl -fsSL hanzo.sh | sh      # install the CLI
+hanzo login                   # sign in with your Hanzo account
+hanzo webhook list            # the endpoints your org has registered
+```
+
 A webhook is two orthogonal halves: a registry you write, and a dispatcher that
 consumes the platform bus and POSTs to you. It owns no stream of its own —
 the producer lives with the data.

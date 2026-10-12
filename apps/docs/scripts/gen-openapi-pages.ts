@@ -16,7 +16,7 @@ import {
   type Product,
 } from './openapi-doc';
 import { fields, type Field } from './openapi-schema';
-import { behind, command, door, firstCall, pascalTag, runnable, server, surfaces, type Door } from './openapi-surfaces';
+import { behind, cli, command, door, firstCall, pascalTag, runnable, server, surfaces, type Door } from './openapi-surfaces';
 import { MCP_DOOR, load as loadDoor, ops } from './sync-mcp-tools';
 import { loadCliTable, type CliCommand } from './sync-cli-commands';
 import { loadCorpus, type Corpus, type Hip } from './sync-hips';
@@ -329,18 +329,35 @@ function quickstart(p: Product, doc: Document, table: Map<string, CliCommand>, d
 
   L.push('## Quickstart');
   L.push('');
+  // The CLI first: install, sign in, the first call. The command is the one the
+  // CLI tab below prints, so the two cannot disagree; a capability the CLI does
+  // not reach yet has only the first two steps and says so.
+  const run = cli(op, doc, table);
+  L.push('```bash');
+  L.push('curl -fsSL hanzo.sh | sh');
+  L.push('hanzo login');
+  if (run) L.push(run.replace(/\s*\\\n\s*/g, ' '));
+  L.push('```');
+  L.push('');
+  const at = `\`${op.method.toUpperCase()} ${code(op.path)}\`, operation \`${op.id}\``;
+  L.push(
+    run
+      ? runnable(op)
+        ? `That is ${at} — a read that needs nothing but your login.`
+        : // Said plainly rather than papered over: this product's entry point takes
+          // arguments, and a sample that pretended otherwise would fail on the
+          // reader's first attempt instead of on ours.
+          `That is ${at}. It takes arguments — the placeholders are yours to fill.`
+      : `\`hanzo\` has no command for ${at} yet, so the first call is an SDK, HTTP or MCP one.`,
+  );
+  L.push('');
+  L.push('From code, a key stands in for `hanzo login`:');
+  L.push('');
   L.push('```bash');
   L.push(`export HANZO_API_KEY=${secretKey(doc).prefix}...   # console.hanzo.ai → API keys`);
   L.push('```');
   L.push('');
-  L.push(
-    runnable(op)
-      ? `Then the first call — a read that needs nothing but the key. \`${op.method.toUpperCase()} ${code(op.path)}\`, operation \`${op.id}\`:`
-      : // Said plainly rather than papered over: this product's entry point takes
-        // arguments, and a sample that pretended otherwise would fail on the
-        // reader's first attempt instead of on ours.
-        `Then the first call. This one takes arguments — the placeholders are yours to fill. \`${op.method.toUpperCase()} ${code(op.path)}\`, operation \`${op.id}\`:`,
-  );
+  L.push('The same call, on every surface:');
   L.push('');
   L.push(...surfaces(op, doc, table, d));
   L.push('');
@@ -791,8 +808,15 @@ function renderIndex(
   L.push('');
   L.push('## Authentication');
   L.push('');
+  L.push('Start with the CLI: install it, then sign in once.');
+  L.push('');
+  L.push('```bash');
+  L.push('curl -fsSL hanzo.sh | sh');
+  L.push('hanzo login');
+  L.push('```');
+  L.push('');
   L.push(
-    `Every product accepts the same bearer credential — a Hanzo IAM JWT or a \`${secretKey(doc).prefix}\` secret key.`,
+    `From code, every product accepts the same bearer credential — a Hanzo IAM JWT or a \`${secretKey(doc).prefix}\` secret key.`,
   );
   L.push('');
   L.push('```bash');
@@ -809,9 +833,9 @@ function renderIndex(
   // pages are generated through, so this number cannot disagree with them.
   const ready = products.filter((p) => runnable(firstCall(p))).length;
   L.push(
-    `Every product page opens with a **Quickstart**: what the product is, in its own words, and its first call ` +
-      `shown as the CLI, an SDK, raw HTTP and an MCP tool. For ${ready} of the ${products.length} that first call is a read ` +
-      `that needs nothing but the key — paste it and it answers. The other ${products.length - ready} take an argument, ` +
+    `Every product page opens with a **Quickstart**: what the product is, in its own words, and three steps — install the CLI, ` +
+      `\`hanzo login\`, and its first command — then the same call as an SDK, raw HTTP and an MCP tool. For ${ready} of the ${products.length} that first call is a read ` +
+      `that needs nothing but your login — paste it and it answers. The other ${products.length - ready} take an argument, ` +
       'and say so rather than printing a sample that cannot run.',
   );
   L.push('');

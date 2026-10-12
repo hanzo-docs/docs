@@ -58,7 +58,7 @@ session's status. A `200` means the command was durably recorded and delivered â
 the agent decides when to act on it.
 </Callout>
 
-That is what makes steering work across machines. A `hanzo code` session started
+That is what makes steering work across machines. A `hanzo dev` session started
 on your laptop consumes commands the dashboard posted, by polling
 `/v1/agent/sessions/{id}/control` â€” commands newer than a cursor, oldest first,
 never redelivered once applied.

@@ -1,34 +1,56 @@
 ---
 icon: Rocket
 title: Quickstart
-description: Install the CLI, log in, and make your first call — then see that same call as an SDK method, raw HTTP and an MCP tool.
+description: Install the CLI, run hanzo to sign in and launch your coding agent, then make your first call — and see that same call as an SDK method, raw HTTP and an MCP tool.
 ---
 
 
-**After this page you have a working credential and one call that answered.**
+**After this page Hanzo is installed, you are signed in, and your favourite coding agent is running through it.**
 
-Hanzo is one cloud behind one key. Every capability — inference, identity,
+```bash
+curl -fsSL hanzo.sh | sh      # install the CLI (macOS, Linux, WSL)
+hanzo                         # sign in, pick your coding agent, launch it
+```
+
+`hanzo` does the rest on its first run. It signs you in through your browser,
+links the machine to Hanzo Tabs, asks once which coding agent is your favourite,
+adds Hanzo's tools to it, and launches it accelerated. From then on `hanzo` alone
+launches your favourite; `hanzo dev --claude`, `--codex`, `--cursor` or `--agy`
+switches it and saves the choice; and `hanzo -- -c` continues the last
+conversation.
+
+Rather have your coding agent do it? Paste this into Claude Code, Codex, Cursor
+or Antigravity:
+
+```text
+Set up Hanzo on this machine: follow https://hanzo.sh/setup.md
+```
+
+The sections below are the CLI one step at a time, then the same first call as an
+SDK, raw HTTP and an MCP tool.
+
+Hanzo is one cloud behind one login. Every capability — inference, identity,
 storage, money, agents — answers at `https://api.hanzo.ai`, and the CLI, the
 SDKs and the MCP tools are all generated from the same description of it. So
-there is nothing to wire up per service: get a key once and everything is
+there is nothing to wire up per service: sign in once and everything is
 reachable.
 
 ## 1. Install
 
-<Tabs items={['npm', 'Script', 'Homebrew', 'From source']}>
-<Tab value="npm">
-```bash
-npm i -g hanzo
-```
-
-`hanzo` is the CLI and the client in one install.
-</Tab>
+<Tabs items={['Script', 'npm', 'Homebrew', 'From source']}>
 <Tab value="Script">
 ```bash
 curl -fsSL https://hanzo.sh | sh
 ```
 
 Installs into `~/.local/bin`. `https://hanzo.sh/cli` installs the CLI alone.
+</Tab>
+<Tab value="npm">
+```bash
+npm i -g hanzo
+```
+
+`hanzo` is the CLI and the client in one install.
 </Tab>
 <Tab value="Homebrew">
 ```bash
@@ -48,8 +70,11 @@ hanzo version
 
 ## 2. Log in
 
+`hanzo` signs you in the first time you run it. `hanzo login` is the same sign-in
+on its own, for when you want the cloud from the terminal and no agent:
+
 ```bash
-hanzo auth login
+hanzo login
 ```
 
 That opens a browser against [hanzo.id](https://hanzo.id), Hanzo's identity
@@ -57,15 +82,50 @@ provider, and stores the resulting credential locally. `hanzo auth show` prints
 who you are; `hanzo auth list` shows every identity on this machine and
 `hanzo auth use` switches between them.
 
-For a server, mint a key instead of logging a person in: **platform.hanzo.ai →
-API keys**. A secret key resolves to *you*, so it belongs on a server and never
+The alternative, for a server where no person is there to sign in: mint a key at
+**platform.hanzo.ai → API keys**. A secret key resolves to *you*, so it belongs on a server and never
 in a browser — [Authentication](/docs/api-keys) is the whole rule.
 
 ```bash
 export HANZO_API_KEY=sk-...
 ```
 
-## 3. List the models
+## 3. Send a completion
+
+This is the step that draws down credit; listing the models, next, is free.
+`zen5` is an `id` the catalogue lists.
+
+<Tabs items={['CLI', 'HTTP']}>
+<Tab value="CLI">
+```bash
+hanzo chat completions --data '{"model":"zen5","messages":[{"role":"user","content":"hello"}]}'
+```
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -X POST https://api.hanzo.ai/v1/chat/completions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"zen5","messages":[{"role":"user","content":"hello"}]}'
+```
+</Tab>
+</Tabs>
+
+A `401` names what was missing and where a key comes from; a `402
+insufficient_balance` means the key is fine and the org has no credit — see
+[Credits & billing](/docs/credits). A `429` carries `Retry-After`, in seconds.
+
+Then read what it drew down:
+
+```bash
+hanzo billing balance
+hanzo usage summary
+```
+
+[Credits & billing](/docs/credits) explains what a credit is and what happens at
+zero; [Pricing](/docs/pricing) is the rate for every model and tool.
+
+## 4. List the models, and the four surfaces
 
 The catalogue of models the gateway currently serves. It needs no key at all,
 and it is the same operation on all four surfaces. An `id` from it is what a
@@ -176,41 +236,6 @@ difference. Pick the one you will write in:
 
 HTTP needs no page: it is `https://api.hanzo.ai` and the key you just exported.
 
-## 4. Send a completion
-
-This is the first step that draws down credit; everything above is free to run.
-`zen5` is an `id` the catalogue lists.
-
-<Tabs items={['CLI', 'HTTP']}>
-<Tab value="CLI">
-```bash
-hanzo chat completions --data '{"model":"zen5","messages":[{"role":"user","content":"hello"}]}'
-```
-</Tab>
-<Tab value="HTTP">
-```bash
-curl -X POST https://api.hanzo.ai/v1/chat/completions \
-  -H "Authorization: Bearer $HANZO_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"model":"zen5","messages":[{"role":"user","content":"hello"}]}'
-```
-</Tab>
-</Tabs>
-
-A `401` names what was missing and where a key comes from; a `402
-insufficient_balance` means the key is fine and the org has no credit — see
-[Credits & billing](/docs/credits). A `429` carries `Retry-After`, in seconds.
-
-Then read what it drew down:
-
-```bash
-hanzo billing balance
-hanzo usage summary
-```
-
-[Credits & billing](/docs/credits) explains what a credit is and what happens at
-zero; [Pricing](/docs/pricing) is the rate for every model and tool.
-
 ## 5. Record a fact and read it back
 
 The graph holds what is true of your org's entities, and who said so. Assert
@@ -247,6 +272,18 @@ alone: `hanzo host serve iam`, and likewise `kms`, `gateway`, `storage`,
 `hanzo up` is a different command — it boots k3s in a microVM and hands you a
 kubeconfig, which is what you want to run your own *cluster* rather than your
 own cloud. See [Run your own](/docs/network) for what each needs.
+
+## What your plan unlocks
+
+| Plan | What it adds |
+|---|---|
+| **Free** | Chat: `hanzo chat completions`, above, and the dashboard. |
+| **Pro**, $20 | Acceleration of your own coding tools through [`hanzo dev`](/docs/coding), and 2 Tabs. |
+| **Max** | More Tabs, and the local accelerator. |
+| **Enterprise** | Kai and Enso running locally, on your own hardware. |
+
+What a metered call costs, and what happens at zero credit, is on
+[Credits & billing](/docs/credits).
 
 ## Where to go next
 

@@ -13,6 +13,12 @@ nine domains, mounted as subsystems, served behind one contract at
 `/v1/<capability>`. The same binary that answers `api.hanzo.ai` in production is
 the binary you run on your laptop with one command.
 
+```bash
+curl -fsSL hanzo.sh | sh      # install the CLI
+hanzo login                   # sign in with your Hanzo account
+hanzo link                    # put this machine on your org's network
+```
+
 `hanzo.network` is what happens when you point that binary at a chain instead of
 a single host. It is a network of **`hanzod` nodes** that spawn and power that
 same unified `cloud` binary. **The network is the cloud** — not a hosted service
@@ -106,7 +112,7 @@ speaks to any live cloud, whether it is production, your laptop, or a self-host.
 ### Sign in
 
 ```bash
-hanzo auth login
+hanzo login
 ```
 
 Authenticate with [Hanzo IAM](/docs/openapi/iam) — the same identity works against every

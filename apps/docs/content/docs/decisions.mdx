@@ -7,6 +7,12 @@ icon: ListChecks
 **After this page you can ask typed questions about any state, read the
 distributions that come back, and choose between Kai and Jev with one field.**
 
+```bash
+curl -fsSL hanzo.sh | sh      # install the CLI
+hanzo login                   # sign in with your Hanzo account
+hanzo decisions create --data '{"model":"kai","state":{"message":"I was charged twice for my March invoice."},"questions":{"team":{"type":"choice","instructions":"Which team should handle it?","criteria":{"account":"logins and profiles","payments":"charges, invoices and refunds","product":"features and bugs"}}}}'
+```
+
 A decision is a bounded question: which team, is this a bug, how urgent. The
 answer space is known in advance, so the model returns a probability over it
 and generates nothing; `usage.output_tokens` is 0 for Kai. **Hanzo Decision**

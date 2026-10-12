@@ -10,6 +10,12 @@ Every request to the Hanzo platform is authenticated with a bearer token. There
 are two kinds of key, they are not interchangeable, and the difference is what
 each one resolves to when the edge reads it.
 
+```bash
+curl -fsSL hanzo.sh | sh      # install the CLI
+hanzo login                   # sign in with your Hanzo account
+hanzo account keys list       # the keys you may see; `create` mints one
+```
+
 ## The two types
 
 <include>../../generated/key-types.mdx</include>

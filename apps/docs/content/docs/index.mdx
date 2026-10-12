@@ -7,6 +7,28 @@ description: Build anything with Hanzo. Every model, every tool, one key — in 
 
 <DocsHero />
 
+## Start with the CLI
+
+Two commands, and your coding agent is running through Hanzo.
+
+```bash
+curl -fsSL hanzo.sh | sh      # install the CLI (macOS, Linux, WSL)
+hanzo                         # sign in, pick your coding agent, launch it
+```
+
+Rather have your coding agent do it? Paste this into Claude Code, Codex, Cursor
+or Antigravity:
+
+```text
+Set up Hanzo on this machine: follow https://hanzo.sh/setup.md
+```
+
+`hanzo chat`, `hanzo usage`, `hanzo link`, `hanzo kms` and the rest of the CLI
+are [one command group each](/docs/cli), and every product page below opens with
+install, `hanzo login` and that product's first command. What each plan unlocks is in the [quickstart](/docs/quickstart#what-your-plan-unlocks).
+The alternatives sit below: [SDKs](/docs/sdks) and [API keys](/docs/api-keys) for
+code, and the [dashboard](https://platform.hanzo.ai) for a browser.
+
 ## Every model, one key
 
 <ProviderStrip />
@@ -25,7 +47,7 @@ one domain. Nothing is duplicated, so nothing is ambiguous.
 <ProductSection
   title="Intelligence"
   href="/docs/openapi/ai"
-  snippet={<Example lang="bash" code="hanzo run 'summarize this repo'" />}
+  snippet={<Example lang="bash" code="hanzo dev 'summarize this repo'" />}
   action={{ label: 'Make your first call', href: '/docs/quickstart' }}
   links={[
     { name: 'Models', href: '/docs/models' },
@@ -44,7 +66,7 @@ one domain. Nothing is duplicated, so nothing is ambiguous.
 <ProductSection
   title="Identity & trust"
   href="/docs/openapi/iam"
-  snippet={<Example lang="bash" code="hanzo auth login && hanzo account keys create" />}
+  snippet={<Example lang="bash" code="hanzo login && hanzo account keys create" />}
   action={{ label: 'Set up an org', href: '/docs/openapi/iam' }}
   links={[
     { name: 'IAM', href: '/docs/openapi/iam' },
@@ -167,7 +189,7 @@ software](/docs/network) — same binary, same contract, same `/v1` routes. Brin
 your own GPU or Kubernetes, or mine on any device.
 
 ```bash
-curl -fsSL https://hanzo.sh | sh
+curl -fsSL hanzo.sh | sh
 ```
 
 <Callout type="info">
@@ -188,5 +210,5 @@ languages. See [Engineering Philosophy](/docs/architecture/philosophy) for the *
 ## Resources
 
 - [GitHub](https://github.com/hanzoai) — source code and open-source projects
-- [platform.hanzo.ai](https://platform.hanzo.ai) — dashboard and API keys
+- [platform.hanzo.ai](https://platform.hanzo.ai) — the dashboard and API keys, for when you would rather not use the CLI
 - [hips.hanzo.ai](https://hips.hanzo.ai) — Hanzo Improvement Proposals

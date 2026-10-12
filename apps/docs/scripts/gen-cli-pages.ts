@@ -182,18 +182,21 @@ function renderGroup(g: Group, doc: Document): string {
   const shortest = (rs: typeof reads) =>
     [...rs].sort((a, b) => depth(a.command) - depth(b.command) || a.command.length - b.command.length)[0];
   const first = shortest(reads.filter((r) => / list$/.test(r.command))) ?? shortest(reads);
-  if (first) {
-    L.push('```bash');
-    L.push(first.command.replace(/\s*\\\n\s*/g, ' '));
-    L.push('```');
-    L.push('');
-    L.push(
-      'Every command takes `--json` for the raw response and `--help` for its own ' +
-        'flags. Sign in once with `hanzo auth login`; the commands below use that ' +
-        'session, and the org they act in is the one it carries.',
-    );
-    L.push('');
-  }
+  // Install, sign in, the first command: the same three steps on every page. A
+  // capability that serves no read gets its own `--help` as the third, which
+  // lists what it does serve.
+  L.push('```bash');
+  L.push('curl -fsSL hanzo.sh | sh');
+  L.push('hanzo login');
+  L.push(first ? first.command.replace(/\s*\\\n\s*/g, ' ') : `hanzo ${spelled} --help`);
+  L.push('```');
+  L.push('');
+  L.push(
+    'Every command takes `--json` for the raw response and `--help` for its own ' +
+      'flags. Sign in once with `hanzo login`; the commands below use that ' +
+      'session, and the org they act in is the one it carries.',
+  );
+  L.push('');
 
   // Grouped by the NOUN the command acts on, nouns and commands both in
   // alphabetical order. The rows arrive in the order the document happens to
@@ -254,7 +257,7 @@ function renderIndex(gs: Group[], commands: number, covered: number): string {
   L.push('');
   L.push('```bash');
   L.push('curl -fsSL hanzo.sh | sh');
-  L.push('hanzo auth login');
+  L.push('hanzo                      # sign in, pick your coding agent, launch it');
   L.push('```');
   L.push('');
   L.push('| | |');

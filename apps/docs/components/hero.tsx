@@ -4,15 +4,27 @@ import { Listing } from '@/components/mdx/code';
 import { shikiConfig } from '@/lib/shiki';
 
 /**
- * The three paths, ordered by how much you type. Each carries its real first
+ * The three paths, the CLI first and the browser and the API as the alternatives. Each carries its real first
  * step — these are commands that work, not illustrative pseudocode.
  */
 const PATHS = [
   {
+    id: 'cli',
+    eyebrow: 'Start here',
+    title: 'Start with the CLI',
+    body: 'Install it, then run hanzo: it signs you in, asks which coding agent is your favourite and launches it. Every other path on this site starts here.',
+    href: '/docs/quickstart',
+    external: false,
+    cta: 'Open the quickstart',
+    lang: 'Terminal',
+    grammar: 'bash',
+    code: 'curl -fsSL hanzo.sh | sh\nhanzo',
+  },
+  {
     id: 'app',
-    eyebrow: 'No code',
-    title: 'Build with App',
-    body: 'Describe what you want in English. Chat, agents and MCP tools in the browser — nothing to install.',
+    eyebrow: 'In the browser',
+    title: 'Use the dashboard',
+    body: 'Chat, agents and MCP tools at hanzo.app, and your keys and usage on the platform — nothing to install.',
     href: 'https://hanzo.app',
     external: true,
     cta: 'Open hanzo.app',
@@ -21,22 +33,10 @@ const PATHS = [
     code: 'Build me a multiplayer snake game with a\nleaderboard, and deploy it.',
   },
   {
-    id: 'cli',
-    eyebrow: 'In your terminal',
-    title: 'Build with Dev',
-    body: 'Our coding agent, in your repo. It reads the codebase, writes the change and runs the tests.',
-    href: '/docs/cli',
-    external: false,
-    cta: 'Read the CLI docs',
-    lang: 'Terminal',
-    grammar: 'bash',
-    code: 'curl -fsSL https://hanzo.sh | sh\nhanzo auth login\nhanzo dev "add a leaderboard to the game"',
-  },
-  {
     id: 'api',
-    eyebrow: 'Lower level',
-    title: 'Build with API',
-    body: 'Over 400 models behind one REST endpoint. One bearer token works across every service we run.',
+    eyebrow: 'From code',
+    title: 'Use an SDK or the API',
+    body: 'Over 400 models behind one REST endpoint. One API key works across every service we run.',
     href: '/docs/openapi',
     external: false,
     cta: 'Read the API reference',

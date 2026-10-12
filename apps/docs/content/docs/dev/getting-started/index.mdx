@@ -8,6 +8,15 @@ Hanzo Dev is an AI-powered coding assistant that runs in your terminal. It provi
 
 ## Quick Start
 
+```bash
+curl -fsSL hanzo.sh | sh      # install the CLI
+hanzo login                   # sign in with your Hanzo account
+hanzo dev "explain this codebase to me"
+```
+
+The standalone `dev` binary is the alternative, for a machine that should not
+carry the whole CLI:
+
 ```bash tab="npm"
 npm install -g @hanzo/dev
 ```
@@ -24,7 +33,7 @@ git submodule update --init --depth 1
 make install
 ```
 
-Then launch:
+Then launch it:
 
 ```bash
 dev "explain this codebase to me"

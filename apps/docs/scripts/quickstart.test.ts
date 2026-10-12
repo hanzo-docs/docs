@@ -54,7 +54,7 @@ const code = PAGES.flatMap((page) => {
 const words = (line: string) => [...line.matchAll(/'[^']*'|"[^"]*"|\S+/g)].map((m) => m[0]);
 
 /** The CLI's own commands, which are not capabilities and are not in the table. */
-const NATIVE = new Set(['auth', 'version', 'up', 'run', 'dev', 'code', 'host']);
+const NATIVE = new Set(['auth', 'login', 'link', 'version', 'up', 'run', 'dev', 'code', 'host']);
 
 const lines = code
   .filter((b) => b.shell)
@@ -66,7 +66,7 @@ const lines = code
       .map((line) => ({ page, line: line.replace(/\s+#.*$/, '').trim() })),
   );
 
-/** The commands on a line: `hanzo auth login && hanzo account keys create` is two. */
+/** The commands on a line: `hanzo login && hanzo account keys create` is two. */
 const commands = (line: string) => line.split(/\s*&&\s*/).map(words);
 
 /**
@@ -83,7 +83,7 @@ describe('first-call pages', () => {
     const run = firstCalls.flatMap(({ page, line }) =>
       commands(line)
         // `hanzo --help` lists the capabilities; it names none.
-        .filter((w) => w[0] === 'hanzo' && !NATIVE.has(w[1]) && !w[1]?.startsWith('--'))
+        .filter((w) => w[0] === 'hanzo' && w.length > 1 && !NATIVE.has(w[1]) && !w[1].startsWith('--'))
         .map((w) => ({ page, line: w.join(' '), w })),
     );
     expect(run.length).toBeGreaterThan(0);

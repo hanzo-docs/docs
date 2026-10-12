@@ -1,33 +1,38 @@
 ---
 title: Coding tools
-description: "Start Claude Code, Codex, Cursor or Antigravity from `hanzo code`, and read what a session used."
+description: "Start Claude Code, Codex, Cursor or Antigravity from `hanzo dev`, and read what a session used."
 icon: Terminal
 ---
 
-`hanzo code <tool>` starts a coding tool you already use, in the repository you are standing in, and ties the run to your Hanzo account. What that means differs by tool, and each page below says exactly what the wrapper does and does not do.
+`hanzo dev --<tool>` starts a coding tool you already use, in the repository you are standing in, and ties the run to your Hanzo account. What that means differs by tool, and each page below says exactly what the wrapper does and does not do.
 
 ```bash
-curl -fsSL hanzo.sh | sh      # install the Hanzo CLI
-hanzo login                   # sign in with your Hanzo account
-hanzo code claude             # or: codex, cursor, agy
+curl -fsSL hanzo.sh | sh      # install the CLI (macOS, Linux, WSL)
+hanzo                         # sign in, pick your coding agent, launch it
+```
+
+On its first run `hanzo` signs you in through your browser, links the machine to Hanzo Tabs, asks once which coding agent is your favourite, adds Hanzo's tools to it and launches it accelerated. After that `hanzo` alone launches your favourite, `hanzo dev --claude`, `--codex`, `--cursor` or `--agy` switches it and saves the choice, and `hanzo -- -c` continues the last conversation. Or paste this into the agent and let it install the CLI:
+
+```text
+Set up Hanzo on this machine: follow https://hanzo.sh/setup.md
 ```
 
 ## What each tool gets
 
 | | Claude Code | Codex | Cursor | Antigravity |
 | --- | --- | --- | --- | --- |
-| Command | `hanzo code claude` | `hanzo code codex` | `hanzo code cursor` | `hanzo code agy` |
-| Model calls go through api.hanzo.ai | yes | yes | no | no |
-| Metered into your org's usage | yes | yes | no | no |
+| Command | `hanzo dev --claude` | `hanzo dev --codex` | `hanzo dev --cursor` | `hanzo dev --agy` |
+| Runs on your own account by default | yes | yes | yes | yes |
+| Hanzo's cloud models, at your usage limit or with `--cloud` | yes | yes | no | no |
+| Metered into your org's usage | on the cloud models | on the cloud models | no | no |
 | Hanzo toolset attached (MCP) | yes | yes | no | no |
 | Session shown in the cloud | yes | yes | yes | yes |
-| Keeps the tool's own plan with `--no-route` | yes | yes | always | always |
 
-Routing needs `hanzo login`. Signed out, or with `--no-route`, the tool runs on its own account exactly as if you had started it yourself.
+The cloud models need `hanzo login` and a Hanzo plan. Signed out, the tool runs on its own account exactly as if you had started it yourself.
 
 ## Read what a session used
 
-- **When a session ends**, `hanzo code` prints one block: duration, tokens in and out, the cached share, cost, and a link to the session in the cloud.
+- **When a session ends**, `hanzo dev` prints one block: duration, tokens in and out, the cached share, cost, and a link to the session in the cloud.
 - **`hanzo console`**, then `6`, is the Savings page. It shows your org's usage from the cloud and, when one is running on your machine, a kai-gateway's savings. `t` steps the range through 24 hours, 7 days and 30 days, and `r` reads again.
 - **`hanzo usage summary`** prints the cloud's usage summary as JSON. `--range 7d` or `--range 30d` sets the window; `--range custom --start <time> --end <time>` takes RFC 3339 times.
 - **[platform.hanzo.ai](https://platform.hanzo.ai)** is the same usage in the console, and [Hanzo Usage](/docs/usage) lists your linked provider accounts beside it.
@@ -36,9 +41,9 @@ Routing needs `hanzo login`. Signed out, or with `--no-route`, the tool runs on 
 
 Every figure is labelled with where it came from, and the three kinds are never added together.
 
-- **Reported.** Tokens the tool itself disclosed, which only a linked headless run (`hanzo code claude "task"`, without `--no-link`) does. An interactive run is the tool's own screen, and nothing of its traffic passes through the wrapper.
+- **Reported.** Tokens the tool itself disclosed, which only a linked headless run (`hanzo dev --claude "task"`, without `--no-link`) does. An interactive run is the tool's own screen, and nothing of its traffic passes through the wrapper.
 - **Listed price.** Those tokens priced at the rates `GET https://api.hanzo.ai/v1/models` lists: input, output, and the cache-read rate for tokens served from the provider's prompt cache. This is an estimate of what the tokens cost at the list. It is not a charge, and it says nothing about what a subscription you pay for actually billed. A model listed as free is `$0.00`, and one the list does not name is not priced.
-- **Metered.** The cloud's own count of what your org sent through api.hanzo.ai in the session's time window, shown for a routed run whose tool reported nothing. It includes any other session of your org running in that window, and it can trail the session by a little while.
+- **Metered.** The cloud's own count of what your org sent through api.hanzo.ai in the session's time window, shown for a run on Hanzo's cloud models whose tool reported nothing. It includes any other session of your org running in that window, and it can trail the session by a little while.
 
 Fields the cloud does not send are left out of the console and the block. Nothing is shown as zero because it was not reported.
 
@@ -50,9 +55,9 @@ If a kai-gateway is running on your machine (it listens on ports 8787 to 8793), 
 
 ## Keep your own plan
 
-`--no-route` leaves the tool on its own login and billing. The wrapper still starts it, attaches the Hanzo toolset where it supports one, and streams the session to the cloud unless you also pass `--no-link`.
+That is the default: each tool runs on your own logged-in account, and Hanzo's cloud models answer only when that account hits its usage limit (on your Hanzo plan, until the limit resets) or when you pass `--cloud`. When Zen or Kai run on this machine, routine turns go to them. `--no-link` keeps the session out of the cloud.
 
 ```bash
-hanzo code claude --no-route            # Claude Code on your Claude plan
-hanzo code claude --no-route --no-link  # and nothing about the session leaves the machine
+hanzo dev --claude               # Claude Code on your Claude plan
+hanzo dev --claude --no-link     # and nothing about the session leaves the machine
 ```

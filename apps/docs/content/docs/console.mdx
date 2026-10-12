@@ -8,6 +8,12 @@ description: The Hanzo Cloud console at platform.hanzo.ai -- manage every produc
 
 The Hanzo Console is the unified control surface for Hanzo Cloud -- the app you are looking at. It brings every cloud product into one place: identity, keys, secrets, models, billing, deployments, and dashboards, all scoped to your organization.
 
+```bash
+curl -fsSL hanzo.sh | sh      # install the CLI
+hanzo login                   # sign in with your Hanzo account
+hanzo console                 # the console in your terminal; the web console is the rest of this page
+```
+
 ## One App for Every Product
 
 The console renders from a single product catalog, so every Hanzo Cloud service is reachable from the same nav, overview, and command palette. Each product is a native module -- not a link-out -- backed by the real `/v1` API:

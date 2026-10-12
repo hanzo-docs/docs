@@ -10,6 +10,11 @@ index: true
 
 One Model Context Protocol server, one tool surface. Add **`hanzo-mcp`** to Claude Code (or Cursor, Claude Desktop, or any MCP client) and every Hanzo capability shows up through a single connection — no per-tool wiring.
 
+```bash
+curl -fsSL hanzo.sh | sh      # install the CLI
+hanzo                         # sign in, and add Hanzo's tools to your coding agent
+```
+
 > Looking for the hosted MCP server instead? **[Cloud MCP](/docs/mcp-tools)** is a URL with nothing to install, and its every tool is enumerated in the [tool catalogue](/docs/mcp-tools/all-tools). This page is the server that runs beside your editor.
 
 ```bash title="Add the Hanzo MCP to Claude Code"
@@ -40,7 +45,7 @@ The same surface ships three ways — TypeScript (`@hanzo/mcp`), Python (`hanzo-
 }
 ```
 
-Sign in once (`hanzo auth login`) and the `hanzo` cloud tool + your connectors authenticate automatically; the local tools (`fs`, `exec`, `git`, …) work with no account.
+Sign in once (`hanzo login`) and the `hanzo` cloud tool + your connectors authenticate automatically; the local tools (`fs`, `exec`, `git`, …) work with no account.
 
 ## The tool index
 

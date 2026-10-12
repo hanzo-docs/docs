@@ -334,7 +334,7 @@ export function Landing({ install, use, catalogue }: { install: ReactNode; use: 
             </XStack>
           </XStack>
           <Text fontSize={12} text="center" whiteSpace="normal" {...muted}>
-            Installs the <Text fontFamily="$mono">hanzo</Text> CLI. Then <Text fontFamily="$mono">hanzo auth login</Text> to get a
+            Installs the <Text fontFamily="$mono">hanzo</Text> CLI. Then <Text fontFamily="$mono">hanzo login</Text> to get a
             key.
           </Text>
         </YStack>

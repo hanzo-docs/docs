@@ -1,24 +1,26 @@
 ---
 title: Antigravity
-description: "What `hanzo code agy` does for the Antigravity CLI: it starts it and links the session, and routes and meters nothing."
+description: "What `hanzo dev --agy` does for the Antigravity CLI: it starts it and links the session, and routes and meters nothing."
 ---
 
 ## Set up
 
 ```bash
 curl -fsSL hanzo.sh | sh
-hanzo login
-hanzo code agy
+hanzo                  # first run: sign in, link Tabs, pick your agent (choose Antigravity)
+hanzo dev --agy          # switch to it later; saved as your favourite
 ```
 
-This runs the Antigravity CLI, `agy`. Install and sign in to it first, as you would to use it alone. `antigravity` is an accepted spelling of `agy`.
+`hanzo -- -c` continues the last conversation.
+
+`hanzo dev --agy` runs the Antigravity CLI, `agy`. Install and sign in to it first, as you would to use it alone. `antigravity` is an accepted spelling of `agy`.
 
 ## What the wrapper does
 
-Antigravity keeps its own login and its own backend. `hanzo code agy` has no gateway route for it, so it always runs on Antigravity's account, with or without `--no-route`. The wrapper:
+Antigravity keeps its own login and its own backend. `hanzo dev --agy` has no gateway route for it, so it always runs on Antigravity's account. The wrapper:
 
 - starts the binary in your repository, with `--dangerously-skip-permissions` so it stops asking before each action; `--ask` leaves its own prompts in place;
-- for a task (`hanzo code agy "fix the failing test"`), runs it with `--print` and `--output-format stream-json`, and when the session is linked streams the assistant's messages and the final result to the cloud;
+- for a task (`hanzo dev --agy "fix the failing test"`), runs it with `--print` and `--output-format stream-json`, and when the session is linked streams the assistant's messages and the final result to the cloud;
 - registers the session in the cloud with its machine and directory, and updates its status when the tool exits. An interactive run is Antigravity's own screen, so its events are not streamed;
 - passes any other flags through to the tool unchanged.
 

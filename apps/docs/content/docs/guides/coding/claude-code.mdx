@@ -1,26 +1,40 @@
 ---
 title: Claude Code
-description: "Run Claude Code through api.hanzo.ai with `hanzo code claude`: what is routed, what is not, and how to keep your own plan."
+description: "Run Claude Code with `hanzo dev --claude`: it uses your own Claude account, local Zen and Kai take routine turns, and Hanzo's cloud models cover your usage limit."
 ---
 
 ## Set up
 
 ```bash
 curl -fsSL hanzo.sh | sh
-hanzo login
-hanzo code claude
+hanzo                  # first run: sign in, link Tabs, pick your agent (choose Claude Code)
+hanzo dev --claude       # switch to it later; saved as your favourite
 ```
 
-Give it a task as one quoted argument to run it headless: `hanzo code claude "fix the failing test in api/users"`. `claude-code` and `cc` are accepted spellings of `claude`.
+`hanzo -- -c` continues the last conversation.
 
-## What goes through Hanzo
+Give it a task as one quoted argument to run it headless: `hanzo dev --claude "fix the failing test in api/users"`. `claude-code` and `cc` are accepted spellings of `claude`.
 
-With a signed-in account and no `--no-route`:
+## Which model answers
+
+`hanzo dev --claude` starts Claude Code on your own logged-in Claude account, directly. Nothing is sent through Hanzo by default, and Hanzo meters none of that traffic.
+
+- **Local Zen and Kai.** When Zen or Kai run on this machine, routine turns go to them.
+- **Hanzo's cloud models** answer in two cases only: your own account has hit its usage limit, and the run continues on your Hanzo plan until the limit resets; or you pass `--cloud`.
+
+```bash
+hanzo dev --claude            # your own account; local Zen and Kai take routine turns
+hanzo dev --claude --cloud    # Hanzo's cloud models, on your Hanzo plan
+```
+
+## On Hanzo's cloud models
+
+When a run goes to the cloud, with a signed-in account:
 
 - **Model calls** go to `https://api.hanzo.ai`. The wrapper points Claude Code at it with `ANTHROPIC_BASE_URL` and sends your Hanzo token as the bearer in `ANTHROPIC_AUTH_TOKEN`, and clears any `ANTHROPIC_API_KEY` in your shell so one credential is in play. The token goes to the process through its environment, never its arguments.
 - **The model** is `enso-auto` unless you set another with `--model`, `ANTHROPIC_MODEL` or `model` in `~/.hanzo/settings.json`. Claude Code is handed a `claude-*` name so it grants the model's real context window, and the wrapper maps that name back to the Hanzo model before the request leaves the process.
 - **Usage** is metered into your org at api.hanzo.ai, so it appears in the cloud whichever machine you ran on.
-- **The Hanzo toolset** (`hanzo-mcp`, if installed or reachable with `uvx`) and your org's cloud tools are added to Claude Code's MCP servers. The cloud tools ride only a routed run, because only then does the process already hold your token.
+- **The Hanzo toolset** (`hanzo-mcp`, if installed or reachable with `uvx`) and your org's cloud tools are added to Claude Code's MCP servers. The cloud tools ride only a run on the cloud models, because only then does the process already hold your token.
 - **The session** is registered in the cloud with its machine and directory, and its messages and tool calls stream there. Pass `--no-link` to keep it local.
 - **Claude Code's home** for the run is `~/.hanzo/claude`, so its saved model choice and your Hanzo settings do not overwrite each other.
 
@@ -31,7 +45,7 @@ With a signed-in account and no `--no-route`:
 
 ## See usage and savings
 
-A linked headless run prints its reported tokens, the cached share and the cost at the listed price when it ends. Any other routed run prints the cloud's count for the session window, since an interactive Claude Code reports nothing to the wrapper. Then:
+A linked headless run prints its reported tokens, the cached share and the cost at the listed price when it ends. Any other run on Hanzo's cloud models prints the cloud's count for the session window, since an interactive Claude Code reports nothing to the wrapper. Then:
 
 ```bash
 hanzo console          # press 6 for Savings
@@ -40,10 +54,12 @@ hanzo usage summary --range 7d
 
 [How to read the numbers →](/docs/guides/coding)
 
-## Keep your own plan
+## Keep the session local
+
+Your own account is already the default. `--no-link` is the switch for the session:
 
 ```bash
-hanzo code claude --no-route
+hanzo dev --claude --no-link    # the session is not shown in the cloud
 ```
 
-Claude Code uses its own login in `~/.claude`, and its environment is left as your shell has it. Hanzo meters none of that traffic and the end-of-session block says so.
+Claude Code keeps its own login in `~/.claude`. Hanzo's cloud models answer only when your account hits its limit, or when you pass `--cloud`.

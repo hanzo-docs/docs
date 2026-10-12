@@ -8,6 +8,12 @@ description: An environment is derived from the apps that point at it — there 
 **After this page you know why there is no "create environment" call, and what
 to do instead.**
 
+```bash
+curl -fsSL hanzo.sh | sh      # install the CLI
+hanzo login                   # sign in with your Hanzo account
+hanzo environment list        # the codebases that have an environment
+```
+
 ## An environment is a label, not a resource
 
 An application names the target it deploys to. If it names nothing, it is

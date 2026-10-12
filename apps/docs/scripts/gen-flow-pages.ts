@@ -194,8 +194,15 @@ function renderIndex(flows: Flow[], doc: Document): string {
   );
   L.push('');
   L.push('```bash');
+  L.push('curl -fsSL hanzo.sh | sh      # install the CLI');
+  L.push('hanzo login                   # sign in through Hanzo IAM');
+  L.push('hanzo models list             # the first call, with nothing to fill in');
+  L.push('```');
+  L.push('');
+  L.push('From a server, an SDK or raw HTTP, a key stands in for the login:');
+  L.push('');
+  L.push('```bash');
   L.push(`export HANZO_API_KEY=${secretKey(doc).prefix}...     # console.hanzo.ai`);
-  L.push('hanzo auth login                # or sign in through Hanzo IAM');
   L.push('```');
   L.push('');
   L.push('## Four surfaces, one contract');

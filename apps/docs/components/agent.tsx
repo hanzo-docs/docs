@@ -62,9 +62,9 @@ export function Agent() {
       items={[
         { type: 'label', label: 'Use with Hanzo' },
         { key: 'app', label: 'Open in Hanzo App', onSelect: () => go('https://hanzo.app') },
-        // `hanzo code` runs whichever coding backend the reader chose, in their
+        // `hanzo dev` runs whichever coding backend the reader chose, in their
         // own terminal, so the command is copied rather than opened.
-        { key: 'cli', label: 'Open in Hanzo CLI', description: 'Copies the command', onSelect: () => copy(`hanzo code ${JSON.stringify(prompt(here()))}`) },
+        { key: 'cli', label: 'Open in Hanzo CLI', description: 'Copies the command', onSelect: () => copy(`hanzo dev ${JSON.stringify(prompt(here()))}`) },
         { type: 'separator' },
         { type: 'label', label: 'Use with any agent' },
         { key: 'prompt', label: 'Copy prompt', onSelect: () => copy(prompt(here())) },

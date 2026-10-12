@@ -9,6 +9,12 @@ index: true
 
 Hanzo Chat is the chat app on Hanzo Cloud, built on [LibreChat](https://librechat.ai). It runs our own models — the **enso** frontier family and the **Zen** open-weight family — with MCP tools, configurable agents, file uploads with RAG, vision, conversation history, presets and plugins. Models from outside labs are carried too, and appear in the same model menu.
 
+```bash
+curl -fsSL hanzo.sh | sh      # install the CLI
+hanzo login                   # sign in with your Hanzo account
+hanzo chat completions --data '{"model":"zen5","messages":[{"role":"user","content":"hello"}]}'
+```
+
 Available as a hosted service at [chat.hanzo.ai](https://chat.hanzo.ai) or self-hosted via Docker.
 
 ## Quick Start
