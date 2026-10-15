@@ -112,7 +112,7 @@ function Panel({ drawer = false, close }: { drawer?: boolean; close: React.React
         <Account />
         <XStack items="center" justify="space-between">
           <Text
-            render={<Link href="/docs/support" prefetch={false} />}
+            render={<Link href="https://hanzo.ai/support" prefetch={false} />}
             fontSize="$2"
             {...muted}
             px={4}
