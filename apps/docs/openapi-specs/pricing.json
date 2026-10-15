@@ -1,10 +1,47 @@
 {
   "updated": "2026-08-06T03:18:40.358Z",
+  "enso": [
+    {
+      "id": "enso",
+      "input": 0,
+      "output": 0
+    },
+    {
+      "id": "enso-auto",
+      "input": 0,
+      "output": 0
+    },
+    {
+      "id": "enso-flash",
+      "input": 0.33,
+      "output": 1.65
+    },
+    {
+      "id": "enso-free",
+      "input": 0,
+      "output": 0
+    },
+    {
+      "id": "enso-pro",
+      "input": 3.3,
+      "output": 16.5
+    },
+    {
+      "id": "enso-ultra",
+      "input": 5.236,
+      "output": 26.18
+    },
+    {
+      "id": "hanzo/enso",
+      "input": 0,
+      "output": 0
+    }
+  ],
   "summary": {
     "catalogMode": "all-providers",
     "cloudPlans": 11,
     "cloudRegions": 4,
-    "decisionModels": 4,
+    "decisionModels": 6,
     "doAiModels": 18,
     "ensoModels": 3,
     "featuredModels": 11,
@@ -13,7 +50,7 @@
     "openRouterModels": 340,
     "providers": 57,
     "thirdPartyModels": 397,
-    "totalModels": 436,
+    "totalModels": 438,
     "zenModels": 14
   },
   "hanzoModels": [
@@ -702,7 +739,7 @@
       "tier": "ultra max"
     },
     {
-      "context": 1000000,
+      "context": 900000,
       "description": "Fast, economical Enso tier for high-volume, low-latency everyday work, with 1M-context overflow.",
       "family": "enso",
       "features": [
@@ -715,8 +752,8 @@
       "pricing": {
         "cacheRead": null,
         "cacheWrite": null,
-        "input": 0,
-        "output": 0
+        "input": 0.33,
+        "output": 1.65
       },
       "provider": "Hanzo",
       "tier": "pro"
@@ -735,8 +772,8 @@
       "pricing": {
         "cacheRead": null,
         "cacheWrite": null,
-        "input": 0,
-        "output": 0
+        "input": 5.236,
+        "output": 26.18
       },
       "provider": "Hanzo",
       "tier": "ultra max"
@@ -834,6 +871,54 @@
       },
       "pricingUnit": "token",
       "provider": "TypeSafe",
+      "specs": {
+        "arch": "decision"
+      },
+      "tier": "starter"
+    },
+    {
+      "category": "specialty",
+      "context": null,
+      "description": "Zen 6 answering typed decisions at /v1/decisions under a strict JSON schema. $2.28 per million input tokens and $7.26 per million output tokens.",
+      "endpoint": "/v1/decisions",
+      "features": [
+        "Decisions"
+      ],
+      "fullName": "Zen 6",
+      "name": "zenlm/zen6",
+      "owned_by": "hanzo",
+      "pricing": {
+        "cacheRead": null,
+        "cacheWrite": null,
+        "input": 2.28,
+        "output": 7.26
+      },
+      "pricingUnit": "token",
+      "provider": "Hanzo",
+      "specs": {
+        "arch": "decision"
+      },
+      "tier": "starter"
+    },
+    {
+      "category": "specialty",
+      "context": null,
+      "description": "Zen 6 Flash answering typed decisions at /v1/decisions under a strict JSON schema. $2.28 per million input tokens and $7.26 per million output tokens.",
+      "endpoint": "/v1/decisions",
+      "features": [
+        "Decisions"
+      ],
+      "fullName": "Zen 6 Flash",
+      "name": "zenlm/zen6-flash",
+      "owned_by": "hanzo",
+      "pricing": {
+        "cacheRead": null,
+        "cacheWrite": null,
+        "input": 2.28,
+        "output": 7.26
+      },
+      "pricingUnit": "token",
+      "provider": "Hanzo",
       "specs": {
         "arch": "decision"
       },
@@ -1241,16 +1326,16 @@
     }
   },
   "catalogue": {
-    "models": 495,
-    "makers": 60,
+    "models": 492,
+    "makers": 57,
     "kai": {
       "input": 0.021,
       "output": 0
     },
-    "captured": "2026-10-04"
+    "captured": "2026-10-15"
   },
   "meta": {
-    "captured": "2026-10-04",
+    "captured": "2026-10-15",
     "source": "live"
   }
 }
