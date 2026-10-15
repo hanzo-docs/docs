@@ -26,7 +26,7 @@ Antigravity keeps its own login and its own backend. `hanzo --agy` has no gatewa
 
 - **No routing.** Antigravity's model calls do not go through api.hanzo.ai, and Hanzo does not see them.
 - **No metering.** Nothing is counted into your org's usage. The end-of-session block prints the duration and the session link, and says Antigravity ran on its own account.
-- **No Hanzo toolset.** Antigravity takes no MCP server for a single run, so the Hanzo toolset is not attached, and the summary says so.
+- **No Hanzo toolset for one run.** Antigravity takes no MCP server for a single run, and the summary says so. Add it once and every run loads it: `agy mcp add hanzo ~/.local/bin/hanzo-mcp`.
 - **No resume.** The tool discloses no session id to the wrapper, so `hanzo --resume` has nothing to continue.
 
 ## See the session

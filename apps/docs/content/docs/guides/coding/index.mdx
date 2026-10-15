@@ -26,9 +26,9 @@ hanzo --claude "fix the failing test in api/users"   # one quoted task runs head
 | Hanzo Dev | `hanzo` or `hanzo dev` | hanzo.sh | yes | always on Hanzo |
 | [Claude Code](/docs/guides/coding/claude-code) | `hanzo --claude` | Anthropic | yes | yes |
 | [Codex](/docs/guides/coding/codex) | `hanzo --codex` | OpenAI | yes | yes |
-| [Cursor](/docs/guides/coding/cursor) | `hanzo --cursor` | Cursor | no | no |
-| [Antigravity](/docs/guides/coding/antigravity) | `hanzo --agy` | Google | no | no |
-| [Gemini CLI](/docs/guides/coding/agents#gemini-cli) | `hanzo --gemini` | `hanzo upgrade gemini` | yes | no |
+| [Cursor](/docs/guides/coding/cursor) | `hanzo --cursor` | Cursor | added once | no |
+| [Antigravity](/docs/guides/coding/antigravity) | `hanzo --agy` | Google | added once | no |
+| [Gemini CLI](/docs/guides/coding/agents#gemini-cli) | `hanzo --gemini` | `hanzo upgrade gemini` | added once | no |
 | [Qwen Code](/docs/guides/coding/agents#qwen-code) | `hanzo --qwen` | `hanzo upgrade qwen` | yes | yes |
 | [OpenCode](/docs/guides/coding/agents#opencode) | `hanzo --opencode` | `hanzo upgrade opencode` | yes | yes |
 | [Kilo Code](/docs/guides/coding/agents#kilo-code) | `hanzo --kilo` | `hanzo upgrade kilo` | yes | yes |
@@ -36,7 +36,7 @@ hanzo --claude "fix the failing test in api/users"   # one quoted task runs head
 | [Pi](/docs/guides/coding/agents#pi) | `hanzo --pi` | `hanzo upgrade pi` | no | yes |
 | [GitHub Copilot CLI](/docs/guides/coding/agents#github-copilot-cli) | `hanzo --copilot` | `hanzo upgrade copilot` | yes | no |
 | [Amp](/docs/guides/coding/agents#amp) | `hanzo --amp` | `hanzo upgrade amp` | yes | no |
-| [Grok Build](/docs/guides/coding/agents#grok-build) | `hanzo --grok` | xAI's installer | no | no |
+| [Grok Build](/docs/guides/coding/agents#grok-build) | `hanzo --grok` | xAI's installer | added once | no |
 | [Goose](/docs/guides/coding/agents#goose) | `hanzo --goose` | Goose's installer | yes | yes |
 | [Aider](/docs/guides/coding/agents#aider) | `hanzo --aider` | `uv tool install aider-chat` | no | yes |
 | [Hermes Agent](/docs/guides/coding/agents#hermes-agent) | `hanzo --hermes` | Nous Research's installer | with `--cloud` | yes |
@@ -49,7 +49,7 @@ hanzo --claude "fix the failing test in api/users"   # one quoted task runs head
 | [Letta Code](/docs/guides/coding/agents#letta-code) | `hanzo --letta` | `hanzo upgrade letta` | no | no |
 | [Kode](/docs/guides/coding/agents#kode) | `hanzo --kode` | `hanzo upgrade kode` | yes | no |
 
-Each agent is also `hanzo dev --<agent>` and `hanzo dev --backend <agent>`, and `hanzo code` is `hanzo dev`. `hanzo upgrade <agent>` installs an npm-shipped agent under `~/.hanzo`, where `hanzo` finds it without changing your PATH. Make one agent the default for a bare `hanzo` with `agent` in `~/.hanzo/settings.json`.
+"Added once" means the agent takes no MCP server for a single run, so you add `hanzo-mcp` to its own configuration one time: `gemini mcp add -s user hanzo ~/.local/bin/hanzo-mcp`, `grok mcp add --scope user hanzo ~/.local/bin/hanzo-mcp`, `agy mcp add hanzo ~/.local/bin/hanzo-mcp`, or Cursor's `~/.cursor/mcp.json` ([Desktop apps and editors](/docs/guides/coding/desktop)). Each agent is also `hanzo dev --<agent>` and `hanzo dev --backend <agent>`, and `hanzo code` is `hanzo dev`. `hanzo upgrade <agent>` installs an npm-shipped agent under `~/.hanzo`, where `hanzo` finds it without changing your PATH. Make one agent the default for a bare `hanzo` with `agent` in `~/.hanzo/settings.json`.
 
 ## Hand work to Enso and Kai
 
@@ -90,9 +90,19 @@ hanzo dev · session summary
 
 Figures are labelled with their source and are never added across sources. Nothing in the block claims a speedup.
 
+## Desktop apps and editors
+
+Claude Desktop, Cursor, VS Code, Windsurf, Zed, JetBrains and the Codex and Claude Code apps take the same toolset as an MCP server, and can run their own models on your Hanzo plan: [Desktop apps and editors](/docs/guides/coding/desktop).
+
 ## How Kai and the toolset measure
 
-Every number Hanzo publishes about Kai and the toolset is a research run, with each item stored beside it. [hanzo.ai/benchmarks](https://hanzo.ai/benchmarks) draws them live: Kai against other decision models, and the [agent toolset board](https://hanzo.ai/benchmarks#tools), where the injection screen, the command guard, tool selection and log triage each sit beside the handler they replaced, every table linking its runs.
+Every number Hanzo publishes about Kai and the toolset is a research run, with each item stored beside it.
+
+- **Hanzo Dev against Claude Code**, 44 held repair tasks ([runs](https://api.hanzo.ai/v1/research/runs?org=hanzo&benchmark=coding.repair)): Claude Code solved 44 at a 9.6 s median with 3.8 model calls a task; Hanzo Dev solved 40 at 2.2 s with 1.0. On the 40 both solved, Hanzo Dev was 3.8× faster, and 8.2× on the 24 that were search.
+- **The toolset's local tools** ([command](https://api.hanzo.ai/v1/research/runs?org=hanzo&benchmark=mcp.command), [select](https://api.hanzo.ai/v1/research/runs?org=hanzo&benchmark=mcp.select), [triage](https://api.hanzo.ai/v1/research/runs?org=hanzo&benchmark=mcp.triage)): the command guard answers in 0.06 ms, tool selection in 0.16 ms (top-1 .73), log triage in 0.37 ms (.70 right), each where the model call it replaced took 0.5 to 1.6 s.
+- **Kai** ([runs](https://api.hanzo.ai/v1/research/runs?org=hanzo&benchmark=latency)): 19.8 ms p50 for one decision.
+
+No study yet measures an agent such as Claude Code with the toolset against the same agent without it. [hanzo.ai/benchmarks](https://hanzo.ai/benchmarks) draws them live: Kai against other decision models, and the [agent toolset board](https://hanzo.ai/benchmarks#tools), where the injection screen, the command guard, tool selection and log triage each sit beside the handler they replaced, every table linking its runs.
 
 ## Keep everything up to date
 
@@ -101,7 +111,7 @@ hanzo upgrade                 # hanzo, hanzo-mcp, dev and zt, and every coding a
 hanzo upgrade mcp qwen claude # just these
 ```
 
-`hanzo upgrade` runs [hanzo.sh](https://hanzo.sh) into the directory `hanzo` lives in, so the build that answers `hanzo` is the one that was upgraded. Each agent upgrades its own way: an npm agent is installed again under `~/.hanzo`, one with an updater of its own runs it (`claude update`, `codex update`, `cursor-agent update`, `agy update`, `goose update`, `grok update`, `hermes update`, `interpreter update`), and Aider and OpenHands are upgraded with `uv tool upgrade`. With nothing named, every agent installed that way is upgraded. Every Hanzo tool is a native binary for Linux and macOS on amd64 and arm64. `hanzo`, `dev` and `zt` also ship for Windows on amd64, from their GitHub release pages. `hanzo-mcp` does not: its browser bridge speaks a Unix socket, so on Windows `hanzo` runs each agent without the toolset and says so.
+`hanzo upgrade` runs [hanzo.sh](https://hanzo.sh) into the directory `hanzo` lives in, so the build that answers `hanzo` is the one that was upgraded. Each agent upgrades its own way: an npm agent is installed again under `~/.hanzo`, one with an updater of its own runs it (`claude update`, `codex update`, `cursor-agent update`, `agy update`, `goose update`, `grok update`, `hermes update`, `interpreter update`), and Aider and OpenHands are upgraded with `uv tool upgrade`. With nothing named, every agent installed that way is upgraded. Every Hanzo tool is a native binary for Linux and macOS on amd64 and arm64, and for Windows on amd64. On Windows, `npm install -g @hanzo/cli` installs `hanzo`, and `hanzo upgrade` fetches `hanzo-mcp`, `dev` and `zt` beside it, each checked against its published sha256.
 
 ## Options that apply to every agent
 

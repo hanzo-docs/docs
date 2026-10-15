@@ -11,7 +11,7 @@ hanzo login
 hanzo --cursor
 ```
 
-This runs Cursor's agent CLI, `agent`, or `cursor-agent` where that is the only name on your path. Install and sign in to it first, as you would to use it alone. `agent` and `cursor-agent` are accepted spellings of `cursor`.
+This runs Cursor's agent CLI as `cursor-agent`, never a bare `agent`: xAI's Grok installer links an `agent` of its own. Install and sign in to it first, as you would to use it alone. `agent` and `cursor-agent` are accepted spellings of `cursor`.
 
 ## What the wrapper does
 
@@ -26,7 +26,7 @@ Cursor keeps its own login and its own backend. `hanzo --cursor` has no gateway 
 
 - **No routing.** Cursor's model calls do not go through api.hanzo.ai, and Hanzo does not see them.
 - **No metering.** Nothing is counted into your org's usage. The end-of-session block prints the duration and the session link, and says Cursor ran on its own account.
-- **No Hanzo toolset.** Cursor takes no MCP server for a single run, so the Hanzo toolset is not attached, and the summary says so.
+- **No Hanzo toolset for one run.** Cursor takes no MCP server for a single run, and the summary says so. Add it once to `~/.cursor/mcp.json` and the editor and `cursor-agent` both load it: [Desktop apps and editors](/docs/guides/coding/desktop).
 - **No resume.** The tool discloses no session id to the wrapper, so `hanzo --resume` has nothing to continue.
 
 ## See the session

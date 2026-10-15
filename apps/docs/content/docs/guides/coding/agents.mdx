@@ -14,7 +14,7 @@ hanzo upgrade gemini
 hanzo --gemini "explain the build"
 ```
 
-- **Toolset:** a settings file for the run, named by `GEMINI_CLI_SYSTEM_SETTINGS_PATH`.
+- **Toolset:** added once, `gemini mcp add -s user hanzo ~/.local/bin/hanzo-mcp`. Gemini CLI reads a run's settings file only when root owns it, so `hanzo` cannot hand it one, and it loads MCP servers only in folders you have trusted.
 - **Acts without asking:** `--yolo`. `--ask` leaves its prompts.
 - **Models:** your Google account or `GEMINI_API_KEY`. Gemini CLI speaks only Google's API, so `--cloud` does not apply.
 
@@ -97,10 +97,10 @@ curl -fsSL https://x.ai/cli/install.sh | bash
 hanzo --grok "draft the migration"
 ```
 
-xAI's Grok Build. It installs `grok`, and also a binary named `agent`; `hanzo --cursor` therefore runs `cursor-agent` first, so the two never trade places.
+xAI's Grok Build. Its installer also links a binary named `agent`, to Grok, as Cursor's does to Cursor. `hanzo --cursor` runs `cursor-agent` and never a bare `agent`, so the two never trade places. To keep `agent` meaning Cursor in your shell, leave `~/.grok/bin` off your PATH and link only `grok`: `ln -sfn ~/.grok/bin/grok ~/.local/bin/grok`.
 
 - **Acts without asking:** `--always-approve`. Headless runs use `-p`.
-- **Toolset:** Grok Build reads servers only from its saved configuration (`grok mcp add`), so the toolset is not attached for one run.
+- **Toolset:** added once, `grok mcp add --scope user hanzo ~/.local/bin/hanzo-mcp`. Grok Build reads servers only from its saved configuration.
 - **Models:** your xAI account (`grok login` or `XAI_API_KEY`). `--cloud` does not apply.
 
 ## Goose

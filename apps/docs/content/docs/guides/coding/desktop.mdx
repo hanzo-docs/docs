@@ -1,0 +1,129 @@
+---
+title: Desktop apps and editors
+description: "Give Claude Desktop, Cursor, VS Code, Windsurf, Zed, JetBrains and the Codex and Claude Code apps the Hanzo toolset, and run their models on your Hanzo plan."
+---
+
+An app reaches Hanzo two ways, apart or together:
+
+- **The toolset.** Add `hanzo-mcp` as an MCP server. The app's own model keeps its own plan and hands work to Enso and Kai through the tools, as an agent does under `hanzo --<agent>`.
+- **Its model.** Point the app's OpenAI- or Anthropic-compatible model setting at `api.hanzo.ai`. Its model calls then run on your Hanzo plan.
+
+## Install and sign in once
+
+```bash
+curl -fsSL hanzo.sh | sh                       # macOS and Linux: hanzo, hanzo-mcp, dev, zt
+npm install -g @hanzo/cli && hanzo upgrade     # Windows: hanzo, then hanzo-mcp, dev and zt beside it
+hanzo login
+```
+
+With no key set, `hanzo-mcp` (1.1.33 and later) uses that sign-in, so an app can start it with no environment of its own.
+
+## The toolset in any MCP app
+
+Most apps take the same entry:
+
+```json
+{
+  "mcpServers": {
+    "hanzo": { "command": "/Users/you/.local/bin/hanzo-mcp" }
+  }
+}
+```
+
+Write the full path. An app started from the Dock, the Start menu or a launcher does not read your shell's PATH. `which hanzo-mcp` prints it; on Windows, `where hanzo-mcp`.
+
+| App | Where the entry goes |
+| --- | --- |
+| Claude Desktop | Settings → Developer → Edit Config (`claude_desktop_config.json`) |
+| Cursor, editor and `cursor-agent` | `~/.cursor/mcp.json` |
+| Windsurf | `~/.codeium/windsurf/mcp_config.json` |
+| Cline, Roo Code, Kilo Code | the extension's MCP Servers panel → Configure |
+| VS Code agent mode | `.vscode/mcp.json`, as `{"servers": {"hanzo": {"type": "stdio", "command": "…/hanzo-mcp"}}}` |
+| Claude Code, terminal and IDE extensions | `claude mcp add --scope user hanzo -- /Users/you/.local/bin/hanzo-mcp` |
+| Codex, app, IDE extension and CLI | `~/.codex/config.toml`, as below |
+| Grok Build | `grok mcp add --scope user hanzo /Users/you/.local/bin/hanzo-mcp` |
+| Zed, JetBrains AI Assistant | their MCP settings, with the same command |
+
+Then ask for the work by name: "use kai_decide to sort these 200 tickets by queue", "have llm summarise this log".
+
+## The app's model on Hanzo
+
+An OpenAI-compatible model setting takes three values:
+
+- **Base URL:** `https://api.hanzo.ai/v1`
+- **API key:** a secret key (`sk-…`) from [console.hanzo.ai/api-keys](https://console.hanzo.ai/api-keys)
+- **Model:** `enso-auto`, which picks a model per request within your plan, or any id from `GET https://api.hanzo.ai/v1/models`
+
+An Anthropic-compatible setting takes `https://api.hanzo.ai` as its base and the same key.
+
+| App | Setting |
+| --- | --- |
+| Cursor | Settings → Models: OpenAI API Key, Override OpenAI Base URL, then add `enso-auto` as a model |
+| Cline, Roo Code, Kilo Code | API Provider: OpenAI Compatible, with the base URL, key and model ID |
+| Continue | `config.yaml`, as below |
+| Zed | `language_models.openai_compatible` in `settings.json` |
+| JetBrains AI Assistant | its OpenAI-compatible provider, with the base URL and key |
+| Claude Desktop | none: it runs Anthropic's models only. Add the toolset. |
+
+### Claude Code, in the terminal and the IDE extensions
+
+The extensions read the same `~/.claude/settings.json` as the CLI:
+
+```json
+{
+  "apiKeyHelper": "/Users/you/.local/bin/hanzo auth token",
+  "env": {
+    "ANTHROPIC_BASE_URL": "https://api.hanzo.ai",
+    "ANTHROPIC_MODEL": "enso",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "enso"
+  }
+}
+```
+
+The helper prints your sign-in's current token, so no key is written into the file. In a terminal, `hanzo --claude --cloud` does the same for one run and edits nothing.
+
+### Codex, in the app, the IDE extension and the CLI
+
+All three read `~/.codex/config.toml`:
+
+```toml
+model_provider = "hanzo"
+model = "enso-auto"
+
+[model_providers.hanzo]
+name = "Hanzo"
+base_url = "https://api.hanzo.ai/v1"
+wire_api = "responses"
+
+[model_providers.hanzo.auth]
+command = "/Users/you/.local/bin/hanzo"
+args = ["auth", "token"]
+refresh_interval_ms = 600000
+
+[mcp_servers.hanzo]
+command = "/Users/you/.local/bin/hanzo-mcp"
+```
+
+### Continue, in VS Code, JetBrains and `cn`
+
+`~/.continue/config.yaml`, with the key in the `HANZO_API_KEY` environment variable or Continue's secrets:
+
+```yaml
+name: Hanzo
+version: 1.0.0
+schema: v1
+models:
+  - name: Enso
+    provider: openai
+    model: enso-auto
+    apiBase: https://api.hanzo.ai/v1
+    apiKey: ${{ secrets.HANZO_API_KEY }}
+    roles: [chat, edit, apply]
+mcpServers:
+  - name: hanzo
+    command: /Users/you/.local/bin/hanzo-mcp
+```
+
+## What it used
+
+Calls on your key or sign-in show in `hanzo usage summary --range 7d`, `hanzo console` (press `6`) and [platform.hanzo.ai](https://platform.hanzo.ai). The per-session block that `hanzo --<agent>` prints is a terminal feature; an app's own sessions are not summarised there.
