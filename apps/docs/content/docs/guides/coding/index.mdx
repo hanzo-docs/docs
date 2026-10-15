@@ -97,11 +97,11 @@ Every number Hanzo publishes about Kai and the toolset is a research run, with e
 ## Keep everything up to date
 
 ```bash
-hanzo upgrade              # hanzo, hanzo-mcp, dev and zt, and every agent installed under ~/.hanzo
-hanzo upgrade mcp qwen     # just these
+hanzo upgrade                 # hanzo, hanzo-mcp, dev and zt, and every coding agent installed
+hanzo upgrade mcp qwen claude # just these
 ```
 
-`hanzo upgrade` runs [hanzo.sh](https://hanzo.sh) into the directory `hanzo` lives in, so the build that answers `hanzo` is the one that was upgraded. Every Hanzo tool is a native binary for Linux and macOS on amd64 and arm64. `hanzo`, `dev` and `zt` also ship for Windows on amd64, from their GitHub release pages. `hanzo-mcp` does not: its browser bridge speaks a Unix socket, so on Windows `hanzo` runs each agent without the toolset and says so.
+`hanzo upgrade` runs [hanzo.sh](https://hanzo.sh) into the directory `hanzo` lives in, so the build that answers `hanzo` is the one that was upgraded. Each agent upgrades its own way: an npm agent is installed again under `~/.hanzo`, one with an updater of its own runs it (`claude update`, `codex update`, `cursor-agent update`, `agy update`, `goose update`, `grok update`, `hermes update`, `interpreter update`), and Aider and OpenHands are upgraded with `uv tool upgrade`. With nothing named, every agent installed that way is upgraded. Every Hanzo tool is a native binary for Linux and macOS on amd64 and arm64. `hanzo`, `dev` and `zt` also ship for Windows on amd64, from their GitHub release pages. `hanzo-mcp` does not: its browser bridge speaks a Unix socket, so on Windows `hanzo` runs each agent without the toolset and says so.
 
 ## Options that apply to every agent
 

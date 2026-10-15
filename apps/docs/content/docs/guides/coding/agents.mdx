@@ -5,7 +5,7 @@ description: "Gemini CLI, Qwen Code, OpenCode, Kilo Code, Crush, Pi, GitHub Copi
 
 Each agent here keeps its own login, settings and sessions. For one run, `hanzo --<agent>` hands it the Hanzo toolset the way that agent reads servers, and under `--cloud` it points the agent's model calls at api.hanzo.ai. Nothing is written into the agent's own configuration. Your Hanzo token reaches the agent through its environment, never its arguments.
 
-Install any of them with `hanzo upgrade <agent>`. It runs `npm install` under `~/.hanzo`, so the binary lands in `~/.hanzo/bin`, and `hanzo upgrade` with no arguments keeps them current. This needs Node.js 20 or newer. An agent you already installed elsewhere is found on your PATH.
+Install an npm agent with `hanzo upgrade <agent>`. It runs `npm install` under `~/.hanzo`, so the binary lands in `~/.hanzo/bin`, and `hanzo --<agent>` runs that copy before one on your PATH. This needs Node.js 20 or newer. An agent with its own installer is installed once with it, and then `hanzo upgrade <agent>` runs its own updater. `hanzo upgrade` with no arguments keeps every installed agent current.
 
 ## Gemini CLI
 
