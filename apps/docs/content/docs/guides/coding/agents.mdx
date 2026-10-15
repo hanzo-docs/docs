@@ -1,6 +1,6 @@
 ---
 title: More agents
-description: "Gemini CLI, Qwen Code, OpenCode, Kilo Code, Crush, Pi, GitHub Copilot CLI, Amp, Grok Build, Goose, Aider, Hermes Agent, OpenHands, Cline, Continue, Kimi Code, Oh My Pi, Letta Code and Kode from `hanzo --<agent>`: how each takes the Hanzo toolset and Hanzo's models."
+description: "Gemini CLI, Qwen Code, OpenCode, Kilo Code, Crush, Pi, GitHub Copilot CLI, Amp, Grok Build, Goose, Aider, Hermes Agent, OpenHands, Open Interpreter, Cline, Continue, Kimi Code, Oh My Pi, Letta Code and Kode from `hanzo --<agent>`: how each takes the Hanzo toolset and Hanzo's models."
 ---
 
 Each agent here keeps its own login, settings and sessions. For one run, `hanzo --<agent>` hands it the Hanzo toolset the way that agent reads servers, and under `--cloud` it points the agent's model calls at api.hanzo.ai. Nothing is written into the agent's own configuration. Your Hanzo token reaches the agent through its environment, never its arguments.
@@ -147,14 +147,25 @@ hanzo --openhands --cloud "add a test for the parser"
 - **Toolset:** OpenHands keeps MCP servers in its own saved configuration, so the toolset is not attached for one run.
 - **`--cloud`:** `LLM_BASE_URL=https://api.hanzo.ai/v1`, your token in `LLM_API_KEY` and `LLM_MODEL=openai/<model>`, read under `--override-with-envs`.
 
+## Open Interpreter
+
+```bash
+curl -fsSL https://www.openinterpreter.com/install | sh
+hanzo --interpreter --cloud "add a test for the parser"
+```
+
+Open Interpreter is a Codex fork and runs the way `hanzo --codex` does: `interpreter exec` for a task, the toolset as `-c mcp_servers.hanzo.*` for the run, and under `--cloud` a `hanzocode` provider at `https://api.hanzo.ai/v1`. It reads its settings from `~/.openinterpreter`. `oi` and `open-interpreter` are accepted spellings.
+
 ## Cline
 
 ```bash
 hanzo upgrade cline
-hanzo --cline "fix the failing test"
+hanzo --cline --cloud "fix the failing test"
 ```
 
-The task is Cline's first argument, and `--yolo` lets it act without asking. Cline runs on its own account (`cline auth`). Neither the toolset nor `--cloud` applies.
+- **On your own account:** Cline keeps its login and data (`cline auth`), and the toolset is not attached.
+- **`--cloud`:** Cline runs from a data directory of Hanzo's own, `~/.hanzo/cline`, passed with `--data-dir`. Its `providers.json` selects Cline's `openai-compatible` provider at `https://api.hanzo.ai/v1` with no key in it, so Cline reads your token from `OPENAI_API_KEY`, and `cline_mcp_settings.json` beside it lists the Hanzo toolset.
+- **Acts without asking:** `--yolo`, and the task is Cline's first argument. Under `--yolo` Cline ends by submitting a summary, which `hanzo` prints as its answer.
 
 ## Continue CLI
 
@@ -178,10 +189,11 @@ hanzo --kimi "review the diff"
 
 ```bash
 hanzo upgrade omp
-hanzo --omp "port this module"
+hanzo --omp --cloud "port this module"
 ```
 
-`omp -p --auto-approve` on the providers you configured for it. Neither the toolset nor `--cloud` applies.
+- **On your own account:** `omp -p --auto-approve` on the providers you configured for it, from its own directory, and the toolset is not attached.
+- **`--cloud`:** omp runs from an agent directory of Hanzo's own, `~/.hanzo/omp`. Its `models.yml` names a `hanzo` provider at `https://api.hanzo.ai/v1` whose `apiKey` is the name `HANZO_API_KEY`, where your token is, and its `mcp.json` lists the Hanzo toolset. The run picks `--model hanzo/<model>`.
 
 ## Letta Code
 
@@ -206,4 +218,4 @@ hanzo --kode "write the changelog entry"
 
 ## The same for every agent
 
-A headless task runs with the agent's own one-shot flag (`-p`, `run`, `--print`, `-x`). The output is what the agent prints, unless the session is streamed to the cloud, in which case the agent is asked for its JSON events. The [session summary](/docs/guides/coding#what-a-session-used) counts every toolset call either way.
+A headless task runs with the agent's own one-shot flag (`-p`, `run`, `--print`, `-x`). The output is what the agent prints. When the session is streamed to the cloud, which is the default once you are signed in, `hanzo` asks the agent for its own event stream and prints its replies, tool calls and results from it; an agent with no event stream is printed line by line. The [session summary](/docs/guides/coding#what-a-session-used) shows the tokens the agent reported and counts every toolset call either way.
