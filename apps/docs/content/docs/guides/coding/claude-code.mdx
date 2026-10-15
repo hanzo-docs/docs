@@ -29,7 +29,8 @@ hanzo --claude --cloud --model enso-ultra
 ```
 
 - **Model calls** go to `https://api.hanzo.ai`. The wrapper points Claude Code at it with `ANTHROPIC_BASE_URL` and sends your Hanzo token as the bearer in `ANTHROPIC_AUTH_TOKEN`, and clears any `ANTHROPIC_API_KEY` in your shell so one credential is in play. The token reaches the process through its environment, never its arguments.
-- **The model** is `enso-auto` unless you set another with `--model`, `ANTHROPIC_MODEL` or `model` in `~/.hanzo/settings.json`. Claude Code is handed a `claude-*` name so it grants the model's real context window, and the wrapper maps that name back to the Hanzo model before the request leaves the process.
+- **The model** is `enso-auto` unless you set another with `--model`, `ANTHROPIC_MODEL` or `model` in `~/.hanzo/settings.json`. `--model zen6` runs Zen 6, the open-weights model. Claude Code is handed a `claude-*` name so it grants the model's real context window, and the wrapper maps that name back to the Hanzo model before the request leaves the process.
+- **Claude Code's own slots** are Enso tiers: Haiku, which runs background work and routine turns, is `enso-flash`; Sonnet is `enso-pro`; Opus and Fable are `enso-ultra`. [Enso](/docs/models/enso#claude-code) has what each tier costs and which models answer it.
 - **Usage** is metered into your org at api.hanzo.ai, so it appears in the cloud whichever machine you ran on. Your org's cloud tools are added beside the toolset, because the process already holds your token.
 - **Claude Code's home** for the run is `~/.hanzo/claude`, so its saved model choice and your Hanzo settings do not overwrite each other.
 

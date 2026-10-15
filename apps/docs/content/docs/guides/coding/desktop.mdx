@@ -74,13 +74,15 @@ The extensions read the same `~/.claude/settings.json` as the CLI:
   "apiKeyHelper": "/Users/you/.local/bin/hanzo auth token",
   "env": {
     "ANTHROPIC_BASE_URL": "https://api.hanzo.ai",
-    "ANTHROPIC_MODEL": "enso",
-    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "enso"
+    "ANTHROPIC_MODEL": "enso-auto",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "enso-flash",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "enso-pro",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "enso-ultra"
   }
 }
 ```
 
-The helper prints your sign-in's current token, so no key is written into the file. In a terminal, `hanzo --claude --cloud` does the same for one run and edits nothing.
+The helper prints your sign-in's current token, so no key is written into the file. Each slot names the [Enso tier](/docs/models/enso) that `hanzo --claude --cloud` puts there. In a terminal, `hanzo --claude --cloud` does the same for one run and edits nothing.
 
 ### Codex, in the app, the IDE extension and the CLI
 
