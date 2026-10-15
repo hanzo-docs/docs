@@ -1,6 +1,6 @@
 ---
 title: Antigravity
-description: "What `hanzo code agy` does for the Antigravity CLI: it starts it and links the session, and routes and meters nothing."
+description: "What `hanzo --agy` does for the Antigravity CLI: it starts it and links the session, and routes and meters nothing."
 ---
 
 ## Set up
@@ -8,25 +8,25 @@ description: "What `hanzo code agy` does for the Antigravity CLI: it starts it a
 ```bash
 curl -fsSL hanzo.sh | sh
 hanzo login
-hanzo code agy
+hanzo --agy
 ```
 
 This runs the Antigravity CLI, `agy`. Install and sign in to it first, as you would to use it alone. `antigravity` is an accepted spelling of `agy`.
 
 ## What the wrapper does
 
-Antigravity keeps its own login and its own backend. `hanzo code agy` has no gateway route for it, so it always runs on Antigravity's account, with or without `--no-route`. The wrapper:
+Antigravity keeps its own login and its own backend. `hanzo --agy` has no gateway route for it, so it always runs on Antigravity's account, with or without `--cloud`. The wrapper:
 
 - starts the binary in your repository, with `--dangerously-skip-permissions` so it stops asking before each action; `--ask` leaves its own prompts in place;
-- for a task (`hanzo code agy "fix the failing test"`), runs it with `--print` and `--output-format stream-json`, and when the session is linked streams the assistant's messages and the final result to the cloud;
+- for a task (`hanzo --agy "fix the failing test"`), runs it with `--print` and prints what the agent prints; when the session is linked it asks for `--output-format stream-json` and streams the assistant's messages and the final result to the cloud;
 - registers the session in the cloud with its machine and directory, and updates its status when the tool exits. An interactive run is Antigravity's own screen, so its events are not streamed;
 - passes any other flags through to the tool unchanged.
 
 ## What it does not do
 
 - **No routing.** Antigravity's model calls do not go through api.hanzo.ai, and Hanzo does not see them.
-- **No metering.** Nothing is counted into your org's usage. The end-of-session block prints the duration and the session link, and says the usage was not observed.
-- **No Hanzo toolset.** The Hanzo MCP server and your org's cloud tools are not attached to Antigravity.
+- **No metering.** Nothing is counted into your org's usage. The end-of-session block prints the duration and the session link, and says Antigravity ran on its own account.
+- **No Hanzo toolset.** Antigravity takes no MCP server for a single run, so the Hanzo toolset is not attached, and the summary says so.
 - **No resume.** The tool discloses no session id to the wrapper, so `hanzo --resume` has nothing to continue.
 
 ## See the session

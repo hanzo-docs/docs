@@ -1,0 +1,198 @@
+---
+title: More agents
+description: "Gemini CLI, Qwen Code, OpenCode, Kilo Code, Crush, Pi, GitHub Copilot CLI, Amp, Grok Build, Goose, Aider, Hermes Agent, Cline, Continue, Kimi Code, Oh My Pi, Letta Code and Kode from `hanzo --<agent>`: how each takes the Hanzo toolset and Hanzo's models."
+---
+
+Each agent here keeps its own login, settings and sessions. For one run, `hanzo --<agent>` hands it the Hanzo toolset the way that agent reads servers, and under `--cloud` it points the agent's model calls at api.hanzo.ai. Nothing is written into the agent's own configuration. Your Hanzo token reaches the agent through its environment, never its arguments.
+
+Install any of them with `hanzo upgrade <agent>`. It runs `npm install` under `~/.hanzo`, so the binary lands in `~/.hanzo/bin`, and `hanzo upgrade` with no arguments keeps them current. This needs Node.js 20 or newer. An agent you already installed elsewhere is found on your PATH.
+
+## Gemini CLI
+
+```bash
+hanzo upgrade gemini
+hanzo --gemini "explain the build"
+```
+
+- **Toolset:** a settings file for the run, named by `GEMINI_CLI_SYSTEM_SETTINGS_PATH`.
+- **Acts without asking:** `--yolo`. `--ask` leaves its prompts.
+- **Models:** your Google account or `GEMINI_API_KEY`. Gemini CLI speaks only Google's API, so `--cloud` does not apply.
+
+## Qwen Code
+
+```bash
+hanzo upgrade qwen
+hanzo --qwen --cloud "add a test for the parser"
+```
+
+- **Toolset:** `--mcp-config` with a file for the run.
+- **Acts without asking:** `--yolo`.
+- **`--cloud`:** `--auth-type openai --openai-base-url https://api.hanzo.ai/v1 -m <model>`, with your token in `OPENAI_API_KEY`.
+
+## OpenCode
+
+```bash
+hanzo upgrade opencode
+hanzo --opencode --cloud "port this module"
+```
+
+- **Toolset and provider:** one config document in `OPENCODE_CONFIG_CONTENT`, loaded with your own config. It holds the `hanzo` MCP server and, under `--cloud`, a `hanzo` provider at `https://api.hanzo.ai/v1` with the model set to `hanzo/<model>`.
+- **Acts without asking:** `--auto`. Headless runs use `opencode run`.
+
+## Kilo Code
+
+```bash
+hanzo upgrade kilo
+hanzo --kilo --cloud "fix the lint errors"
+```
+
+Kilo Code is built on OpenCode and takes the same document in `KILO_CONFIG_CONTENT`. `kilocode` is an accepted spelling.
+
+## Crush
+
+```bash
+hanzo upgrade crush
+hanzo --crush --cloud "summarise the open issues"
+```
+
+- **Toolset and provider:** `crush.json` in a data directory of Hanzo's own, `~/.hanzo/crush`, passed with `--data-dir`. Your global Crush config still loads beside it. Under `--cloud` the file adds a `hanzo` provider, and headless runs pick `hanzo/<model>`.
+- **Acts without asking:** `--yolo` on its own screen. `crush run` has no such flag.
+
+## Pi
+
+```bash
+hanzo upgrade pi
+hanzo --pi --cloud "rename the store"
+```
+
+- **Toolset:** Pi takes no MCP server for a single run, so the toolset is not attached.
+- **`--cloud`:** a `hanzo` provider in `models.json` under `~/.hanzo/pi`, used as Pi's agent directory for the run, with `--provider hanzo --model <model>`.
+
+## GitHub Copilot CLI
+
+```bash
+hanzo upgrade copilot
+hanzo --copilot "write the changelog entry"
+```
+
+- **Toolset:** `--additional-mcp-config @<file>`, beside your own servers.
+- **Acts without asking:** `--allow-all-tools`.
+- **Models:** your GitHub Copilot plan. `--cloud` does not apply.
+
+## Amp
+
+```bash
+hanzo upgrade amp
+hanzo --amp "review the diff"
+```
+
+- **Toolset:** `--mcp-config` with the server inline.
+- **Acts without asking:** `--dangerously-allow-all`.
+- **Models:** your Amp account (`amp login`). `--cloud` does not apply.
+
+## Grok Build
+
+```bash
+curl -fsSL https://x.ai/cli/install.sh | bash
+hanzo --grok "draft the migration"
+```
+
+xAI's Grok Build. It installs `grok`, and also a binary named `agent`; `hanzo --cursor` therefore runs `cursor-agent` first, so the two never trade places.
+
+- **Acts without asking:** `--always-approve`. Headless runs use `-p`.
+- **Toolset:** Grok Build reads servers only from its saved configuration (`grok mcp add`), so the toolset is not attached for one run.
+- **Models:** your xAI account (`grok login` or `XAI_API_KEY`). `--cloud` does not apply.
+
+## Goose
+
+```bash
+curl -fsSL https://github.com/aaif-goose/goose/releases/download/stable/download_cli.sh | CONFIGURE=false bash
+hanzo --goose --cloud "add a test for the parser"
+```
+
+- **Toolset:** `--with-extension` with the server's command line. Headless runs use `goose run -t`, interactive ones `goose session`.
+- **Acts without asking:** `GOOSE_MODE=auto` in its environment.
+- **`--cloud`:** goose's `openai` provider at `OPENAI_HOST=https://api.hanzo.ai`, with your token in `OPENAI_API_KEY` and `--provider openai --model <model>`.
+
+## Aider
+
+```bash
+uv tool install aider-chat
+hanzo --aider --cloud "rename the store"
+```
+
+- **Toolset:** Aider takes no MCP server.
+- **Acts without asking:** `--yes-always`. Headless runs use `--message`.
+- **`--cloud`:** `OPENAI_API_BASE=https://api.hanzo.ai/v1` and your token in `OPENAI_API_KEY`, with `--model openai/<model>` and `--no-show-model-warnings`.
+
+## Hermes Agent
+
+```bash
+curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
+hanzo --hermes --cloud "summarise the open issues"
+```
+
+- **On your own account:** Hermes keeps its home, `~/.hermes`, with its memory and skills, and the toolset is not attached, because Hermes reads servers only from its home.
+- **`--cloud`:** Hermes runs in a home of Hanzo's own, `~/.hanzo/hermes`. Its `config.yaml` names a `hanzo` provider at `https://api.hanzo.ai/v1`, reading your token from `HANZO_API_KEY`, and lists the Hanzo toolset as an MCP server.
+- **Acts without asking:** `--yolo`. Headless runs use `-z`.
+
+## Cline
+
+```bash
+hanzo upgrade cline
+hanzo --cline "fix the failing test"
+```
+
+The task is Cline's first argument, and `--yolo` lets it act without asking. Cline runs on its own account (`cline auth`). Neither the toolset nor `--cloud` applies.
+
+## Continue CLI
+
+```bash
+hanzo upgrade continue
+hanzo --continue "explain the build"
+```
+
+`cn -p` on your Continue account and configuration. `cn` is an accepted spelling. Neither the toolset nor `--cloud` applies.
+
+## Kimi Code
+
+```bash
+hanzo upgrade kimi
+hanzo --kimi "review the diff"
+```
+
+`kimi -p` on your Moonshot account. Kimi refuses `--yolo` beside a prompt, so it acts without asking only on its own screen. Neither the toolset nor `--cloud` applies.
+
+## Oh My Pi
+
+```bash
+hanzo upgrade omp
+hanzo --omp "port this module"
+```
+
+`omp -p --auto-approve` on the providers you configured for it. Neither the toolset nor `--cloud` applies.
+
+## Letta Code
+
+```bash
+hanzo upgrade letta
+LETTA_API_KEY=… hanzo --letta "plan the refactor"
+```
+
+`letta -p` on your Letta account; headless runs need `LETTA_API_KEY`. Neither the toolset nor `--cloud` applies.
+
+## Kode
+
+```bash
+hanzo upgrade kode
+kode                      # once: Kode's first run asks for a theme and a model
+hanzo --kode "write the changelog entry"
+```
+
+- **Toolset:** `--mcp-config` with a file for the run.
+- **Acts without asking:** `--dangerously-skip-permissions`. Headless runs use `-p`.
+- **Models:** the provider you set up in Kode. `--cloud` does not apply.
+
+## The same for every agent
+
+A headless task runs with the agent's own one-shot flag (`-p`, `run`, `--print`, `-x`). The output is what the agent prints, unless the session is streamed to the cloud, in which case the agent is asked for its JSON events. The [session summary](/docs/guides/coding#what-a-session-used) counts every toolset call either way.

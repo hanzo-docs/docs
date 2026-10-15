@@ -1,88 +1,26 @@
 ---
 title: Coding agents
-description: "Run a coding agent in your repo — ours, Claude Code, Codex, Cursor or Antigravity — from one command."
+description: "Run Hanzo Dev, Claude Code, Codex, Cursor, Gemini CLI, Qwen Code, OpenCode, Goose, Hermes and more from one command, with Enso and Kai a tool call away."
 icon: Terminal
 ---
 
-`hanzo code` runs a coding agent against the repository you are standing in.
-Five agents are supported, and naming one gets you that agent or a clear
-failure — they are separate products, never aliases of each other.
+`hanzo` runs a coding agent against the repository you are standing in. Hanzo Dev is the default. Every other agent is a flag, and naming one gets you that agent or a clear failure.
 
 ```bash
-hanzo code                      # Hanzo Dev, the default
-hanzo code claude               # Claude Code
-hanzo code codex                # Codex
-hanzo code cursor               # Cursor's agent CLI
-hanzo code agy                  # Antigravity
+curl -fsSL hanzo.sh | sh       # install
+hanzo                          # sign in, pick your agent, start it
+hanzo --claude                 # Claude Code
+hanzo --codex                  # Codex
+hanzo --gemini                 # Gemini CLI; also --qwen, --opencode, --kilo, --crush, --goose, --aider,
+                               # --hermes, --pi, --copilot, --amp, --grok, --cline, --continue, --kimi,
+                               # --omp, --letta, --kode, --cursor, --agy
+hanzo --claude "fix the failing test in api/users"   # one quoted task runs headless
 ```
 
-Claude Code and Codex run through api.hanzo.ai when you are signed in, so their
-model calls are metered into your org. Cursor and Antigravity keep their own
-backend and login: the wrapper starts them and links the session, and routes and
-meters nothing. Each has a [guide](/docs/guides/coding), with how to read what a
-session used.
+`hanzo dev` is the same launcher, and `hanzo code` is `hanzo dev`. Each agent keeps its own login and plan. The Hanzo toolset is attached for the run, so the agent can hand work to Enso, Kai and Hanzo's search tools. `--cloud` moves the agent's own model calls onto Hanzo too. When the session ends, the summary names every hand-off and the model that took it.
 
-Give it a task as **one** argument, quoted:
-
-```bash
-hanzo code "fix the failing test in api/users"
-hanzo code claude "port this module to the new store"
-```
-
-## Naming the agent
-
-Every spelling below resolves in one place, so they cannot drift apart:
-
-| | Positional | Flag | Explicit |
-| --- | --- | --- | --- |
-| Hanzo Dev | `hanzo code dev` | `hanzo code --dev` | `hanzo code --backend dev` |
-| Claude Code | `hanzo code claude` | `hanzo code --claude` | `hanzo code --backend claude` |
-| Codex | `hanzo code codex` | `hanzo code --codex` | `hanzo code --backend codex` |
-| Cursor | `hanzo code cursor` | `hanzo code --cursor` | `hanzo code --backend cursor` |
-| Antigravity | `hanzo code agy` | `hanzo code --agy` | `hanzo code --backend agy` |
-
-`hanzo dev` is a top-level shorthand for `hanzo code dev`. `claude-code` and
-`cc` are accepted spellings of `claude`, `agent` and `cursor-agent` of `cursor`,
-and `antigravity` of `agy`.
-
-Naming it twice is refused rather than resolved — `hanzo code claude --codex`
-tells you to name it once.
-
-## Approvals
-
-The agent auto-approves its own steps by default. Two ways out, in increasing
-order of how much they give up:
-
-```bash
-hanzo code --ask            # the backend asks before each step
-hanzo code --no-sandbox     # bypass approvals AND drop the sandbox
-```
-
-`--safe` is a synonym for `--ask`, and either wins over `autoApprove` in
-`~/.hanzo/settings.json`.
-
-## Model calls and the session
-
-A signed-in run of Claude Code or Codex sends its model calls through
-api.hanzo.ai, and every run you are signed in for is shown in the cloud as a
-session. Two flags switch those off, independently:
-
-```bash
-hanzo code claude --no-route    # the tool's own model account; Hanzo meters none of it
-hanzo code claude --no-link     # the session is not shown in the cloud
-```
-
-When a session ends, `hanzo code` prints its duration, tokens, cached share, cost
-at the listed price and a link to the session. `hanzo console` (press `6`) and
-`hanzo usage summary` show the same usage across sessions. See
-[Coding tools](/docs/guides/coding) for what each figure means.
+[Coding tools](/docs/guides/coding) has the full table of agents, sign-up and plans, what each flag does, and how to read the summary.
 
 ## The other `hanzo code`
 
-`hanzo code context`, `hanzo code file` and `hanzo code index` are a different
-thing that shares the word: they are the [code intelligence
-API](/docs/openapi/code) — search and symbols across your indexed repositories,
-for you and for agents. They take no backend and run no agent.
-
-The rule is the first argument: a word that names a backend selects one, and
-anything else is a task or a subcommand.
+`hanzo code search`, `hanzo code context`, `hanzo code file` and `hanzo code index` are a different thing that shares the word: they are the [code intelligence API](/docs/openapi/code), search and symbols across your indexed repositories, for you and for agents. They take no agent and run none. The rule is the word after `code`: an operation of the code index runs it, and anything else starts a session.

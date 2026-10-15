@@ -15,20 +15,20 @@ reachable.
 
 ## 1. Install
 
-<Tabs items={['npm', 'Script', 'Homebrew', 'From source']}>
+<Tabs items={['Script', 'npm', 'Homebrew', 'From source']}>
+<Tab value="Script">
+```bash
+curl -fsSL https://hanzo.sh | sh
+```
+
+Native binaries, checksummed, into `~/.local/bin`: the CLI, the MCP server, Hanzo Dev and ZT. `https://hanzo.sh/cli` installs the CLI alone, and `hanzo upgrade` keeps them current.
+</Tab>
 <Tab value="npm">
 ```bash
 npm i -g hanzo
 ```
 
 `hanzo` is the CLI and the client in one install.
-</Tab>
-<Tab value="Script">
-```bash
-curl -fsSL https://hanzo.sh | sh
-```
-
-Installs into `~/.local/bin`. `https://hanzo.sh/cli` installs the CLI alone.
 </Tab>
 <Tab value="Homebrew">
 ```bash
@@ -250,6 +250,9 @@ own cloud. See [Run your own](/docs/network) for what each needs.
 
 ## Where to go next
 
+- **[Coding agents](/docs/guides/coding)** — `hanzo --claude`, `--codex`,
+  `--gemini` and ten more, with Enso and Kai a tool call away and a summary of
+  what each session handed off.
 - **[Six flows, four surfaces](/docs/guides)** — hello, chat, money, store, agent,
   tools. The whole product in miniature, each journey shown four ways.
 - **[Concepts](/docs/concepts)** — orgs, projects, sandboxes, agents, memory and

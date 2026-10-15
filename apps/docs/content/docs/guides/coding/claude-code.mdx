@@ -1,6 +1,6 @@
 ---
 title: Claude Code
-description: "Run Claude Code through api.hanzo.ai with `hanzo code claude`: what is routed, what is not, and how to keep your own plan."
+description: "Run Claude Code with `hanzo --claude`: on your Claude plan with the Hanzo toolset beside it, or fully on Hanzo with `--cloud`."
 ---
 
 ## Set up
@@ -8,42 +8,41 @@ description: "Run Claude Code through api.hanzo.ai with `hanzo code claude`: wha
 ```bash
 curl -fsSL hanzo.sh | sh
 hanzo login
-hanzo code claude
+hanzo --claude
 ```
 
-Give it a task as one quoted argument to run it headless: `hanzo code claude "fix the failing test in api/users"`. `claude-code` and `cc` are accepted spellings of `claude`.
+Give it a task as one quoted argument to run it headless: `hanzo --claude "fix the failing test in api/users"`. `claude-code` and `cc` are accepted spellings of `claude`.
 
-## What goes through Hanzo
+## On your Claude plan (the default)
 
-With a signed-in account and no `--no-route`:
+Claude Code uses its own login in `~/.claude`, and its model calls go to Anthropic on your Claude plan. The wrapper adds:
 
-- **Model calls** go to `https://api.hanzo.ai`. The wrapper points Claude Code at it with `ANTHROPIC_BASE_URL` and sends your Hanzo token as the bearer in `ANTHROPIC_AUTH_TOKEN`, and clears any `ANTHROPIC_API_KEY` in your shell so one credential is in play. The token goes to the process through its environment, never its arguments.
+- **The Hanzo toolset.** The native `hanzo-mcp` that hanzo.sh installs beside `hanzo` is attached with `--mcp-config` for the run, through the CLI's own proxy, so Claude Code starts without waiting on it. Claude Code can then hand work to Enso (`llm`), Kai (`kai_decide`) and Hanzo's search tools, billed to your Hanzo plan. See [Hand work to Enso and Kai](/docs/guides/coding#hand-work-to-enso-and-kai).
+- **The session** is registered in the cloud with its machine and directory. Pass `--no-link` to keep it local.
+- **The summary** at the end names every toolset call and the model it reached.
+
+## Fully on Hanzo (`--cloud`)
+
+```bash
+hanzo --claude --cloud
+hanzo --claude --cloud --model enso-ultra
+```
+
+- **Model calls** go to `https://api.hanzo.ai`. The wrapper points Claude Code at it with `ANTHROPIC_BASE_URL` and sends your Hanzo token as the bearer in `ANTHROPIC_AUTH_TOKEN`, and clears any `ANTHROPIC_API_KEY` in your shell so one credential is in play. The token reaches the process through its environment, never its arguments.
 - **The model** is `enso-auto` unless you set another with `--model`, `ANTHROPIC_MODEL` or `model` in `~/.hanzo/settings.json`. Claude Code is handed a `claude-*` name so it grants the model's real context window, and the wrapper maps that name back to the Hanzo model before the request leaves the process.
-- **Usage** is metered into your org at api.hanzo.ai, so it appears in the cloud whichever machine you ran on.
-- **The Hanzo toolset** (`hanzo-mcp`, if installed or reachable with `uvx`) and your org's cloud tools are added to Claude Code's MCP servers. The cloud tools ride only a routed run, because only then does the process already hold your token.
-- **The session** is registered in the cloud with its machine and directory, and its messages and tool calls stream there. Pass `--no-link` to keep it local.
+- **Usage** is metered into your org at api.hanzo.ai, so it appears in the cloud whichever machine you ran on. Your org's cloud tools are added beside the toolset, because the process already holds your token.
 - **Claude Code's home** for the run is `~/.hanzo/claude`, so its saved model choice and your Hanzo settings do not overwrite each other.
 
-## What does not
+## What does not load
 
-- A repository's own `.mcp.json` and `.claude/settings*.json` hooks do not load, because a repository is untrusted and its hooks would run with your token in the environment. `--project-mcp` opts in for a repository you trust.
+- A repository's own `.mcp.json` and `.claude/settings*.json` hooks do not load, because a repository is untrusted and its hooks would run with your credentials in the environment. `--project-mcp` opts in for a repository you trust.
 - With `--ask` the tool asks before each action. By default the wrapper starts Claude Code with `--dangerously-skip-permissions`, as `autoApprove` in `~/.hanzo/settings.json` says.
 
-## See usage and savings
-
-A linked headless run prints its reported tokens, the cached share and the cost at the listed price when it ends. Any other routed run prints the cloud's count for the session window, since an interactive Claude Code reports nothing to the wrapper. Then:
+## See usage
 
 ```bash
 hanzo console          # press 6 for Savings
 hanzo usage summary --range 7d
 ```
 
-[How to read the numbers →](/docs/guides/coding)
-
-## Keep your own plan
-
-```bash
-hanzo code claude --no-route
-```
-
-Claude Code uses its own login in `~/.claude`, and its environment is left as your shell has it. Hanzo meters none of that traffic and the end-of-session block says so.
+[How to read the summary →](/docs/guides/coding#what-a-session-used)
