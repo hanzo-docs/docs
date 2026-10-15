@@ -50,17 +50,17 @@ the Kai column is what `api.hanzo.ai` answers.
 | Endpoint | `POST https://openrouter.ai/api/alpha/decisions` | `POST https://api.hanzo.ai/v1/decisions` |
 | Key | an OpenRouter key | a Hanzo secret key, `sk-`; see [API keys](/docs/api-keys) |
 | `model` in the request | `typesafe/jev-1.13` | `kai` |
-| `model` in the answer | the dated snapshot that served, `typesafe/jev-1.13-20260917` in the harness's run | `kai`; the checkpoint is `routing.checkpoint`, `kai-1` |
+| `model` in the answer | the dated snapshot that served, `typesafe/jev-1.13-20260917` in the harness's run | `kai`; the checkpoint is `routing.checkpoint`, `kai-1.2` |
 | `id` | OpenRouter's | `dec_` and 32 hex digits |
 | `provider` | the provider OpenRouter routed to | `Hanzo` |
 | `usage.output_tokens` | as OpenRouter counts them, not billed | `0`: Kai generates nothing |
 | `usage.cost` | the call's price in dollars | not sent: the price is `usage.input_tokens` at $0.021 per million, and each call is a row in `GET /v1/billing/usage` |
-| Fields only Hanzo sends | — | `answer_confidence` on each answer; `routing`, `state_hash` and `latency_ms` on the response ([Decisions](/docs/decisions#response)) |
+| Fields only Hanzo sends | — | `answer_confidence` on each choice and score answer; `routing`, `state_hash` and `latency_ms` on the response ([Decisions](/docs/decisions#response)) |
 | Price | $0.042 per million input tokens | $0.021 per million input tokens |
 
 Hanzo checks a request before any work: 1 to 100 questions, a body of at most
 16 MiB, and at most 256 characters of `session_id` or `user`. Kai reads each
-question with the state beside it, at most 1,024 tokens together, and each
+question with the state beside it, up to 32,768 tokens together, and each
 option whole up to 512 tokens; a request past either is refused with `422`
 before any work. A key that sends faster than its per-minute rate is answered
 `429` with `Retry-After`. The [errors](/docs/decisions#errors) are listed on
@@ -112,8 +112,11 @@ curl https://api.hanzo.ai/v1/decisions \
   }'
 ```
 
-kai-1's answer, from its v0.3.14 runtime on CPU, the release `api.hanzo.ai`
-serves, with `latency_ms` left out because it is a measurement:
+kai-1's answer, recorded on its v0.3.14 runtime on CPU, with `latency_ms` left
+out because it is a measurement. kai-1.2, which `api.hanzo.ai` serves now,
+differs in three places: `routing.checkpoint` is `kai-1.2`, `routing.reach` is
+32768, and a `noul` answer is `noul` alone, read by a new yes/no reader, so
+`is_bug` will not match:
 
 ```json
 {
@@ -177,10 +180,11 @@ tokens and Jev \$0.042, with output free on both. Each model counts tokens with
 its own tokenizer. Kai counts the request's own text once: the state, and each
 question's instructions, labels, descriptions and levels.
 
-**Higher accuracy on 11 of 12 suites.** On the frozen harness, kai-1, the build
-`api.hanzo.ai` serves, is more accurate than Jev on every suite but jailbreak,
-0.9175 against 0.940, and on 30 of the 51 MASSIVE languages. Those runs were
-measured on CUDA in BF16; production answers on CPU. Suite by suite:
+**Higher accuracy on 11 of 12 suites, measured on kai-1.** On the frozen
+harness, kai-1 is more accurate than Jev on every suite but jailbreak, 0.9175
+against 0.940, and on 30 of the 51 MASSIVE languages. Those runs were measured
+on CUDA in BF16; kai-1.2, which production serves on CPU, answers yes/no with a
+new reader and has no harness run posted. Suite by suite:
 [Kai's results](/docs/models/kai#results). Its probabilities are less well
 calibrated than Jev's on four suites (expected calibration error, Kai against
 Jev): typed decisions 0.171 against 0.047, toxicity 0.195 against 0.177,
@@ -189,20 +193,26 @@ tuned on Jev's `confidence` is to be tuned again.
 
 ## Speed
 
-No latency of the served build (kai-1, on CPU) is published yet, so none is
-quoted here. Each response's `latency_ms` is the decision's wall time in the
-model; time your own calls end to end. Each Kai replica answers one request at
-a time, so a long request, many questions or many options, delays the
-requests behind it on that replica.
+One yes/no question takes 38 ms of server time at p50 in production (kai-1.2,
+on CPU); 100 in one request take 13.9 s. Each response's `latency_ms` is the
+decision's wall time in the model; time your own calls end to end. Each Kai
+replica answers one request at a time, so a long request, many questions or
+many options, delays the requests behind it on that replica.
 
 ## What does not carry
 
-**A long state.** Kai reads each question with the state beside it, at most
-1,024 tokens together, and refuses a longer one with `422` and code
+**A long state.** Kai was trained on 1,024 tokens of state beside each
+question. It reads up to 32,768 and marks a longer read
+`routing.extrapolated: true`; those answers are unreliable: a fact at the end of
+a 3,982-token state read 0.507. Past 32,768 it refuses with `422` and code
 `state_too_long`, naming the tokens it needs. An option is read whole up to 512
 tokens; a longer one is `option_too_long`. Jev's window is 32,000 tokens
 ([OpenRouter](https://openrouter.ai/typesafe/jev-1.13)). Keep the state to what
 decides the question, or split a long document across calls.
+
+**A yes/no question's `criteria`.** kai-1.2 accepts them and does not read
+them: on JevBench's 74 described yes/no items its P(true) is the same with the
+sides as written, negated or swapped.
 
 **`usage.cost`.** Jev's answer states its price; Kai's states
 `usage.input_tokens`, billed at \$0.021 per million. The org's spend is

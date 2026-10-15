@@ -16,8 +16,10 @@ is the endpoint that serves these questions:
 POST https://api.hanzo.ai/v1/decisions
 ```
 
-The wire is OpenRouter's Decisions API. A client written for Jev works
-unchanged: set its base URL to `https://api.hanzo.ai/v1` and send a Hanzo key.
+The body is the one Jev takes on OpenRouter's Decisions API
+(`POST https://openrouter.ai/api/alpha/decisions`): a client written for it
+works with its base URL set to `https://api.hanzo.ai/v1` and a Hanzo key.
+OpenAI's Decisions body (`input` and a list of questions) is refused.
 [Migrate from Jev](/docs/guides/migrate/jev) lists every field that changes,
 with the same request sent both ways.
 
@@ -46,13 +48,26 @@ curl https://api.hanzo.ai/v1/decisions \
 | Field | Type | Limit |
 |---|---|---|
 | `model` | `kai`, `typesafe/jev-1.13` or `~typesafe/jev-latest` | required |
-| `state` | a string, object or array: whatever the questions are about | required; Kai reads each question with the state beside it, at most 1,024 tokens together (a string as is, anything else as its JSON text) |
+| `state` | a string, object or array: whatever the questions are about | required; Kai reads each question with the state beside it (a string as is, anything else as its JSON text); see [Limits](#limits) |
 | `questions` | `{name: question}`; answers come back under the same names, in the same order | required; 1 to 100 |
 | `session_id`, `user` | strings | optional; at most 256 characters each |
 | `provider`, `trace` | any JSON | optional; forwarded to OpenRouter on a Jev request |
 
 A question is `{type, instructions, criteria}`. `instructions` is the text the
 model answers. `criteria` depends on the type.
+
+## Limits
+
+- **Questions**: 1 to 100 a request; 101 is refused with `422`.
+- **State**: Kai was trained on 1,024 tokens of state beside each question
+  (`routing.trained`). It reads up to 32,768 and marks a longer read
+  `routing.extrapolated: true`; those answers are unreliable: in a
+  3,982-token state, one fact read P(true) 0.985 at the start, 0.663 in the
+  middle and 0.507 at the end. Past 32,768 tokens the request is refused with
+  `422` and code `state_too_long`.
+- **Time**: one yes/no question takes 38 ms of server time at p50 in
+  production, on CPU. 100 yes/no questions in one request take 13.9 s.
+  Each response reports its own `latency_ms`.
 
 ## The three types
 
@@ -80,7 +95,9 @@ the order the question gave them.
 ### `noul`: does a statement hold
 
 `criteria` is optional: `{"true": …, "false": …}`, either side or both,
-describes what each side means. Any other key is refused.
+describes what each side means. Any other key is refused. kai-1.2 accepts
+`criteria` and does not read them: on JevBench's 74 described yes/no items
+its P(true) is the same with the sides as written, negated or swapped.
 
 ```json
 "is_bug": {"type": "noul", "instructions": "Is this a product defect?",
@@ -88,11 +105,10 @@ describes what each side means. Any other key is refused.
 ```
 
 ```json
-"is_bug": {"type": "noul", "noul": 0.12, "confidence": 0.76, "answer_confidence": 0.88}
+"is_bug": {"type": "noul", "noul": 0.12}
 ```
 
-`noul` is P(true). `confidence` is `|2p − 1|`: 0 at even odds, 1 at certainty
-either way. `answer_confidence` is `max(p, 1 − p)`.
+`noul` is P(true), and the answer holds nothing else.
 
 ### `score`: an ordinal level
 
@@ -126,7 +142,7 @@ a recorded answer.
   "model": "kai",
   "provider": "Hanzo",
   "answers": {
-    "is_bug":  {"type": "noul", "noul": 0.12, "confidence": 0.76, "answer_confidence": 0.88},
+    "is_bug":  {"type": "noul", "noul": 0.12},
     "team":    {"type": "choice", "choice": "payments", "confidence": 0.91,
                 "probabilities": {"account": 0.03, "payments": 0.94, "product": 0.03},
                 "answer_confidence": 0.94},
@@ -138,11 +154,11 @@ a recorded answer.
   "usage": {"input_tokens": 212, "output_tokens": 0},
   "routing": {
     "backend": "kai",
-    "checkpoint": "kai-1",
+    "checkpoint": "kai-1.2",
     "sha256": "<SHA-256 of the weights>",
     "calibration": "cal_<16 hex digits>",
     "device": "cpu",
-    "reach": 1024,
+    "reach": 32768,
     "trained": 1024,
     "positions": 8192,
     "extrapolated": false,
@@ -166,8 +182,8 @@ Hanzo adds four fields, which a Decisions client ignores:
 
 | Field | Meaning |
 |---|---|
-| `answer_confidence` | on each answer: `p_max`, the calibrated probability of the reported answer |
-| `routing` | the backend (`kai` or `openrouter`), the checkpoint (the served Kai build, `kai-1`), the SHA-256 of its weights, the hash of the calibration tables, the device, the tokens a question and its state may reach together (`reach`, beside the length the checkpoint was `trained` at and the encoder's `positions`; `extrapolated` when reach passes them), and why the request went there |
+| `answer_confidence` | on each `choice` and `score` answer: `p_max`, the calibrated probability of the reported answer |
+| `routing` | the backend (`kai` or `openrouter`), the checkpoint (the served Kai build, `kai-1.2`), the SHA-256 of its weights, the hash of the calibration tables, the device, the tokens a question and its state may reach together (`reach`, beside the length the checkpoint was `trained` at and the encoder's `positions`; `extrapolated` when the read ran past `trained`), and why the request went there |
 | `state_hash` | SHA-256 of the state as the model read it, so two decisions over one input are provably over one input |
 | `latency_ms` | wall time of the decision, in milliseconds |
 
@@ -230,7 +246,7 @@ names what to fix, from the field it is about.
 | `422` | more than 100 questions | `questions: 'questions' takes at most 100 questions, got 101` |
 | `422` | a question is malformed | `questions.team.choice.criteria: a choice needs at least 2 labels, got 0` |
 | `422` | `state` is a number or a boolean | `state: Input should be text, an object or an array` |
-| `422`, `code` `state_too_long`, `question_too_long`, `option_too_long` or `request_too_long` | a question and its state, a question, an option or the body is longer than Kai reads | `the state and question "q" take 8903 tokens; kai-0834a74f2d14 reads at most 1024` |
+| `422`, `code` `state_too_long`, `question_too_long`, `option_too_long` or `request_too_long` | a question and its state, a question, an option or the body is longer than Kai reads | `the state and question "q" take 40960 tokens; kai-0834a74f2d14 reads at most 32768` |
 | `429` | Kai's queue for the model is full | `… has a full queue; retry in … ms`, with `Retry-After` |
 | `529` | the work queued ahead would not start within 10 seconds | `… is overloaded; retry in … ms`, with `Retry-After` |
 | `503` | the model is known but not served by this deployment | `model "kai" is not served here: …` |
