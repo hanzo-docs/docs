@@ -1,25 +1,180 @@
 ---
 title: Enso
-description: "Enso routes: a learned router picks the model for every request, bills the model that served, and learns from your feedback. The enso-* family serves that choice under one name."
+description: "Enso is Hanzo's own model family: a free lane, and three paid tiers that each run a chain of frontier models under one id and one price. Which tier for which job, what it costs, and what answers it."
 icon: Route
 ---
 
-**After this page you know how Enso picks a model, how to bound and steer the
-pick, how to teach it, and which Enso id to send.**
+**After this page you know which Enso id to send for a job, what a call costs,
+which models answer it, and how `enso-auto` picks a tier for you.**
 
-Enso is the router. Every request it sees is classified, priced against what
-your org can serve, and sent to the model that should answer it — a Zen model,
-another provider's, or one you host. The decision runs on a CPU:
-[HIP-0510](https://hips.hanzo.ai/docs/hip-0510-enso-learned-router) measures
-300 ns for the rule router and 12 µs for the learned one, before a model call
-that takes seconds.
+Enso is Hanzo's own family on `api.hanzo.ai`. The free ids answer with open
+models and bill nothing. Each paid tier runs an ordered chain of frontier
+models under one id and one price, so when one vendor is down the next rung
+answers and the bill does not change. Enso is also the router behind
+[`model: "auto"`](#the-auto-router).
 
-## Two ways in
+## Pick a tier
 
-| Send | What happens | Pick it when |
+| Send | For | Thinks | Window |
+|---|---|---|---|
+| `enso-flash` | volume: reads, searches, small edits, extraction, an agent's routine turns | low | 900,000 |
+| `enso-pro` | everyday coding and analysis | medium | 1,000,000 |
+| `enso-ultra` | the hardest turns: a refactor across many files, a bug the other tiers missed, a plan the rest of a run depends on | max | 1,000,000 |
+| `enso-auto` | any job, when you would rather not choose: on a paid plan, the tier your reasoning depth asks for; otherwise free models | as asked | — |
+
+**Thinks** is the reasoning depth a tier uses when the request names none; a
+request that names one is served at it, or at the nearest the model takes.
+**Window** is the longest prompt the tier's chain holds, in tokens. Every paid
+tier reads images.
+
+`enso-auto`, `enso`, `hanzo/enso` and `enso-free` are the free lane: open
+models, billed at nothing. On a paid plan the first three are
+[lifted to a paid tier](#how-enso-auto-picks-a-tier); `enso-free` never is.
+
+## Prices
+
+Per million tokens, in US dollars. A call bills its tier's price whichever
+model in the chain answered it.
+
+| Id | Input | Output | Cache read | Cache write |
+|---|---|---|---|---|
+| `enso-flash` | 0.33 | 1.65 | 0.033 | 0.4125 |
+| `enso-pro` | 3.30 | 16.50 | 0.165 | 4.125 |
+| `enso-ultra` | 5.236 | 26.18 | 0.2618 | 6.545 |
+| `enso-auto`, `enso`, `hanzo/enso`, `enso-free` | 0 | 0 | 0 | 0 |
+
+A lifted `enso-auto` bills the tier it was lifted to. The gateway is the
+authority on what a call costs, and answers with every id's input and output
+rate, no key needed:
+
+```bash
+curl -s https://api.hanzo.ai/v1/models \
+  | jq -r '.data[] | select(.id | test("^(hanzo/)?enso")) | "\(.id)\t\(.pricing.input_per_million)\t\(.pricing.output_per_million)"'
+```
+
+Against `api.hanzo.ai`'s own list for the models the tiers stand in for:
+
+| Model | Input | Output | Cache read | Cache write |
+|---|---|---|---|---|
+| Claude Sonnet 5.5 | 2.11 | 10.55 | 0.1055 | 2.6375 |
+| **`enso-pro`** | 3.30 | 16.50 | 0.165 | 4.125 |
+| Claude Opus 5.5 | 4.22 | 21.10 | 0.211 | 5.275 |
+| **`enso-ultra`** | 5.236 | 26.18 | 0.2618 | 6.545 |
+| Claude Fable 5.1 | 10.55 | 52.75 | 0.26375 | 13.1875 |
+| GPT-6 Astra | 10.55 | 52.75 | 1.055 | 13.1875 |
+
+`enso-pro` costs more than Sonnet 5.5 and less than Opus 5.5 in every class.
+`enso-ultra` costs less than Fable 5.1 and GPT-6 Astra in every class.
+
+## What answers each tier
+
+Each tier is an ordered chain. A rung is asked only when the one before it
+fails — an outage, a rate limit, a refusal — and never raced against another.
+
+| Tier | Chain, in order |
+|---|---|
+| `enso-flash` | GPT-6 Luna → GPT-6 Luna Pro |
+| `enso-pro` | GPT-6.1 Sol at medium effort, for prompts up to 272,000 tokens → Gemini 4 Argon → Claude Sonnet 5.5 |
+| `enso-ultra` | Claude Sonnet 5.5 at max effort → Claude Opus 5.5 → Gemini 4 Argon |
+
+A prompt over 272,000 tokens on `enso-pro` starts at Gemini 4 Argon. The
+`X-Hanzo-Served` response header names the Enso id that answered: the tier you
+sent, or the one `enso-auto` was lifted to. If every rung fails, the free lane
+answers and the header says so.
+
+Gemini 4 Argon also answers under its own id, `google/gemini-4-argon`, at 2.11
+input, 10.55 output and 0.1055 cache read per million tokens.
+
+## Why these models
+
+The chains follow a third-party ranking: the
+[Artificial Analysis](https://artificialanalysis.ai) Coding Agent Index (v1.5),
+which runs each model in its own agent at the effort named. The scores were
+read from the
+[benchlm.ai capture of 2026-10-15](https://benchlm.ai/benchmarks/aacodingagents);
+Hanzo did not measure them.
+
+| Model | Effort | Index |
 |---|---|---|
-| `model: "auto"` | Enso routes across the models your org can serve and bills the one that answered | you want the choice made per request, over your own pool |
-| an `enso-*` id | one managed name; Hanzo picks the serving path behind it | you want one id, one rate, and no pool to manage |
+| Claude Sonnet 5.5 | max | 68.4 |
+| Claude Opus 5.5 | max | 66.0 |
+| Gemini 4 Argon | high | 63.8 |
+| GPT-6.1 Sol | xhigh | 62.9 |
+| GPT-6.1 Sol | medium | 61.4 |
+| GPT-6 Luna | max | 41.1 |
+
+`enso-ultra` leads with the top score and keeps the next two behind it.
+`enso-pro` leads with GPT-6.1 Sol at medium effort, 2.4 points under Gemini 4
+Argon at the same price a token. `enso-flash` leads with GPT-6 Luna, for turns
+that do not need the frontier; Luna Pro stands behind it, because it billed 3.2
+times the prompt tokens for the same request. Hanzo's own runs are published at
+[hanzo.ai/benchmarks](https://hanzo.ai/benchmarks).
+
+## How `enso-auto` picks a tier
+
+On a paid plan, `enso-auto`, `enso` and `hanzo/enso` are served as the tier the
+request's reasoning depth asks for:
+
+| Depth asked | Served as |
+|---|---|
+| no depth, `none`, `minimal`, `low` | `enso-flash` |
+| `medium`, `high` | `enso-pro` |
+| `xhigh`, `max` | `enso-ultra` |
+
+The depth is read from `reasoning_effort`, `reasoning.effort`, or a thinking
+budget (`reasoning.max_tokens`, or Anthropic's `thinking.budget_tokens`): under
+4,096 tokens is low, 4,096 to 16,383 medium, 16,384 and over max. A lifted
+answer carries a `routing` object naming the depth it read, the tier it chose
+and why. A caller without a paid plan is never lifted and stays on free models.
+
+## Caching
+
+Caching works through every tier. Put the long, stable part of a prompt first
+and send it unchanged; from the second call on, the model behind the tier reads
+it from cache, and those tokens bill at the tier's cache-read rate.
+`usage.prompt_tokens_details.cached_tokens` counts them.
+
+Measured through `api.hanzo.ai` on 2026-10-15, with the prefix marked
+`cache_control`: a repeated prompt read 8,429 of 10,483 tokens from cache on
+Gemini 4 Argon, and 14,810 of 14,828 on Claude Sonnet 5.5.
+
+## What a turn costs
+
+One turn of a coding agent: a 100,000-token prompt, of which 92,000 tokens are
+read from cache, 6,000 are new and written to it for the next turn, and 2,000
+are plain input; then 2,000 tokens of answer.
+
+| Tokens | Class | `enso-flash` | `enso-pro` | `enso-ultra` |
+|---|---|---|---|---|
+| 92,000 | cache read | $0.00304 | $0.01518 | $0.02409 |
+| 6,000 | cache write | $0.00248 | $0.02475 | $0.03927 |
+| 2,000 | input | $0.00066 | $0.00660 | $0.01047 |
+| 2,000 | output | $0.00330 | $0.03300 | $0.05236 |
+| | **the turn** | **$0.0095** | **$0.0795** | **$0.1262** |
+
+Without the cache, `enso-pro` bills all 100,000 prompt tokens as input, and the
+same turn costs \$0.363: 4.6 times as much.
+
+## Claude Code
+
+`hanzo --claude --cloud` (CLI 8.5.731 and later) runs Claude Code on Hanzo and
+fills its model slots with Enso:
+
+| Claude Code slot | Served as |
+|---|---|
+| Haiku: background work and routine turns | `enso-flash` |
+| Sonnet | `enso-pro` |
+| Opus, Fable | `enso-ultra` |
+
+The session's main model is `enso-auto` unless you pass `--model`.
+`--model zen6` runs [Zen 6](/docs/models/zen), the open-weights model.
+[Claude Code](/docs/guides/coding/claude-code) has the rest.
+
+## The `auto` router
+
+`model: "auto"` routes across the models your org can serve and bills the one
+that answered. That model is in the `X-Routed-Model` response header and the
+body's `model` field. `zen-router` is an alias for `auto`.
 
 ```bash
 curl -si https://api.hanzo.ai/v1/chat/completions \
@@ -28,53 +183,39 @@ curl -si https://api.hanzo.ai/v1/chat/completions \
   -d '{"model": "auto", "messages": [{"role": "user", "content": "Summarize this changelog in one line."}]}'
 ```
 
-The rewrite happens before provider, pricing and billing are resolved, so the
-request is priced, metered and reported as exactly the model that served it.
-That model is in the `X-Routed-Model` response header and in the body's
-`model` field; the two always match. `zen-router` is accepted as an alias for
-`auto`.
-
-## How it picks
+### How it picks
 
 1. **Classify.** Media, length and keywords put the request in one task class:
    `code`, `reasoning`, `math`, `creative`, `vision`, `long_context`,
    `cheap_chat` or `general`.
-2. **Narrow.** Only models your org can actually serve are eligible — a route
-   exists and your tier or grant admits it — then only the ones your org
-   enabled, then only the ones under your cost ceiling. A narrower scope can
-   only narrow; it never reaches a model another scope could not.
-3. **Choose**, in this order, first answer wins:
-   - an **override** your org pinned for that task class;
-   - the **learned policy**: a bilinear utility `xᵀW p` over request features
-     and per-model profiles, fit by ridge regression and adapted per user with
-     LinUCB; it defers when it is unsure;
-   - an optional **exploration** share that samples a non-champion model, so
-     every model in the pool keeps earning feedback;
-   - the **rule table**: an ordered list of models per task class, Zen first;
-     the first servable one wins.
+2. **Narrow.** Only models your org can serve are eligible, then only the ones
+   your org enabled, then only the ones under your cost ceiling.
+3. **Choose**, first answer wins: an **override** your org pinned for the task
+   class; the **learned policy**, a bilinear utility over request features and
+   per-model profiles that defers when it is unsure; an optional
+   **exploration** share that samples a non-champion model; the **rule
+   table**, an ordered list per task class whose first servable model wins.
 
-With routing on for your org, `auto` always resolves: when the learned policy
-is unreachable or unsure, the rule table answers.
+The decision runs on a CPU:
+[HIP-0510](https://hips.hanzo.ai/docs/hip-0510-enso-learned-router) measures
+300 ns for the rule router and 12 µs for the learned one.
 
-## Bound it
-
-Two optional headers set a ceiling per request without touching the body:
+### Bound it
 
 | Header | Meaning |
 |---|---|
 | `X-Max-Cost` | the most you will pay, in USD per 1,000 tokens |
 | `X-Max-Latency-Ms` | the slowest model you will accept, in milliseconds |
 
-An org can also set, once: a cost ceiling that fills an unset `X-Max-Cost`,
-per-task overrides, the enabled-model list, and the strategy — `enso` (the
-learned policy leads; the default) or `heuristic` (rules only, for routing you
-can audit line by line). An explicit header always wins when it is lower.
+An org can set a default cost ceiling, per-task overrides, the enabled-model
+list, and the strategy: `enso` (the learned policy leads; the default) or
+`heuristic` (rules only). A header always wins when it is lower.
 [Smart routing](/docs/usage/routing) covers where those switches live.
 
-## Teach it
+### Teach it
 
-Tell Enso how a routed answer went. The `request_id` is the response `id` you
-already hold (`chatcmpl-…`):
+Tell Enso how a routed answer went. The `request_id` is the response `id`
+(`chatcmpl-…`):
 
 ```bash
 curl https://api.hanzo.ai/v1/ai/feedback \
@@ -91,41 +232,10 @@ curl https://api.hanzo.ai/v1/ai/feedback \
 | `rating` with `rating` 1, 2 or 3 | 0, 0.5, 1 |
 | `dismiss` | nothing recorded |
 
-The ledger holds features and a reward, never prompt text. A reward can land
-only on your own org's requests, and an org that turns training contribution
-off records none. Each cycle fits a candidate, deploys it only if it beats the
-incumbent on held-out reward, and otherwise keeps the incumbent: a regression
-cannot ship. Your org's own policy trains on your org's rewards alone.
-
-## The Enso family
-
-The managed ids, from the gateway:
-
-```bash
-curl -s https://api.hanzo.ai/v1/models \
-  | jq -r '.data[] | select(.id | startswith("enso")) | "\(.id)\t\(.context_window)\t\(.pricing.input_per_million)/\(.pricing.output_per_million)"'
-```
-
-| Id | Reasoning | Note |
-|---|---|---|
-| `enso-auto` | medium | the default: [Hanzo Dev](/docs/dev) sends it when you name no model |
-| `enso-flash` | off | fast, for volume |
-| `enso-ultra` | maximum | the most compute per request |
-| `enso-pro` | medium | served on the same path as `enso` |
-| `enso` | medium | the earlier name of `enso-auto`, kept while clients move |
-| `enso-free` | — | the no-charge tier |
-
-Reasoning is the serving catalogue's setting today. Rates and windows are the
-command's, not this page's: the gateway is the source of truth, and
-[Pricing](/docs/pricing) is generated from it.
-
-## Kai inside Enso
-
-Routing is one bounded decision; an agent loop makes many more — how much
-context, which tool, how much reasoning, whether the step made progress, whether
-the task is done, whether a command may run. [Kai](/docs/models/kai) is being
-built into Enso as the in-process controller for those, one Decision Program
-each, starting in `shadow`. Status: in progress.
+The ledger holds features and a reward, never prompt text, and only for your
+own org's requests. Each cycle fits a candidate and deploys it only if it beats
+the incumbent on held-out reward. [Kai](/docs/models/kai#kai-inside-enso) is
+being built into Enso for the decisions an agent loop makes beyond the model.
 
 ## Also named Enso
 
@@ -136,9 +246,9 @@ each, starting in `shadow`. Status: in progress.
 
 ## Source
 
-The router and learned policy: [hanzoai/engine](https://github.com/hanzoai/engine)
-(`enso`, `hanzo-router`). The family: [hanzoai/enso](https://github.com/hanzoai/enso).
-
-Specification: [HIP-0510](https://hips.hanzo.ai/docs/hip-0510-enso-learned-router).
-
-Measurements and economics: the [Enso paper](https://github.com/hanzoai/papers/tree/main/enso).
+The tiers are served by the `enso` service on the Hanzo engine. The router and
+learned policy: [hanzoai/engine](https://github.com/hanzoai/engine). The
+family: [hanzoai/enso](https://github.com/hanzoai/enso). Specification:
+[HIP-0510](https://hips.hanzo.ai/docs/hip-0510-enso-learned-router). The
+learned policy and its measurements: the
+[Hanzo Router paper](https://github.com/hanzoai/papers/tree/main/hanzo-router).
