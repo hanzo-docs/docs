@@ -1,0 +1,37 @@
+---
+title: Google Gemini
+description: "Gemini models are in the catalogue as google/gemini-*, served on the OpenAI-compatible routes at api.hanzo.ai/v1. Gemini's own generateContent wire is not served."
+---
+
+Google's Gemini API is its own wire, `models/{model}:generateContent`.
+Hanzo serves Gemini models on the OpenAI-compatible routes instead:
+`POST https://api.hanzo.ai/v1/chat/completions` with `model:
+"google/gemini-2.5-flash"` or any other `google/…` id the catalogue lists. Moving
+over means switching from the Gemini SDK to an OpenAI-compatible client, after
+which every other provider's models are one name away.
+
+## Start here
+
+```bash
+curl -sS https://api.hanzo.ai/v1/chat/completions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '{"model":"google/gemini-2.5-flash","messages":[{"role":"user","content":"summarise Q3"}]}'
+
+curl -sS https://api.hanzo.ai/v1/models | jq -r '.data[].id' | grep '^google/'
+```
+
+## Gemini CLI
+
+Keep Gemini CLI on your Google account. `hanzo --gemini` attaches the Hanzo
+toolset for the run, so it can hand work to Enso and Kai. It speaks only Google's
+API, so `--cloud` does not apply to it. [Gemini CLI with Hanzo →](/docs/guides/coding/agents#gemini-cli)
+
+## What does not carry
+
+**`generateContent` is not served.** A client built on the Gemini wire
+(`v1beta/models/…:generateContent`) needs an OpenAI-compatible client to reach
+api.hanzo.ai.
+
+**Safety settings and Gemini-only request fields stay with Google.** The
+OpenAI-compatible body carries messages, tools and sampling settings.

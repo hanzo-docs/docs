@@ -1,10 +1,10 @@
 ---
 title: Migrate
-description: 41 vendors, each mapped to the Hanzo capability that answers it — how to start, nouns, the call before and after, and what does not carry.
+description: 45 vendors and tools, each mapped to the Hanzo capability that answers it — how to start, nouns, the call before and after, and what does not carry.
 icon: ArrowRightLeft
 ---
 
-41 guides, one per vendor. Each one starts with the shortest path to a working
+45 guides, one per vendor or tool. Each one starts with the shortest path to a working
 call, names the capability that answers the vendor, maps their nouns onto ours,
 shows the same call both ways, and says plainly what you lose.
 
@@ -56,6 +56,10 @@ below are read from the API document this site is built from.
 | From | What it does | Capability |
 |---|---|---|
 | [OpenAI platform](/docs/guides/migrate/openai) | Models, assistants and the platform around them | `/v1/ai` (272) · `/v1/agent` (37) |
+| [Anthropic](/docs/guides/migrate/anthropic) | The Messages API, and Claude Code on an Anthropic key | `/v1/messages` |
+| [Google Gemini](/docs/guides/migrate/gemini) | Gemini models and Gemini CLI | `/v1/chat/completions` |
+| [OpenRouter](/docs/guides/migrate/openrouter) | One OpenAI-compatible endpoint over many providers | `/v1/chat/completions` · `/v1/responses` |
+| [Coding agents](/docs/guides/migrate/coding-agents) | Claude Code, Codex, Cursor, OpenCode and every agent you already run | `hanzo --<agent>` |
 | [NVIDIA NeMo](/docs/guides/migrate/nemo) | Nemotron, NIM, Relay, Guardrails, Evaluator and the agent toolkit | `/v1/ai` (272) · `/v1/o11y` (381) · `/v1/eval` (16) |
 | [Jev](/docs/guides/migrate/jev) | Typed decisions through OpenRouter's Decisions API | `/v1/decisions` |
 | [Replicate](/docs/guides/migrate/replicate) | Running a model under a name | `/v1/ml` (7) · `/v1/ai` (272) |

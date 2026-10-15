@@ -1,0 +1,64 @@
+---
+title: Anthropic
+description: "The Anthropic Messages API is served at POST /v1/messages: point the SDK or Claude Code at api.hanzo.ai with a Hanzo key as the bearer, and name a model as anthropic/claude-* or any other model in the catalogue."
+---
+
+Anthropic's API is `POST /v1/messages`, and Hanzo serves the same route at
+`https://api.hanzo.ai/v1/messages`. The body you send today works unchanged. Two
+things move: the host, and the key, which goes as a bearer token. Every Claude
+model is in the catalogue as `anthropic/claude-*`, beside the other providers'
+models and Hanzo's own, so one key reaches all of them through the same route.
+
+## Start here
+
+```bash
+# the call you already make, at a different host, with a Hanzo key as the bearer
+curl -sS https://api.hanzo.ai/v1/messages \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H 'anthropic-version: 2023-06-01' \
+  -H 'Content-Type: application/json' \
+  -d '{"model":"anthropic/claude-haiku-4.5","max_tokens":256,
+       "messages":[{"role":"user","content":"summarise Q3"}]}'
+
+# the names it accepts
+curl -sS https://api.hanzo.ai/v1/models | jq -r '.data[].id' | grep '^anthropic/'
+```
+
+In the SDKs, set the base URL and pass the key as the auth token, the form that
+sends a bearer:
+
+```python
+from anthropic import Anthropic
+client = Anthropic(base_url="https://api.hanzo.ai", auth_token=os.environ["HANZO_API_KEY"])
+```
+
+```ts
+import Anthropic from "@anthropic-ai/sdk";
+const client = new Anthropic({ baseURL: "https://api.hanzo.ai", authToken: process.env.HANZO_API_KEY });
+```
+
+## Claude Code
+
+Keep Claude Code. `hanzo --claude` starts it on your Claude plan with the Hanzo
+toolset attached, so it can hand work to Enso and Kai. `hanzo --claude --cloud`
+moves its own model calls onto Hanzo as well, sets `ANTHROPIC_BASE_URL` and the
+bearer for that run, and names `enso-auto` unless you pass `--model`. Your
+`~/.claude` is not edited. [Claude Code with Hanzo →](/docs/guides/coding/claude-code)
+
+## Nouns
+
+| Anthropic | Hanzo |
+|---|---|
+| `x-api-key: sk-ant-…` | `Authorization: Bearer <Hanzo key>` |
+| `claude-sonnet-…` | `anthropic/claude-…`, or any model in `GET /v1/models` |
+| Workspace | Org: the key carries it |
+| Console usage | `hanzo usage summary`, `hanzo console` (press `6`), [platform.hanzo.ai](https://platform.hanzo.ai) |
+
+## What does not carry
+
+**The model name gains a prefix.** A bare `claude-…` id is Anthropic's own
+naming. Here the catalogue names the provider, `anthropic/claude-haiku-4.5`, so
+the same key can also name `openai/…`, `google/…` or `enso-auto`.
+
+**The key goes as a bearer.** Send it in `Authorization: Bearer`. That is what the
+SDKs' `auth_token` option sends, and what `hanzo --claude --cloud` sets.

@@ -1,6 +1,6 @@
 ---
 title: More agents
-description: "Gemini CLI, Qwen Code, OpenCode, Kilo Code, Crush, Pi, GitHub Copilot CLI, Amp, Grok Build, Goose, Aider, Hermes Agent, Cline, Continue, Kimi Code, Oh My Pi, Letta Code and Kode from `hanzo --<agent>`: how each takes the Hanzo toolset and Hanzo's models."
+description: "Gemini CLI, Qwen Code, OpenCode, Kilo Code, Crush, Pi, GitHub Copilot CLI, Amp, Grok Build, Goose, Aider, Hermes Agent, OpenHands, Cline, Continue, Kimi Code, Oh My Pi, Letta Code and Kode from `hanzo --<agent>`: how each takes the Hanzo toolset and Hanzo's models."
 ---
 
 Each agent here keeps its own login, settings and sessions. For one run, `hanzo --<agent>` hands it the Hanzo toolset the way that agent reads servers, and under `--cloud` it points the agent's model calls at api.hanzo.ai. Nothing is written into the agent's own configuration. Your Hanzo token reaches the agent through its environment, never its arguments.
@@ -135,6 +135,17 @@ hanzo --hermes --cloud "summarise the open issues"
 - **On your own account:** Hermes keeps its home, `~/.hermes`, with its memory and skills, and the toolset is not attached, because Hermes reads servers only from its home.
 - **`--cloud`:** Hermes runs in a home of Hanzo's own, `~/.hanzo/hermes`. Its `config.yaml` names a `hanzo` provider at `https://api.hanzo.ai/v1`, reading your token from `HANZO_API_KEY`, and lists the Hanzo toolset as an MCP server.
 - **Acts without asking:** `--yolo`. Headless runs use `-z`.
+
+## OpenHands
+
+```bash
+uv tool install openhands --python 3.12
+hanzo --openhands --cloud "add a test for the parser"
+```
+
+- **Headless:** `--headless -t <task>`, which also acts without asking. Interactive runs take `--always-approve`.
+- **Toolset:** OpenHands keeps MCP servers in its own saved configuration, so the toolset is not attached for one run.
+- **`--cloud`:** `LLM_BASE_URL=https://api.hanzo.ai/v1`, your token in `LLM_API_KEY` and `LLM_MODEL=openai/<model>`, read under `--override-with-envs`.
 
 ## Cline
 

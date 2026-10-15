@@ -1,7 +1,7 @@
 {
   "$schema": "../../../../.docs/json-schema/docs.meta.json",
   "title": "Migrate",
-  "description": "41 vendors, each mapped to the capability that answers it.",
+  "description": "45 vendors and tools, each mapped to the capability that answers it.",
   "icon": "ArrowRightLeft",
   "pages": [
     "---[Rocket]Hosting and delivery---",
@@ -30,6 +30,10 @@
     "launchdarkly",
     "---[Boxes]Agents & inference---",
     "openai",
+    "anthropic",
+    "gemini",
+    "openrouter",
+    "coding-agents",
     "nemo",
     "jev",
     "replicate",

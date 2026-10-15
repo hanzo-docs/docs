@@ -40,6 +40,7 @@ hanzo --claude "fix the failing test in api/users"   # one quoted task runs head
 | [Goose](/docs/guides/coding/agents#goose) | `hanzo --goose` | Goose's installer | yes | yes |
 | [Aider](/docs/guides/coding/agents#aider) | `hanzo --aider` | `uv tool install aider-chat` | no | yes |
 | [Hermes Agent](/docs/guides/coding/agents#hermes-agent) | `hanzo --hermes` | Nous Research's installer | with `--cloud` | yes |
+| [OpenHands](/docs/guides/coding/agents#openhands) | `hanzo --openhands` | `uv tool install openhands --python 3.12` | no | yes |
 | [Cline](/docs/guides/coding/agents#cline) | `hanzo --cline` | `hanzo upgrade cline` | no | no |
 | [Continue CLI](/docs/guides/coding/agents#continue-cli) | `hanzo --continue` | `hanzo upgrade continue` | no | no |
 | [Kimi Code](/docs/guides/coding/agents#kimi-code) | `hanzo --kimi` | `hanzo upgrade kimi` | no | no |
@@ -90,10 +91,7 @@ Figures are labelled with their source and are never added across sources. Nothi
 
 ## How Kai and the toolset measure
 
-Every number Hanzo publishes about Kai and the toolset is a research run, with each item stored beside it:
-
-- [hanzo.ai/benchmarks](https://hanzo.ai/benchmarks): Kai against other decision models, and the agent toolset board, live from the runs below.
-- [`mcp.injection`](https://api.hanzo.ai/v1/research/runs?org=hanzo&benchmark=mcp.injection), [`mcp.command`](https://api.hanzo.ai/v1/research/runs?org=hanzo&benchmark=mcp.command), [`mcp.select`](https://api.hanzo.ai/v1/research/runs?org=hanzo&benchmark=mcp.select), [`mcp.triage`](https://api.hanzo.ai/v1/research/runs?org=hanzo&benchmark=mcp.triage): the toolset's injection screen, command guard, tool selection and log triage, each held out and beside the handler it replaced.
+Every number Hanzo publishes about Kai and the toolset is a research run, with each item stored beside it. [hanzo.ai/benchmarks](https://hanzo.ai/benchmarks) draws them live: Kai against other decision models, and the [agent toolset board](https://hanzo.ai/benchmarks#tools), where the injection screen, the command guard, tool selection and log triage each sit beside the handler they replaced, every table linking its runs.
 
 ## Keep everything up to date
 

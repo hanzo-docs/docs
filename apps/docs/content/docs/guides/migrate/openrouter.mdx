@@ -1,0 +1,52 @@
+---
+title: OpenRouter
+description: "OpenRouter's OpenAI-compatible API maps onto api.hanzo.ai/v1 with the same provider/model names: a base URL and a key, and Enso when you want the router to pick."
+---
+
+OpenRouter is one OpenAI-compatible endpoint in front of many providers, with
+models named `provider/model`. Hanzo is the same shape:
+`https://api.hanzo.ai/v1` serves `POST /v1/chat/completions` and
+`POST /v1/responses`, and the catalogue names models the same way,
+`anthropic/…`, `openai/…`, `google/…`, `x-ai/…`, `deepseek/…`, `qwen/…`. For
+inference the base URL and the key are the whole edit.
+
+## Start here
+
+```bash
+curl -sS https://api.hanzo.ai/v1/chat/completions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '{"model":"google/gemini-2.5-flash","messages":[{"role":"user","content":"summarise Q3"}]}'
+```
+
+```python
+from openai import OpenAI
+client = OpenAI(base_url="https://api.hanzo.ai/v1", api_key=os.environ["HANZO_API_KEY"])
+```
+
+## Let the router pick
+
+Name `enso-auto` and Enso, Hanzo's router, chooses the model your plan pays for.
+Each answer says which model served it and why, in its `routing` block. Name a
+model instead whenever you want that model and no other.
+
+## Coding agents that used OpenRouter
+
+An agent you pointed at OpenRouter through its own settings (OpenCode, Kilo
+Code, Crush, Goose, Aider, Qwen Code, Hermes and others) runs on Hanzo with
+`hanzo --<agent> --cloud`, which sets the provider for that run and changes none
+of your files. [Every agent →](/docs/guides/coding)
+
+## Decisions
+
+OpenRouter's Decisions API (`/api/alpha/decisions`) maps to `POST /v1/decisions`
+with `model: "kai"`. [From Jev →](/docs/guides/migrate/jev)
+
+## What does not carry
+
+**OpenRouter's request-level routing fields are its own.** `provider`
+preferences, a `models` fallback list and `route` belong to OpenRouter. Here you
+name one model, or name `enso-auto` and let Enso choose.
+
+**`HTTP-Referer` and `X-Title` are not needed.** Hanzo attributes usage to the org
+the key belongs to.

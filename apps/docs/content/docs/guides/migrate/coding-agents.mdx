@@ -1,0 +1,33 @@
+---
+title: Coding agents
+description: "Keep the coding agent you use. Run it with `hanzo --<agent>`: it hands work to Enso and Kai through the Hanzo toolset, and `--cloud` moves its model calls onto your Hanzo plan."
+---
+
+Nothing to port. The agent you use now keeps its login, its settings and its
+sessions; `hanzo` starts it, attaches the Hanzo toolset for that run, and, with
+`--cloud`, points its model calls at api.hanzo.ai.
+
+```bash
+curl -fsSL hanzo.sh | sh
+hanzo login
+hanzo --claude            # or --codex, --cursor, --gemini, --qwen, --opencode, --goose, --hermes, …
+```
+
+## From each kind of setup
+
+| You run today | Run instead | What changes |
+|---|---|---|
+| Claude Code on a Claude plan | `hanzo --claude` | The toolset is attached; Enso and Kai take work off your Claude plan |
+| Claude Code through a router (claude-code-router, a LiteLLM proxy) | `hanzo --claude --cloud` | Model calls go to api.hanzo.ai; no proxy to run |
+| Codex on a ChatGPT plan | `hanzo --codex` | The toolset is attached through `-c mcp_servers.*` |
+| OpenCode, Kilo Code, Crush, Goose, Aider, Qwen Code, Hermes, OpenHands or Pi on OpenRouter or a provider key | `hanzo --<agent> --cloud` | Hanzo sets the provider for the run; your config is untouched |
+| Cursor, Antigravity, Copilot, Amp, Gemini CLI, Grok Build, Cline, Kimi, Letta, Continue | `hanzo --<agent>` | Starts it on its own account; the toolset where the agent takes one |
+
+[Every agent, and what Hanzo adds to each →](/docs/guides/coding)
+
+## Taking work off your plan
+
+The toolset gives the agent `llm` (Enso), `kai_decide` (Kai), and Hanzo's code
+and web search. Work handed to them is billed to your Hanzo plan, not the agent's,
+and the summary at the end of each session lists every hand-off with the model
+that took it and the tokens it used. [What a session used →](/docs/guides/coding#what-a-session-used)
