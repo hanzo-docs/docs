@@ -98,9 +98,9 @@ Claude Desktop, Cursor, VS Code, Windsurf, Zed, JetBrains and the Codex and Clau
 
 Every number Hanzo publishes about Kai and the toolset is a research run, with each item stored beside it.
 
-- **Hanzo Dev against Claude Code**, 44 held repair tasks ([runs](https://api.hanzo.ai/v1/research/runs?org=hanzo&benchmark=coding.repair)): Claude Code solved 44 at a 9.6 s median with 3.8 model calls a task; Hanzo Dev solved 40 at 2.2 s with 1.0. On the 40 both solved, Hanzo Dev was 3.8× faster, and 8.2× on the 24 that were search.
-- **The toolset's local tools** ([command](https://api.hanzo.ai/v1/research/runs?org=hanzo&benchmark=mcp.command), [select](https://api.hanzo.ai/v1/research/runs?org=hanzo&benchmark=mcp.select), [triage](https://api.hanzo.ai/v1/research/runs?org=hanzo&benchmark=mcp.triage)): the command guard answers in 0.06 ms, tool selection in 0.16 ms (top-1 .73), log triage in 0.37 ms (.70 right), each where the model call it replaced took 0.5 to 1.6 s.
-- **Kai** ([runs](https://api.hanzo.ai/v1/research/runs?org=hanzo&benchmark=latency)): 19.8 ms p50 for one decision.
+- **Hanzo Dev against Claude Code**, 44 held repair tasks ([board](https://hanzo.ai/benchmarks#coding-agent)): Claude Code solved 44 at a 9.6 s median with 3.8 model calls a task; Hanzo Dev solved 40 at 2.2 s with 1.0. On the 40 both solved, Hanzo Dev was 3.8× faster, and 8.2× on the 24 that were search.
+- **The toolset's local tools** ([command](https://hanzo.ai/benchmarks#tools-mcp-command), [select](https://hanzo.ai/benchmarks#tools-mcp-select), [triage](https://hanzo.ai/benchmarks#tools-mcp-triage)): the command guard answers in 0.06 ms, tool selection in 0.16 ms (top-1 .73), log triage in 0.37 ms (.70 right), each where the model call it replaced took 0.5 to 1.6 s.
+- **Kai** ([board](https://hanzo.ai/benchmarks#kai)): 19.8 ms p50 for one decision.
 
 No study yet measures an agent such as Claude Code with the toolset against the same agent without it. [hanzo.ai/benchmarks](https://hanzo.ai/benchmarks) draws them live: Kai against other decision models, and the [agent toolset board](https://hanzo.ai/benchmarks#tools), where the injection screen, the command guard, tool selection and log triage each sit beside the handler they replaced, every table linking its runs.
 
