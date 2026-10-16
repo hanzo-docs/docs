@@ -32,9 +32,9 @@ Every path is the same `/v1` as production. Change the base URL and nothing else
 curl https://api-test.hanzo.ai/v1/models
 ```
 
-Each network keeps its own API keys, so a production `hk-` key means nothing on
-testnet. Authenticate with your Hanzo account's token instead, which every
-network accepts (`hanzo auth token` prints it):
+Testnet and devnet do not accept API keys: an `sk-` key authenticates on
+mainnet only. Authenticate with your Hanzo account's token, which all three
+accept (`hanzo auth token` prints it):
 
 ```python
 import subprocess
