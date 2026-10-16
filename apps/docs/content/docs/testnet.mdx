@@ -1,7 +1,7 @@
 ---
 icon: FlaskConical
 title: Testnet and devnet
-description: Two copies of the Hanzo cloud that take only Square sandbox cards. Testnet runs exactly what production runs; devnet runs what is being built next.
+description: Two copies of the Hanzo cloud that take only Square sandbox cards. Testnet runs exactly what production runs; devnet runs what is being built next, with accounts of its own.
 ---
 
 
@@ -11,11 +11,11 @@ really charged, and know which one to pick.**
 Hanzo runs three copies of the same cloud. Each has its own API, its own web app,
 its own books and its own chain, and only one of them takes real money.
 
-| | API | Web app | Runs | Money |
-|---|---|---|---|---|
-| **mainnet** | `https://api.hanzo.ai` | hanzo.ai | the current release | real cards |
-| **testnet** | `https://api-test.hanzo.ai` | test.hanzo.ai | the same release as mainnet, always | Square sandbox only |
-| **devnet** | `https://api-dev.hanzo.ai` | dev.hanzo.ai | the `dev` branch, minutes after each push | Square sandbox only |
+| | API | Web app | Sign-in | Runs | Money |
+|---|---|---|---|---|---|
+| **mainnet** | `https://api.hanzo.ai` | hanzo.ai | hanzo.id | the current release | real cards |
+| **testnet** | `https://api-test.hanzo.ai` | test.hanzo.ai | hanzo.id | the same release as mainnet, always | Square sandbox only |
+| **devnet** | `https://api-dev.hanzo.ai` | app-dev.hanzo.ai | id-dev.hanzo.ai | the `dev` branch, minutes after each push | Square sandbox only |
 
 <Callout>
 **Testnet is production's release, byte for byte.** Every release that reaches
@@ -33,8 +33,10 @@ curl https://api-test.hanzo.ai/v1/models
 ```
 
 Testnet and devnet do not accept API keys: an `sk-` key authenticates on
-mainnet only. Authenticate with your Hanzo account's token, which all three
-accept (`hanzo auth token` prints it):
+mainnet only. Authenticate with an account token. Testnet takes your Hanzo
+account's token, the one hanzo.id issues; devnet takes only a devnet account's
+token, issued by id-dev.hanzo.ai (see [Signing in](#signing-in)). `hanzo auth
+token` prints the token for the network the CLI is on:
 
 ```python
 import subprocess
@@ -44,16 +46,31 @@ token = subprocess.check_output(["hanzo", "auth", "token"], text=True).strip()
 client = OpenAI(base_url="https://api-test.hanzo.ai/v1", api_key=token)
 ```
 
+To aim the `hanzo` CLI at a network, select it; the API and the sign-in host
+follow:
+
+```bash
+hanzo network use devnet    # api-dev.hanzo.ai, signing in at id-dev.hanzo.ai
+hanzo auth login
+hanzo network use mainnet   # back to api.hanzo.ai and hanzo.id
+```
+
 ## Signing in
 
-You sign in with your Hanzo account, the one you use on hanzo.ai: there is one
-identity for all three networks. What is separate is everything that account
-*holds*: a testnet or devnet balance, card on file, invoice or usage record lives
-only on that network and is never mixed with your production books.
+**Mainnet and testnet** share one identity: you sign in with your Hanzo account,
+the one you use on hanzo.ai. What is separate is everything that account
+*holds*: a testnet balance, card on file, invoice or usage record lives only on
+testnet and is never mixed with your production books.
+
+**Devnet has accounts of its own.** It runs code that is still being built, so it
+never sees a production credential: its identity is id-dev.hanzo.ai, a token
+from hanzo.id is refused at api-dev.hanzo.ai, and a devnet token is refused at
+api.hanzo.ai. Sign in at id-dev.hanzo.ai, or on app-dev.hanzo.ai, with a devnet
+account; your hanzo.id account does not exist there.
 
 ## Paying with a sandbox card
 
-On test.hanzo.ai and dev.hanzo.ai the card form is Square's **sandbox**. No real
+On test.hanzo.ai and app-dev.hanzo.ai/pay the card form is Square's **sandbox**. No real
 card is accepted and none is charged; the credit you buy is testnet or devnet
 credit and spends only there.
 
@@ -62,8 +79,10 @@ credit and spends only there.
 | Visa | `4111 1111 1111 1111` | `111` | any future date | any, e.g. `94103` |
 | Mastercard | `5105 1051 0510 5100` | `111` | any future date | any |
 
-Square documents its other sandbox values, including cards that decline on
-purpose, at [developer.squareup.com/docs/devtools/sandbox/payments](https://developer.squareup.com/docs/devtools/sandbox/payments).
+To test a decline, use either card with CVV `911`, postal code `99999` or expiry
+`01/40`. A client that sends Square nonces directly uses `cnon:card-nonce-ok` and
+`cnon:card-nonce-declined`. Square documents every sandbox value at
+[developer.squareup.com/docs/devtools/sandbox/payments](https://developer.squareup.com/docs/devtools/sandbox/payments).
 
 ## What a sandbox network is not
 
@@ -72,3 +91,6 @@ purpose, at [developer.squareup.com/docs/devtools/sandbox/payments](https://deve
 - **Not paid models.** Testnet and devnet route Hanzo's free models only; a paid
   model id is refused.
 - **Not a place to keep data.** Treat testnet and devnet data as disposable.
+- **Devnet is the API, identity and checkout only.** It sends no email or SMS, so
+  it signs in by password; it offers no social sign-in, no MPC wallets, no crypto
+  deposits and no builds.
