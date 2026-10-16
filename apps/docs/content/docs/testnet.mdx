@@ -1,0 +1,68 @@
+---
+icon: FlaskConical
+title: Testnet and devnet
+description: Two copies of the Hanzo cloud that take only Square sandbox cards. Testnet runs exactly what production runs; devnet runs what is being built next.
+---
+
+
+**After this page you can point your code at a network where no card is ever
+really charged, and know which one to pick.**
+
+Hanzo runs three copies of the same cloud. Each has its own API, its own web app,
+its own books and its own chain, and only one of them takes real money.
+
+| | API | Web app | Runs | Money |
+|---|---|---|---|---|
+| **mainnet** | `https://api.hanzo.ai` | hanzo.ai | the current release | real cards |
+| **testnet** | `https://api-test.hanzo.ai` | test.hanzo.ai | the same release as mainnet, always | Square sandbox only |
+| **devnet** | `https://api-dev.hanzo.ai` | dev.hanzo.ai | the `dev` branch, minutes after each push | Square sandbox only |
+
+<Callout>
+**Testnet is production's release, byte for byte.** Every release that reaches
+api.hanzo.ai reaches api-test.hanzo.ai in the same step, so a checkout or an
+integration that works on testnet works on mainnet. Use **devnet** to try what is
+coming before it is released.
+</Callout>
+
+## Pointing a client at a network
+
+Every path is the same `/v1` as production. Change the base URL and nothing else.
+
+```bash
+curl https://api-test.hanzo.ai/v1/models
+```
+
+```python
+from openai import OpenAI
+
+client = OpenAI(base_url="https://api-test.hanzo.ai/v1", api_key=HANZO_API_KEY)
+```
+
+## Signing in
+
+You sign in with your Hanzo account, the one you use on hanzo.ai: there is one
+identity for all three networks. What is separate is everything that account
+*holds*: a testnet or devnet balance, card on file, invoice or usage record lives
+only on that network and is never mixed with your production books.
+
+## Paying with a sandbox card
+
+On test.hanzo.ai and dev.hanzo.ai the card form is Square's **sandbox**. No real
+card is accepted and none is charged; the credit you buy is testnet or devnet
+credit and spends only there.
+
+| Card | Number | CVV | Expiry | Postal code |
+|---|---|---|---|---|
+| Visa | `4111 1111 1111 1111` | `111` | any future date | any, e.g. `94103` |
+| Mastercard | `5105 1051 0510 5100` | `111` | any future date | any |
+
+Square documents its other sandbox values, including cards that decline on
+purpose, at [developer.squareup.com/docs/devtools/sandbox/payments](https://developer.squareup.com/docs/devtools/sandbox/payments).
+
+## What a sandbox network is not
+
+- **Not a way to move real money.** It cannot be switched to live payments, and
+  no real card, crypto deposit or payout rail exists on it.
+- **Not paid models.** Testnet and devnet route Hanzo's free models only; a paid
+  model id is refused.
+- **Not a place to keep data.** Treat testnet and devnet data as disposable.
