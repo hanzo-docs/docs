@@ -32,10 +32,16 @@ Every path is the same `/v1` as production. Change the base URL and nothing else
 curl https://api-test.hanzo.ai/v1/models
 ```
 
+Each network keeps its own API keys, so a production `hk-` key means nothing on
+testnet. Authenticate with your Hanzo account's token instead, which every
+network accepts (`hanzo auth token` prints it):
+
 ```python
+import subprocess
 from openai import OpenAI
 
-client = OpenAI(base_url="https://api-test.hanzo.ai/v1", api_key=HANZO_API_KEY)
+token = subprocess.check_output(["hanzo", "auth", "token"], text=True).strip()
+client = OpenAI(base_url="https://api-test.hanzo.ai/v1", api_key=token)
 ```
 
 ## Signing in
