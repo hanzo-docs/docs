@@ -7,19 +7,21 @@ icon: Boxes
 **After this page you know which family answers which kind of question, which
 ones you can download, and which ids the gateway serves right now.**
 
-## Four roles
+## Five roles
 
 | Family | Role | Weights | Reach it at | Status |
 |---|---|---|---|---|
 | **[Enso](/docs/models/enso)** | routes: three paid tiers, each a chain of frontier models under one id and one price, and the `auto` router | router code open ([hanzoai/engine](https://github.com/hanzoai/engine)); tiers hosted | `enso-auto`, `enso-flash`, `enso-pro`, `enso-ultra`; `model: "auto"` | shipped |
 | **[Kai](/docs/models/kai)** | decides: typed, calibrated answers to bounded questions | hosted, not published; served by API only | `model: "kai"` on [`POST /v1/decisions`](/docs/decisions) | live: kai-1.2, $0.021 per million input tokens |
 | **[Zen](/docs/models/zen)** | reasons: agentic coding that runs locally, marketing copy and assets; also vision, speech, embeddings | open, on [Hugging Face](https://huggingface.co/zenlm) | `zen*` ids on `/v1/chat/completions` | shipped |
+| **[Creative AI](/docs/models/creative)** | generates: cinematic video, high-fidelity imagery, 3D meshes, foley, voice, music | proprietary checkpoints over open foundations; private weights | studio nodes (`studio.hanzo.ai`) & gated API | research preview · [Apply](https://hanzo.ai/research-access?track=creative) |
 | **Policy** | governs: deterministic allow / ask / deny | — | your rules, in every Decision Program | a part of Hanzo Decision, not a model |
 
 The split is by the shape of the answer. An open question — write, explain,
 plan — needs generation, so it goes to Zen. A bounded one — which model, which
 tool, is this done, allow or deny — has a known answer space, so it goes to Kai,
-which answers it without generating text. Enso sits in front and sends each
+which answers it without generating text. Creative media synthesis — video, images,
+3D, audio — runs on proprietary Creative AI checkpoints in Studio. Enso sits in front and sends each
 operation to the one that should answer it. Policy has the last word on any
 action, and a model can make a verdict stricter, never looser.
 
@@ -29,6 +31,12 @@ action, and a model can make a verdict stricter, never looser.
 |---|---|---|
 | **Kai-1.7** | multimodal decision intelligence and adaptive reasoning | early access preview · [Guide](/docs/decisions/early-access) · [Request access](https://hanzo.ai/research-access?track=kai) |
 | **Zen 7** | the next Zen generation; succeeds Satori | research preview — no weights, no id to call · [Request access](https://hanzo.ai/research-access?track=zen) |
+| **Koma** | cinematic video generation and shot continuity | research preview · [koma](https://hanzo.ai/koma) · [Apply](https://hanzo.ai/research-access?model=koma) |
+| **Iro** | high-fidelity creative image synthesis and art direction | research preview · [iro](https://hanzo.ai/iro) · [Apply](https://hanzo.ai/research-access?model=iro) |
+| **Mori** | production-ready geometric 3D mesh and PBR generation | research preview · [mori](https://hanzo.ai/mori) · [Apply](https://hanzo.ai/research-access?model=mori) |
+| **Oto** | synchronized foley sound effects and acoustic modeling | research preview · [oto](https://hanzo.ai/oto) · [Apply](https://hanzo.ai/research-access?model=oto) |
+| **Koe** | expressive speech performance and dialogue synthesis | research preview · [koe](https://hanzo.ai/koe) · [Apply](https://hanzo.ai/research-access?model=koe) |
+| **Uta** | structural music composition and multi-track stems | research preview · [uta](https://hanzo.ai/uta) · [Apply](https://hanzo.ai/research-access?model=uta) |
 | **Satori** | a video-generation line, never trained | retiring; replaced by Zen 7 |
 | **Jin** | a multimodal model specified in [HIP-0003](https://hips.hanzo.ai/docs/hip-0003-jin-multimodal-ai-architecture) | not built; no weights |
 | **Enso Diffusion** | a sparse mixture-of-experts diffusion transformer, forked from DiT-MoE: [zenlm/enso](https://github.com/zenlm/enso) | research code, no released weights |

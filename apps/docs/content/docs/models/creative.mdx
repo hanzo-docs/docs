@@ -1,0 +1,157 @@
+---
+title: Creative AI
+description: "Hanzo Creative AI: proprietary generative media checkpoints (Koma, Iro, Mori, Oto, Koe, Uta) built upon open foundations (ZenLM), served via Hanzo Cloud inference and Hanzo Studio."
+icon: Palette
+---
+
+**Hanzo Creative AI establishes a strict architectural separation between open foundations and proprietary studio models.**
+
+Open foundation models provide public, reproducible research under permissive licenses (Apache 2.0 / MIT) with downloadable weights on Hugging Face ([`huggingface.co/zenlm`](https://huggingface.co/zenlm)). Hanzo Creative models are proprietary fine-tunes designed for production studio workflows, character consistency, shot continuity, and professional audio-visual generation with private weights hosted in Hanzo Cloud.
+
+## The Model Pairings
+
+Each proprietary creative model pairs directly with an open foundation checkpoint:
+
+| Modality | Open Foundation (`Zen`) | License & Upstream Base | Hanzo Proprietary Checkpoint | Research Preview Route | Status |
+|---|---|---|---|---|---|
+| **Video** | [`zenlm/zen-director`](https://huggingface.co/zenlm/zen-director) | Apache 2.0 · Wan2.2 5B | **Koma** | [`hanzo.ai/koma`](https://hanzo.ai/koma) | Research Preview |
+| **Image** | [`zenlm/zen3-image`](https://huggingface.co/zenlm/zen3-image) | Apache 2.0 · Qwen-Image / 2512 | **Iro** | [`hanzo.ai/iro`](https://hanzo.ai/iro) | Research Preview |
+| **3D** | [`zenlm/zen-3d`](https://huggingface.co/zenlm/zen-3d) | MIT · TRELLIS | **Mori** | [`hanzo.ai/mori`](https://hanzo.ai/mori) | Research Preview |
+| **Foley** | [`zenlm/zen-foley`](https://huggingface.co/zenlm/zen-foley) | Apache 2.0 · MOSS-SoundEffect v2 | **Oto** | [`hanzo.ai/oto`](https://hanzo.ai/oto) | Research Preview |
+| **Voice** | [`zenlm/zen3-tts`](https://huggingface.co/zenlm/zen3-tts) | Apache 2.0 · Qwen3-TTS | **Koe** | [`hanzo.ai/koe`](https://hanzo.ai/koe) | Research Preview |
+| **Music** | [`zenlm/zen-musician`](https://huggingface.co/zenlm/zen-musician) | Apache 2.0 / MIT · YuE / ACE-Step 1.5 | **Uta** | [`hanzo.ai/uta`](https://hanzo.ai/uta) | Research Preview |
+
+---
+
+## Architectural Contracts
+
+The distinction between open foundation checkpoints and Hanzo proprietary models is governed by a strict lifecycle contract:
+
+| Contract Property | Open Foundation (`ZenLM`) | Proprietary Creative Model (`Hanzo`) |
+|---|---|---|
+| **Model Class** | `open` | `proprietary` |
+| **Weights Access** | Publicly downloadable | Private to Hanzo Cloud infrastructure |
+| **Licensing** | Apache 2.0 / MIT | Hanzo Commercial & Research Evaluation License |
+| **Distribution** | [Hugging Face (`zenlm`)](https://huggingface.co/zenlm) | Private API gateway & Hanzo Studio node graph |
+| **Access Gate** | Open download without approval | Granular per-model research approval |
+| **Fine-Tuning** | Unrestricted open fine-tuning | Custom enterprise adaptation via private agreement |
+| **Safety Oversight** | Upstream safety filters | Dual evaluation: [ZooAI Lifeguard](https://github.com/zooai/lifeguard) + Policy DAGs |
+
+---
+
+## Proprietary Model Specifications
+
+### Koma — Cinematic Video Generation
+- **Role**: High-fidelity video generation with shot-level creative direction and character continuity across camera cuts.
+- **Foundation**: `zen-director` (Wan2.2 5B base, Apache 2.0).
+- **Core Architecture**: Spatial-temporal diffusion transformer with dual trajectory motion control and depth-guided camera trajectories.
+- **Native Context**: Up to 120-frame temporal coherence at 24/60 fps with 1080p native generation and 4K latent upscaling.
+- **Key Use Cases**: Pre-visualization, commercial spot generation, dynamic episodic storytelling, virtual production plates.
+- **Access Route**: [hanzo.ai/koma](https://hanzo.ai/koma) · [Apply for Research Access](https://hanzo.ai/research-access?model=koma)
+
+### Iro — Creative Image Synthesis
+- **Role**: Creative art direction, brand asset design, prompt adherence, and photorealistic asset generation.
+- **Foundation**: `zen3-image` (Qwen-Image / Qwen-Image-2512 base, Apache 2.0).
+- **Core Architecture**: Multimodal cross-attention flow-matching transformer with precise typography and layout rendering.
+- **Key Use Cases**: Brand design systems, production concept art, typography-accurate editorial posters, game assets.
+- **Access Route**: [hanzo.ai/iro](https://hanzo.ai/iro) · [Apply for Research Access](https://hanzo.ai/research-access?model=iro)
+
+### Mori — Geometric 3D Mesh Generation
+- **Role**: High-fidelity 3D asset creation with production-ready topologies, PBR material maps, and UV unwrapping.
+- **Foundation**: `zen-3d` (TRELLIS base, MIT).
+- **Core Architecture**: Structured 3D Gaussian splatting to dual-resolution signed distance field (SDF) meshing with automated quad-dominant remeshing.
+- **Output Formats**: GLTF, USDZ, FBX, OBJ with albedo, roughness, metallic, and normal maps.
+- **Key Use Cases**: Spatial computing, Unreal Engine / Unity level dressing, industrial asset prototyping.
+- **Access Route**: [hanzo.ai/mori](https://hanzo.ai/mori) · [Apply for Research Access](https://hanzo.ai/research-access?model=mori)
+
+### Oto — Foley & Environmental Audio
+- **Role**: Synchronized foley sound effects, ambient soundscapes, acoustic reverberation modeling, and video-to-audio matching.
+- **Foundation**: `zen-foley` (MOSS-SoundEffect v2 base, Apache 2.0).
+- **Core Architecture**: Latent audio diffusion with multi-band mel spectrogram reconstruction and frame-accurate hit-point temporal synchronization.
+- **Output Spec**: 48 kHz / 24-bit uncompressed audio (WAV, FLAC) with spatial binaural rendering options.
+- **Key Use Cases**: Automated game sound design, video post-production foley replacement, interactive media acoustics.
+- **Access Route**: [hanzo.ai/oto](https://hanzo.ai/oto) · [Apply for Research Access](https://hanzo.ai/research-access?model=oto)
+
+### Koe — Expressive Speech & Voice Performance
+- **Role**: Emotionally nuanced voice performance, character acting, multilingual accent synthesis, and vocal style transfer.
+- **Foundation**: `zen3-tts` (Qwen3-TTS base, Apache 2.0).
+- **Core Architecture**: Flow-matching autoregressive acoustic model with zero-shot reference voice cloning and prosody descriptor conditioning.
+- **Capabilities**: Sub-second voice replication from 3-second reference audio; multi-lingual dialogue with natural pacing and phoneme control.
+- **Key Use Cases**: Game NPC dialogue trees, cinematic voiceovers, localization, audiobook narration.
+- **Access Route**: [hanzo.ai/koe](https://hanzo.ai/koe) · [Apply for Research Access](https://hanzo.ai/research-access?model=koe)
+
+### Uta — Multi-Track Music Composition
+- **Role**: Structural music composition, stem generation, full-length musical arrangement, and vocal lyric synthesis.
+- **Foundation**: `zen-musician` (YuE stage 1 / ACE-Step 1.5 base, Apache 2.0 / MIT).
+- **Core Architecture**: Hierarchical acoustic codebook transformer with separate stem conditioning (drums, bass, harmonic accompaniment, vocal lead).
+- **Capabilities**: Up to 4-minute continuous composition with structured verse-chorus progression and BPM-locked time signatures.
+- **Key Use Cases**: Adaptive game soundtracks, advertising scoring, commercial audio production.
+- **Access Route**: [hanzo.ai/uta](https://hanzo.ai/uta) · [Apply for Research Access](https://hanzo.ai/research-access?model=uta)
+
+---
+
+## Access & Governance Lifecycle
+
+Access to private creative models follows a mandatory multi-step approval pipeline:
+
+```
+┌────────────────────────┐      ┌────────────────────────┐      ┌────────────────────────┐
+│  1. Model Application  │ ───► │  2. Enterprise Audit   │ ───► │ 3. Entitlement Minting │
+│   hanzo.ai/research-   │      │  Intended use & volume │      │ Cryptographic access   │
+│   access intake form   │      │  compliance clearance  │      │ token issued to IAM org│
+└────────────────────────┘      └────────────────────────┘      └────────────────────────┘
+                                                                             │
+                                                                             ▼
+┌────────────────────────┐      ┌────────────────────────┐      ┌────────────────────────┐
+│  5. Studio Workflow    │ ◄─── │  4. Gateway Activation │ ◄────┘ Node graph enabled on  │
+│  Interactive pipeline  │      │  POST /v1/creative/*   │       studio.hanzo.ai         │
+│  with live latent view │      │  verified per request  │                               │
+└────────────────────────┘      └────────────────────────┘
+```
+
+1. **Intake Application**: Submit an application specifying intended models and research use cases at [hanzo.ai/research-access](https://hanzo.ai/research-access?track=creative).
+2. **Review & Compliance**: The research review board verifies institutional credentials and alignment with the [Hanzo Acceptable Use Policy](/docs/aup).
+3. **Entitlement Minting**: An entitlement token is minted against your Hanzo IAM organization ID. Approvals are strictly scoped per model (approval for Koma does not grant access to Iro or Mori).
+4. **Wire-Time Enforcement**: Every request to the Hanzo Platform API verifies the cryptographic entitlement before inference begins; unauthorized calls fail at the ingress layer.
+5. **Studio Node Activation**: Models immediately unlock as native nodes inside [Hanzo Studio](https://studio.hanzo.ai) for multi-node visual orchestration.
+
+---
+
+## Hanzo Studio Integration
+
+Creative models operate as first-class nodes in **Hanzo Studio** (`studio.hanzo.ai`), allowing developers and creators to link generative media with foundation models and deterministic Decision Programs:
+
+```python
+# Conceptual Hanzo Studio DAG Pipeline
+from hanzo.studio import Workflow, Node
+
+wf = Workflow(name="Cinematic Trailer Generation")
+
+# 1. Foundation reasoning generates character bible and prompt sequence
+concept = wf.add(Node.chat("zen6", prompt="Generate 3-shot scene beats for sci-fi film"))
+
+# 2. Decision node selects visual art style
+style_choice = wf.add(Node.kai("style-decision", options=["cyberpunk", "solarpunk", "brutalist"]))
+
+# 3. Creative Image model generates reference keyframes
+keyframe = wf.add(Node.creative("iro", prompt=concept.out["shot_1"], style=style_choice.verdict))
+
+# 4. Creative Video model generates cinematic motion
+shot = wf.add(Node.creative("koma", image=keyframe.image, duration_frames=72))
+
+# 5. Creative Audio models generate voice performance and foley
+voice = wf.add(Node.creative("koe", script=concept.out["dialogue_1"], voice_ref="narrator_v2"))
+foley = wf.add(Node.creative("oto", video_track=shot.video, mood="tension"))
+
+# 6. Safety evaluation node checks content boundaries
+guard = wf.add(Node.guard("zooai/lifeguard", video=shot.video, audio=voice.audio))
+```
+
+---
+
+## Safety & Content Standards
+
+All Hanzo Creative model runs are evaluated against consequence-grounded safety standards:
+- **ZooAI Lifeguard (`zooai/lifeguard`)**: Multi-modal guardrail evaluating generated media for physical safety, non-consensual imagery, and policy boundaries.
+- **Provenance & Watermarking**: Cryptographic provenance metadata (C2PA standard) is embedded into all generated video, audio, and images to ensure verifiable attribution.
+- **Deterministic Override**: If a safety node issues a `deny` verdict, the media pipeline halts instantly and resources are quarantined.
