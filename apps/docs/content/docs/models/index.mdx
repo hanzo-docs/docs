@@ -74,18 +74,17 @@ covers what happens when the balance runs out.
 
 ## Hugging Face Hub & Model Registry
 
-Hanzo AI maintains a public model and system card registry across [Hugging Face (`huggingface.co/hanzoai`)](https://huggingface.co/hanzoai) and [ZenLM (`huggingface.co/zenlm`)](https://huggingface.co/zenlm), organizing 24 distinct cards across 6 functional families:
+Hanzo AI maintains a public model and system card registry across [Hugging Face (`huggingface.co/hanzoai`)](https://huggingface.co/hanzoai) and [ZenLM (`huggingface.co/zenlm`)](https://huggingface.co/zenlm), organizing its first-party architecture across 5 functional families:
 
-1. **Kai — Decision Intelligence (`hanzoai/kai-*`)**: Calibrated, typed decision models. Hosted API on `POST /v1/decisions` (`kai-1.3`, `kai-1.4`, `kai-1.5`, `kai-1.6`) and open baselines (`kai-1-multilingual`).
+1. **Kai — Unified Multimodal Decision Intelligence (`hanzoai/kai-*`)**: Calibrated, typed decision models. Hosted API on `POST /v1/decisions` (`kai-1.3`, `kai-1.4`, `kai-1.5`, `kai-1.6`, and the unified multimodal target `kai-1.7`), alongside specialized baselines (`kai-1-agent`, `kai-1-multilingual`).
 2. **Enso — Intelligent Routing (`hanzoai/enso-*`)**: Dynamic prompt routing across cost, latency, and quality tiers (`enso-auto`, `enso-flash`, `enso-pro`, `enso-ultra`, `enso-free`).
 3. **Zen — Generative Intelligence (`zenlm/zen6*`)**: Open-weight foundation models for agentic coding, reasoning, and multimodality (`zen6`, `zen6-flash`, `zen6-coder`, `zen-vl`, `zen-embedding`, `zen-reranker`).
-4. **Laya — Encoder Research (`convaiinnovations/laya*`)**: Upstream encoder baselines (`laya`, `laya-multilingual`, `laya-typed-decisions`).
-5. **Guard — Safety & Oversight (`hanzoai/guard`, `zoo-labs/lifeguard`)**: Deterministic policy gateways and consequence-grounded evaluation suites.
-6. **Agent Systems (`hanzoai/kata`, `hanzoai/gen`)**: Autonomous DAG execution and software engineering agent runtimes.
+4. **Guard — Safety & Oversight (`hanzoai/guard`, `zoo-labs/lifeguard`)**: Deterministic policy gateways and consequence-grounded evaluation suites.
+5. **Agent Systems (`hanzoai/kata`, `hanzoai/gen`)**: Autonomous DAG execution and software engineering agent runtimes.
 
 ### Interactive Spaces
 Try models and inspect benchmarks in real-time on Hugging Face Spaces:
-- [**Leaderboard**](https://huggingface.co/spaces/hanzoai/leaderboard): Open Decision Model Arena comparing Kai, Laya, Jev, and frontier LLMs.
+- [**Leaderboard**](https://huggingface.co/spaces/hanzoai/leaderboard): Open Decision Model Arena comparing Kai, Jev 1.13, and frontier LLMs.
 - [**Kai Playground**](https://huggingface.co/spaces/hanzoai/kai-playground): Interactive typed question console (`boolean`, `choice`, `score`).
 - [**Enso Router Simulator**](https://huggingface.co/spaces/hanzoai/enso-router): Real-time prompt complexity and cost router preview.
 - [**Guard Arena**](https://huggingface.co/spaces/hanzoai/guard-arena): Adversarial prompt injection and policy boundary testing.
