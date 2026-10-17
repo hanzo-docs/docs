@@ -21,6 +21,10 @@ concurrency:
 
 jobs:
   cicd:
+    permissions:
+      contents: write
+      packages: write
+      id-token: write
     uses: hanzoai/ci/.github/workflows/build.yml@v2
     with:
       # apps/docs/content/docs/studio is a submodule (hanzo-docs/studio-docs);
