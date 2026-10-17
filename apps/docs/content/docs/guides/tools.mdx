@@ -86,8 +86,6 @@ var result = new ToolApi(client).getTool();
 ```
 </Tab>
 </Tabs>
-
-The method above is the one at the current release of the document. `hanzoai@8.5.157` (npm) was generated from an earlier release, where this operation carried a different id, so it spells the method differently — regenerating the clients is what makes the two agree. [SDKs →](/docs/sdks)
 </Tab>
 <Tab value="HTTP">
 ```bash
@@ -96,7 +94,7 @@ curl https://api.hanzo.ai/v1/tool \
 ```
 </Tab>
 <Tab value="MCP">
-MCP reaches **tool** through the `tools` tool, which names its 19 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
+MCP reaches **tool** through the `tool` tool, which names its 17 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
 
 ```bash
 curl -X POST https://api.hanzo.ai/v1/mcp \
@@ -108,7 +106,7 @@ curl -X POST https://api.hanzo.ai/v1/mcp \
        "params": {
          "name": "describe",
          "arguments": {
-           "op": "list_mcp_servers"
+           "op": "list_tools"
          }
        }
      }'

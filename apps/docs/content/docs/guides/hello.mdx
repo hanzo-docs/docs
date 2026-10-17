@@ -20,27 +20,18 @@ Returns the list of available models from the routing table.
 PUBLIC BY DESIGN, AND IT DOES NOT AUTHENTICATE — that is the whole contract, so it
 is stated here rather than left to be inferred. The catalogue is the same for
 everyone (listAvailableModels takes no principal), docs.hanzo.ai fetches it from
-the browser, and every policy layer around it already says so out loud: the authz
-filter lists "models" as public, filter_balance refuses to gate it (a 402 here was
-a console-wide outage), the rate limiter excludes it, and cloud's spend.Reachable
-carries /v1/models/ as "the model catalog the shell reads for discovery".
+the browser, and every policy layer around it says so: the authz filter lists
+"models" as public, filter_balance does not gate it, the rate limiter excludes it,
+and cloud's spend.Reachable carries /v1/models/ as "the model catalog the shell
+reads for discovery".
 
 SO THE Authorization HEADER IS NOT AN ADMISSION CHECK HERE. It is read for ONE
 thing — annotating gated SKUs with the caller's own access standing — and
 annotation degrades to nothing when there is no verified principal.
 
-It used to hold a "require authentication" gate that authenticated nobody: it
-rejected an ABSENT credential and a MALFORMED one, then accepted any string that
-merely looked like a key. `Bearer sk-` followed by 36 zeroes returned 200 in
-production; so did a JWT three days expired. It was a shape check wearing an auth
-check's clothes, and its cost was diagnostic: /v1/models is the natural "is my auth
-working?" probe, and answering 200 to a dead credential sent people debugging the
-wrong system. A public endpoint must not appear to validate. Either check the
-credential or ignore it — this one ignores it, deliberately and visibly.
-
-Removing that gate discloses nothing new: the catalogue was already reachable by
-anyone willing to type three characters, so there is no confidentiality delta, only
-an honesty one.
+A credential that is presented is verified, never merely shape-checked: a caller
+using /v1/models to ask "is my key working?" gets an honest answer, because a key
+that does not verify annotates nothing rather than reading as accepted.
 
 <Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
 <Tab value="CLI">
@@ -109,38 +100,19 @@ curl https://api.hanzo.ai/v1/models \
 ```
 </Tab>
 <Tab value="MCP">
-MCP reaches **ai** through the `ai` tool, which names its 294 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
-
-```bash
-curl -X POST https://api.hanzo.ai/v1/mcp \
-  -H "Content-Type: application/json" \
-  -d '{
-       "jsonrpc": "2.0",
-       "id": 1,
-       "method": "tools/call",
-       "params": {
-         "name": "describe",
-         "arguments": {
-           "op": "list_models"
-         }
-       }
-     }'
-```
+MCP declares no tool for **ai** — `tools/list` on `https://api.hanzo.ai/v1/mcp` names the products it does reach. Use HTTP or an SDK.
 </Tab>
 </Tabs>
 
-## Returns the caller's own API keys — every type they hold, read AUTHORITATIVELY from IAM rather than from the session claim, which lags a key minted moments ago.
+## Returns the API keys the caller may see, newest first: their own, or every key the org holds when the caller administers it.
 
 `GET /v1/account/keys` · [reference →](/docs/openapi/account)
 
-Returns the caller's own API keys — every type they hold, read
-AUTHORITATIVELY from IAM rather than from the session claim, which lags a key
-minted moments ago. No secret material comes back: a secret key is represented
-by its prefix, and only a publishable key (public by construction) carries its
-full value.
-
-A transient IAM read failure reports an empty set rather than a 5xx, so the
-page shows the honest empty state and never a fabricated key.
+Returns the API keys the caller may see, newest first: their own, or
+every key the org holds when the caller administers it. Each is its own
+credential with its own name, prefix, status, expiry and limit. Revoked keys
+stay listed. No secret material comes back; a publishable key, which is public
+by construction, carries its full value.
 
 <Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
 <Tab value="CLI">
@@ -209,7 +181,7 @@ curl https://api.hanzo.ai/v1/account/keys \
 ```
 </Tab>
 <Tab value="MCP">
-MCP reaches **account** through the `account` tool, which names its 8 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
+MCP reaches **account** through the `account` tool, which names its 6 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
 
 ```bash
 curl -X POST https://api.hanzo.ai/v1/mcp \
@@ -221,7 +193,7 @@ curl -X POST https://api.hanzo.ai/v1/mcp \
        "params": {
          "name": "describe",
          "arguments": {
-           "op": "get_appearance"
+           "op": "get_account_appearance"
          }
        }
      }'

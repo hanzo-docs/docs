@@ -19,6 +19,8 @@ The wallet is an ADDRESS, not an org: `account` echoes the key resolved within t
 
 `balance`, `holds` and `available` are whole USD cents, ROUNDED from the ledger's exact 18-decimal value. On the co-resident ledger `holds` is 0 and `available` equals `balance`: the gate's reservations live in its own pod and are never posted, so the settled balance IS the spendable one.
 
+`cash`, `line` and `credit` say where `available` came from, and add up to it. `cash` is money the customer paid — a settled card payment or a recorded wire. `credit` is money Hanzo minted: signup and promotional credit, admin grants. `line` is what is left of the org's postpaid credit line (`creditLimit`), and `due` what the account owes on it: usage the line paid for, invoiced, and paid down first by the next payment. A debit draws cash, then the line, then credit; granted credit never pays what is due. The three line fields are absent when the ledger did not report them.
+
 The ledger is the caller's own org, taken from the VALIDATED IAM owner claim and never from a client header. No validated principal is 401. A balance that cannot be READ is 502, never 0: unknown is not broke.
 
 <Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
@@ -88,21 +90,19 @@ curl https://api.hanzo.ai/v1/billing/balance \
 ```
 </Tab>
 <Tab value="MCP">
-Tool `billing`, op `get_billing_balance` — POST the JSON-RPC envelope to `https://api.hanzo.ai/v1/mcp`.
+MCP reaches **billing** through the `billing` tool, which names its 39 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
 
 ```bash
 curl -X POST https://api.hanzo.ai/v1/mcp \
-  -H "Authorization: Bearer $HANZO_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
        "jsonrpc": "2.0",
        "id": 1,
        "method": "tools/call",
        "params": {
-         "name": "billing",
+         "name": "describe",
          "arguments": {
-           "op": "get_billing_balance",
-           "input": {}
+           "op": "list_billing_accounts"
          }
        }
      }'
@@ -191,21 +191,19 @@ curl https://api.hanzo.ai/v1/billing/usage \
 ```
 </Tab>
 <Tab value="MCP">
-Tool `billing`, op `get_billing_usage` — POST the JSON-RPC envelope to `https://api.hanzo.ai/v1/mcp`.
+MCP reaches **billing** through the `billing` tool, which names its 39 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
 
 ```bash
 curl -X POST https://api.hanzo.ai/v1/mcp \
-  -H "Authorization: Bearer $HANZO_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
        "jsonrpc": "2.0",
        "id": 1,
        "method": "tools/call",
        "params": {
-         "name": "billing",
+         "name": "describe",
          "arguments": {
-           "op": "get_billing_usage",
-           "input": {}
+           "op": "list_billing_accounts"
          }
        }
      }'

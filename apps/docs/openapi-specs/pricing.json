@@ -1,15 +1,15 @@
 {
-  "updated": "2026-08-06T03:18:40.358Z",
+  "updated": "2026-10-17T02:27:55.106Z",
   "enso": [
     {
       "id": "enso",
-      "input": 0,
-      "output": 0
+      "input": 0.33,
+      "output": 1.65
     },
     {
       "id": "enso-auto",
-      "input": 0,
-      "output": 0
+      "input": 0.33,
+      "output": 1.65
     },
     {
       "id": "enso-flash",
@@ -23,18 +23,18 @@
     },
     {
       "id": "enso-pro",
-      "input": 3.3,
-      "output": 16.5
+      "input": 4.4,
+      "output": 22
     },
     {
       "id": "enso-ultra",
-      "input": 5.236,
-      "output": 26.18
+      "input": 5.5,
+      "output": 27.5
     },
     {
       "id": "hanzo/enso",
-      "input": 0,
-      "output": 0
+      "input": 0.33,
+      "output": 1.65
     }
   ],
   "summary": {
@@ -719,7 +719,7 @@
       "tier": "pro"
     },
     {
-      "context": 1000000,
+      "context": 900000,
       "description": "Hanzo's proprietary frontier model — Opus-class reasoning by default with 1M-context overflow.",
       "family": "enso",
       "features": [
@@ -730,10 +730,10 @@
       "name": "enso",
       "owned_by": "hanzo",
       "pricing": {
-        "cacheRead": null,
-        "cacheWrite": null,
-        "input": 0,
-        "output": 0
+        "cacheRead": 0.033,
+        "cacheWrite": 0.4125,
+        "input": 0.33,
+        "output": 1.65
       },
       "provider": "Hanzo",
       "tier": "ultra max"
@@ -750,8 +750,8 @@
       "name": "enso-flash",
       "owned_by": "hanzo",
       "pricing": {
-        "cacheRead": null,
-        "cacheWrite": null,
+        "cacheRead": 0.033,
+        "cacheWrite": 0.4125,
         "input": 0.33,
         "output": 1.65
       },
@@ -770,10 +770,10 @@
       "name": "enso-ultra",
       "owned_by": "hanzo",
       "pricing": {
-        "cacheRead": null,
-        "cacheWrite": null,
-        "input": 5.236,
-        "output": 26.18
+        "cacheRead": 0.275,
+        "cacheWrite": 6.875,
+        "input": 5.5,
+        "output": 27.5
       },
       "provider": "Hanzo",
       "tier": "ultra max"
@@ -923,6 +923,20 @@
         "arch": "decision"
       },
       "tier": "starter"
+    },
+    {
+      "family": "enso",
+      "fullName": "enso-pro",
+      "name": "enso-pro",
+      "owned_by": "hanzo",
+      "pricing": {
+        "cacheRead": 0.22,
+        "cacheWrite": 5.5,
+        "input": 4.4,
+        "output": 22
+      },
+      "provider": "Hanzo",
+      "context": 1000000
     }
   ],
   "tools": [
@@ -1036,7 +1050,14 @@
     "huggingface/zai-org/GLM-4-32B-0414",
     "huggingface/MiniMaxAI/MiniMax-M1-80k",
     "huggingface/moonshotai/Kimi-K2-Instruct",
-    "huggingface/Qwen/Qwen3-Coder-480B-A35B-Instruct"
+    "huggingface/Qwen/Qwen3-Coder-480B-A35B-Instruct",
+    "xingchen-agi/xing4.0-29b-a4b:free",
+    "nvidia/nemotron-3.5-super-vl:free",
+    "dots-studio/dots-3-note-preview:free",
+    "liquid/lfm-2.5-2.6b:free",
+    "nvidia/nemotron-3.5-lightning:free",
+    "thinkingmachines/inkling-small:free",
+    "thinkingmachines/inkling:free"
   ],
   "providers": {
     "AI Singapore": {
@@ -1054,6 +1075,11 @@
       "paid": 4,
       "total": 4
     },
+    "Aion-labs": {
+      "free": 0,
+      "paid": 6,
+      "total": 6
+    },
     "Allen AI": {
       "free": 1,
       "paid": 1,
@@ -1069,15 +1095,25 @@
       "paid": 1,
       "total": 1
     },
+    "Anthracite-org": {
+      "free": 0,
+      "paid": 1,
+      "total": 1
+    },
     "Anthropic": {
       "free": 0,
-      "paid": 21,
-      "total": 21
+      "paid": 30,
+      "total": 30
     },
     "Arcee": {
       "free": 0,
       "paid": 2,
       "total": 2
+    },
+    "Arcee-ai": {
+      "free": 0,
+      "paid": 1,
+      "total": 1
     },
     "Baidu": {
       "free": 1,
@@ -1089,15 +1125,25 @@
       "paid": 5,
       "total": 5
     },
+    "Bytedance": {
+      "free": 0,
+      "paid": 1,
+      "total": 1
+    },
+    "Bytedance-seed": {
+      "free": 0,
+      "paid": 6,
+      "total": 6
+    },
     "Cognitivecomputations": {
       "free": 0,
       "paid": 1,
       "total": 1
     },
     "Cohere": {
-      "free": 13,
-      "paid": 4,
-      "total": 17
+      "free": 1,
+      "paid": 5,
+      "total": 6
     },
     "DeepCogito": {
       "free": 2,
@@ -1109,10 +1155,25 @@
       "paid": 13,
       "total": 19
     },
+    "Deepseek": {
+      "free": 0,
+      "paid": 15,
+      "total": 15
+    },
+    "Dots-studio": {
+      "free": 1,
+      "paid": 0,
+      "total": 1
+    },
+    "Fireworks": {
+      "free": 0,
+      "paid": 1,
+      "total": 1
+    },
     "Google": {
       "free": 4,
-      "paid": 28,
-      "total": 32
+      "paid": 40,
+      "total": 44
     },
     "Gryphe": {
       "free": 0,
@@ -1124,20 +1185,40 @@
       "paid": 2,
       "total": 2
     },
+    "Ibm-granite": {
+      "free": 0,
+      "paid": 2,
+      "total": 2
+    },
     "Inception": {
       "free": 0,
-      "paid": 1,
-      "total": 1
+      "paid": 2,
+      "total": 2
     },
     "InclusionAI": {
       "free": 1,
       "paid": 4,
       "total": 5
     },
+    "Inclusionai": {
+      "free": 0,
+      "paid": 3,
+      "total": 3
+    },
+    "Inference-net": {
+      "free": 0,
+      "paid": 2,
+      "total": 2
+    },
     "Kwaipilot": {
       "free": 0,
       "paid": 3,
       "total": 3
+    },
+    "Liquid": {
+      "free": 1,
+      "paid": 1,
+      "total": 2
     },
     "Mancer": {
       "free": 0,
@@ -1150,9 +1231,14 @@
       "total": 1
     },
     "Meta": {
-      "free": 2,
-      "paid": 10,
-      "total": 12
+      "free": 0,
+      "paid": 8,
+      "total": 8
+    },
+    "Meta-llama": {
+      "free": 0,
+      "paid": 8,
+      "total": 8
     },
     "Microsoft": {
       "free": 0,
@@ -1160,6 +1246,11 @@
       "total": 2
     },
     "MiniMax": {
+      "free": 0,
+      "paid": 8,
+      "total": 8
+    },
+    "Minimax": {
       "free": 0,
       "paid": 8,
       "total": 8
@@ -1174,10 +1265,25 @@
       "paid": 18,
       "total": 18
     },
+    "Mistralai": {
+      "free": 0,
+      "paid": 26,
+      "total": 26
+    },
+    "Moondream": {
+      "free": 0,
+      "paid": 2,
+      "total": 2
+    },
     "Moonshot": {
       "free": 2,
       "paid": 8,
       "total": 10
+    },
+    "Moonshotai": {
+      "free": 0,
+      "paid": 8,
+      "total": 8
     },
     "Morph": {
       "free": 0,
@@ -1194,10 +1300,25 @@
       "paid": 2,
       "total": 2
     },
+    "Nex-agi": {
+      "free": 0,
+      "paid": 2,
+      "total": 2
+    },
     "Nous Research": {
       "free": 0,
       "paid": 4,
       "total": 4
+    },
+    "Nousresearch": {
+      "free": 0,
+      "paid": 3,
+      "total": 3
+    },
+    "Nvidia": {
+      "free": 6,
+      "paid": 7,
+      "total": 13
     },
     "OpenAI": {
       "free": 1,
@@ -1209,6 +1330,16 @@
       "paid": 5,
       "total": 6
     },
+    "Openai": {
+      "free": 0,
+      "paid": 104,
+      "total": 104
+    },
+    "Openrouter": {
+      "free": 1,
+      "paid": 5,
+      "total": 6
+    },
     "Pearl AI": {
       "free": 1,
       "paid": 0,
@@ -1216,8 +1347,8 @@
     },
     "Perceptron": {
       "free": 0,
-      "paid": 1,
-      "total": 1
+      "paid": 2,
+      "total": 2
     },
     "Perplexity": {
       "free": 0,
@@ -1234,12 +1365,27 @@
       "paid": 0,
       "total": 2
     },
+    "Prism-ml": {
+      "free": 0,
+      "paid": 1,
+      "total": 1
+    },
     "Qwen": {
-      "free": 6,
-      "paid": 49,
-      "total": 55
+      "free": 0,
+      "paid": 43,
+      "total": 43
+    },
+    "Reflection": {
+      "free": 0,
+      "paid": 1,
+      "total": 1
     },
     "Reka": {
+      "free": 0,
+      "paid": 2,
+      "total": 2
+    },
+    "Rekaai": {
       "free": 0,
       "paid": 2,
       "total": 2
@@ -1251,13 +1397,23 @@
     },
     "Sakana": {
       "free": 0,
-      "paid": 1,
-      "total": 1
+      "paid": 4,
+      "total": 4
     },
     "Sao10K": {
       "free": 2,
       "paid": 3,
       "total": 5
+    },
+    "Sao10k": {
+      "free": 0,
+      "paid": 3,
+      "total": 3
+    },
+    "Scaledown": {
+      "free": 0,
+      "paid": 2,
+      "total": 2
     },
     "Speakleash": {
       "free": 1,
@@ -1269,6 +1425,11 @@
       "paid": 2,
       "total": 2
     },
+    "Stepfun": {
+      "free": 0,
+      "paid": 3,
+      "total": 3
+    },
     "Swiss AI": {
       "free": 4,
       "paid": 0,
@@ -1276,18 +1437,38 @@
     },
     "Tencent": {
       "free": 0,
-      "paid": 3,
-      "total": 3
+      "paid": 7,
+      "total": 7
     },
     "TheDrummer": {
       "free": 0,
       "paid": 4,
       "total": 4
     },
+    "Thedrummer": {
+      "free": 0,
+      "paid": 3,
+      "total": 3
+    },
     "Thinking Machines": {
       "free": 0,
       "paid": 2,
       "total": 2
+    },
+    "Thinkingmachines": {
+      "free": 2,
+      "paid": 2,
+      "total": 4
+    },
+    "Typesafe": {
+      "free": 0,
+      "paid": 1,
+      "total": 1
+    },
+    "Unbiased": {
+      "free": 0,
+      "paid": 1,
+      "total": 1
     },
     "Undi95": {
       "free": 0,
@@ -1296,8 +1477,8 @@
     },
     "Upstage": {
       "free": 0,
-      "paid": 1,
-      "total": 1
+      "paid": 3,
+      "total": 3
     },
     "Utter Project": {
       "free": 1,
@@ -1309,10 +1490,25 @@
       "paid": 1,
       "total": 1
     },
+    "X-ai": {
+      "free": 0,
+      "paid": 8,
+      "total": 8
+    },
     "Xiaomi": {
       "free": 0,
-      "paid": 2,
-      "total": 2
+      "paid": 5,
+      "total": 5
+    },
+    "Xingchen-agi": {
+      "free": 1,
+      "paid": 0,
+      "total": 1
+    },
+    "Z-ai": {
+      "free": 0,
+      "paid": 18,
+      "total": 18
     },
     "Zhipu": {
       "free": 9,
@@ -1323,19 +1519,59 @@
       "free": 0,
       "paid": 6,
       "total": 6
+    },
+    "~anthropic": {
+      "free": 0,
+      "paid": 4,
+      "total": 4
+    },
+    "~deepseek": {
+      "free": 0,
+      "paid": 3,
+      "total": 3
+    },
+    "~google": {
+      "free": 0,
+      "paid": 2,
+      "total": 2
+    },
+    "~moonshotai": {
+      "free": 0,
+      "paid": 1,
+      "total": 1
+    },
+    "~openai": {
+      "free": 0,
+      "paid": 5,
+      "total": 5
+    },
+    "~unbiased": {
+      "free": 0,
+      "paid": 1,
+      "total": 1
+    },
+    "~x-ai": {
+      "free": 0,
+      "paid": 1,
+      "total": 1
+    },
+    "~z-ai": {
+      "free": 0,
+      "paid": 2,
+      "total": 2
     }
   },
   "catalogue": {
-    "models": 492,
-    "makers": 57,
+    "models": 499,
+    "makers": 60,
     "kai": {
       "input": 0.021,
       "output": 0
     },
-    "captured": "2026-10-15"
+    "captured": "2026-10-17"
   },
   "meta": {
-    "captured": "2026-10-15",
+    "captured": "2026-10-17",
     "source": "live"
   }
 }

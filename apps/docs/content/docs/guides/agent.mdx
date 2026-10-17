@@ -96,8 +96,6 @@ var result = new AgentApi(client).postAgent();
 ```
 </Tab>
 </Tabs>
-
-The method above is the one at the current release of the document. `hanzoai@8.5.157` (npm) was generated from an earlier release, where this operation carried a different id, so it spells the method differently — regenerating the clients is what makes the two agree. [SDKs →](/docs/sdks)
 </Tab>
 <Tab value="HTTP">
 ```bash
@@ -111,24 +109,19 @@ curl -X POST https://api.hanzo.ai/v1/agent \
 ```
 </Tab>
 <Tab value="MCP">
-Tool `agents`, op `post_agent` — POST the JSON-RPC envelope to `https://api.hanzo.ai/v1/mcp`.
+MCP reaches **agent** through the `agent` tool, which names its 38 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
 
 ```bash
 curl -X POST https://api.hanzo.ai/v1/mcp \
-  -H "Authorization: Bearer $HANZO_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
        "jsonrpc": "2.0",
        "id": 1,
        "method": "tools/call",
        "params": {
-         "name": "agents",
+         "name": "describe",
          "arguments": {
-           "op": "post_agent",
-           "input": {
-             "avatar": "<avatar>",
-             "cap_micro_usd": 0
-           }
+           "op": "list_agents"
          }
        }
      }'
@@ -211,8 +204,6 @@ var result = new AgentApi(client).postAgentByRefRun();
 ```
 </Tab>
 </Tabs>
-
-The method above is the one at the current release of the document. `hanzoai@8.5.157` (npm) was generated from an earlier release, where this operation carried a different id, so it spells the method differently — regenerating the clients is what makes the two agree. [SDKs →](/docs/sdks)
 </Tab>
 <Tab value="HTTP">
 ```bash
@@ -221,7 +212,7 @@ curl -X POST https://api.hanzo.ai/v1/agent/<ref>/run \
 ```
 </Tab>
 <Tab value="MCP">
-MCP reaches **agent** through the `agents` tool, which names its 36 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
+MCP reaches **agent** through the `agent` tool, which names its 38 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
 
 ```bash
 curl -X POST https://api.hanzo.ai/v1/mcp \
@@ -233,7 +224,7 @@ curl -X POST https://api.hanzo.ai/v1/mcp \
        "params": {
          "name": "describe",
          "arguments": {
-           "op": "list_agent_conversations"
+           "op": "list_agents"
          }
        }
      }'
@@ -313,8 +304,6 @@ var result = new AgentApi(client).getAgentByRefRuns();
 ```
 </Tab>
 </Tabs>
-
-The method above is the one at the current release of the document. `hanzoai@8.5.157` (npm) was generated from an earlier release, where this operation carried a different id, so it spells the method differently — regenerating the clients is what makes the two agree. [SDKs →](/docs/sdks)
 </Tab>
 <Tab value="HTTP">
 ```bash
@@ -323,19 +312,23 @@ curl https://api.hanzo.ai/v1/agent/<ref>/runs \
 ```
 </Tab>
 <Tab value="MCP">
-MCP reaches **agent** through the `agents` tool, which names its 36 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
+Tool `agent`, op `get_agent_by_ref_runs` — POST the JSON-RPC envelope to `https://api.hanzo.ai/v1/mcp`.
 
 ```bash
 curl -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
        "jsonrpc": "2.0",
        "id": 1,
        "method": "tools/call",
        "params": {
-         "name": "describe",
+         "name": "agent",
          "arguments": {
-           "op": "list_agent_conversations"
+           "op": "get_agent_by_ref_runs",
+           "input": {
+             "ref": "<ref>"
+           }
          }
        }
      }'

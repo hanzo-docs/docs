@@ -131,11 +131,11 @@ console.log(decision.answers.action.choice)
 For high-frequency loops or multi-turn agent interactions with large multimodal states (e.g., 32K–1M tokens of code or high-resolution imagery), Kai-1.7 supports state handles:
 
 ```bash
-# 1. Observe state once:
-HANDLE=$(curl -s https://api.hanzo.ai/v1/decisions/observe \
+# 1. Observe and cache state handle:
+HANDLE=$(curl -s https://api.hanzo.ai/v1/decisions \
   -H "Authorization: Bearer $HANZO_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"state": {"repo_map": "...", "images": [...]}}' | jq -r .handle)
+  -d '{"model": "kai-1.7", "state": {"repo_map": "...", "images": [...]}, "cache_state": true}' | jq -r .handle)
 
 # 2. Query questions against cached state handle:
 curl https://api.hanzo.ai/v1/decisions \

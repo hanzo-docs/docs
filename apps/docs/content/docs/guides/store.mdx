@@ -108,7 +108,7 @@ curl -X POST https://api.hanzo.ai/v1/mcp \
        "params": {
          "name": "describe",
          "arguments": {
-           "op": "get_search"
+           "op": "get_provisioning_datastore"
          }
        }
      }'
@@ -196,19 +196,23 @@ curl https://api.hanzo.ai/v1/provisioning/kv/<name> \
 ```
 </Tab>
 <Tab value="MCP">
-MCP reaches **provisioning** through the `provisioning` tool, which names its 28 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
+Tool `provisioning`, op `get_provisioning_kv_by_name` — POST the JSON-RPC envelope to `https://api.hanzo.ai/v1/mcp`.
 
 ```bash
 curl -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
        "jsonrpc": "2.0",
        "id": 1,
        "method": "tools/call",
        "params": {
-         "name": "describe",
+         "name": "provisioning",
          "arguments": {
-           "op": "get_search"
+           "op": "get_provisioning_kv_by_name",
+           "input": {
+             "name": "<name>"
+           }
          }
        }
      }'
@@ -308,7 +312,7 @@ curl -X POST https://api.hanzo.ai/v1/mcp \
        "params": {
          "name": "describe",
          "arguments": {
-           "op": "get_search"
+           "op": "get_provisioning_datastore"
          }
        }
      }'

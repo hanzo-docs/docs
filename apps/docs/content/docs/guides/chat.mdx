@@ -19,6 +19,8 @@ Implements the OpenAI-compatible chat completions API
 
 | Parameter | In | Required | Description |
 |---|---|---|---|
+| `X-Max-Cost` | header | — | The most this request may cost, in USD per 1,000 tokens. Routing picks only models under it; an org's own ceil |
+| `X-Max-Latency-Ms` | header | — | The slowest model this request accepts, in milliseconds. |
 | `frequency_penalty` | body | — |  |
 | `function_call` | body | — |  |
 | `functions` | body | — |  |
@@ -104,23 +106,7 @@ curl -X POST https://api.hanzo.ai/v1/chat/completions \
 ```
 </Tab>
 <Tab value="MCP">
-MCP reaches **ai** through the `ai` tool, which names its 294 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
-
-```bash
-curl -X POST https://api.hanzo.ai/v1/mcp \
-  -H "Content-Type: application/json" \
-  -d '{
-       "jsonrpc": "2.0",
-       "id": 1,
-       "method": "tools/call",
-       "params": {
-         "name": "describe",
-         "arguments": {
-           "op": "list_models"
-         }
-       }
-     }'
-```
+MCP declares no tool for **ai** — `tools/list` on `https://api.hanzo.ai/v1/mcp` names the products it does reach. Use HTTP or an SDK.
 </Tab>
 </Tabs>
 
