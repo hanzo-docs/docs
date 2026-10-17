@@ -72,6 +72,24 @@ is a property of the model, not of the surface you reach it through.
 [Pricing](/docs/pricing) explains how usage becomes a bill. [Credits](/docs/credits)
 covers what happens when the balance runs out.
 
+## Hugging Face Hub & Model Registry
+
+Hanzo AI maintains a public model and system card registry across [Hugging Face (`huggingface.co/hanzoai`)](https://huggingface.co/hanzoai) and [ZenLM (`huggingface.co/zenlm`)](https://huggingface.co/zenlm), organizing 24 distinct cards across 6 functional families:
+
+1. **Kai — Decision Intelligence (`hanzoai/kai-*`)**: Calibrated, typed decision models. Hosted API on `POST /v1/decisions` (`kai-1.3`, `kai-1.4`, `kai-1.5`, `kai-1.6`) and open baselines (`kai-1-multilingual`).
+2. **Enso — Intelligent Routing (`hanzoai/enso-*`)**: Dynamic prompt routing across cost, latency, and quality tiers (`enso-auto`, `enso-flash`, `enso-pro`, `enso-ultra`, `enso-free`).
+3. **Zen — Generative Intelligence (`zenlm/zen6*`)**: Open-weight foundation models for agentic coding, reasoning, and multimodality (`zen6`, `zen6-flash`, `zen6-coder`, `zen-vl`, `zen-embedding`, `zen-reranker`).
+4. **Laya — Encoder Research (`convaiinnovations/laya*`)**: Upstream encoder baselines (`laya`, `laya-multilingual`, `laya-typed-decisions`).
+5. **Guard — Safety & Oversight (`hanzoai/guard`, `zoo-labs/lifeguard`)**: Deterministic policy gateways and consequence-grounded evaluation suites.
+6. **Agent Systems (`hanzoai/kata`, `hanzoai/gen`)**: Autonomous DAG execution and software engineering agent runtimes.
+
+### Interactive Spaces
+Try models and inspect benchmarks in real-time on Hugging Face Spaces:
+- [**Leaderboard**](https://huggingface.co/spaces/hanzoai/leaderboard): Open Decision Model Arena comparing Kai, Laya, Jev, and frontier LLMs.
+- [**Kai Playground**](https://huggingface.co/spaces/hanzoai/kai-playground): Interactive typed question console (`boolean`, `choice`, `score`).
+- [**Enso Router Simulator**](https://huggingface.co/spaces/hanzoai/enso-router): Real-time prompt complexity and cost router preview.
+- [**Guard Arena**](https://huggingface.co/spaces/hanzoai/guard-arena): Adversarial prompt injection and policy boundary testing.
+
 ## Specifications
 
 | HIP | Subject | Status |
@@ -82,3 +100,4 @@ covers what happens when the balance runs out.
 | [HIP-0510](https://hips.hanzo.ai/docs/hip-0510-enso-learned-router) | Enso: learned per-request routing | Final |
 | [HIP-1332](https://hips.hanzo.ai/docs/hip-1332-kai-the-decision-model) | Kai: the decision model and the decision plane | Draft |
 | [HIP-0003](https://hips.hanzo.ai/docs/hip-0003-jin-multimodal-ai-architecture) | Jin: a multimodal model that was not built | Draft |
+
