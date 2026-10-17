@@ -4,6 +4,7 @@
   "icon": "ChefHat",
   "pages": [
     "index",
+    "blueprints",
     "recipes",
     "route",
     "triage",

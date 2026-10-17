@@ -1,0 +1,167 @@
+---
+title: Kai Early Access
+description: "Early access preview for Kai-1.7: unified multimodal decision intelligence across vision, audio, video, code, and text with adaptive reasoning budgets."
+icon: Sparkles
+---
+
+**Kai-1.7 expands Hanzo's decision intelligence into unified multimodal evaluation and adaptive reasoning budgets.**
+
+While production Kai-1.3 serves text decisions globally at $0.021 per million input tokens, **Kai-1.7** introduces multimodal evidence processing (images, audio, video, ASTs, and diffs) and masked block diffusion decoding with variable reasoning depth (`auto`, `fast`, `deep`).
+
+---
+
+## Requesting Early Access
+
+Early access to Kai-1.7 is rolling out to enterprise teams, researchers, and developers building autonomous agents and high-consequence decision loops:
+
+1. **Submit Access Request**: Join the queue at [hanzo.ai/research-access?track=kai](https://hanzo.ai/research-access?track=kai) or sign in directly to [platform.hanzo.ai](https://platform.hanzo.ai?access=kai-1.7).
+2. **Select Track**: Choose **Kai-1.7 (Multimodal Decision Intelligence)**.
+3. **Provisioning**: Approved organizations receive an early access flag on their API key enabling `model: "kai-1.7"`.
+
+---
+
+## What's New in Kai-1.7
+
+### 1. Unified Multimodal Evidence
+Kai-1.7 processes rich multimodal state representations directly within the dual-memory hierarchy:
+
+- **Vision**: Optical inspection, UI screenshots, document scans, defect detection (`image/png`, `image/jpeg`, `image/webp`).
+- **Audio**: Acoustic telemetry, bearing/motor vibration signals, speech signals (`audio/wav`, `audio/mp3`).
+- **Video**: Security feeds, manufacturing lines, agent desktop recordings (`video/mp4`).
+- **Code & Graph State**: Abstract Syntax Trees (ASTs), unified diffs, SysML v2 systems models, knowledge graph snapshots.
+
+### 2. Adaptive Reasoning Budgets
+Instead of fixed compute per decision, Kai-1.7 accepts a `reasoning` parameter to control the block diffusion decoder:
+
+| Reasoning Tier | Passes | Active Ratio ($R_{\text{active}}$) | Target Latency (CPU) | Best For |
+|---|---|---|---|---|
+| `"fast"` | 1 (Pass 0 draft) | $1.0\times$ | ~12 ms p50 | Real-time tool dispatch, routing, low-latency agent guardrails |
+| `"auto"` (default) | 1–2 (Selective re-mask) | $\le 1.25\times$ | ~28 ms p50 | General decision intelligence, automated triage, defect inspection |
+| `"deep"` | 2–4 (Iterative refinement) | $\le 2.0\times$ | ~65 ms p50 | Bounded ethical dilemmas, complex DAGs, multi-party policy approvals |
+
+### 3. Zoo Lifeguard Consequence Awareness
+Kai-1.7 is aligned under the **Zoo Lifeguard** framework ([`zooai/lifeguard`](https://github.com/zooai/lifeguard)) to ensure ethical consistency and consequence awareness in autonomous systems. Even under adversarial switch framing or severe trolley-style trade-offs, decisions enforce human protection floors and join deterministically with policy on `allow < ask < deny`.
+
+---
+
+## API Reference
+
+Kai-1.7 maintains the same wire contract at `POST /v1/decisions` with optional multimodal state items and the `reasoning` parameter.
+
+### cURL Example
+
+```bash
+curl https://api.hanzo.ai/v1/decisions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "kai-1.7",
+    "reasoning": "auto",
+    "state": {
+      "telemetry": "Vibration sensor 4A reading 842 Hz harmonic spike",
+      "visual_inspection": {
+        "mime_type": "image/jpeg",
+        "url": "https://storage.hanzo.ai/inspect/bearing-surface-38.jpg"
+      },
+      "sysml_component": "powertrain.assembly.bearing_b1"
+    },
+    "questions": {
+      "fault_detected": {
+        "type": "noul",
+        "instructions": "Does the visual and vibration evidence indicate mechanical failure?"
+      },
+      "maintenance_action": {
+        "type": "choice",
+        "instructions": "Which action should the maintenance scheduler execute?",
+        "criteria": {
+          "monitor": "Normal wear, continue operation and log readings",
+          "service_next_cycle": "Moderate wear, schedule inspection during next shift",
+          "emergency_halt": "Critical structural failure risk, halt immediately"
+        }
+      },
+      "risk_level": {
+        "type": "score",
+        "instructions": "Rate the operational risk level.",
+        "criteria": ["nominal", "elevated", "severe", "critical"]
+      }
+    }
+  }'
+```
+
+### TypeScript SDK Example
+
+```typescript
+import { Hanzo } from '@hanzo/ai'
+
+const client = new Hanzo({ apiKey: process.env.HANZO_API_KEY })
+
+const decision = await client.decisions.create({
+  model: 'kai-1.7',
+  reasoning: 'fast',
+  state: {
+    diff: '--- a/auth.ts\n+++ b/auth.ts\n@@ -12,2 +12,2 @@\n- if (!user.isAdmin) throw new Error()\n+ // bypass admin check for dev',
+    repo: 'hanzo-inc/gateway',
+    author: 'external_contributor'
+  },
+  questions: {
+    is_safe: {
+      type: 'noul',
+      instructions: 'Does this code diff violate authentication or security boundaries?'
+    },
+    action: {
+      type: 'choice',
+      instructions: 'What triage action should the CI agent take?',
+      criteria: {
+        'approve': 'Safe change, allow test run',
+        'require_review': 'Suspicious security change, escalate to security team',
+        'block': 'Dangerous exploit attempt, block PR immediately'
+      }
+    }
+  }
+})
+
+console.log(decision.answers.is_safe.probabilities)
+console.log(decision.answers.action.choice)
+```
+
+---
+
+## State Handles (`observe` and `decide`)
+
+For high-frequency loops or multi-turn agent interactions with large multimodal states (e.g., 32K–1M tokens of code or high-resolution imagery), Kai-1.7 supports state handles:
+
+```bash
+# 1. Observe state once:
+HANDLE=$(curl -s https://api.hanzo.ai/v1/decisions/observe \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"state": {"repo_map": "...", "images": [...]}}' | jq -r .handle)
+
+# 2. Query questions against cached state handle:
+curl https://api.hanzo.ai/v1/decisions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d "{
+    \"model\": \"kai-1.7\",
+    \"handle\": \"$HANDLE\",
+    \"questions\": {
+      \"next_step\": {
+        \"type\": \"choice\",
+        \"instructions\": \"Which file should be edited next?\",
+        \"criteria\": {\"auth.ts\": \"Authentication\", \"db.ts\": \"Database\"}
+      }
+    }
+  }"
+```
+
+This dual-memory pattern encodes the long context once into the L0 Global Latent Memory and L1 Local Index, avoiding repeated encode passes on subsequent decisions.
+
+---
+
+## Resources & Source Code
+
+- **GitHub Repository**: [github.com/hanzoai/kai](https://github.com/hanzoai/kai)
+- **Model Card & Benchmarks**: [github.com/hanzoai/kai/blob/main/MODEL_CARD.md](https://github.com/hanzoai/kai/blob/main/MODEL_CARD.md)
+- **Decision Recipes**: [github.com/hanzoai/kai/tree/main/recipes](https://github.com/hanzoai/kai/tree/main/recipes)
+- **Production Developer Guide**: [/docs/decisions](/docs/decisions)
+- **Early Access Request**: [hanzo.ai/research-access?track=kai](https://hanzo.ai/research-access?track=kai)

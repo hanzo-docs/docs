@@ -1,0 +1,141 @@
+---
+title: Enterprise Blueprints & Production Archetypes
+description: "Production AI architecture blueprints across retail availability, supply chain logistics, asset protection, and autonomous DevOps grounded in white papers, research posts, and OSS code."
+icon: Layers
+---
+
+The following 10 enterprise blueprints represent verified production architectures combining **Kai** (calibrated multimodal decision models), **Zen** (open-weight foundation models), **Enso** (microsecond learned utility routing), and **Kata / Gen / Dev** (autonomous software engineering loops).
+
+All architectures operate under sovereign enterprise controls: edge inference at the shelf and cross-dock, local or on-premise DGX clusters, and governed cloud escalation.
+
+---
+
+## 10 Enterprise Production Blueprints
+
+### 01. Shelf & Ghost Inventory Triage
+*Multimodal edge vision detects misplaced SKUs, out-of-stock items, and occluded facings under store lighting variations.*
+
+- **Stack**: `Kai-M + Kai`
+- **Economic Value**: **5–20 bps sales recovery** (Retail availability engine)
+- **Architecture**: Edge-mounted camera feeds process shelf frames into discrete bounding boxes via Kai-M. Kai evaluates inventory state distributions into discrete restock priority classes with zero output tokens and sub-90ms latency.
+- **📄 White Paper / Specification**: [HIP-1332: Kai Decision Model Specification](https://hips.hanzo.ai/docs/hip-1332-kai-the-decision-model)
+- **📰 Research Blog Post**: [Kai: One Intelligence. Every Modality. Every Decision.](https://hanzo.blog/blog/2026-10-16-kai-unified-multimodal/)
+- **💻 Open Source Recipe**: [`recipes/src/retail.rs` (`ShelfInventoryRecipe`)](https://github.com/hanzoai/kai/tree/main/recipes)
+
+```rust
+use recipes::retail::ShelfInventoryRecipe;
+
+let triage = ShelfInventoryRecipe::new("AISLE-14-BEV", 0.08, 3);
+let decision = triage.evaluate(&client).await?;
+if decision.is_restock_required() {
+    dispatch_associate_alert("Aisle 14 bay 3: replenish facing");
+}
+```
+
+---
+
+### 02. Cross-Dock Pallet Anomaly Triage
+*Real-time dock sensors identify pallet tilt, crush damage, and stretch-wrap tears before ingestion into automated storage and retrieval systems (ASRS).*
+
+- **Stack**: `Kai-M + Kata`
+- **Economic Value**: **$100M–$500M annual logistics value** ($0.001–$0.005 net value per item across billions of items)
+- **Architecture**: Forklift and gantry camera vision streams detect pallet structural defects. Kai outputs calibrated disposition probabilities (Accept, Inspect, Repalletize, Quarantine) under site safety rules.
+- **📄 White Paper / Specification**: [HIP-1334: Unified Research & Edge Sensor Runtime](https://hips.hanzo.ai/docs/hip-1334-research-unified-runtime)
+- **📰 Research Blog Post**: [Kai 1: Decisions, Not Completions](https://hanzo.blog/blog/2026-10-07-introducing-kai/)
+- **💻 Open Source Recipe**: [`recipes/src/industrial.rs` (`PalletTriageRecipe`)](https://github.com/hanzoai/kai/tree/main/recipes)
+
+---
+
+### 03. High-Value Returns Fraud Inspection
+*Identifies item swaps, missing serial tags, internal component tampering, and automated restock vs. liquidator routing.*
+
+- **Stack**: `Kai-M + Zen`
+- **Economic Value**: **$12.5M–$200M value recovery** ($0.25–$1.00 improvement per returned unit)
+- **Architecture**: High-resolution image diffs compare returned merchandise against pristine golden SKU catalogs. Visual embeddings generate anomaly vectors; Kai scores disposition confidence with zero hallucinations.
+- **📄 White Paper / Specification**: [HIP-0039: Multimodal Anomaly Embeddings in Zen 6](https://hips.hanzo.ai/docs/hip-0039-zen-model-architecture)
+- **📰 Research Blog Post**: [Teaching Kai to Decide: Zoo Lifeguard Framework](https://hanzo.blog/blog/2026-10-16-your-ai-is-planning-to-kill-you/)
+- **💻 Open Source Recipe**: [`recipes/src/retail.rs` (`ReturnsFraudRecipe`)](https://github.com/hanzoai/kai/tree/main/recipes)
+
+---
+
+### 04. Cold-Chain & Fleet Telemetry Triage
+*Continuous multivariate telemetry ingestion across trailer temperature, compressor vibration, and RPM sensors.*
+
+- **Stack**: `Kai-M + Kai`
+- **Economic Value**: **Zero spoilage losses** across reefer truck fleets and distribution cold rooms.
+- **Architecture**: Microsecond time-series feature extraction over temperature fluctuation harmonics and vibration signatures. Flags impending compressor freeze-ups hours before temperature excursions breach safe boundaries.
+- **📄 White Paper / Specification**: [HIP-1145: Telemetry Anomaly Experiment Record](https://hips.hanzo.ai/docs/hip-1145-research-experiment-record)
+- **📰 Research Blog Post**: [What Is a Decision Model? State Transitions, Not Generation](https://hanzo.blog/blog/2026-09-30-what-is-a-decision-model/)
+- **💻 Open Source Recipe**: [`recipes/src/industrial.rs` (`EquipmentReadinessRecipe`)](https://github.com/hanzoai/kai/tree/main/recipes)
+
+---
+
+### 05. Merchant Decisions & Assortment Optimization
+*Synthesizes historical sales velocity, regional elasticity, and promotional lift across hundreds of thousands of store clusters.*
+
+- **Stack**: `Kai + Zen`
+- **Economic Value**: **3–8% gross margin lift**
+- **Architecture**: High-parameter Zen MoE models process unstructured market trends, competitor circulars, and weather forecasts. Kai provides discrete price-elasticity bounding to prevent unprofitable markdown cascades.
+- **📄 White Paper / Specification**: [HIP-0039: Zen Foundation Architecture](https://hips.hanzo.ai/docs/hip-0039-zen-model-architecture)
+- **📰 Research Blog Post**: [Top Pain Points for Investment & Commerce Firms](https://hanzo.blog/blog/2026-09-21-ai-pain-points-investment-firms/)
+- **💻 Open Source Recipe**: [`recipes/src/merchant.rs` (`AssortmentOptimizationRecipe`)](https://github.com/hanzoai/zen/tree/main/recipes)
+
+---
+
+### 06. Supplier Contracts & Invoice Reconciliations
+*High-throughput extraction across master vendor agreements, purchase orders, bills of lading, and freight deductions.*
+
+- **Stack**: `Zen + Kata`
+- **Economic Value**: **Zero invoice settlement delay** and dispute backlog elimination.
+- **Architecture**: Zen dense models extract complex multi-page tabular itemizations and contractual rebate stipulations. Kata executes closed-loop reconciliation checks against ERP databases, generating audited variance reports.
+- **📄 White Paper / Specification**: [HIP-0043: LLM Inference Engine Standard](https://hips.hanzo.ai/docs/hip-0043-llm-inference-engine-standard)
+- **📰 Research Blog Post**: [Zen: 1T+ Parameter MoE Architecture](https://hanzo.blog/blog/2026-04-06-zen-model-architecture/)
+- **💻 Open Source Recipe**: [`recipes/src/finance.rs` (`InvoiceReconciliationRecipe`)](https://github.com/hanzoai/zen/tree/main/recipes)
+
+---
+
+### 07. Catalog Taxonomy & Attribute QA
+*Continuously scrubs multi-vendor product catalogs for duplicate UPCs, corrupted taxonomy categories, conflicting attributes, and uncalibrated claims.*
+
+- **Stack**: `Zen + Kai`
+- **Economic Value**: **100M+ catalog items scrubbed** with zero human labelling bottlenecks.
+- **Architecture**: Zen parses unstructured product descriptions and specification sheets. Kai outputs discrete categorical classifications into unified GS1/GDSN taxonomies with verified source citations.
+- **📄 White Paper / Specification**: [HIP-1332: Discrete Categorical Alignment](https://hips.hanzo.ai/docs/hip-1332-kai-the-decision-model)
+- **📰 Research Blog Post**: [The Router is the Registry](https://hanzo.blog/blog/2026-07-27-the-router-is-the-registry/)
+- **💻 Open Source Recipe**: [`recipes/src/catalog.rs` (`TaxonomyConsistencyRecipe`)](https://github.com/hanzoai/zen/tree/main/recipes)
+
+---
+
+### 08. Associate Multilingual Copilot
+*Provides store and distribution center associates with instant multilingual answers to standard operating procedures (SOPs) and equipment diagnostics.*
+
+- **Stack**: `Gen + Zen + Kai`
+- **Economic Value**: **$173M annual labor capacity value** (1.6M associates × 5 min/week saved).
+- **Architecture**: Handheld terminal client powered by Gen with embedded local knowledge graph (Hanzo Brain). Translates queries into 40+ native languages and verifies step compliance via Kai guardrails.
+- **📄 White Paper / Specification**: [HIP-1334: Sub-second Multilingual Grounding](https://hips.hanzo.ai/docs/hip-1334-research-unified-runtime)
+- **📰 Research Blog Post**: [Hanzo Brain: Local-First Knowledge Graph](https://hanzo.blog/blog/2026-05-12-hanzo-brain/)
+- **💻 Open Source Code**: [`examples/associate_copilot.py`](https://github.com/hanzoai/gen)
+
+---
+
+### 09. Autonomous CI/CD Test Repair
+*Continuous test suite maintenance on autopilot: captures test failures, identifies root causes in the AST, applies surgical diffs, and verifies green passes.*
+
+- **Stack**: `Kata + Gen + Enso`
+- **Economic Value**: **$55M–$552M developer capacity value** (2–5 hrs/week saved per engineer).
+- **Architecture**: Hooks into GitHub Actions and GitLab CI. On test failure, Kata extracts traces, Kai triages the regression, Enso routes AST diff generation to optimal models, and candidate patches are verified in isolated microVMs before opening pull requests.
+- **📄 White Paper / Specification**: [HIP-0510: Closed-Loop Agentic Verification](https://hips.hanzo.ai/docs/hip-0510-enso-learned-router)
+- **📰 Research Blog Post**: [Closed-Loop Autonomous Test Repair: From Stack Trace to Green PR](https://hanzo.blog/blog/2026-10-16-closed-loop-agentic-repair/)
+- **💻 Open Source Recipe**: [`recipes/src/repair.rs` (`AutomatedTestRepairLoop`)](https://github.com/hanzoai/kata/tree/main/recipes)
+
+---
+
+### 10. AI Inference Cost & Latency Optimization
+*Learned microsecond routing balances quality, latency budgets, and token cost across local models, open weights, and frontier cloud providers.*
+
+- **Stack**: `Enso + Kai + Zen`
+- **Economic Value**: **Up to 90% cloud compute cost reduction** across enterprise LLM traffic.
+- **Architecture**: Microsecond learned utility router (`utility = quality - λ·cost - μ·latency`) evaluates prompt features on CPU in 12 µs. Routes high-volume structured queries to open weights and reserves frontier models for complex multi-step reasoning.
+- **📄 White Paper / Specification**: [Hanzo Router: Learned Bilinear Utility Routing](https://papers.hanzo.ai/hanzo-router/)
+- **📰 Research Blog Post**: [Route every prompt — and cut AI costs by up to 90%](https://hanzo.blog/blog/2026-07-07-hanzo-router-cut-ai-costs/)
+- **💻 Open Source Recipe**: [`recipes/src/routing.rs` (`CostLatencyOptimizer`)](https://github.com/hanzoai/enso/tree/main/recipes)

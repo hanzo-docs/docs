@@ -1,0 +1,9 @@
+{
+  "title": "Decisions",
+  "description": "POST /v1/decisions: typed questions about state, answered with calibrated distributions.",
+  "icon": "ListChecks",
+  "pages": [
+    "index",
+    "early-access"
+  ]
+}
