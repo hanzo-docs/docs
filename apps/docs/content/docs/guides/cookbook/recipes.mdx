@@ -1,0 +1,205 @@
+---
+title: Modular Decision Recipes
+description: "Production-grade, composable decision blueprints in Rust and TypeScript for Hanzo Kai: retail triage, industrial diagnostics, confidence routing, and agent gates."
+icon: Code
+---
+
+**Modular decision recipes are reusable, type-safe decision blueprints designed to sit directly inside production software pipelines.**
+
+Unlike standalone prompts, recipes execute as typed programs over evidence against the Kai decision runtime (`POST /v1/decisions` or in-process via `libkai`). Every recipe outputs calibrated probabilities with zero token generation cost and sub-90ms p50 latency.
+
+All recipes are open source and maintained in the Hanzo Decision repository:
+- **Source Code Repository**: [`github.com/hanzoai/decision/tree/main/recipes`](https://github.com/hanzoai/decision/tree/main/recipes)
+- **Rust Crate**: `hanzo-decision-recipes` (`recipes/`)
+
+---
+
+## Architecture: Fast Path vs. Reasoning Escalation
+
+Decision recipes structure decisions into deterministic, calibrated evaluations with automated escalation boundaries:
+
+```
+                            ┌────────────────────────────────────────┐
+                            │          Operational State             │
+                            │  (Telemetry, Shelf Scan, Pricing, Task)│
+                            └───────────────────┬────────────────────┘
+                                                │
+                                    ┌───────────▼───────────┐
+                                    │     Recipe Builder    │
+                                    │ (Typed Rust Structs)  │
+                                    └───────────┬───────────┘
+                                                │
+                                    ┌───────────▼───────────┐
+                                    │    POST /v1/decisions │
+                                    │     or libkai in-proc │
+                                    └───────────┬───────────┘
+                                                │
+                                    ┌───────────▼───────────┐
+                                    │  Calibrated Decision  │
+                                    │   (Sub-90ms latency)  │
+                                    └───────────┬───────────┘
+                                                │
+                         ┌──────────────────────┴──────────────────────┐
+                         │                                             │
+               [Confidence >= tau]                            [Confidence < tau]
+                         │                                             │
+             ┌───────────▼───────────┐                     ┌───────────▼───────────┐
+             │ Fast Path Accept      │                     │ Deep Reasoning / LLM  │
+             │ (Policy Gated Return) │                     │ (Escalate to Zen / PM)│
+             └───────────────────────┘                     └───────────────────────┘
+```
+
+---
+
+## Available Recipe Modules
+
+### 1. Retail & Supply Chain (`recipes::retail`)
+*Source: [`recipes/src/retail.rs`](https://github.com/hanzoai/decision/tree/main/recipes/src/retail.rs)*
+
+High-throughput inventory triage, returns fraud verification, and automated pricing safety ceiling checks.
+
+```rust
+use recipes::retail::{ShelfInventoryRecipe, ReturnsFraudRecipe, PricingGuardrailRecipe};
+
+// Pricing safety check: prevent fat-finger pricing drops before updating database
+let guardrail = PricingGuardrailRecipe::new(
+    "SKU-99412",
+    149.99, // original price
+    14.99,  // attempted update (90% drop!)
+    "Automated flash sale sync",
+);
+let decision = guardrail.execute(&client).await?;
+if decision.is_blocked() {
+    eprintln!("Pricing update blocked by Kai safety policy: {}", decision.reason);
+}
+```
+
+### 2. Industrial Fleets & Readiness (`recipes::industrial`)
+*Source: [`recipes/src/industrial.rs`](https://github.com/hanzoai/decision/tree/main/recipes/src/industrial.rs)*
+
+Multi-criteria powertrain trade studies (Battery Electric vs Hybrid vs Clean Diesel) and equipment telematics readiness evaluation.
+
+```rust
+use recipes::industrial::EquipmentReadinessRecipe;
+
+let readiness = EquipmentReadinessRecipe::builder()
+    .asset_id("TURBINE-04B")
+    .vibration_harmonics_hz(42.1)
+    .thermal_core_celsius(88.4)
+    .lubrication_pressure_psi(31.2)
+    .build();
+
+let report = readiness.evaluate(&client).await?;
+println!("Release readiness: {:?}, P(failure_within_24h): {:.4}", report.status, report.risk);
+```
+
+### 3. Confidence Gating & Model Routing (`recipes::routing`)
+*Source: [`recipes/src/routing.rs`](https://github.com/hanzoai/decision/tree/main/recipes/src/routing.rs)*
+
+Classifies query complexity and routes queries dynamically. If Kai's confidence margin clears threshold $\tau$, the sub-90ms decision stands; otherwise, it escalates to a deep reasoning model like Zen.
+
+```rust
+use recipes::routing::{ConfidenceGate, ModelSuitabilityRecipe};
+
+let gate = ConfidenceGate::new(0.85); // 85% confidence margin threshold
+let route = gate.evaluate(&decision);
+
+match route {
+    ConfidenceGate::FastPath(action) => execute_action(action),
+    ConfidenceGate::Escalate => fallback_to_zen(prompt).await?,
+}
+```
+
+### 4. Generative LLM & Streaming SSE (`recipes::zen`)
+*Source: [`recipes/src/zen.rs`](https://github.com/hanzoai/decision/tree/main/recipes/src/zen.rs)*
+
+OpenAI-compatible request builder and Server-Sent Events (SSE) accumulator extracting streaming reasoning thoughts (`reasoning_content`) and final responses.
+
+```rust
+use recipes::zen::{ZenChatRecipe, ZenStreamAccumulator};
+
+let chat = ZenChatRecipe::new("zen5-pro")
+    .system("You are a systems reliability engineer.")
+    .user("Analyze cluster failover logs.")
+    .reasoning_effort("high");
+
+let mut stream = chat.send_stream(&client).await?;
+let mut acc = ZenStreamAccumulator::new();
+
+while let Some(chunk) = stream.next().await {
+    acc.push_chunk(&chunk);
+    if let Some(thought) = acc.latest_thought() {
+        print!("\rThinking: {}", thought);
+    }
+}
+println!("\nFinal Response: {}", acc.final_content());
+```
+
+### 5. Autonomous Coding & CI Gating (`recipes::kata`)
+*Source: [`recipes/src/kata.rs`](https://github.com/hanzoai/decision/tree/main/recipes/src/kata.rs)*
+
+Self-healing test-and-repair state machine that parses compiler error diagnostics, tests candidate patches, and gates automated commit vs human review.
+
+```rust
+use recipes::kata::{KataAgentLoopRecipe, GateEvaluation};
+
+let loop_recipe = KataAgentLoopRecipe::new(
+    "crates/server/src/handler.rs",
+    "cargo test --test auth",
+);
+let patch = loop_recipe.run_iteration(&client, &test_runner).await?;
+if patch.gate.passes() {
+    patch.commit_and_push()?;
+}
+```
+
+### 6. Conversational Agent & MCP Dispatch (`recipes::gen`)
+*Source: [`recipes/src/gen.rs`](https://github.com/hanzoai/decision/tree/main/recipes/src/gen.rs)*
+
+Stateful multi-turn conversational agent harness managing turn history, tool execution callbacks, and Model Context Protocol (MCP) tool dispatch.
+
+---
+
+## TypeScript / Node.js Usage
+
+All recipes can also be invoked via the official `@hanzo/ai` SDK:
+
+```typescript
+import { HanzoAI } from '@hanzo/ai'
+
+const ai = new HanzoAI({ apiKey: process.env.HANZO_API_KEY })
+
+// Returns fraud triage recipe
+const decision = await ai.postDecisions({
+  model: 'kai',
+  state: {
+    order_id: 'ORD-8821',
+    return_reason: 'Defective item',
+    serial_scanned: 'SN-00912',
+    serial_registered: 'SN-00844', // Serial mismatch
+    box_tamper_flag: true
+  },
+  questions: [
+    {
+      question: 'Should this return be automatically approved or quarantined?',
+      kind: 'choice',
+      instructions: 'Evaluate return risk based on serial number and tamper signals.',
+      options: ['approve_refund', 'manual_inspection_quarantine', 'reject_fraud']
+    }
+  ]
+})
+
+console.log(decision.answers[0].choice) // "manual_inspection_quarantine"
+console.log(decision.answers[0].probabilities)
+```
+
+---
+
+## Related Documentation & Links
+
+- [Decisions API Reference](/docs/decisions)
+- [Cookbook: Route with Enso](/docs/guides/cookbook/route)
+- [Cookbook: Triage with Kai, Reply with Zen](/docs/guides/cookbook/triage)
+- [Cookbook: Gate an Agent's Command](/docs/guides/cookbook/gate)
+- [Cookbook: Drive an Agent Loop](/docs/guides/cookbook/loop)
+- [Hanzo Decision Source Code](https://github.com/hanzoai/decision)

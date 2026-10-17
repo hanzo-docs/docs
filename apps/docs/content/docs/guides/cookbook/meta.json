@@ -3,6 +3,8 @@
   "description": "Zen, Enso and Kai in one loop, recipe by recipe.",
   "icon": "ChefHat",
   "pages": [
+    "index",
+    "recipes",
     "route",
     "triage",
     "gate",
