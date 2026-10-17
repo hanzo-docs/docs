@@ -1,0 +1,91 @@
+---
+title: zen6-max
+description: 3.7 trillion parameters of aggregate expert capacity. Intelligence at enterprise scale.
+---
+
+**The combined profile gives us concrete targets: approximately 93.5 on GPQA, 88.3 on Terminal-Bench 2.1, 84.5 on CyberGym, and 1,769 Elo on GDPval-AA v2.** These come from the strongest published result among the proposed components for each benchmark, assuming Zen6-Max reproduces the corresponding evaluation conditions.
+
+# Zen6-Max
+## Intelligence at enterprise scale.
+
+**3.7 trillion parameters of aggregate expert capacity. One unified experience.**
+
+Zen6-Max brings advanced reasoning, software engineering, research, and multimodal understanding together through one model interface. Designed for deployment on enterprise infrastructure, with performance tuned to the demands of each task.
+
+### Projected performance
+
+An initial capability profile derived from published evaluations of the proposed model components.
+
+| Capability | Benchmark | Zen6-Max projection* |
+|---|---|---:|
+| Scientific reasoning | GPQA Diamond | **93.5** |
+| Advanced reasoning with tools | Humanity’s Last Exam | **62.5** |
+| Terminal-based engineering | Terminal-Bench 2.1 | **88.3** |
+| Challenging terminal tasks | Terminal-Bench 3.0 | **28.3** |
+| Software engineering | DeepSWE v1.1 | **67.5** |
+| Competitive programming | LiveCodeBench v6 | **91.9** |
+| Multilingual software engineering | SWE-bench Multilingual | **81.0** |
+| Security vulnerability discovery | CyberGym | **84.5** |
+| Research and web investigation | BrowseComp | **91.2** |
+| Complex tool use | Toolathlon Verified | **76.5** |
+| Workflow automation | AutomationBench v1.0.6 | **48.2** |
+| Professional knowledge work | GDPval-AA v2 | **1,769 Elo** |
+| Document understanding | OmniDocBench | **91.1** |
+| Multimodal reasoning with tools | MMMU-Pro | **83.4** |
+
+*\*Projection method: select the strongest published component result for each named benchmark and target reproduction through Zen6-Max. These are optimistic engineering targets, rather than measured Zen6-Max scores. They assume the source evaluation’s reasoning budget, tools, agent harness, and benchmark version. Scores use their original metrics; GDPval uses Elo.*
+
+Sources: [reasoning, research, and multimodal evaluations](https://huggingface.co/moonshotai/Kimi-K3#3-evaluation-results), [coding, security, and enterprise evaluations](https://huggingface.co/zai-org/GLM-5.3#benchmark), [efficient coding and multilingual evaluations](https://huggingface.co/Qwen/Qwen3.8-Flash-Next#benchmark-results).
+
+### One interface. The effort your task requires.
+
+**Fast**  
+For everyday assistance, interactive coding, and routine tool use.
+
+**Deep**  
+For substantial engineering, research, and complex analysis.
+
+**Max**  
+For demanding reasoning and extended tasks where answer quality takes priority.
+
+The projected benchmark profile represents maximum capability under the corresponding source settings. Each operating mode receives its own quality and latency qualification.
+
+### Model specifications
+
+| Specification | Deployment target |
+|---|---|
+| Aggregate parameter capacity | Approximately **3.7 trillion** |
+| Product interface | Unified multimodal model service |
+| Inputs | Text and images |
+| Outputs | Text, code, structured responses, and tool calls |
+| Context | Up to **1 million tokens**, subject to configuration and qualification |
+| Execution | Sparse expert computation |
+| Precision | Mixed native four-bit and eight-bit weights |
+| Deployment | Enterprise infrastructure or dedicated private environment |
+
+### Choose your deployment
+
+| Configuration | Initial hardware sizing | Purpose |
+|---|---|---|
+| **Pilot** | **16 B300 GPUs across two servers** | Validate quality, latency, and workload capacity |
+| **Dedicated** | **24 B300 GPUs across three servers** | Isolate workloads and scale capacity independently |
+| **Resilient** | **48 B300 GPUs across six servers** | Independent replicas with capacity reserved for failover |
+| **B200** | **32 B200 GPUs across four servers** | Deploy across existing B200 infrastructure |
+
+Configurations assume eight GPUs per server. Pilot GPU allocation and all production capacity require workload validation.
+
+### Zen6-Max Enterprise
+
+Build a deployment around your data, infrastructure, and operating requirements.
+
+The enterprise engagement covers hardware sizing, deployment integration, evaluation on representative tasks, and production acceptance criteria. Qualification measures answer quality alongside response latency, throughput, concurrency, and recovery behavior.
+
+**Bring your hardest workloads. Establish the results on your infrastructure.**
+
+**[Request a Zen6-Max Enterprise evaluation](https://hanzo.ai/contact).**
+
+## See Also
+
+- [zen6](/docs/models/zen) -- Zen 6 generation
+- [zen5-max](/docs/models/zen5-max) -- Previous enterprise frontier
+- [Models Overview](/docs/models) -- Complete Zen LM catalog

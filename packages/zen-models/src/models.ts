@@ -889,6 +889,79 @@ export const zen5Mini: ZenModel = {
 }
 
 // ---------------------------------------------------------------------------
+// Zen6 Generation — Enterprise Scale Frontier Models
+// ---------------------------------------------------------------------------
+
+export const zen6Max: ZenModel = {
+  id: 'zen6-max',
+  name: 'Zen6 Max',
+  fullName: 'Zen6 Max — Enterprise Scale',
+  description: '3.7 trillion parameters of aggregate expert capacity. Unified multimodal model service with 1M context, enterprise hardware deployment, and state-of-the-art reasoning.',
+  generation: 'zen6',
+  tier: 'ultra max',
+  category: 'flagship',
+  modalities: ['text', 'code', 'vision', 'agents', 'math'],
+  spec: {
+    params: '3.7T aggregate',
+    activeParams: null,
+    context: 1_048_576,
+    arch: 'MoE',
+  },
+  pricing: null,
+  features: ['3.7T aggregate parameters', '1M context window', 'Fast / Deep / Max operating modes', 'Enterprise hardware sizing (B300/B200)'],
+  status: 'contact-sales',
+  huggingface: null,
+  github: null,
+  aliases: [],
+}
+
+export const zen6: ZenModel = {
+  id: 'zen6',
+  name: 'Zen6',
+  fullName: 'Zen6 — Dense 27B',
+  description: 'Dense 27B model for agentic coding and reasoning. 262K native context (1M with YaRN) with speculative diffusion drafter.',
+  generation: 'zen6',
+  tier: 'ultra',
+  category: 'code',
+  modalities: ['text', 'code', 'vision'],
+  spec: {
+    params: '27.3B',
+    activeParams: '27.3B',
+    context: 262_144,
+    arch: 'Dense',
+  },
+  pricing: { input: 2.28, output: 7.26, cacheRead: 0.57, cacheWrite: 2.85 },
+  features: ['262K native context', '1M with YaRN', 'Speculative diffusion drafter', 'NVFP4 / FP8'],
+  status: 'available',
+  huggingface: 'https://huggingface.co/zenlm/zen6',
+  github: null,
+  aliases: [],
+}
+
+export const zen6Flash: ZenModel = {
+  id: 'zen6-flash',
+  name: 'Zen6 Flash',
+  fullName: 'Zen6 Flash — Ternary 27B',
+  description: 'Ternary 1.77-bit quantization of Zen6 (5.95 GB) for single GPU or local workstation deployment.',
+  generation: 'zen6',
+  tier: 'pro',
+  category: 'code',
+  modalities: ['text', 'code', 'vision'],
+  spec: {
+    params: '27.3B',
+    activeParams: '27.3B',
+    context: 262_144,
+    arch: 'Dense',
+  },
+  pricing: { input: 0.45, output: 1.8, cacheRead: 0.11, cacheWrite: 0.56 },
+  features: ['262K context window', 'Ternary weights (5.95 GB)', 'Runs on single GPU / Metal'],
+  status: 'available',
+  huggingface: 'https://huggingface.co/zenlm/zen6-flash',
+  github: null,
+  aliases: [],
+}
+
+// ---------------------------------------------------------------------------
 // Foundation Models — Local Weights (HuggingFace)
 // ---------------------------------------------------------------------------
 
@@ -1183,6 +1256,241 @@ export const zenAgent: ZenModel = {
 }
 
 // ---------------------------------------------------------------------------
+// Creative AI Models — Open Foundations (Zen) & Proprietary (Hanzo)
+// ---------------------------------------------------------------------------
+
+export const zenDirector: ZenModel = {
+  id: 'zen-director',
+  name: 'Zen Director',
+  fullName: 'Zen Director — Open Video Foundation',
+  description: 'Open-weight 5B diffusion transformer for video generation based on Wan2.2.',
+  generation: 'foundation',
+  tier: 'pro',
+  category: 'video',
+  modalities: ['video', 'vision'],
+  spec: { params: '5B', activeParams: null, context: 0, arch: 'Diffusion' },
+  pricing: null,
+  features: ['Wan2.2 5B base', 'Apache 2.0 license', 'Temporal video generation'],
+  status: 'available',
+  huggingface: 'https://huggingface.co/zenlm/zen-director',
+  github: 'https://github.com/zenlm/zen-director',
+  model_class: 'open',
+  weights_access: 'public',
+  license: 'Apache-2.0',
+  access_policy: 'public',
+  counterpart: 'koma-1',
+  aliases: [],
+}
+
+export const zen3D: ZenModel = {
+  id: 'zen-3d',
+  name: 'Zen 3D',
+  fullName: 'Zen 3D — Open Spatial Asset Foundation',
+  description: 'Open-source 3D asset generation based on MIT-licensed TRELLIS neural radiance fields.',
+  generation: 'foundation',
+  tier: 'pro',
+  category: 'spatial',
+  modalities: ['3d', 'vision'],
+  spec: { params: 'TRELLIS', activeParams: null, context: 0, arch: 'Diffusion' },
+  pricing: null,
+  features: ['TRELLIS base', 'MIT license', 'Watertight mesh generation'],
+  status: 'available',
+  huggingface: 'https://huggingface.co/zenlm/zen-3d',
+  github: 'https://github.com/zenlm/zen-3d',
+  model_class: 'open',
+  weights_access: 'public',
+  license: 'MIT',
+  access_policy: 'public',
+  counterpart: 'mori-1',
+  aliases: [],
+}
+
+export const zenFoley: ZenModel = {
+  id: 'zen-foley',
+  name: 'Zen Foley',
+  fullName: 'Zen Foley — Open Sound Effects Foundation',
+  description: 'Open foundation for synchronized scene sound and sound effects based on MOSS-SoundEffect v2.',
+  generation: 'foundation',
+  tier: 'pro',
+  category: 'audio',
+  modalities: ['audio'],
+  spec: { params: 'MOSS-v2', activeParams: null, context: 0, arch: 'Diffusion' },
+  pricing: null,
+  features: ['MOSS-SoundEffect v2 base', 'Apache 2.0 license', '48kHz audio generation'],
+  status: 'available',
+  huggingface: 'https://huggingface.co/zenlm/zen-foley',
+  github: 'https://github.com/zenlm/zen-foley',
+  model_class: 'open',
+  weights_access: 'public',
+  license: 'Apache-2.0',
+  access_policy: 'public',
+  counterpart: 'oto-1',
+  aliases: [],
+}
+
+export const zenMusician: ZenModel = {
+  id: 'zen-musician',
+  name: 'Zen Musician',
+  fullName: 'Zen Musician — Open Music Generation Foundation',
+  description: 'Open music model foundation based on YuE stage 1 and ACE-Step 1.5.',
+  generation: 'foundation',
+  tier: 'pro',
+  category: 'audio',
+  modalities: ['audio'],
+  spec: { params: 'YuE-1', activeParams: null, context: 0, arch: 'Diffusion' },
+  pricing: null,
+  features: ['YuE stage 1 / ACE-Step 1.5 base', 'Apache-2.0 / MIT license', 'Full-track arrangement'],
+  status: 'available',
+  huggingface: 'https://huggingface.co/zenlm/zen-musician',
+  github: 'https://github.com/zenlm/zen-musician',
+  model_class: 'open',
+  weights_access: 'public',
+  license: 'Apache-2.0',
+  access_policy: 'public',
+  counterpart: 'uta-1',
+  aliases: [],
+}
+
+// Proprietary Counterparts (Hanzo Creative Models)
+export const koma: ZenModel = {
+  id: 'koma-1',
+  name: 'Koma',
+  fullName: 'Hanzo Koma — Cinematic Video Intelligence',
+  description: 'Every frame tells a story. Cinematic video generation, character continuity, and director control.',
+  generation: 'zen6',
+  tier: 'ultra max',
+  category: 'video',
+  modalities: ['video', 'vision'],
+  spec: { params: 'Proprietary', activeParams: null, context: 0, arch: 'Diffusion' },
+  pricing: null,
+  features: ['Temporal Character Continuity', 'Director Camera Control', 'Private weights on Hanzo Cloud'],
+  status: 'preview',
+  huggingface: null,
+  github: null,
+  model_class: 'proprietary',
+  weights_access: 'private',
+  license: 'Proprietary',
+  access_policy: 'research_approval',
+  counterpart: 'zen-director',
+  aliases: ['koma'],
+}
+
+export const iro: ZenModel = {
+  id: 'iro-1',
+  name: 'Iro',
+  fullName: 'Hanzo Iro — High-Fidelity Visual Intelligence',
+  description: 'Imagine without limits. High-fidelity image generation, character design and consistent visual assets.',
+  generation: 'zen6',
+  tier: 'ultra max',
+  category: 'vision',
+  modalities: ['vision'],
+  spec: { params: 'Proprietary', activeParams: null, context: 0, arch: 'Diffusion' },
+  pricing: null,
+  features: ['16-bit wide gamut HDR', 'Photorealistic and stylized direction', 'Private weights on Hanzo Cloud'],
+  status: 'preview',
+  huggingface: null,
+  github: null,
+  model_class: 'proprietary',
+  weights_access: 'private',
+  license: 'Proprietary',
+  access_policy: 'research_approval',
+  counterpart: 'zen3-image',
+  aliases: ['iro'],
+}
+
+export const mori: ZenModel = {
+  id: 'mori-1',
+  name: 'Mori',
+  fullName: 'Hanzo Mori — Spatial 3D Intelligence',
+  description: 'Build worlds, not just images. 3D assets, geometry, materials, environments and spatially consistent scenes.',
+  generation: 'zen6',
+  tier: 'ultra max',
+  category: 'spatial',
+  modalities: ['3d', 'vision'],
+  spec: { params: 'Proprietary', activeParams: null, context: 0, arch: 'Diffusion' },
+  pricing: null,
+  features: ['Production quad topology', 'Full PBR material generation', 'Private weights on Hanzo Cloud'],
+  status: 'preview',
+  huggingface: null,
+  github: null,
+  model_class: 'proprietary',
+  weights_access: 'private',
+  license: 'Proprietary',
+  access_policy: 'research_approval',
+  counterpart: 'zen-3d',
+  aliases: ['mori'],
+}
+
+export const oto: ZenModel = {
+  id: 'oto-1',
+  name: 'Oto',
+  fullName: 'Hanzo Oto — Film Foley & Sound Intelligence',
+  description: 'Give every moment its sound. Film Foley, immersive sound effects, environmental audio and synchronized sound.',
+  generation: 'zen6',
+  tier: 'ultra max',
+  category: 'audio',
+  modalities: ['audio'],
+  spec: { params: 'Proprietary', activeParams: null, context: 0, arch: 'Diffusion' },
+  pricing: null,
+  features: ['Timeline synchronized Foley', 'Acoustic impulse modeling', 'Private weights on Hanzo Cloud'],
+  status: 'preview',
+  huggingface: null,
+  github: null,
+  model_class: 'proprietary',
+  weights_access: 'private',
+  license: 'Proprietary',
+  access_policy: 'research_approval',
+  counterpart: 'zen-foley',
+  aliases: ['oto'],
+}
+
+export const koe: ZenModel = {
+  id: 'koe-1',
+  name: 'Koe',
+  fullName: 'Hanzo Koe — Directable Voice Intelligence',
+  description: 'Performance in every word. Directable speech synthesis, character performances, dubbing and multilingual dialogue.',
+  generation: 'zen6',
+  tier: 'ultra max',
+  category: 'audio',
+  modalities: ['audio'],
+  spec: { params: 'Proprietary', activeParams: null, context: 0, arch: 'TTS HD' },
+  pricing: null,
+  features: ['Director emotional modulation', 'Cross-lingual voice cloning', 'Private weights on Hanzo Cloud'],
+  status: 'preview',
+  huggingface: null,
+  github: null,
+  model_class: 'proprietary',
+  weights_access: 'private',
+  license: 'Proprietary',
+  access_policy: 'research_approval',
+  counterpart: 'zen3-tts',
+  aliases: ['koe'],
+}
+
+export const uta: ZenModel = {
+  id: 'uta-1',
+  name: 'Uta',
+  fullName: 'Hanzo Uta — Orchestral & Music Intelligence',
+  description: 'Compose beyond imagination. Soundtracks, original songs, musical ideas, cue-driven scoring and music production.',
+  generation: 'zen6',
+  tier: 'ultra max',
+  category: 'audio',
+  modalities: ['audio'],
+  spec: { params: 'Proprietary', activeParams: null, context: 0, arch: 'Diffusion' },
+  pricing: null,
+  features: ['Multi-movement composition', 'Video cue scoring', 'Private weights on Hanzo Cloud'],
+  status: 'preview',
+  huggingface: null,
+  github: null,
+  model_class: 'proprietary',
+  weights_access: 'private',
+  license: 'Proprietary',
+  access_policy: 'research_approval',
+  counterpart: 'zen-musician',
+  aliases: ['uta'],
+}
+
+// ---------------------------------------------------------------------------
 // Collections
 // ---------------------------------------------------------------------------
 
@@ -1203,6 +1511,8 @@ export const allModels: ZenModel[] = [
   zen3Audio, zen3AudioFast, zen3Asr, zen3AsrV1,
   // Zen3 TTS
   zen3Tts, zen3TtsHd, zen3TtsFast,
+  // Zen6 next-gen enterprise & agentic
+  zen6Max, zen6, zen6Flash,
   // Zen5 next-gen (contact sales)
   zen5, zen5Pro, zen5Max, zen5Ultra, zen5Mini,
   // Foundation local models
@@ -1217,6 +1527,30 @@ export const allModels: ZenModel[] = [
   zenEmbedding, zenReranker,
   // Agents
   zenAgent,
+  // Creative Open Foundation (Zen)
+  zenDirector, zen3D, zenFoley, zenMusician,
+  // Creative Proprietary Research Previews (Hanzo)
+  koma, iro, mori, oto, koe, uta,
+]
+
+/** Creative Open Foundation models (Zen - Apache 2.0 / MIT, public weights). */
+export const creativeOpenModels: ZenModel[] = [
+  zenDirector,
+  zen3Image,
+  zen3D,
+  zenFoley,
+  zen3Tts,
+  zenMusician,
+]
+
+/** Creative Proprietary models (Hanzo - Research Preview, private weights). */
+export const creativeProprietaryModels: ZenModel[] = [
+  koma,
+  iro,
+  mori,
+  oto,
+  koe,
+  uta,
 ]
 
 /** Production API models (served via api.hanzo.ai). */
@@ -1226,9 +1560,10 @@ export const apiModels: ZenModel[] = allModels.filter(m => m.pricing !== null)
 export const localModels: ZenModel[] = allModels.filter(m => m.huggingface !== null)
 
 /** Models by generation. */
+export const zen6Models: ZenModel[] = allModels.filter(m => m.generation === 'zen6')
+export const zen5Models: ZenModel[] = allModels.filter(m => m.generation === 'zen5')
 export const zen4Models: ZenModel[] = allModels.filter(m => m.generation === 'zen4')
 export const zen3Models: ZenModel[] = allModels.filter(m => m.generation === 'zen3')
-export const zen5Models: ZenModel[] = allModels.filter(m => m.generation === 'zen5')
 export const foundationModels: ZenModel[] = allModels.filter(m => m.generation === 'foundation')
 
 /** Lookup by ID. */

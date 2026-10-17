@@ -20,6 +20,9 @@ export type {
   ModelStatus,
   ModelPricing,
   ModelSpec,
+  ModelClass,
+  WeightsAccess,
+  AccessPolicy,
 } from './types'
 
 // All models (named exports)

@@ -4,7 +4,7 @@
  * There should be one — and preferably only one — obvious place to define these.
  */
 
-export type ModelGeneration = 'zen3' | 'zen4' | 'zen5' | 'foundation'
+export type ModelGeneration = 'zen3' | 'zen4' | 'zen5' | 'zen6' | 'foundation'
 
 export type ModelTier =
   | 'pro'
@@ -58,8 +58,8 @@ export type ModelStatus = 'available' | 'cloud-only' | 'coming-soon' | 'preview'
 export interface ModelPricing {
   /** Cost per 1M input tokens in USD */
   input: number
-  /** Cost per 1M output tokens in USD */
-  output: number
+  /** Cost per 1M output tokens in USD (null for embeddings/rerankers) */
+  output: number | null
   /** Cost per 1M cached read tokens (null if not supported) */
   cacheRead: number | null
   /** Cost per 1M cached write tokens (null if not supported) */
@@ -106,11 +106,25 @@ export interface ZenModel {
   huggingface: string | null
   /** GitHub URL (null if none) */
   github: string | null
+  /** Model product class: open foundation vs proprietary counterpart */
+  model_class?: ModelClass
+  /** Weights accessibility */
+  weights_access?: WeightsAccess
+  /** License identifier */
+  license?: string
+  /** Access policy */
+  access_policy?: AccessPolicy
+  /** Counterpart model ID */
+  counterpart?: string | null
   /** Technical paper / report URL (null if none) */
   paper?: string | null
   /** Brand aliases (e.g., zen-max → zen4-max) */
   aliases: string[]
 }
+
+export type ModelClass = 'open' | 'proprietary'
+export type WeightsAccess = 'public' | 'private'
+export type AccessPolicy = 'public' | 'research_approval'
 
 /**
  * Model family grouping for display.
