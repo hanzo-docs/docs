@@ -254,6 +254,15 @@ being built into Enso for the decisions an agent loop makes beyond the model.
 | **Enso Diffusion** | a sparse mixture-of-experts diffusion transformer with rectified-flow training, forked from DiT-MoE: [zenlm/enso](https://github.com/zenlm/enso) | research code, no released weights |
 | **Enso Browser** | a Firefox-based desktop browser | not released |
 
+## SDK Examples & Recipes
+
+- **[Open Source Repository on GitHub (`hanzoai/enso`)](https://github.com/hanzoai/enso)**: Canonical repository for Enso router examples, client bindings, and recipes.
+- **Multi-Language Examples**:
+  - [Python Client (`examples/python/client_enso.py`)](https://github.com/hanzoai/enso/tree/main/examples/python): Multi-tier routing (`enso-free`, `enso`, `enso-ultra`) with latency and cost control headers.
+  - [Go Client (`examples/go/main.go`)](https://github.com/hanzoai/enso/tree/main/examples/go): Idiomatic Go router client with custom HTTP transport and latency caps.
+  - [Rust Client (`examples/rust/src/main.rs`)](https://github.com/hanzoai/enso/tree/main/examples/rust): Async client using `reqwest` and serde JSON.
+- **[Modular Rust Recipes Crate (`enso-recipes`)](https://github.com/hanzoai/enso/tree/main/recipes)**: High-level primitives including `ModelSuitabilityRecipe` and `ConfidenceGate`.
+
 ## Source
 
 The tiers are served by the `enso` service on the Hanzo engine. The router and

@@ -149,14 +149,18 @@ The key field is named for the key: an `sk-` goes in `secretKey` on a server, a
 `pk-` goes in `publishableKey` in a browser, and the two are not
 interchangeable. [Authentication](/docs/api-keys) is the whole rule.
 
-## Any OpenAI-shaped client also works
+## Product SDK Repositories & Runnable Examples
 
-The chat, embeddings and messages routes are OpenAI- and Anthropic-compatible on
-purpose, so a language with no Hanzo client yet is not blocked. Point the client
-you already have at `https://api.hanzo.ai/v1` with your Hanzo key and the
-request body does not change — this is the same edit the [migration
-guides](/docs/guides/migrate) describe. The native clients add the rest of `/v1`
-on top of that.
+Hanzo's core AI models and agents maintain dedicated open-source repositories with runnable examples in Python, TypeScript, Go, Rust, and cURL, along with modular Rust recipe crates:
+
+| Product | Capability | GitHub Repository | SDK Languages & Recipes |
+|---|---|---|---|
+| **[Kai](/docs/decisions)** | Calibrated probability decisions | [`hanzoai/kai`](https://github.com/hanzoai/kai) | [Python](https://github.com/hanzoai/kai/tree/main/examples/python) · [TypeScript](https://github.com/hanzoai/kai/tree/main/examples/typescript) · [Go](https://github.com/hanzoai/kai/tree/main/examples/go) · [Rust](https://github.com/hanzoai/kai/tree/main/examples/rust) · [20 Recipes](https://github.com/hanzoai/kai/tree/main/recipes) |
+| **[Zen](/docs/models/zen)** | Foundation generative reasoning & code | [`hanzoai/zen`](https://github.com/hanzoai/zen) | [Python](https://github.com/hanzoai/zen/tree/main/examples/cloud/client_cloud.py) · [Go](https://github.com/hanzoai/zen/tree/main/examples/cloud/client_cloud.go) · [Rust](https://github.com/hanzoai/zen/tree/main/examples/cloud/client_cloud.rs) · [Recipes](https://github.com/hanzoai/zen/tree/main/recipes) |
+| **[Enso](/docs/models/enso)** | Learned microsecond model routing | [`hanzoai/enso`](https://github.com/hanzoai/enso) | [Python](https://github.com/hanzoai/enso/tree/main/examples/python) · [Go](https://github.com/hanzoai/enso/tree/main/examples/go) · [Rust](https://github.com/hanzoai/enso/tree/main/examples/rust) · [Recipes](https://github.com/hanzoai/enso/tree/main/recipes) |
+| **[Kata](/docs/coding#kata)** | Autonomous test repair & CI/CD loop | [`hanzoai/kata`](https://github.com/hanzoai/kata) | [Python](https://github.com/hanzoai/kata/tree/main/examples/python) · [TypeScript](https://github.com/hanzoai/kata/tree/main/examples/typescript) · [Go](https://github.com/hanzoai/kata/tree/main/examples/go) · [Rust](https://github.com/hanzoai/kata/tree/main/examples/rust) · [Recipes](https://github.com/hanzoai/kata/tree/main/recipes) |
+| **[Gen](/docs/coding)** | Agentic CLI harness & tool calling | [`hanzoai/gen`](https://github.com/hanzoai/gen) | [Python](https://github.com/hanzoai/gen/tree/main/examples/python) · [TypeScript](https://github.com/hanzoai/gen/tree/main/examples/typescript) · [Go](https://github.com/hanzoai/gen/tree/main/examples/go) · [Rust](https://github.com/hanzoai/gen/tree/main/examples/rust) |
+| **[Dev](/docs/dev)** | Autonomous software engineer | [`hanzoai/dev`](https://github.com/hanzoai/dev) | Terminal, CLI, and cloud execution |
 
 ## Where to go next
 

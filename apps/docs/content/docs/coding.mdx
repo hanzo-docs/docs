@@ -21,6 +21,61 @@ hanzo --claude "fix the failing test in api/users"   # one quoted task runs head
 
 [Coding tools](/docs/guides/coding) has the full table of agents, sign-up and plans, what each flag does, and how to read the summary.
 
-## The other `hanzo code`
+## Code Intelligence API
 
 `hanzo code search`, `hanzo code context`, `hanzo code file` and `hanzo code index` are a different thing that shares the word: they are the [code intelligence API](/docs/openapi/code), search and symbols across your indexed repositories, for you and for agents. They take no agent and run none. The rule is the word after `code`: an operation of the code index runs it, and anything else starts a session.
+
+---
+
+## The Agent Ecosystem: Dev, Gen & Kata
+
+Hanzo provides three complementary tools for software engineering:
+
+| Tool | Role | Runtime | Repository |
+|---|---|---|---|
+| **[Hanzo Dev](/docs/dev)** | Autonomous feature engineer & bug fixer | Terminal, Web, Cloud, Slack | [`hanzoai/dev`](https://github.com/hanzoai/dev) |
+| **[Hanzo Gen](/docs/coding)** | Universal harness for any coding agent | CLI (`gen --claude`, `gen --codex`) | [`hanzoai/gen`](https://github.com/hanzoai/gen) |
+| **[Hanzo Kata](/docs/coding#kata)** | Closed-loop test repair & CI/CD triage | CI/CD, pre-push, autonomous loop | [`hanzoai/kata`](https://github.com/hanzoai/kata) |
+
+---
+
+## Hanzo Kata: Closed-Loop Test Repair & CI/CD Triage
+
+**[Kata](https://github.com/hanzoai/kata)** is an autonomous agent loop engineered specifically for continuous test repair and CI/CD triage. Rather than generating unconstrained prose, Kata uses **[Kai](/docs/decisions)** typed decisions to evaluate failure logs and **[Enso](/docs/models/enso)** routing to synthesize AST fixes that pass test suites.
+
+```bash
+# Run tests and let Kata triage and repair failures
+kata run --suite tests/unit
+```
+
+### Kata Workflow
+1. **Detect**: Captures failure traces from `pytest`, `cargo test`, `vitest`, or `go test`.
+2. **Triage**: Asks Kai for a discrete decision (`choice`: retry, patch, rollback, approve).
+3. **Synthesize**: Routes code edit generation via Enso to the optimal model.
+4. **Verify**: Re-runs the test suite in an isolated sandbox until 100% green verification.
+
+---
+
+## Open Source Repositories & SDK Examples
+
+Every Hanzo agent and client is open source with runnable examples in all tier-one languages:
+
+### Hanzo Kata (`hanzoai/kata`)
+- **[GitHub Repository](https://github.com/hanzoai/kata)**
+- [Python Autonomous Loop (`examples/python/kata_loop.py`)](https://github.com/hanzoai/kata/tree/main/examples/python)
+- [TypeScript Autonomous Loop (`examples/typescript/kata_loop.ts`)](https://github.com/hanzoai/kata/tree/main/examples/typescript)
+- [Go Client (`examples/go/main.go`)](https://github.com/hanzoai/kata/tree/main/examples/go)
+- [Rust Client (`examples/rust/src/main.rs`)](https://github.com/hanzoai/kata/tree/main/examples/rust)
+- [Modular Rust Recipes Crate (`kata-recipes`)](https://github.com/hanzoai/kata/tree/main/recipes)
+
+### Hanzo Gen (`hanzoai/gen`)
+- **[GitHub Repository](https://github.com/hanzoai/gen)**
+- [Python Assistant & Tool Dispatch (`examples/python/gen_tool_calling.py`)](https://github.com/hanzoai/gen/tree/main/examples/python)
+- [TypeScript Client (`examples/typescript/client.ts`)](https://github.com/hanzoai/gen/tree/main/examples/typescript)
+- [Go Client (`examples/go/main.go`)](https://github.com/hanzoai/gen/tree/main/examples/go)
+- [Rust Client (`examples/rust/src/main.rs`)](https://github.com/hanzoai/gen/tree/main/examples/rust)
+
+### Hanzo Dev (`hanzoai/dev`)
+- **[GitHub Repository](https://github.com/hanzoai/dev)**
+- [Terminal Installation (`curl -fsSL https://hanzo.sh | sh`)](https://hanzo.sh)
+- [npm Package (`@hanzo/dev`)](https://www.npmjs.com/package/@hanzo/dev)
