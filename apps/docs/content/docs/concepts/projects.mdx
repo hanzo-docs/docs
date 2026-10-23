@@ -27,6 +27,21 @@ curl -X POST https://api.hanzo.ai/v1/projects \
 hanzo projects list
 ```
 
+### Deploying from the CLI
+
+Deploy static sites and applications instantly from your terminal or AI coding agent:
+
+```bash
+# Auto-detects site vs app (checks IaC hanzo.yml/json, Dockerfile, or index.html)
+hanzo deploy
+
+# Deploy a static site from current directory or a build output folder
+hanzo site deploy [--dir <path>] [--slug <slug>]
+
+# Deploy a containerized platform app
+hanzo app deploy --repo <repo> [--ref <ref>] [--port <port>]
+```
+
 The **slug** is the load-bearing part. It becomes the object-store key segment,
 the public host `<slug>.hanzo.app`, and the handle every later call addresses.
 It matches `^[a-z0-9]([a-z0-9-]{0,38}[a-z0-9])?$`, reserved labels are refused,
