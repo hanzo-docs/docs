@@ -50,7 +50,7 @@
     "openRouterModels": 340,
     "providers": 57,
     "thirdPartyModels": 397,
-    "totalModels": 438,
+    "totalModels": 561,
     "zenModels": 14
   },
   "hanzoModels": [
@@ -76,10 +76,10 @@
     },
     {
       "context": null,
-      "description": "Text-to-sound-effects — generates Foley and ambient audio from a prompt.",
+      "description": "Text-to-sound-effects \u2014 generates Foley and ambient audio from a prompt.",
       "family": "zen",
       "features": [
-        "Text → Sound FX"
+        "Text \u2192 Sound FX"
       ],
       "fullName": "Zen Foley",
       "name": "zen-foley",
@@ -99,7 +99,7 @@
         "128K context",
         "Safety classifier"
       ],
-      "fullName": "Zen Guard — Content Safety",
+      "fullName": "Zen Guard \u2014 Content Safety",
       "name": "zen-guard",
       "owned_by": "zenlm",
       "pricing": {
@@ -116,7 +116,7 @@
       "description": "Text-to-image generation.",
       "family": "zen",
       "features": [
-        "Text → Image"
+        "Text \u2192 Image"
       ],
       "fullName": "Zen Image",
       "name": "zen-image",
@@ -133,7 +133,7 @@
       "description": "Text-to-music generation.",
       "family": "zen",
       "features": [
-        "Text → Music"
+        "Text \u2192 Music"
       ],
       "fullName": "Zen Music",
       "name": "zen-music",
@@ -147,7 +147,7 @@
     },
     {
       "context": null,
-      "description": "Cross-encoder reranker — scores (query, document) pairs to reorder retrieval results.",
+      "description": "Cross-encoder reranker \u2014 scores (query, document) pairs to reorder retrieval results.",
       "family": "zen",
       "features": [
         "Reranking",
@@ -165,10 +165,10 @@
     },
     {
       "context": null,
-      "description": "Text-to-video — generates short clips from a prompt (async).",
+      "description": "Text-to-video \u2014 generates short clips from a prompt (async).",
       "family": "zen",
       "features": [
-        "Text → Video",
+        "Text \u2192 Video",
         "Async"
       ],
       "fullName": "Zen Video",
@@ -183,13 +183,13 @@
     },
     {
       "context": 1000000,
-      "description": "Reads images and reasons over them — visual Q&A, document and chart understanding, grounded captioning.",
+      "description": "Reads images and reasons over them \u2014 visual Q&A, document and chart understanding, grounded captioning.",
       "family": "zen",
       "features": [
         "128K context",
         "Vision + Language"
       ],
-      "fullName": "Zen VL — Vision-Language",
+      "fullName": "Zen VL \u2014 Vision-Language",
       "name": "zen-vl",
       "owned_by": "zenlm",
       "pricing": {
@@ -204,10 +204,10 @@
     },
     {
       "context": null,
-      "description": "Text-to-speech — natural voice synthesis.",
+      "description": "Text-to-speech \u2014 natural voice synthesis.",
       "family": "zen",
       "features": [
-        "Text → Speech"
+        "Text \u2192 Speech"
       ],
       "fullName": "Zen Voice",
       "name": "zen-voice",
@@ -355,7 +355,7 @@
     {
       "category": "specialty",
       "context": null,
-      "description": "Text embeddings — hosted by Hanzo.",
+      "description": "Text embeddings \u2014 hosted by Hanzo.",
       "endpoint": "/v1/embeddings",
       "features": [
         "Text embeddings"
@@ -376,7 +376,7 @@
     {
       "category": "specialty",
       "context": null,
-      "description": "Text embeddings — hosted by Hanzo.",
+      "description": "Text embeddings \u2014 hosted by Hanzo.",
       "endpoint": "/v1/embeddings",
       "features": [
         "Text embeddings"
@@ -397,7 +397,7 @@
     {
       "category": "specialty",
       "context": null,
-      "description": "Reranking — hosted by Hanzo.",
+      "description": "Reranking \u2014 hosted by Hanzo.",
       "endpoint": "/v1/rerank",
       "features": [
         "Reranking"
@@ -418,7 +418,7 @@
     {
       "category": "specialty",
       "context": null,
-      "description": "Text embeddings — hosted by Hanzo.",
+      "description": "Text embeddings \u2014 hosted by Hanzo.",
       "endpoint": "/v1/embeddings",
       "features": [
         "Text embeddings"
@@ -439,7 +439,7 @@
     {
       "category": "specialty",
       "context": null,
-      "description": "Text embeddings — hosted by Hanzo.",
+      "description": "Text embeddings \u2014 hosted by Hanzo.",
       "endpoint": "/v1/embeddings",
       "features": [
         "Text embeddings"
@@ -460,7 +460,7 @@
     {
       "category": "specialty",
       "context": null,
-      "description": "Text embeddings — hosted by Hanzo.",
+      "description": "Text embeddings \u2014 hosted by Hanzo.",
       "endpoint": "/v1/embeddings",
       "features": [
         "Text embeddings"
@@ -481,7 +481,7 @@
     {
       "category": "specialty",
       "context": null,
-      "description": "Text-to-image — hosted by Hanzo.",
+      "description": "Text-to-image \u2014 hosted by Hanzo.",
       "endpoint": "/v1/images/generations",
       "features": [
         "Text-to-image"
@@ -502,7 +502,7 @@
     {
       "category": "specialty",
       "context": null,
-      "description": "Text-to-image — hosted by Hanzo.",
+      "description": "Text-to-image \u2014 hosted by Hanzo.",
       "endpoint": "/v1/images/generations",
       "features": [
         "Text-to-image"
@@ -523,7 +523,7 @@
     {
       "category": "specialty",
       "context": null,
-      "description": "Text-to-image — hosted by Hanzo.",
+      "description": "Text-to-image \u2014 hosted by Hanzo.",
       "endpoint": "/v1/images/generations",
       "features": [
         "Text-to-image"
@@ -544,7 +544,7 @@
     {
       "category": "specialty",
       "context": null,
-      "description": "Text embeddings — hosted by Hanzo.",
+      "description": "Text embeddings \u2014 hosted by Hanzo.",
       "endpoint": "/v1/embeddings",
       "features": [
         "Text embeddings"
@@ -565,7 +565,7 @@
     {
       "category": "specialty",
       "context": 32768,
-      "description": "Text-to-speech — hosted by Hanzo.",
+      "description": "Text-to-speech \u2014 hosted by Hanzo.",
       "endpoint": "/v1/audio/speech",
       "features": [
         "Text-to-speech",
@@ -587,7 +587,7 @@
     {
       "category": "specialty",
       "context": null,
-      "description": "Automatic model routing — hosted by Hanzo.",
+      "description": "Automatic model routing \u2014 hosted by Hanzo.",
       "endpoint": "/v1/chat/completions",
       "features": [
         "Automatic model routing"
@@ -605,7 +605,7 @@
     {
       "category": "specialty",
       "context": null,
-      "description": "Automatic model routing — hosted by Hanzo.",
+      "description": "Automatic model routing \u2014 hosted by Hanzo.",
       "endpoint": "/v1/chat/completions",
       "features": [
         "Automatic model routing"
@@ -623,7 +623,7 @@
     {
       "category": "specialty",
       "context": null,
-      "description": "Automatic model routing — hosted by Hanzo.",
+      "description": "Automatic model routing \u2014 hosted by Hanzo.",
       "endpoint": "/v1/chat/completions",
       "features": [
         "Automatic model routing"
@@ -641,7 +641,7 @@
     {
       "category": "specialty",
       "context": null,
-      "description": "Automatic model routing — hosted by Hanzo.",
+      "description": "Automatic model routing \u2014 hosted by Hanzo.",
       "endpoint": "/v1/chat/completions",
       "features": [
         "Automatic model routing"
@@ -659,7 +659,7 @@
     {
       "category": "specialty",
       "context": null,
-      "description": "Automatic model routing — hosted by Hanzo.",
+      "description": "Automatic model routing \u2014 hosted by Hanzo.",
       "endpoint": "/v1/chat/completions",
       "features": [
         "Automatic model routing"
@@ -677,7 +677,7 @@
     {
       "category": "specialty",
       "context": 256,
-      "description": "Text-to-image — hosted by Hanzo.",
+      "description": "Text-to-image \u2014 hosted by Hanzo.",
       "endpoint": "/v1/images/generations",
       "features": [
         "Text-to-image",
@@ -699,7 +699,7 @@
     {
       "category": "specialty",
       "context": 100,
-      "description": "Text-to-video — hosted by Hanzo.",
+      "description": "Text-to-video \u2014 hosted by Hanzo.",
       "endpoint": "/v1/videos/generations",
       "features": [
         "Text-to-video",
@@ -720,7 +720,7 @@
     },
     {
       "context": 900000,
-      "description": "Hanzo's proprietary frontier model — Opus-class reasoning by default with 1M-context overflow.",
+      "description": "Hanzo's proprietary frontier model \u2014 Opus-class reasoning by default with 1M-context overflow.",
       "family": "enso",
       "features": [
         "1M context window",
@@ -760,7 +760,7 @@
     },
     {
       "context": 1000000,
-      "description": "Adaptive fan-out — probes a task-appropriate model, escalates to a top-K panel only when needed, then verifies-then-selects the best answer.",
+      "description": "Adaptive fan-out \u2014 probes a task-appropriate model, escalates to a top-K panel only when needed, then verifies-then-selects the best answer.",
       "family": "enso",
       "features": [
         "200K context window",
@@ -1562,13 +1562,13 @@
     }
   },
   "catalogue": {
-    "models": 499,
+    "models": 561,
     "makers": 60,
     "kai": {
       "input": 0.021,
       "output": 0
     },
-    "captured": "2026-10-17"
+    "captured": "2026-10-23"
   },
   "meta": {
     "captured": "2026-10-17",
