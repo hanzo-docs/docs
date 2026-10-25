@@ -1,0 +1,274 @@
+---
+title: Self-improvement
+description: How everyday use can improve Hanzo's memory, skills, tools, connectors, apps and agent harness through a continuous, validated feedback loop.
+icon: RefreshCw
+---
+
+# Self-improvement
+
+Hanzo's direction is a **native, recursive self-improvement loop** across
+[hanzo.ai](https://hanzo.ai) and [Hanzo Dev](/docs/dev). Work produces evidence;
+evidence improves memory and capabilities; those improvements help with the next
+task. The agent can also propose changes to the harness and cloud infrastructure
+that run it.
+
+The loop is driven by normal use: a completed task, a correction, a verified
+recovery, or a missing capability. It runs incrementally as work happens. An
+overnight schedule is not required.
+
+<Callout type="info">
+**Native components:** Hanzo Dev supports memory extraction and consolidation
+with an independent background provider. Research studies can enable automatic
+baseline evaluation through an `improvement` policy; new evidence produces
+private draft findings and events for enabled automations. In hanzo.ai,
+**Customize → Learning** brings studies, findings, controlled experiments and
+benchmark comparisons together. Each study and automation has an explicit
+scope. A conversation does not automatically become shared training data, and a
+finding does not automatically merge or deploy a change.
+</Callout>
+
+<Callout type="info">
+**Rollout:** Customize → Learning is available in `@hanzo/app` 0.2.10 and later.
+The automatic study policy and outcome-triggered automation backend is being
+released in [cloud PR #417](https://github.com/hanzo-inc/cloud/pull/417).
+The UI verifies that a policy persisted before reporting it enabled; an older
+backend cannot silently activate automatic review. Hanzo Dev's independent
+memory provider and Kai learning hook are on the native runtime's main branch.
+</Callout>
+
+## Use it in hanzo.ai
+
+Open **Customize → Learning**. On **Research**, choose **New improvement study**
+and name a baseline run, the capability under test, the metric and its acceptance
+criteria. New baseline and candidate results recorded in that study are reviewed
+as they arrive. The page shows the resulting draft findings, including blocked
+comparisons and regressions.
+
+On **Experiments**, **Analyze outcomes** reads a controlled experiment's measured
+variant outcomes and records its evidence. It does not promote a winner. On
+**Benchmarks**, choose a benchmark and two measured model ids, then **Compare
+measurements**. A comparison with no common measured items says so; it is not a
+completed evaluation.
+
+## Enable local memory in Hanzo Dev
+
+```bash
+dev memory enable --base-url http://127.0.0.1:8731/v1 --model halogen-qwen3.8-flash-next
+dev memory status
+```
+
+The endpoint must run a Responses-compatible local engine. New profiles enable
+this local memory route by default; an existing profile uses the command above
+to opt in without changing its foreground provider. Both extraction and
+consolidation use the independent provider. An unavailable or unknown memory
+provider does not fall back to a billed foreground model.
+
+Learning runs on eligible session activity, processes a bounded number of past
+sessions and leaves active conversations alone. The default idle window is one
+hour; this is continuous incremental work, with no overnight schedule. Use
+`dev memory disable` to stop automatic memory use and generation for the profile.
+
+## Automate research through the cloud
+
+The three surfaces have separate jobs:
+
+| Surface | Job |
+| --- | --- |
+| `/v1/research` | Record tasks, studies, versioned runs, provenance and private findings. |
+| `/v1/experiment` | Assign controlled variants, analyze outcomes and record A/B evidence. |
+| `/v1/benchmark` | Read and compare measured attempts and curated claims. |
+
+For example, record this study through `POST /v1/research/studies`. The values
+below are illustrative; the baseline must be an actual run in the same study
+and project.
+
+```json
+{
+  "studies": [{
+    "id": "harness-recovery",
+    "title": "Improve recovery",
+    "question": "Does the candidate improve recovery without increasing latency?",
+    "improvement": {
+      "baseline": "recovery-baseline",
+      "target": "hanzoai/dev",
+      "min_questions": 40,
+      "require_intervals": true,
+      "metrics": [
+        {"category": "held-out", "metric": "accuracy", "direction": "higher", "min_gain": 1, "max_regression": 0},
+        {"category": "held-out", "metric": "latency_ms", "direction": "lower", "min_gain": 0, "max_regression": 5}
+      ]
+    }
+  }]
+}
+```
+
+Run the authorized harness in Hanzo Dev or a sandbox, then send its measured
+baseline and candidate records to `POST /v1/research/runs` with
+`study: "harness-recovery"`. Include system version, commit, dataset digest,
+evaluation size, answered count, end time and the declared measures. Partial or
+incompatible runs cannot produce a positive verdict. Required intervals must
+be valid; overlapping primary intervals remain inconclusive.
+
+The study evaluator records `research.improvement.v1` actions at
+`GET /v1/research/actions`. Findings are `improved`, `regressed`, `inconclusive`
+or `blocked`, and remain drafts. Their identities include the policy and exact
+evidence versions, so correcting evidence cannot inherit an older authorization.
+
+An enabled [automation](/docs/openapi/auto) can subscribe with a webhook trigger's
+source/provider `research` and event `improvement.reviewed`. Its payload contains
+the draft action and `review`, including `review.status`, the baseline and
+candidate hashes and the blocks. The native automation engine supplies durable
+execution, deduplication and run limits. Failed delivery retains the finding;
+retrying an upload or later research activity resumes delivery. The next action
+can request further evaluation or prepare a reviewed improvement through the
+existing tools. Neither the evaluator nor event delivery calls a model.
+
+## Kai outcome hooks
+
+Hanzo Dev asks Kai's `agent.learn@1` program after a completed turn has tool
+evidence. It chooses `none`, `memory`, `experiment` or `improvement`; a grounded
+lesson and a confident choice are both required. The existing `kai.toml`
+operation modes apply:
+
+```toml
+[ops.learn]
+mode = "advisory"
+```
+
+`shadow` records the decision; `advisory` also shows the recommendation.
+`enforced` may start one bounded follow-up per user request. It uses the same
+approval policy and sandbox as the original work. Kai cannot expand permissions,
+convert tool output into instructions, or authorize publication. A timeout or
+abstention starts no learning follow-up. Traces retain the decision and evidence
+hashes rather than the transcript text. Automatic memory extraction remains a
+separate bounded pipeline; a learning recommendation does not bypass its scope.
+
+For a cloud agent to react without a timer, create an automation through
+`POST /v1/auto/automations` with an outcome trigger:
+
+```json
+{
+  "name": "Continuous harness research",
+  "instructions": "Inspect the recorded evidence. Propose one bounded experiment or tested draft improvement. Never fabricate measurements.",
+  "event": {"source": "research", "name": "improvement.reviewed"},
+  "target": "your-registered-local-target",
+  "model": "halogen-qwen3.8-flash-next",
+  "permissions": "ask"
+}
+```
+
+Use a registered target with that local model available. Creating the subscription
+arms it; it does not run immediately. Evidence is appended as untrusted data.
+Repeated delivery of the same evidence does not create a second run. The target,
+model, organization and permissions remain explicit; an unavailable local target
+must be repaired before that automation can execute.
+
+## How the loop works
+
+```text
+Use Hanzo → observe an outcome → extract a lesson → update scoped memory
+                                      ↓
+                        propose a reusable improvement
+                                      ↓
+                       build → verify → review → release
+                                      ↓
+                         measure the next real outcome
+```
+
+An improvement is recursive when a later run can improve the memory, skill,
+tool or harness that made an earlier improvement possible. Each pass still
+needs evidence that the change helped.
+
+| Step | Intended behavior |
+| --- | --- |
+| Observe | Record what was attempted, its revision, the tool results, user corrections and verification outcomes. |
+| Remember | Extract useful preferences, procedures and failure lessons; merge duplicates and correct stale memories in their original scope. |
+| Suggest | Identify a missing capability or recurring friction and explain the smallest useful improvement. |
+| Build | Use Hanzo Dev and the existing tool plane to prepare an isolated change, skill or extension. |
+| Verify | Reproduce a defect, test the candidate, and compare its correctness, cost and latency against the previous behavior. |
+| Review and release | Present the evidence and diff for review, then deliver accepted changes through Hanzo's existing release path. |
+| Learn again | Measure subsequent outcomes and retain, revise or withdraw the improvement. |
+
+Memory updates happen within the person's or workspace's authorized scope.
+Shared product changes follow a separate review and release path.
+
+## What Hanzo can improve
+
+The proposal should follow the user's use case. Reuse an existing capability
+when it already solves the problem; create a new one when there is a demonstrated
+gap.
+
+| Improvement | Example |
+| --- | --- |
+| Personal memory | Remember a preferred report format or a correction to a recurring workflow. |
+| Workspace memory | Preserve a verified build procedure or an organization's approved conventions. |
+| Skill | Turn a successfully repeated procedure into a reusable `SKILL.md`, with prerequisites and verification. |
+| Tool | Propose a typed operation for a task that repeatedly requires manual steps. |
+| Connector | Add a missing integration or repair an existing action's inputs and error handling. |
+| App or workspace experience | Propose a focused workspace app or a change to the shared rooms and shell in `@hanzo/app`. |
+| Appearance mod | Suggest a theme, font or platform-appearance improvement through `@hanzo/mod`. |
+| Agent harness | Improve context selection, recovery, sandboxed execution, memory retrieval or tool selection. |
+| Cloud infrastructure | Prepare a reproducible fix for a service, deployment configuration or observability gap. |
+
+`@hanzo/app` and `@hanzo/mod` are existing packages with different roles.
+`@hanzo/mod` currently provides appearance customization; an arbitrary executable
+extension system would need its own reviewed contract. A suggestion is not an
+installation, an activated tool or a deployed feature.
+
+For example, repeated requests to turn support conversations into tracked work
+could first suggest an existing connector and a skill. If those are insufficient,
+the next proposal could add the missing connector action and a workspace view.
+A verified tool failure could instead lead to a regression test and a draft PR
+against the responsible Hanzo repository.
+
+## Personal learning and shared improvement
+
+The design keeps three scopes explicit:
+
+| Scope | What may be retained or promoted |
+| --- | --- |
+| Person | Preferences and lessons belonging to that person. |
+| Organization or project | Procedures and knowledge shared under that workspace's permissions. |
+| Hanzo product | A deliberately contributed, sanitized problem statement, reproducible test or reviewed implementation that can help other users. |
+
+A useful private memory does not automatically become shared product knowledge.
+The same applies to conversations, credentials and customer data. A product
+proposal should carry the minimum evidence needed to reproduce and assess it,
+with permission to use that evidence in the destination repository.
+
+This is also distinct from training model weights. The first improvements are
+to memory, skills, tools, apps and the harness. Model training is a separate
+process with its own data authorization and evaluation.
+
+## Changes remain reviewable
+
+A candidate records its source outcome, affected revision, scope, proposed
+change and validation results. Repeated delivery of the same outcome should
+update the same candidate rather than create duplicate work. Failed background
+work should resume from durable state without blocking the user's next task.
+
+For a bug fix, the evidence is a reproduction that fails before the change and
+passes afterward. A new capability needs acceptance checks for the use case it
+claims to solve. Harness changes also need regression evaluation on other tasks;
+a better answer on one example is not enough to establish a general gain.
+
+Once that evidence exists, the intended next step is a **draft PR** against the
+relevant Hanzo repository, including Hanzo Dev, the app packages, connectors or
+cloud infrastructure. Review, merge and deployment stay on the existing delivery
+path. The loop does not grant itself new permissions or promote its own claims
+of success into production.
+
+## Build on the native platform
+
+The loop should use Hanzo's existing sessions, tool discovery, IAM permissions,
+KMS secrets, sandbox execution, evaluation and delivery surfaces. A generated
+capability enters the same contract as a capability written by a person.
+
+See [Extend](/docs/extend) for the tool and connector contracts available today,
+[Skills](/docs/dev/usage/skills) for reusable procedures, and
+[Architecture](/docs/architecture) for the platform they run on.
+
+The product goal is cumulative, measurable improvement from everyday use.
+Progress is measured by outcomes such as fewer repeated failures, better task
+completion and useful accepted capabilities. Recursive improvement alone does
+not establish AGI or superintelligence.
