@@ -1,0 +1,48 @@
+---
+title: Contribute and earn
+description: Merged pull requests, accepted issues, docs and translations in Hanzo's public repositories earn points on the Hanzo leaderboard.
+---
+
+Work you do on Hanzo's open source earns points on the same board as referrals and usage:
+[hanzo.ai/leaderboard](https://hanzo.ai/leaderboard). Points are not money; any way to
+redeem them will be announced separately.
+
+## What earns
+
+The values, the daily cap and the kinds that count are one table, the one the cloud awards by.
+Read it rather than a copy of it:
+
+```bash
+curl https://api.hanzo.ai/v1/rewards/rules
+```
+
+The kinds whose `source` is `contributions` are the open-source ones: a merged pull request,
+one a maintainer labelled as a bug fix, documentation or translation, an issue a maintainer
+accepted, an issue closed as completed, and a security report. [hanzo.ai/bounty](https://hanzo.ai/bounty)
+prints the same table and lists the open issues labelled `bounty` or `good first issue`.
+
+## How a contribution is counted
+
+1. **Find an issue** on [hanzo.ai/bounty](https://hanzo.ai/bounty), or any open issue in a public
+   repository of a Hanzo organization on GitHub.
+2. **Open a pull request.** A maintainer reviews it. Points come when it merges, not when it opens.
+3. **Link GitHub** on [hanzo.ai/leaderboard](https://hanzo.ai/leaderboard), so the merge counts
+   for your Hanzo account. Work merged before you link is held for your GitHub login and joins your
+   points when you link it.
+
+The cloud learns of a merge or a label from GitHub itself, through the Hanzo GitHub App, so there
+is nothing to submit.
+
+## The rules
+
+- Maintainers decide: points come only after a maintainer merges your pull request or labels your issue.
+- Each pull request and each issue earns once. A pull request you merge yourself, and work by a bot, earns nothing.
+- Contributions have a daily cap per person; the rules table states it.
+- Report a security issue to [security@hanzo.ai](mailto:security@hanzo.ai) only, never in a public
+  issue. The security team awards those points.
+
+## Your points
+
+Signed in, `GET https://api.hanzo.ai/v1/rewards/me` answers your rank, points, level, badges and the
+awards behind them; `GET https://api.hanzo.ai/v1/rewards` is the board. Your name shows on the board
+only if you choose it (`PUT /v1/rewards/optin`).

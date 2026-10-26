@@ -1,8 +1,9 @@
 {
   "title": "Contributing",
-  "description": "How Hanzo docs are built, sourced, and joined into docs.hanzo.ai",
+  "description": "Contributing to Hanzo: what earns points, and how docs.hanzo.ai is built, sourced and joined",
   "icon": "GitPullRequest",
   "pages": [
+    "earn",
     "style",
     "docs-architecture",
     "authoring-cli",
