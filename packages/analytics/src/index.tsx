@@ -26,6 +26,17 @@ const DOMAINS = [
   'pay.hanzo.ai',
 ];
 
+/**
+ * One client. @hanzo/docs and @hanzo/ui report through @hanzogui/telemetry, whose
+ * ambient client (an older @hanzo/event of its own) sends a second pageview for
+ * every document under the same key. It is switched off here, at module scope,
+ * because it is built on first use during render and this module loads first.
+ */
+if (typeof globalThis !== 'undefined') {
+  const g = globalThis as { __HANZO_TELEMETRY__?: { enabled?: boolean } };
+  g.__HANZO_TELEMETRY__ = { ...g.__HANZO_TELEMETRY__, enabled: false };
+}
+
 function Pageview() {
   usePageview(usePathname());
   return null;
