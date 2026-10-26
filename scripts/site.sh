@@ -54,19 +54,19 @@ pnpm turbo run build --filter='docs^...'
 # cgroup's figure where the runtime exposes one, otherwise the sandbox's own
 # /proc/meminfo, then the five largest processes by resident memory.
 #
-# The compile peaks near 10 GB and the whole build, render workers included,
-# near 14 GB. Two Turbopack tasks and two render workers fit a 6-core, 24Gi
-# runner, which is where this ran: 13.6 minutes of compile and 26.8 of pages
-# (run 16350). The counts are read from the runner the job got instead — the
-# publish job takes a 32-core node (.hanzo/workflows/cicd.yml) — at one task per
-# core up to eight, and one render worker per 6 GiB above the compile's 8, never
-# fewer than two of either.
+# The compile peaks near 10 GB and each render worker holds about 1.2 GB. The
+# counts are read from the runner the job got: one Turbopack task per two cores
+# up to sixteen, and one render worker per 2 GiB above the compile's 10, up to
+# all but four cores, never fewer than two of either. Measured on the 32-core
+# node the job takes (.hanzo/workflows/cicd.yml, class xl): 16 tasks compile in
+# 66 s and 20 workers render the 6,294 pages in 52 s, against 9.2 and 10.6
+# minutes on a 6-core runner.
 cores=$(nproc)
 mem=$(cat /sys/fs/cgroup/memory.max 2>/dev/null || echo max)
 case "$mem" in ''|*[!0-9]*) mem=$(awk '/^MemTotal:/{print $2 * 1024}' /proc/meminfo) ;; esac
 gib=$(( mem / 1073741824 ))
-tasks=$(( cores < 8 ? cores : 8 )); [ "$tasks" -lt 2 ] && tasks=2
-workers=$(( (gib - 8) / 6 )); [ "$workers" -gt $(( cores / 2 )) ] && workers=$(( cores / 2 )); [ "$workers" -lt 2 ] && workers=2
+tasks=$(( cores / 2 < 16 ? cores / 2 : 16 )); [ "$tasks" -lt 2 ] && tasks=2
+workers=$(( (gib - 10) / 2 )); [ "$workers" -gt $(( cores - 4 )) ] && workers=$(( cores - 4 )); [ "$workers" -lt 2 ] && workers=2
 [ "$gib" -ge 32 ] || tasks=2
 echo "build: ${cores} cores, ${gib} GiB — ${tasks} Turbopack tasks, ${workers} render workers"
 ( while :; do

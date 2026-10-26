@@ -30,6 +30,9 @@ jobs:
       # apps/docs/content/docs/studio is a submodule (hanzo-docs/studio-docs);
       # scripts/check-export.sh refuses an export without its pages.
       submodules: recursive
+      # A 32-core node: the gate, then the export of 6,294 pages beside it
+      # (scripts/site.sh sizes its compile and render workers to the node).
+      class: xl
     secrets:
       KMS_CLIENT_ID: ${{ secrets.KMS_CLIENT_ID }}
       KMS_CLIENT_SECRET: ${{ secrets.KMS_CLIENT_SECRET }}
