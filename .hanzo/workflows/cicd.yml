@@ -15,8 +15,12 @@ on:
 # not name, so two publishes at once would each delete the other's files.
 # git.hanzo.ai applies this group to the run; it does not apply the reusable's
 # own job-level group.
+#
+# The group is named publish-, not cicd-: the forge holds a run of the old group
+# as running with no runner behind it (its zombie reaper does not fire), and a
+# group never frees while a member runs.
 concurrency:
-  group: cicd-${{ github.ref }}
+  group: publish-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
