@@ -202,9 +202,26 @@ The way in for an agent, second in the root sidebar.
   (404 when written).
 - **`/v1/research/runs` is the one `STAGED` path in `check-endpoints.ts`.**
   research is alpha, so the public document omits it, yet the read is open and
-  is how a reader checks Kai's published runs. Exact path only.
+  is how a reader checks Kai's published runs. Exact path only. (`REWARDS`, below the
+  Hanzo Rewards heading, is the other staged set.)
 - The hosted `POST /v1/mcp` speaks protocol 2026-07-28 only, so the page sends
   clients to the local `@hanzo/mcp` server.
+
+## Hanzo Rewards
+
+`content/docs/contributing/`: `earn` (the overview, titled Hanzo Rewards), `bounties`,
+`share`, `redeem`, `badges`, `api` (every endpoint). `referrals.mdx` and `credits.mdx`
+link in with one sentence each.
+
+- **The rules table is the one source** (`GET /v1/rewards/rules`, cloud `apps/rewards/
+  rules.go`). These pages state no number it holds: not points, caps, level thresholds, the
+  redemption rate or limits, milestones, nor the post window. They explain in words and show
+  `curl | jq` per question. A number added here is a copy that goes stale.
+- **No data component renders the table.** The pricing page is generated from a live read
+  at build, but this site does not read a running service for a page it can write from its
+  own commit; the table is not live yet. Do not add one without that decision.
+- **`REWARDS` in `check-endpoints.ts`** admits the rewards routes (exact segments, `{id}`
+  stands for one) until the pinned document carries the capability. Delete it then.
 
 ## Company
 

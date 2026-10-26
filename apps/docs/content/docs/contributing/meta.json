@@ -1,9 +1,14 @@
 {
   "title": "Contributing",
-  "description": "Contributing to Hanzo: what earns points, and how docs.hanzo.ai is built, sourced and joined",
+  "description": "Hanzo Rewards: points, bounties, posts, redemption and badges; and how docs.hanzo.ai is built, sourced and joined",
   "icon": "GitPullRequest",
   "pages": [
     "earn",
+    "bounties",
+    "share",
+    "redeem",
+    "badges",
+    "api",
     "style",
     "docs-architecture",
     "authoring-cli",
