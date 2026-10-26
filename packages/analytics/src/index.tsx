@@ -2,7 +2,7 @@
 
 import { useEffect, type ReactNode } from 'react';
 import { startTags } from '@hanzo/event';
-import { AnalyticsProvider, useConsent, usePageview } from '@hanzo/event/react';
+import { AnalyticsProvider, usePageview } from '@hanzo/event/react';
 import { GuiProvider } from '@hanzo/gui';
 import guiConfig from '@hanzo/ui/gui-config';
 import { Consent } from '@hanzo/ui/consent';
@@ -50,16 +50,14 @@ function Tags() {
  * The provider owns the ONE @hanzo/event client: it fires the first pageview,
  * registers auto error capture (window.onerror + unhandledrejection), and flushes
  * the batch on unload; <Pageview> adds one pageview per client-side route change.
- * Errors are events on the same stream (`type: 'error'`). The stream runs while
- * the visitor allows analytics: cloud serves the rule for their region, and
- * <Consent> is the one banner that asks where the region requires it and offers
- * "Cookie settings" everywhere. Its key is the site's own project key, found by host.
- * `product` is the only knob.
+ * Errors are events on the same stream (`type: 'error'`). The stream is our own
+ * first-party analytics and runs for every visitor; consent governs the third
+ * parties alone (<Tags>), and <Consent> is the one banner that asks. Its key is
+ * the site's own project key, found by host. `product` is the only knob.
  */
 export function Analytics({ product = 'docs', children }: { product?: string; children?: ReactNode }) {
-  const consent = useConsent();
   return (
-    <AnalyticsProvider config={{ product, host: HOST, enabled: consent.analytics }}>
+    <AnalyticsProvider config={{ product, host: HOST }}>
       <Tags />
       <Pageview />
       {children}

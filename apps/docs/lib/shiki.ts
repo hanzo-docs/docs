@@ -2,8 +2,8 @@ import { codeTheme } from '@hanzo/ui/core';
 
 /**
  * The code theme. It is not chosen here: `codeTheme` from @hanzo/ui names it
- * for every Hanzo surface (Dracula dark, GitHub light), so a block on this site
- * reads the same as one on hanzo.ai, platform.hanzo.ai and ui.hanzo.ai.
+ * for every Hanzo surface (monochrome, on the neutral ramp), so a block on this
+ * site reads the same as one on hanzo.ai, platform.hanzo.ai and ui.hanzo.ai.
  *
  * Shape shiki/rehype-code want: `{ themes, defaultColor }`. One object, so no
  * caller spells the pair.

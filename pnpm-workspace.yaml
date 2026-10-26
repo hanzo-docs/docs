@@ -55,14 +55,14 @@ catalog:
   '@hanzo/docs-core': '17.0.1'
   '@hanzo/docs-mdx': '15.0.10'
   '@hanzo/docs-ui': '17.0.5'
-  '@hanzo/event': '0.3.57'
+  '@hanzo/event': '0.3.61'
   '@hanzo/font': '1.9.2'
   '@hanzo/gui': '8.3.5'
   '@hanzo/iam': '0.21.17'
   '@hanzo/logo': '1.0.26'
   '@hanzo/mdx': '14.2.6'
   '@hanzo/products': '0.2.6'
-  '@hanzo/ui': '^8.27.83'
+  '@hanzo/ui': '8.29.14'
   '@hanzogui/lucide-icons-2': '8.3.5'
   '@hanzogui/next-theme': '8.3.5'
   '@hanzogui/shell': '8.3.5'
@@ -329,8 +329,8 @@ catalog:
 
 minimumReleaseAgeExclude:
   - '@hanzo/font@1.9.2'
-  - '@hanzo/ui@8.25.0 || 8.27.18 || 8.27.35 || 8.27.83'
-  - '@hanzo/event@0.3.50 || 0.3.57'
+  - '@hanzo/ui@8.25.0 || 8.27.18 || 8.27.35 || 8.27.83 || 8.29.14'
+  - '@hanzo/event@0.3.50 || 0.3.57 || 0.3.61'
   - '@hanzo/events@0.3.1'
   - '@hanzo/design@0.5.35'
 overrides:
