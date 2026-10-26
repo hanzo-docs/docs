@@ -1,12 +1,16 @@
 ---
 title: "Agents: start here"
-description: "No human required: sign in with a wallet, get a key, call the API, top up in USDC. One key for every model, Kai decisions and the whole platform, free to start with 50 requests a day."
+description: "Sign up free with a wallet. Get an API key free. A small free allowance to try it. Top up in USDC or USDT over the API to raise your limits and pay as you go. No human required."
 icon: Bot
 ---
 
-Your agent gets one key for every model, for Kai decisions and for the rest of
-the platform at `https://api.hanzo.ai/v1`. It starts free: 50 requests a day,
-no card.
+Sign up free with a wallet. Get an API key free. A small free allowance to try
+it. Top up in USDC or USDT over the API to raise your limits and pay as you go.
+No human required.
+
+One key serves every model, Kai decisions and the rest of the platform at
+`https://api.hanzo.ai/v1`. Every request and its answer:
+[Headless, step by step](/docs/agents/headless).
 
 Hanzo has built business software since 2014 for hundreds of venture-funded
 startups, two of which went public. [About Hanzo](/docs/about/company).
@@ -32,8 +36,9 @@ reference](/docs/openapi/agent).
 ### 1. Headless: sign in with a wallet
 
 A wallet is the whole credential: no person, browser, inbox or card. A
-first-seen wallet gets its own Hanzo account and organization on the Free plan,
-and its private key never leaves your process. One file does all of it:
+first-seen wallet gets its own Hanzo account and organization, with a small free
+allowance to try it, and its private key never leaves your process. One file
+does all of it:
 
 ```ts title="headless.mts"
 // No human required: sign in with a wallet, get a key, call the API, top up in USDC.
@@ -123,27 +128,16 @@ Node 22.18 or later runs the TypeScript as is. Set `HANZO_WALLET_KEY` to sign
 with your agent's own wallet; without it the script makes a fresh one. A real run:
 
 ```text
-chat 200 zen-free free left today: 49
+chat 200 zen-free free left today: …
 ready
 { chains: [ 'base', 'ethereum', 'solana' ], tokens: [ 'usdc', 'usdt' ] }
 { id: 'GRncZpMYqBuV', status: 'pending', chain: 'base', token: 'usdc', depositAddress: '0x…', expiresAt: '2026-10-27T20:33:54Z' }
 HANZO_API_KEY=sk-live-1ea7…  (store the whole key; it is shown once)
 ```
 
-What each request answers:
-
-- `GET https://hanzo.id/v1/iam/web3/nonce?chain=evm&address=0x…`: the challenge,
-  `domain` hanzo.id, `uri`, `statement`, a 32-hex `nonce`, `issuedAt` and an
-  `expirationTime` 10 minutes out.
-- `POST https://hanzo.id/v1/iam/web3/verify`: `{"status":"ok","data":"<authorization code>"}`.
-- The token exchange: `access_token`, `id_token` and `refresh_token`, with
-  `expires_in` 604800 (seven days). The account is `wallet_evm_<16 hex>`, admin of
-  its own organization `wallet-evm-<16 hex>`.
-- `POST https://api.hanzo.ai/v1/account/keys`: `key`, an `sk-live-…` secret
-  shown once, with `status` `active`.
-- `POST https://api.hanzo.ai/v1/billing/crypto/deposit`: an address open for 24
-  hours and reused while it is open, held in MPC custody per payer. The balance
-  is credited when the chain confirms; read it at `GET /v1/billing/balance`.
+Each request with its answer, then limits, a 429, the deposit and the
+balance: [Headless, step by step](/docs/agents/headless). The deposit address is
+held in MPC custody per payer; the balance is credited when the chain confirms.
 
 The script signs with EVM. Wallets on Solana, Bitcoin, TON, XRP, Polkadot and
 Cardano sign in too (`chain` `solana`, `bitcoin`, `ton`, `xrp`, `polkadot`,
@@ -227,17 +221,20 @@ The answer's `key` is an `sk-` secret, shown once. Keep it as `HANZO_API_KEY`.
 Each person gets 30 key writes a minute, and an org holds up to 1,000 live keys.
 Key types and revocation: [Authentication](/docs/api-keys).
 
-### 3. Use the free tier
+### 3. Use the free allowance
 
-The free plan costs nothing and needs no card, to sign up or to mint a key.
+Free costs nothing and needs no card, to sign up or to mint a key.
 
-- 50 requests per person per UTC day on the free models: `zen-free`,
-  `enso-free`, `zen5`, `zen5-flash`, `zen5-mini`, `zen5-pro` and `zen5-coder`.
-- 50 Kai decisions a day.
-- Call 51 answers 429 until the next UTC midnight. `X-RateLimit-Remaining`
-  counts down to it.
+- A wallet account: a small free allowance to try it. Read it live:
+  `GET /v1/allowance` and `GET /v1/billing/tier`.
+- A person on the Free plan: 50 requests a day on the free models (`zen-free`,
+  `enso-free`, `zen5`, `zen5-flash`, `zen5-mini`, `zen5-pro`, `zen5-coder`) and
+  50 Kai decisions a day.
+- Past it: 429 `free_plan_cap`. Wait for the reset, or top up and go on.
+  `X-RateLimit-Remaining` counts down to it.
 
-Read the plans with no key: `curl https://api.hanzo.ai/v1/billing/plans`.
+Read the plans with no key: `curl https://api.hanzo.ai/v1/billing/plans`. How to
+read each: [Read your limits](/docs/agents/headless#6-read-your-limits).
 
 ### 4. Make the first call
 
@@ -253,9 +250,9 @@ with these headers:
 
 ```text
 x-hanzo-served: zen-free
-x-ratelimit-limit: 50
-x-ratelimit-remaining: 11
-x-ratelimit-reset: 1793059200
+x-ratelimit-limit: …
+x-ratelimit-remaining: …
+x-ratelimit-reset: …
 ```
 
 The TypeScript SDK, reading the catalog:
@@ -350,7 +347,8 @@ python3 harness/run_kai.py --limit 3 --suites jev.ag_news,jev.emotion,jev.bankin
 uv run --with numpy python harness/merge.py --kai $PWD/kai.json.gz --out $PWD/out
 ```
 
-That is 33 requests, inside the free plan's 50 a day. `merge.py` writes
+That is 33 requests, inside a person's Free plan; on a wallet account, read
+`GET /v1/allowance` first. `merge.py` writes
 `out/table.md` and `out/scores.json`, Kai beside Jev's recorded answers; Jev is
 never called. Three cases a suite checks the wiring, not the score. Without
 `--limit` it runs the whole harness, 9,499 requests, which needs a paid plan or
@@ -371,14 +369,18 @@ Every answer carries `X-RateLimit-Limit`, `X-RateLimit-Remaining` and
 | --- | --- |
 | Before auth, per IP | 100 requests a second |
 | `/v1/decisions` with a credential, per org | 60,000 requests a minute |
-| Free chat, per person | 50 requests a day |
+| Free chat, a person on the Free plan | 50 requests a day |
+| Free chat, a wallet account | a small free allowance: `GET /v1/allowance` |
 
 A refusal is 429. Wait for `X-RateLimit-Reset` or `Retry-After`. The free cap
 names itself:
 
 ```json
-{"error":{"type":"rate_limit_error","code":"free_plan_cap","resets_at":"…","topup_url":"https://hanzo.ai/…"}}
+{"error":{"type":"rate_limit_error","code":"free_plan_cap","resets_at":"…","topup_url":"https://hanzo.ai/…","actions":[{"kind":"wait"},{"kind":"topup"}]}}
 ```
+
+To raise it, top up: `POST /v1/billing/crypto/deposit`, then calls past the
+allowance draw on the balance. [Every step](/docs/agents/headless#7-a-429-means-the-free-allowance-is-used).
 
 <Cards>
   <Card icon="Key" title="Get an API key, free" href="https://hanzo.ai/signup" description="50 requests a day and 50 Kai decisions. No card." />
@@ -459,8 +461,10 @@ with the team.
 **Does an agent need a person to sign up?** No. A wallet signs in, gets its own
 account and organization, and mints a key (step 1).
 
-**What is free?** 50 requests a day per person on the free models and 50 Kai
-decisions a day. Signing up and minting a key need no card.
+**What is free?** A wallet account gets a small free allowance to try it
+(`GET /v1/allowance`). A person on the Free plan gets 50 requests a day on the
+free models and 50 Kai decisions a day. Signing up and minting a key need no
+card.
 
 **What does it cost after that?** Usage is per token: `zen6` is \$0.60 in and
 \$2.40 out per million tokens, and Kai is \$0.021 per million input tokens with
@@ -477,8 +481,9 @@ API. Card checkout needs a browser.
 balance. Chat, decisions and the rest of the API draw on the balance and the
 plan.
 
-**What happens at call 51?** A 429 with code `free_plan_cap`, `resets_at` and
-`topup_url`. Wait for the next UTC midnight, or buy credit and go on.
+**What happens when the free allowance runs out?** A 429 with code
+`free_plan_cap`, `resets_at` and `topup_url`. Wait for the reset, or top up in
+USDC or USDT over the API and go on.
 
 **Why does my client refuse the hosted MCP endpoint?** It speaks protocol
 2026-07-28 only. Run the local server above instead.

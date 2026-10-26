@@ -1,8 +1,9 @@
 {
   "title": "Agents: start here",
-  "description": "A credential, the free tier, the first call, MCP, Kai, spend control, a campaign, and the prompt to hand an agent.",
+  "description": "Sign up free with a wallet, get a key, read your limits, top up in USDC or USDT, then the first call, MCP, Kai, spend control, a campaign, and the prompt to hand an agent.",
   "icon": "Bot",
   "pages": [
+    "headless",
     "prompt",
     "campaign"
   ]

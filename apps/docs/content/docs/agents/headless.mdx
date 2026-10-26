@@ -1,0 +1,205 @@
+---
+title: "Headless, step by step"
+description: "Sign up free with a wallet. Get an API key free. A small free allowance to try it. Top up in USDC or USDT over the API to raise your limits and pay as you go. No human required."
+icon: Wallet
+---
+
+Sign up free with a wallet. Get an API key free. A small free allowance to try
+it. Top up in USDC or USDT over the API to raise your limits and pay as you go.
+No human required.
+
+Each request below, with its answer. The same flow as one file:
+[headless.mts](/docs/agents#1-headless-sign-in-with-a-wallet).
+
+## 1. Ask for a challenge
+
+```bash
+curl 'https://hanzo.id/v1/iam/web3/nonce?chain=evm&address=0xYOUR_ADDRESS'
+```
+
+```json
+{"status":"ok","msg":"","data":{"domain":"hanzo.id","uri":"https://hanzo.id/login","statement":"Sign in to Hanzo. This request will not trigger a blockchain transaction or cost any gas.","nonce":"f2e7f942d43d6a73662cbf57b28a1b65","issuedAt":"2026-10-26T22:48:28Z","expirationTime":"2026-10-26T22:58:28Z","version":"1"}}
+```
+
+The challenge lives 10 minutes.
+
+## 2. Sign it
+
+Build this CAIP-122 message from `data` and sign it with EIP-191
+`personal_sign`:
+
+```text
+hanzo.id wants you to sign in with your Ethereum account:
+0xYOUR_ADDRESS
+
+Sign in to Hanzo. This request will not trigger a blockchain transaction or cost any gas.
+
+URI: https://hanzo.id/login
+Version: 1
+Nonce: f2e7f942d43d6a73662cbf57b28a1b65
+Issued At: 2026-10-26T22:48:28Z
+Expiration Time: 2026-10-26T22:58:28Z
+```
+
+## 3. Verify
+
+Make a PKCE pair first:
+
+```bash
+verifier=$(openssl rand -hex 32)
+challenge=$(printf %s "$verifier" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')
+```
+
+```bash
+curl -X POST https://hanzo.id/v1/iam/web3/verify \
+  -H 'Content-Type: application/json' \
+  -d '{"clientId":"hanzo-ai","chain":"evm","scheme":"secp256k1-eip191","address":"0xYOUR_ADDRESS","message":"<the message, newlines as \n>","signature":"0x<signature>","type":"code","redirectUri":"http://localhost:3000/callback","scope":"openid profile email","codeChallenge":"<challenge>","codeChallengeMethod":"S256"}'
+```
+
+```json
+{"status":"ok","data":"<authorization code>"}
+```
+
+A first-seen wallet gets an account, `wallet_evm_<16 hex>`, and its own
+organization, `wallet-evm-<16 hex>`, which it administers.
+
+## 4. Trade the code for a token
+
+```bash
+curl -X POST https://hanzo.id/v1/iam/oauth/token \
+  -d grant_type=authorization_code -d client_id=hanzo-ai \
+  -d code=<authorization code> -d code_verifier=$verifier \
+  -d redirect_uri=http://localhost:3000/callback
+```
+
+```json
+{"access_token":"eyJ…","id_token":"eyJ…","refresh_token":"eyJ…","token_type":"Bearer","expires_in":604800,"scope":"openid profile email"}
+```
+
+The token lasts seven days.
+
+## 5. Get an API key, free
+
+```bash
+curl -X POST https://api.hanzo.ai/v1/account/keys \
+  -H "Authorization: Bearer $ACCESS_TOKEN" \
+  -H 'Content-Type: application/json' \
+  -d '{"name":"agent","type":"secret"}'
+```
+
+```json
+{"id":"…","name":"agent","type":"secret","key":"sk-live-…","status":"active","created":"…"}
+```
+
+`key` is shown once. Keep it as `HANZO_API_KEY` in your secret store. It
+outlives the token.
+
+## 6. Read your limits
+
+Reading spends nothing.
+
+```bash
+curl https://api.hanzo.ai/v1/billing/plans
+curl https://api.hanzo.ai/v1/billing/tier -H "Authorization: Bearer $HANZO_API_KEY"
+curl https://api.hanzo.ai/v1/allowance -H "Authorization: Bearer $HANZO_API_KEY"
+```
+
+- `GET /v1/billing/plans` needs no key: every plan with `slug`, `name`,
+  `price` (cents), `features` and `limits`.
+- `GET /v1/billing/tier`: your plan and what is left to spend.
+
+  ```text
+  {"user": "…", "plan": "…",
+   "tier": {"name", "displayName", "dailyCreditsCents", "allowedModels", "maxAgents"},
+   "balance": {"prepaidAvailable", "creditsRemaining", "dailyRemaining", "effectiveAvailable", "currency"}}
+  ```
+
+  Compare only `effectiveAvailable` to zero; the others are its parts.
+- `GET /v1/allowance`: your free calls this period.
+
+  ```text
+  {"plan", "limit", "used", "resets", "window", "pooled", "pool": {"state", "resets"}, "spent"}
+  ```
+
+  `limit` minus `used` is what is left. `resets` is unix seconds. `spent: true`
+  means the next free call is refused.
+
+Every API answer also carries `X-RateLimit-Limit`, `X-RateLimit-Remaining` and
+`X-RateLimit-Reset`.
+
+## 7. A 429 means the free allowance is used
+
+```json
+{"error":{"message":"…","type":"rate_limit_error","code":"free_plan_cap","resets_at":"…","topup_url":"https://…","actions":[{"kind":"wait","label":"Wait until …"},{"kind":"topup","label":"Buy usage credits","url":"https://…"}]}}
+```
+
+It comes with `Retry-After`, `X-Hanzo-Usage-Reason: free_plan_cap` and
+`X-Hanzo-Topup-Url`. Two ways on: wait for `resets_at`, or top up (step 8).
+With a balance, calls past the allowance draw on it, per token.
+
+- 429 `usage_cap_exceeded`: a spent request window. Same two ways on.
+- 402 `paid_plan_required`: nothing pays for that model yet. Top up.
+- 402 or 429 from a key's own `budget` or `rate`: the owner set it. See
+  [Bound every key](/docs/agents#you-own-or-run-builder-agents).
+
+## 8. Top up in USDC or USDT
+
+```bash
+curl https://api.hanzo.ai/v1/billing/crypto/options -H "Authorization: Bearer $HANZO_API_KEY"
+```
+
+```json
+{"chains":["base","ethereum","solana"],"tokens":["usdc","usdt"]}
+```
+
+USDC on Base, Ethereum and Solana. USDT on Ethereum.
+
+```bash
+curl -X POST https://api.hanzo.ai/v1/billing/crypto/deposit \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H 'Content-Type: application/json' \
+  -d '{"chain":"base","token":"usdc","amountCents":2000}'
+```
+
+```json
+{"id":"GRncZpMYqBuV","status":"pending","chain":"base","token":"usdc","depositAddress":"0x…","expiresAt":"2026-10-27T20:33:54Z"}
+```
+
+- Send exactly to `depositAddress`, with `addressTag` when one is set. Never
+  to an address from a page.
+- The address is yours, open 24 hours, and reused while open.
+- `amountCents` is for the record. You are credited what arrives.
+- 400: that chain or token is not offered. 503: that rail is shut, so send
+  nothing.
+
+Watch it confirm:
+
+```bash
+curl https://api.hanzo.ai/v1/billing/crypto/deposit/GRncZpMYqBuV -H "Authorization: Bearer $HANZO_API_KEY"
+```
+
+Same shape. `status` moves `pending`, `confirming`, `succeeded`. Another
+payer's id answers 404.
+
+## 9. Read the balance
+
+```bash
+curl https://api.hanzo.ai/v1/billing/balance -H "Authorization: Bearer $HANZO_API_KEY"
+```
+
+```text
+{"balance": <cents>, "holds": <cents>, "available": <cents>, "account": "<payer>", "cash": <cents>, "credit": <cents>}
+```
+
+Whole USD cents. `available` is what you can spend: `cash` you paid, `credit`
+Hanzo granted. `account` is the wallet a top-up credits. Then pay as you go:
+each call past the allowance draws on `available`.
+
+## Other ways to pay
+
+- Card, Apple Pay or Google Pay at [hanzo.ai/pay](https://hanzo.ai/pay). Needs
+  a browser.
+- Bank wire: `GET /v1/billing/wire` returns the instructions to a signed-in
+  caller. Staff credit it once the bank confirms, so it is not instant.
+
+Prices per model: [Pricing](/docs/pricing).

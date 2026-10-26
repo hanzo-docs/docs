@@ -165,11 +165,24 @@ The way in for an agent, second in the root sidebar.
   same facts (`HEAD`: positioning, "For agents", "Company") before the index.
   `public/_redirects`: `/agents`, `/agents/prompt`, `/about/company` land here;
   `/docs/agents` is a page now and points at `/docs/openapi/agent`.
-- **Headless first.** Step 1 is wallet sign-in with no human: `headless.mts`,
-  byte for byte the file that was run (nonce, EIP-191 signature, verify, token,
-  key, a free call, a USDC deposit), and its real output. A first-seen wallet
-  gets its own account and organization on the Free plan. Seven chains sign in
-  (evm, solana, bitcoin, ton, xrp, polkadot, cardano); the file shows EVM.
+- **Headless first.** Every agent surface opens on the owner's words, verbatim:
+  "Sign up free with a wallet. Get an API key free. A small free allowance to
+  try it. Top up in USDC or USDT over the API to raise your limits and pay as you
+  go. No human required." Step 1 is wallet sign-in with no human: `headless.mts`,
+  byte for byte the file that was run (hanzo-inc/app `lib/agents.ts` HEADLESS),
+  and its real output. `agents/headless.mdx` (/docs/agents/headless) is the same
+  flow one request at a time, each with its answer: nonce (a live answer),
+  verify, token (IAM `tokenResponse`), key, limits (`/v1/billing/plans`,
+  `/v1/billing/tier`, `/v1/allowance`), the 429 body (hanzoai/ai
+  `routers/filter_balance.go` `limitReached`), crypto options, deposit, deposit
+  by id and balance (cloud `apps/billing/ledger.go` `commerceBalance`). Seven
+  chains sign in (evm, solana, bitcoin, ton, xrp, polkadot, cardano); the file
+  shows EVM.
+- **No wallet-allowance number.** Cloud is changing what a wallet-only account
+  gets free. Until that deploys, pages say "a small free allowance to try it" and
+  point at `GET /v1/allowance` / `GET /v1/billing/tier`; 50 a day is printed only
+  as a person's Free plan. The run output's remaining count is elided for the
+  same reason.
 - **Every page points agents in.** `app/layout.tsx` puts `rel=alternate`
   (`/llms.txt`) and `rel=help` (`/docs/agents`) in each head, and `lib/nav.ts`
   leads the top bar with Agents. The label is one word because "Agents: get an
