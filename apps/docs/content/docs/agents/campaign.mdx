@@ -1,0 +1,89 @@
+---
+title: Run a campaign from your agent
+description: Measure the site, write the ads with a model, draft the campaign, hand the launch to its owner, then read the results. One request a step.
+icon: Megaphone
+---
+
+Your agent can do every step of a campaign except the one that spends money:
+it measures, writes, drafts and reports, and the owner launches.
+
+## 1. Measure the site
+
+Put the event tag on every page. `data-key` is the project's publishable key
+([Authentication](/docs/api-keys)); without one the tag sends nothing.
+
+```html
+<script defer src="https://api.hanzo.ai/v1/event/tag.js" data-key="pk-…"></script>
+```
+
+Read the numbers back: web (pageviews, visitors, sessions) and commerce
+(orders, revenue, AOV), with `available: false` while there is no data yet.
+
+```bash
+curl 'https://api.hanzo.ai/v1/event/overview?range=7d' -H "Authorization: Bearer $HANZO_API_KEY"
+```
+
+Events can also be sent directly to `POST https://api.hanzo.ai/v1/event`.
+More: [Event](/docs/openapi/event).
+
+## 2. Write the ads with a model
+
+```bash
+curl https://api.hanzo.ai/v1/chat/completions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"zen-free","messages":[{"role":"user","content":"Write three short ad variants for our spring launch."}]}'
+```
+
+`zen-free` is free, 50 requests a day.
+
+## 3. Draft the campaign
+
+A draft is inert: nothing is sent and no budget is committed.
+
+```bash
+curl -X POST https://api.hanzo.ai/v1/campaign \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Spring launch","audience":"<segment>","content":["variant A","variant B"],"budget":50000,"channels":[{"kind":"paid","platform":"meta"},{"kind":"email"}]}'
+```
+
+- `budget` is in cents.
+- `content[0]` runs; the rest are A/B variants, up to 32.
+- `channels` holds at most one of each kind: `paid`, `organic`, `email`. The
+  platforms are `meta`, `google`, `x`, `instagram`, or the email provider.
+- Paid channels run through the org's own connected ad accounts (Meta, Google,
+  X), and target through the account they run under.
+
+The answer carries the campaign's `id` (`cmp_…`).
+
+## 4. The owner launches
+
+**Launching spends the ad budget at the provider.** The agent prepares; the
+owner launches.
+
+```bash
+curl -X POST https://api.hanzo.ai/v1/campaign/<id>/launch -H "Authorization: Bearer $HANZO_API_KEY"
+```
+
+Each channel launches on its own and reports `live`, `failed` or `unavailable`,
+so one failure never stops the others. Repeating the call is safe: a live
+channel is skipped.
+
+## 5. Read the results, or pause
+
+```bash
+curl 'https://api.hanzo.ai/v1/campaign/<id>/metrics?range=7d' -H "Authorization: Bearer $HANZO_API_KEY"
+curl -X POST https://api.hanzo.ai/v1/campaign/<id>/pause -H "Authorization: Bearer $HANZO_API_KEY"
+```
+
+Metrics are impressions, clicks, conversions, revenue, visitors and each
+channel's spend, with CTR, CVR, CAC and ROAS, plus the A/B result when the
+campaign carries more than one creative.
+
+Email audiences and drip sequences are `/v1/marketing/audiences` and
+`/v1/marketing/sequences`: [Marketing](/docs/openapi/marketing). Every campaign
+operation: [Campaign](/docs/openapi/campaign).
+
+Bound what the agent may spend before it starts: [per-key budgets and session
+caps](/docs/agents#you-own-or-run-builder-agents).

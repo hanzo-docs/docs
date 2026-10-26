@@ -299,7 +299,7 @@ export function Landing({ install, use, catalogue }: { install: ReactNode; use: 
           $max-lg={{ fontSize: 60, lineHeight: 60 }}
           $max-md={{ fontSize: 44, lineHeight: 46, letterSpacing: -1 }}
         >
-          Build anything with Hanzo.
+          The AI operating system for business.
         </Text>
         <Text
           render="p"
@@ -313,7 +313,7 @@ export function Landing({ install, use, catalogue }: { install: ReactNode; use: 
           {...muted}
           $max-md={{ fontSize: 17, lineHeight: 27 }}
         >
-          Every model. Every tool. One key. Start in the browser, ship from your terminal, and when you want it on your own hardware, take the whole thing with you — it is the same software we run in production.
+          Building business software since 2014. Techstars '17. Every model, every tool and Kai on one key, free to start: in the browser, from your terminal, or on your own hardware, with the same software we run in production.
         </Text>
 
         {/* The models first: they are the reason to choose the platform at all. */}
@@ -347,7 +347,10 @@ export function Landing({ install, use, catalogue }: { install: ReactNode; use: 
             <Text render="a" href="https://hanzoskills.com" target="_blank" rel="noreferrer" color="$color12" textDecorationLine="underline">
               skills
             </Text>
-            , then points its own model calls at Hanzo.
+            , then points its own model calls at Hanzo.{' '}
+            <Text render={<Link href="/docs/agents" prefetch={false} />} color="$color12" textDecorationLine="underline">
+              Agents: start here
+            </Text>
           </Text>
         </YStack>
 

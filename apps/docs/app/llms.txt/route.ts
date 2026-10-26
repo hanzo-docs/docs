@@ -27,6 +27,7 @@ export const revalidate = false;
  * reads "api-keys" instead of "Authentication" is the first thing it learns.
  */
 const TITLES: Record<string, string> = {
+  agents: 'Agents — start here, the prompt to hand one, and a campaign run from one',
   openapi: 'API reference — one page per capability, one per operation',
   cli: 'CLI — the `hanzo` command line, one page per capability',
   start: 'Start — six journeys, each shown as CLI, SDK, HTTP and MCP',
@@ -35,7 +36,44 @@ const TITLES: Record<string, string> = {
   sdks: 'SDKs — one page per language',
   architecture: 'Architecture',
   contributing: 'Contributing',
+  // `...about` inlines the company page into the root sidebar, so the tree has
+  // no folder to name this section and it would print its slug.
+  about: 'About Hanzo',
 };
+
+/**
+ * What the file says before the index: who Hanzo is, the way in for an agent,
+ * and the company. An agent reads the top of this file first, so the answer to
+ * "how do I start" is there rather than after thousands of index lines. Every
+ * line is the same fact the linked page states; the page explains it.
+ */
+const HEAD = [
+  '# Hanzo',
+  '',
+  "> The AI operating system for business. Building business software since 2014. Techstars '17.",
+  '',
+  '## For agents',
+  '',
+  '- [Agents: start here](/docs/agents): a credential, the free tier, the first call, MCP, Kai, rate limits and spend control.',
+  '- [The prompt](/docs/agents/prompt): one block to hand any agent that builds on Hanzo.',
+  '- Key: `hanzo auth login`, then `hanzo account keys create --name agent --type secret`. With no person nearby, the four-request email-code sequence on /docs/agents ends in POST https://api.hanzo.ai/v1/account/keys.',
+  '- Free: 50 requests a day per person on `zen-free` and `enso-free`, and 50 Kai decisions a day. No card.',
+  '- Pay: plans from $20 a month (https://hanzo.ai/pricing), card, Apple Pay or Google Pay at https://hanzo.ai/pay, or USDC and USDT over the API: POST https://api.hanzo.ai/v1/billing/crypto/deposit.',
+  '- Evaluate Kai: POST https://api.hanzo.ai/v1/decisions; the frozen harness is https://github.com/hanzoai/benchmarks (decision/); published runs: https://api.hanzo.ai/v1/research/runs?org=hanzo&benchmark=app.phishing',
+  '- Skills: https://hanzoskills.com',
+  '',
+  '## Company',
+  '',
+  '- Since 2014: founded as Crowdstart, renamed Hanzo in 2016. First commit 2014-09-29; Go-native since October 2014. First customer SKULLY raised $1M in about 45 hours, the fastest fully funded campaign on Indiegogo.',
+  '- AI and machine learning in commercial use since 2014; GPT models by 2019.',
+  '- 2017: the first blockchain-native commerce platform; the Unikrn ICO raised over 120,000 ETH. Techstars \'17.',
+  '- 2020: Damon Motorcycles sold $8.4M of motorcycles in 30 days at a 541:1 return on ad spend, on AI-generated ads.',
+  '- Hundreds of venture-funded startups served, funded by Y Combinator, 500 Startups and Techstars; billions in client revenue; two companies past 100 million users; two went public on Nasdaq in 2024, Damon Motorcycles and Triller.',
+  '- People: Antje Worring, CEO; Zach Kelling, CTO.',
+  '- Talk to us: https://cal.com/hanzo, https://hanzo.ai/contact. Investors: ir@hanzo.ai.',
+  '- [About Hanzo](/docs/about/company); the full history is https://hanzo.ai/about',
+  '',
+];
 
 export function GET() {
   const pages = source.getPages();
@@ -69,7 +107,7 @@ export function GET() {
     return `- [${page.data.title}](${page.url})${desc ? `: ${desc}` : ''}`;
   };
 
-  const out: string[] = ['# Hanzo', ''];
+  const out: string[] = [...HEAD];
   // Sections in the order the root sidebar declares them, then anything else —
   // so the file reads like the site and cannot silently drop a new section.
   const sections = [...bySection.keys()].sort((a, b) => {

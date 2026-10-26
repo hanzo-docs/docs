@@ -153,6 +153,67 @@ app.
   catalog. The cold image lane's `PUBLISHABLE_KEY` build arg is no longer read
   by any app.
 
+## Agents section
+
+The way in for an agent, second in the root sidebar.
+
+- **Where it lives.** `content/docs/agents/index.mdx` (/docs/agents: the
+  builder-agent path, then the owner path, then Q&A; one primary CTA, "Get an API
+  key, free"), `agents/prompt.mdx` (/docs/agents/prompt: the standard prompt, one
+  fenced block, byte for byte the owner's text) and `agents/campaign.mdx` (measure,
+  write, draft, owner launches, read). `app/llms.txt/route.ts` opens with the
+  same facts (`HEAD`: positioning, "For agents", "Company") before the index.
+  `public/_redirects`: `/agents`, `/agents/prompt`, `/about/company` land here;
+  `/docs/agents` is a page now and points at `/docs/openapi/agent`.
+- **Source of every number.** A facts file measured on 2026-10-26 (each line
+  VERIFIED by a run or READ from code at a cited commit). Print no number it
+  does not carry; re-measure before changing one.
+- **Not published, and why.** x402 as a way to pay for the API (it settles only
+  priced marketplace tools via `/v1/tool/call`). Cash App Pay (accepted by the
+  route, not verified on the live checkout). Bank account numbers (`GET
+  /v1/billing/wire` returns them to a signed-in caller only). ai@hanzo.ai (nothing
+  reads it). Any response-time promise (none exists). SMS as a campaign channel
+  (not an API channel). `POST /v1/email` (served by cloud main, absent from the
+  pinned document, so check-endpoints refuses it). The hanzoskills.com Kai skill
+  (404 when written).
+- **`/v1/research/runs` is the one `STAGED` path in `check-endpoints.ts`.**
+  research is alpha, so the public document omits it, yet the read is open and
+  is how a reader checks Kai's published runs. Exact path only.
+- The hosted `POST /v1/mcp` speaks protocol 2026-07-28 only, so the page sends
+  clients to the local `@hanzo/mcp` server.
+
+## Company
+
+`content/docs/about/company.mdx` (/docs/about/company; inlined into the sidebar
+by `...about` under the Company separator, so no one-page folder shows).
+
+- **Source: the founder's account** (owner override, 2026-10-26: no claim ledger;
+  the founder is the authority on Hanzo's history). Print only its numbers.
+- Positioning, verbatim: "The AI operating system for business. Building
+  business software since 2014. Techstars '17."
+- Dates: founded as Crowdstart, renamed Hanzo in 2016; first commit 2014-09-29;
+  SKULLY 2014 (TechCrunch 2014-08-14: $1M in about 45 hours, not "first day");
+  Unikrn 2017 (Crunchbase News: over 120,000 ETH; it does not name Hanzo, so
+  hanzo.ai/customers#unikrn carries our part); Techstars '17 (hanzo.blog
+  2017-06-08, Startland News 2017-10-10); Damon CES 2020 (case study: $8.4M in
+  30 days, 541:1 ROAS, "AI-generated ads").
+- Damon and Triller "went public on Nasdaq in 2024" (merger and direct listing;
+  both later delisted), never "IPO".
+- People as hanzo.ai/about names them: Antje Worring, CEO; Zach Kelling, CTO.
+  Nothing else about Antje.
+- Contacts: https://cal.com/hanzo, https://hanzo.ai/contact (hello@, sales
+  enterprise@, security@), investors ir@hanzo.ai. Never ai@hanzo.ai.
+- Never printed: "original AI OS", "first AI chat app", "LLM chat before
+  ChatGPT", "Go native since day 1" (the 2014-09-29 commit is a CoffeeScript
+  prototype; the platform is Go-native since October 2014, first Go file
+  2014-10-20). GPT
+  models appear only as the founder's "commercial use by 2019", never in a case
+  study's numbers. crowdstart.com is a parked domain, so it is named, not linked.
+- Unproven until an artifact exists: "hundreds of startups", "billions in client
+  revenue", "two companies past 100 million users" rest on the founder's word; a
+  client list with revenue figures, or the case studies on hanzo.ai/customers,
+  are what would prove them.
+
 ## Build guards, and why prose needs them
 
 `scripts/pre-build.ts` ends with checks that fail the build. The first two exist for

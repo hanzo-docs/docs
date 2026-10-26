@@ -1,6 +1,7 @@
 {
   "pages": [
     "index",
+    "agents",
     "quickstart",
     "models",
     "decisions",
@@ -43,7 +44,9 @@
     "startups",
     "run-your-org",
     "---Account---",
-    "api-keys"
+    "api-keys",
+    "---Company---",
+    "...about"
   ],
   "unlisted": {
     "pages": [

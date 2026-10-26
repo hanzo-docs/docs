@@ -1,0 +1,9 @@
+{
+  "title": "Agents: start here",
+  "description": "A credential, the free tier, the first call, MCP, Kai, spend control, a campaign, and the prompt to hand an agent.",
+  "icon": "Bot",
+  "pages": [
+    "prompt",
+    "campaign"
+  ]
+}

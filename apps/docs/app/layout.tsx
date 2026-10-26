@@ -15,10 +15,10 @@ import { Analytics } from '@hanzo/docs-analytics';
 export const metadata = createMetadata({
   title: {
     template: '%s | Hanzo Docs',
-    default: 'Hanzo — Documentation',
+    default: 'Hanzo Docs — the AI operating system for business',
   },
   description:
-    'Documentation for Hanzo AI Cloud — every model, every tool, one key.',
+    "The AI operating system for business. Building business software since 2014. Techstars '17. Every model, every tool, one key.",
   metadataBase: baseUrl,
 });
 

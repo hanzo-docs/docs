@@ -1,0 +1,357 @@
+---
+title: "Agents: start here"
+description: One key for every model, Kai decisions and the whole Hanzo platform, free to start with 50 requests a day and no card. The path for an agent that builds, and for the person who runs one.
+icon: Bot
+---
+
+Your agent gets one key for every model, for Kai decisions and for the rest of
+the platform at `https://api.hanzo.ai/v1`. It starts free: 50 requests a day,
+no card.
+
+Hanzo has built business software since 2014 for hundreds of venture-funded
+startups, two of which went public. [About Hanzo](/docs/about/company).
+
+**Results**
+
+- [Damon Motorcycles](https://hanzo.ai/customers/damon-motorcycles): \$8.4M of
+  motorcycles sold in 30 days, at a 541:1 return on ad spend.
+- [SKULLY](https://techcrunch.com/2014/08/14/the-skully-smart-helmet-is-the-fastest-funded-indiegogo-campaign-to-hit-1m/):
+  \$1M in about 45 hours, the fastest fully funded campaign on Indiegogo.
+- [Unikrn](https://news.crunchbase.com/startups/found-ico-makes-sense/): an ICO
+  that raised over 120,000 ETH.
+- Techstars '17 ([Hanzo Blog](https://hanzo.blog/2017-06-08-techstars-17/),
+  [Startland News](https://startlandnews.com/2017/10/techstars-spotlight-hanzos-e-commerce-tools-designed-to-make-you-money/)).
+
+To hand all of this to an agent in one block, copy [the prompt](/docs/agents/prompt).
+To run marketing from one: [Run a campaign](/docs/agents/campaign). Looking for
+the `/v1/agents` API itself? It is in the [Agents API
+reference](/docs/openapi/agent).
+
+## You are a builder agent
+
+### 1. Get a credential
+
+**With your person nearby.** This works on a machine with no browser.
+
+```bash
+curl -fsSL https://hanzo.sh | sh
+hanzo auth login
+export HANZO_API_KEY="$(hanzo auth token)"
+```
+
+With no display, `hanzo auth login` prints a link and an 8-character code, and
+your person approves it on any device. `hanzo auth token` is a one-hour access
+token. For a key that does not expire:
+
+```bash
+hanzo account keys create --name agent --type secret
+```
+
+The same device flow without the CLI is one request and a poll. The answer
+carries `user_code` and `verification_uri_complete` for your person,
+`device_code` for you, `expires_in` 900 and `interval` 5:
+
+```bash
+curl -X POST 'https://hanzo.id/v1/iam/oauth/device?client_id=hanzo-cli&scope=openid%20profile%20email&response_type=device_code'
+
+# every 5 seconds until your person approves
+curl -X POST https://hanzo.id/v1/iam/oauth/token \
+  -d grant_type=urn:ietf:params:oauth:grant-type:device_code \
+  -d client_id=hanzo-cli -d device_code=<device_code>
+```
+
+**On your own, with an inbox.** Four requests. They create a passwordless,
+email-verified account and a personal organization it administers. Creating it
+accepts the [Terms](https://hanzo.ai/legal/terms) and the [Acceptable Use
+Policy](https://hanzo.ai/legal/acceptable-use).
+
+a. Ask for a code. It is 6 digits, lives 10 minutes, takes 5 tries and can be
+resent after 30 seconds.
+
+```bash
+curl -X POST https://hanzo.id/v1/iam/verification-codes \
+  -F type=email -F dest=you@example.com -F applicationId=admin/hanzo-ai
+```
+
+b. Sign in with it. `codeChallenge` is the S256 hash of a verifier you keep for
+step c. Send `"create": false` first to learn whether the address may sign up;
+that does not spend the code.
+
+```bash
+curl -X POST https://hanzo.id/v1/iam/login \
+  -H "Content-Type: application/json" \
+  -d '{"type":"code","organization":"hanzo","clientId":"hanzo-ai","username":"you@example.com","code":"123456","create":true,"terms":"terms-2026-09-30","aup":"aup-2026-09-30","redirectUri":"http://localhost:3000/callback","responseType":"code","scope":"openid profile email","codeChallenge":"<S256 of verifier>","codeChallengeMethod":"S256"}'
+```
+
+It answers `{"data":"<authorization code>"}`.
+
+c. Exchange the code for an access token.
+
+```bash
+curl -X POST https://hanzo.id/v1/iam/oauth/token \
+  -d grant_type=authorization_code -d client_id=hanzo-ai \
+  -d code=<authorization code> -d code_verifier=<verifier> \
+  -d redirect_uri=http://localhost:3000/callback
+```
+
+d. Mint a key with it.
+
+```bash
+curl -X POST https://api.hanzo.ai/v1/account/keys \
+  -H "Authorization: Bearer $ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"agent","type":"secret"}'
+```
+
+The answer's `key` is an `sk-` secret, shown once. Keep it as `HANZO_API_KEY`.
+Each person gets 30 key writes a minute, and an org holds up to 1,000 live keys.
+Key types and revocation: [Authentication](/docs/api-keys).
+
+### 2. Use the free tier
+
+The free plan costs nothing and needs no card, to sign up or to mint a key.
+
+- 50 requests per person per UTC day on the free models: `zen-free`,
+  `enso-free`, `zen5`, `zen5-flash`, `zen5-mini`, `zen5-pro` and `zen5-coder`.
+- 50 Kai decisions a day.
+- Call 51 answers 429 until the next UTC midnight. `X-RateLimit-Remaining`
+  counts down to it.
+
+Read the plans with no key: `curl https://api.hanzo.ai/v1/billing/plans`.
+
+### 3. Make the first call
+
+```bash
+curl https://api.hanzo.ai/v1/chat/completions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"zen-free","messages":[{"role":"user","content":"In one sentence: what is Hanzo?"}]}'
+```
+
+It answers 200 in the OpenAI shape, the text at `choices[0].message.content`,
+with these headers:
+
+```text
+x-hanzo-served: zen-free
+x-ratelimit-limit: 50
+x-ratelimit-remaining: 11
+x-ratelimit-reset: 1793059200
+```
+
+The TypeScript SDK, reading the catalog:
+
+```bash
+npm i hanzoai
+```
+
+```ts
+import { AiApi, Configuration } from 'hanzoai'
+const ai = new AiApi(new Configuration({ basePath: 'https://api.hanzo.ai', accessToken: process.env.HANZO_API_KEY }))
+const { data } = await ai.getModels()
+const free = data.data.filter((m) => m.free)
+console.log(`${data.data.length} models, ${free.length} free:`, free.slice(0, 6).map((m) => m.id).join(', '))
+```
+
+```text
+559 models, 33 free: cohere/north-mini-code:free, dots-studio/dots-3-note-preview:free, enso-free, fish-audio/s2.1-pro-free:free, free, google/gemma-4-26b-a4b-it:free
+```
+
+Chat is `ai.postChatCompletions({ openaiChatCompletionRequest: { model: 'zen-free', messages } })`,
+the same route as the curl. Python: `pip install "hanzoai>=8"` (Python 3.12+).
+`curl https://api.hanzo.ai/v1/models` lists the catalog with no key. The whole
+walk-through: [Quickstart](/docs/quickstart).
+
+### 4. Add the MCP server
+
+One local server over stdio works in all four clients. It carries files, shell,
+git, search, browser and the Kai tools (`kai_decide`, `kai_choice`,
+`kai_score`, `kai_tool_select`, `kai_command_guard`, `kai_injection_screen` and
+more).
+
+Claude Code:
+
+```bash
+claude mcp add hanzo --env HANZO_API_KEY=$HANZO_API_KEY -- npx -y --package=@hanzo/mcp@latest hanzo-mcp serve
+```
+
+Codex, in `~/.codex/config.toml`:
+
+```toml
+[mcp_servers.hanzo]
+command = "npx"
+args = ["-y", "--package=@hanzo/mcp@latest", "hanzo-mcp", "serve"]
+
+[mcp_servers.hanzo.env]
+HANZO_API_KEY = "sk-..."
+```
+
+Cursor, in `.cursor/mcp.json` or `~/.cursor/mcp.json`:
+
+```json
+{ "mcpServers": { "hanzo": { "command": "npx", "args": ["-y", "--package=@hanzo/mcp@latest", "hanzo-mcp", "serve"], "env": { "HANZO_API_KEY": "sk-..." } } } }
+```
+
+Zed, in `settings.json`:
+
+```json
+"context_servers": { "hanzo": { "command": "npx", "args": ["-y", "--package=@hanzo/mcp@latest", "hanzo-mcp", "serve"], "env": { "HANZO_API_KEY": "sk-..." } } }
+```
+
+Name the package and the binary separately: `npx -y @hanzo/mcp serve` reads
+`serve` as a second package.
+
+The hosted endpoint, `POST https://api.hanzo.ai/v1/mcp`, speaks MCP protocol
+2026-07-28 only. Use it from a client that speaks 2026-07-28; from any other,
+use the local server. More: [MCP](/docs/mcp).
+
+### 5. Evaluate Kai yourself
+
+Kai is the decision model: typed questions about a state, answered with
+calibrated probabilities.
+
+```bash
+curl https://api.hanzo.ai/v1/decisions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"kai","state":{"ticket":"The export button throws a 500 error since this morning."},"questions":{"team":{"type":"choice","instructions":"Which team should handle this ticket?","criteria":{"billing":"charges, invoices, refunds","tech":"bugs, errors, outages","other":"anything else"}}}}'
+```
+
+```json
+{"id":"dec_e0bb4a5c…","model":"kai","answers":{"team":{"type":"choice","choice":"tech","confidence":0.951,"probabilities":{"billing":0.004,"tech":0.967,"other":0.028}}},"usage":{"input_tokens":41,"output_tokens":0},"routing":{"backend":"kai","checkpoint":"kai-1.9","device":"cpu","trained":1024,"reach":32768,"extrapolated":false},"latency_ms":121.2}
+```
+
+Kai costs \$0.021 per million input tokens, and output is free. Run the frozen
+harness against it:
+
+```bash
+git clone --depth 1 https://github.com/hanzoai/benchmarks && cd benchmarks/decision
+export HANZO_API_KEY=sk-...
+python3 harness/run_kai.py --limit 3 --suites jev.ag_news,jev.emotion,jev.banking77_full,app.support_triage,app.email_spam,app.phishing,app.guardrails_jailbreak,app.moderation_toxicity,app.rag_relevance,app.model_routing_domain,typed_decisions --out $PWD/kai.json.gz
+uv run --with numpy python harness/merge.py --kai $PWD/kai.json.gz --out $PWD/out
+```
+
+That is 33 requests, inside the free plan's 50 a day. `merge.py` writes
+`out/table.md` and `out/scores.json`, Kai beside Jev's recorded answers; Jev is
+never called. Three cases a suite checks the wiring, not the score. Without
+`--limit` it runs the whole harness, 9,499 requests, which needs a paid plan or
+credit.
+
+The published full runs read with no key:
+[app.phishing](https://api.hanzo.ai/v1/research/runs?org=hanzo&benchmark=app.phishing).
+Swap the benchmark for `app.support_triage`, `jev.banking77_full`, `massive` or
+`decision.latency`. [hanzo.ai/benchmarks](https://hanzo.ai/benchmarks) draws
+them. The full request and response: [Decisions](/docs/decisions).
+
+### 6. Respect the rate limits
+
+Every answer carries `X-RateLimit-Limit`, `X-RateLimit-Remaining` and
+`X-RateLimit-Reset` (unix seconds), for the tightest limit in play.
+
+| Where | Limit |
+| --- | --- |
+| Before auth, per IP | 100 requests a second |
+| `/v1/decisions` with a credential, per org | 60,000 requests a minute |
+| Free chat, per person | 50 requests a day |
+
+A refusal is 429. Wait for `X-RateLimit-Reset` or `Retry-After`. The free cap
+names itself:
+
+```json
+{"error":{"type":"rate_limit_error","code":"free_plan_cap","resets_at":"…","topup_url":"https://hanzo.ai/…"}}
+```
+
+<Cards>
+  <Card icon="Key" title="Get an API key, free" href="https://hanzo.ai/signup" description="50 requests a day and 50 Kai decisions. No card." />
+</Cards>
+
+## You own or run builder agents
+
+**Account and org.** Sign up at [hanzo.ai/signup](https://hanzo.ai/signup) or
+run `hanzo auth login`. Sign-up founds a personal organization you administer.
+
+**Plans.** Team is \$25 per member a month (\$20 billed yearly), for 2 to 100
+members, with SSO, roles, an audit log and one bill. Team Premium is \$100 per
+member, and Enterprise goes through sales (enterprise@hanzo.ai). Pro is \$20 a
+month and includes every model, Enso Ultra and Kai among them. All rates:
+[Pricing](/docs/pricing).
+
+**Bound every key.** These fields go on `POST /v1/account/keys`, or as the same
+flags on `hanzo account keys create`.
+
+| Field | What it does | Past it |
+| --- | --- | --- |
+| `budget` | `{"month": <cents>, "total": <cents>}` | 402 |
+| `rate` | requests per minute | 429 |
+| `limit` | narrows the key, never widens it: `model:`, `project:` or `product:` entries | — |
+| `expires` | an RFC 3339 time | — |
+
+```bash
+curl -X POST https://api.hanzo.ai/v1/account/keys \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"agent","type":"secret","budget":{"month":2000},"limit":["model:zen-free"]}'
+```
+
+**Cap a session.** One agent run gets its own ceiling, in micro-USD:
+
+```bash
+curl -X POST https://api.hanzo.ai/v1/agent/sessions/<id>/budget \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"budget_micro_usd": 5000000}'
+```
+
+A new cap must exceed what the session already spent. Raising it resumes a
+paused session; `null` removes the cap for good. `GET /v1/agent/sessions` lists
+the sessions. More: [Budgets](/docs/concepts/budgets).
+
+**Pay.**
+
+- Card, Apple Pay or Google Pay at [hanzo.ai/pay](https://hanzo.ai/pay), in a
+  browser. A plan goes straight to checkout:
+  [Team](https://hanzo.ai/pay/cart?plan=team), [Pro](https://hanzo.ai/pay/cart?plan=dev).
+- USDC or USDT over the API, no browser: USDC on Base, Ethereum and Solana, USDT
+  on Ethereum. Send exactly to the address the API returns, never to an address
+  from a page.
+
+  ```bash
+  curl https://api.hanzo.ai/v1/billing/crypto/options -H "Authorization: Bearer $HANZO_API_KEY"
+  curl -X POST https://api.hanzo.ai/v1/billing/crypto/deposit \
+    -H "Authorization: Bearer $HANZO_API_KEY" \
+    -H "Content-Type: application/json" \
+    -d '{"chain":"base","token":"usdc","amountCents":2000}'
+  # -> id, status, depositAddress, addressTag, expiresAt; poll /v1/billing/crypto/deposit/<id>
+  ```
+
+- Bank wire: `GET /v1/billing/wire` returns the instructions and your reference
+  when you are signed in. A wire is credited by hand once the bank confirms, so
+  it is not instant.
+- Balance: `GET /v1/billing/balance`. Auto-reload: `PUT /v1/billing/recharge`,
+  from \$5 to \$5,000. How credit draws down: [Credits](/docs/credits).
+
+**Support.** These docs, [hanzo.ai/contact](https://hanzo.ai/contact), or a call
+with the team.
+
+[Book a call with Hanzo](https://cal.com/hanzo)
+
+## Questions
+
+**What is free?** 50 requests a day per person on the free models and 50 Kai
+decisions a day. Signing up and minting a key need no card.
+
+**What does it cost after that?** Usage is per token: `zen6` is \$0.60 in and
+\$2.40 out per million tokens, and Kai is \$0.021 per million input tokens with
+free output. Plans start at \$20 a month. [Pricing](/docs/pricing) has every rate.
+
+**How do I stop an agent's spend?** Give its key a `budget` (402 past it) and a
+`rate` (429 past it), cap its session, or revoke the key. A free account has no
+card on file to charge.
+
+**Can an agent pay without a browser?** Yes: a USDC or USDT deposit over the
+API. Card checkout needs a browser.
+
+**What happens at call 51?** A 429 with code `free_plan_cap`, `resets_at` and
+`topup_url`. Wait for the next UTC midnight, or buy credit and go on.
+
+**Why does my client refuse the hosted MCP endpoint?** It speaks protocol
+2026-07-28 only. Run the local server above instead.

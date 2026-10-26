@@ -118,6 +118,18 @@ const RELAYS = [
   '/v1/team/billing/ui/',
 ];
 
+/**
+ * Exact addresses cloud serves to anyone that the public document omits by stage.
+ *
+ * `research` is an alpha capability, so cloud's openapi.yaml leaves it out (cloud
+ * openapi/public.go: only `ga` capabilities are public) while private.yaml at the
+ * pinned ref declares it. `GET /v1/research/runs` answers with no key, and it is
+ * how /docs/agents and hanzo.ai/benchmarks let a reader check Kai's published
+ * runs. One exact path, not a prefix: the rest of research stays held to the
+ * rule. The entry is dead the day research is `ga` and the document carries it.
+ */
+const STAGED = ['/v1/research/runs'];
+
 export function checkEndpoints(): { checked: number; unknown: Array<[string, string]> } {
   const doc = loadDocument(DOCUMENT);
   // Only `/v1` routes, because only those are what a page's `/v1/...` can mean.
@@ -142,6 +154,7 @@ export function checkEndpoints(): { checked: number; unknown: Array<[string, str
       const mention = segments(raw);
       if (paths.some((p) => names(mention, p))) continue;
       if (RELAYS.some((prefix) => raw.startsWith(prefix))) continue;
+      if (STAGED.includes(raw.replace(/\/$/, ''))) continue;
       unknown.push([rel, raw]);
     }
   }

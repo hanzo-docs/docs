@@ -44,7 +44,9 @@
 /getting-started   /docs/quickstart       301
 /models            /docs/models           301
 /chat              /docs/chat             301
-/agents            /docs/openapi/agent    301
+/agents            /docs/agents           301
+/agents/prompt     /docs/agents/prompt    301
+/about/company     /docs/about/company    301
 /mcp               /docs/mcp              301
 /sdks              /docs/sdks             301
 /llm               /docs/openapi/ai       301
@@ -74,11 +76,11 @@
 /docs/dns          /docs/openapi/dns      301
 /docs/desktop      /docs/apps/desktop               301
 /docs/code         /docs/openapi/code     301
-# The console's own Docs buttons: AgentsModule, SearchModule (/crawl),
-# EdgeModule, embeddings SettingsView and ResourceRail, the inference rail,
-# FunctionsModule and its secrets tab, and the machines view. Edge is
-# GET /v1/project/edge, so it lands on that operation.
-/docs/agents       /docs/openapi/agent              301
+# The console's own Docs buttons: SearchModule (/crawl), EdgeModule,
+# embeddings SettingsView and ResourceRail, the inference rail, FunctionsModule
+# and its secrets tab, and the machines view. Edge is GET /v1/project/edge, so
+# it lands on that operation. AgentsModule's /docs/agents is a page now, and it
+# points at /docs/openapi/agent.
 /docs/crawl        /docs/openapi/crawl              301
 /docs/edge         /docs/openapi/project/get-project-edge  301
 /docs/embeddings   /docs/openapi/ai/post-embeddings 301

@@ -1,0 +1,27 @@
+---
+title: Give your agent this prompt
+description: The standard prompt for an agent that builds on Hanzo. One block carries the key, the free tier, the first call, MCP, Kai and how to pay.
+---
+
+Paste this whole block into any agent that will build on Hanzo.
+
+```text
+You can build on Hanzo, the AI operating system for business (building business software since 2014; Techstars '17). One API at https://api.hanzo.ai/v1 serves chat, embeddings, images, agents, Kai decisions and the rest of the platform with one key. Start free; nothing below needs a card.
+
+Get a credential:
+- With your person nearby: run `curl -fsSL https://hanzo.sh | sh`, then `hanzo auth login`. On a machine with no browser it prints a link and an 8-character code; your person approves it on any device. Then `export HANZO_API_KEY="$(hanzo auth token)"`, or mint a key that does not expire: `hanzo account keys create --name agent --type secret`.
+- On your own, with an inbox: POST https://hanzo.id/v1/iam/verification-codes (form: type=email, dest=<your address>, applicationId=admin/hanzo-ai), then POST https://hanzo.id/v1/iam/login with type "code", the 6-digit code and create true, exchange the code at https://hanzo.id/v1/iam/oauth/token, and POST https://api.hanzo.ai/v1/account/keys {"name":"agent","type":"secret"}. The whole sequence: https://docs.hanzo.ai/docs/agents
+
+Free: 50 requests a day per person on `zen-free` and `enso-free`, and 50 Kai decisions a day. Call 51 answers 429 until the next UTC midnight; X-RateLimit-Remaining counts down.
+
+First call:
+curl https://api.hanzo.ai/v1/chat/completions -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" -d '{"model":"zen-free","messages":[{"role":"user","content":"Hello"}]}'
+
+Tools for your editor or agent: `npx -y --package=@hanzo/mcp@latest hanzo-mcp serve` (an MCP server over stdio with Kai, files, shell, git and search tools). Claude Code: `claude mcp add hanzo -- npx -y --package=@hanzo/mcp@latest hanzo-mcp serve`.
+
+Evaluate Kai, the decision model, yourself: POST https://api.hanzo.ai/v1/decisions with {"model":"kai","state":...,"questions":...}; the frozen harness is public at https://github.com/hanzoai/benchmarks (decision/), and the published runs are at https://api.hanzo.ai/v1/research/runs?org=hanzo&benchmark=app.phishing
+
+Pay when you need more: plans from $20 a month at https://hanzo.ai/pricing (card, Apple Pay or Google Pay at https://hanzo.ai/pay), or fund the balance over the API in USDC or USDT: GET /v1/billing/crypto/options, then POST /v1/billing/crypto/deposit {"chain":"base","token":"usdc","amountCents":2000} and send to the address it returns. Per-key budgets and per-session caps keep spend bounded.
+
+Read more: https://docs.hanzo.ai/llms.txt (every docs page), https://hanzo.ai/llms.txt, https://api.hanzo.ai/v1/openapi.json (every operation), https://hanzoskills.com/llms.txt (skills). Talk to people at Hanzo: https://cal.com/hanzo, or https://hanzo.ai/contact.
+```
