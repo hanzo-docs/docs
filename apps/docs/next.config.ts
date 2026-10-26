@@ -118,13 +118,16 @@ const config: NextConfig = {
     // build makes no maps and does not minify the server bundle it renders with.
     // `next dev` keeps its maps.
     //
-    // It keeps Turbopack's filesystem cache, which Next 16 turns on for builds:
-    // hanzoai/ci carries apps/docs/.next/cache between runs through the org's
-    // store, so the next export compiles what moved instead of 13.6 minutes of
-    // everything (run 16350).
+    // It turns off Turbopack's filesystem cache, which Next 16 turns on for
+    // builds. hanzoai/ci carries apps/docs/.next/cache between runs, and each
+    // run checks out under a new directory (~/.cache/act/<job hash>), while
+    // that cache records paths under the directory that wrote it: the next
+    // build reads them and fails with "leaves the filesystem root" (run 16992,
+    // restoring 16981's cache). A cold compile is 69 s on the xl node.
     ...(isExport && {
       turbopackSourceMaps: false,
       turbopackInputSourceMaps: false,
+      turbopackFileSystemCacheForBuild: false,
       serverMinification: false,
     }),
     // Page-generation workers as scripts/site.sh sizes them to the runner: each
