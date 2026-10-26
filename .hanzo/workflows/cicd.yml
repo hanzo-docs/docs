@@ -25,11 +25,16 @@ jobs:
       contents: write
       packages: write
       id-token: write
-    uses: hanzoai/ci/.github/workflows/build.yml@v2
+    uses: hanzoai/ci/.github/workflows/build.yml@d8ad3a09bd62e8c95260ab2fdbb3bb5d0652ebae
     with:
       # apps/docs/content/docs/studio is a submodule (hanzo-docs/studio-docs);
       # scripts/check-export.sh refuses an export without its pages.
       submodules: recursive
+      # The gate installs and builds the workspace: six cores of a node. The
+      # publish job builds 6,282 pages: a 32-core node, which scripts/site.sh
+      # sizes its compile tasks and render workers to.
+      class: heavy
+      runner: '["xl-linux-amd64"]'
     secrets:
       KMS_CLIENT_ID: ${{ secrets.KMS_CLIENT_ID }}
       KMS_CLIENT_SECRET: ${{ secrets.KMS_CLIENT_SECRET }}

@@ -118,19 +118,19 @@ const config: NextConfig = {
     // build makes no maps and does not minify the server bundle it renders with.
     // `next dev` keeps its maps.
     //
-    // Nor does it keep Turbopack's filesystem cache, which Next 16 turns on for
-    // builds. The export runs once on a fresh runner, so the cache is never
-    // read back, and under visor every file the job writes is cached in the
-    // sandbox's own memory, which the pod's limit is charged for.
+    // It keeps Turbopack's filesystem cache, which Next 16 turns on for builds:
+    // hanzoai/ci carries apps/docs/.next/cache between runs through the org's
+    // store, so the next export compiles what moved instead of 13.6 minutes of
+    // everything (run 16350).
     ...(isExport && {
       turbopackSourceMaps: false,
       turbopackInputSourceMaps: false,
-      turbopackFileSystemCacheForBuild: false,
       serverMinification: false,
     }),
-    // Two page-generation workers rather than one per core. Each worker loads
-    // its own copy of the page modules, so memory grows with the count.
-    cpus: 2,
+    // Page-generation workers as scripts/site.sh sizes them to the runner: each
+    // loads its own copy of the page modules, so memory grows with the count,
+    // and two is what fits a 24Gi runner.
+    cpus: Number(process.env.NEXT_BUILD_CPUS) || 2,
   },
   webpack: (config) => {
     // ------------------------------------------------------------------ //

@@ -55,9 +55,20 @@ pnpm turbo run build --filter='docs^...'
 # /proc/meminfo, then the five largest processes by resident memory.
 #
 # The compile peaks near 10 GB and the whole build, render workers included,
-# near 14 GB, inside a runner pod capped at 6 cores and 24Gi.
-# TURBO_TASKS_AVAILABLE_PARALLELISM=2 runs two Turbopack tasks and two loader
-# processes at once, which keeps the loaders near 1.2G together.
+# near 14 GB. Two Turbopack tasks and two render workers fit a 6-core, 24Gi
+# runner, which is where this ran: 13.6 minutes of compile and 26.8 of pages
+# (run 16350). The counts are read from the runner the job got instead — the
+# publish job takes a 32-core node (.hanzo/workflows/cicd.yml) — at one task per
+# core up to eight, and one render worker per 6 GiB above the compile's 8, never
+# fewer than two of either.
+cores=$(nproc)
+mem=$(cat /sys/fs/cgroup/memory.max 2>/dev/null || echo max)
+case "$mem" in ''|*[!0-9]*) mem=$(awk '/^MemTotal:/{print $2 * 1024}' /proc/meminfo) ;; esac
+gib=$(( mem / 1073741824 ))
+tasks=$(( cores < 8 ? cores : 8 )); [ "$tasks" -lt 2 ] && tasks=2
+workers=$(( (gib - 8) / 6 )); [ "$workers" -gt $(( cores / 2 )) ] && workers=$(( cores / 2 )); [ "$workers" -lt 2 ] && workers=2
+[ "$gib" -ge 32 ] || tasks=2
+echo "build: ${cores} cores, ${gib} GiB — ${tasks} Turbopack tasks, ${workers} render workers"
 ( while :; do
     printf '[usage] %s mem=%s disk=%s%s\n' "$(date -u +%H:%M:%S)" \
       "$(cat /sys/fs/cgroup/memory.current 2>/dev/null || awk '/^MemTotal:/{t=$2} /^MemAvailable:/{a=$2} END{print (t-a)"k"}' /proc/meminfo)" \
@@ -67,8 +78,8 @@ pnpm turbo run build --filter='docs^...'
   done ) &
 heartbeat=$!
 trap 'kill "$heartbeat" 2>/dev/null || true' EXIT
-NEXT_EXPORT=1 HANZO_DOCS_SYNC=0 NEXT_TELEMETRY_DISABLED=1 \
-NODE_OPTIONS=--max-old-space-size=8192 TURBO_TASKS_AVAILABLE_PARALLELISM=2 \
+NEXT_EXPORT=1 HANZO_DOCS_SYNC=0 NEXT_TELEMETRY_DISABLED=1 NEXT_BUILD_CPUS=$workers \
+NODE_OPTIONS=--max-old-space-size=8192 TURBO_TASKS_AVAILABLE_PARALLELISM=$tasks \
   pnpm --filter docs build
 kill "$heartbeat" 2>/dev/null || true
 
