@@ -231,19 +231,7 @@ curl -X POST https://api.hanzo.ai/v1/graph/resolve \
 The assert answers `{"recorded":1,…}`; the resolve answers `"known":true` with
 the assertion as `winner`. [Graph](/docs/openapi/graph) is the rest of it.
 
-## 6. Deploy a site or app
-
-Deploy any static frontend or containerized app live to `<slug>.hanzo.app`:
-
-```bash
-# Auto-detects site vs app (checks IaC hanzo.yml/json, Dockerfile, or index.html)
-hanzo deploy
-
-# Or explicitly deploy a static site directory
-hanzo site deploy --dir dist
-```
-
-## 7. Run the cloud locally
+## 6. Run the cloud locally
 
 The same binary that serves `api.hanzo.ai` runs on your machine:
 
