@@ -1,0 +1,79 @@
+---
+title: Bounties
+description: Merged pull requests and accepted issues in Hanzo's public repositories earn points. A bounty label sets a fixed award for the work.
+icon: Bug
+---
+
+Open source work in Hanzo's public repositories earns [Hanzo Rewards](/docs/contributing/earn)
+points. A maintainer decides every award. The open issues are on
+[hanzo.ai/bounty](https://hanzo.ai/bounty), next to the live rules.
+
+## Find work
+
+[hanzo.ai/bounty](https://hanzo.ai/bounty) lists the open issues labelled `bounty` or
+`good first issue`. Any open issue in a public repository of a Hanzo organization on GitHub
+counts too. The organizations are in the rules:
+
+```bash
+curl -s https://api.hanzo.ai/v1/rewards/rules | jq '.github.orgs'
+```
+
+## How a contribution counts
+
+1. **Pick an issue** on [hanzo.ai/bounty](https://hanzo.ai/bounty), or any open issue in a
+   public repository of those organizations.
+2. **Open a pull request.** A maintainer reviews it. Points come when it merges into the
+   default branch, not when it opens.
+3. **Link GitHub** on [hanzo.ai/leaderboard](https://hanzo.ai/leaderboard), so the merge counts
+   for your Hanzo account. Work merged before you link is held under your GitHub login and
+   joins your points when you link it.
+
+Hanzo learns of a merge or a label from GitHub itself, through the Hanzo GitHub App. There is
+nothing to submit.
+
+## Labels
+
+A maintainer sets the labels. They decide what the work earns.
+
+| Label | Where | Effect |
+|---|---|---|
+| `bounty` | An open issue | Lists the issue on hanzo.ai/bounty. |
+| `bounty:starter`, `bounty:standard`, `bounty:advanced` | The merged pull request | Pays the bounty of that size. |
+| `bug` | The merged pull request | A bug fix. |
+| `documentation`, `docs` | The merged pull request | Documentation. |
+| `translation`, `i18n` | The merged pull request | A translation. |
+| `accepted` | An issue | The issue earns for the person who opened it. |
+
+A bounty replaces the ordinary award for the same work. A merged pull request that carries a
+bounty label earns the bounty, not the bounty plus a merge. The full label list, and what each
+kind is worth, is the rules table:
+
+```bash
+curl -s https://api.hanzo.ai/v1/rewards/rules | jq '.github.labels'
+curl -s https://api.hanzo.ai/v1/rewards/rules \
+  | jq -r '.kinds[] | select(.source == "contributions") | [.points, .id, .title] | @tsv'
+```
+
+An issue you opened earns when a maintainer labels it `accepted`, and earns again when it
+closes as completed while it carries an `accepted` or `bug` label.
+
+## The rules
+
+- **Maintainers decide.** Points come only after a maintainer merges your pull request or
+  labels your issue.
+- **Each pull request and each issue earns once.** A pull request you merge yourself earns
+  nothing, and neither does work by a bot.
+- **Staff are excluded.** The people who own, belong to or have write access to a repository
+  do not earn for its work.
+- **Public repositories only,** in the organizations the rules name, merged into the default
+  branch.
+- **There is a daily cap** on contribution points per person, bounties included. It is in the
+  rules (`jq '.caps'`). Awards a person makes by hand after review are not capped.
+- Bounty and other reviewed contribution points can be [redeemed](/docs/contributing/redeem)
+  for service credit.
+
+## Security reports
+
+Report a security issue to [security@hanzo.ai](mailto:security@hanzo.ai) only. Never open a
+public issue and never post it on a public board. The security team reviews the report and
+awards its points by hand. The award is private: you see it, the public board does not.

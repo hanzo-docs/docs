@@ -1,0 +1,145 @@
+---
+title: Hanzo Rewards
+description: Points for what you build, ship and contribute with Hanzo. Reputation, not money. Levels, badges, and service credit for reviewed work.
+icon: Trophy
+---
+
+You earn points for real work: trying models, building, referring builders who stay,
+contributing to Hanzo's open source, and posts that stay up. Points set your level and your
+place on [hanzo.ai/leaderboard](https://hanzo.ai/leaderboard). Points from reviewed work can
+be redeemed for Hanzo AI service credit.
+
+## What a point is
+
+- A point is a reputation mark in Hanzo's ledger. It belongs to one account.
+- It cannot be transferred, sold or sent.
+- It is not a token and not money, and it has no cash value.
+- It is not an investment. Nothing here promises a return.
+- Hanzo pays no cash and sends no tokens for points. The only thing points buy is service
+  credit in your own account, and only some points do: [Redeem points](/docs/contributing/redeem).
+
+## Levels
+
+Five levels, in order: **Hacker, Builder, Shipper, Core, Legend.** Your lifetime points set
+your level. Core and Legend also need reviewed work that is not a referral: a merged
+contribution, an approved bounty or integration, or a security report. No amount of referring
+reaches them alone.
+
+## Two balances
+
+**Lifetime points** count everything you earned. They set your level, your rank and your
+badge progress, and they never go down.
+
+**Redeemable points** are the part earned from reviewed work, less what you already redeemed.
+Redeeming never lowers your level or rank.
+
+## Ways to earn
+
+Each one pays once per accomplishment unless it says otherwise.
+
+| Source | You earn it by |
+|---|---|
+| Exploring models and modalities | Your first successful task of each kind (text, vision, image, audio, reasoning), and trying more models. A model counts after a successful task that does real work. Aliases of one model do not count twice. |
+| Building and deploying | A tool call, an MCP tool, an agent task, a CLI task, a sandbox run, a deployed application, and steady days of building. A published integration or a reusable template earns after review. |
+| Referrals | Someone you referred does a first real task, then comes back and uses Hanzo again. They get a welcome award on their first qualified task. A person you referred still counts toward your badges after you reach the referral cap. |
+| Community | A testimonial or a showcase that Hanzo reviews and accepts. |
+| Open source and bounties | Merged pull requests, bug fixes, docs, translations, accepted issues, issues you reported that closed as completed, bounties, and valid security reports. [Bounties](/docs/contributing/bounties). |
+| Verified posts | A public post with your own link that is still up after the waiting window. [Share a post](/docs/contributing/share). |
+| Token milestones | One-time awards as your recorded usage passes each milestone. Reputation only, never redeemable, one badge each. There are no recurring points per token. |
+| Beta | Applying to the beta, and being accepted into Alpha. |
+
+Some kinds are part of the program and award nothing yet, because their event is not measured
+and verified. The rules mark them `live: false`.
+
+## What never earns
+
+- Visits to your link, sign-ups, and stars or follows on their own.
+- Staff and bots of every participating organization.
+- Self referrals, circular referrals, and accounts that belong to one person.
+- Usage Hanzo does not meter.
+- Sourcing investors or financing.
+
+The rules table lists the same set (`excluded`).
+
+## Earlier points
+
+Points from the earlier beta board are grandfathered: each member's total is kept whole as one
+legacy award. It counts toward your lifetime points and your level. It is not redeemable.
+
+## Read the rules
+
+One table holds every value: what each kind earns, the caps, the level thresholds, the token
+milestones, the redemption limits and the post window. Every page and tool reads it. These docs
+copy none of it, so they cannot go stale. No key is needed.
+
+```bash
+curl -s https://api.hanzo.ai/v1/rewards/rules
+```
+
+**Levels.** Name, lifetime points, and whether it also needs reviewed non-referral work:
+
+```bash
+curl -s https://api.hanzo.ai/v1/rewards/rules \
+  | jq -r '.levels[] | [.name, .points, .substantive] | @tsv'
+```
+
+**What a kind earns.** One kind by id, or every kind in a source (`explore`, `build`,
+`referrals`, `community`, `share`, `contributions`, `usage`, `beta`):
+
+```bash
+curl -s https://api.hanzo.ai/v1/rewards/rules \
+  | jq '.kinds[] | select(.id == "merged") | {title, points, rule}'
+
+curl -s https://api.hanzo.ai/v1/rewards/rules \
+  | jq -r '.kinds[] | select(.source == "explore") | [.points, .title] | @tsv'
+```
+
+**The caps.** The most a person earns from a source in a window:
+
+```bash
+curl -s https://api.hanzo.ai/v1/rewards/rules | jq '.caps'
+```
+
+**Token milestones.** Tokens, points, and the badge each unlocks:
+
+```bash
+curl -s https://api.hanzo.ai/v1/rewards/rules | jq '.tiers'
+```
+
+**Which points redeem**, and which kinds are not live yet:
+
+```bash
+curl -s https://api.hanzo.ai/v1/rewards/rules | jq -r '.kinds[] | select(.credit) | .title'
+curl -s https://api.hanzo.ai/v1/rewards/rules | jq -r '.kinds[] | select(.live | not) | .title'
+```
+
+**The redemption rate and limits**, and **the post window**:
+
+```bash
+curl -s https://api.hanzo.ai/v1/rewards/rules | jq '.redeem'
+curl -s https://api.hanzo.ai/v1/rewards/rules | jq '.share'
+```
+
+A kind with `manual: true` is awarded by a person after review, and a kind with
+`private: true` stays off the public board. Every award records the table `version` it was
+priced by, so a change never rewrites what you already earned.
+
+## Your standing
+
+Signed in, `GET https://api.hanzo.ai/v1/rewards/me` answers your rank, points, level, the next
+level, badges, redeemable points, and every award behind them.
+
+```bash
+curl -s https://api.hanzo.ai/v1/rewards/me -H "Authorization: Bearer $HANZO_API_KEY"
+```
+
+[hanzo.ai/leaderboard](https://hanzo.ai/leaderboard) is the public board. Your name shows on it
+only if you choose it (`PUT /v1/rewards/optin`); otherwise you rank as a builder. Every
+endpoint is listed in the [Rewards API](/docs/contributing/api).
+
+<Cards>
+  <Card title="Bounties" href="/docs/contributing/bounties" description="Open source work and fixed-award issues." />
+  <Card title="Share a post" href="/docs/contributing/share" description="A post that stays up earns once." />
+  <Card title="Redeem points" href="/docs/contributing/redeem" description="Reviewed work becomes service credit." />
+  <Card title="Badges" href="/docs/contributing/badges" description="Collectibles you unlock as you go." />
+</Cards>

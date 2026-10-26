@@ -1,0 +1,122 @@
+---
+title: Rewards API
+description: Every Hanzo Rewards endpoint on api.hanzo.ai - the board, your standing, the rules, opt-in, redemptions, posts and badges.
+icon: Braces
+---
+
+Hanzo Rewards lives under `https://api.hanzo.ai/v1/rewards`. Read [Hanzo Rewards](/docs/contributing/earn)
+first for what the program is. This page is the endpoints.
+
+| Method and path | Auth | Answers |
+|---|---|---|
+| `GET /v1/rewards` | None. A bearer adds `you`. | The board: everyone ranked by points. |
+| `GET /v1/rewards/me` | Signed in | Your rank, points, level, badges, redeemable points and history. |
+| `GET /v1/rewards/rules` | None | The rules table: the one source of every value. |
+| `GET /v1/rewards/optin` | Signed in | Whether your board row carries your name. |
+| `PUT /v1/rewards/optin` | Signed in | Name your row, or stop naming it. |
+| `POST /v1/rewards/redeem` | Signed in | Turn redeemable points into service credit. |
+| `GET /v1/rewards/redemptions` | Signed in | Your redemptions, newest first. |
+| `POST /v1/rewards/posts` | Signed in | Paste the URL of a post for points. |
+| `GET /v1/rewards/posts` | Signed in | Your posts, and what the waiting ones are worth. |
+| `GET /v1/rewards/badges/{id}` | None | A badge's metadata. |
+| `GET /v1/rewards/badges/{id}/art` | None | A badge's art. |
+
+Send a key as a bearer token wherever a call needs you signed in:
+
+```bash
+curl -s https://api.hanzo.ai/v1/rewards/me -H "Authorization: Bearer $HANZO_API_KEY"
+```
+
+## The board
+
+`GET /v1/rewards` takes four query parameters, all optional:
+
+| Parameter | Meaning |
+|---|---|
+| `board` | A tab of the board: one of the `tabs` ids in the rules. Empty counts every public source. |
+| `source` | Count one source only: one of the `sources` ids in the rules. |
+| `period` | `all` for every point ever earned (the default, and what levels count), or `month` for the points of this calendar month in UTC (what the monthly competition ranks by). |
+| `limit` | How many rows, 1 to 100. Default 25. |
+
+```bash
+curl -s "https://api.hanzo.ai/v1/rewards?board=contributors&period=month&limit=10"
+```
+
+The answer has `rows`, each with `rank`, `name`, `you`, `points`, `level` and `since`. `name` is
+`null` for a person who did not opt in. The answer also has `you` (your own row, wherever it
+ranks), `of` (how many rows the board ranks), the `source`, `board` and `period` it answered
+for, and `settled`.
+
+## Your standing
+
+`GET /v1/rewards/me` answers:
+
+| Field | Meaning |
+|---|---|
+| `rank`, `of` | Your place, and how many are ranked. |
+| `points`, `since` | Your lifetime points, and the day your row began. |
+| `level`, `next` | Your level, and the one after it (`null` at the top). |
+| `toNext` | The points that would pass the row above you. |
+| `sources` | Your points by source. |
+| `badges` | Every badge, with `earned` and `at`. |
+| `redeemable`, `allowance` | What you can redeem, and your month's allowance. |
+| `legacy`, `private` | Points you had earned on the earlier beta board, kept whole, and points of awards never shown on the board, such as a security report. |
+| `usage` | Tokens counted, and the next milestone. |
+| `github` | The GitHub login your contributions attach to, and whether it is linked. |
+| `history` | The awards behind your points, newest first. |
+
+## The rules
+
+`GET /v1/rewards/rules` answers the whole table. [Hanzo Rewards](/docs/contributing/earn#read-the-rules)
+shows how to read it with `jq`. Its top-level keys:
+
+| Key | Holds |
+|---|---|
+| `version` | The table's name. Every award records the version it was priced by. |
+| `sources`, `kinds` | The sources, and every way to earn. |
+| `tiers` | The token milestones. |
+| `caps` | The most a person earns from a source in a window. |
+| `levels` | The levels, by lifetime points. |
+| `badges`, `missions` | The collectibles, and the guides toward them. |
+| `tabs` | The board's views. |
+| `github` | The organizations and labels that make a contribution count. |
+| `activity` | What counts as using Hanzo. |
+| `share` | The post window, the post limit, and which networks are read automatically. |
+| `redeem` | The rate and the limits, in cents. |
+| `payouts` | Always `false`. Nothing pays out cash or a token. |
+| `chain` | Where badges are claimed, and whether claiming is open. |
+| `disclosure`, `excluded` | The line to post, and what never earns. |
+| `cutover` | When the earlier totals were struck and this program took over. |
+
+## Opt in to your name
+
+Your row shows as a builder unless you choose a name.
+
+```bash
+curl -s https://api.hanzo.ai/v1/rewards/optin -H "Authorization: Bearer $HANZO_API_KEY"
+
+curl -s -X PUT https://api.hanzo.ai/v1/rewards/optin \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"listed": true, "handle": "ada"}'
+```
+
+`GET` answers `user` with `listed`, `handle`, and `canSet`. `PUT` takes `listed` and `handle`. A
+handle is 1 to 40 letters, digits, spaces, dots, underscores, apostrophes or hyphens, starting
+with a letter or digit. With no handle, a listed row takes your username. `{"listed": false}`
+takes the name off.
+
+## Redeem
+
+`POST /v1/rewards/redeem` takes `dollars`, a whole number. `GET /v1/rewards/redemptions` lists
+yours. Fields, errors and limits are on [Redeem points](/docs/contributing/redeem).
+
+## Posts
+
+`POST /v1/rewards/posts` takes `{"url": "..."}`. `GET /v1/rewards/posts` answers `posts` and
+`pending`. Fields and states are on [Share a post](/docs/contributing/share).
+
+## Badges
+
+`GET /v1/rewards/badges/{id}` and `GET /v1/rewards/badges/{id}/art` are public and hold no
+personal data. See [Badges](/docs/contributing/badges).
