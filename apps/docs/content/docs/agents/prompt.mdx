@@ -6,9 +6,10 @@ description: The standard prompt for an agent that builds on Hanzo. One block ca
 Paste this whole block into any agent that will build on Hanzo.
 
 ```text
-You can build on Hanzo, the AI operating system for business (building business software since 2014; Techstars '17). One API at https://api.hanzo.ai/v1 serves chat, embeddings, images, agents, Kai decisions and the rest of the platform with one key. Start free; nothing below needs a card.
+You can build on Hanzo, the AI operating system for business (building business software since 2014; Techstars '17). One API at https://api.hanzo.ai/v1 serves chat, embeddings, images, agents, Kai decisions and the rest of the platform with one key. Start free; nothing below needs a card, and with a wallet nothing needs a person.
 
 Get a credential:
+- With a wallet, no human required: GET https://hanzo.id/v1/iam/web3/nonce?chain=evm&address=<your address>, sign the CAIP-122 message it describes with EIP-191 personal_sign, POST https://hanzo.id/v1/iam/web3/verify (clientId "hanzo-ai", chain "evm", scheme "secp256k1-eip191", type "code" with a PKCE challenge), exchange the code at https://hanzo.id/v1/iam/oauth/token, then POST https://api.hanzo.ai/v1/account/keys {"name":"agent","type":"secret"}. A first-seen wallet gets its own account and organization on the Free plan. The whole flow as one TypeScript file: https://hanzo.ai/agents#headless
 - With your person nearby: run `curl -fsSL https://hanzo.sh | sh`, then `hanzo auth login`. On a machine with no browser it prints a link and an 8-character code; your person approves it on any device. Then `export HANZO_API_KEY="$(hanzo auth token)"`, or mint a key that does not expire: `hanzo account keys create --name agent --type secret`.
 - On your own, with an inbox: POST https://hanzo.id/v1/iam/verification-codes (form: type=email, dest=<your address>, applicationId=admin/hanzo-ai), then POST https://hanzo.id/v1/iam/login with type "code", the 6-digit code and create true, exchange the code at https://hanzo.id/v1/iam/oauth/token, and POST https://api.hanzo.ai/v1/account/keys {"name":"agent","type":"secret"}. The whole sequence: https://docs.hanzo.ai/docs/agents
 
@@ -21,7 +22,7 @@ Tools for your editor or agent: `npx -y --package=@hanzo/mcp@latest hanzo-mcp se
 
 Evaluate Kai, the decision model, yourself: POST https://api.hanzo.ai/v1/decisions with {"model":"kai","state":...,"questions":...}; the frozen harness is public at https://github.com/hanzoai/benchmarks (decision/), and the published runs are at https://api.hanzo.ai/v1/research/runs?org=hanzo&benchmark=app.phishing
 
-Pay when you need more: plans from $20 a month at https://hanzo.ai/pricing (card, Apple Pay or Google Pay at https://hanzo.ai/pay), or fund the balance over the API in USDC or USDT: GET /v1/billing/crypto/options, then POST /v1/billing/crypto/deposit {"chain":"base","token":"usdc","amountCents":2000} and send to the address it returns. Per-key budgets and per-session caps keep spend bounded.
+Pay when you need more: plans from $20 a month at https://hanzo.ai/pricing (card, Apple Pay or Google Pay at https://hanzo.ai/pay), or top up over the API in USDC or USDT with no human: GET /v1/billing/crypto/options, then POST /v1/billing/crypto/deposit {"chain":"base","token":"usdc","amountCents":2000} and send to the address it returns; the balance is credited when the chain confirms. Per-key budgets and per-session caps keep spend bounded.
 
 Read more: https://docs.hanzo.ai/llms.txt (every docs page), https://hanzo.ai/llms.txt, https://api.hanzo.ai/v1/openapi.json (every operation), https://hanzoskills.com/llms.txt (skills). Talk to people at Hanzo: https://cal.com/hanzo, or https://hanzo.ai/contact.
 ```

@@ -36,6 +36,11 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${Zen.variable} ${ZenMono.variable} t_dark`} suppressHydrationWarning>
+      {/* Every page points an agent at the index and at the way in. */}
+      <head>
+        <link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt" />
+        <link rel="help" href="/docs/agents" title="For agents: get an API key in one call" />
+      </head>
       <body>
         <Analytics product="docs">
           <NextProvider>

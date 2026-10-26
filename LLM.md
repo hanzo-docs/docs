@@ -165,11 +165,22 @@ The way in for an agent, second in the root sidebar.
   same facts (`HEAD`: positioning, "For agents", "Company") before the index.
   `public/_redirects`: `/agents`, `/agents/prompt`, `/about/company` land here;
   `/docs/agents` is a page now and points at `/docs/openapi/agent`.
+- **Headless first.** Step 1 is wallet sign-in with no human: `headless.mts`,
+  byte for byte the file that was run (nonce, EIP-191 signature, verify, token,
+  key, a free call, a USDC deposit), and its real output. A first-seen wallet
+  gets its own account and organization on the Free plan. Seven chains sign in
+  (evm, solana, bitcoin, ton, xrp, polkadot, cardano); the file shows EVM.
+- **Every page points agents in.** `app/layout.tsx` puts `rel=alternate`
+  (`/llms.txt`) and `rel=help` (`/docs/agents`) in each head, and `lib/nav.ts`
+  leads the top bar with Agents. The label is one word because "Agents: get an
+  API key in one call" wraps in the bar from 768 to 1023px; the long phrase is
+  the `rel=help` title.
 - **Source of every number.** A facts file measured on 2026-10-26 (each line
   VERIFIED by a run or READ from code at a cited commit). Print no number it
   does not carry; re-measure before changing one.
-- **Not published, and why.** x402 as a way to pay for the API (it settles only
-  priced marketplace tools via `/v1/tool/call`). Cash App Pay (accepted by the
+- **Not published, and why.** x402 as a way to pay for the API, or any 402 flow
+  (it settles only priced marketplace tools via `/v1/tool/call`, from the
+  prepaid balance, and no listing is priced today). Cash App Pay (accepted by the
   route, not verified on the live checkout). Bank account numbers (`GET
   /v1/billing/wire` returns them to a signed-in caller only). ai@hanzo.ai (nothing
   reads it). Any response-time promise (none exists). SMS as a campaign channel
