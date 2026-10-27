@@ -1,7 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { isMarkdownPreferred, rewritePath } from '@hanzo/docs/core/negotiation';
+import { isMarkdownPreferred } from '@hanzo/docs/core/negotiation';
+import { twinPath } from '@/lib/twin';
 
-const { rewrite: rewriteLLM } = rewritePath('/docs/*path', '/llms.mdx/*path');
+// A page's Markdown twin under `next dev`, which serves no `<page>.md` file:
+// the export's copies (scripts/twins.ts) are of these routes.
+const TWIN = /^\/(index|docs(?:\/.*)?|blog(?:\/.*)?|reference)\.md$/;
+function twinRoute(pathname: string): string | undefined {
+  const m = TWIN.exec(pathname);
+  if (!m) return undefined;
+  return m[1] === 'index' ? '/llms.mdx/content.md' : `/llms.mdx/${m[1]}/content.md`;
+}
 
 const DEFAULT_HOST_SUFFIX = 'docs.hanzo.ai';
 
@@ -40,13 +48,9 @@ export default function proxy(request: NextRequest) {
     }
   }
 
-  // Content negotiation: serve .mdx for markdown-preferring clients (LLMs)
-  if (isMarkdownPreferred(request)) {
-    const result = rewriteLLM(pathname);
-    if (result) {
-      return NextResponse.rewrite(new URL(result, request.nextUrl));
-    }
-  }
+  // `<page>.md`, or the page asked for as Markdown: its twin.
+  const twin = twinRoute(pathname) ?? (isMarkdownPreferred(request) ? twinRoute(twinPath(pathname)) : undefined);
+  if (twin) return NextResponse.rewrite(new URL(twin, request.nextUrl));
 
   return NextResponse.next();
 }

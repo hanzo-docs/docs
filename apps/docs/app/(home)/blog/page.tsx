@@ -1,6 +1,9 @@
 import { blog } from '@/lib/source';
 import { PathUtils } from '@hanzo/docs/core/source';
 import { Posts } from '@/components/posts';
+import { alternates } from '@/lib/metadata';
+
+export const metadata = { alternates: alternates('/blog') };
 
 // Blog frontmatter (source.config.ts). A post with no date is dated by its file.
 interface BlogData {

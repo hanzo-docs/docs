@@ -8,14 +8,10 @@ import { DropdownMenu } from '@hanzo/ui';
 import { Action } from '@/components/action';
 import { AGENT_SETUP_PROMPT } from '@/lib/agent-setup-prompt';
 import { muted } from '@/lib/ink';
+import { twinPath } from '@/lib/twin';
 
 const SKILLS = 'https://hanzoskills.com';
 
-/** /docs/a/b -> /llms.mdx/docs/a/b/content.md, the route app/llms.mdx serves. */
-function markdown(pathname: string) {
-  const clean = pathname.replace(/\/+$/, '');
-  return `/llms.mdx${clean || '/docs'}/content.md`;
-}
 
 function prompt(url: string) {
   return `${AGENT_SETUP_PROMPT}
@@ -34,9 +30,8 @@ Hanzo capability are published at ${SKILLS}.`;
 export function Agent() {
   const pathname = usePathname();
   const [done, setDone] = useState(false);
-  const md = markdown(pathname);
-  // Every page can be handed to an agent; only a doc page has a Markdown twin.
-  const twin = pathname.startsWith('/docs');
+  // Every page has a Markdown twin at `<page>.md` (scripts/twins.ts).
+  const md = twinPath(pathname);
   const here = () => window.location.href;
 
   const copy = async (text: string | Promise<string>) => {
@@ -68,12 +63,8 @@ export function Agent() {
         { type: 'separator' },
         { type: 'label', label: 'Use with any agent' },
         { key: 'prompt', label: 'Copy prompt', onSelect: () => copy(prompt(here())) },
-        ...(twin
-          ? [
-              { key: 'copy', label: 'Copy page as Markdown', onSelect: () => copy(fetch(md).then((r) => r.text())) },
-              { key: 'view', label: 'View as Markdown', onSelect: () => window.location.assign(md) },
-            ]
-          : []),
+        { key: 'copy', label: 'Copy page as Markdown', onSelect: () => copy(fetch(md).then((r) => r.text())) },
+        { key: 'view', label: 'View as Markdown', onSelect: () => window.location.assign(md) },
         { type: 'separator' },
         { key: 'chatgpt', label: 'Open in ChatGPT', onSelect: () => go(`https://chatgpt.com/?${new URLSearchParams({ hints: 'search', q: prompt(here()) })}`) },
         { key: 'claude', label: 'Open in Claude', onSelect: () => go(`https://claude.ai/new?${new URLSearchParams({ q: prompt(here()) })}`) },

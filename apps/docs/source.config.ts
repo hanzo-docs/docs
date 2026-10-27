@@ -135,6 +135,8 @@ export const blog = defineCollections({
     author: z.string(),
     date: z.iso.date().or(z.date()),
   }),
+  // The post as Markdown, for its twin (app/llms.mdx/blog).
+  postprocess: { includeProcessedMarkdown: true },
   async: true,
   async mdxOptions(environment) {
     const { rehypeCodeDefaultOptions } = await import('@hanzo/docs-core/mdx-plugins/rehype-code');

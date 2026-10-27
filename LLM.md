@@ -191,7 +191,8 @@ The way in for an agent, second in the root sidebar.
   as a person's Free plan. The run output's remaining count is elided for the
   same reason.
 - **Every page points agents in.** `app/layout.tsx` puts `rel=alternate`
-  (`/llms.txt`) and `rel=help` (`/docs/agents`) in each head, and `lib/nav.ts`
+  (`/llms.txt`), the page's Markdown twin and `rel=help` (`/docs/agents`) in each
+  head (Agent readiness, below), and `lib/nav.ts`
   leads the top bar with Agents. The label is one word because "Agents: get an
   API key in one call" wraps in the bar from 768 to 1023px; the long phrase is
   the `rel=help` title.
@@ -212,6 +213,46 @@ The way in for an agent, second in the root sidebar.
   is how a reader checks Kai's published runs. Exact path only.
 - The hosted `POST /v1/mcp` speaks protocol 2026-07-28 only, so the page sends
   clients to the local `@hanzo/mcp` server.
+
+## Agent readiness
+
+What an agent reads before, beside and instead of a page. Scanner:
+`POST https://isitagentready.com/api/scan`.
+
+- **Every page has a Markdown twin at `<page>.md`** (`/` -> `/index.md`, `/docs/a`
+  -> `/docs/a.md`). `lib/markdown.ts` lowers the page's processed MDX to plain
+  CommonMark + GFM: a callout a quote, cards a list of links, tabs labelled
+  sections, an `Example` a fenced block, live widgets out, every link absolute.
+  The twins prerender at `llms.mdx/<page>/content.md` (app/llms.mdx: docs, blog,
+  the front page from `lib/landing.ts`, /reference) because the docs route
+  cannot also answer `<page>.md`; `scripts/twins.ts` (post-build) copies each to
+  `<page>.md`, gives an alias page its target's twin, and names any HTML page
+  left without one. The old `llms.mdx/...` addresses stay served.
+- **The front page's words live in `lib/landing.ts`**, which
+  `components/landing.tsx` draws and `/index.md` writes, so they cannot differ.
+- Each page's head carries `<link rel="alternate" type="text/markdown">`
+  (`lib/metadata.ts` `alternates`). `next dev` serves `<page>.md` through
+  `proxy.ts`; the export never runs it.
+- **llms.txt** links every twin, absolute; `/auth.md` and llms-full.txt are named
+  at its top. API calls are written as `METHOD /v1/...` in code, never as bare
+  URLs, because a crawler that follows a POST-only URL gets a 405.
+- **`public/auth.md` is hanzoai/skills `public/auth.md`, byte for byte**: one
+  text on every Hanzo host. This host is neither an authorization server nor a
+  resource server, so it publishes no OAuth discovery or PRM of its own.
+- **`public/.well-known/api-catalog`** (RFC 9727). The static plane serves an
+  extensionless file with no Content-Type; `application/linkset+json` needs an
+  edge header rule.
+- **`public/robots.txt`**: `Content-Signal: search=yes, ai-input=yes,
+  ai-train=yes` in `User-agent: *` and in the named AI crawlers' group (a crawler
+  named in a group reads only that group). Bytespider is not named, as before.
+- **WebMCP** (`lib/webmcp.ts`, mounted by `components/webmcp.tsx` in the root
+  layout): `search_docs` (the ⌘K dialog's own flexsearch index at /v1/search,
+  loaded on the first call) and `get_page` (a page's twin), read-only, on
+  `document.modelContext` or `navigator.modelContext`. No `<form toolname>`:
+  the search is a dialog with no form, and a declarative tool named
+  `search_docs` would collide with the imperative one.
+- `export.require` names the twins and agent files, so a post-build that stops
+  running fails the gate instead of shipping `rel=alternate` links to 404s.
 
 ## Company
 

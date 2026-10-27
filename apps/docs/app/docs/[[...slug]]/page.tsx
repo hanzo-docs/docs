@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import type { ComponentProps } from 'react';
-import { createMetadata } from '@/lib/metadata';
+import { alternates, createMetadata } from '@/lib/metadata';
 import { source } from '@/lib/source';
 import { inlineCode } from '@/lib/inline-code';
 import { Mermaid } from '@/components/mdx/mermaid';
@@ -106,6 +106,7 @@ export async function generateMetadata(props: PageProps<'/docs/[[...slug]]'>): P
     openGraph: {
       url: `/docs/${page.slugs.join('/')}`,
     },
+    alternates: alternates(page.url),
   });
 }
 

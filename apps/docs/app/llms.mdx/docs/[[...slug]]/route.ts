@@ -2,11 +2,12 @@ import { getLLMText } from '@/lib/get-llm-text';
 import { getPageMarkdownUrl, source } from '@/lib/source';
 import { notFound } from 'next/navigation';
 
-// The markdown twin of every docs page: what Copy Markdown puts on the
-// clipboard, what View Markdown opens, and what the Open in ChatGPT / Claude /
-// Cursor links hand the model. Those buttons have always been rendered by
-// app/docs/[[...slug]]/page.tsx; until this route existed they fetched a 404,
-// so the feature read as broken rather than missing.
+// The Markdown twin of every docs page (lib/markdown). It prerenders here, under
+// its own namespace, because the docs route cannot also answer `<page>.md`;
+// scripts/twins.ts copies each file to `<page>.md`, the address the page's
+// `<link rel="alternate" type="text/markdown">`, llms.txt and the edge's
+// `Accept: text/markdown` rewrite all name. This address stays served too:
+// earlier builds handed it out from the page's Markdown buttons.
 //
 // The last slug segment is `content.md` (see getPageMarkdownUrl), so it is
 // dropped before the page lookup.

@@ -11,6 +11,7 @@ import { TreeProvider } from '@/lib/tree';
 import { clientTree } from '@/lib/source';
 import { NextProvider } from '@hanzo/docs/core/framework/next';
 import { Analytics } from '@hanzo/docs-analytics';
+import { WebMCP } from '@/components/webmcp';
 
 export const metadata = createMetadata({
   title: {
@@ -42,6 +43,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <link rel="help" href="/docs/agents" title="For agents: get an API key in one call" />
       </head>
       <body>
+        <WebMCP />
         <Analytics product="docs">
           <NextProvider>
             <TreeProvider tree={clientTree()}>

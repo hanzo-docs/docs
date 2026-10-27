@@ -1,6 +1,9 @@
-import { source } from '@/lib/source';
+import { blog, source } from '@/lib/source';
+import { ORIGIN, twinPath } from '@/lib/twin';
 
-// THE INDEX: every page, not every page a human navigates to.
+// THE INDEX: every page, not every page a human navigates to. Each line links
+// the page's Markdown twin (`<page>.md`, scripts/twins.ts), absolute, so an
+// agent reading this file reads Markdown at every hop.
 //
 // This rendered the sidebar — `llms(source).index()` walks the page TREE — and
 // the tree is a navigation decision. A capability's folder deliberately lists
@@ -52,20 +55,23 @@ const HEAD = [
   '',
   "> The AI operating system for business. Building business software since 2014. Techstars '17.",
   '',
+  `Every page below is Markdown: a page's address with \`.md\` appended. How an agent authenticates: [auth.md](${ORIGIN}/auth.md). Everything in one file: [llms-full.txt](${ORIGIN}/llms-full.txt).`,
+  '',
   '## For agents',
   '',
   'Sign up free with a wallet. Get an API key free. A small free allowance to try it. Top up in USDC or USDT over the API to raise your limits and pay as you go. No human required.',
   '',
-  '- Wallet sign-up: GET https://hanzo.id/v1/iam/web3/nonce?chain=evm&address=<address>, sign the message it describes with EIP-191, POST https://hanzo.id/v1/iam/web3/verify, exchange the code at https://hanzo.id/v1/iam/oauth/token, then POST https://api.hanzo.ai/v1/account/keys. A first-seen wallet gets its own account and organization with a small free allowance to try it. The whole flow as one TypeScript file: [Headless: sign in with a wallet](/docs/agents#1-headless-sign-in-with-a-wallet).',
-  '- [Headless, step by step](/docs/agents/headless): each request and its answer: challenge, signature, verify, token, key, limits, a 429, the USDC or USDT deposit and the balance.',
-  '- [Agents: start here](/docs/agents): a credential, the free tier, the first call, MCP, Kai, rate limits and spend control.',
-  '- [The prompt](/docs/agents/prompt): one block to hand any agent that builds on Hanzo.',
+  `- Wallet sign-up: \`GET /v1/iam/web3/nonce?chain=evm&address=<address>\` on hanzo.id, sign the message it describes with EIP-191, \`POST /v1/iam/web3/verify\`, exchange the code with \`POST /v1/iam/oauth/token\`, then \`POST /v1/account/keys\` on api.hanzo.ai. A first-seen wallet gets its own account and organization with a small free allowance to try it. The whole flow as one TypeScript file: [Agents: start here](${ORIGIN}/docs/agents.md).`,
+  `- [Headless, step by step](${ORIGIN}/docs/agents/headless.md): each request and its answer: challenge, signature, verify, token, key, limits, a 429, the USDC or USDT deposit and the balance.`,
+  `- [auth.md](${ORIGIN}/auth.md): the wallet flow, the device flow, API keys and revocation, with IAM's discovery documents.`,
+  `- [Agents: start here](${ORIGIN}/docs/agents.md): a credential, the free tier, the first call, MCP, Kai, rate limits and spend control.`,
+  `- [The prompt](${ORIGIN}/docs/agents/prompt.md): one block to hand any agent that builds on Hanzo.`,
   '- Key: `hanzo auth login`, then `hanzo account keys create --name agent --type secret`. With an inbox, the four-request email-code sequence on /docs/agents ends in the same key mint.',
-  '- Free: a wallet account gets a small free allowance to try it; read it live at GET https://api.hanzo.ai/v1/allowance and GET https://api.hanzo.ai/v1/billing/tier. A person on the Free plan gets 50 requests a day on `zen-free` and `enso-free`, and 50 Kai decisions a day. No card.',
-  '- Limits: a 429 with code `free_plan_cap` means the free allowance is used. Wait for `resets_at`, or raise it: POST https://api.hanzo.ai/v1/billing/crypto/deposit, send to the address it returns, and calls past the allowance draw on the balance (GET https://api.hanzo.ai/v1/billing/balance).',
-  '- Pay: plans from $20 a month (https://hanzo.ai/pricing), card, Apple Pay or Google Pay at https://hanzo.ai/pay, or USDC and USDT over the API: POST https://api.hanzo.ai/v1/billing/crypto/deposit.',
-  '- Evaluate Kai: POST https://api.hanzo.ai/v1/decisions; the frozen harness is https://github.com/hanzoai/benchmarks (decision/); published runs: https://api.hanzo.ai/v1/research/runs?org=hanzo&benchmark=app.phishing',
-  '- Skills: https://hanzoskills.com',
+  '- Free: a wallet account gets a small free allowance to try it; read it live with `GET /v1/allowance` and `GET /v1/billing/tier` on api.hanzo.ai. A person on the Free plan gets 50 requests a day on `zen-free` and `enso-free`, and 50 Kai decisions a day. No card.',
+  '- Limits: a 429 with code `free_plan_cap` means the free allowance is used. Wait for `resets_at`, or raise it: `POST /v1/billing/crypto/deposit`, send to the address it returns, and calls past the allowance draw on the balance (`GET /v1/billing/balance`).',
+  '- Pay: plans from $20 a month ([pricing](https://hanzo.ai/pricing)), card, Apple Pay or Google Pay at [hanzo.ai/pay](https://hanzo.ai/pay), or USDC and USDT over the API: `POST /v1/billing/crypto/deposit`.',
+  '- Evaluate Kai: `POST /v1/decisions`; the frozen harness is [hanzoai/benchmarks](https://github.com/hanzoai/benchmarks) (`decision/`); published runs: [app.phishing](https://api.hanzo.ai/v1/research/runs?org=hanzo&benchmark=app.phishing).',
+  '- Skills: [hanzoskills.com](https://hanzoskills.com)',
   '',
   '## Company',
   '',
@@ -75,8 +81,8 @@ const HEAD = [
   '- 2020: Damon Motorcycles sold $8.4M of motorcycles in 30 days at a 541:1 return on ad spend, on AI-generated ads.',
   '- Hundreds of venture-funded startups served, funded by Y Combinator, 500 Startups and Techstars; billions in client revenue; two companies past 100 million users; two went public on Nasdaq in 2024, Damon Motorcycles and Triller.',
   '- People: Antje Worring, CEO; Zach Kelling, CTO.',
-  '- Talk to us: https://cal.com/hanzo, https://hanzo.ai/contact. Investors: ir@hanzo.ai.',
-  '- [About Hanzo](/docs/about/company); the full history is https://hanzo.ai/about',
+  '- Talk to us: [cal.com/hanzo](https://cal.com/hanzo), [hanzo.ai/contact](https://hanzo.ai/contact). Investors: ir@hanzo.ai.',
+  `- [About Hanzo](${ORIGIN}/docs/about/company.md); the full history is [hanzo.ai/about](https://hanzo.ai/about).`,
   '',
 ];
 
@@ -109,7 +115,7 @@ export function GET() {
 
   const line = (page: (typeof pages)[number]): string => {
     const desc = String(page.data.description ?? '').replace(/\s+/g, ' ').trim();
-    return `- [${page.data.title}](${page.url})${desc ? `: ${desc}` : ''}`;
+    return `- [${page.data.title}](${ORIGIN}${twinPath(page.url)})${desc ? `: ${desc}` : ''}`;
   };
 
   const out: string[] = [...HEAD];
@@ -128,6 +134,17 @@ export function GET() {
     for (const page of list.sort((a, b) => a.url.localeCompare(b.url))) out.push(line(page));
     out.push('');
   }
+
+  // The pages outside /docs, each with its twin too.
+  out.push(
+    '## Site',
+    '',
+    `- [Hanzo Docs](${ORIGIN}/index.md): the front page.`,
+    `- [API reference](${ORIGIN}/reference.md): where the OpenAPI document is, and the same reference as pages.`,
+    `- [Blog](${ORIGIN}/blog.md)`,
+    ...blog.getPages().map((post) => `- [${post.data.title}](${ORIGIN}${twinPath(post.url)})`),
+    '',
+  );
 
   return new Response(out.join('\n'), {
     headers: { 'Content-Type': 'text/markdown; charset=utf-8' },

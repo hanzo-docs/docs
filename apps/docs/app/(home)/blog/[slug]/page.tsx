@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import type { TOCItemType } from '@hanzo/docs-core/toc';
 import path from 'node:path';
 import { blog } from '@/lib/source';
-import { createMetadata } from '@/lib/metadata';
+import { alternates, createMetadata } from '@/lib/metadata';
 import { getMDXComponents } from '@/components/mdx';
 import { Body } from '@/components/mdx/prose';
 import { Page as Frame } from '@/components/page';
@@ -57,6 +57,7 @@ export async function generateMetadata(props: BlogPageProps): Promise<Metadata> 
   return createMetadata({
     title: page.data.title,
     description: page.data.description ?? 'The library for building documentation sites',
+    alternates: alternates(page.url),
   });
 }
 

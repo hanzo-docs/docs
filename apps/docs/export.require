@@ -38,6 +38,24 @@ llms.txt
 llms-full.txt
 llms.mdx/docs/content.md
 #
+#   <page>.md        the Markdown twins at the addresses agents and the edge's
+#                    `Accept: text/markdown` rewrite ask for, which
+#                    scripts/twins.ts copies out of llms.mdx/ after the build.
+#                    A post-build that stops running leaves every page's
+#                    `rel=alternate` naming a 404.
+#   auth.md,         read by agents before any page; served from public/, which
+#   .well-known/     a broken copy step drops whole.
+index.md
+docs.md
+docs/agents.md
+docs/quickstart.md
+docs/openapi.md
+blog.md
+reference.md
+auth.md
+.well-known/api-catalog
+robots.txt
+#
 #   404.html         app/not-found.tsx, which Next writes only for an export. It
 #                    is the one page nothing links to, so nothing else notices
 #                    when it stops being emitted — and the serving plane points

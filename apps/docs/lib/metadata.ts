@@ -1,4 +1,14 @@
 import type { Metadata } from 'next/types';
+import { twinPath } from '@/lib/twin';
+
+const feed = {
+  'application/rss+xml': [{ title: 'Hanzo Docs Blog', url: 'https://docs.hanzo.ai/blog/rss.xml' }],
+};
+
+/** The page's `<link rel="alternate">`s: the blog feed, and the page as Markdown (lib/twin twinPath). */
+export function alternates(path: string): NonNullable<Metadata['alternates']> {
+  return { types: { ...feed, 'text/markdown': twinPath(path) } };
+}
 
 export function createMetadata(override: Metadata): Metadata {
   return {
@@ -20,14 +30,7 @@ export function createMetadata(override: Metadata): Metadata {
       ...override.twitter,
     },
     alternates: {
-      types: {
-        'application/rss+xml': [
-          {
-            title: 'Hanzo Docs Blog',
-            url: 'https://docs.hanzo.ai/blog/rss.xml',
-          },
-        ],
-      },
+      types: feed,
       ...override.alternates,
     },
   };
