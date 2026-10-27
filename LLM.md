@@ -31,6 +31,13 @@ move the DNS, delete the workflow.
 the Sites plane did. The pod still runs and no router names it. Building or
 pinning it publishes nothing.
 
+**No Turbopack filesystem cache in the export build.** hanzoai/ci carries
+`apps/docs/.next/cache` between runs, and every job checks out under a new
+`~/.cache/act/<hash>/hostexecutor`. Turbopack's cache records paths under the
+directory that wrote it, so a warm build died "leaves the filesystem root" (run
+16992). `next.config.ts` sets `turbopackFileSystemCacheForBuild: false` for the
+export; run 16996 then compiled in 70 s and passed every gate.
+
 **The export gate is in `scripts/check-export.sh`**, which the deploy runs on
 `apps/docs/out` and the Dockerfile runs in its build stage. This site fails by
 exporting nothing — a valid layer, a valid image, a 404 — and `apps/<app>/
