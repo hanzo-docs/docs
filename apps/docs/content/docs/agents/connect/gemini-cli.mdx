@@ -1,0 +1,31 @@
+---
+title: "Gemini CLI"
+description: "Add the Hanzo MCP server to Gemini CLI."
+---
+
+## MCP server (toolset)
+
+Add the Hanzo MCP server to Gemini CLI via `~/.gemini/settings.json`:
+
+```json
+{
+  "mcpServers": {
+    "hanzo": {
+      "command": "/Users/you/.local/bin/hanzo-mcp"
+    }
+  }
+}
+```
+
+Write the full path. `which hanzo-mcp` prints it; on Windows, `where hanzo-mcp`.
+
+With no key set, `hanzo-mcp` (1.1.33 and later) uses your `hanzo login` sign-in automatically.
+
+## Model on Hanzo
+
+Gemini CLI runs Google's models only. Add the toolset above and use the MCP tools from within your Google plan.
+
+## See also
+
+- [MCP server reference](/docs/mcp)
+- [Desktop apps and editors](/docs/guides/coding/desktop)

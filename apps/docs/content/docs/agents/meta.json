@@ -5,6 +5,8 @@
   "pages": [
     "headless",
     "prompt",
-    "campaign"
+    "campaign",
+    "---Connect your agent---",
+    "...connect"
   ]
 }

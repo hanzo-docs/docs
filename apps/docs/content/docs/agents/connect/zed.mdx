@@ -1,0 +1,46 @@
+---
+title: "Zed"
+description: "Add the Hanzo MCP server to Zed and run its models on Hanzo."
+---
+
+## MCP server (toolset)
+
+Add the Hanzo MCP server to Zed via `settings.json`:
+
+```json
+{
+  "context_servers": {
+    "hanzo": {
+      "command": "npx",
+      "args": ["-y", "--package=@hanzo/mcp@latest", "hanzo-mcp", "serve"]
+    }
+  }
+}
+```
+
+## Model on Hanzo (OpenAI-compatible)
+
+Point Zed at Hanzo's models via `settings.json`:
+
+```json
+{
+  "language_models": {
+    "openai_compatible": {
+      "hanzo": {
+        "api_url": "https://api.hanzo.ai/v1",
+        "available_models": [
+          {"name": "enso-auto", "display_name": "Enso Auto"}
+        ]
+      }
+    }
+  }
+}
+```
+
+Set your API key in the `HANZO_API_KEY` environment variable, or use Zed's secrets management.
+
+## See also
+
+- [MCP server reference](/docs/mcp)
+- [Desktop apps and editors](/docs/guides/coding/desktop)
+- [Zed integration](/docs/dev/integrations/zed)

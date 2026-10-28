@@ -1,0 +1,37 @@
+---
+title: "Cursor"
+description: "Add the Hanzo MCP server to Cursor and run its models on Hanzo."
+---
+
+## MCP server (toolset)
+
+Add the Hanzo MCP server to Cursor via `~/.cursor/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "hanzo": {
+      "command": "/Users/you/.local/bin/hanzo-mcp"
+    }
+  }
+}
+```
+
+Write the full path. An app started from the Dock, the Start menu or a launcher does not read your shell's PATH. `which hanzo-mcp` prints it; on Windows, `where hanzo-mcp`.
+
+This works for both the Cursor editor and `cursor-agent` CLI.
+
+## Model on Hanzo (OpenAI-compatible)
+
+Point Cursor at Hanzo's models:
+
+1. Open Settings → Models
+2. Set **OpenAI API Key** to your secret key (`sk-...`) from [console.hanzo.ai/api-keys](https://console.hanzo.ai/api-keys)
+3. Set **Override OpenAI Base URL** to `https://api.hanzo.ai/v1`
+4. Add `enso-auto` as a model
+
+## See also
+
+- [MCP server reference](/docs/mcp)
+- [Desktop apps and editors](/docs/guides/coding/desktop)
+- [Cursor wrapper](/docs/guides/coding/cursor)

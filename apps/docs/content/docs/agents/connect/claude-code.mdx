@@ -1,0 +1,47 @@
+---
+title: "Claude Code"
+description: "Add the Hanzo MCP server to Claude Code and run its models on Hanzo."
+---
+
+## MCP server (toolset)
+
+Add the Hanzo MCP server to Claude Code:
+
+```bash
+claude mcp add hanzo --env HANZO_API_KEY=$HANZO_API_KEY -- npx -y --package=@hanzo/mcp@latest hanzo-mcp serve
+```
+
+Name the package and the binary separately. In the shorter `npx -y @hanzo/mcp serve`, npx is free to read `serve` as a second package to fetch.
+
+That one command exposes the full surface:
+
+- **13 unified tools** — `fs`, `exec`, `code`, `git`, `fetch`, `workspace`, `ui`, `think`, `memory`, `hanzo`, `plan`, `tasks`, `mode`
+- **Cloud services** — the `hanzo` tool routes to your platform: IAM, Commerce, Storage, AI API at `api.hanzo.ai/v1`
+- **Your connectors** — GitHub, Slack, Google, Discord, X, and more, once linked in the console
+
+Sign in once (`hanzo auth login`) and the `hanzo` cloud tool + your connectors authenticate automatically; the local tools work with no account.
+
+## Model on Hanzo (OpenAI-compatible)
+
+Point Claude Code at Hanzo's models:
+
+```bash
+export ANTHROPIC_BASE_URL=https://api.hanzo.ai
+export ANTHROPIC_AUTH_TOKEN=$HANZO_API_KEY
+unset ANTHROPIC_API_KEY
+claude
+```
+
+Or use the wrapper which does this for you:
+
+```bash
+hanzo --claude --cloud
+```
+
+The model is `enso-auto` unless you set another with `--model` or `ANTHROPIC_MODEL`. The wrapper maps `claude-*` slot names to Enso tiers: Haiku → `enso-flash`, Sonnet → `enso-pro`, Opus → `enso-ultra`.
+
+## See also
+
+- [MCP server reference](/docs/mcp)
+- [Desktop apps and editors](/docs/guides/coding/desktop)
+- [Claude Code wrapper](/docs/guides/coding/claude-code)
