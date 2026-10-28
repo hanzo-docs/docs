@@ -1,0 +1,34 @@
+---
+title: "Grok Bot"
+description: "Connect Grok Bot to Hanzo via MCP or OpenAI-compatible API."
+---
+
+## MCP server (toolset)
+
+Add the Hanzo MCP server to Grok Bot:
+
+```bash
+grok mcp add --scope user hanzo /Users/you/.local/bin/hanzo-mcp
+```
+
+Write the full path. `which hanzo-mcp` prints it; on Windows, `where hanzo-mcp`.
+
+With no key set, `hanzo-mcp` (1.1.33 and later) uses your `hanzo login` sign-in automatically.
+
+## Model on Hanzo (OpenAI-compatible)
+
+Point Grok Bot at Hanzo's models:
+
+- **Base URL:** `https://api.hanzo.ai/v1`
+- **API Key:** Your secret key (`sk-...`) from [console.hanzo.ai/api-keys](https://console.hanzo.ai/api-keys)
+- **Model:** `enso-auto` (or any from `GET https://api.hanzo.ai/v1/models`)
+
+## Agent setup from llms.txt
+
+Read [https://hanzo.ai/llms.txt](https://hanzo.ai/llms.txt) and follow it. The file lists every tool, model, and capability with exact API formats.
+
+## See also
+
+- [MCP server reference](/docs/mcp)
+- [Desktop apps and editors](/docs/guides/coding/desktop)
+- [llms.txt](https://hanzo.ai/llms.txt)
