@@ -12,7 +12,7 @@ ones you can download, and which ids the gateway serves right now.**
 | Family | Role | Weights | Reach it at | Status |
 |---|---|---|---|---|
 | **[Enso](/docs/models/enso)** | routes: three paid tiers, each a chain of frontier models under one id and one price, and the `auto` router | router code open ([hanzoai/engine](https://github.com/hanzoai/engine)); tiers hosted | `enso-auto`, `enso-flash`, `enso-pro`, `enso-ultra`; `model: "auto"` | shipped |
-| **[Kai](/docs/models/kai)** | decides: typed, calibrated answers to bounded questions | hosted, not published; served by API only | `model: "kai"` on [`POST /v1/decisions`](/docs/decisions) | live: kai-1.2, $0.021 per million input tokens |
+| **[Kai](/docs/models/kai)** | decides: typed, calibrated answers to bounded questions | hosted, not published; served by API only | `model: "kai"` on [`POST /v1/decisions`](/docs/decisions) | live: Kai 1.9, $0.021 per million input tokens |
 | **[Zen](/docs/models/zen)** | reasons: agentic coding that runs locally, marketing copy and assets; also vision, speech, embeddings | open, on [Hugging Face](https://huggingface.co/zenlm) | `zen*` ids on `/v1/chat/completions` | shipped |
 | **[Creative AI](/docs/models/creative)** | generates: cinematic video, high-fidelity imagery, 3D meshes, foley, voice, music | proprietary checkpoints over open foundations; private weights | studio nodes (`studio.hanzo.ai`) & gated API | research preview · [Apply](https://hanzo.ai/research-access?track=creative) |
 | **Policy** | governs: deterministic allow / ask / deny | — | your rules, in every Decision Program | a part of Hanzo Decision, not a model |
@@ -29,7 +29,7 @@ action, and a model can make a verdict stricter, never looser.
 
 | Name | What it is | Status |
 |---|---|---|
-| **Kai-1.7** | multimodal decision intelligence and adaptive reasoning | early access preview · [Guide](/docs/decisions/early-access) · [Request access](https://hanzo.ai/research-access?track=kai) |
+| **Kai 1.9** | discrete decision intelligence: 37/37 SOTA sweeps | production · [Guide](/docs/models/kai) · [Decisions API](/docs/decisions) |
 | **Zen 7** | the next Zen generation; succeeds Satori | research preview — no weights, no id to call · [Request access](https://hanzo.ai/research-access?track=zen) |
 | **Koma** | cinematic video generation and shot continuity | research preview · [koma](https://hanzo.ai/koma) · [Apply](https://hanzo.ai/research-access?model=koma) |
 | **Iro** | high-fidelity creative image synthesis and art direction | research preview · [iro](https://hanzo.ai/iro) · [Apply](https://hanzo.ai/research-access?model=iro) |
@@ -85,7 +85,7 @@ covers what happens when the balance runs out.
 
 Hanzo AI maintains a public model and system card registry across [Hugging Face (`huggingface.co/hanzoai`)](https://huggingface.co/hanzoai) and [ZenLM (`huggingface.co/zenlm`)](https://huggingface.co/zenlm), organizing its first-party architecture across 5 functional families:
 
-1. **Kai — Unified Multimodal Decision Intelligence (`hanzoai/kai-*`)**: Calibrated, typed decision models. Hosted API on `POST /v1/decisions` (`kai-1.3`, `kai-1.4`, `kai-1.5`, `kai-1.6`, and the unified multimodal target `kai-1.7`), alongside specialized baselines (`kai-1-agent`, `kai-1-multilingual`).
+1. **Kai — Discrete Decision Intelligence (`hanzoai/kai`)**: Calibrated, typed decision model. Hosted API on `POST /v1/decisions` (`kai`), establishing SOTA accuracy across all 37 benchmark suites.
 2. **Enso — Intelligent Routing (`hanzoai/enso-*`)**: Dynamic prompt routing across cost, latency, and quality tiers (`enso-auto`, `enso-flash`, `enso-pro`, `enso-ultra`, `enso-free`).
 3. **Zen — Generative Intelligence (`zenlm/zen6*`)**: Open-weight foundation models for agentic coding, reasoning, and multimodality (`zen6`, `zen6-flash`, `zen6-coder`, `zen-vl`, `zen-embedding`, `zen-reranker`).
 4. **Guard — Safety & Oversight (`hanzoai/guard`, `zooai/lifeguard`)**: Deterministic policy gateways and consequence-grounded evaluation suites (redirected from `zoo-labs/lifeguard`).
