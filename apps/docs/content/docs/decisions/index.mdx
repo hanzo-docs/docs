@@ -97,8 +97,9 @@ the order the question gave them.
 ### `noul`: does a statement hold
 
 `criteria` is optional: `{"true": …, "false": …}`, either side or both,
-describes what each side means. Any other key is refused. kai-1.9 natively evaluates
-`criteria` with calibrated affirmative vs negative probabilities.
+describes what each side means. Any other key is refused. kai-1.2 accepts
+`criteria` and does not read them: on JevBench's 74 described yes/no items
+its P(true) is the same with the sides as written, negated or swapped.
 
 ```json
 "is_bug": {"type": "noul", "instructions": "Is this a product defect?",
@@ -155,7 +156,7 @@ a recorded answer.
   "usage": {"input_tokens": 212, "output_tokens": 0},
   "routing": {
     "backend": "kai",
-    "checkpoint": "kai-1.9",
+    "checkpoint": "kai-1.2",
     "sha256": "<SHA-256 of the weights>",
     "calibration": "cal_<16 hex digits>",
     "device": "cpu",
@@ -184,7 +185,7 @@ Hanzo adds four fields, which a Decisions client ignores:
 | Field | Meaning |
 |---|---|
 | `answer_confidence` | on each `choice` and `score` answer: `p_max`, the calibrated probability of the reported answer |
-| `routing` | the backend (`kai` or `openrouter`), the checkpoint (the served Kai build, `kai-1.9`), the SHA-256 of its weights, the hash of the calibration tables, the device, the tokens a question and its state may reach together (`reach`, beside the length the checkpoint was `trained` at and the encoder's `positions`; `extrapolated` when the read ran past `trained`), and why the request went there |
+| `routing` | the backend (`kai` or `openrouter`), the checkpoint (the served Kai build, `kai-1.2`), the SHA-256 of its weights, the hash of the calibration tables, the device, the tokens a question and its state may reach together (`reach`, beside the length the checkpoint was `trained` at and the encoder's `positions`; `extrapolated` when the read ran past `trained`), and why the request went there |
 | `state_hash` | SHA-256 of the state as the model read it, so two decisions over one input are provably over one input |
 | `latency_ms` | wall time of the decision, in milliseconds |
 
