@@ -142,7 +142,9 @@ held in MPC custody per payer; the balance is credited when the chain confirms.
 
 The script signs with EVM. Wallets on Solana, Bitcoin, TON, XRP, Polkadot and
 Cardano sign in too (`chain` `solana`, `bitcoin`, `ton`, `xrp`, `polkadot`,
-`cardano`).
+`cardano`). On Solana the message says `Solana account`, `scheme` is `ed25519`,
+and the signature goes as base64 or `0x` hex, not base58:
+[step 2](/docs/agents/headless#2-sign-it).
 
 ### 2. Or get a credential through a person or an inbox
 

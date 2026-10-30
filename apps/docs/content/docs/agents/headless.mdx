@@ -41,6 +41,12 @@ Issued At: 2026-10-26T22:48:28Z
 Expiration Time: 2026-10-26T22:58:28Z
 ```
 
+**With a Solana wallet**, ask with `chain=solana` and your base58 address, write
+`Solana account` in the first line, and sign the same message bytes with
+Ed25519. Send the 64-byte signature as base64 or `0x` hex, never base58, and
+send `"chain":"solana","scheme":"ed25519"` in step 3. The account is
+`wallet_solana_<16 hex>`.
+
 ## 3. Verify
 
 Make a PKCE pair first:
@@ -62,6 +68,13 @@ curl -X POST https://hanzo.id/v1/iam/web3/verify \
 
 A first-seen wallet gets an account, `wallet_evm_<16 hex>`, and its own
 organization, `wallet-evm-<16 hex>`, which it administers.
+
+- 400 `web3: verification failed: bad-signature`: the message is not
+  byte-for-byte the one above, or the signature is not over it.
+- 429 `wallet_signup_capped`: one address or network creates only so many new
+  accounts a day. `data` names the bound, its limit and `retryAfter` in
+  seconds. A wallet already on file is never counted, so sign in again with the
+  same wallet rather than a fresh one.
 
 ## 4. Trade the code for a token
 
