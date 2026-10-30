@@ -1,0 +1,251 @@
+---
+title: "@hanzo/app"
+description: The Hanzo app as React components. The window with Chat, Dev and Studio, the organization gate, and the workspace apps (Home, Inbox, Contacts, Meet, Calendar, Drive, Board, Work, Bots), mounted by a host under its own router. hanzo.ai draws it for a signed-in reader.
+---
+
+`@hanzo/app` is the Hanzo app, published as React components. A host installs
+it, states its addresses once, hands it a router, and draws either the whole
+window (`App`) or one workspace app in its frame (`Room`). hanzo.ai draws it
+for a signed-in reader at `/chat`, `/dev` and `/studio`, and the Hanzo desktop
+app draws the same `App` in its window.
+
+It has no server of its own. The apps read and write the Hanzo API with the
+signed-in person's [IAM](/docs/sdks/iam) token, scoped to the organization they
+work in; Calendar, which keeps its events in the browser, is the exception
+([below](#what-it-does-not-do)). Dev is `@hanzo/build`'s builder and Studio is
+`@hanzo/studio`; this package draws them in its window and does not
+re-implement them.
+
+- **npm:** [`@hanzo/app`](https://www.npmjs.com/package/@hanzo/app), 0.2.50
+- **Source:** [`hanzoai/app`](https://github.com/hanzoai/app), directory `pkg/app`; its `LLM.md` is the full contract
+- **License:** Apache-2.0 OR MIT
+- **Runs on:** React 19.2.8 or later, in a browser or a desktop webview
+
+## Install
+
+```bash
+pnpm add @hanzo/app
+```
+
+The package's UI and API libraries are peer dependencies, so a host holds one
+copy of each: `@hanzo/ui`, `@hanzo/gui`, `@hanzo/ai`, `@hanzo/iam`,
+`@hanzo/build`, `@hanzo/studio`, `@hanzo/voice`, `@hanzo/usage`,
+`@hanzo/appearance`, `@hanzo/i18n`, `@hanzo/event`, `@hanzo/composer`,
+`@hanzo/logo`, `@hanzogui/shell`, `lucide-react`, `react` and `react-dom`.
+pnpm installs required peers itself (its default `auto-install-peers`); pin them
+in the host wherever the host's own code imports them too. `@hanzo/tabs` is
+optional and not installed for you (see [What it does not do](#what-it-does-not-do)).
+
+## Mount it
+
+These are hanzo.ai's own files, trimmed of comments. A host does four things.
+
+**1. State the addresses once**, at module scope, in a module the root imports
+(`lib/app.ts`):
+
+```ts
+import { configure } from '@hanzo/app'
+
+configure({
+  site: '',
+  home: '/home',
+  signUp: '/signup',
+  api: process.env.NEXT_PUBLIC_HANZO_API_URL,
+  iam: process.env.NEXT_PUBLIC_HANZO_IAM_URL,
+  key: process.env.NEXT_PUBLIC_PUBLISHABLE_KEY,
+})
+```
+
+`site` is where the app's own pages live (empty on the site that serves them),
+`home` is the workspace's Home, and `signUp` is where a new account starts.
+Without `api` the apps derive the gateway from the page's host; without `iam`
+they use hanzo.id. `key` is the publishable `pk-` key that anonymous calls carry.
+
+**2. Mount the providers** at the root: `IamProvider` from `@hanzo/iam/react`
+(the session every app reads), the `@hanzo/gui` provider with the host's gui
+config, and `Look` from `@hanzo/app` inside `IamProvider`, which applies the
+person's theme, type, spacing, corners and accent and keeps them with their IAM
+account. `I18nProvider` from `@hanzo/i18n/react` is optional; without it every
+string renders in English.
+
+**3. Hand the apps the router** (`components/app.tsx`):
+
+```tsx
+'use client'
+
+import type { ReactNode } from 'react'
+import NextLink from 'next/link'
+import { useRouter } from 'next/navigation'
+import { Rooms } from '@hanzo/app'
+import { useRoute } from '@/components/shell/route'
+
+export function RoomsHost({ path, children }: { path?: string | null; children: ReactNode }) {
+  const router = useRouter()
+  const route = useRoute()
+  return (
+    <Rooms router={router} path={path} route={route} Link={NextLink}>
+      {children}
+    </Rooms>
+  )
+}
+```
+
+`router` is anything with `push`, `replace`, `back` and `forward`; `Link` is
+the host's link component; `path` is the address's path, which Chat, Dev and
+Studio read their place from; `route` is the route the page was built for. The
+package names no framework: hanzo.ai passes Next's router, and a desktop window
+passes one over `history`.
+
+**4. Draw the window, or one app.** The whole window (`app/_web.tsx`):
+
+```tsx
+'use client'
+
+import { usePathname } from 'next/navigation'
+import { App } from '@hanzo/app/App'
+import { RoomsHost } from '@/components/app'
+
+export default function Web() {
+  const path = usePathname()
+  return (
+    <RoomsHost path={path}>
+      <App />
+    </RoomsHost>
+  )
+}
+```
+
+One app in the workspace frame (`app/(app)/cal/_workspace.tsx`, inside a
+layout that wraps it in `RoomsHost` and `AccountProvider` from
+`@hanzo/app/lib/account`):
+
+```tsx
+'use client'
+
+import { Room } from '@hanzo/app/Room'
+import { CalScheduler } from '@hanzo/app/CalScheduler'
+
+export default function CalRoom() {
+  return (
+    <Room mode="cal">
+      <CalScheduler />
+    </Room>
+  )
+}
+```
+
+What else hanzo.ai does to make that build and run:
+
+- **react-native-web.** `@hanzo/gui` renders through it, so `next.config.mjs`
+  aliases `react-native` to `react-native-web`, resolves `.web.*` files first,
+  and transpiles `@hanzo/gui`, `@hanzo/ui`, `@hanzo/usage`, `@hanzo/tabs`,
+  `react-native-web` and `react-native-svg`.
+- **Assets.** The apps name portraits and avatars by path (`/agents/<id>.png`,
+  `/bots/<name>.png`). `scripts/rooms-assets.mjs` copies `@hanzo/app/assets`
+  into `public/` before every build and dev server.
+- **Paths.** Chat is `/chat` and `/chat/<id>`, Dev every path under `/dev`,
+  Studio every path under `/studio`. The host serves the page that draws `App`
+  at all of them.
+- **Settings.** The account menu, ⌘, and the palette open Settings at the
+  host's `/settings` through its router (`settings()` in
+  `@hanzo/app/lib/host`). hanzo.ai's Settings pages are its own; General draws
+  `Look` from `@hanzo/app/look`, the panel described on
+  [@hanzo/mod](/docs/sdks/mod).
+- **Signed out.** `App` is for a signed-in reader. The landing and sign-in
+  pages are hanzo.ai's, and the organization gate sends a stranger to sign in.
+
+## What is in the window
+
+`App` draws a rail on the window's left edge: Chat, Dev, Studio, Library,
+Scheduled tasks, Customize, then More (Tabs, Team), and the account menu at its
+foot. Beside it the sidebar shows what the place holds: conversations and
+Recents for Chat, runs and projects for Dev. Before any of it, the organization
+gate (`Orgs`) asks a person with no organization to make one and a person with
+several to pick one.
+
+- **Chat:** conversations through the gateway, files and images attached,
+  dictation and talk mode through `@hanzo/voice`, a side panel of artifacts.
+- **Dev:** `@hanzo/build`'s builder: repositories, runs, issues, templates.
+- **Studio:** `@hanzo/studio`.
+- **Tabs:** the terminals on the reader's linked machines and sandboxes,
+  through `@hanzo/tabs`.
+- **The palette:** ⌘K / Ctrl+K searches places, actions, chats, Dev tasks,
+  projects, agents, skills and connectors.
+- **A narrow window** (a phone's browser) gets a bar and a drawer in place of
+  the rail and sidebar.
+
+## Exported API
+
+The root holds what a host passes and loads in plain Node:
+
+| Export | What it does |
+|---|---|
+| `configure(addresses)` | States the host's addresses once, at module scope: `site`, `home`, `signUp`, and optionally `api`, `iam`, `brand`, `key`, `session` (where the IAM session is kept when it is not `localStorage`), `plans` (a first-paint plan catalogue), `Landing`, `Signup`, `team`, `track`. Each call merges into what is already stated. |
+| `where()`, `site(path)`, `brand()` | Read the addresses back. `brand()` defaults to `Hanzo AI`. |
+| `Rooms` | The context the apps read: `router`, `path`, `route`, `Link`. |
+| `useRooms()` | Reads that context. |
+| `Look` | Renders nothing. Applies the person's appearance for the organization in scope through `@hanzo/appearance`, synced with their IAM account when signed in. |
+| `useLook()`, `useOrg()` | The same appearance state; the organization in scope as `{ id, name }`. |
+| `getLocalWorkspaces`, `pickLocalFolder`, `listLocalEntries`, `readLocalFile`, `writeLocalFile`, `runLocalDev`, `isTauri`, and the rest of `lib/local-fs` | Local folders and files for the desktop app. |
+
+Every module is its own subpath, so a page loads only the apps it draws. The
+ones a host mounts:
+
+| Import | Export | What it draws |
+|---|---|---|
+| `@hanzo/app/App` | `App` | The whole window. Props: `bar` (`inset`, `drag`, `controls`) for a host that is its own window, `betas` (a node drawn as the Betas pane). |
+| `@hanzo/app/Room` | `Room` | One app in the workspace frame, behind the organization gate. `mode` is one of `home`, `chat`, `dev`, `inbox`, `agents`, `tasks`, `drive`, `contacts`, `bots`, `meet`, `cal`. |
+| `@hanzo/app/Home` | `Home` | A composer, with cards of the organization's data beneath it (`mode="home"`). |
+| `@hanzo/app/Inbox` | `Inbox` | Messages other networks carried in, read like mail (`mode="inbox"`). |
+| `@hanzo/app/Contacts` | `Contacts` | The organization's people and agents (`mode="contacts"`). |
+| `@hanzo/app/Meet` | `Meet` | A meeting with a live transcript into notes and agents that answer aloud (`mode="meet"`). |
+| `@hanzo/app/CalScheduler` | `CalScheduler` | A calendar (`mode="cal"`). |
+| `@hanzo/app/Drive` | `Drive` | Files in the organization's storage (`mode="drive"`). |
+| `@hanzo/app/Board` | `Board` | The organization's work as a board; each card is an issue on Hanzo's git forge (`mode="tasks"`). |
+| `@hanzo/app/Work` | `Work` | Agent sessions: what is running, what each did and made (`mode="agents"`). |
+| `@hanzo/app/bots/Bots` | `Bots` | The organization's bots (model, instructions, tools) and their runs (`mode="bots"`). |
+| `@hanzo/app/Orgs` | `Orgs` | The organization gate: sign in, then pick or create an organization. |
+| `@hanzo/app/Chrome` | `Chrome` | The bar over a focused page such as sign-in or checkout. |
+| `@hanzo/app/look` | `Look` | The appearance and look panel in Settings → General. Not the root's `Look`. |
+| `@hanzo/app/TeamPreview` | `TeamPreview` | Hanzo Team as a playing preview: workspaces, channels, messages, agents. |
+| `@hanzo/app/preview` | `usePlay`, `useStage`, `useStill` | The clock product previews play on. |
+| `@hanzo/app/lib/*` | | The shared infrastructure, one copy for every host: `session`, `host`, `api`, `ai`, `account`, `tier`, `limits`, `plans`, `pay` and the rest. |
+| `@hanzo/app/assets/*` | | The portraits and avatars the apps name by path. |
+
+## What it does not do
+
+- **No server, no auth of its own.** The apps call the Hanzo API and need a
+  network. The session is Hanzo IAM's, through the `IamProvider` the host
+  mounts; the package has no sign-in flow, tokens or passwords of its own.
+- **No native mobile app.** A narrow window gets a phone layout in the browser.
+  There is no React Native or Expo build of this package, and
+  [hanzoai/mobile](https://github.com/hanzoai/mobile), a separate Expo app,
+  does not use it.
+- **No public desktop build.** The desktop app that draws `App` in its window
+  has no public builds yet. See [Desktop](/docs/apps/desktop).
+- **Local files only in the desktop app.** `lib/local-fs` reaches the disk
+  through the desktop app's IPC. In a browser, reading, writing, creating,
+  deleting, importing, cloning and `runLocalDev` throw, and listing a folder
+  returns nothing; picking a folder records its name from the browser's
+  directory picker where one exists, and its files still cannot be read.
+- **Calendar keeps events in the browser.** `CalScheduler` opens with sample
+  events and keeps what you add in this browser's `localStorage`. It schedules
+  nothing and syncs nowhere; its Booker tab links to
+  [cal.hanzo.ai](https://cal.hanzo.ai). Meet's list of upcoming meetings is a
+  fixed sample; the meeting itself (transcript, notes, agents) is live.
+- **Tabs needs `@hanzo/tabs` 0.1.8 or later.** It is an optional peer. `App`
+  loads Tabs lazily, but a bundler resolves the import at build time, so a host
+  installs it either way. npm serves 0.1.7; hanzo.ai takes it from
+  [hanzo-inc/tabs](https://github.com/hanzo-inc/tabs) on GitHub.
+- **No extension point.** A host cannot add its own app to the rail or load a
+  third-party one at run time. HIP-0528 describes a mod contract for that
+  (manifest, registry, loader); it is a draft, and none of it ships in
+  `@hanzo/app` or [@hanzo/mod](/docs/sdks/mod).
+
+## Related
+
+- [`hanzoai/app`](https://github.com/hanzoai/app): the source, `pkg/app`
+- [`@hanzo/app` on npm](https://www.npmjs.com/package/@hanzo/app)
+- [@hanzo/mod](/docs/sdks/mod): platform profiles, theme mods and fonts, used by the Settings panel
+- [@hanzo/iam](/docs/sdks/iam): the session every app reads
+- [Desktop](/docs/apps/desktop)

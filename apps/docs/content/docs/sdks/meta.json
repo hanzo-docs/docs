@@ -12,6 +12,9 @@
     "java",
     "cpp",
     "iam",
+    "---[AppWindow]Interface---",
+    "app",
+    "mod",
     "---[Database]Data collection---",
     "ast"
   ]

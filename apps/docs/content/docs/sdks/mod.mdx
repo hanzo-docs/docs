@@ -1,0 +1,177 @@
+---
+title: "@hanzo/mod"
+description: Five platform look profiles (iOS, Android, macOS, Windows, Linux), theme mods as JSON, and web fonts, written as CSS custom properties on the page's root element and kept in this browser's localStorage. No server, no account sync, no mod loader.
+---
+
+`@hanzo/mod` is a small browser library with no dependencies. It does three
+things, all on the page it runs in:
+
+- **Platform profiles.** Five sets of font stacks, corner radii and glass
+  values, named after an OS. It picks one from the user agent or keeps the one
+  chosen, and writes it as CSS custom properties.
+- **Theme mods.** A mod is a JSON object: colours, fonts, a corner radius,
+  glass values, custom CSS. It applies one, serializes it, parses and checks
+  one, or derives a new one from another. Six are built in.
+- **Fonts.** It loads a web font by stylesheet or font-file URL and points the
+  heading, body or mono face at a family.
+
+Everything it does is a write to `document.documentElement` (CSS custom
+properties and a `data-platform` attribute), a `<link>` or `<style>` element
+in the page's head, or a `localStorage` key, and it dispatches two events on
+`window` (`hanzo:mod:change`, `hanzo:mod:applied`). It makes no request of its own:
+the only network traffic is the font or stylesheet URL you hand it. On a server
+(no `window`, no `document`) the functions that touch the page do nothing,
+`getActivePlatform` answers `ios` and `getOrgMod` answers `null`.
+
+- **npm:** [`@hanzo/mod`](https://www.npmjs.com/package/@hanzo/mod), 0.1.0
+- **Source:** [`hanzoai/app`](https://github.com/hanzoai/app), directory `pkg/mod`
+- **License:** Apache-2.0 OR MIT
+- **Peer:** `react` 19 or later is declared; no module imports it
+
+[@hanzo/app](/docs/sdks/app) depends on it, and its Settings panel is the one
+place it is used today ([below](#in-hanzoais-settings)).
+
+## Install
+
+```bash
+pnpm add @hanzo/mod
+```
+
+## Example
+
+From the Settings panel in `@hanzo/app` (`pkg/app/src/look.tsx`), reduced to
+the calls:
+
+```ts
+import { setActivePlatform, BUILTIN_MODS, applyMod, importMod } from '@hanzo/mod'
+
+// A platform: kept under localStorage hanzo.mod.platform, then written to <html>.
+// 'auto' forgets the choice and follows the user agent.
+setActivePlatform('macos')
+
+// A built-in mod, or one pasted as JSON.
+applyMod(BUILTIN_MODS[5])
+applyMod(importMod(pasted))
+```
+
+A web font, loaded by its stylesheet and made the body face:
+
+```ts
+import { injectCustomFont, applyFontFamily } from '@hanzo/mod'
+
+injectCustomFont({
+  family: 'Inter',
+  url: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;600',
+  isStylesheet: true,
+})
+applyFontFamily('sans', 'Inter, sans-serif')
+```
+
+For a stylesheet, the face is named by the stylesheet itself (Google's CSS
+above declares `Inter`); `family` only names the element `injectCustomFont`
+adds, so it can be replaced or removed.
+
+## Exported API
+
+Platform profiles:
+
+| Export | What it does |
+|---|---|
+| `PLATFORM_PROFILES` | For `ios`, `android`, `macos`, `windows` and `linux`: a name, a font stack, a mono stack, card and pill radii, glass blur (px) and saturation (%), `specularBorder` and `touchFeedback`. |
+| `detectPlatform(userAgent?)` | Reads the user agent (default `navigator.userAgent`) and returns a `PlatformId`. An iPad that reports `MacIntel` with touch points counts as `ios`; a user agent that matches nothing returns `ios`. |
+| `getActivePlatform()` | The id kept under `localStorage` key `hanzo.mod.platform`, else `detectPlatform()`. |
+| `setActivePlatform(id)` | Keeps `id` under `hanzo.mod.platform`, or removes the key for `'auto'`; calls `applyPlatformTokens`; dispatches `hanzo:mod:change` on `window`. |
+| `applyPlatformTokens(id)` | Sets `data-platform` and `--platform-font-sans`, `--platform-font-mono`, `--platform-radius-card`, `--platform-radius-pill`, `--glass-blur` and `--glass-saturate` on `<html>`. |
+
+Theme mods:
+
+| Export | What it does |
+|---|---|
+| `ModTheme` | The type: `id`, `name`, and optional `description`, `author`, `org`, `platform`, `fontHeading`, `fontBody`, `fontMono`, `customFontUrl`, `primary`, `accent`, `glassTint`, `glassBlur`, `radius`, `density`, `customCss`. |
+| `BUILTIN_MODS` | Six mods: `ios-liquid`, `android-material`, `macos-vibrant`, `windows-fluent`, `cyber-zen`, `nordic-frost`. |
+| `applyMod(mod)` | Applies the mod's platform profile when it names one; sets `--primary`, `--accent`, `--liquid-glass-bg` (from `glassTint`), `--glass-blur`, `--radius`, `--font-heading`, `--font-body`, `--font-mono` for the fields the mod has; puts `customCss` in `<style id="hanzo-custom-mod-css">`, or removes that element when the mod has none; keeps the mod under `hanzo.mod.active`; dispatches `hanzo:mod:applied`. |
+| `exportMod(mod)` | The mod as indented JSON. |
+| `importMod(json)` | Parses JSON into a `ModTheme`. Throws `Invalid Hanzo mod: missing theme name` when there is no `name`. Cuts `name` and `author` to 64 characters and `description` to 256, drops a `platform` it does not know and a `glassBlur` or `radius` that is not a number, gives a missing `id` one made from the time, and passes every other field through as given. |
+| `forkMod(base, overrides)` | `base` with `overrides` on top, under a new id (`<base id>-fork-<time>`) and the name `<base name> (Mod)`, unless the overrides set them. |
+| `saveOrgMod(orgId, mod)` | Writes the mod, with `org` set to `orgId`, to `localStorage` key `hanzo.mod.org.<orgId>` in this browser. |
+| `getOrgMod(orgId)` | Reads that key back, or `null`. |
+
+Fonts:
+
+| Export | What it does |
+|---|---|
+| `CustomFontOptions` | The type: `family`, `url`, and optional `format` (`woff2`, `woff`, `truetype`, `opentype`), `weights`, `isStylesheet`. |
+| `injectCustomFont(options)` | A URL ending in `.css`, on `fonts.googleapis.com`, or passed with `isStylesheet` becomes a `<link rel="stylesheet">`. Any other URL becomes one `@font-face` rule per weight (default 400, 500, 600, 700, `font-display: swap`) in a `<style>`. Replaces the element an earlier call made for the same family. |
+| `removeCustomFont(family)` | Removes that element. |
+| `applyFontFamily(target, family)` | Sets `--font-heading`, `--font-sans` or `--font-mono` on `<html>`, for `target` `heading`, `sans` or `mono`. |
+
+## What reads the properties
+
+`@hanzo/mod` writes custom properties; a stylesheet decides what they change.
+In what hanzo.ai ships (`@hanzo/design` 0.5.35, `@hanzo/ui` 8.29.26,
+`@hanzo/glass` 0.1.0):
+
+| Property | Written by | Read by |
+|---|---|---|
+| `--font-sans`, `--font-mono`, `--radius`, `--primary` | `applyFontFamily`, `applyMod` | `@hanzo/design` and `@hanzo/ui` |
+| `--accent` | `applyMod` | `@hanzo/ui` |
+| `--liquid-glass-bg` | `applyMod` | `@hanzo/glass` |
+| `data-platform`, `--platform-*`, `--glass-blur`, `--glass-saturate`, `--font-heading`, `--font-body` | `applyPlatformTokens`, `applyMod`, `applyFontFamily` | None of them. A host that wants these reads them in its own CSS. |
+
+So on hanzo.ai a platform profile alone changes nothing on screen: its radii
+and font stacks go to `--platform-*`, which no Hanzo stylesheet reads. A mod's
+own `radius`, colours and mono face do.
+
+## In hanzo.ai's Settings
+
+Settings → General on hanzo.ai draws `Look` from `@hanzo/app/look`. Below the
+appearance controls (theme, type, accent, which `@hanzo/appearance` keeps with
+the person's IAM account), it has four `@hanzo/mod` controls:
+
+- **Native Platform Look & Feel:** Auto and the five platforms, through
+  `setActivePlatform`.
+- **Organization Theme Mods:** one button per built-in mod, through `applyMod`.
+  The choice is not saved for the organization: the panel does not call
+  `saveOrgMod`.
+- **Custom Typography:** a family name is applied to the heading and body faces
+  with `applyFontFamily`. A stylesheet URL is loaded, but the face applied is
+  named `CustomBrandFont`, which a stylesheet such as Google Fonts' does not
+  declare, so text falls back to the browser's generic sans-serif.
+- **Fork & Share Theme Mods:** pasted JSON goes through `importMod` and
+  `applyMod`. Export JSON copies the first built-in mod (`ios-liquid`), not the
+  one in effect.
+
+A mod or a font applied there lasts until the page reloads. The chosen
+platform is kept, and the panel shows it as chosen on the next visit, but its
+properties are not written to the page again.
+
+## What it does not do
+
+- **No server and no account sync.** Every key is in this browser's
+  `localStorage`. `saveOrgMod` does not reach another browser, another device,
+  or another member of the organization.
+- **No re-apply on load.** `applyMod` keeps the mod under `hanzo.mod.active`,
+  and nothing in the package reads that key back; the kept platform is not
+  written to the page again either. A host that wants a choice to outlive a
+  reload calls `applyMod` and `applyPlatformTokens(getActivePlatform())` at
+  start-up itself.
+- **No reset.** `applyMod` sets only the fields a mod has. A colour or radius
+  an earlier mod set stays until the page reloads.
+- **Not every field is applied.** `density`, `customFontUrl`, `description`,
+  `author` and `org` travel in a mod's JSON; `applyMod` reads none of them.
+- **No sanitizing.** `importMod` passes colours and `customCss` through as
+  given, and `applyMod` puts `customCss` on the page as it is. CSS can load
+  remote URLs, so apply only mods you trust.
+- **No native look.** The profiles are font stacks and numbers for web CSS. It
+  draws no native controls, and there is no native mobile shell on
+  [@hanzo/app](/docs/sdks/app).
+- **No mod loader.** HIP-0528 (a draft) describes mods as packages: a
+  manifest, a registry, a loader, and an API for them. None of that is in
+  0.1.0; this package is the three groups above and nothing else.
+
+## Related
+
+- [`hanzoai/app`](https://github.com/hanzoai/app/tree/main/pkg/mod): the source, `pkg/mod`
+- [`@hanzo/mod` on npm](https://www.npmjs.com/package/@hanzo/mod)
+- [@hanzo/app](/docs/sdks/app): the app whose Settings panel uses it
+- [HIP-0528](https://github.com/hanzoai/hips/blob/main/HIPs/hip-0528-mods-the-app-sdk.md): the draft mod contract

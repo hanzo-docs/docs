@@ -132,6 +132,11 @@ document: a shape, a grouping, and a browser flow.
 | `@hanzo/sdk` | One typed client per service — IAM, KMS, Commerce, Billing, MPC, PaaS, Team — with subpath imports so a bundle carries only what it uses. |
 | `@hanzo/iam` | [Identity](/docs/sdks/iam) — OIDC, JWT validation, browser PKCE, org switching, and React bindings. |
 
+Two more TypeScript packages are UI rather than API clients:
+[`@hanzo/app`](/docs/sdks/app), the Hanzo app's window and workspace apps as
+React components a host mounts, and [`@hanzo/mod`](/docs/sdks/mod), platform
+look profiles, theme mods and web fonts for a page.
+
 `@hanzo/ai` is the one to reach for when the job is inference or agents:
 
 ```typescript
