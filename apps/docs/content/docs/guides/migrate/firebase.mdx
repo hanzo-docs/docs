@@ -119,7 +119,7 @@ version, populate files, finalize, then release. The static plane here is two:
 |---|---|
 | Cloud Messaging to a device token | Not here — see below |
 | Transactional mail and SMS | `POST /v1/notify/send` — the channel is a body field, provider credential read from KMS |
-| Reaching a team room | `POST /v1/channel/{channel}/send` — Slack, Discord, Teams, Telegram |
+| Reaching a chat channel | `POST /v1/transport/{transport}/send` — Slack, Discord, Teams, Telegram |
 | Remote Config | `PUT /v1/flag/defs/{key}`, decided at `POST /v1/flag/decide` |
 | A/B Testing | `/v1/experiment` (7) — `/v1/experiment/{id}/assign`, `/decide`, `/analyze` |
 | Google Analytics for Firebase | `/v1/event` (12), browser tag at `GET /v1/event/tag.js` |
@@ -230,7 +230,7 @@ is running is not a question you have to ask.
 **No push notification.** FCM's job — a token per device, topics, APNs and web
 push fan-out — has no answer here. `/v1/notify/send` delivers email and SMS
 through your org's own provider credential, synchronously, and
-`/v1/channel/{channel}/send` reaches a Slack, Discord, Teams or Telegram room.
+`/v1/transport/{transport}/send` reaches a Slack, Discord, Teams or Telegram channel.
 A phone that is asleep is reachable by none of them. Port this to a push vendor
 directly.
 
