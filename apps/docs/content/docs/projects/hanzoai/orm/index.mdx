@@ -1,8 +1,172 @@
 ---
-title: Orm
-description: Generics-based ORM for Go — type-safe Model[T] with auto-registration, auto-serialization, KV cache, and multi-backend support (Hanzo SQLite, Hanzo SQL, Hanzo DocDB)
+title: ORM
+description: Database-agnostic, generics-based ORM for Go — type-safe Model[T] with embedded SQLite for local dev and ZAP binary multi-backend drivers.
 ---
 
-# Orm
+# Hanzo ORM
 
-Documentation imported from repository content.
+[`hanzoai/orm`](https://github.com/hanzoai/orm) is Hanzo's canonical generics-based Object-Relational Mapping (ORM) and state engine for Go. Governed by [**HIP-0144: Where State Lives**](https://hips.hanzo.ai/hip-0144-where-state-lives), it provides a single unified `Model[T]` abstraction that is **completely agnostic of the underlying SQL engine**.
+
+```go
+import "github.com/hanzoai/orm"
+```
+
+---
+
+## Architecture: Fast Local Dev & Multi-Backend Scalability
+
+Hanzo enforces a clean separation between development simplicity and production rank:
+
+1. **Fast Embedded Local Dev (Rank 1)**: By default, `orm.OpenSQLite` boots an embedded, pure-Go SQLite instance with hardware-accelerated SQLCipher 4 encryption or in-memory tables. There are zero external container dependencies—developers run `hanzo up` and immediately have a fully functional relational data layer.
+2. **Clustered Production Backends (Rank 2 & 3)**: In production clusters, `orm.OpenZap` connects natively over the Zero-Copy Application Protocol (ZAP) to external SQL engines ([`hanzoai/sql`](https://github.com/hanzoai/sql) speaking the PostgreSQL wire protocol), columnar OLAP engines ([`hanzoai/datastore`](https://github.com/hanzoai/datastore)), and in-memory caches ([`hanzoai/kv`](https://github.com/hanzoai/kv)).
+3. **Identical Application Logic**: Service code remains 100% identical regardless of whether it is running against an embedded SQLite file or a clustered PostgreSQL database.
+
+```
+                  Go Application Logic (Model[T])
+                                 │
+                 ┌───────────────┴───────────────┐
+                 ▼                               ▼
+       Embedded SQLite (Local Dev)     ZAP Binary Transport (Production)
+       • Zero external daemons         • Port 9651 / 9653
+       • SQLCipher 4 at-rest           • Zero-copy struct encoding
+       • Sub-millisecond queries                 │
+                                       ┌─────────┴─────────┐
+                                       ▼                   ▼
+                               hanzoai/sql         hanzoai/datastore
+                              (PostgreSQL wire)      (Columnar OLAP)
+```
+
+---
+
+## Quick Start
+
+### 1. Installation
+
+```bash
+go get github.com/hanzoai/orm@latest
+```
+
+### 2. Define a Model
+
+Models embed `orm.Model[T]` and register their collection/table name:
+
+```go
+package models
+
+import "github.com/hanzoai/orm"
+
+type Organization struct {
+    orm.Model[Organization]
+    Name     string `json:"name" orm:"required"`
+    Plan     string `json:"plan" orm:"default:starter"`
+    Balance  int64  `json:"balance" orm:"default:0"`
+}
+
+func init() {
+    orm.Register[Organization]("organization")
+}
+```
+
+### 3. Connect to a Storage Backend
+
+```go
+package main
+
+import (
+    "github.com/hanzoai/orm"
+    ormdb "github.com/hanzoai/orm/db"
+)
+
+func main() {
+    // Embedded SQLite (fast local dev, zero config)
+    localDB, err := orm.OpenSQLite(&ormdb.SQLiteDBConfig{
+        Path:   "data/app.db",
+        Config: ormdb.SQLiteConfig{BusyTimeout: 5000, JournalMode: "WAL"},
+    })
+    if err != nil {
+        panic(err)
+    }
+
+    // Clustered ZAP backend (production PostgreSQL / Datastore)
+    prodDB, err := orm.OpenZap(&ormdb.ZapConfig{
+        Addr:    "localhost:9651",
+        Backend: ormdb.ZapSQL, // or ZapDatastore, ZapKV, ZapDocumentDB
+    })
+    if err != nil {
+        panic(err)
+    }
+}
+```
+
+### 4. Type-Safe CRUD Operations
+
+```go
+// Create a new record
+org := orm.New[Organization](db)
+org.Name = "Acme Corp"
+org.Plan = "enterprise"
+if err := org.Create(); err != nil {
+    return err
+}
+
+// Read by ID
+record, err := orm.Get[Organization](db, org.Id())
+
+// Update attributes
+record.Balance += 50000
+if err := record.Update(); err != nil {
+    return err
+}
+
+// Soft or hard delete
+if err := record.Delete(); err != nil {
+    return err
+}
+```
+
+### 5. Type-Safe Queries
+
+```go
+q := orm.TypedQuery[Organization](db)
+activeEnterprises, err := q.
+    Filter("Plan=", "enterprise").
+    Filter("Balance>", 0).
+    Limit(50).
+    Get()
+```
+
+### 6. Lifecycle Hooks
+
+Models can implement pre- and post-operation hooks:
+
+```go
+func (o *Organization) BeforeCreate() error {
+    if o.Name == "" {
+        return errors.New("organization name is required")
+    }
+    return nil
+}
+
+func (o *Organization) AfterCreate() error {
+    // Dispatch telemetry span or welcome event over ZAP pub/sub
+    return nil
+}
+```
+
+---
+
+## Supported Backends
+
+| Backend | Driver | State Rank (HIP-0144) | Ideal Workload |
+|:---|:---|:---|:---|
+| **SQLite** | `orm.OpenSQLite` | **Rank 1** (Per-Tenant File) | Local dev (`hanzo up`), edge nodes, isolated per-org database files |
+| **PostgreSQL** | `orm.OpenZap` + `ZapSQL` | **Rank 3** (Shared Clustered SQL) | High-concurrency relational data, multi-writer enterprise clusters |
+| **Hanzo Datastore** | `orm.OpenZap` + `ZapDatastore` | **Rank 2** (Column Store) | Clickstream events, billing metrics, telemetry spans, high-volume time-series |
+| **KV (Valkey / Redis)** | `orm.OpenZap` + `ZapKV` | **Rank 3** (Shared KV) | Ephemeral session tokens, distributed locks, rate-limiting counters |
+
+---
+
+## Specifications & Standards
+* [**HIP-0144: Where State Lives**](https://hips.hanzo.ai/hip-0144-where-state-lives) — Normative ranking and multi-tenant database policies.
+* [**HIP-0302: Encrypted SQLite Replication Standard**](https://hips.hanzo.ai/hip-0302-encrypted-sqlite-replication-standard) — Hardware-accelerated SQLCipher 4 storage and streaming replication.
+* [**HIP-0107: Streaming Replication over VFS**](https://hips.hanzo.ai/hip-0107-streaming-replication-over-vfs) — Content-addressed block storage sync.
