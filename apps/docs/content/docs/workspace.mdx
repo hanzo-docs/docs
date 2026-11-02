@@ -112,7 +112,7 @@ Nothing here needs building. It needs one UI over it.
 
 | Slack calls it | Runs on | Read through |
 |---|---|---|
-| Channels, DMs | hanzo.team | `/v1/team/rooms` |
+| Channels, DMs | hanzo.team | `/v1/team/channels` |
 | Threads, reactions | hanzo.team | `/v1/team/*` |
 | Huddles | meet.hanzo.ai | link out |
 | Canvas | hanzo.team | link out |
@@ -124,7 +124,7 @@ Nothing here needs building. It needs one UI over it.
 
 ## 7. Build order
 
-1. Route `/v1/team/rooms` in cloud. The sidebar fills. Everything below depends on it.
+1. Route `/v1/team/channels` in cloud. The sidebar fills. Everything below depends on it.
 2. Rail: Home · DMs · Activity · Later · More. Products move under More.
 3. Rail foot: avatar with presence dot.
 4. Sidebar rows: Threads · Huddles · Drafts & sent.

@@ -1,6 +1,6 @@
 ---
 title: Centaur
-description: Centaur gives a Slack thread a Kubernetes pod, a coding harness and a credential proxy. Here that is /v1/channel, /v1/agent, /v1/sandbox and /v1/provider on one origin — with a kernel boundary Centaur leaves off by default.
+description: Centaur gives a Slack thread a Kubernetes pod, a coding harness and a credential proxy. Here that is /v1/transport, /v1/agent, /v1/sandbox and /v1/provider on one origin — with a kernel boundary Centaur leaves off by default.
 ---
 
 Centaur is Paradigm's self-hosted agent platform. A bot is mentioned in Slack, the thread is
@@ -40,11 +40,11 @@ curl -sS -X POST https://api.hanzo.ai/v1/sandbox/lease \
   -H 'Content-Type: application/json' \
   -d '{"class":"dev","project":"billing","ttlSec":900}'
 
-# 4. which agent answers where: a default for the workspace, another agent in one room
-curl -sS -X PUT https://api.hanzo.ai/v1/channel/agent \
+# 4. which agent answers where: a default for the workspace, another agent in one channel
+curl -sS -X PUT https://api.hanzo.ai/v1/transport/agent \
   -H "Authorization: Bearer $HANZO_API_KEY" \
   -H 'Content-Type: application/json' \
-  -d '{"channel":"slack","default":"eng","rooms":{"C024BE91L":"des"}}'
+  -d '{"transport":"slack","default":"eng","channels":{"C024BE91L":"des"}}'
 ```
 
 Step 2 is what a Centaur persona becomes: a row the org owns, with a model, instructions, a tool
@@ -59,7 +59,7 @@ personas behind one bot are several agents, each with its own model, instruction
 
 | Capability | What it does |
 |---|---|
-| [`/v1/channel`](/docs/usage/teams) | Slack, Teams, Discord, Telegram, WhatsApp, and GitHub and Linear issues, behind one registry. Pairing and allowlist policy per org; every turn runs as the person who sent it. |
+| [`/v1/transport`](/docs/usage/teams) | Slack, Teams, Discord, Telegram, WhatsApp, and GitHub and Linear issues, behind one registry. Pairing and allowlist policy per org; every turn runs as the person who sent it. |
 | [`/v1/agent`](/docs/concepts/agents) | Named agents with model, instructions, tools and schedule; sessions with an ordered durable event log, parent/child trees and an SSE stream. |
 | [`/v1/sandbox`](/docs/concepts/sandboxes) | One gVisor or Kata pod per lease, a per-project volume, exec as the only way in, three clocks to end it. |
 | [`/v1/tasks` and `/v1/auto`](/docs/concepts/workflows) | The durable engine, embedded in the process, and the flow editor over it. |
@@ -166,7 +166,7 @@ agentic run are the same object with different lease lengths — so its isolatio
 | `harness-server` normalizing Codex, Claude Code, Amp, Hermes | `dev`, Hanzo's own harness; `claude` and `codex` also run in the `dev` class |
 | iron-proxy placeholder substitution | `egress` for provider keys; IAM token exchange for identity; `/v1/connection` for a person's own accounts |
 | 1Password vault | Hanzo KMS — sealed secrets, per-secret agent policy, per-agent audit trail |
-| Slackbot, Teamsbot, Discordbot | `/v1/channel` |
+| Slackbot, Teamsbot, Discordbot | `/v1/transport` |
 | Githubbot, Linearbot | `github` and `linear` are channels transports: an issue is a room, a comment that mentions the App is a turn, the reply is a comment; issues also mirror into the native todo and fire automation triggers |
 | Persona (`type = "persona"` tool entry) | Agent (`/v1/agent`) |
 | Python tool plugin → CLI shim | Every `/v1` operation is a tool; `hanzo-mcp` serves the catalogue over stdio in the pod |
@@ -178,7 +178,7 @@ agentic run are the same object with different lease lengths — so its isolatio
 | Rails Console | [platform.hanzo.ai](/docs/console) — Agents, Agent Builder, integrations, keys, org |
 | Static API keys, HS256 JWT | Hanzo IAM |
 | `overlays.sources[]` git layering | Per-org rows for tools, prompts, skills and agents, managed from the API and console |
-| Per-channel persona defaults (`SLACKBOTV2_CHANNEL_DEFAULTS`) | `PUT /v1/channel/agent` — a default agent per transport and an agent per room, set by an org admin |
+| Per-channel persona defaults (`SLACKBOTV2_CHANNEL_DEFAULTS`) | `PUT /v1/transport/agent` — a default agent per transport and an agent per channel, set by an org admin |
 | Helm chart, k3s, `just up` | `docker run ghcr.io/hanzoai/cloud`; operator and Helm in production |
 
 ## The call
@@ -197,7 +197,7 @@ Centaur's HTTP surface is small and each route has a direct counterpart.
 | `GET /api/workflows/schedules` | `/v1/tasks` schedules |
 | `POST /api/workflows/events` | `/v1/tasks` signal |
 | `ANY /api/webhooks/{slug}` | `POST /v1/auto/hooks/{source}/{event}` |
-| `/api/slack/channels`, `/api/slack/files/…` | `POST /v1/channel/slack/send`; `/v1/connection/slack` |
+| `/api/slack/channels`, `/api/slack/files/…` | `POST /v1/transport/slack/send`; `/v1/connection/slack` |
 | `/api/admin/slack/archive-imports`, `dm-sync`, `google/docs-sync`, `granola/sync` | `/v1/sync` |
 | `POST /mcp` | `POST /v1/mcp`, and `hanzo-mcp` over stdio |
 | Console `/api/v1/secrets`, `broker_credentials`, `oauth_apps` | `/v1/kms`; `/v1/connection` |
@@ -215,7 +215,7 @@ Inside a tool or a workflow:
 | `ctx.wait_for_event(name, type, correlation_id)` | a signal |
 | `ctx.start_workflow` | a child workflow |
 | `ctx.run_agent`, `ctx.run_agents([...], max_concurrency)` | `POST /v1/agent/{ref}/run`, once per agent, from the workflow |
-| `ctx.post_to_slack(channel, text)` | `POST /v1/channel/slack/send` |
+| `ctx.post_to_slack(channel, text)` | `POST /v1/transport/slack/send` |
 | `centaur-tools list`, `centaur-tools call` | the same operations over MCP, or `hanzo` subcommands |
 | `--codex`, `--claude`, `--amp`, `--model`, `-rsn` | `dev` flags; `tool` and `agentRef` on a coding run |
 

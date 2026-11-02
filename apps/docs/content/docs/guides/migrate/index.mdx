@@ -67,7 +67,7 @@ below are read from the API document this site is built from.
 | [LangSmith](/docs/guides/migrate/langsmith) | LLM tracing, datasets and evaluations | `/v1/o11y` (381) · `/v1/eval` (16) |
 | [Composio](/docs/guides/migrate/composio) | Authenticated third-party tools for agents | `/v1/provider` (56) · `/v1/connection` (8) |
 | [E2B](/docs/guides/migrate/e2b) | Sandboxes for code an agent wrote | `/v1/sandbox` (19) · `/v1/exec` (4) |
-| [Centaur](/docs/guides/migrate/centaur) | Shared Slack agents in Kubernetes sandboxes | `/v1/channel` · `/v1/agent` · `/v1/sandbox` · `/v1/provider` |
+| [Centaur](/docs/guides/migrate/centaur) | Shared Slack agents in Kubernetes sandboxes | `/v1/transport` · `/v1/agent` · `/v1/sandbox` · `/v1/provider` |
 | [Tavily](/docs/guides/migrate/tavily) | Web search and page extraction for agents | `/v1/websearch` (6) · `/v1/crawl` (1) |
 
 ## Messaging
@@ -75,8 +75,8 @@ below are read from the API document this site is built from.
 | From | What it does | Capability |
 |---|---|---|
 | [Amazon SQS](/docs/guides/migrate/sqs) | Queues between services | `/v1/mq` (15) · `/v1/pubsub` (2) |
-| [Twilio](/docs/guides/migrate/twilio) | Phone numbers, SMS and calls | `/v1/tel` (10) · `/v1/channel` (7) |
-| [AgentMail](/docs/guides/migrate/agentmail) | Mailboxes an agent can send and read | `/v1/notify` (4) · `/v1/channel` (7) |
+| [Twilio](/docs/guides/migrate/twilio) | Phone numbers, SMS and calls | `/v1/tel` (10) · `/v1/transport` (7) |
+| [AgentMail](/docs/guides/migrate/agentmail) | Mailboxes an agent can send and read | `/v1/notify` (4) · `/v1/transport` (7) |
 | [ElevenLabs](/docs/guides/migrate/elevenlabs) | Speech synthesis and transcription | `/v1/audio` (5) |
 
 ## Money and business
