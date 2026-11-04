@@ -37,6 +37,7 @@ internal/
 
 # Generated flow pages (six journeys x four surfaces) — see scripts/gen-flow-pages.ts
 content/docs/guides/*.mdx
+!content/docs/guides/kai.mdx
 content/docs/guides/meta.json
 
 # Generated MCP reference (one page per tool) — see scripts/gen-mcp-pages.ts.
