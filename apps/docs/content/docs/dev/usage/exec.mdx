@@ -44,9 +44,9 @@ dev exec --json "List all functions in src/"
 ```yaml
 - name: Update changelog via Hanzo Dev
   run: |
-    npm install -g @hanzo/dev
+    npm i -g hanzo
     export OPENAI_API_KEY="${{ secrets.OPENAI_KEY }}"
-    dev exec --full-auto "update CHANGELOG for next release"
+    hanzo-dev exec --full-auto "update CHANGELOG for next release"
 ```
 
 ### Resuming Sessions

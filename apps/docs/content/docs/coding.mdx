@@ -7,7 +7,7 @@ icon: Terminal
 `hanzo` runs a coding agent against the repository you are standing in. Hanzo Dev is the default. Every other agent is a flag, and naming one gets you that agent or a clear failure.
 
 ```bash
-curl -fsSL hanzo.sh | sh       # install
+npm i -g hanzo                 # install, any OS (or: curl -fsSL hanzo.sh | sh)
 hanzo                          # sign in, pick your agent, start it
 hanzo --claude                 # Claude Code
 hanzo --codex                  # Codex
@@ -78,4 +78,4 @@ Every Hanzo agent and client is open source with runnable examples in all tier-o
 ### Hanzo Dev (`hanzoai/dev`)
 - **[GitHub Repository](https://github.com/hanzoai/dev)**
 - [Terminal Installation (`curl -fsSL https://hanzo.sh | sh`)](https://hanzo.sh)
-- [npm Package (`@hanzo/dev`)](https://www.npmjs.com/package/@hanzo/dev)
+- [npm Package (`hanzo`)](https://www.npmjs.com/package/hanzo)

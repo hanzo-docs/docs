@@ -7,7 +7,8 @@ icon: Terminal
 `hanzo --<agent>` starts the coding agent you already use, in the repository you are standing in, with the Hanzo toolset attached. The agent keeps its own login and plan. The toolset lets it hand work to Hanzo's models: Enso for text, Kai for typed decisions, plus code and web search. That work is billed to your Hanzo plan, not the agent's.
 
 ```bash
-curl -fsSL hanzo.sh | sh      # hanzo, hanzo-mcp, dev and zt: native binaries, checksummed, into ~/.local/bin
+npm i -g hanzo                # any OS, Windows included: the launcher; each native binary is fetched, sha256-checked, on first use
+curl -fsSL hanzo.sh | sh      # or, on macOS and Linux: hanzo, hanzo-mcp, dev and zt, checksummed, into ~/.local/bin
 hanzo                         # first run: sign in or sign up, pick your agent, start it
 hanzo --claude                # or any agent below
 hanzo --claude "fix the failing test in api/users"   # one quoted task runs headless
@@ -111,7 +112,7 @@ hanzo upgrade                 # hanzo, hanzo-mcp, dev and zt, and every coding a
 hanzo upgrade mcp qwen claude # just these
 ```
 
-`hanzo upgrade` runs [hanzo.sh](https://hanzo.sh) into the directory `hanzo` lives in, so the build that answers `hanzo` is the one that was upgraded. Each agent upgrades its own way: an npm agent is installed again under `~/.hanzo`, one with an updater of its own runs it (`claude update`, `codex update`, `cursor-agent update`, `agy update`, `goose update`, `grok update`, `hermes update`, `interpreter update`), and Aider and OpenHands are upgraded with `uv tool upgrade`. With nothing named, every agent installed that way is upgraded. Every Hanzo tool is a native binary for Linux and macOS on amd64 and arm64, and for Windows on amd64. On Windows, `npm install -g @hanzo/cli` installs `hanzo`, and `hanzo upgrade` fetches `hanzo-mcp`, `dev` and `zt` beside it, each checked against its published sha256.
+`hanzo upgrade` runs [hanzo.sh](https://hanzo.sh) into the directory `hanzo` lives in, so the build that answers `hanzo` is the one that was upgraded. Each agent upgrades its own way: an npm agent is installed again under `~/.hanzo`, one with an updater of its own runs it (`claude update`, `codex update`, `cursor-agent update`, `agy update`, `goose update`, `grok update`, `hermes update`, `interpreter update`), and Aider and OpenHands are upgraded with `uv tool upgrade`. With nothing named, every agent installed that way is upgraded. Every Hanzo tool is a native binary for Linux and macOS on amd64 and arm64, and for Windows on amd64. On any OS, Windows included, `npm i -g hanzo` installs the `hanzo` launcher, and each native binary (`hanzo dev`, `hanzo mcp`, `hanzo engine`) is downloaded the first time it is used, checked against its published sha256.
 
 ## Options that apply to every agent
 
