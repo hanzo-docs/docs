@@ -14,10 +14,11 @@
 // Two exactness rules are load-bearing and are stated inside the prompt itself,
 // because a model that paraphrases them produces a setup that half-works:
 //
-//   • `npx -y --package=@hanzo/mcp@latest hanzo-mcp serve` — the --package form.
-//     `npx -y @hanzo/mcp serve` resolves `serve` as a SEPARATE package and
-//     installs something unrelated.
-//   • one install method, never both. Brew and the curl script both land a
+//   • `npx -y hanzo mcp` — the `hanzo` package, then the `mcp` subcommand: the
+//     native Rust MCP server over stdio. The old `npx -y @hanzo/mcp serve` form
+//     let npx resolve `serve` as a SEPARATE package and install something
+//     unrelated; `hanzo mcp` has no `serve` to misread.
+//   • one install method, never both. npm and the curl script both land a
 //     `hanzo` on PATH, and which one wins is then a PATH-ordering accident.
 //
 // The completion report is a fixed block on purpose: four checks, each either
@@ -41,16 +42,18 @@ Complete all applicable steps yourself by running commands directly. Do not ask 
 
 If the \`hanzo\` command is not already available, install it:
 
-### macOS or Linux
+### Any OS, including Windows
 
 \`\`\`sh
-curl -fsSL hanzo.sh/cli | sh
+npm i -g hanzo
 \`\`\`
 
-### macOS with Homebrew
+This installs the \`hanzo\` launcher only. Each native binary it runs is downloaded and SHA-256 verified the first time it is used: \`hanzo dev\` (the coding agent), \`hanzo mcp\` (the MCP server), \`hanzo engine serve <model>\` (local inference).
+
+### macOS or Linux, without npm
 
 \`\`\`sh
-brew install hanzoai/tap/hanzo
+curl -fsSL https://hanzo.sh | sh
 \`\`\`
 
 Do not run both installation methods.
@@ -80,17 +83,17 @@ Use the correct section for the active agent.
 The command must include:
 
 \`\`\`sh
-npx -y --package=@hanzo/mcp@latest hanzo-mcp serve
+npx -y hanzo mcp
 \`\`\`
 
-Do not use \`npx -y @hanzo/mcp serve\`. That syntax can resolve \`serve\` as an unrelated package.
+Use exactly \`npx -y hanzo mcp\`: the \`hanzo\` package, then the \`mcp\` subcommand, which serves MCP over stdio with no further arguments. Do not use \`npx -y @hanzo/mcp serve\`; npx can resolve \`serve\` as an unrelated package. Nothing has to be installed first: npx fetches \`hanzo\`, and \`hanzo mcp\` fetches its native binary on first use.
 
 ### Claude Code
 
 Run:
 
 \`\`\`sh
-claude mcp add --scope user hanzo -- npx -y --package=@hanzo/mcp@latest hanzo-mcp serve
+claude mcp add --scope user hanzo -- npx -y hanzo mcp
 \`\`\`
 
 Then verify:
@@ -108,7 +111,7 @@ Tell the user to restart Claude Code after setup.
 Run:
 
 \`\`\`sh
-codex mcp add hanzo -- npx -y --package=@hanzo/mcp@latest hanzo-mcp serve
+codex mcp add hanzo -- npx -y hanzo mcp
 \`\`\`
 
 Then verify:
@@ -123,22 +126,18 @@ Tell the user to restart Codex after setup.
 
 ### Hanzo Dev
 
-Install Hanzo Dev if it is not already available:
-
-\`\`\`sh
-npm install -g @hanzo/dev
-\`\`\`
+Hanzo Dev comes with the \`hanzo\` CLI installed above: \`hanzo dev\` fetches it on first use, and the \`hanzo-dev\` command is the same agent.
 
 Register Hanzo MCP:
 
 \`\`\`sh
-dev mcp add hanzo -- npx -y --package=@hanzo/mcp@latest hanzo-mcp serve
+hanzo-dev mcp add hanzo -- npx -y hanzo mcp
 \`\`\`
 
 Then verify:
 
 \`\`\`sh
-dev mcp list
+hanzo-dev mcp list
 \`\`\`
 
 Restart Hanzo Dev after setup.
@@ -157,9 +156,8 @@ Add this entry under \`"mcp"\`:
   "command": [
     "npx",
     "-y",
-    "--package=@hanzo/mcp@latest",
-    "hanzo-mcp",
-    "serve"
+    "hanzo",
+    "mcp"
   ],
   "enabled": true
 }
@@ -180,9 +178,8 @@ Add this entry under \`"mcpServers"\`:
   "command": "npx",
   "args": [
     "-y",
-    "--package=@hanzo/mcp@latest",
-    "hanzo-mcp",
-    "serve"
+    "hanzo",
+    "mcp"
   ]
 }
 \`\`\`
@@ -202,9 +199,8 @@ Add this entry under \`"mcpServers"\`:
   "command": "npx",
   "args": [
     "-y",
-    "--package=@hanzo/mcp@latest",
-    "hanzo-mcp",
-    "serve"
+    "hanzo",
+    "mcp"
   ]
 }
 \`\`\`
@@ -252,7 +248,7 @@ succeeds against the wrong address.
 Verify the MCP protocol directly:
 
 \`\`\`sh
-printf '%s\\n' '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"setup","version":"1"}}}' | npx -y --package=@hanzo/mcp@latest hanzo-mcp serve
+printf '%s\\n' '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"setup","version":"1"}}}' | npx -y hanzo mcp
 \`\`\`
 
 A working installation returns a JSON-RPC response containing a \`serverInfo\` object whose name is \`hanzo-mcp\`.

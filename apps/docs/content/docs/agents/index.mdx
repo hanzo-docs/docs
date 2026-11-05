@@ -291,7 +291,7 @@ more).
 Claude Code:
 
 ```bash
-claude mcp add hanzo --env HANZO_API_KEY=$HANZO_API_KEY -- npx -y --package=@hanzo/mcp@latest hanzo-mcp serve
+claude mcp add --scope user hanzo --env HANZO_API_KEY=$HANZO_API_KEY -- npx -y hanzo mcp
 ```
 
 Codex, in `~/.codex/config.toml`:
@@ -299,7 +299,7 @@ Codex, in `~/.codex/config.toml`:
 ```toml
 [mcp_servers.hanzo]
 command = "npx"
-args = ["-y", "--package=@hanzo/mcp@latest", "hanzo-mcp", "serve"]
+args = ["-y", "hanzo", "mcp"]
 
 [mcp_servers.hanzo.env]
 HANZO_API_KEY = "sk-..."
@@ -308,17 +308,17 @@ HANZO_API_KEY = "sk-..."
 Cursor, in `.cursor/mcp.json` or `~/.cursor/mcp.json`:
 
 ```json
-{ "mcpServers": { "hanzo": { "command": "npx", "args": ["-y", "--package=@hanzo/mcp@latest", "hanzo-mcp", "serve"], "env": { "HANZO_API_KEY": "sk-..." } } } }
+{ "mcpServers": { "hanzo": { "command": "npx", "args": ["-y", "hanzo", "mcp"], "env": { "HANZO_API_KEY": "sk-..." } } } }
 ```
 
 Zed, in `settings.json`:
 
 ```json
-"context_servers": { "hanzo": { "command": "npx", "args": ["-y", "--package=@hanzo/mcp@latest", "hanzo-mcp", "serve"], "env": { "HANZO_API_KEY": "sk-..." } } }
+"context_servers": { "hanzo": { "command": "npx", "args": ["-y", "hanzo", "mcp"], "env": { "HANZO_API_KEY": "sk-..." } } }
 ```
 
-Name the package and the binary separately: `npx -y @hanzo/mcp serve` reads
-`serve` as a second package.
+`npx -y hanzo mcp` is the whole command: the `hanzo` package, then its `mcp`
+subcommand, the native MCP server over stdio. There is no `serve` to add.
 
 The hosted endpoint, `POST https://api.hanzo.ai/v1/mcp`, speaks MCP protocol
 2026-07-28 only. Use it from a client that speaks 2026-07-28; from any other,

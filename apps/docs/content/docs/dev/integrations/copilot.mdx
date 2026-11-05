@@ -119,9 +119,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Hanzo Dev
-        run: npm install -g @hanzo/dev
+        run: npm i -g hanzo
       - name: Review Changes
-        run: dev copilot review --diff --format markdown > review.md
+        run: hanzo-dev copilot review --diff --format markdown > review.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```

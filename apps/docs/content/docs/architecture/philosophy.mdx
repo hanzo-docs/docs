@@ -89,8 +89,8 @@ openapi.yaml          the ONE contract — /v1 over HTTP + ZAP
  zap-spec                          the ZAP wire types
    │
  hanzo-client (Rust: ZAP bridge + hanzo.id auth + rust-sdk)
-   ├── hanzo   — the control CLI        → @hanzo/cli
-   └── dev     — the coding agent       → @hanzo/dev
+   ├── hanzo   — the control CLI        → hanzo (npm)
+   └── dev     — the coding agent       → hanzo dev
 ```
 
 - **The CLI is a client, never the server.** It speaks ZAP (or its SDK) to a
@@ -101,7 +101,7 @@ openapi.yaml          the ONE contract — /v1 over HTTP + ZAP
   auth stack, one ZAP client, one SDK. The result is a ~15 MB binary — small
   enough to ship over npm.
 - **One harness, many channels.** Per-platform prebuilt binaries on GitHub
-  Releases fan out to `@hanzo/cli` / `@hanzo/dev` (npm), `hanzo.sh` (`curl | sh`),
+  Releases fan out to `hanzo` (npm, which fetches each binary on first use), `hanzo.sh` (`curl | sh`),
   Homebrew, and `go install`. One binary per tool, N channels.
 
 <Callout type="info">

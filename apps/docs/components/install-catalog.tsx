@@ -79,7 +79,7 @@ const TARGETS: Target[] = [
   { id: 'ai-sdk', label: 'Vercel AI SDK', kind: 'llm', install: 'npm i @hanzo/ai' },
   { id: 'langchain', label: 'LangChain', kind: 'llm', install: 'pip install "hanzoai>=8"' },
   { id: 'llamaindex', label: 'LlamaIndex', kind: 'llm', install: 'pip install "hanzoai>=8"' },
-  { id: 'mcp', label: 'MCP', kind: 'llm', install: 'npx @hanzo/mcp', docs: '/docs/mcp' },
+  { id: 'mcp', label: 'MCP', kind: 'llm', install: 'npx -y hanzo mcp', docs: '/docs/mcp' },
 ];
 
 const KINDS: { value: Kind | 'all'; label: string }[] = [

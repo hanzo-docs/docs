@@ -246,7 +246,8 @@ env = { "API_KEY" = "sk-..." }`}
             <div>
               <h4 className="font-medium mb-2">npm</h4>
               <pre className="bg-black/20 rounded-lg p-3 text-xs overflow-x-auto font-mono">
-{`npm install -g @hanzo/dev`}
+{`npm i -g hanzo
+hanzo dev`}
               </pre>
             </div>
             <div>

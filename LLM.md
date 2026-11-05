@@ -212,7 +212,7 @@ The way in for an agent, second in the root sidebar.
   research is alpha, so the public document omits it, yet the read is open and
   is how a reader checks Kai's published runs. Exact path only.
 - The hosted `POST /v1/mcp` speaks protocol 2026-07-28 only, so the page sends
-  clients to the local `@hanzo/mcp` server.
+  clients to the local server, `npx -y hanzo mcp`.
 
 ## Agent readiness
 

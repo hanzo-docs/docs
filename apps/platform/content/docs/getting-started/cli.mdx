@@ -9,36 +9,22 @@ API that powers the dashboard.
 
 ## Installation
 
-<Tabs items={["macOS", "Linux", "Windows"]}>
-<Tab value="macOS">
+<Tabs items={["npm", "Script"]}>
+<Tab value="npm">
 ```bash
-brew install hanzoai/tap/hanzo
+npm i -g hanzo
 ```
+
+Any OS, Windows included. This installs the `hanzo` launcher only; each native
+binary is downloaded and SHA-256 verified the first time it is used.
 </Tab>
 
-<Tab value="Linux">
+<Tab value="Script">
 ```bash
-curl -fsSL https://get.hanzo.ai/cli | sh
+curl -fsSL https://hanzo.sh | sh
 ```
 
-Or with your package manager:
-
-```bash
-# Debian/Ubuntu
-sudo apt install hanzo
-
-# Arch
-yay -S hanzo-cli
-```
-</Tab>
-
-<Tab value="Windows">
-```powershell
-scoop bucket add hanzo https://github.com/hanzoai/scoop-bucket
-scoop install hanzo
-```
-
-Or download the binary from
+macOS and Linux. Or download the binary from
 [GitHub Releases](https://github.com/hanzoai/cli/releases).
 </Tab>
 </Tabs>

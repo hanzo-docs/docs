@@ -15,20 +15,20 @@ reachable.
 
 ## 1. Install
 
-<Tabs items={['Script', 'npm', 'Homebrew', 'From source']}>
+<Tabs items={['npm', 'Script', 'Homebrew', 'From source']}>
+<Tab value="npm">
+```bash
+npm i -g hanzo
+```
+
+Any OS, Windows included. This installs the `hanzo` launcher only; each native binary is downloaded and SHA-256 verified the first time you use it: `hanzo dev` (the coding agent), `hanzo mcp` (the MCP server over stdio), `hanzo engine serve <model>` (local inference).
+</Tab>
 <Tab value="Script">
 ```bash
 curl -fsSL https://hanzo.sh | sh
 ```
 
 Native binaries, checksummed, into `~/.local/bin`: the CLI, the MCP server, Hanzo Dev and ZT. `https://hanzo.sh/cli` installs the CLI alone, and `hanzo upgrade` keeps them current.
-</Tab>
-<Tab value="npm">
-```bash
-npm i -g hanzo
-```
-
-`hanzo` is the CLI and the client in one install.
 </Tab>
 <Tab value="Homebrew">
 ```bash
