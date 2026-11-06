@@ -33,6 +33,7 @@ document at a ref its own `.spec-lock` names.
 | Swift | [hanzo-swift/sdk](https://github.com/hanzo-swift/sdk), product `Hanzo` | SwiftPM, from the git URL |
 | Kotlin | `ai.hanzo:hanzo-kotlin-cloud` | Gradle, built from source |
 | Java | `ai.hanzo:hanzo-java-cloud` on Maven Central | Gradle or Maven, from `mavenCentral()` |
+| C# | `Hanzo` on NuGet, namespace `Hanzo.AI` | `dotnet add package Hanzo` |
 | C++ | [hanzo-cpp/sdk](https://github.com/hanzo-cpp/sdk) | CMake, from a tag |
 
 Swift, Kotlin and C++ are tagged and buildable but not on a package manager
@@ -102,14 +103,23 @@ try await AiAPI.getModels(apiConfiguration: hanzo)
 ```
 
 ```java tab="Java"
-import ai.hanzo.cloud.ApiClient;
-import ai.hanzo.cloud.api.AiApi;
-import ai.hanzo.cloud.model.AiModelList;
+import ai.hanzo.ApiClient;
+import ai.hanzo.api.AiApi;
+import ai.hanzo.model.AiModelList;
 
 ApiClient client = new ApiClient();
 client.setBearerToken(System.getenv("HANZO_API_KEY"));
 
 AiModelList models = new AiApi(client).getModels();
+```
+
+```csharp tab="C#"
+using Hanzo.AI.Api;
+using Hanzo.AI.Client;
+
+var config = new Configuration { AccessToken = Environment.GetEnvironmentVariable("HANZO_API_KEY") };
+
+var models = new AiApi(config).GetModels();
 ```
 
 <Callout title="Why Go spells the method differently">

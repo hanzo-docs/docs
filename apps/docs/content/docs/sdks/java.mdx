@@ -16,31 +16,36 @@ JVM project that pulls both pulls one stack.
 ```kotlin
 // build.gradle.kts
 repositories { mavenCentral() }
-dependencies { implementation("ai.hanzo:hanzo-java-cloud:8.5.156") }
+dependencies { implementation("ai.hanzo:hanzo-java-cloud:8.5.+") }
 ```
 
 ```xml
 <dependency>
   <groupId>ai.hanzo</groupId>
   <artifactId>hanzo-java-cloud</artifactId>
-  <version>8.5.156</version>
+  <version>[8.5,8.6)</version>
 </dependency>
 ```
 
+Every cloud release cuts a patch, so both take the newest of the 8.5 line.
+
 ## The shape
 
-One `ApiClient`, one class per capability:
+One `ApiClient`, one class per capability. `ai.hanzo.Hanzo` builds the client
+from `HANZO_API_KEY`, `HANZO_BASE_URL` and `HANZO_ORG_ID`:
 
 ```java
-import ai.hanzo.cloud.ApiClient;
-import ai.hanzo.cloud.api.AiApi;
-import ai.hanzo.cloud.model.AiModelList;
+import ai.hanzo.Hanzo;
+import ai.hanzo.ApiClient;
+import ai.hanzo.api.AiApi;
+import ai.hanzo.model.AiModelList;
 
-ApiClient client = new ApiClient();
-client.setBearerToken(System.getenv("HANZO_API_KEY"));
+ApiClient client = Hanzo.client();
 
 AiModelList models = new AiApi(client).getModels();
 ```
+
+Or set the credential yourself: `new ApiClient()` and `setBearerToken(token)`.
 
 `setBearerToken` also takes a `Supplier<String>`, which is what you want when
 the credential is an IAM access token that refreshes rather than a static
@@ -53,5 +58,6 @@ body.
 
 ## Resources
 
-- Source — [hanzoai/java-sdk](https://github.com/hanzoai/java-sdk)
+- Source — [hanzo-java/sdk](https://github.com/hanzo-java/sdk)
+- Examples — [the six flows](https://github.com/hanzo-java/sdk/tree/main/examples) and a [Kai decision](https://github.com/hanzoai/kai/blob/main/examples/java/src/main/java/kai/Kai.java)
 - [Every `/v1` operation →](/docs/openapi)

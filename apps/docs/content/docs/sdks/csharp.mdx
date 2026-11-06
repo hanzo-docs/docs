@@ -1,0 +1,51 @@
+---
+title: C#
+description: Hanzo on NuGet — the generated client for every /v1 capability, on HttpClient and Newtonsoft.Json.
+---
+
+# C#
+
+The C# client is generated from the API's own document onto `HttpClient` and
+Newtonsoft.Json. Every operation is a method with an `…Async` twin and a
+`…WithHttpInfo` form that also returns the status and headers.
+
+## Install
+
+`Hanzo` is the package on NuGet. .NET 8 or newer.
+
+```bash
+dotnet add package Hanzo
+```
+
+## The shape
+
+One `Configuration`, one class per capability. `Gateway.Configuration()` reads
+`HANZO_API_KEY`, `HANZO_BASE_URL` and `HANZO_ORG_ID`:
+
+```csharp
+using Hanzo.AI;
+using Hanzo.AI.Api;
+using Hanzo.AI.Model;
+
+var config = Gateway.Configuration();
+
+AiModelList models = new AiApi(config).GetModels();
+```
+
+Or set the credential yourself: `new Configuration { AccessToken = token }`.
+See [Authentication](/docs/api-keys).
+
+The class is the capability and the method is the operation, both derived from
+the document: `post_chat_completions` is `AiApi.PostChatCompletions`. The
+[reference](/docs/openapi) prints the pair per operation. A refusal throws
+`Hanzo.AI.Client.ApiException`, which carries `ErrorCode` and `ErrorContent`.
+
+A request carries the fields you set and only those: an optional number or flag
+is `T?`, an unset one is left off the wire, and an explicit `0` or `false` is
+sent.
+
+## Resources
+
+- Source — [hanzo-csharp/sdk](https://github.com/hanzo-csharp/sdk)
+- Examples — [the six flows](https://github.com/hanzo-csharp/sdk/tree/main/examples) and a [Kai decision](https://github.com/hanzoai/kai/blob/main/examples/csharp/Program.cs)
+- [Every `/v1` operation →](/docs/openapi)
