@@ -11,12 +11,12 @@ Configure agents in `config.toml` under `[[agents]]`:
 
 ```toml
 [[agents]]
-name = "code-gpt-5.3-codex"       # slug or alias shown in pickers
-command = "coder"                  # executable; defaults to name
-args = ["--foo", "bar"]            # base argv
+name = "zen5"                     # slug or alias shown in pickers
+command = "dev"                   # executable; defaults to name
+args = ["--model", "zen5"]        # base argv
 args_read_only = ["-s", "read-only", "-a", "never", "exec", "--skip-git-repo-check"]
 args_write = ["-s", "workspace-write", "--dangerously-bypass-approvals-and-sandbox", "exec", "--skip-git-repo-check"]
-env = { CODE_FOO = "1" }
+env = { HANZO_FOO = "1" }
 read_only = false                  # force RO even if session allows writes
 enabled = true                     # hide from pickers when false
 description = "Frontline coding agent"
@@ -40,9 +40,9 @@ instructions = "Preamble added to this agent's prompt"
 
 ### Built-in Defaults
 
-When no `[[agents]]` are configured, Hanzo Dev advertises built-in agents (gated by `CODE_ENABLE_CLOUD_AGENT_MODEL` for cloud variants):
+When no `[[agents]]` are configured, Hanzo Dev advertises built-in models and agents:
 
-`code-gpt-5.4`, `code-gpt-5.3-codex`, `claude-opus-4.6`, `gemini-3-pro`, `code-gpt-5.1-codex-mini`, `claude-sonnet-4.5`, `gemini-3-flash`, `claude-haiku-4.5`, `qwen-3-coder`, `cloud-gpt-5.1-codex-max`.
+`enso-auto`, `zen5`, `zen5-pro`, `zen5-max`, `zen5-ultra`, `zen5-mini`, `claude-opus-4.6`, `claude-sonnet-4.5`, `gemini-3-pro`, `gemini-3-flash`.
 
 Built-ins strip any user `--model/-m` flags to avoid conflicts and inject their own.
 
@@ -56,7 +56,7 @@ Configure multi-agent slash commands under `[[subagents.commands]]`:
 [[subagents.commands]]
 name = "plan"                     # slash name (/plan, /solve, /code, or custom)
 read_only = true                  # default plan/solve=true, code=false
-agents = ["code-gpt-5.4", "claude-opus-4.6"]
+agents = ["zen5", "claude-opus-4.6"]
 orchestrator_instructions = "Guidance for Hanzo Dev before spawning agents"
 agent_instructions = "Preamble added to each spawned agent"
 ```
@@ -129,7 +129,7 @@ Custom context sweep command:
 [[subagents.commands]]
 name = "context"
 read_only = true
-agents = ["code-gpt-5.4", "claude-opus-4.6"]
+agents = ["zen5", "claude-opus-4.6"]
 orchestrator_instructions = "Have each agent summarize the most relevant files and tests."
 agent_instructions = "Return paths plus 1-2 sentence rationale; do not edit files."
 ```

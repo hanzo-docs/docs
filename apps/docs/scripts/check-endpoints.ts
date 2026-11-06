@@ -128,7 +128,14 @@ const RELAYS = [
  * runs. One exact path, not a prefix: the rest of research stays held to the
  * rule. The entry is dead the day research is `ga` and the document carries it.
  */
-const STAGED = ['/v1/research/runs'];
+const STAGED = [
+  '/v1/research/runs',
+  // /v1/channel moved to /v1/transport in cloud (HIP-0523); held here until
+  // openapi-specs/.spec-lock advances past the rename.
+  '/v1/transport/agent',
+  '/v1/transport/inbox',
+  '/v1/transport/slack/send',
+];
 
 export function checkEndpoints(): { checked: number; unknown: Array<[string, string]> } {
   const doc = loadDocument(DOCUMENT);

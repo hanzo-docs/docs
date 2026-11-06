@@ -5,8 +5,6 @@
 
 # API reference: the canonical page is the single-page OpenAPI reference at
 # /docs/openapi. Send every intuitive/guessed alias there so it always resolves.
-/api               /docs/openapi          301
-/api/*             /docs/openapi          301
 /docs/api          /docs/openapi          301
 /docs/api/*        /docs/openapi          301
 /api-reference     /docs/openapi          301
@@ -143,7 +141,7 @@
 /docs/zero-trust   /docs/openapi/network            301
 /docs/zt           /docs/openapi/network            301
 /docs/getting-started  /docs/quickstart             301
-/docs/contributing     /docs/contributing/style     301
+/contributing          /docs/contributing           301
 
 # The console links the SDK product at the singular /docs/sdk; the section is
 # /docs/sdks. Catch the singular rather than move the section.

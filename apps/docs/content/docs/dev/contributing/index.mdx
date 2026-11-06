@@ -4,57 +4,45 @@ description: Guidelines for contributing to Hanzo Dev.
 index: true
 ---
 
-## Contributing Policy
+## Contributing to Hanzo Dev
 
-**External contributions are by invitation only.**
+We welcome bug reports, pull requests, and improvements to [`hanzoai/dev`](https://github.com/hanzoai/dev). For general contributor onboarding across all Hanzo repositories, HIPs, and documentation, see [Contributing](/docs/contributing).
 
-The Hanzo Dev team does not accept unsolicited code contributions. To propose a feature or behavior change, open an issue or upvote an existing enhancement request.
+- **Community & questions**: Join [Hanzo Discord](https://discord.gg/XthHQQj) (`#general` and `#docs`).
+- **Bounties & rewards**: Merged contributions earn points on [hanzo.ai/bounty](https://hanzo.ai/bounty) and [hanzo.ai/leaderboard](https://hanzo.ai/leaderboard).
+- **Bug reports**: Run `/feedback` directly inside the `dev` TUI or open an issue on [`hanzoai/dev`](https://github.com/hanzoai/dev/issues) with reproduction steps.
 
-If you encounter a bug, please open a bug report with reproduction details, root-cause hypotheses, or a high-level outline of a potential fix.
+## Development Workflow
 
-The team may invite an external contributor to submit a PR when:
-- The problem is well understood
-- The proposed approach aligns with the intended solution
-- The issue is deemed high-impact and high-priority
-
-## Development Workflow (Invited Contributors)
-
-- Create a topic branch from `main` (e.g., `feat/interactive-prompt`)
-- Keep changes focused — multiple unrelated fixes should be separate PRs
-- Ensure changes are free of lint warnings and test failures
-
-### Guidelines
-
-1. **Start with an issue** — agree on the solution before writing code
-2. **Add or update tests** — bug fixes should include test coverage
-3. **Document behavior** — update docs if user-facing behavior changes
-4. **Keep commits atomic** — each commit should compile and pass tests
+1. Fork [`hanzoai/dev`](https://github.com/hanzoai/dev) and create a topic branch from `main`.
+2. Initialize the engine submodule:
+   ```bash
+   git submodule update --init --depth 1
+   ```
+3. Keep changes focused and atomic — every commit should compile cleanly with zero warnings and pass the test suite.
 
 ### Running Checks
 
 ```bash
-just fmt
-just fix -p <crate>
-cargo test -p <crate>
-just test  # full suite
+make build          # build the dev binary (must pass with zero warnings)
+make test           # run the Hanzo test suite
+make test-upstream  # run the engine test suite
 ```
 
-### Model Metadata Updates
+### Architecture & Boundaries
 
-When updating model catalogs or metadata:
-- Set `input_modalities` explicitly for models that don't support images
-- Ensure client surfaces that accept images consume the same capability signal
-- Add/update tests covering unsupported-image behavior
+- `crates/hanzo-dev` is the binary entry point (`dev`).
+- `crates/hanzo-config` manages configuration, provider selection, and `~/.hanzo/dev`.
+- `crates/hanzo-tui` provides Hanzo account integration (`/login`, `/logout`, `/auth`, `/status`).
+- `crates/hanzo-kai` implements the Kai controller loop, ledger, and tools.
 
 ## Review Process
 
-1. One maintainer assigned as primary reviewer
-2. PRs introducing scope not previously discussed may be closed
-3. Changes may be requested — this is standard practice
-4. When consensus is reached, a maintainer will squash-and-merge
+1. Open a pull request against `main` stating what changed and why, linking the issue.
+2. Ensure CI passes across Linux, macOS, and Windows.
+3. A maintainer will review and merge once checks and design review pass.
 
 ## Community Values
 
-- **Be kind and inclusive** — follow the [Contributor Covenant](https://www.contributor-covenant.org/)
-- **Assume good intent** — err on the side of generosity
-- **Teach & learn** — open issues with suggestions or clarifications
+- Follow the [Code of Conduct](https://github.com/hanzoai/.github/blob/main/CODE_OF_CONDUCT.md).
+- Report security issues privately to [security@hanzo.ai](mailto:security@hanzo.ai).

@@ -1,0 +1,59 @@
+---
+title: Contributing
+description: How to contribute to Hanzo across open-source code, documentation, and HIPs — and join the community on Discord.
+icon: GitPullRequest
+index: true
+---
+
+Thank you for helping build Hanzo. Every repository in the [`hanzoai`](https://github.com/hanzoai) and [`hanzo-docs`](https://github.com/hanzo-docs) organizations welcomes bug reports, pull requests, documentation fixes, and architectural proposals.
+
+## Community & Discussions
+
+Join the Hanzo community on [Discord](https://discord.gg/XthHQQj). All contributor onboarding, engineering discussion, HIP drafts, and documentation feedback happen on Discord rather than GitHub Discussions so maintainers and contributors stay in one place:
+
+- **`#docs`** — broken links, missing pages, or confusing steps on [docs.hanzo.ai](https://docs.hanzo.ai)
+- **`#hips`** — architectural and protocol proposals for [hips.hanzo.ai](https://hips.hanzo.ai)
+- **`#general`** — engineering discussion, questions, and contributor onboarding
+
+## Ways to Contribute
+
+### 1. Code & Bug Fixes (`hanzoai/*`)
+
+- **Report a bug.** Open an issue in the relevant repository on [`github.com/hanzoai`](https://github.com/hanzoai) with reproduction steps, what you expected, and what happened.
+- **Fix a bug or build a feature.** Pick an open issue on [hanzo.ai/bounty](https://hanzo.ai/bounty) or across [`github.com/hanzoai`](https://github.com/hanzoai). For anything larger than a small fix, open an issue or ask on [Discord](https://discord.gg/XthHQQj) first so a maintainer can confirm the direction before you spend your time.
+- **Submit a pull request:**
+  1. Fork the repository and branch from `main`. Keep the change small and focused.
+  2. Run the repository's tests and linters before pushing — its `README.md` or `LLM.md` states the exact commands.
+  3. State what changed and why, and link the issue.
+
+### 2. Documentation (`docs.hanzo.ai`)
+
+Clear documentation is part of the product. If you spot a broken link, a missing page, or a confusing step:
+
+- Drop it in **`#docs`** on [Discord](https://discord.gg/XthHQQj), or
+- Open a pull request against [`hanzo-docs/docs`](https://github.com/hanzo-docs/docs).
+
+Before authoring or editing docs pages, read [Style](/docs/contributing/style) for house rules (`https://api.hanzo.ai/v1`, `sk-` and `pk-` keys, one canonical way per task) and [Docs Architecture](/docs/contributing/docs-architecture) for how `docs.hanzo.ai` is sourced and built.
+
+### 3. Standards & Proposals (`hips.hanzo.ai`)
+
+Hanzo Improvement Proposals (HIPs) specify Hanzo's architecture, protocols, and standards. Published proposals live at [hips.hanzo.ai](https://hips.hanzo.ai) from [`hanzoai/hips`](https://github.com/hanzoai/hips).
+
+1. Check [hips.hanzo.ai](https://hips.hanzo.ai) first — if a HIP already covers the subsystem, update that HIP rather than duplicating it.
+2. Copy `docs/templates/hip-template.md` in [`hanzoai/hips`](https://github.com/hanzoai/hips) to `HIPs/hip-<NNNN>-<slug>.md`.
+3. Run the index generator and linter locally:
+   ```bash
+   python3 scripts/index.py
+   python3 scripts/lint-hips.py
+   ```
+4. Open a pull request on [`hanzoai/hips`](https://github.com/hanzoai/hips) and share it on [Discord](https://discord.gg/XthHQQj).
+
+## Rewards
+
+Merged contributions earn points on Hanzo Rewards: what counts and what each earns is listed at [hanzo.ai/bounty](https://hanzo.ai/bounty), and standings are at [hanzo.ai/leaderboard](https://hanzo.ai/leaderboard). Maintainers decide what is awarded. Low-effort or automated submissions earn nothing and may be closed.
+
+## Security
+
+Never report a vulnerability in a public issue or on Discord. Email [security@hanzo.ai](mailto:security@hanzo.ai).
+
+## Docs Guides

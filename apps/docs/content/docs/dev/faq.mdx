@@ -5,9 +5,7 @@ description: Frequently asked questions about Hanzo Dev.
 
 ## Which models are supported?
 
-We recommend the built-in presets that wrap GPT-5.2 (e.g., `code-gpt-5.2-codex`). The default reasoning level is medium — upgrade to high for complex tasks with `/model`.
-
-You can also use other models via API-based auth with the `--model` flag.
+By default, Hanzo Dev uses `enso-auto` (the learned router that picks the optimal model for each turn) and supports the full Zen family (`zen5`, `zen5-pro`, `zen5-max`, `zen5-ultra`, `zen5-mini`) as well as all frontier models served on `https://api.hanzo.ai/v1`. Switch models anytime with `/model <name>` or `--model`, and toggle priority speed with `/fast`.
 
 ## How do I stop Hanzo Dev from editing my files?
 
@@ -21,7 +19,7 @@ Or change the approval level mid-conversation with `/approvals`.
 
 ## Does it work on Windows?
 
-Running directly on Windows may work but is not officially supported. We recommend [Windows Subsystem for Linux (WSL2)](https://learn.microsoft.com/en-us/windows/wsl/install).
+Yes — install globally with `npm i -g hanzo` and run `hanzo dev`, or use [Windows Subsystem for Linux (WSL2)](https://learn.microsoft.com/en-us/windows/wsl/install).
 
 ## Why can't Hanzo Dev find my agents on Windows?
 
@@ -51,7 +49,3 @@ $env:PATH -split ';' | Select-String "npm"
 ### Check file extensions
 
 On Windows, Hanzo Dev looks for executables with extensions: `.exe`, `.cmd`, `.bat`, `.com`. Include the correct extension when using absolute paths.
-
-## What is the relationship to OpenAI Codex?
-
-Hanzo Dev is a Rust-native agentic development CLI: multi-agent orchestration, MCP client and server, a sandboxed execution policy, and direct integration with Hanzo AI infrastructure. The name is unrelated to OpenAI's 2021 Codex model, which was deprecated in March 2023.

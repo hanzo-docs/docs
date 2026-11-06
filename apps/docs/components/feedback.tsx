@@ -56,30 +56,57 @@ export function Feedback() {
         </Text>
       ) : (
         <>
-          <XStack gap={8} items="center" flexWrap="wrap">
-            <Text fontSize="$3" fontWeight="500" color="$color12" mr={4}>
-              Was this page useful?
-            </Text>
-            {(['good', 'bad'] as const).map((v) => (
-              <Action
-                key={v}
-                tone={verdict === v ? 'loud' : 'line'}
-                render="button"
-                type="button"
-                aria-pressed={verdict === v}
-                onPress={() => setVerdict(v)}
-                rounded={999}
+          <XStack gap={12} items="center" justify="space-between" flexWrap="wrap">
+            <XStack gap={8} items="center" flexWrap="wrap">
+              <Text fontSize="$3" fontWeight="500" color="$color12" mr={4}>
+                Was this page useful?
+              </Text>
+              {(['good', 'bad'] as const).map((v) => (
+                <Action
+                  key={v}
+                  tone={verdict === v ? 'loud' : 'line'}
+                  render="button"
+                  type="button"
+                  aria-pressed={verdict === v}
+                  onPress={() => setVerdict(v)}
+                  rounded={999}
+                >
+                  {v === 'good' ? (
+                    <ThumbsUp size={14} color={verdict === v ? '$background' : '$color11'} />
+                  ) : (
+                    <ThumbsDown size={14} color={verdict === v ? '$background' : '$color11'} />
+                  )}
+                  <Text fontSize="$2" fontWeight="500" color={verdict === v ? '$background' : '$color11'}>
+                    {v === 'good' ? 'Yes' : 'No'}
+                  </Text>
+                </Action>
+              ))}
+            </XStack>
+            <Text fontSize="$2" whiteSpace="normal" {...muted}>
+              Broken link or missing step? Drop it in{' '}
+              <Text
+                render="a"
+                href="https://discord.gg/XthHQQj"
+                target="_blank"
+                rel="noopener noreferrer"
+                color="$color12"
+                textDecorationLine="underline"
               >
-                {v === 'good' ? (
-                  <ThumbsUp size={14} color={verdict === v ? '$background' : '$color11'} />
-                ) : (
-                  <ThumbsDown size={14} color={verdict === v ? '$background' : '$color11'} />
-                )}
-                <Text fontSize="$2" fontWeight="500" color={verdict === v ? '$background' : '$color11'}>
-                  {v === 'good' ? 'Yes' : 'No'}
-                </Text>
-              </Action>
-            ))}
+                #docs on Discord
+              </Text>{' '}
+              or{' '}
+              <Text
+                render="a"
+                href="https://github.com/hanzo-docs/docs"
+                target="_blank"
+                rel="noopener noreferrer"
+                color="$color12"
+                textDecorationLine="underline"
+              >
+                open a PR
+              </Text>
+              .
+            </Text>
           </XStack>
           {verdict && (
             <YStack gap={8}>

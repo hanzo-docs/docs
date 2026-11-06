@@ -252,7 +252,7 @@ export async function genFlowPages(): Promise<void> {
   // would delete them on every build.
   fs.mkdirSync(OUT_DIR, { recursive: true });
   for (const f of fs.readdirSync(OUT_DIR)) {
-    if (f.endsWith('.mdx') || f === 'meta.json') fs.rmSync(path.join(OUT_DIR, f));
+    if (f !== 'kai.mdx' && (f.endsWith('.mdx') || f === 'meta.json')) fs.rmSync(path.join(OUT_DIR, f));
   }
 
   let withCli = 0;
@@ -287,6 +287,7 @@ export async function genFlowPages(): Promise<void> {
         // and not an edit to this generator.
         pages: [
           ...flows.map((f) => f.id),
+          ...(fs.existsSync(path.join(OUT_DIR, 'kai.mdx')) ? ['kai'] : []),
           ...fs
             .readdirSync(OUT_DIR, { withFileTypes: true })
             .filter((e) => e.isDirectory())
