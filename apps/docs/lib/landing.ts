@@ -72,11 +72,27 @@ export const agentNote = {
   start: { label: 'Agents: start here', href: '/docs/agents' },
 };
 
+/** Coding agents and IDEs that work out of the box with Hanzo's gateway and MCP tools. */
+export const codingAgents = [
+  { id: 'hanzo-dev', name: 'Hanzo Dev', spec: 'dev' },
+  { id: 'claudecode', name: 'Claude Code', spec: 'claude' },
+  { id: 'codex', name: 'Codex', spec: 'codex' },
+  { id: 'google', name: 'Gemini CLI', spec: 'gemini' },
+  { id: 'cursor', name: 'Cursor', spec: 'IDE' },
+  { id: 'openclaw', name: 'OpenClaw', spec: 'openclaw' },
+  { id: 'antigravity', name: 'Antigravity', spec: 'agy' },
+  { id: 'zed', name: 'Zed', spec: 'IDE' },
+  { id: 'opencode', name: 'OpenCode', spec: 'opencode' },
+  { id: 'cline', name: 'Cline', spec: 'VS Code' },
+  { id: 'aider', name: 'Aider', spec: 'aider' },
+  { id: 'continue', name: 'Continue', spec: 'IDE' },
+] as const;
+
 /** The three doors, in descending order of how much you type. */
 export const doors = (models: string) => [
-  { eyebrow: 'No code', title: 'Build with App', body: 'Describe it in English and watch it build. Chat, agents and MCP tools in the browser.', href: 'https://hanzo.app' },
-  { eyebrow: 'In your terminal', title: 'Build with Dev', body: 'Our coding agent, in your repo. Or bring Claude Code and Codex — they work here too.', href: '/docs/cli' },
-  { eyebrow: 'Lower level', title: 'Build with API', body: `${models} models behind one REST endpoint, with SDKs for every language we ship.`, href: '/docs/openapi' },
+  { eyebrow: 'No code', title: 'Build with App', body: 'Describe it in English and watch it build. Chat, agents and MCP tools in the browser.', href: 'https://hanzo.app', brand: 'hanzo' },
+  { eyebrow: 'In your terminal', title: 'Build with Dev', body: 'Our coding agent, in your repo. Or bring Claude Code and Codex — they work here too.', href: '/docs/cli', brand: 'hanzo-dev' },
+  { eyebrow: 'Lower level', title: 'Build with API', body: `${models} models behind one REST endpoint, with SDKs for every language we ship.`, href: '/docs/openapi', brand: 'enso' },
 ];
 
 export const quickstart = {
@@ -136,13 +152,21 @@ export const providerSection = (models: string) => ({
 
 export const providers = [
   { name: 'Zen', spec: 'Open weights' },
-  { name: 'OpenAI', spec: 'GPT' },
   { name: 'Anthropic', spec: 'Claude' },
-  { name: 'Qwen', spec: 'Open' },
-  { name: 'Llama', spec: 'Open' },
-  { name: 'DeepSeek', spec: 'Open' },
-  { name: 'Mistral', spec: 'Open' },
-  { name: 'Gemma', spec: 'Open' },
+  { name: 'OpenAI', spec: 'GPT & o-series' },
+  { name: 'Google', spec: 'Gemini' },
+  { name: 'Llama', spec: 'Meta Open' },
+  { name: 'DeepSeek', spec: 'R1 & V3' },
+  { name: 'Qwen', spec: 'Qwen3 & Coder' },
+  { name: 'Mistral', spec: 'Mistral & Codestral' },
+  { name: 'xAI', spec: 'Grok' },
+  { name: 'Nvidia', spec: 'Nemotron' },
+  { name: 'Cohere', spec: 'Command & Embed' },
+  { name: 'GLM', spec: 'Z.ai Open' },
+  { name: 'MiniMax', spec: 'Text & Speech' },
+  { name: 'Kimi', spec: 'Moonshot' },
+  { name: 'Perplexity', spec: 'Sonar Search' },
+  { name: 'Gemma', spec: 'Google Open' },
 ];
 
 export const surfaces = [
@@ -158,7 +182,7 @@ export const surfaces = [
     icon: 'Workflow',
     title: 'Every tool, one MCP surface',
     body: 'Native connectors + the open MCP registry — Slack, GitHub, Notion, Stripe, and more — exposed as MCP tools any agent can call.',
-    chips: ['Slack', 'GitHub', 'Notion', 'Stripe', 'Google', 'Linear', '+700 more'],
+    chips: ['Slack', 'GitHub', 'GitLab', 'Google', 'Discord', 'X', '+700 more'],
     href: '/docs/mcp',
     cta: 'MCP tools',
   },

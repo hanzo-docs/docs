@@ -4,6 +4,8 @@ import { createContext, use, useEffect, useMemo, useState, type ReactNode } from
 import { usePathname } from 'next/navigation';
 import { XStack, YStack } from '@hanzo/gui';
 import { Bar } from '@/components/bar';
+import { Corner } from '@/components/corner';
+import { Footer } from '@/components/footer';
 import { Rail } from '@/components/rail';
 
 /**
@@ -49,10 +51,14 @@ export function Shell({ children }: { children: ReactNode }) {
     <Context value={value}>
       <XStack minH="100dvh" items="flex-start" bg="$background">
         <Rail />
-        <YStack flex={1} minW={0} self="stretch">
+        <YStack flex={1} minW={0} self="stretch" minH="100dvh">
           <Bar />
-          {children}
+          <YStack flex={1} minW={0}>
+            {children}
+          </YStack>
+          <Footer />
         </YStack>
+        <Corner />
       </XStack>
     </Context>
   );

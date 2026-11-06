@@ -36,6 +36,8 @@ export function Rail() {
         position="sticky"
         t={0}
         height="100dvh"
+        maxH="100dvh"
+        overflow="hidden"
         width={RAIL}
         shrink={0}
         borderRightWidth={1}
@@ -104,25 +106,17 @@ function Panel({ drawer = false, close }: { drawer?: boolean; close: React.React
         overflowY="auto"
         px={12}
         py={8}
+        style={{ overscrollBehavior: 'contain', scrollbarGutter: 'stable' }}
       >
         <Tree />
       </YStack>
 
-      <YStack shrink={0} px={12} pt={12} pb={12} gap={10} borderTopWidth={1} borderColor="$borderColor">
-        <Account />
-        <XStack items="center" justify="space-between">
-          <Text
-            render={<Link href="https://hanzo.ai/support" prefetch={false} />}
-            fontSize="$2"
-            {...muted}
-            px={4}
-            hoverStyle={{ color: '$color12' }}
-          >
-            Help
-          </Text>
-          <Theme />
-        </XStack>
-      </YStack>
+      <XStack shrink={0} px={12} py={10} gap={8} items="center" borderTopWidth={1} borderColor="$borderColor">
+        <YStack flex={1} minW={0}>
+          <Account />
+        </YStack>
+        <Theme />
+      </XStack>
     </YStack>
   );
 }

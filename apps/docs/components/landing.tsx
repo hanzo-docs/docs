@@ -12,8 +12,6 @@ import {
   Globe,
   LayoutGrid,
   Package,
-  Route,
-  Scale,
   Server,
   Shield,
   ShoppingCart,
@@ -24,6 +22,7 @@ import {
 import { Grid } from '@hanzo/ui/grid';
 import { Action } from '@/components/action';
 import { Agent } from '@/components/agent';
+import { BrandIcon } from '@/components/brand-icon';
 import { HeroField } from '@/components/hero-field';
 import { muted } from '@/lib/ink';
 import {
@@ -31,7 +30,7 @@ import {
   type Catalogue,
   catalogueCard,
   cli,
-  close,
+  codingAgents,
   counted,
   domains,
   doors,
@@ -50,8 +49,8 @@ import {
 /**
  * The front page, drawn on the theme like every other route: the headline, the
  * three model families and the catalogue, the two ways in (install the CLI, or
- * hand it to an agent), the three doors, the quick start, the nine domains, the
- * tools, the models, the CLI and Zen.
+ * hand it to an agent), coding agents, the three doors, the quick start, the
+ * nine domains, the tools, the models, the CLI and Zen.
  *
  * The quick start's code is highlighted on the server and handed in, so the
  * page ships tokens rather than a highlighter.
@@ -84,16 +83,23 @@ function Section({ title, lead, children }: { title: string; lead: string; child
   );
 }
 
-function Tile({ name, spec, mono = false }: { name: string; spec: string; mono?: boolean }) {
+function Tile({ name, spec, mono = false, icon }: { name: string; spec: string; mono?: boolean; icon?: string }) {
   return (
-    <YStack {...CARD} rounded={10} px={14} py={12} gap={3}>
-      <Text fontSize={12} fontWeight="600" fontFamily={mono ? '$mono' : '$body'} color="$color12">
-        {name}
-      </Text>
-      <Text fontSize={11} {...muted}>
-        {spec}
-      </Text>
-    </YStack>
+    <XStack {...CARD} rounded={12} px={14} py={12} gap={10} items="center">
+      {icon ? (
+        <XStack width={28} height={28} rounded={8} bg="$hover" items="center" justify="center" shrink={0}>
+          <BrandIcon name={icon} size={16} />
+        </XStack>
+      ) : null}
+      <YStack gap={2} minW={0} flex={1}>
+        <Text fontSize={12} fontWeight="600" fontFamily={mono ? '$mono' : '$body'} color="$color12" numberOfLines={1}>
+          {name}
+        </Text>
+        <Text fontSize={11} numberOfLines={1} {...muted}>
+          {spec}
+        </Text>
+      </YStack>
+    </XStack>
   );
 }
 
@@ -114,20 +120,19 @@ function Mono({ children }: { children: ReactNode }) {
  */
 const TRIO = 'repeat(auto-fit, minmax(min(100%, max(calc((100% - 32px) / 3), calc((692px - 100%) * 999))), 1fr))';
 
+const CATALOGUE_BADGES = ['Zen', 'Anthropic', 'OpenAI', 'Google', 'Llama', 'DeepSeek', 'Qwen', 'Mistral', 'xAI', 'Nvidia', 'Cohere', 'GLM'];
+
 /** Enso, Kai and Zen, then the whole catalogue as one wide door beneath them. */
 function Families({ catalogue }: { catalogue: Catalogue }) {
-  const icon = { Enso: Route, Kai: Scale, Zen: Sparkle } as const;
   const all = catalogueCard(catalogue);
   return (
     <YStack render="section" aria-label="Hanzo models" width="100%" gap={16}>
       <Grid columns={TRIO} gap={16}>
-        {families(catalogue).map(({ name, verb, body, docs, site }) => {
-          const Icon = icon[name as keyof typeof icon];
-          return (
-          <YStack key={name} render="article" {...CARD} p={24} gap={10} minW={0}>
+        {families(catalogue).map(({ name, verb, body, docs, site }) => (
+          <YStack key={name} render="article" {...CARD} p={24} gap={12} minW={0}>
             <XStack gap={10} items="center">
-              <XStack p={8} rounded={12} bg="$hover">
-                <Icon size={18} color="$color11" />
+              <XStack width={36} height={36} rounded={10} bg="$hover" borderWidth={1} borderColor="$borderColor" items="center" justify="center">
+                <BrandIcon name={name} size={20} />
               </XStack>
               <Text render="h2" fontSize={20} lineHeight={26} fontWeight="700" letterSpacing={-0.4} color="$color12">
                 {name} {verb}.
@@ -148,8 +153,7 @@ function Families({ catalogue }: { catalogue: Catalogue }) {
               </Text>
             </XStack>
           </YStack>
-          );
-        })}
+        ))}
       </Grid>
 
       <XStack
@@ -167,13 +171,31 @@ function Families({ catalogue }: { catalogue: Catalogue }) {
         <Text fontSize={64} lineHeight={64} fontWeight="700" letterSpacing={-2} color="$color12">
           {all.count}
         </Text>
-        <YStack flex={1} minW={240} gap={6}>
+        <YStack flex={1} minW={240} gap={8}>
           <Text fontSize={20} lineHeight={26} fontWeight="700" letterSpacing={-0.4} color="$color12">
             {all.title}
           </Text>
           <Text fontSize={14} lineHeight={22} whiteSpace="normal" {...muted}>
             {all.body}
           </Text>
+          <XStack gap={8} flexWrap="wrap" items="center" pt={4}>
+            {CATALOGUE_BADGES.map((maker) => (
+              <XStack
+                key={maker}
+                width={26}
+                height={26}
+                rounded={999}
+                bg="$panel"
+                borderWidth={1}
+                borderColor="$borderColor"
+                items="center"
+                justify="center"
+                title={maker}
+              >
+                <BrandIcon name={maker} size={14} />
+              </XStack>
+            ))}
+          </XStack>
         </YStack>
         <XStack gap={6} items="center">
           <Text fontSize={14} fontWeight="600" color="$color12">
@@ -189,9 +211,9 @@ function Families({ catalogue }: { catalogue: Catalogue }) {
 export function Landing({ install, use, catalogue }: { install: ReactNode; use: ReactNode; catalogue: Catalogue }) {
   const models = counted(catalogue.models);
   return (
-    <YStack render="main" minW={0} pb={48}>
+    <YStack render="main" minW={0} pb={64}>
       {/* The hero, centred over its halftone. */}
-      <YStack position="relative" items="center" px={24} pt={72} pb={80} $max-md={{ pt: 48, pb: 56 }}>
+      <YStack position="relative" items="center" px={24} pt={72} pb={72} $max-md={{ pt: 48, pb: 48 }}>
         <HeroField />
         <Text
           render="h1"
@@ -229,7 +251,7 @@ export function Landing({ install, use, catalogue }: { install: ReactNode; use: 
         </YStack>
 
         {/* The main call: install the CLI. */}
-        <YStack position="relative" mt={48} width="100%" maxW={512} gap={12} items="center">
+        <YStack position="relative" mt={44} width="100%" maxW={512} gap={12} items="center">
           <XStack {...CARD} width="100%" p={4}>
             <XStack flex={1} gap={12} items="center" px={20} py={16} rounded={12} bg="$background">
               <Text fontFamily="$mono" fontSize={14} select="none" {...muted}>
@@ -246,7 +268,7 @@ export function Landing({ install, use, catalogue }: { install: ReactNode; use: 
         </YStack>
 
         {/* The other way in: hand it to an agent. */}
-        <YStack position="relative" mt={24} gap={8} items="center">
+        <YStack position="relative" mt={24} gap={12} items="center" width="100%" maxW={896}>
           <Agent />
           <Text fontSize={12} text="center" whiteSpace="normal" {...muted}>
             {agentNote.before}{' '}
@@ -258,16 +280,43 @@ export function Landing({ install, use, catalogue }: { install: ReactNode; use: 
               {agentNote.start.label}
             </Text>
           </Text>
+
+          {/* Works with every coding agent & IDE */}
+          <XStack mt={8} flexWrap="wrap" gap={8} justify="center" maxW={840}>
+            {codingAgents.map((a) => (
+              <XStack
+                key={a.id}
+                render={<Link href="/docs/cli" prefetch={false} />}
+                gap={7}
+                px={12}
+                py={7}
+                rounded={999}
+                borderWidth={1}
+                borderColor="$borderColor"
+                bg="$panel"
+                items="center"
+                hoverStyle={{ bg: '$hover', borderColor: '$color8' }}
+              >
+                <BrandIcon name={a.id} size={14} />
+                <Text fontSize={12} fontWeight="500" color="$color12">
+                  {a.name}
+                </Text>
+              </XStack>
+            ))}
+          </XStack>
         </YStack>
 
         {/* The three doors, in descending order of how much you type. */}
-        <YStack position="relative" mt={48} width="100%" maxW={896}>
+        <YStack position="relative" mt={40} width="100%" maxW={896}>
           <Grid columns={{ min: 260, max: 3 }} gap={16}>
             {doors(models).map((d) => (
-              <YStack key={d.title} render={go(d.href)} {...CARD} p={24} gap={6} hoverStyle={{ bg: '$hover', borderColor: '$color8' }}>
-                <Text fontSize={12} fontWeight="500" {...muted}>
-                  {d.eyebrow}
-                </Text>
+              <YStack key={d.title} render={go(d.href)} {...CARD} p={24} gap={8} hoverStyle={{ bg: '$hover', borderColor: '$color8' }}>
+                <XStack justify="space-between" items="center">
+                  <Text fontSize={12} fontWeight="500" {...muted}>
+                    {d.eyebrow}
+                  </Text>
+                  <BrandIcon name={d.brand} size={16} />
+                </XStack>
                 <XStack gap={6} items="center">
                   <Text fontSize={18} fontWeight="600" color="$color12">
                     {d.title}
@@ -283,7 +332,7 @@ export function Landing({ install, use, catalogue }: { install: ReactNode; use: 
         </YStack>
       </YStack>
 
-      <YStack width="100%" maxW={1024} self="center" px={32} gap={96} $max-md={{ px: 20, gap: 72 }}>
+      <YStack width="100%" maxW={1024} self="center" px={32} gap={80} $max-md={{ px: 20, gap: 60 }}>
         <Section title={quickstart.title} lead={quickstart.lead}>
           <YStack gap={20}>
             {install}
@@ -294,33 +343,41 @@ export function Landing({ install, use, catalogue }: { install: ReactNode; use: 
           </YStack>
         </Section>
 
+        <Section title={providerSection(models).title} lead={providerSection(models).lead}>
+          <Grid columns={{ min: 180, max: 4 }} gap={12}>
+            {providers.map((p) => (
+              <Tile key={p.name} name={p.name} spec={p.spec} icon={p.name} />
+            ))}
+          </Grid>
+        </Section>
+
         <Section title={platform.title} lead={platform.lead}>
           <Grid columns={{ min: 220, max: 3 }} gap={12}>
             {domains.map(({ name, desc, icon, href, tag }) => {
               const Icon = ICONS[icon];
               return (
-              <YStack key={name} render={<Link href={href} prefetch={false} />} {...CARD} p={24} gap={8} minH={140} hoverStyle={{ bg: '$hover', borderColor: '$color8' }}>
-                <XStack justify="space-between" items="center" mb={4}>
-                  <XStack p={8} rounded={12} bg="$hover">
-                    <Icon size={18} color="$color11" />
+                <YStack key={name} render={<Link href={href} prefetch={false} />} {...CARD} p={24} gap={8} minH={140} hoverStyle={{ bg: '$hover', borderColor: '$color8' }}>
+                  <XStack justify="space-between" items="center" mb={4}>
+                    <XStack p={8} rounded={12} bg="$hover">
+                      <Icon size={18} color="$color11" />
+                    </XStack>
+                    <Text fontSize={11} fontWeight="500" {...muted}>
+                      {tag}
+                    </Text>
                   </XStack>
-                  <Text fontSize={11} fontWeight="500" {...muted}>
-                    {tag}
+                  <Text fontSize={14} fontWeight="600" color="$color12">
+                    {name}
                   </Text>
-                </XStack>
-                <Text fontSize={14} fontWeight="600" color="$color12">
-                  {name}
-                </Text>
-                <Text flex={1} fontSize={12} lineHeight={19} whiteSpace="normal" {...muted}>
-                  {desc}
-                </Text>
-                <XStack gap={4} items="center">
-                  <Text fontSize={11} fontWeight="500" {...muted}>
-                    View docs
+                  <Text flex={1} fontSize={12} lineHeight={19} whiteSpace="normal" {...muted}>
+                    {desc}
                   </Text>
-                  <ArrowRight size={12} color="$color10" />
-                </XStack>
-              </YStack>
+                  <XStack gap={4} items="center">
+                    <Text fontSize={11} fontWeight="500" {...muted}>
+                      View docs
+                    </Text>
+                    <ArrowRight size={12} color="$color10" />
+                  </XStack>
+                </YStack>
               );
             })}
           </Grid>
@@ -331,64 +388,59 @@ export function Landing({ install, use, catalogue }: { install: ReactNode; use: 
             {tools.map(({ name, desc, href, icon }) => {
               const Icon = ICONS[icon];
               return (
-              <YStack key={name} render={<Link href={href} prefetch={false} />} {...CARD} p={24} gap={4} hoverStyle={{ bg: '$hover', borderColor: '$color8' }}>
-                <XStack mb={10}>
-                  <Icon size={18} color="$color11" />
-                </XStack>
-                <Text fontSize={14} fontWeight="600" color="$color12">
-                  {name}
-                </Text>
-                <Text fontSize={12} whiteSpace="normal" {...muted}>
-                  {desc}
-                </Text>
-              </YStack>
+                <YStack key={name} render={<Link href={href} prefetch={false} />} {...CARD} p={24} gap={4} hoverStyle={{ bg: '$hover', borderColor: '$color8' }}>
+                  <XStack mb={10}>
+                    <Icon size={18} color="$color11" />
+                  </XStack>
+                  <Text fontSize={14} fontWeight="600" color="$color12">
+                    {name}
+                  </Text>
+                  <Text fontSize={12} whiteSpace="normal" {...muted}>
+                    {desc}
+                  </Text>
+                </YStack>
               );
             })}
           </Grid>
         </Section>
 
-        <Section title={providerSection(models).title} lead={providerSection(models).lead}>
-          <Grid columns={{ min: 120, max: 8 }} gap={12}>
-            {providers.map((p) => (
-              <Tile key={p.name} name={p.name} spec={p.spec} />
-            ))}
-          </Grid>
-        </Section>
-
-        <Grid columns={{ min: 470, max: 2 }} gap={16}>
+        <Grid columns={{ min: 440, max: 2 }} gap={16}>
           {surfaces.map(({ icon, title, body, chips, href, cta }) => {
             const Icon = ICONS[icon];
             return (
-            <YStack key={title} {...CARD} p={32} gap={10} items="flex-start" $max-md={{ p: 24 }}>
-              <XStack gap={12} items="center">
-                <Icon size={18} color="$color11" />
-                <Text fontSize={20} fontWeight="700" letterSpacing={-0.4} color="$color12">
-                  {title}
-                </Text>
-              </XStack>
-              <Text fontSize={13} mb={8} whiteSpace="normal" {...muted}>
-                {body}
-              </Text>
-              <XStack flexWrap="wrap" gap={8}>
-                {chips.map((c) => (
-                  <Text key={c} fontSize={12} px={12} py={6} rounded={999} borderWidth={1} borderColor="$borderColor" bg="$background" {...muted}>
-                    {c}
+              <YStack key={title} {...CARD} p={32} gap={10} items="flex-start" $max-md={{ p: 24 }}>
+                <XStack gap={12} items="center">
+                  <Icon size={18} color="$color11" />
+                  <Text fontSize={20} fontWeight="700" letterSpacing={-0.4} color="$color12">
+                    {title}
                   </Text>
-                ))}
-              </XStack>
-              <XStack render={<Link href={href} prefetch={false} />} mt={12} gap={4} items="center">
-                <Text fontSize={12} fontWeight="500" color="$color12">
-                  {cta}
+                </XStack>
+                <Text fontSize={13} mb={8} whiteSpace="normal" {...muted}>
+                  {body}
                 </Text>
-                <ArrowRight size={12} color="$color12" />
-              </XStack>
-            </YStack>
+                <XStack flexWrap="wrap" gap={8}>
+                  {chips.map((c) => (
+                    <XStack key={c} gap={6} px={12} py={6} rounded={999} borderWidth={1} borderColor="$borderColor" bg="$background" items="center">
+                      <BrandIcon name={c} size={13} />
+                      <Text fontSize={12} {...muted}>
+                        {c}
+                      </Text>
+                    </XStack>
+                  ))}
+                </XStack>
+                <XStack render={<Link href={href} prefetch={false} />} mt={12} gap={4} items="center">
+                  <Text fontSize={12} fontWeight="500" color="$color12">
+                    {cta}
+                  </Text>
+                  <ArrowRight size={12} color="$color12" />
+                </XStack>
+              </YStack>
             );
           })}
         </Grid>
 
         {/* What the CLI can do. */}
-        <YStack {...CARD} p={40} gap={24} $max-md={{ p: 24 }}>
+        <YStack {...CARD} p={36} gap={24} $max-md={{ p: 24 }}>
           <XStack gap={12} items="center">
             <XStack p={10} rounded={12} bg="$hover">
               <Terminal size={18} color="$color11" />
@@ -410,9 +462,11 @@ export function Landing({ install, use, catalogue }: { install: ReactNode; use: 
         </YStack>
 
         {/* Zen. */}
-        <YStack {...CARD} p={40} gap={24} $max-md={{ p: 24 }}>
+        <YStack {...CARD} p={36} gap={24} $max-md={{ p: 24 }}>
           <XStack gap={12} items="center">
-            <Sparkle size={18} color="$color11" />
+            <XStack width={36} height={36} rounded={10} bg="$hover" borderWidth={1} borderColor="$borderColor" items="center" justify="center">
+              <BrandIcon name="Zen" size={22} />
+            </XStack>
             <Text fontSize={24} fontWeight="700" letterSpacing={-0.5} color="$color12">
               {zen.title}
             </Text>
@@ -423,9 +477,9 @@ export function Landing({ install, use, catalogue }: { install: ReactNode; use: 
           <Text fontSize={14} lineHeight={22} maxW={672} whiteSpace="normal" {...muted}>
             {zen.body}
           </Text>
-          <Grid columns={{ min: 130, max: 6 }} gap={12}>
+          <Grid columns={{ min: 150, max: 5 }} gap={12}>
             {zen.models.map((m) => (
-              <Tile key={m.name} name={m.name} spec={m.spec} mono />
+              <Tile key={m.name} name={m.name} spec={m.spec} mono icon="Zen" />
             ))}
           </Grid>
           <XStack flexWrap="wrap" gap={12} items="center">
@@ -435,27 +489,6 @@ export function Landing({ install, use, catalogue }: { install: ReactNode; use: 
             <Text render="a" href={zen.weights.href} target="_blank" rel="noreferrer noopener" fontSize={12} {...muted} hoverStyle={{ color: '$color12' }}>
               {zen.weights.label}
             </Text>
-          </XStack>
-        </YStack>
-
-        {/* The close. */}
-        <YStack render="section" items="center" gap={12} py={48}>
-          <Text render="h2" fontSize={36} lineHeight={42} fontWeight="700" letterSpacing={-0.8} color="$color12" text="center">
-            {close.title}
-          </Text>
-          <Text fontSize={14} text="center" {...muted}>
-            {close.lead}
-          </Text>
-          <Text fontFamily="$mono" fontSize={14} mb={20} {...muted}>
-            {close.install}
-          </Text>
-          <XStack flexWrap="wrap" gap={12} justify="center">
-            <Action tone="loud" render="a" href={close.primary.href} height={44} px={28} rounded={999}>
-              {close.primary.label}
-            </Action>
-            <Action tone="line" render={<Link href={close.secondary.href} prefetch={false} />} height={44} px={28} rounded={999}>
-              {close.secondary.label}
-            </Action>
           </XStack>
         </YStack>
       </YStack>

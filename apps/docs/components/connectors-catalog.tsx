@@ -13,6 +13,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Text, XStack, YStack } from '@hanzo/gui';
 import { Plug, Boxes, ArrowUpRight } from '@hanzogui/lucide-icons-2';
+import { BrandIcon } from '@/components/brand-icon';
 import { Grid } from '@hanzo/ui/grid';
 import { Action } from '@/components/action';
 import { Field } from '@/components/field';
@@ -89,7 +90,7 @@ export function ConnectorsCatalog() {
             {nativeFiltered.map((c) => (
               <YStack key={c.id} gap={6} p={12} rounded="$4" borderWidth={1} borderColor="$borderColor" bg="$panel">
                 <XStack gap={8} items="center">
-                  <Plug size={14} color="$color12" />
+                  <BrandIcon name={c.id} size={16} />
                   <Text flex={1} fontSize={14} fontWeight="500" color="$color12">
                     {c.label}
                   </Text>

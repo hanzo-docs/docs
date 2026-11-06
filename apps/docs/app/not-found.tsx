@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { Shell } from '@/components/shell';
-import { Footer } from '@/components/footer';
 import { Missing } from '@/components/missing';
 
 // The export writes this page as 404.html, and the edge serves it for any path
@@ -26,11 +25,8 @@ const suggestions = [
 
 export default function Page() {
   return (
-    <>
-      <Shell>
-        <Missing suggestions={suggestions} />
-      </Shell>
-      <Footer />
-    </>
+    <Shell>
+      <Missing suggestions={suggestions} />
+    </Shell>
   );
 }

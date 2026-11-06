@@ -10,7 +10,7 @@ import { Field } from '@/components/field';
 import { Copy, Check, Cpu, Sparkle, Zap, Box } from '@hanzogui/lucide-icons-2';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@/components/mdx/prose';
 import { muted } from '@/lib/ink';
-import { PROVIDER_ICONS, providerKey } from '@/components/provider-icons';
+import { PROVIDER_COLORS, PROVIDER_ICONS, providerKey } from '@/components/provider-icons';
 
 const ENDPOINT = 'https://api.hanzo.ai/v1/models';
 
@@ -71,7 +71,9 @@ function initials(name: string): string {
   return name.replace(/[^\p{L}\p{N}]/gu, '').slice(0, 2).toUpperCase() || '?';
 }
 function ProviderChip({ name }: { name: string }) {
-  const svg = PROVIDER_ICONS[providerKey(name)];
+  const key = providerKey(name);
+  const svg = PROVIDER_ICONS[key];
+  const color = PROVIDER_COLORS[key];
   if (svg)
     return (
       <XStack
@@ -79,7 +81,7 @@ function ProviderChip({ name }: { name: string }) {
         width={18}
         height={18}
         shrink={0}
-        color="$color12"
+        color={color && color !== 'currentColor' ? (color as never) : '$color12'}
         dangerouslySetInnerHTML={{ __html: svg.replace('<svg', '<svg width="100%" height="100%"') }}
       />
     );
