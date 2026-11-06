@@ -1,0 +1,102 @@
+---
+title: Badges
+description: Collectibles you unlock automatically as you use Hanzo. A record of what you did, with no points of their own.
+icon: Medal
+---
+
+A badge is a collectible that records something you did: a first task, ten models, a merged
+pull request, a usage milestone. You unlock it automatically when your awards meet its rule. You
+need no wallet and you claim nothing to have it.
+
+## What a badge is
+
+- A badge **grants no points of its own.** Points come only from the event that unlocks it, if
+  that event earns any ([Hanzo Rewards](/docs/contributing/earn)). Claiming a badge on a chain
+  grants none either.
+- A badge is a record of achievement. It is not an investment and not a token reward.
+- Each badge is locked, unlocked, or claimed.
+- Higher usage milestones get more elaborate art. They do not get more money.
+
+## Shelves and rarity
+
+Badges sit on five shelves:
+
+| Shelf | What it records |
+|---|---|
+| `explorer` | The models and modalities you tried. |
+| `technology` | The Hanzo tools you used: Zen, Kai, Enso, Kata, the CLI, MCP, sandboxes, deploys, integrations and templates. |
+| `usage` | The token milestones your usage passed. |
+| `community` | Beta and Alpha, referrals that stuck, merged work, bounties, security. |
+| `mastery` | Steady building, open source standing, and levels. |
+
+Each badge has a rarity: `common`, `uncommon`, `rare`, `epic` or `legendary`.
+
+The rules table lists every badge with its shelf, rarity and the rule that unlocks it:
+
+```bash
+curl -s https://api.hanzo.ai/v1/rewards/rules \
+  | jq -r '.badges[] | [.group, .rarity, .id, .rule] | @tsv'
+```
+
+One shelf, or one rarity:
+
+```bash
+curl -s https://api.hanzo.ai/v1/rewards/rules \
+  | jq -r '.badges[] | select(.group == "usage") | [.rarity, .name] | @tsv'
+
+curl -s https://api.hanzo.ai/v1/rewards/rules \
+  | jq -r '.badges[] | select(.rarity == "legendary") | .name'
+```
+
+A badge with `live: false` is on the shelf but cannot unlock yet: the event that unlocks it is
+not measured and verified. A badge turns live the day its event does.
+
+## Your badges
+
+`GET /v1/rewards/me` lists every badge, with `earned` and, once earned, `at`.
+
+```bash
+curl -s https://api.hanzo.ai/v1/rewards/me -H "Authorization: Bearer $HANZO_API_KEY" \
+  | jq '.badges[] | select(.earned)'
+```
+
+Missions are guides toward a badge, such as trying models across modalities or deploying an
+application. A mission awards nothing of its own, and finishing one duplicates no points already granted for
+its steps:
+
+```bash
+curl -s https://api.hanzo.ai/v1/rewards/rules | jq '.missions'
+```
+
+## Claim on the Hanzo network
+
+Claiming a badge on the Hanzo network (hanzo.network, Hanzo's own EVM chain, gas in the native
+AI coin) is coming and is off until the badge contract is live.
+
+When it opens you will connect a verified wallet and claim a badge you already unlocked. Each
+claim is one non-transferable token for one person and one badge: a locked ERC-721 under
+ERC-5192, so it cannot be sold or sent. Hanzo pays the gas in the native AI coin from a
+sponsored budget. The coin is separate from points. Points are never a coin.
+
+The rules say whether claiming is open:
+
+```bash
+curl -s https://api.hanzo.ai/v1/rewards/rules | jq '.chain'
+```
+
+While `minting` is `false`, nothing mints. Each badge's metadata and art are served either way.
+
+## Metadata and art
+
+Each badge has a public address for its metadata and one for its art. No key is needed.
+
+```bash
+curl -s https://api.hanzo.ai/v1/rewards/badges/first-spark
+curl -s https://api.hanzo.ai/v1/rewards/badges/first-spark/art
+```
+
+`GET /v1/rewards/badges/{id}` answers the badge's metadata. `GET /v1/rewards/badges/{id}/art`
+answers its image. Badge ids are the `id` values in the rules.
+
+The metadata describes the badge and nothing else. It holds no personal data: no name, no
+account, no address and no usage count. Two people with the same badge have the same metadata.

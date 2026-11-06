@@ -1,0 +1,98 @@
+---
+title: Redeem points
+description: Points from reviewed work become whole dollars of Hanzo AI service credit in your own account. No cash, no transfer.
+icon: Gift
+---
+
+Points from reviewed work redeem for Hanzo AI service credit. The credit lands in your own
+account, in whole dollars, and you spend it on Hanzo. It is not cash, it cannot be sent to anyone,
+and it has no cash value.
+
+## Which points redeem
+
+Only points from verified, reviewed work, earned under this program:
+
+- retained referrals
+- reviewed open source contributions
+- approved bounties
+- approved published integrations
+- security reports, after manual approval
+
+These do not redeem: exploration, token milestones, beta and Alpha, verified posts, and points
+carried over from the earlier beta board. They still count toward your level.
+
+The rules mark every kind that redeems with `credit: true`:
+
+```bash
+curl -s https://api.hanzo.ai/v1/rewards/rules | jq -r '.kinds[] | select(.credit) | [.id, .title] | @tsv'
+```
+
+Your **redeemable points** are those points less what you already redeemed. `GET /v1/rewards/me`
+returns them as `redeemable`. Redeeming spends redeemable points only. Your lifetime points,
+level and rank do not change.
+
+## The rate and the limits
+
+How many points make one dollar, how much one member can redeem in a calendar month, and how much
+the whole program can redeem in a month are in the rules. Money fields there are in cents.
+
+```bash
+curl -s https://api.hanzo.ai/v1/rewards/rules | jq '.redeem'
+```
+
+Months are calendar months in UTC. `GET /v1/rewards/me` also returns your own `allowance`: what
+your month allows, what you used, and what is left.
+
+## Redeem
+
+Ask for whole dollars:
+
+```bash
+curl -s https://api.hanzo.ai/v1/rewards/redeem \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"dollars": 1}'
+```
+
+`dollars` is a whole number from one up to your monthly limit. The request reserves the points and
+the budget in one step, so two requests at once cannot spend the same points or pass a limit.
+Then the credit is granted to your account. The answer:
+
+| Field | Meaning |
+|---|---|
+| `id` | The redemption. |
+| `points`, `cents` | What was spent, and what it bought. |
+| `status` | `granted`, or `reserved` while the credit is finishing. |
+| `at` | When you asked. |
+| `redeemable` | Your redeemable points after this one. |
+| `allowance` | Your month: `monthCents`, `usedCents`, `leftCents`, and `open`. |
+
+If `status` is `reserved`, the credit is on its way and is granted once. Do not ask again. If the
+credit cannot be granted, your points are returned and the request answers 502.
+
+Your redemptions, newest first:
+
+```bash
+curl -s https://api.hanzo.ai/v1/rewards/redemptions -H "Authorization: Bearer $HANZO_API_KEY"
+```
+
+## When a request is refused
+
+| Status | Why |
+|---|---|
+| 400 | `dollars` is not a whole number in range, or your account has no username to credit. |
+| 401 | You are not signed in. |
+| 403 | Staff do not redeem. |
+| 409 | You asked for more than your redeemable points. Or more than your month allows. Or redeeming is not open. Or the program's budget for the month is spent. |
+| 502 | The credit could not be granted. Your points were returned. |
+
+## When the month's budget is spent
+
+The program has a fixed redemption budget each calendar month, so total redemptions cannot run past it. When
+it is spent, a redemption answers 409 and says so. Your points are untouched, and `allowance.open`
+is false. The budget opens again next month.
+
+## What it is not
+
+No cash. No payout. No transfer to another account or person. Credit has no cash value, and
+nothing redeems into a token. See [Credits & billing](/docs/credits) for how credit is spent.

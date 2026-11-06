@@ -130,6 +130,30 @@ const RELAYS = [
  */
 const STAGED = ['/v1/research/runs'];
 
+/**
+ * The Hanzo Rewards surface, served by cloud's `rewards` app, which the pinned
+ * document does not carry yet. Exact addresses, one segment per placeholder: a
+ * page writes `/v1/rewards/badges/first-spark` where the entry has `{id}`. Every
+ * entry is dead the day the pin carries the capability, and goes then.
+ */
+const REWARDS = [
+  '/v1/rewards',
+  '/v1/rewards/me',
+  '/v1/rewards/rules',
+  '/v1/rewards/optin',
+  '/v1/rewards/redeem',
+  '/v1/rewards/redemptions',
+  '/v1/rewards/posts',
+  '/v1/rewards/badges/{id}',
+  '/v1/rewards/badges/{id}/art',
+];
+
+/** Does the mention name this address exactly, a placeholder standing for one segment? */
+const same = (mention: string[], address: string): boolean => {
+  const b = segments(address);
+  return mention.length === b.length && mention.every((s, i) => s === b[i] || s === ANY || b[i] === ANY);
+};
+
 export function checkEndpoints(): { checked: number; unknown: Array<[string, string]> } {
   const doc = loadDocument(DOCUMENT);
   // Only `/v1` routes, because only those are what a page's `/v1/...` can mean.
@@ -155,6 +179,7 @@ export function checkEndpoints(): { checked: number; unknown: Array<[string, str
       if (paths.some((p) => names(mention, p))) continue;
       if (RELAYS.some((prefix) => raw.startsWith(prefix))) continue;
       if (STAGED.includes(raw.replace(/\/$/, ''))) continue;
+      if (REWARDS.some((a) => same(mention, a))) continue;
       unknown.push([rel, raw]);
     }
   }

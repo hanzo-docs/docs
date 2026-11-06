@@ -1,0 +1,111 @@
+---
+title: Share a post
+description: Paste the URL of your public post. Hanzo reads it, waits, reads it again, and awards points once if it is still up with your link.
+icon: Share2
+---
+
+A post earns [Hanzo Rewards](/docs/contributing/earn) points only when it is proven and has stayed
+up. You paste its URL. Hanzo reads the post itself, holds it as Pending, reads it again after the
+waiting window, and awards the points once if the post is still up and still has your link.
+
+## Share and earn
+
+1. Copy your own link from [hanzo.ai/referral](https://hanzo.ai/referral).
+2. Post it, on your own public account, with the disclosure below.
+3. Paste the post's URL into **Share and earn** on [hanzo.ai/referral](https://hanzo.ai/referral)
+   or [hanzo.ai/leaderboard](https://hanzo.ai/leaderboard).
+
+Your posts list shows each one as Pending (with the days left), Confirmed or Removed. A post
+that waits on a maintainer shows as Pending review. The points still waiting show next to your
+total as a pending amount.
+
+## What Hanzo checks
+
+- **Hanzo reads the post, not your browser.** The address is fetched on the server, from the
+  network's own public endpoint.
+- **The post is public** and carries your own link. Redirects and short links are followed, and
+  the match is on your code.
+- **It is your post.** Your own code in the link is the proof. A post whose author Hanzo cannot
+  tell, or whose author another member already holds, goes to review instead of earning.
+- **After the waiting window** Hanzo reads it again. Still up, with your link: it earns once.
+  Deleted, edited, or made private: it is marked Removed and earns nothing.
+- **Private or locked accounts earn nothing,** because Hanzo cannot read them.
+- **One post, one award.** The same post is claimed once. The same words on a second network do
+  not stack.
+- **There is a limit** on posts that count per person in a rolling window, and a cap on share
+  points. Self-referral blocks apply, and staff and bots earn nothing.
+
+A pending post is a claim, not points. It cannot rank and cannot be redeemed. Points from posts
+are reputation and do not redeem.
+
+The window, the limit and what a post is worth are in the rules:
+
+```bash
+curl -s https://api.hanzo.ai/v1/rewards/rules | jq '.share'
+curl -s https://api.hanzo.ai/v1/rewards/rules | jq '.kinds[] | select(.id == "share_verified")'
+curl -s https://api.hanzo.ai/v1/rewards/rules | jq '.caps[] | select(.source == "share")'
+```
+
+## Networks
+
+Hanzo reads these on its own, with no sign-in on your side:
+
+- X
+- Bluesky
+- Reddit
+- Hacker News
+- Mastodon
+
+These wait for review. A maintainer confirms them by hand after the window, because Hanzo cannot
+read them without your sign-in on that network:
+
+- LinkedIn
+- Facebook
+
+The list is `share.networks` in the rules, with a `verified` flag on each.
+
+## Say you are rewarded
+
+If you post about Hanzo and earn points for it, say so in the post:
+
+> I earn Hanzo Rewards points.
+
+This is an endorsement for a reward, and it must be disclosed (FTC Endorsement Guides). The
+exact line is in the rules:
+
+```bash
+curl -s https://api.hanzo.ai/v1/rewards/rules | jq -r '.disclosure'
+```
+
+## API
+
+Paste a post:
+
+```bash
+curl -s https://api.hanzo.ai/v1/rewards/posts \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://bsky.app/profile/you.example/post/3kabc"}'
+```
+
+List your posts and what the waiting ones are worth:
+
+```bash
+curl -s https://api.hanzo.ai/v1/rewards/posts -H "Authorization: Bearer $HANZO_API_KEY"
+```
+
+The answer is `posts`, newest first, and `pending`, the points still waiting. It is not in your
+points. Each post carries:
+
+| Field | Meaning |
+|---|---|
+| `id` | The claim. |
+| `network` | `x`, `bluesky`, `reddit`, `hackernews`, `mastodon`, `linkedin` or `facebook`. |
+| `url` | The post's address. |
+| `status` | `pending`, `confirmed`, `removed`, or `review` (waiting on a maintainer). |
+| `points` | What it earned, or will earn if it counts. 0 when removed. |
+| `at` | When you pasted it. |
+| `countsAt`, `daysLeft` | When it counts, and the whole days until then. |
+| `note` | Why a post earned less or nothing, or what it waits on. |
+
+A URL on a host Hanzo does not read is refused. Hanzo fetches only each network's own address.
