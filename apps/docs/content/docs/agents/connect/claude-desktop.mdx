@@ -1,0 +1,33 @@
+---
+title: "Claude Desktop"
+description: "Add the Hanzo MCP server to Claude Desktop."
+---
+
+## MCP server (toolset)
+
+Add the Hanzo MCP server to Claude Desktop via `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "hanzo": {
+      "command": "/Users/you/.local/bin/hanzo-mcp"
+    }
+  }
+}
+```
+
+Write the full path. An app started from the Dock, the Start menu or a launcher does not read your shell's PATH. `which hanzo-mcp` prints it; on Windows, `where hanzo-mcp`.
+
+Open Settings → Developer → Edit Config to find the file.
+
+With no key set, `hanzo-mcp` (1.1.33 and later) uses your `hanzo login` sign-in automatically.
+
+## Model on Hanzo
+
+Claude Desktop runs Anthropic's models only. Add the toolset above and use the MCP tools from within your Anthropic plan.
+
+## See also
+
+- [MCP server reference](/docs/mcp)
+- [Desktop apps and editors](/docs/guides/coding/desktop)

@@ -1,0 +1,78 @@
+---
+title: "Any agent"
+description: "Connect any agent to Hanzo via OpenAI-compatible API and llms.txt."
+---
+
+Any agent that speaks OpenAI-compatible API or reads `llms.txt` can use Hanzo.
+
+## Model on Hanzo (OpenAI-compatible)
+
+- **Base URL:** `https://api.hanzo.ai/v1`
+- **API Key:** Your secret key (`sk-...`) from [console.hanzo.ai/api-keys](https://console.hanzo.ai/api-keys)
+- **Model:** `enso-auto` (or any from `GET https://api.hanzo.ai/v1/models`)
+
+**Headers:**
+```
+Authorization: Bearer $HANZO_API_KEY
+Content-Type: application/json
+```
+
+**Example call:**
+```bash
+curl https://api.hanzo.ai/v1/chat/completions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"enso-auto","messages":[{"role":"user","content":"Hello"}]}'
+```
+
+## Agent setup from llms.txt
+
+Read [https://hanzo.ai/llms.txt](https://hanzo.ai/llms.txt) and follow it. The file lists:
+
+- Every tool with exact JSON schemas
+- Every model with capabilities and pricing
+- Every API endpoint with request/response formats
+- Authentication and error handling
+
+API calls are written as `METHOD /v1/...` in code, never as bare URLs, because a crawler that follows a POST-only URL gets a 405.
+
+## MCP server (optional)
+
+If your agent supports MCP, add the Hanzo MCP server:
+
+```json
+{
+  "mcpServers": {
+    "hanzo": {
+      "command": "npx",
+      "args": ["-y", "--package=@hanzo/mcp@latest", "hanzo-mcp", "serve"]
+    }
+  }
+}
+```
+
+With no key set, `hanzo-mcp` (1.1.33 and later) uses your `hanzo login` sign-in automatically.
+
+## What you get
+
+- **Every model** — Enso (flash/pro/ultra), Zen (open-weights), and any model `GET /v1/models` returns
+- **Kai decisions** — `kai_decide` tool for complex routing and planning
+- **Search & retrieval** — Web, docs, workspace, and your connected data
+- **Spend control** — Per-key budgets, per-session caps, rate limits, 402/429 with `resets_at` and `topup_url`
+- **No human required** — Wallet sign-in, API top-up in USDC/USDT, all scriptable
+
+## Get an API key
+
+[Sign up free](https://hanzo.ai/signup) with a wallet — no card, no human — and mint a key at [console.hanzo.ai/api-keys](https://console.hanzo.ai/api-keys) or run:
+
+```bash
+curl -fsSL hanzo.sh | sh
+hanzo login
+hanzo account keys create --name my-agent --type secret
+```
+
+## See also
+
+- [MCP server reference](/docs/mcp)
+- [llms.txt](https://hanzo.ai/llms.txt)
+- [API reference](/docs/openapi)

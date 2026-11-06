@@ -1,0 +1,53 @@
+---
+title: "Codex"
+description: "Add the Hanzo MCP server to Codex and run its models on Hanzo."
+---
+
+## MCP server (toolset)
+
+Add the Hanzo MCP server to Codex via `~/.codex/config.toml`:
+
+```toml
+[mcp_servers.hanzo]
+command = "/Users/you/.local/bin/hanzo-mcp"
+```
+
+Write the full path. An app started from the Dock, the Start menu or a launcher does not read your shell's PATH. `which hanzo-mcp` prints it; on Windows, `where hanzo-mcp`.
+
+With no key set, `hanzo-mcp` (1.1.33 and later) uses your `hanzo login` sign-in automatically.
+
+## Model on Hanzo (OpenAI-compatible)
+
+Point Codex at Hanzo's models via `~/.codex/config.toml`:
+
+```toml
+model_provider = "hanzo"
+model = "enso-auto"
+
+[model_providers.hanzo]
+name = "Hanzo"
+base_url = "https://api.hanzo.ai/v1"
+wire_api = "responses"
+
+[model_providers.hanzo.auth]
+command = "/Users/you/.local/bin/hanzo"
+args = ["auth", "token"]
+refresh_interval_ms = 600000
+```
+
+The helper prints your sign-in's current token, so no key is written into the file.
+
+## Run it
+
+```bash
+hanzo --codex          # on your ChatGPT plan with the toolset
+hanzo --codex --cloud  # fully on Hanzo models
+```
+
+Give it a task headless: `hanzo --codex "port this module to the new store"`.
+
+## See also
+
+- [MCP server reference](/docs/mcp)
+- [Desktop apps and editors](/docs/guides/coding/desktop)
+- [Codex wrapper](/docs/guides/coding/codex)

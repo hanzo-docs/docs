@@ -1,0 +1,74 @@
+---
+title: "Connect your agent"
+description: "Hanzo is not just for coding agents — it gives superpowers to any bot. Wire the Hanzo MCP server or point your model at api.hanzo.ai."
+icon: Cpu
+---
+
+Hanzo is not just for coding agents. It gives superpowers to any bot — coding assistants, research agents, workflow bots, Discord bots, Slack apps, custom agents you build yourself.
+
+Two ways in:
+
+1. **The toolset (MCP).** Add the `hanzo-mcp` server and your agent gets 13 unified tools (`fs`, `exec`, `code`, `git`, `fetch`, `workspace`, `ui`, `think`, `memory`, `hanzo`, `plan`, `tasks`, `mode`) plus every connector you've linked (GitHub, Slack, Google, Discord, X, and more) and your cloud services (IAM, Commerce, Storage, AI API). One connection, the whole surface.
+
+2. **The model (OpenAI-compatible).** Point any OpenAI- or Anthropic-compatible client at `https://api.hanzo.ai/v1` with an `Authorization: Bearer $HANZO_API_KEY` header. Your model calls run on your Hanzo plan with proprietary model compression, personalization and fine-tuning.
+
+Both work together or apart. A coding agent on your own plan can hand work to Enso and Kai through the tools. A research bot on Hanzo's models can still call the `hanzo` tool to reach your cloud.
+
+## Quick start by agent
+
+| Agent | MCP setup | Model on Hanzo |
+|-------|-----------|----------------|
+| [Claude Code](/docs/agents/connect/claude-code) | `claude mcp add hanzo --env HANZO_API_KEY=$HANZO_API_KEY -- npx -y --package=@hanzo/mcp@latest hanzo-mcp serve` | `ANTHROPIC_BASE_URL=https://api.hanzo.ai` + `ANTHROPIC_AUTH_TOKEN` |
+| [Codex](/docs/agents/connect/codex) | `[mcp_servers.hanzo]` in `~/.codex/config.toml` | `model_provider = "hanzo"` in `~/.codex/config.toml` |
+| [Cursor](/docs/agents/connect/cursor) | `mcpServers` in `~/.cursor/mcp.json` | Settings → Models: OpenAI-compatible, base `https://api.hanzo.ai/v1` |
+| [Zed](/docs/agents/connect/zed) | `context_servers` in `settings.json` | `language_models.openai_compatible` in `settings.json` |
+| [Claude Desktop](/docs/agents/connect/claude-desktop) | `mcpServers` in `claude_desktop_config.json` | Not supported (Anthropic models only) |
+| [Gemini CLI](/docs/agents/connect/gemini-cli) | `mcpServers` in `~/.gemini/settings.json` | Not supported (Google models only) |
+| [Grok Bot](/docs/agents/connect/grok-bot) | `grok mcp add` | Read `llms.txt` + OpenAI-compatible at `https://api.hanzo.ai/v1` |
+| [Dots](/docs/agents/connect/dots) | Read `llms.txt` + OpenAI-compatible | Same |
+| [Any agent](/docs/agents/connect/any-agent) | Read `llms.txt` + OpenAI-compatible | Same |
+
+## Get an API key
+
+Every path needs a key. [Sign up free](https://hanzo.ai/signup) with a wallet — no card, no human — and mint a key at [console.hanzo.ai/api-keys](https://console.hanzo.ai/api-keys) or run:
+
+```bash
+curl -fsSL hanzo.sh | sh
+hanzo login
+hanzo account keys create --name my-agent --type secret
+```
+
+Set it as `HANZO_API_KEY` in your environment, or use the auth helpers each agent provides (they print the current token so no key is written to disk).
+
+## The MCP server
+
+The `hanzo-mcp` binary is the same everywhere. Install once:
+
+```bash
+# macOS / Linux
+curl -fsSL hanzo.sh | sh
+# Windows
+npm install -g @hanzo/cli && hanzo upgrade
+```
+
+Then point your agent at the full path (`which hanzo-mcp` or `where hanzo-mcp`). The server uses your sign-in automatically, or pass `HANZO_API_KEY` explicitly.
+
+## The model endpoint
+
+- **Base URL:** `https://api.hanzo.ai/v1` (OpenAI-compatible)
+- **Anthropic base:** `https://api.hanzo.ai`
+- **Auth:** `Authorization: Bearer $HANZO_API_KEY`
+- **Default model:** `enso-auto` (picks per request within your plan)
+- **Model list:** `GET https://api.hanzo.ai/v1/models`
+
+## What you get
+
+- **Every model** — Enso (flash/pro/ultra), Zen (open-weights), and any model `GET /v1/models` returns
+- **Kai decisions** — `kai_decide` tool for complex routing and planning
+- **Search & retrieval** — Web, docs, workspace, and your connected data
+- **Spend control** — Per-key budgets, per-session caps, rate limits, 402/429 with `resets_at` and `topup_url`
+- **No human required** — Wallet sign-in, API top-up in USDC/USDT, all scriptable
+
+## Next steps
+
+Pick your agent from the sidebar and follow the exact config. Each page copies the verified format from the MCP docs so you can paste and go.

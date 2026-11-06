@@ -1,0 +1,17 @@
+{
+  "title": "Connect your agent",
+  "description": "Hanzo is not just for coding agents — it gives superpowers to any bot. Wire the Hanzo MCP server or point your model at api.hanzo.ai.",
+  "icon": "Cpu",
+  "pages": [
+    "index",
+    "claude-code",
+    "codex",
+    "cursor",
+    "zed",
+    "claude-desktop",
+    "gemini-cli",
+    "grok-bot",
+    "dots",
+    "any-agent"
+  ]
+}
