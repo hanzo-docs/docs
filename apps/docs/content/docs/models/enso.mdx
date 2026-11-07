@@ -19,7 +19,7 @@ behind [`model: "auto"`](#the-auto-router).
 
 | Send | For |
 |---|---|
-| `enso-auto` | any job, when you would rather not choose; the default. It [picks the tier](#how-enso-auto-picks-a-tier) |
+| `enso-auto` | any job, when you would rather not choose; the default. It [picks the tier](#reasoning-effort) |
 | `enso-flash` | volume: reads, searches, small edits, extraction, an agent's routine turns |
 | `enso-pro` | everyday coding and analysis |
 | `enso-max` | turns that need more than Pro, at less than Ultra's price |
@@ -108,15 +108,17 @@ against another.
 
 | Tier | Thinks | Window | Chain, in order |
 |---|---|---|---|
-| `enso-flash` | low | 900,000 | GPT-6 Luna → GPT-6 Luna Pro |
-| `enso-pro` | medium | 1,000,000 | GPT-6.1 Sol at medium effort, for prompts up to 272,000 tokens → Gemini 4 Argon → Claude Sonnet 5.5 |
-| `enso-ultra` | max | 1,000,000 | Claude Sonnet 5.5 at max effort → Claude Opus 5.5 → Gemini 4 Argon |
+| `enso-flash` | low | 900,000 | GPT-6 Luna → Claude Haiku 5.5 → DeepSeek V4.1 Flash → GPT-6 Luna Pro |
+| `enso-pro` | medium | 1,000,000 | GPT-6.1 Sol, for prompts up to 272,000 tokens → Claude Sonnet 5.5 → Gemini 4 Argon |
+| `enso-max` | high | 1,000,000 | Claude Opus 5.5 → Claude Sonnet 5.5 → Claude Sonnet 5 → Gemini 4 Argon |
+| `enso-ultra` | max | 1,000,000 | Claude Sonnet 5.5 → Claude Opus 5.5 → Claude Sonnet 5 → Gemini 4 Argon |
 
 **Thinks** is the reasoning depth a tier uses when the request names none; a
-request that names one is served at it, or at the nearest the model takes.
-**Window** is the longest prompt the tier's chain holds, in tokens.
+request that names one is served at it, or at the nearest the model takes
+([Reasoning effort](#reasoning-effort)). **Window** is the longest prompt the
+tier's chain holds, in tokens.
 
-A prompt over 272,000 tokens on `enso-pro` starts at Gemini 4 Argon. The
+A prompt over 272,000 tokens on `enso-pro` starts at Claude Sonnet 5.5. The
 `X-Hanzo-Served` response header names the Enso id that answered: the tier you
 sent, or the one `enso-auto` chose. If every rung fails, the fallback pool
 answers.
@@ -143,19 +145,33 @@ Hanzo did not measure them.
 | GPT-6 Luna | max | 41.1 |
 
 `enso-ultra` leads with the top score and keeps the next two behind it.
-`enso-pro` leads with GPT-6.1 Sol at medium effort, 2.4 points under Gemini 4
-Argon at the same price a token. `enso-flash` leads with GPT-6 Luna, for turns
-that do not need the frontier; Luna Pro stands behind it, because it billed 3.2
-times the prompt tokens for the same request. Hanzo's own runs are published at
+`enso-max` leads with Claude Opus 5.5, which sets its price. `enso-pro` leads
+with GPT-6.1 Sol at medium effort, 2.4 points under Gemini 4 Argon at the same
+price a token. `enso-flash` leads with GPT-6 Luna, for turns that do not need
+the frontier; Luna Pro stands last, because it billed 3.2 times the prompt
+tokens for the same request. Hanzo's own runs are published at
 [hanzo.ai/benchmarks](https://hanzo.ai/benchmarks).
 
-## How `enso-auto` picks a tier
+## Reasoning effort
 
-`enso-auto` is the default for every caller, the Free plan included. It thinks
-at medium depth or lower, and moves a request to a deeper tier only when the
-router decides the request needs it. The answer carries a `routing` object
-naming the tier it chose and why, and the `X-Routed-Model` response header
-names the same tier. The call bills that tier's price.
+Every Enso model takes a reasoning effort: `reasoning_effort` on
+`/v1/chat/completions`, `reasoning.effort` on `/v1/responses`. On `enso-auto`
+it picks the tier; on a named tier it sets only how hard that tier thinks.
+
+| Effort | `enso-auto` serves | A named tier (`enso-pro` …) thinks |
+|---|---|---|
+| omitted, or `auto` | the tier the router picks: it starts at low or medium and escalates only when the router or Kai judges the request needs more | at its own depth (**Thinks**, above) |
+| `instant`, or `minimal`, `none` | `enso-flash`, no reasoning | not at all: thinking off |
+| `low` | `enso-flash`, light reasoning | low |
+| `medium` | `enso-pro` | medium |
+| `high` | `enso-max` | high |
+| `max`, or `xhigh` | `enso-ultra` | max |
+
+`none` means `instant`, so a client that wants the router sends no effort, or
+`auto`. [Fast mode](#fast-mode) is a separate switch. `enso-auto` is the default
+for every caller, the Free plan included. Its answer carries a `routing` object
+naming the tier it chose and why, the `X-Routed-Model` response header names
+the same tier, and the call bills that tier's price.
 
 ## Caching
 
@@ -188,14 +204,17 @@ same turn costs \$0.363: 4.6 times as much.
 ## Claude Code
 
 `hanzo --claude --cloud` runs Claude Code on Hanzo and fills its model slots
-with Enso, one tier per slot:
+with Enso, one tier per slot, each thinking at its own depth:
 
-| Claude Code slot | Served as |
-|---|---|
-| Haiku: background work and routine turns | `enso-flash` |
-| Sonnet | `enso-pro` |
-| Opus | `enso-max` |
-| Fable | `enso-ultra` |
+| Claude Code slot | Served as | Thinks |
+|---|---|---|
+| Haiku: background work and routine turns | `enso-flash` | low |
+| Sonnet | `enso-pro` | medium |
+| Opus | `enso-max` | high |
+| Fable | `enso-ultra` | max |
+
+The wrapper sets no session effort; Claude Code's `/effort` overrides the
+depth for the session.
 
 The session's main model is `enso-auto` unless you pass `--model`.
 `--model zen6` runs [Zen 6](/docs/models/zen), the open-weights model.
