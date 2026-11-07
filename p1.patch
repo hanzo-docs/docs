@@ -1,0 +1,8 @@
+--- a/apps/docs/components/models-catalog.tsx
++++ b/apps/docs/components/models-catalog.tsx
+@@ -16,4 +16,4 @@ type Catalog = { data: Model[]; families?: Family[]; summary?: Record<string, number>; updated?: string };
+ 
+ // `prompt`/`completion` are USD per token (OpenRouter's keys); the per-million
+ // rates sit under keys that name the unit.
+-type Pricing = { prompt?: string; completion?: string; input_per_million?: number; output_per_million?: number };
++type Pricing = { prompt?: string; completion?: string; input_per_million?: number | null; output_per_million?: number | null };
