@@ -24,7 +24,7 @@ bot configure
 
 Recommended: set up a Brave Search API key so the agent can use `web_search`
 (`web_fetch` works without a key). Easiest path: `bot configure --section web`
-which stores `tools.web.search.apiKey`. Docs: [Web tools](/tools/web).
+which stores `tools.web.search.apiKey`. Docs: [Web tools](/docs/tools/web).
 
 ## QuickStart vs Advanced
 
@@ -86,24 +86,24 @@ Tip: `--json` does **not** imply non-interactive mode. Use `--non-interactive` (
    - **OpenCode Zen (multi-model proxy)**: prompts for `OPENCODE_API_KEY` (or `OPENCODE_ZEN_API_KEY`, get it at https://opencode.ai/auth).
    - **API key**: stores the key for you.
    - **Vercel AI Gateway (multi-model proxy)**: prompts for `AI_GATEWAY_API_KEY`.
-   - More detail: [Vercel AI Gateway](/providers/vercel-ai-gateway)
+   - More detail: [Vercel AI Gateway](/docs/providers/vercel-ai-gateway)
    - **MiniMax M2.1**: config is auto-written.
-   - More detail: [MiniMax](/providers/minimax)
+   - More detail: [MiniMax](/docs/providers/minimax)
    - **Synthetic (Anthropic-compatible)**: prompts for `SYNTHETIC_API_KEY`.
-   - More detail: [Synthetic](/providers/synthetic)
+   - More detail: [Synthetic](/docs/providers/synthetic)
    - **Moonshot (Kimi K2)**: config is auto-written.
    - **Kimi Code**: config is auto-written.
-   - More detail: [Moonshot AI (Kimi + Kimi Code)](/providers/moonshot)
+   - More detail: [Moonshot AI (Kimi + Kimi Code)](/docs/providers/moonshot)
    - **Skip**: no auth configured yet.
    - Pick a default model from detected options (or enter provider/model manually).
    - Wizard runs a model check and warns if the configured model is unknown or missing auth.
   - OAuth credentials live in `~/.bot/credentials/oauth.json`; auth profiles live in `~/.bot/agents/<agentId>/agent/auth-profiles.json` (API keys + OAuth).
-   - More detail: [/concepts/oauth](/concepts/oauth)
+   - More detail: [/concepts/oauth](/docs/concepts/oauth)
 
 3) **Workspace**
    - Default `~/bot` (configurable).
    - Seeds the workspace files needed for the agent bootstrap ritual.
-   - Full workspace layout + backup guide: [Agent workspace](/concepts/agent-workspace)
+   - Full workspace layout + backup guide: [Agent workspace](/docs/concepts/agent-workspace)
 
 4) **Gateway**
    - Port, bind, auth mode, tailscale exposure.
@@ -310,7 +310,7 @@ will prompt to install it (npm or a local path) before it can be configured.
 
 ## Related docs
 
-- macOS app onboarding: [Onboarding](/start/onboarding)
-- Config reference: [Gateway configuration](/gateway/configuration)
-- Providers: [WhatsApp](/channels/whatsapp), [Telegram](/channels/telegram), [Discord](/channels/discord), [Google Chat](/channels/googlechat), [Signal](/channels/signal), [iMessage](/channels/imessage)
-- Skills: [Skills](/tools/skills), [Skills config](/tools/skills-config)
+- macOS app onboarding: [Onboarding](/docs/start/onboarding)
+- Config reference: [Gateway configuration](/docs/gateway/configuration)
+- Providers: [WhatsApp](/docs/channels/whatsapp), [Telegram](/docs/channels/telegram), [Discord](/docs/channels/discord), [Google Chat](/docs/channels/googlechat), [Signal](/docs/channels/signal), [iMessage](/docs/channels/imessage)
+- Skills: [Skills](/docs/tools/skills), [Skills config](/docs/tools/skills-config)

@@ -3,7 +3,7 @@ title: "Cron jobs (Gateway scheduler)"
 description: "Cron jobs + wakeups for the Gateway scheduler"
 ---
 
-> **Cron vs Heartbeat?** See [Cron vs Heartbeat](/automation/cron-vs-heartbeat) for guidance on when to use each.
+> **Cron vs Heartbeat?** See [Cron vs Heartbeat](/docs/automation/cron-vs-heartbeat) for guidance on when to use each.
 
 Cron is the Gateway’s built-in scheduler. It persists jobs, wakes the agent at
 the right time, and can optionally deliver output back to a chat.
@@ -70,7 +70,7 @@ They must use `payload.kind = "systemEvent"`.
 - `wakeMode: "now"`: event triggers an immediate heartbeat run.
 
 This is the best fit when you want the normal heartbeat prompt + main-session context.
-See [Heartbeat](/gateway/heartbeat).
+See [Heartbeat](/docs/gateway/heartbeat).
 
 #### Isolated jobs (dedicated cron sessions)
 Isolated jobs run a dedicated agent turn in session `cron:<jobId>`.
@@ -267,7 +267,7 @@ bot system event --mode now --text "Next heartbeat: check battery."
 ## Gateway API surface
 - `cron.list`, `cron.status`, `cron.add`, `cron.update`, `cron.remove`
 - `cron.run` (force or due), `cron.runs`
-For immediate system events without a job, use [`bot system event`](/cli/system).
+For immediate system events without a job, use [`bot system event`](/docs/cli/system).
 
 ## Troubleshooting
 

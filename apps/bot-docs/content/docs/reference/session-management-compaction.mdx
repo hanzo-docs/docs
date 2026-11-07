@@ -14,10 +14,10 @@ This document explains how Bot manages sessions end-to-end:
 - **Silent housekeeping** (e.g. memory writes that shouldn’t produce user-visible output)
 
 If you want a higher-level overview first, start with:
-- [/concepts/session](/concepts/session)
-- [/concepts/compaction](/concepts/compaction)
-- [/concepts/session-pruning](/concepts/session-pruning)
-- [/reference/transcript-hygiene](/reference/transcript-hygiene)
+- [/concepts/session](/docs/concepts/session)
+- [/concepts/compaction](/docs/concepts/compaction)
+- [/concepts/session-pruning](/docs/concepts/session-pruning)
+- [/reference/transcript-hygiene](/docs/reference/transcript-hygiene)
 
 ---
 
@@ -70,7 +70,7 @@ Common patterns:
 - Cron: `cron:<job.id>`
 - Webhook: `hook:<uuid>` (unless overridden)
 
-The canonical rules are documented at [/concepts/session](/concepts/session).
+The canonical rules are documented at [/concepts/session](/docs/concepts/session).
 
 ---
 
@@ -143,7 +143,7 @@ If you’re tuning limits:
 - The context window comes from the model catalog (and can be overridden via config).
 - `contextTokens` in the store is a runtime estimate/reporting value; don’t treat it as a strict guarantee.
 
-For more, see [/token-use](/token-use).
+For more, see [/token-use](/docs/reference/token-use).
 
 ---
 
@@ -155,7 +155,7 @@ After compaction, future turns see:
 - The compaction summary
 - Messages after `firstKeptEntryId`
 
-Compaction is **persistent** (unlike session pruning). See [/concepts/session-pruning](/concepts/session-pruning).
+Compaction is **persistent** (unlike session pruning). See [/concepts/session-pruning](/docs/concepts/session-pruning).
 
 ---
 
@@ -251,7 +251,7 @@ Notes:
 - The flush runs once per compaction cycle (tracked in `sessions.json`).
 - The flush runs only for embedded Pi sessions (CLI backends skip it).
 - The flush is skipped when the session workspace is read-only (`workspaceAccess: "ro"` or `"none"`).
-- See [Memory](/concepts/memory) for the workspace file layout and write patterns.
+- See [Memory](/docs/concepts/memory) for the workspace file layout and write patterns.
 
 Pi also exposes a `session_before_compact` hook in the extension API, but Bot’s
 flush logic lives on the Gateway side today.
@@ -260,7 +260,7 @@ flush logic lives on the Gateway side today.
 
 ## Troubleshooting checklist
 
-- Session key wrong? Start with [/concepts/session](/concepts/session) and confirm the `sessionKey` in `/status`.
+- Session key wrong? Start with [/concepts/session](/docs/concepts/session) and confirm the `sessionKey` in `/status`.
 - Store vs transcript mismatch? Confirm the Gateway host and the store path from `bot status`.
 - Compaction spam? Check:
   - model context window (too small)

@@ -8,6 +8,8 @@
     "channel-routing",
     "compaction",
     "context",
+    "date-time",
+    "features",
     "group-messages",
     "groups",
     "markdown-formatting",

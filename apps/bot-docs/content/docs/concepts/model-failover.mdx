@@ -19,7 +19,7 @@ Bot uses **auth profiles** for both API keys and OAuth tokens.
 - Config `auth.profiles` / `auth.order` are **metadata + routing only** (no secrets).
 - Legacy import-only OAuth file: `~/.bot/credentials/oauth.json` (imported into `auth-profiles.json` on first use).
 
-More detail: [/concepts/oauth](/concepts/oauth)
+More detail: [/concepts/oauth](/docs/concepts/oauth)
 
 Credential types:
 - `type: "api_key"` → `{ provider, key }`
@@ -127,11 +127,11 @@ When a run starts with a model override (hooks or CLI), fallbacks still end at
 
 ## Related config
 
-See [Gateway configuration](/gateway/configuration) for:
+See [Gateway configuration](/docs/gateway/configuration) for:
 - `auth.profiles` / `auth.order`
 - `auth.cooldowns.billingBackoffHours` / `auth.cooldowns.billingBackoffHoursByProvider`
 - `auth.cooldowns.billingMaxHours` / `auth.cooldowns.failureWindowHours`
 - `agents.defaults.model.primary` / `agents.defaults.model.fallbacks`
 - `agents.defaults.imageModel` routing
 
-See [Models](/concepts/models) for the broader model selection and fallback overview.
+See [Models](/docs/concepts/models) for the broader model selection and fallback overview.

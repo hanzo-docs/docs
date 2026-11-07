@@ -8,8 +8,8 @@ description: "CLI reference for `bot browser` (profiles, tabs, actions, extensio
 Manage Bot’s browser control server and run browser actions (tabs, snapshots, screenshots, navigation, clicks, typing).
 
 Related:
-- Browser tool + API: [Browser tool](/tools/browser)
-- Chrome extension relay: [Chrome extension](/tools/chrome-extension)
+- Browser tool + API: [Browser tool](/docs/tools/browser)
+- Chrome extension relay: [Chrome extension](/docs/tools/chrome-extension)
 
 ## Common flags
 
@@ -88,7 +88,7 @@ bot browser extension path
 
 Then Chrome → `chrome://extensions` → enable “Developer mode” → “Load unpacked” → select the printed folder.
 
-Full guide: [Chrome extension](/tools/chrome-extension)
+Full guide: [Chrome extension](/docs/tools/chrome-extension)
 
 ## Remote browser control (`bot browser serve`)
 
@@ -100,4 +100,4 @@ bot browser serve --bind 127.0.0.1 --port 18791 --token <token>
 
 Then point the Gateway at it using `browser.controlUrl` + `browser.controlToken` (or `BOT_BROWSER_CONTROL_TOKEN`).
 
-Security + TLS best-practices: [Browser tool](/tools/browser), [Tailscale](/gateway/tailscale), [Security](/gateway/security)
+Security + TLS best-practices: [Browser tool](/docs/tools/browser), [Tailscale](/docs/gateway/tailscale), [Security](/docs/gateway/security)

@@ -9,7 +9,7 @@ Status: experimental. Direct messages only; groups coming soon per Zalo docs.
 Zalo ships as a plugin and is not bundled with the core install.
 - Install via CLI: `bot plugins install @bot/zalo`
 - Or select **Zalo** during onboarding and confirm the install prompt
-- Details: [Plugins](/plugin)
+- Details: [Plugins](/docs/tools/plugin)
 
 ## Quick setup (beginner)
 1) Install the Zalo plugin:
@@ -89,7 +89,7 @@ Multi-account support: use `channels.zalo.accounts` with per-account tokens and 
 - Approve via:
   - `bot pairing list zalo`
   - `bot pairing approve zalo <CODE>`
-- Pairing is the default token exchange. Details: [Pairing](/start/pairing)
+- Pairing is the default token exchange. Details: [Pairing](/docs/start/pairing)
 - `channels.zalo.allowFrom` accepts numeric user IDs (no username lookup available).
 
 ## Long-polling vs webhook
@@ -138,7 +138,7 @@ Multi-account support: use `channels.zalo.accounts` with per-account tokens and 
 - Check that getUpdates polling is not running (they're mutually exclusive)
 
 ## Configuration reference (Zalo)
-Full configuration: [Configuration](/gateway/configuration)
+Full configuration: [Configuration](/docs/gateway/configuration)
 
 Provider options:
 - `channels.zalo.enabled`: enable/disable channel startup.

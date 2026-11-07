@@ -2,13 +2,20 @@
   "title": "Getting Started",
   "pages": [
     "getting-started",
+    "quickstart",
     "wizard",
+    "wizard-cli-reference",
+    "wizard-cli-automation",
     "setup",
     "bot",
+    "hanzo-bot",
     "pairing",
+    "bootstrapping",
     "showcase",
     "onboarding",
+    "onboarding-overview",
     "hubs",
+    "docs-directory",
     "lore"
   ]
 }

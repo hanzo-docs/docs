@@ -8,8 +8,8 @@ description: "CLI reference for `bot hooks` (agent hooks)"
 Manage agent hooks (event-driven automations for commands like `/new`, `/reset`, and gateway startup).
 
 Related:
-- Hooks: [Hooks](/hooks)
-- Plugin hooks: [Plugins](/plugin#plugin-hooks)
+- Hooks: [Hooks](/docs/automation/hooks)
+- Plugin hooks: [Plugins](/docs/tools/plugin#plugin-hooks)
 
 ## List All Hooks
 
@@ -232,7 +232,7 @@ bot hooks enable session-memory
 
 **Output:** `~/bot/memory/YYYY-MM-DD-slug.md`
 
-**See:** [session-memory documentation](/hooks#session-memory)
+**See:** [session-memory documentation](/docs/automation/hooks#session-memory)
 
 ### command-logger
 
@@ -259,7 +259,7 @@ cat ~/.bot/logs/commands.log | jq .
 grep '"action":"new"' ~/.bot/logs/commands.log | jq .
 ```
 
-**See:** [command-logger documentation](/hooks#command-logger)
+**See:** [command-logger documentation](/docs/automation/hooks#command-logger)
 
 ### soul-evil
 
@@ -271,7 +271,7 @@ Swaps injected `SOUL.md` content with `SOUL_EVIL.md` during a purge window or by
 bot hooks enable soul-evil
 ```
 
-**See:** [SOUL Evil Hook](/hooks/soul-evil)
+**See:** [SOUL Evil Hook](/docs/automation/hooks)
 
 ### boot-md
 
@@ -285,4 +285,4 @@ Runs `BOOT.md` when the gateway starts (after channels start).
 bot hooks enable boot-md
 ```
 
-**See:** [boot-md documentation](/hooks#boot-md)
+**See:** [boot-md documentation](/docs/automation/hooks#boot-md)

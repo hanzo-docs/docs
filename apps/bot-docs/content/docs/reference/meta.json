@@ -4,13 +4,18 @@
     "AGENTS.default",
     "RELEASING",
     "api-usage-costs",
+    "credits",
     "device-models",
     "environment",
+    "prompt-caching",
     "rpc",
     "scripts",
+    "secretref-credential-surface",
     "session-management-compaction",
     "test",
     "testing",
-    "transcript-hygiene"
+    "token-use",
+    "transcript-hygiene",
+    "wizard"
   ]
 }

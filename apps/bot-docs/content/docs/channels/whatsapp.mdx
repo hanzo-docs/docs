@@ -171,7 +171,7 @@ Pairing is a DM gate for unknown senders:
 - Codes expire after 1 hour; pending requests are capped at 3 per channel.
 
 **Can multiple people use different Bots on one WhatsApp number?**  
-Yes, by routing each sender to a different agent via `bindings` (peer `kind: "dm"`, sender E.164 like `+15551234567`). Replies still come from the **same WhatsApp account**, and direct chats collapse to each agent’s main session, so use **one agent per person**. DM access control (`dmPolicy`/`allowFrom`) is global per WhatsApp account. See [Multi-Agent Routing](/concepts/multi-agent).
+Yes, by routing each sender to a different agent via `bindings` (peer `kind: "dm"`, sender E.164 like `+15551234567`). Replies still come from the **same WhatsApp account**, and direct chats collapse to each agent’s main session, so use **one agent per person**. DM access control (`dmPolicy`/`allowFrom`) is global per WhatsApp account. See [Multi-Agent Routing](/docs/concepts/multi-agent).
 
 **Why do you ask for my phone number in the wizard?**  
 The wizard uses it to set your **allowlist/owner** so your own DMs are permitted. It’s not used for auto-sending. If you run on your personal WhatsApp number, use that same number and enable `channels.whatsapp.selfChatMode`.
@@ -263,7 +263,7 @@ WhatsApp can automatically send emoji reactions to incoming messages immediately
 ## Agent tool (reactions)
 - Tool: `whatsapp` with `react` action (`chatJid`, `messageId`, `emoji`, optional `remove`).
 - Optional: `participant` (group sender), `fromMe` (reacting to your own message), `accountId` (multi-account).
-- Reaction removal semantics: see [/tools/reactions](/tools/reactions).
+- Reaction removal semantics: see [/tools/reactions](/docs/tools/reactions).
 - Tool gating: `channels.whatsapp.actions.reactions` (default: enabled).
 
 ## Limits
@@ -342,7 +342,7 @@ WhatsApp sends audio as **voice notes** (PTT bubble).
 ## Logs + troubleshooting
 - Subsystems: `whatsapp/inbound`, `whatsapp/outbound`, `web-heartbeat`, `web-reconnect`.
 - Log file: `/tmp/bot/bot-YYYY-MM-DD.log` (configurable).
-- Troubleshooting guide: [Gateway troubleshooting](/gateway/troubleshooting).
+- Troubleshooting guide: [Gateway troubleshooting](/docs/gateway/troubleshooting).
 
 ## Troubleshooting (quick)
 

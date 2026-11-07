@@ -137,7 +137,7 @@ Plugins run **in-process** with the Gateway. Treat them as trusted code:
   - Bot uses `npm pack` and then runs `npm install --omit=dev` in that directory (npm lifecycle scripts can execute code during install).
   - Prefer pinned, exact versions (`@scope/pkg@1.2.3`), and inspect the unpacked code on disk before enabling.
 
-Details: [Plugins](/plugin)
+Details: [Plugins](/docs/tools/plugin)
 
 ## DM access model (pairing / allowlist / open / disabled)
 
@@ -155,7 +155,7 @@ bot pairing list <channel>
 bot pairing approve <channel> <code>
 ```
 
-Details + files on disk: [Pairing](/start/pairing)
+Details + files on disk: [Pairing](/docs/start/pairing)
 
 ## DM session isolation (multi-user mode)
 
@@ -167,7 +167,7 @@ By default, Bot routes **all DMs into the main session** so your assistant has c
 }
 ```
 
-This prevents cross-user context leakage while keeping group chats isolated. If the same person contacts you on multiple channels, use `session.identityLinks` to collapse those DM sessions into one canonical identity. See [Session Management](/concepts/session) and [Configuration](/gateway/configuration).
+This prevents cross-user context leakage while keeping group chats isolated. If the same person contacts you on multiple channels, use `session.identityLinks` to collapse those DM sessions into one canonical identity. See [Session Management](/docs/concepts/session) and [Configuration](/docs/gateway/configuration).
 
 ## Allowlists (DM + groups) — terminology
 
@@ -182,7 +182,7 @@ Bot has two separate “who can trigger me?” layers:
     - `channels.discord.guilds` / `channels.slack.channels`: per-surface allowlists + mention defaults.
   - **Security note:** treat `dmPolicy="open"` and `groupPolicy="open"` as last-resort settings. They should be barely used; prefer pairing + allowlists unless you fully trust every member of the room.
 
-Details: [Configuration](/gateway/configuration) and [Groups](/concepts/groups)
+Details: [Configuration](/docs/gateway/configuration) and [Groups](/docs/concepts/groups)
 
 ## Prompt injection (what it is, why it matters)
 
@@ -344,12 +344,12 @@ Trusted proxies:
 - Bot will trust `x-forwarded-for` (or `x-real-ip`) from those IPs to determine the client IP for local pairing checks and HTTP auth/local checks.
 - Ensure your proxy **overwrites** `x-forwarded-for` and blocks direct access to the Gateway port.
 
-See [Tailscale](/gateway/tailscale) and [Web overview](/web).
+See [Tailscale](/docs/gateway/tailscale) and [Web overview](/docs/web).
 
 ### 0.6.1) Browser control server over Tailscale (recommended)
 
 If your Gateway is remote but the browser runs on another machine, you’ll often run a **separate browser control server**
-on the browser machine (see [Browser tool](/tools/browser)). Treat this like an admin API.
+on the browser machine (see [Browser tool](/docs/tools/browser)). Treat this like an admin API.
 
 Recommended pattern:
 
@@ -395,7 +395,7 @@ Recommendations:
 - When sharing diagnostics, prefer `bot status --all` (pasteable, secrets redacted) over raw logs.
 - Prune old session transcripts and log files if you don’t need long retention.
 
-Details: [Logging](/gateway/logging)
+Details: [Logging](/docs/gateway/logging)
 
 ### 1) DMs: pairing by default
 
@@ -468,12 +468,12 @@ If you want “safer by default” tool execution too, add a sandbox + deny dang
 
 ## Sandboxing (recommended)
 
-Dedicated doc: [Sandboxing](/gateway/sandboxing)
+Dedicated doc: [Sandboxing](/docs/gateway/sandboxing)
 
 Two complementary approaches:
 
-- **Run the full Gateway in Docker** (container boundary): [Docker](/install/docker)
-- **Tool sandbox** (`agents.defaults.sandbox`, host gateway + Docker-isolated tools): [Sandboxing](/gateway/sandboxing)
+- **Run the full Gateway in Docker** (container boundary): [Docker](/docs/install/docker)
+- **Tool sandbox** (`agents.defaults.sandbox`, host gateway + Docker-isolated tools): [Sandboxing](/docs/gateway/sandboxing)
 
 Note: to prevent cross-agent access, keep `agents.defaults.sandbox.scope` at `"agent"` (default)
 or `"session"` for stricter per-session isolation. `scope: "shared"` uses a
@@ -484,7 +484,7 @@ Also consider agent workspace access inside the sandbox:
 - `agents.defaults.sandbox.workspaceAccess: "ro"` mounts the agent workspace read-only at `/agent` (disables `write`/`edit`/`apply_patch`)
 - `agents.defaults.sandbox.workspaceAccess: "rw"` mounts the agent workspace read/write at `/workspace`
 
-Important: `tools.elevated` is the global baseline escape hatch that runs exec on the host. Keep `tools.elevated.allowFrom` tight and don’t enable it for strangers. You can further restrict elevated per agent via `agents.list[].tools.elevated`. See [Elevated Mode](/tools/elevated).
+Important: `tools.elevated` is the global baseline escape hatch that runs exec on the host. Keep `tools.elevated.allowFrom` tight and don’t enable it for strangers. You can further restrict elevated per agent via `agents.list[].tools.elevated`. See [Elevated Mode](/docs/tools/elevated).
 
 ## Browser control risks
 
@@ -505,7 +505,7 @@ access those accounts and data. Treat browser profiles as **sensitive state**:
 
 With multi-agent routing, each agent can have its own sandbox + tool policy:
 use this to give **full access**, **read-only**, or **no access** per agent.
-See [Multi-Agent Sandbox & Tools](/multi-agent-sandbox-tools) for full details
+See [Multi-Agent Sandbox & Tools](/docs/tools/multi-agent-sandbox-tools) for full details
 and precedence rules.
 
 Common use cases:

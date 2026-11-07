@@ -26,9 +26,9 @@ Bot bridges WhatsApp (via WhatsApp Web / Baileys), Telegram (Bot API / grammY), 
 
 ## Start here
 
-- **New install from zero:** [Getting Started](/start/getting-started)
-- **Coming from OpenClaw:** [Migrate from OpenClaw](/install/migrate-from-openclaw) moves your install with `hanzo-bot migrate openclaw`
-- **Guided setup (recommended):** [Wizard](/start/wizard) (`bot onboard`)
+- **New install from zero:** [Getting Started](/docs/start/getting-started)
+- **Coming from OpenClaw:** [Migrate from OpenClaw](/docs/install/migrate-from-openclaw) moves your install with `hanzo-bot migrate openclaw`
+- **Guided setup (recommended):** [Wizard](/docs/start/wizard) (`bot onboard`)
 - **Open the dashboard (local Gateway):** http://127.0.0.1:18789/ (or http://localhost:18789/)
 
 If the Gateway is running on the same computer, that link opens the browser Control UI
@@ -38,7 +38,7 @@ immediately. If it fails, start the Gateway first: `bot gateway`.
 
 The dashboard is the browser Control UI for chat, config, nodes, sessions, and more.
 Local default: http://127.0.0.1:18789/
-Remote access: [Web surfaces](/web) and [Tailscale](/gateway/tailscale)
+Remote access: [Web surfaces](/docs/web) and [Tailscale](/docs/gateway/tailscale)
 
 ## How it works
 
@@ -65,13 +65,13 @@ Most operations flow through the **Gateway** (`bot gateway`), a single long-runn
 
 ## Network model
 
-- **One Gateway per host (recommended)**: it is the only process allowed to own the WhatsApp Web session. If you need a rescue bot or strict isolation, run multiple gateways with isolated profiles and ports; see [Multiple gateways](/gateway/multiple-gateways).
+- **One Gateway per host (recommended)**: it is the only process allowed to own the WhatsApp Web session. If you need a rescue bot or strict isolation, run multiple gateways with isolated profiles and ports; see [Multiple gateways](/docs/gateway/multiple-gateways).
 - **Loopback-first**: Gateway WS defaults to `ws://127.0.0.1:18789`.
   - The wizard now generates a gateway token by default (even for loopback).
   - For Tailnet access, run `bot gateway --bind tailnet --token ...` (token is required for non-loopback binds).
 - **Nodes**: connect to the Gateway WebSocket (LAN/tailnet/SSH as needed); legacy TCP bridge is deprecated/removed.
-- **Canvas host**: HTTP file server on `canvasHost.port` (default `18793`), serving `/__bot__/canvas/` for node WebViews; see [Gateway configuration](/gateway/configuration) (`canvasHost`).
-- **Remote use**: SSH tunnel or tailnet/VPN; see [Remote access](/gateway/remote) and [Discovery](/gateway/discovery).
+- **Canvas host**: HTTP file server on `canvasHost.port` (default `18793`), serving `/__bot__/canvas/` for node WebViews; see [Gateway configuration](/docs/gateway/configuration) (`canvasHost`).
+- **Remote use**: SSH tunnel or tailnet/VPN; see [Remote access](/docs/gateway/remote) and [Discovery](/docs/gateway/discovery).
 
 ## Features (high level)
 
@@ -81,7 +81,7 @@ Most operations flow through the **Gateway** (`bot gateway`), a single long-runn
 - 🧩 **Mattermost Bot (plugin)** — Bot token + WebSocket events
 - 💬 **iMessage** — Local imsg CLI integration (macOS)
 - 🤖 **Agent bridge** — Pi (RPC mode) with tool streaming
-- ⏱️ **Streaming + chunking** — Block streaming + Telegram draft streaming details ([/concepts/streaming](/concepts/streaming))
+- ⏱️ **Streaming + chunking** — Block streaming + Telegram draft streaming details ([/concepts/streaming](/docs/concepts/streaming))
 - 🧠 **Multi-agent routing** — Route provider accounts/peers to isolated agents (workspace + per-agent sessions)
 - 🔐 **Subscription auth** — Anthropic (Claude Pro/Max) + OpenAI (ChatGPT/Codex) via OAuth
 - 💬 **Sessions** — Direct chats collapse into shared `main` (default); groups are isolated
@@ -166,49 +166,49 @@ Example:
 ## Docs
 
 - Start here:
-  - [Docs hubs (all pages linked)](/start/hubs)
-  - [Help](/help) — *common fixes + troubleshooting*
-  - [Configuration](/gateway/configuration)
-  - [Configuration examples](/gateway/configuration-examples)
-  - [Slash commands](/tools/slash-commands)
-  - [Multi-agent routing](/concepts/multi-agent)
-  - [Updating / rollback](/install/updating)
-  - [Pairing (DM + nodes)](/start/pairing)
-  - [Nix mode](/install/nix)
-  - [Bot assistant setup](/start/bot)
-  - [Skills](/tools/skills)
-  - [Skills config](/tools/skills-config)
-  - [Workspace templates](/reference/templates/AGENTS)
-  - [RPC adapters](/reference/rpc)
-  - [Gateway runbook](/gateway)
-  - [Nodes (iOS/Android)](/nodes)
-  - [Web surfaces (Control UI)](/web)
-  - [Discovery + transports](/gateway/discovery)
-  - [Remote access](/gateway/remote)
+  - [Docs hubs (all pages linked)](/docs/start/hubs)
+  - [Help](/docs/help) — *common fixes + troubleshooting*
+  - [Configuration](/docs/gateway/configuration)
+  - [Configuration examples](/docs/gateway/configuration-examples)
+  - [Slash commands](/docs/tools/slash-commands)
+  - [Multi-agent routing](/docs/concepts/multi-agent)
+  - [Updating / rollback](/docs/install/updating)
+  - [Pairing (DM + nodes)](/docs/start/pairing)
+  - [Nix mode](/docs/install/nix)
+  - [Bot assistant setup](/docs/start/bot)
+  - [Skills](/docs/tools/skills)
+  - [Skills config](/docs/tools/skills-config)
+  - [Workspace templates](/docs/reference/templates/AGENTS)
+  - [RPC adapters](/docs/reference/rpc)
+  - [Gateway runbook](/docs/gateway)
+  - [Nodes (iOS/Android)](/docs/nodes)
+  - [Web surfaces (Control UI)](/docs/web)
+  - [Discovery + transports](/docs/gateway/discovery)
+  - [Remote access](/docs/gateway/remote)
 - Providers and UX:
-  - [WebChat](/web/webchat)
-  - [Control UI (browser)](/web/control-ui)
-  - [Telegram](/channels/telegram)
-  - [Discord](/channels/discord)
-  - [Mattermost (plugin)](/channels/mattermost)
-  - [iMessage](/channels/imessage)
-  - [Groups](/concepts/groups)
-  - [WhatsApp group messages](/concepts/group-messages)
-  - [Media: images](/nodes/images)
-  - [Media: audio](/nodes/audio)
+  - [WebChat](/docs/web/webchat)
+  - [Control UI (browser)](/docs/web/control-ui)
+  - [Telegram](/docs/channels/telegram)
+  - [Discord](/docs/channels/discord)
+  - [Mattermost (plugin)](/docs/channels/mattermost)
+  - [iMessage](/docs/channels/imessage)
+  - [Groups](/docs/concepts/groups)
+  - [WhatsApp group messages](/docs/concepts/group-messages)
+  - [Media: images](/docs/nodes/images)
+  - [Media: audio](/docs/nodes/audio)
 - Companion apps:
-  - [macOS app](/platforms/macos)
-  - [iOS app](/platforms/ios)
-  - [Android app](/platforms/android)
-  - [Windows (WSL2)](/platforms/windows)
-  - [Linux app](/platforms/linux)
+  - [macOS app](/docs/platforms/macos)
+  - [iOS app](/docs/platforms/ios)
+  - [Android app](/docs/platforms/android)
+  - [Windows (WSL2)](/docs/platforms/windows)
+  - [Linux app](/docs/platforms/linux)
 - Ops and safety:
-  - [Sessions](/concepts/session)
-  - [Cron jobs](/automation/cron-jobs)
-  - [Webhooks](/automation/webhook)
-  - [Gmail hooks (Pub/Sub)](/automation/gmail-pubsub)
-  - [Security](/gateway/security)
-  - [Troubleshooting](/gateway/troubleshooting)
+  - [Sessions](/docs/concepts/session)
+  - [Cron jobs](/docs/automation/cron-jobs)
+  - [Webhooks](/docs/automation/webhook)
+  - [Gmail hooks (Pub/Sub)](/docs/automation/gmail-pubsub)
+  - [Security](/docs/gateway/security)
+  - [Troubleshooting](/docs/gateway/troubleshooting)
 
 ## Credits
 

@@ -9,45 +9,45 @@ This page describes the current CLI behavior. If commands change, update this do
 
 ## Command pages
 
-- [`setup`](/cli/setup)
-- [`onboard`](/cli/onboard)
-- [`configure`](/cli/configure)
-- [`config`](/cli/config)
-- [`doctor`](/cli/doctor)
-- [`dashboard`](/cli/dashboard)
-- [`reset`](/cli/reset)
-- [`uninstall`](/cli/uninstall)
-- [`update`](/cli/update)
-- [`message`](/cli/message)
-- [`agent`](/cli/agent)
-- [`agents`](/cli/agents)
-- [`acp`](/cli/acp)
-- [`status`](/cli/status)
-- [`health`](/cli/health)
-- [`sessions`](/cli/sessions)
-- [`gateway`](/cli/gateway)
-- [`logs`](/cli/logs)
-- [`system`](/cli/system)
-- [`models`](/cli/models)
-- [`memory`](/cli/memory)
-- [`nodes`](/cli/nodes)
-- [`devices`](/cli/devices)
-- [`node`](/cli/node)
-- [`approvals`](/cli/approvals)
-- [`sandbox`](/cli/sandbox)
-- [`tui`](/cli/tui)
-- [`browser`](/cli/browser)
-- [`cron`](/cli/cron)
-- [`dns`](/cli/dns)
-- [`docs`](/cli/docs)
-- [`hooks`](/cli/hooks)
-- [`webhooks`](/cli/webhooks)
-- [`pairing`](/cli/pairing)
-- [`plugins`](/cli/plugins) (plugin commands)
-- [`channels`](/cli/channels)
-- [`security`](/cli/security)
-- [`skills`](/cli/skills)
-- [`voicecall`](/cli/voicecall) (plugin; if installed)
+- [`setup`](/docs/cli/setup)
+- [`onboard`](/docs/cli/onboard)
+- [`configure`](/docs/cli/configure)
+- [`config`](/docs/cli/config)
+- [`doctor`](/docs/cli/doctor)
+- [`dashboard`](/docs/cli/dashboard)
+- [`reset`](/docs/cli/reset)
+- [`uninstall`](/docs/cli/uninstall)
+- [`update`](/docs/cli/update)
+- [`message`](/docs/cli/message)
+- [`agent`](/docs/cli/agent)
+- [`agents`](/docs/cli/agents)
+- [`acp`](/docs/cli/acp)
+- [`status`](/docs/cli/status)
+- [`health`](/docs/cli/health)
+- [`sessions`](/docs/cli/sessions)
+- [`gateway`](/docs/cli/gateway)
+- [`logs`](/docs/cli/logs)
+- [`system`](/docs/cli/system)
+- [`models`](/docs/cli/models)
+- [`memory`](/docs/cli/memory)
+- [`nodes`](/docs/cli/nodes)
+- [`devices`](/docs/cli/devices)
+- [`node`](/docs/cli/node)
+- [`approvals`](/docs/cli/approvals)
+- [`sandbox`](/docs/cli/sandbox)
+- [`tui`](/docs/cli/tui)
+- [`browser`](/docs/cli/browser)
+- [`cron`](/docs/cli/cron)
+- [`dns`](/docs/cli/dns)
+- [`docs`](/docs/cli/docs)
+- [`hooks`](/docs/cli/hooks)
+- [`webhooks`](/docs/cli/webhooks)
+- [`pairing`](/docs/cli/pairing)
+- [`plugins`](/docs/cli/plugins) (plugin commands)
+- [`channels`](/docs/cli/channels)
+- [`security`](/docs/cli/security)
+- [`skills`](/docs/cli/skills)
+- [`voicecall`](/docs/cli/voicecall) (plugin; if installed)
 
 ## Global flags
 
@@ -252,7 +252,7 @@ Manage extensions and their config:
 - `bot plugins enable <id>` / `disable <id>` — toggle `plugins.entries.<id>.enabled`.
 - `bot plugins doctor` — report plugin load errors.
 
-Most plugin changes require a gateway restart. See [/plugin](/plugin).
+Most plugin changes require a gateway restart. See [/plugin](/docs/tools/plugin).
 
 ## Memory
 
@@ -264,7 +264,7 @@ Vector search over `MEMORY.md` + `memory/*.md`:
 
 ## Chat slash commands
 
-Chat messages support `/...` commands (text and native). See [/tools/slash-commands](/tools/slash-commands).
+Chat messages support `/...` commands (text and native). See [/tools/slash-commands](/docs/tools/slash-commands).
 
 Highlights:
 - `/status` for quick diagnostics.
@@ -394,7 +394,7 @@ OAuth sync sources:
   - Linux/Windows: `~/.claude/.credentials.json`
 - `~/.codex/auth.json` → `openai-codex:codex-cli`
 
-More detail: [/concepts/oauth](/concepts/oauth)
+More detail: [/concepts/oauth](/docs/concepts/oauth)
 
 Examples:
 ```bash
@@ -428,14 +428,14 @@ Subcommands:
 - `pairing approve <channel> <code> [--notify]`
 
 ### `webhooks gmail`
-Gmail Pub/Sub hook setup + runner. See [/automation/gmail-pubsub](/automation/gmail-pubsub).
+Gmail Pub/Sub hook setup + runner. See [/automation/gmail-pubsub](/docs/automation/gmail-pubsub).
 
 Subcommands:
 - `webhooks gmail setup` (requires `--account <email>`; supports `--project`, `--topic`, `--subscription`, `--label`, `--hook-url`, `--hook-token`, `--push-token`, `--bind`, `--port`, `--path`, `--include-body`, `--max-bytes`, `--renew-minutes`, `--tailscale`, `--tailscale-path`, `--tailscale-target`, `--push-endpoint`, `--json`)
 - `webhooks gmail run` (runtime overrides for the same flags)
 
 ### `dns setup`
-Wide-area discovery DNS helper (CoreDNS + Tailscale). See [/gateway/discovery](/gateway/discovery).
+Wide-area discovery DNS helper (CoreDNS + Tailscale). See [/gateway/discovery](/docs/gateway/discovery).
 
 Options:
 - `--apply`: install/update CoreDNS config (requires sudo; macOS only).
@@ -445,7 +445,7 @@ Options:
 ### `message`
 Unified outbound messaging + channel actions.
 
-See: [/cli/message](/cli/message)
+See: [/cli/message](/docs/cli/message)
 
 Subcommands:
 - `message send|poll|react|reactions|read|edit|delete|pin|unpin|pins|permissions|search|timeout|kick|ban`
@@ -512,7 +512,7 @@ Options:
 ### `acp`
 Run the ACP bridge that connects IDEs to the Gateway.
 
-See [`acp`](/cli/acp) for full options and examples.
+See [`acp`](/docs/cli/acp) for full options and examples.
 
 ### `status`
 Show linked session health and recent recipients.
@@ -541,7 +541,7 @@ Notes:
 - Data comes directly from provider usage endpoints (no estimates).
 - Providers: Anthropic, GitHub Copilot, OpenAI Codex OAuth, plus Gemini CLI/Antigravity when those provider plugins are enabled.
 - If no matching credentials exist, usage is hidden.
-- Details: see [Usage tracking](/concepts/usage-tracking).
+- Details: see [Usage tracking](/docs/concepts/usage-tracking).
 
 ### `health`
 Fetch health from the running Gateway.
@@ -672,7 +672,7 @@ Tip: when calling `config.set`/`config.apply`/`config.patch` directly, pass `bas
 
 ## Models
 
-See [/concepts/models](/concepts/models) for fallback behavior and scanning strategy.
+See [/concepts/models](/docs/concepts/models) for fallback behavior and scanning strategy.
 
 Preferred Anthropic auth (CLI token, not API key):
 
@@ -792,7 +792,7 @@ Options:
 - `--url`, `--token`, `--timeout`, `--expect-final`
 
 ## Cron
-Manage scheduled jobs (Gateway RPC). See [/automation/cron-jobs](/automation/cron-jobs).
+Manage scheduled jobs (Gateway RPC). See [/automation/cron-jobs](/docs/automation/cron-jobs).
 
 Subcommands:
 - `cron status [--json]`
@@ -810,7 +810,7 @@ All `cron` commands accept `--url`, `--token`, `--timeout`, `--expect-final`.
 ## Node host
 
 `node` runs a **headless node host** or manages it as a background service. See
-[`bot node`](/cli/node).
+[`bot node`](/docs/cli/node).
 
 Subcommands:
 - `node run --host <gateway-host> --port 18789`
@@ -822,7 +822,7 @@ Subcommands:
 
 ## Nodes
 
-`nodes` talks to the Gateway and targets paired nodes. See [/nodes](/nodes).
+`nodes` talks to the Gateway and targets paired nodes. See [/nodes](/docs/nodes).
 
 Common options:
 - `--url`, `--token`, `--timeout`, `--json`
@@ -859,7 +859,7 @@ Location:
 
 ## Browser
 
-Browser control CLI (dedicated Chrome/Brave/Edge/Chromium). See [`bot browser`](/cli/browser) and the [Browser tool](/tools/browser).
+Browser control CLI (dedicated Chrome/Brave/Edge/Chromium). See [`bot browser`](/docs/cli/browser) and the [Browser tool](/docs/tools/browser).
 
 Common options:
 - `--url <controlUrl>`

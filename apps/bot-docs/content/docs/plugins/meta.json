@@ -2,6 +2,7 @@
   "title": "Plugins",
   "pages": [
     "agent-tools",
+    "community",
     "manifest",
     "voice-call",
     "zalouser"

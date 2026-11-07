@@ -1,0 +1,50 @@
+---
+title: "Network"
+description: "Network hub: gateway surfaces, pairing, discovery, and security"
+---
+
+# Network hub
+
+This hub links the core docs for how HanzoBot connects, pairs, and secures
+devices across localhost, LAN, and tailnet.
+
+## Core model
+
+- [Gateway architecture](/docs/concepts/architecture)
+- [Gateway protocol](/docs/gateway/protocol)
+- [Gateway runbook](/docs/gateway)
+- [Web surfaces + bind modes](/docs/web)
+
+## Pairing + identity
+
+- [Pairing overview (DM + nodes)](/docs/channels/pairing)
+- [Gateway-owned node pairing](/docs/gateway/pairing)
+- [Devices CLI (pairing + token rotation)](/docs/cli/devices)
+- [Pairing CLI (DM approvals)](/docs/cli/pairing)
+
+Local trust:
+
+- Local connections (loopback or the gateway host’s own tailnet address) can be
+  auto‑approved for pairing to keep same‑host UX smooth.
+- Non‑local tailnet/LAN clients still require explicit pairing approval.
+
+## Discovery + transports
+
+- [Discovery & transports](/docs/gateway/discovery)
+- [Bonjour / mDNS](/docs/gateway/bonjour)
+- [Remote access (SSH)](/docs/gateway/remote)
+- [Tailscale](/docs/gateway/tailscale)
+
+## Nodes + transports
+
+- [Nodes overview](/docs/nodes)
+- [Bridge protocol (legacy nodes)](/docs/gateway/bridge-protocol)
+- [Node runbook: iOS](/docs/platforms/ios)
+- [Node runbook: Android](/docs/platforms/android)
+
+## Security
+
+- [Security overview](/docs/gateway/security)
+- [Gateway config reference](/docs/gateway/configuration)
+- [Troubleshooting](/docs/gateway/troubleshooting)
+- [Doctor](/docs/gateway/doctor)

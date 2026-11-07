@@ -5,9 +5,9 @@ description: "Nodes: pairing, capabilities, permissions, and CLI helpers for can
 
 # Nodes
 
-A **node** is a companion device (macOS/iOS/Android/headless) that connects to the Gateway **WebSocket** (same port as operators) with `role: "node"` and exposes a command surface (e.g. `canvas.*`, `camera.*`, `system.*`) via `node.invoke`. Protocol details: [Gateway protocol](/gateway/protocol).
+A **node** is a companion device (macOS/iOS/Android/headless) that connects to the Gateway **WebSocket** (same port as operators) with `role: "node"` and exposes a command surface (e.g. `canvas.*`, `camera.*`, `system.*`) via `node.invoke`. Protocol details: [Gateway protocol](/docs/gateway/protocol).
 
-Legacy transport: [Bridge protocol](/gateway/bridge-protocol) (TCP JSONL; deprecated/removed for current nodes).
+Legacy transport: [Bridge protocol](/docs/gateway/bridge-protocol) (TCP JSONL; deprecated/removed for current nodes).
 
 macOS can also run in **node mode**: the menubar app connects to the Gateway’s WS server and exposes its local canvas/camera commands as a node (so `bot nodes …` works against this Mac).
 
@@ -106,9 +106,9 @@ Once set, any `exec` call with `host=node` runs on the node host (subject to the
 node allowlist/approvals).
 
 Related:
-- [Node host CLI](/cli/node)
-- [Exec tool](/tools/exec)
-- [Exec approvals](/tools/exec-approvals)
+- [Node host CLI](/docs/cli/node)
+- [Exec tool](/docs/tools/exec)
+- [Exec approvals](/docs/tools/exec-approvals)
 
 ## Invoking commands
 
@@ -290,7 +290,7 @@ Notes:
 - Pairing is still required (the Gateway will show a node approval prompt).
 - The node host stores its node id, token, display name, and gateway connection info in `~/.bot/node.json`.
 - Exec approvals are enforced locally via `~/.bot/exec-approvals.json`
-  (see [Exec approvals](/tools/exec-approvals)).
+  (see [Exec approvals](/docs/tools/exec-approvals)).
 - On macOS, the headless node host prefers the companion app exec host when reachable and falls
   back to local execution if the app is unavailable. Set `BOT_NODE_EXEC_HOST=app` to require
   the app, or `BOT_NODE_EXEC_FALLBACK=0` to disable fallback.

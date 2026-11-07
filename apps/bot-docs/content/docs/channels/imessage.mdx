@@ -165,7 +165,7 @@ Notes:
 - Use SSH keys so `ssh bot@mac-mini.tailnet-1234.ts.net` works without prompts.
 - `remoteHost` should match the SSH target so SCP can fetch attachments.
 
-Multi-account support: use `channels.imessage.accounts` with per-account config and optional `name`. See [`gateway/configuration`](/gateway/configuration#telegramaccounts--discordaccounts--slackaccounts--signalaccounts--imessageaccounts) for the shared pattern. Don't commit `~/.bot/bot.json` (it often contains tokens).
+Multi-account support: use `channels.imessage.accounts` with per-account config and optional `name`. See [`gateway/configuration`](/docs/gateway/configuration#telegramaccounts--discordaccounts--slackaccounts--signalaccounts--imessageaccounts) for the shared pattern. Don't commit `~/.bot/bot.json` (it often contains tokens).
 
 ## Access control (DMs + groups)
 DMs:
@@ -174,7 +174,7 @@ DMs:
 - Approve via:
   - `bot pairing list imessage`
   - `bot pairing approve imessage <CODE>`
-- Pairing is the default token exchange for iMessage DMs. Details: [Pairing](/start/pairing)
+- Pairing is the default token exchange for iMessage DMs. Details: [Pairing](/docs/start/pairing)
 
 Groups:
 - `channels.imessage.groupPolicy = open | allowlist | disabled`.
@@ -207,7 +207,7 @@ Example:
   }
 }
 ```
-This is useful when you want an isolated personality/model for a specific thread (see [Multi-agent routing](/concepts/multi-agent)). For filesystem isolation, see [Sandboxing](/gateway/sandboxing).
+This is useful when you want an isolated personality/model for a specific thread (see [Multi-agent routing](/docs/concepts/multi-agent)). For filesystem isolation, see [Sandboxing](/docs/gateway/sandboxing).
 
 ## Media + limits
 - Optional attachment ingestion via `channels.imessage.includeAttachments`.
@@ -231,7 +231,7 @@ imsg chats --limit 20
 ```
 
 ## Configuration reference (iMessage)
-Full configuration: [Configuration](/gateway/configuration)
+Full configuration: [Configuration](/docs/gateway/configuration)
 
 Provider options:
 - `channels.imessage.enabled`: enable/disable channel startup.

@@ -81,6 +81,18 @@ describe('links to the community', () => {
     expect(upstream).toEqual([]);
   });
 
+  it('point root-relative internal doc links at /docs/...', () => {
+    expect(relink('See [WhatsApp](/channels/whatsapp) and [LINE](/channels/line).')).toBe(
+      'See [WhatsApp](/docs/channels/whatsapp) and [LINE](/docs/channels/line).',
+    );
+    expect(relink('Check [Doctor](/gateway/doctor#mac) and [Menu bar](/platforms/mac/menu-bar).')).toBe(
+      'Check [Doctor](/docs/gateway/doctor#mac) and [Menu bar](/docs/platforms/mac/menu-bar).',
+    );
+    expect(relink('Plugins: [Plugin](/plugin) and [TUI](/tui).')).toBe(
+      'Plugins: [Plugin](/docs/tools/plugin) and [TUI](/docs/web/tui).',
+    );
+  });
+
   it('leave every other name as written', () => {
     const doc = 'Run `hanzo bot migrate openclaw`; the `clawdbot` shim reads ~/.openclaw.';
     expect(relink(doc)).toBe(doc);

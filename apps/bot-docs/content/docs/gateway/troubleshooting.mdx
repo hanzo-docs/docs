@@ -5,9 +5,9 @@ description: "Quick troubleshooting guide for common Bot failures"
 
 When Bot misbehaves, here's how to fix it.
 
-Start with the FAQ’s [First 60 seconds](/help/faq#first-60-seconds-if-somethings-broken) if you just want a quick triage recipe. This page goes deeper on runtime failures and diagnostics.
+Start with the FAQ’s [First 60 seconds](/docs/help/faq#first-60-seconds-if-somethings-broken) if you just want a quick triage recipe. This page goes deeper on runtime failures and diagnostics.
 
-Provider-specific shortcuts: [/channels/troubleshooting](/channels/troubleshooting)
+Provider-specific shortcuts: [/channels/troubleshooting](/docs/channels/troubleshooting)
 
 ## Status & Diagnostics
 
@@ -25,7 +25,7 @@ Quick triage commands (in order):
 
 **Sharing output:** prefer `bot status --all` (it redacts tokens). If you paste `bot status`, consider setting `BOT_SHOW_SECRETS=0` first (token previews).
 
-See also: [Health checks](/gateway/health) and [Logging](/logging).
+See also: [Health checks](/docs/gateway/health) and [Logging](/docs/gateway/logging).
 
 ## Common Issues
 
@@ -73,7 +73,7 @@ bot models status
 log in with Claude Code CLI on the gateway host, then run `bot models status`
 to sync the refreshed token into Bot’s auth store.
 
-More detail: [Anthropic](/providers/anthropic) and [OAuth](/concepts/oauth).
+More detail: [Anthropic](/docs/providers/anthropic) and [OAuth](/docs/concepts/oauth).
 
 ### Control UI fails on HTTP ("device identity required" / "connect failed")
 
@@ -82,16 +82,16 @@ If you open the dashboard over plain HTTP (e.g. `http://<lan-ip>:18789/` or
 blocks WebCrypto, so device identity can’t be generated.
 
 **Fix:**
-- Prefer HTTPS via [Tailscale Serve](/gateway/tailscale).
+- Prefer HTTPS via [Tailscale Serve](/docs/gateway/tailscale).
 - Or open locally on the gateway host: `http://127.0.0.1:18789/`.
 - If you must stay on HTTP, enable `gateway.controlUi.allowInsecureAuth: true` and
   use a gateway token (token-only; no device identity/pairing). See
-  [Control UI](/web/control-ui#insecure-http).
+  [Control UI](/docs/web/control-ui#insecure-http).
 
 ### CI Secrets Scan Failed
 
 This means `detect-secrets` found new candidates not yet in the baseline.
-Follow [Secret scanning](/gateway/security#secret-scanning-detect-secrets).
+Follow [Secret scanning](/docs/gateway/security#secret-scanning-detect-secrets).
 
 ### Service Installed but Nothing is Running
 
@@ -124,7 +124,7 @@ Doctor/service will show runtime state (PID/last exit) and log hints.
   ```
 - Quick tip: `--verbose` affects **console** output only. File logs remain controlled by `logging.level`.
 
-See [/logging](/logging) for a full overview of formats, config, and access.
+See [/logging](/docs/gateway/logging) for a full overview of formats, config, and access.
 
 ### "Gateway start blocked: set gateway.mode=local"
 
@@ -166,7 +166,7 @@ variables like `DISPLAY` should live in `~/.bot/.env` (loaded early by the
 gateway).
 Exec runs on `host=gateway` merge your login-shell `PATH` into the exec environment,
 so missing tools usually mean your shell init isn’t exporting them (or set
-`tools.exec.pathPrepend`). See [/tools/exec](/tools/exec).
+`tools.exec.pathPrepend`). See [/tools/exec](/docs/tools/exec).
 
 WhatsApp + Telegram channels require **Node**; Bun is unsupported. If your
 service was installed with Bun or a version-managed Node path, run `bot doctor`
@@ -242,7 +242,7 @@ Multiple workspace directories can cause confusing auth or state drift because
 only one workspace is active.
 
 **Fix:** keep a single active workspace and archive/remove the rest. See
-[Agent workspace](/concepts/agent-workspace#extra-workspace-folders).
+[Agent workspace](/docs/concepts/agent-workspace#extra-workspace-folders).
 
 ### Main chat running in a sandbox workspace
 
@@ -280,7 +280,7 @@ longer supported.
   `bot models scan` and choose a supported one.
 - Check gateway logs for the detailed failure reason.
 
-See also: [Models CLI](/cli/models) and [Model providers](/concepts/model-providers).
+See also: [Models CLI](/docs/cli/models) and [Model providers](/docs/concepts/model-providers).
 
 ### Messages Not Triggering
 
@@ -464,7 +464,7 @@ Enable self-chat mode and allowlist your own number:
 }
 ```
 
-See [WhatsApp setup](/channels/whatsapp).
+See [WhatsApp setup](/docs/channels/whatsapp).
 
 ### WhatsApp logged me out. How do I re‑auth?
 
@@ -535,7 +535,7 @@ Fix checklist:
 2) Set `channels.telegram.streamMode: "off"` if you want real multi‑message block replies.
 3) Use smaller chunk/coalesce thresholds while debugging.
 
-See [Streaming](/concepts/streaming).
+See [Streaming](/docs/concepts/streaming).
 
 ### Discord doesn’t reply in my server even with `requireMention: false`. Why?
 
@@ -551,7 +551,7 @@ Fix checklist:
 4) Ensure the bot has **Message Content Intent** and channel permissions.
 5) Run `bot channels status --probe` for audit hints.
 
-Docs: [Discord](/channels/discord), [Channels troubleshooting](/channels/troubleshooting).
+Docs: [Discord](/docs/channels/discord), [Channels troubleshooting](/docs/channels/troubleshooting).
 
 ### Cloud Code Assist API error: invalid tool schema (400). What now?
 
@@ -569,7 +569,7 @@ Fix checklist:
 3) If you define custom tools, keep the top‑level schema as `type: "object"` with
    `properties` and simple enums.
 
-See [Tools](/tools) and [TypeBox schemas](/concepts/typebox).
+See [Tools](/docs/tools) and [TypeBox schemas](/docs/concepts/typebox).
 
 ## macOS Specific Issues
 
@@ -714,4 +714,4 @@ Then set in config:
 }
 ```
 
-**Full guide:** See [browser-linux-troubleshooting](/tools/browser-linux-troubleshooting)
+**Full guide:** See [browser-linux-troubleshooting](/docs/tools/browser-linux-troubleshooting)

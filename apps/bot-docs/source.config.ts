@@ -41,6 +41,10 @@ export const docs = defineDocs({
         remarkCodeTabOptions: {
           parseMdx: true,
         },
+        remarkImageOptions: {
+          useImport: false,
+          onError: 'ignore',
+        },
         remarkNpmOptions: {
           persist: {
             id: 'package-manager',

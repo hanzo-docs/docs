@@ -52,7 +52,7 @@ The Gateway advertises `_bot._tcp` on `local.`. The iOS app lists these automati
 ### Tailnet (cross-network)
 
 If mDNS is blocked, use a unicast DNS-SD zone (recommended domain: `bot.internal.`) and Tailscale split DNS.
-See [Bonjour](/gateway/bonjour) for the CoreDNS example.
+See [Bonjour](/docs/gateway/bonjour) for the CoreDNS example.
 
 ### Manual host/port
 
@@ -89,12 +89,12 @@ bot nodes invoke --node "iOS Node" --command canvas.snapshot --params '{"maxWidt
 ## Common errors
 
 - `NODE_BACKGROUND_UNAVAILABLE`: bring the iOS app to the foreground (canvas/camera/screen commands require it).
-- `A2UI_HOST_NOT_CONFIGURED`: the Gateway did not advertise a canvas host URL; check `canvasHost` in [Gateway configuration](/gateway/configuration).
+- `A2UI_HOST_NOT_CONFIGURED`: the Gateway did not advertise a canvas host URL; check `canvasHost` in [Gateway configuration](/docs/gateway/configuration).
 - Pairing prompt never appears: run `bot nodes pending` and approve manually.
 - Reconnect fails after reinstall: the Keychain pairing token was cleared; re-pair the node.
 
 ## Related docs
 
-- [Pairing](/gateway/pairing)
-- [Discovery](/gateway/discovery)
-- [Bonjour](/gateway/bonjour)
+- [Pairing](/docs/gateway/pairing)
+- [Discovery](/docs/gateway/discovery)
+- [Bonjour](/docs/gateway/bonjour)

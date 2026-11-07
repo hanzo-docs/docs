@@ -5,7 +5,9 @@
     "cron-jobs",
     "cron-vs-heartbeat",
     "gmail-pubsub",
+    "hooks",
     "poll",
+    "troubleshooting",
     "webhook"
   ]
 }

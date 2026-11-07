@@ -59,7 +59,7 @@ DMs:
 - Approve via:
   - `bot pairing list bluebubbles`
   - `bot pairing approve bluebubbles <CODE>`
-- Pairing is the default token exchange. Details: [Pairing](/start/pairing)
+- Pairing is the default token exchange. Details: [Pairing](/docs/start/pairing)
 
 Groups:
 - `channels.bluebubbles.groupPolicy = open | allowlist | disabled` (default: `allowlist`).
@@ -157,7 +157,7 @@ Use full IDs for durable automations and storage:
 - Templates: `{{MessageSidFull}}`, `{{ReplyToIdFull}}`
 - Context: `MessageSidFull` / `ReplyToIdFull` in inbound payloads
 
-See [Configuration](/gateway/configuration) for template variables.
+See [Configuration](/docs/gateway/configuration) for template variables.
 
 ## Block streaming
 Control whether responses are sent as a single message or streamed in blocks:
@@ -177,7 +177,7 @@ Control whether responses are sent as a single message or streamed in blocks:
 - Outbound text is chunked to `channels.bluebubbles.textChunkLimit` (default: 4000 chars).
 
 ## Configuration reference
-Full configuration: [Configuration](/gateway/configuration)
+Full configuration: [Configuration](/docs/gateway/configuration)
 
 Provider options:
 - `channels.bluebubbles.enabled`: Enable/disable the channel.
@@ -225,4 +225,4 @@ Prefer `chat_guid` for stable routing:
 - Bot auto-hides known-broken actions based on the BlueBubbles server's macOS version. If edit still appears on macOS 26 (Tahoe), disable it manually with `channels.bluebubbles.actions.edit=false`.
 - For status/health info: `bot status --all` or `bot status --deep`.
 
-For general channel workflow reference, see [Channels](/channels) and the [Plugins](/plugins) guide.
+For general channel workflow reference, see [Channels](/docs/channels) and the [Plugins](/docs/cli/plugins) guide.

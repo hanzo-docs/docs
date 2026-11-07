@@ -30,7 +30,7 @@ bot plugins install ./extensions/msteams
 If you choose Teams during configure/onboarding and a git checkout is detected,
 Bot will offer the local install path automatically.
 
-Details: [Plugins](/plugin)
+Details: [Plugins](/docs/tools/plugin)
 
 ## Quick setup (beginner)
 1) Install the Microsoft Teams plugin.
@@ -424,7 +424,7 @@ Key settings (see `/gateway/configuration` for shared channel patterns):
 - `channels.msteams.sharePointSiteId`: SharePoint site ID for file uploads in group chats/channels (see [Sending files in group chats](#sending-files-in-group-chats)).
 
 ## Routing & Sessions
-- Session keys follow the standard agent format (see [/concepts/session](/concepts/session)):
+- Session keys follow the standard agent format (see [/concepts/session](/docs/concepts/session)):
   - Direct messages share the main session (`agent:<agentId>:<mainKey>`).
   - Channel/group messages use conversation id:
     - `agent:<agentId>:msteams:channel:<conversationId>`

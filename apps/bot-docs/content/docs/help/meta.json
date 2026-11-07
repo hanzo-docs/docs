@@ -2,7 +2,11 @@
   "title": "Help",
   "pages": [
     "index",
+    "debugging",
+    "environment",
     "faq",
+    "scripts",
+    "testing",
     "troubleshooting"
   ]
 }

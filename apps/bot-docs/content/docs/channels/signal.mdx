@@ -68,7 +68,7 @@ Example:
 }
 ```
 
-Multi-account support: use `channels.signal.accounts` with per-account config and optional `name`. See [`gateway/configuration`](/gateway/configuration#telegramaccounts--discordaccounts--slackaccounts--signalaccounts--imessageaccounts) for the shared pattern.
+Multi-account support: use `channels.signal.accounts` with per-account config and optional `name`. See [`gateway/configuration`](/docs/gateway/configuration#telegramaccounts--discordaccounts--slackaccounts--signalaccounts--imessageaccounts) for the shared pattern.
 
 ## External daemon mode (httpUrl)
 If you want to manage `signal-cli` yourself (slow JVM cold starts, container init, or shared CPUs), run the daemon separately and point Bot at it:
@@ -93,7 +93,7 @@ DMs:
 - Approve via:
   - `bot pairing list signal`
   - `bot pairing approve signal <CODE>`
-- Pairing is the default token exchange for Signal DMs. Details: [Pairing](/start/pairing)
+- Pairing is the default token exchange for Signal DMs. Details: [Pairing](/docs/start/pairing)
 - UUID-only senders (from `sourceUuid`) are stored as `uuid:<id>` in `channels.signal.allowFrom`.
 
 Groups:
@@ -145,7 +145,7 @@ Config:
 - Usernames: `username:<name>` (if supported by your Signal account).
 
 ## Configuration reference (Signal)
-Full configuration: [Configuration](/gateway/configuration)
+Full configuration: [Configuration](/docs/gateway/configuration)
 
 Provider options:
 - `channels.signal.enabled`: enable/disable channel startup.

@@ -10,12 +10,12 @@ Quick open (local Gateway):
 - http://127.0.0.1:18789/ (or http://localhost:18789/)
 
 Key references:
-- [Control UI](/web/control-ui) for usage and UI capabilities.
-- [Tailscale](/gateway/tailscale) for Serve/Funnel automation.
-- [Web surfaces](/web) for bind modes and security notes.
+- [Control UI](/docs/web/control-ui) for usage and UI capabilities.
+- [Tailscale](/docs/gateway/tailscale) for Serve/Funnel automation.
+- [Web surfaces](/docs/web) for bind modes and security notes.
 
 Authentication is enforced at the WebSocket handshake via `connect.params.auth`
-(token or password). See `gateway.auth` in [Gateway configuration](/gateway/configuration).
+(token or password). See `gateway.auth` in [Gateway configuration](/docs/gateway/configuration).
 
 ## Fast path (recommended)
 
@@ -27,7 +27,7 @@ Authentication is enforced at the WebSocket handshake via `connect.params.auth`
 
 - **Localhost**: open `http://127.0.0.1:18789/`. If you see “unauthorized,” run `bot dashboard` and use the tokenized link (`?token=...`).
 - **Token source**: `gateway.auth.token` (or `BOT_GATEWAY_TOKEN`); the UI stores it after first load.
-- **Not localhost**: use Tailscale Serve (tokenless if `gateway.auth.allowTailscale: true`), tailnet bind with a token, or an SSH tunnel. See [Web surfaces](/web).
+- **Not localhost**: use Tailscale Serve (tokenless if `gateway.auth.allowTailscale: true`), tailnet bind with a token, or an SSH tunnel. See [Web surfaces](/docs/web).
 
 ## If you see “unauthorized” / 1008
 

@@ -15,7 +15,7 @@ Recommended path: use the **CLI onboarding wizard** (`bot onboard`). It sets up:
 - workspace bootstrap + skills
 - optional background service
 
-If you want the deeper reference pages, jump to: [Wizard](/start/wizard), [Setup](/start/setup), [Pairing](/start/pairing), [Security](/gateway/security).
+If you want the deeper reference pages, jump to: [Wizard](/docs/start/wizard), [Setup](/docs/start/setup), [Pairing](/docs/start/pairing), [Security](/docs/gateway/security).
 
 Sandboxing note: `agents.defaults.sandbox.mode: "non-main"` uses `session.mainKey` (default `"main"`),
 so group/channel sessions are sandboxed. If you want the main agent to always
@@ -40,10 +40,10 @@ run on host, set an explicit per-agent override:
 - `pnpm` (optional; recommended if you build from source)
 - **Recommended:** Brave Search API key for web search. Easiest path:
   `bot configure --section web` (stores `tools.web.search.apiKey`).
-  See [Web tools](/tools/web).
+  See [Web tools](/docs/tools/web).
 
 macOS: if you plan to build the apps, install Xcode / CLT. For the CLI + gateway only, Node is enough.
-Windows: use **WSL2** (Ubuntu recommended). WSL2 is strongly recommended; native Windows is untested, more problematic, and has poorer tool compatibility. Install WSL2 first, then run the Linux steps inside WSL. See [Windows (WSL2)](/platforms/windows).
+Windows: use **WSL2** (Ubuntu recommended). WSL2 is strongly recommended; native Windows is untested, more problematic, and has poorer tool compatibility. Install WSL2 first, then run the Linux steps inside WSL. See [Windows (WSL2)](/docs/platforms/windows).
 
 ## 1) Install the CLI (recommended)
 
@@ -51,7 +51,7 @@ Windows: use **WSL2** (Ubuntu recommended). WSL2 is strongly recommended; native
 curl -fsSL https://hanzo.bot/install.sh | bash
 ```
 
-Installer options (install method, non-interactive, from GitHub): [Install](/install).
+Installer options (install method, non-interactive, from GitHub): [Install](/docs/install).
 
 Windows (PowerShell):
 
@@ -83,7 +83,7 @@ What you’ll choose:
   - **Runtime**: Node (recommended; required for WhatsApp/Telegram). Bun is **not recommended**.
 - **Gateway token**: the wizard generates one by default (even on loopback) and stores it in `gateway.auth.token`.
 
-Wizard doc: [Wizard](/start/wizard)
+Wizard doc: [Wizard](/docs/start/wizard)
 
 ### Auth: where it lives (important)
 
@@ -131,14 +131,14 @@ bot channels login
 
 Scan via WhatsApp → Settings → Linked Devices.
 
-WhatsApp doc: [WhatsApp](/channels/whatsapp)
+WhatsApp doc: [WhatsApp](/docs/channels/whatsapp)
 
 ### Telegram / Discord / others
 
 The wizard can write tokens/config for you. If you prefer manual config, start with:
-- Telegram: [Telegram](/channels/telegram)
-- Discord: [Discord](/channels/discord)
-- Mattermost (plugin): [Mattermost](/channels/mattermost)
+- Telegram: [Telegram](/docs/channels/telegram)
+- Discord: [Discord](/docs/channels/discord)
+- Mattermost (plugin): [Mattermost](/docs/channels/mattermost)
 
 **Telegram DM tip:** your first DM returns a pairing code. Approve it (see next step) or the bot won’t respond.
 
@@ -152,7 +152,7 @@ bot pairing list whatsapp
 bot pairing approve whatsapp <code>
 ```
 
-Pairing doc: [Pairing](/start/pairing)
+Pairing doc: [Pairing](/docs/start/pairing)
 
 ## From source (development)
 
@@ -190,7 +190,7 @@ Health probes: `bot health` (or `bot status --deep`) asks the running gateway fo
 
 ## Next steps (optional, but great)
 
-- macOS menu bar app + voice wake: [macOS app](/platforms/macos)
-- iOS/Android nodes (Canvas/camera/voice): [Nodes](/nodes)
-- Remote access (SSH tunnel / Tailscale Serve): [Remote access](/gateway/remote) and [Tailscale](/gateway/tailscale)
-- Always-on / VPN setups: [Remote access](/gateway/remote), [exe.dev](/platforms/exe-dev), [Hetzner](/platforms/hetzner), [macOS remote](/platforms/mac/remote)
+- macOS menu bar app + voice wake: [macOS app](/docs/platforms/macos)
+- iOS/Android nodes (Canvas/camera/voice): [Nodes](/docs/nodes)
+- Remote access (SSH tunnel / Tailscale Serve): [Remote access](/docs/gateway/remote) and [Tailscale](/docs/gateway/tailscale)
+- Always-on / VPN setups: [Remote access](/docs/gateway/remote), [exe.dev](/docs/platforms/exe-dev), [Hetzner](/docs/platforms/hetzner), [macOS remote](/docs/platforms/mac/remote)

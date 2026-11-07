@@ -51,22 +51,68 @@ const SKIP_FILES = new Set([
  */
 const INVITES: [RegExp, string][] = [
   [/\b(?:channels\.)?discord\.(?:gg|com\/invite)\/(?:clawd|hanzo|bot)\b/g, 'discord.gg/XthHQQj'],
+  [/\]\(\.\.\/\.\.\/(LICENSE|NOTICE|LICENSES\/MIT\.txt)\)/g, '](https://github.com/hanzoai/bot/blob/main/$1)'],
 ];
 
-/** A doc with every upstream community invite pointed at Hanzo's server. */
+const ALIAS_LINKS: Record<string, string> = {
+  '/tui': '/docs/web/tui',
+  '/tts': '/docs/nodes/tts',
+  '/environment': '/docs/reference/environment',
+  '/scripts': '/docs/reference/scripts',
+  '/testing': '/docs/reference/testing',
+  '/debug': '/docs/help/debug',
+  '/debug/node-issue': '/docs/help/troubleshooting',
+  '/vps': '/docs/platforms/vps',
+  '/network': '/docs/gateway/network',
+  '/prose': '/docs/tools/prose',
+  '/date-time': '/docs/concepts/date-time',
+  '/brave-search': '/docs/tools/brave-search',
+  '/perplexity': '/docs/tools/perplexity',
+  '/plugin': '/docs/tools/plugin',
+  '/plugins': '/docs/cli/plugins',
+  '/hooks': '/docs/automation/hooks',
+  '/hooks/soul-evil': '/docs/automation/hooks',
+  '/logging': '/docs/gateway/logging',
+  '/broadcast-groups': '/docs/channels/broadcast-groups',
+  '/token-use': '/docs/reference/token-use',
+  '/multi-agent-sandbox-tools': '/docs/tools/multi-agent-sandbox-tools',
+  '/bedrock': '/docs/providers/bedrock',
+  '/experiments/onboarding-config-protocol': '/docs/start/onboarding',
+  '/experiments/plans/cron-add-hardening': '/docs/automation/cron-jobs',
+  '/experiments/plans/group-policy-hardening': '/docs/concepts/groups',
+  '/experiments/research/memory': '/docs/concepts/memory',
+  '/experiments/proposals/model-config': '/docs/providers/models',
+};
+
+const CATEGORY_SET = new Set(CATEGORIES);
+
+function rewriteInternalHref(href: string): string {
+  const m = href.match(/^(\/[a-zA-Z0-9_.\-/]*?)(\/?)([#?].*)?$/);
+  if (!m) return href;
+  const p = m[1].replace(/\/index$/, '') || '/';
+  const tail = m[3] || '';
+  if (p.startsWith('/docs/') || p === '/docs') return p + tail;
+  if (ALIAS_LINKS[p]) return ALIAS_LINKS[p] + tail;
+  const seg = p.slice(1).split('/')[0];
+  if (CATEGORY_SET.has(seg)) return '/docs' + p + tail;
+  return href;
+}
+
+/** A doc with every upstream community invite and root-relative doc link pointed at its canonical target. */
 export function relink(doc: string): string {
-  return INVITES.reduce((d, [from, to]) => d.replace(from, to), doc);
+  const withInvites = INVITES.reduce((d, [from, to]) => d.replace(from, to), doc);
+  return withInvites.replace(/\]\((\/[^)\s]+)\)/g, (_m, href: string) => `](${rewriteInternalHref(href)})`);
 }
 
 // Category display names and ordering
 const CATEGORY_META: Record<string, { title: string; pages?: string[] }> = {
   install: {
     title: 'Installation',
-    pages: ['index', 'installer', 'node', 'docker', 'nix', 'ansible', 'bun', 'updating', 'migrate-from-openclaw', 'development-channels', 'uninstall'],
+    pages: ['index', 'installer', 'node', 'docker', 'podman', 'nix', 'ansible', 'bun', 'fly', 'render', 'northflank', 'hetzner', 'gcp', 'macos-vm', 'exe-dev', 'updating', 'migrating', 'migrate-from-openclaw', 'development-channels', 'uninstall'],
   },
   start: {
     title: 'Getting Started',
-    pages: ['getting-started', 'wizard', 'setup', 'bot', 'pairing', 'showcase', 'onboarding', 'hubs', 'lore'],
+    pages: ['getting-started', 'quickstart', 'wizard', 'wizard-cli-reference', 'wizard-cli-automation', 'setup', 'bot', 'hanzo-bot', 'pairing', 'bootstrapping', 'showcase', 'onboarding', 'onboarding-overview', 'hubs', 'docs-directory', 'lore'],
   },
   concepts: {
     title: 'Core Concepts',
@@ -76,11 +122,11 @@ const CATEGORY_META: Record<string, { title: string; pages?: string[] }> = {
   },
   channels: {
     title: 'Channels',
-    pages: ['index', 'whatsapp', 'telegram', 'grammy', 'discord', 'slack', 'signal', 'bluebubbles', 'imessage', 'matrix', 'mattermost', 'googlechat', 'msteams', 'nostr', 'tlon', 'nextcloud-talk', 'zalo', 'zalouser', 'location', 'troubleshooting'],
+    pages: ['index', 'whatsapp', 'telegram', 'grammy', 'discord', 'slack', 'signal', 'bluebubbles', 'imessage', 'matrix', 'mattermost', 'googlechat', 'msteams', 'line', 'feishu', 'twitch', 'irc', 'synology-chat', 'nostr', 'tlon', 'nextcloud-talk', 'zalo', 'zalouser', 'groups', 'group-messages', 'broadcast-groups', 'channel-routing', 'pairing', 'location', 'troubleshooting'],
   },
   providers: {
     title: 'LLM Providers',
-    pages: ['index', 'openai', 'anthropic', 'ollama', 'qwen', 'openrouter', 'moonshot', 'minimax', 'venice', 'synthetic', 'vercel-ai-gateway', 'opencode', 'zai', 'glm', 'github-copilot', 'deepgram'],
+    pages: ['index', 'models', 'openai', 'anthropic', 'bedrock', 'ollama', 'vllm', 'litellm', 'qwen', 'openrouter', 'huggingface', 'mistral', 'nvidia', 'together', 'moonshot', 'minimax', 'venice', 'qianfan', 'xiaomi', 'synthetic', 'vercel-ai-gateway', 'cloudflare-ai-gateway', 'claude-max-api-proxy', 'kilocode', 'opencode', 'zai', 'glm', 'github-copilot', 'deepgram'],
   },
   tools: {
     title: 'Skills & Tools',
@@ -265,6 +311,12 @@ async function convertFile(srcPath: string) {
       'scripts.md': 'reference/scripts.mdx',
       'testing.md': 'reference/testing.mdx',
       'debug.md': 'help/debug.mdx',
+      'vps.md': 'platforms/vps.mdx',
+      'network.md': 'gateway/network.mdx',
+      'prose.md': 'tools/prose.mdx',
+      'date-time.md': 'concepts/date-time.mdx',
+      'brave-search.md': 'tools/brave-search.mdx',
+      'perplexity.md': 'tools/perplexity.mdx',
     };
     const mapped = rootFileMap[parts[0]];
     if (!mapped) return;
@@ -279,7 +331,7 @@ async function convertFile(srcPath: string) {
   }
 
   // Build dest path (.md → .mdx)
-  let destRel = relPath.replace(/\.md$/, '.mdx');
+  let destRel = relPath === 'gateway/security/index.md' ? 'gateway/security.mdx' : relPath.replace(/\.md$/, '.mdx');
   const destPath = join(DEST, destRel);
 
   await mkdir(dirname(destPath), { recursive: true });

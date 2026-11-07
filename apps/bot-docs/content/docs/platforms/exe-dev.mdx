@@ -97,7 +97,7 @@ It can set up:
 - model provider config/login
 - Linux systemd **user** service (service)
 
-If you’re doing OAuth on a headless VM: do OAuth on a normal machine first, then copy the auth profile to the VM (see [Help](/help)).
+If you’re doing OAuth on a headless VM: do OAuth on a normal machine first, then copy the auth profile to the VM (see [Help](/docs/help)).
 
 ## 5) Remote access options
 
@@ -112,7 +112,7 @@ ssh -N -L 18789:127.0.0.1:18789 bot.exe.xyz
 Open locally:
 - `http://127.0.0.1:18789/` (Control UI)
 
-Runbook: [Remote access](/gateway/remote)
+Runbook: [Remote access](/docs/gateway/remote)
 
 ### Option B: exe.dev HTTPS proxy (no tunnel)
 
@@ -155,7 +155,7 @@ Notes:
 - Prefer a **non-default** port (like `8080`) if your proxy expects an app port.
 - Treat the token like a password.
 
-Control UI details: [Control UI](/web/control-ui)
+Control UI details: [Control UI](/docs/web/control-ui)
 
 ## 6) Keep it running (service)
 
@@ -171,7 +171,7 @@ If the service dies after logout, enable lingering:
 sudo loginctl enable-linger "$USER"
 ```
 
-More: [Linux](/platforms/linux)
+More: [Linux](/docs/platforms/linux)
 
 ## 7) Updates
 
@@ -182,4 +182,4 @@ bot gateway restart
 bot health
 ```
 
-Guide: [Updating](/install/updating)
+Guide: [Updating](/docs/install/updating)

@@ -291,7 +291,7 @@ Then set your Gateway config `browser.controlUrl` to the HTTPS URL (MagicDNS/ts.
 
 Notes:
 - Do **not** use Tailscale Funnel for this unless you explicitly want to make the endpoint public.
-- For Tailnet setup/background, see [Gateway web surfaces](/web/index) and the [Gateway CLI](/cli/gateway).
+- For Tailnet setup/background, see [Gateway web surfaces](/docs/web) and the [Gateway CLI](/docs/cli/gateway).
 
 ## Profiles (multi-browser)
 
@@ -312,7 +312,7 @@ All control endpoints accept `?profile=<name>`; the CLI uses `--browser-profile`
 
 Bot can also drive **your existing Chrome tabs** (no separate “bot” Chrome instance) via a local CDP relay + a Chrome extension.
 
-Full guide: [Chrome extension](/tools/chrome-extension)
+Full guide: [Chrome extension](/docs/tools/chrome-extension)
 
 Flow:
 - You run a **browser control server** (Gateway on the same machine, or `bot browser serve`).
@@ -510,7 +510,7 @@ Notes:
   - `--format ai` (default when Playwright is installed): returns an AI snapshot with numeric refs (`aria-ref="<n>"`).
   - `--format aria`: returns the accessibility tree (no refs; inspection only).
   - `--efficient` (or `--mode efficient`): compact role snapshot preset (interactive + compact + depth + lower maxChars).
-  - Config default (tool/CLI only): set `browser.snapshotDefaults.mode: "efficient"` to use efficient snapshots when the caller does not pass a mode (see [Gateway configuration](/gateway/configuration#browser-bot-managed-browser)).
+  - Config default (tool/CLI only): set `browser.snapshotDefaults.mode: "efficient"` to use efficient snapshots when the caller does not pass a mode (see [Gateway configuration](/docs/gateway/configuration#browser-bot-managed-browser)).
   - Role snapshot options (`--interactive`, `--compact`, `--depth`, `--selector`) force a role-based snapshot with refs like `ref=e12`.
   - `--frame "<iframe selector>"` scopes role snapshots to an iframe (pairs with role refs like `e12`).
   - `--interactive` outputs a flat, easy-to-pick list of interactive elements (best for driving actions).
@@ -609,14 +609,14 @@ These are useful for “make the site behave like X” workflows:
 ## Security & privacy
 
 - The bot browser profile may contain logged-in sessions; treat it as sensitive.
-- For logins and anti-bot notes (X/Twitter, etc.), see [Browser login + X/Twitter posting](/tools/browser-login).
+- For logins and anti-bot notes (X/Twitter, etc.), see [Browser login + X/Twitter posting](/docs/tools/browser-login).
 - Keep control URLs loopback-only unless you intentionally expose the server.
 - Remote CDP endpoints are powerful; tunnel and protect them.
 
 ## Troubleshooting
 
 For Linux-specific issues (especially snap Chromium), see
-[Browser troubleshooting](/tools/browser-linux-troubleshooting).
+[Browser troubleshooting](/docs/tools/browser-linux-troubleshooting).
 
 ## Agent tools + how control works
 

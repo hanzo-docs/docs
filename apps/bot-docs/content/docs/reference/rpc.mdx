@@ -11,7 +11,7 @@ Bot integrates external CLIs via JSON-RPC. Two patterns are used today.
 - Health probe: `/api/v1/check`.
 - Bot owns lifecycle when `channels.signal.autoStart=true`.
 
-See [Signal](/channels/signal) for setup and endpoints.
+See [Signal](/docs/channels/signal) for setup and endpoints.
 
 ## Pattern B: stdio child process (imsg)
 - Bot spawns `imsg rpc` as a child process.
@@ -24,7 +24,7 @@ Core methods used:
 - `send`
 - `chats.list` (probe/diagnostics)
 
-See [iMessage](/channels/imessage) for setup and addressing (`chat_id` preferred).
+See [iMessage](/docs/channels/imessage) for setup and addressing (`chat_id` preferred).
 
 ## Adapter guidelines
 - Gateway owns the process (start/stop tied to provider lifecycle).

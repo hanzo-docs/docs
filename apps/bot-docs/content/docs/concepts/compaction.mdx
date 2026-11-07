@@ -13,7 +13,7 @@ Compaction **summarizes older conversation** into a compact summary entry and ke
 Compaction **persists** in the session’s JSONL history.
 
 ## Configuration
-See [Compaction config & modes](/concepts/compaction) for the `agents.defaults.compaction` settings.
+See [Compaction config & modes](/docs/concepts/compaction) for the `agents.defaults.compaction` settings.
 
 ## Auto-compaction (default on)
 When a session nears or exceeds the model’s context window, Bot triggers auto-compaction and may retry the original request using the compacted context.
@@ -23,7 +23,7 @@ You’ll see:
 - `/status` showing `🧹 Compactions: <count>`
 
 Before compaction, Bot can run a **silent memory flush** turn to store
-durable notes to disk. See [Memory](/concepts/memory) for details and config.
+durable notes to disk. See [Memory](/docs/concepts/memory) for details and config.
 
 ## Manual compaction
 Use `/compact` (optionally with instructions) to force a compaction pass:
@@ -38,7 +38,7 @@ Context window is model-specific. Bot uses the model definition from the configu
 - **Compaction**: summarises and **persists** in JSONL.
 - **Session pruning**: trims old **tool results** only, **in-memory**, per request.
 
-See [/concepts/session-pruning](/concepts/session-pruning) for pruning details.
+See [/concepts/session-pruning](/docs/concepts/session-pruning) for pruning details.
 
 ## Tips
 - Use `/compact` when sessions feel stale or context is bloated.

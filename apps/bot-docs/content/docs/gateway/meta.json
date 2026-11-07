@@ -9,6 +9,7 @@
     "cli-backends",
     "configuration",
     "configuration-examples",
+    "configuration-reference",
     "discovery",
     "doctor",
     "gateway-lock",
@@ -17,6 +18,8 @@
     "local-models",
     "logging",
     "multiple-gateways",
+    "network",
+    "network-model",
     "openai-http-api",
     "openresponses-http-api",
     "pairing",
@@ -25,9 +28,12 @@
     "remote-gateway-readme",
     "sandbox-vs-tool-policy-vs-elevated",
     "sandboxing",
+    "secrets",
+    "secrets-plan-contract",
     "security",
     "tailscale",
     "tools-invoke-http-api",
-    "troubleshooting"
+    "troubleshooting",
+    "trusted-proxy-auth"
   ]
 }

@@ -11,11 +11,11 @@ Bot uses a single agent workspace directory (`agents.defaults.workspace`) as the
 
 Recommended: use `bot setup` to create `~/.bot/bot.json` if missing and initialize the workspace files.
 
-Full workspace layout + backup guide: [Agent workspace](/concepts/agent-workspace)
+Full workspace layout + backup guide: [Agent workspace](/docs/concepts/agent-workspace)
 
 If `agents.defaults.sandbox` is enabled, non-main sessions can override this with
 per-session workspaces under `agents.defaults.sandbox.workspaceRoot` (see
-[Gateway configuration](/gateway/configuration)).
+[Gateway configuration](/docs/gateway/configuration)).
 
 ## Bootstrap files (injected)
 
@@ -55,7 +55,7 @@ Bot loads skills from three locations (workspace wins on name conflict):
 - Managed/local: `~/.bot/skills`
 - Workspace: `<workspace>/skills`
 
-Skills can be gated by config/env (see `skills` in [Gateway configuration](/gateway/configuration)).
+Skills can be gated by config/env (see `skills` in [Gateway configuration](/docs/gateway/configuration)).
 
 ## p-mono integration
 
@@ -82,7 +82,7 @@ message is injected before the next assistant response.
 
 When queue mode is `followup` or `collect`, inbound messages are held until the
 current turn ends, then a new agent turn starts with the queued payloads. See
-[Queue](/concepts/queue) for mode + debounce/cap behavior.
+[Queue](/docs/concepts/queue) for mode + debounce/cap behavior.
 
 Block streaming sends completed assistant blocks as soon as they finish; it is
 **off by default** (`agents.defaults.blockStreamingDefault: "off"`).
@@ -94,7 +94,7 @@ single-line spam (idle-based merging before send). Non-Telegram channels require
 explicit `*.blockStreaming: true` to enable block replies.
 Verbose tool summaries are emitted at tool start (no debounce); Control UI
 streams tool output via agent events when available.
-More details: [Streaming + chunking](/concepts/streaming).
+More details: [Streaming + chunking](/docs/concepts/streaming).
 
 ## Model refs
 
@@ -112,4 +112,4 @@ At minimum, set:
 
 ---
 
-*Next: [Group Chats](/concepts/group-messages)*
+*Next: [Group Chats](/docs/concepts/group-messages)*

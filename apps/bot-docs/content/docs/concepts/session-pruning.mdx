@@ -56,7 +56,7 @@ Pruning uses an estimated context window (chars ≈ tokens × 4). The window siz
 
 ## Interaction with other limits
 - Built-in tools already truncate their own output; session pruning is an extra layer that prevents long-running chats from accumulating too much tool output in the model context.
-- Compaction is separate: compaction summarizes and persists, pruning is transient per request. See [/concepts/compaction](/concepts/compaction).
+- Compaction is separate: compaction summarizes and persists, pruning is transient per request. See [/concepts/compaction](/docs/concepts/compaction).
 
 ## Defaults (when enabled)
 - `ttl`: `"5m"`
@@ -98,4 +98,4 @@ Restrict pruning to specific tools:
 }
 ```
 
-See config reference: [Gateway Configuration](/gateway/configuration)
+See config reference: [Gateway Configuration](/docs/gateway/configuration)

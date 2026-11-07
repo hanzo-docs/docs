@@ -62,11 +62,11 @@
 /balancer          /docs/network          301
 /base              /docs/projects/hanzoai/base 301
 /products/chat        /docs/chat          301
-/products/flow        /docs/projects/hanzoai/flow 301
+/products/flow        /docs/openapi/flow  301
 /products/llms        /docs/models        301
 /products/mcps        /docs/mcp           301
 /products/realtimedb  /docs/projects/hanzoai/kv 301
-/products/vector      /docs/projects/hanzoai/vector 301
+/products/vector      /docs/openapi/search 301
 /products/base        /docs/projects/hanzoai/base 301
 /products/dev         /docs/dev           301
 /products/code        /docs/coding        301
@@ -152,7 +152,7 @@
 # listed where a canonical page exists; ads→marketing and cms→content are omitted
 # until those pages are authored (a 301 to a missing page is still a dead end).
 /docs/featuregate  /docs/openapi/flag     301
-/docs/cron         /docs/openapi/tasks    301
+/docs/cron         /docs/openapi/task     301
 /docs/connectorruntime /docs/openapi/auto     301
 
 # Console module "Docs" buttons that link bare product paths (docsUrl + '/x').
@@ -241,7 +241,7 @@
 /docs/openapi/flags        /docs/openapi/flag         301
 /docs/openapi/functions    /docs/openapi/function     301
 /docs/openapi/channels     /docs/openapi/channel      301
-/docs/openapi/integrations /docs/openapi/integration  301
+/docs/openapi/integrations /docs/guides/integrations  301
 /docs/openapi/projects     /docs/openapi/project      301
 # visor is retired; compute is the plane it named.
 /docs/openapi/visor        /docs/openapi/compute      301
@@ -253,3 +253,16 @@
 /docs/enso         /docs/models/enso      301
 /docs/zen          /docs/models/zen       301
 /docs/kai          /docs/models/kai       301
+
+# Marketing & agent strip deep links (hanzo.ai -> docs.hanzo.ai)
+/docs/design               /docs/apps/design          301
+/docs/cli/agents           /docs/cli/agent            301
+/docs/integrations/slack   /docs/openapi/channel      301
+
+# Hanzo Bot documentation deep links without /docs prefix
+/channels/line             https://docs.hanzo.bot/docs/channels/line            301
+/channels/mattermost       https://docs.hanzo.bot/docs/channels/mattermost      301
+/channels/whatsapp         https://docs.hanzo.bot/docs/channels/whatsapp        301
+/gateway/doctor            https://docs.hanzo.bot/docs/gateway/doctor           301
+/platforms/mac/menu-bar    https://docs.hanzo.bot/docs/platforms/mac/menu-bar   301
+/platforms/mac/voicewake   https://docs.hanzo.bot/docs/platforms/mac/voicewake  301
