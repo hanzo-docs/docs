@@ -183,6 +183,38 @@ curl -si https://api.hanzo.ai/v1/chat/completions \
   -d '{"model": "auto", "messages": [{"role": "user", "content": "Summarize this changelog in one line."}]}'
 ```
 
+From the [Java](/docs/sdks/java) and [C#](/docs/sdks/csharp) clients; the
+reply's `model` names the one that answered:
+
+```java title="Java"
+import ai.hanzo.Hanzo;
+import ai.hanzo.api.AiApi;
+import ai.hanzo.model.*;
+import java.util.List;
+
+PostChat200Response reply = new AiApi(Hanzo.client()).postChatCompletions(
+    new OpenaiChatCompletionRequest()
+        .model("auto")
+        .messages(List.of(new OpenaiChatCompletionMessage()
+            .role("user")
+            .content("Summarize this changelog in one line."))),
+    null, null);
+
+System.out.println(reply.getModel());
+```
+
+```csharp title="C#"
+using Hanzo.AI;
+using Hanzo.AI.Api;
+using Hanzo.AI.Model;
+
+var reply = new AiApi(Gateway.Configuration()).PostChatCompletions(new OpenaiChatCompletionRequest(
+    model: "auto",
+    messages: new() { new OpenaiChatCompletionMessage(role: "user", content: "Summarize this changelog in one line.") }));
+
+Console.WriteLine(reply.Model);
+```
+
 The rewrite happens before provider, pricing and billing are resolved, so the
 request is priced, metered and reported as exactly the model that served it.
 That model is in the `X-Routed-Model` response header and in the body's

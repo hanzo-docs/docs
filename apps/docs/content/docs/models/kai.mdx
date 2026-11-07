@@ -82,6 +82,54 @@ curl https://api.hanzo.ai/v1/decisions \
   }'
 ```
 
+The same call from the [Java](/docs/sdks/java) and [C#](/docs/sdks/csharp)
+clients, which read `HANZO_API_KEY` from the environment:
+
+```java title="Java"
+import ai.hanzo.Hanzo;
+import ai.hanzo.api.AiApi;
+import ai.hanzo.model.*;
+import java.util.Map;
+
+AiDecisionsResponse r = new AiApi(Hanzo.client()).postDecisions(new AiDecisionsRequest()
+    .model("kai")
+    .state("Mi pedido llegó roto y quiero que me devuelvan el dinero.")
+    .putQuestionsItem("intent", new AiDecisionsQuestion(new AiDecisionsChoice()
+        .type(AiDecisionsChoice.TypeEnum.CHOICE)
+        .instructions("What does the customer want?")
+        .criteria(Map.of("refund", "money back",
+                         "replacement", "a new item",
+                         "status", "where the order is")))));
+
+AiDecisionsAnswer intent = r.getAnswers().get("intent");
+System.out.println(intent.getChoice() + " " + intent.getConfidence());
+```
+
+```csharp title="C#"
+using Hanzo.AI;
+using Hanzo.AI.Api;
+using Hanzo.AI.Model;
+
+var r = new AiApi(Gateway.Configuration()).PostDecisions(new AiDecisionsRequest(
+    model: "kai",
+    state: "Mi pedido llegó roto y quiero que me devuelvan el dinero.",
+    questions: new Dictionary<string, AiDecisionsQuestion>
+    {
+        ["intent"] = new AiDecisionsQuestion(new AiDecisionsChoice(
+            type: AiDecisionsChoice.TypeEnum.Choice,
+            instructions: "What does the customer want?",
+            criteria: new Dictionary<string, string>
+            {
+                ["refund"] = "money back",
+                ["replacement"] = "a new item",
+                ["status"] = "where the order is",
+            })),
+    }));
+
+var intent = r.Answers["intent"];
+Console.WriteLine($"{intent.Choice} {intent.Confidence}");
+```
+
 The state is Spanish and the question English; one model reads both.
 [Decisions](/docs/decisions) documents the three question types, the response
 field by field, the errors, and how the same request reaches Jev. A call is

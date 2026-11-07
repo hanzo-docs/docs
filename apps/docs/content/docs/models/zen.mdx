@@ -73,6 +73,37 @@ curl https://api.hanzo.ai/v1/chat/completions \
   }'
 ```
 
+From the [Java](/docs/sdks/java) and [C#](/docs/sdks/csharp) clients:
+
+```java title="Java"
+import ai.hanzo.Hanzo;
+import ai.hanzo.api.AiApi;
+import ai.hanzo.model.*;
+import java.util.List;
+
+PostChat200Response reply = new AiApi(Hanzo.client()).postChatCompletions(
+    new OpenaiChatCompletionRequest()
+        .model("zen6")
+        .messages(List.of(new OpenaiChatCompletionMessage()
+            .role("user")
+            .content("Write a binary search in Rust."))),
+    null, null); // optional X-Max-Cost and X-Max-Latency-Ms bounds
+
+System.out.println(reply.getChoices().get(0).getMessage().getContent());
+```
+
+```csharp title="C#"
+using Hanzo.AI;
+using Hanzo.AI.Api;
+using Hanzo.AI.Model;
+
+var reply = new AiApi(Gateway.Configuration()).PostChatCompletions(new OpenaiChatCompletionRequest(
+    model: "zen6",
+    messages: new() { new OpenaiChatCompletionMessage(role: "user", content: "Write a binary search in Rust.") }));
+
+Console.WriteLine(reply.Choices[0].Message.Content);
+```
+
 Every hosted Zen id, with its context window and rate, is one request away and
 needs no key:
 
