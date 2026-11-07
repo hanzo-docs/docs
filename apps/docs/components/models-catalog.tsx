@@ -16,7 +16,7 @@ const ENDPOINT = 'https://api.hanzo.ai/v1/models';
 
 // `prompt`/`completion` are USD per token (OpenRouter's keys); the per-million
 // rates sit under keys that name the unit.
-type Pricing = { prompt?: string; completion?: string; input_per_million?: number; output_per_million?: number };
+type Pricing = { prompt?: string; completion?: string; input_per_million?: number | null; output_per_million?: number | null };
 type Model = {
   id: string;
   name: string;
