@@ -6,7 +6,7 @@ import { text, yamlString } from './mdx';
 // THE PRICING PAGE, generated from the billing API.
 //
 // `GET https://api.hanzo.ai/v1/pricing` is the shape of the bill — the tool
-// rates, the free-model count, the provider count, which models exist and what
+// rates, the provider count, which models exist and what
 // each one is for. Every figure on /docs/pricing is read out of a response.
 // Nothing is typed by hand, because a hand-typed price is wrong the first time a
 // rate moves and nobody notices until a bill does.
@@ -21,11 +21,11 @@ import { text, yamlString } from './mdx';
 // /v1/pricing, and a pricing response that has lost the Enso family is treated
 // as no answer at all (see fetchPricing).
 //
-// The Enso section is the catalogue's alone: the ids and their rates as
-// `/v1/models` lists them. /v1/pricing's Enso rows are a frozen snapshot whose
-// tiers, descriptions and windows no longer exist, so none of it is printed.
-// What only /docs/models/enso says (cache rates, the chain behind each tier,
-// the depth lift) is linked, not copied.
+// The Enso section is the catalogue's alone: the four paid tiers and their
+// rates as `/v1/models` lists them. /v1/pricing's Enso rows are a frozen
+// snapshot whose tiers, descriptions and windows no longer exist, so none of it
+// is printed. What only /docs/models/enso says (cache rates, the chain behind
+// each tier, fast mode, how `enso-auto` picks) is linked, not copied.
 //
 // Snapshot, like the document and the MCP server: fetched when reachable, and the
 // committed copy when not, so a builder with no egress still renders a truthful
@@ -47,12 +47,12 @@ export const PRICING_ENDPOINT = 'https://api.hanzo.ai/v1/pricing';
 export const MODELS_ENDPOINT = 'https://api.hanzo.ai/v1/models';
 
 /**
- * Enso engines that exist but are never a model you name. They are reached only
- * as a vision fallback from inside another tier, so listing them would publish a
- * price for a string nobody can send. `/v1/models` already omits them; this is
- * the guard for the day /v1/pricing does not.
+ * The rows of the Enso table: the four paid tiers. `enso-auto`, the fifth Enso
+ * model and the default, bills at the tier that answers, so it has no rate of its
+ * own to print and the page says so in prose. Any other Enso id the catalogue
+ * still answers (a retired one, during a cutover) is not printed.
  */
-const UNLISTED = new Set(['enso-vl', 'enso-vl-pro']);
+const TIERS = new Set(['enso-flash', 'enso-pro', 'enso-max', 'enso-ultra']);
 
 /** USD per million tokens, or per unit when `pricingUnit` says otherwise. */
 interface Rate {
@@ -105,7 +105,6 @@ interface Pricing {
   summary?: Record<string, number>;
   hanzoModels?: Model[];
   tools?: Tool[];
-  freeModels?: string[];
   providers?: Record<string, { total: number; free: number; paid: number }>;
   catalogue?: Catalogue;
   meta?: { captured: string; source: 'live' | 'snapshot' };
@@ -212,7 +211,7 @@ async function fetchCatalogue(): Promise<{ rates: Rates; summary: Catalogue | nu
     const enso: EnsoRate[] = [];
     for (const m of rows) {
       const input = m.pricing?.input_per_million;
-      if (!isEnso(m.id) || UNLISTED.has(m.id) || input == null) continue;
+      if (!TIERS.has(m.id) || input == null) continue;
       enso.push({ id: m.id, input, output: m.pricing?.output_per_million ?? null });
     }
     const kai = rows.find((m) => m.family === 'kai' && m.pricing?.input_per_million != null);
@@ -277,7 +276,6 @@ const project = (
   summary: p.summary,
   hanzoModels: p.hanzoModels,
   tools: p.tools,
-  freeModels: p.freeModels,
   providers: p.providers,
   catalogue,
   meta,
@@ -289,10 +287,6 @@ const project = (
 const ensoTiers = (enso: EnsoRate[]): EnsoRate[] =>
   enso.filter((t) => t.input > 0).sort((a, b) => a.input - b.input);
 
-/** The Enso ids that bill nothing. */
-const ensoFree = (enso: EnsoRate[]): string[] =>
-  enso.filter((t) => t.input === 0 && !t.output).map((t) => t.id);
-
 /** Hanzo-served models billed per call/image/clip rather than per token. */
 function perUnit(models: Model[]): Model[] {
   return models
@@ -303,10 +297,8 @@ function perUnit(models: Model[]): Model[] {
 function render(p: Pricing): string {
   const models = p.hanzoModels ?? [];
   const tiers = ensoTiers(p.enso ?? []);
-  const free = ensoFree(p.enso ?? []);
   const units = perUnit(models);
   const tools = p.tools ?? [];
-  const freeModels = (p.freeModels ?? []).length;
   const captured = p.meta?.captured ?? 'an unrecorded date';
 
   const L: string[] = [];
@@ -343,22 +335,19 @@ function render(p: Pricing): string {
       '',
       'Enso is Hanzo\'s own family. Each paid tier runs a chain of frontier',
       'models under one id and one price, and a call bills that price whichever',
-      'model answered it.',
+      'model answered it. `enso-auto`, the default, picks a tier per request and',
+      'bills at the tier that answers.',
       '',
       '| Model | Input | Output |',
       '|---|---|---|',
     );
     for (const t of tiers) w(`| \`${text(t.id)}\` | ${usd(t.input)} | ${usd(t.output)} |`);
     w('');
-    if (free.length) {
-      w(
-        `${free.map((id) => `\`${text(id)}\``).join(', ')} answer with free models and`,
-        'bill nothing. On a paid plan each of them but `enso-free` is lifted to',
-        'the tier the request\'s reasoning depth asks for, and bills that tier.',
-        '',
-      );
-    }
     w(
+      'Fast mode, `"fast": true` in the body or the header `X-Fast: 1`, bills 2x',
+      'on `enso-auto` and `enso-flash`, 3x on `enso-pro` and `enso-max`, and 4x on',
+      '`enso-ultra`, always from prepaid balance.',
+      '',
       'Cache read and write rates, the models behind each tier, and a worked',
       'cost for an agent turn: [Enso](/docs/models/enso).',
       '',
@@ -379,19 +368,6 @@ function render(p: Pricing): string {
     'the price there, next to the model id you are about to paste.',
     '',
   );
-  if (freeModels) {
-    w(
-      `**${freeModels} of them cost nothing**, in or out, subject to`,
-      'rate limits. They are not named by a common convention, so list them from',
-      'the API rather than guessing at the id:',
-      '',
-      '```bash',
-      `curl -s ${PRICING_ENDPOINT} | jq -r '.freeModels[]'`,
-      '```',
-      '',
-    );
-  }
-
   // --- Not per token ------------------------------------------------------
   if (tools.length) {
     w(
@@ -457,13 +433,13 @@ function render(p: Pricing): string {
     'nothing the endpoint will not:',
     '',
     '```bash',
-    `curl -s ${MODELS_ENDPOINT} | jq '.data[] | select(.id | test("^(hanzo/)?enso")) | {id, pricing}'`,
+    `curl -s ${MODELS_ENDPOINT} | jq '.data[] | select(.id | test("^enso-")) | {id, pricing}'`,
     '```',
     '',
     'It needs no key. `/v1/pricing` returns the Hanzo family, the third-party',
-    'rates, the free-model list, the tool table, and the provider breakdown in one',
-    'document; `/v1/models` returns the same rates alongside the model ids you',
-    'pass as `model`.',
+    'rates, the tool table, and the provider breakdown in one document;',
+    '`/v1/models` returns the same rates alongside the model ids you pass as',
+    '`model`.',
     '',
     '## Next',
     '',
@@ -515,7 +491,7 @@ export async function genPricingPage(): Promise<void> {
     `[pricing] ${path.relative(APP_ROOT, OUT)} from ${pricing.meta!.source}: ` +
       `${ensoTiers(pricing.enso ?? []).length} Enso tiers, ` +
       `${(pricing.tools ?? []).length} tools, ` +
-      `${(pricing.freeModels ?? []).length} free of ${s.totalModels ?? '?'} models`,
+      `${s.totalModels ?? '?'} models`,
   );
 }
 

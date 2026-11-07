@@ -42,7 +42,7 @@ const PATHS = [
     cta: 'Read the API reference',
     lang: 'Request',
     grammar: 'bash',
-    code: 'curl https://api.hanzo.ai/v1/chat/completions \\\n  -H "Authorization: Bearer sk-..." \\\n  -d \'{"model":"enso","messages":[...]}\'',
+    code: 'curl https://api.hanzo.ai/v1/chat/completions \\\n  -H "Authorization: Bearer sk-..." \\\n  -d \'{"model":"enso-auto","messages":[...]}\'',
   },
 ] as const;
 

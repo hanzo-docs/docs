@@ -85,7 +85,7 @@ export async function POST(req: Request) {
   });
 
   const result = streamText({
-    model: provider.chatModel(process.env.HANZO_AI_MODEL ?? 'enso'),
+    model: provider.chatModel(process.env.HANZO_AI_MODEL ?? 'enso-auto'),
     system:
       SYSTEM_PROMPT +
       '\n\n' +

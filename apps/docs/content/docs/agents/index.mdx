@@ -110,7 +110,7 @@ const key = { Authorization: `Bearer ${minted.key}`, 'Content-Type': 'applicatio
 // 6. A first call, free.
 const chat = await fetch(`${API}/v1/chat/completions`, {
   method: 'POST', headers: key,
-  body: JSON.stringify({ model: 'zen-free', messages: [{ role: 'user', content: 'Reply with the single word: ready' }] }),
+  body: JSON.stringify({ model: 'enso-auto', messages: [{ role: 'user', content: 'Reply with the single word: ready' }] }),
 })
 console.log('chat', chat.status, chat.headers.get('x-hanzo-served'), 'free left today:', chat.headers.get('x-ratelimit-remaining'))
 console.log((await chat.json()).choices?.[0]?.message?.content)
@@ -129,7 +129,7 @@ Node 22.18 or later runs the TypeScript as is. Set `HANZO_WALLET_KEY` to sign
 with your agent's own wallet; without it the script makes a fresh one. A real run:
 
 ```text
-chat 200 zen-free free left today: …
+chat 200 enso-… free left today: …
 ready
 { chains: [ 'base', 'ethereum', 'solana' ], tokens: [ 'usdc', 'usdt' ] }
 { id: 'GRncZpMYqBuV', status: 'pending', chain: 'base', token: 'usdc', depositAddress: '0x…', expiresAt: '2026-10-27T20:33:54Z' }
@@ -230,9 +230,8 @@ Free costs nothing and needs no card, to sign up or to mint a key.
 
 - A wallet account: a small free allowance to try it. Read it live:
   `GET /v1/allowance` and `GET /v1/billing/tier`.
-- A person on the Free plan: 50 requests a day on the free models (`zen-free`,
-  `enso-free`, `zen5`, `zen5-flash`, `zen5-mini`, `zen5-pro`, `zen5-coder`) and
-  50 Kai decisions a day.
+- A person on the Free plan: 50 requests a day through `enso-auto`, the
+  default, and 50 Kai decisions a day.
 - Past it: 429 `free_plan_cap`. Wait for the reset, or top up and go on.
   `X-RateLimit-Remaining` counts down to it.
 
@@ -245,14 +244,15 @@ read each: [Read your limits](/docs/agents/headless#6-read-your-limits).
 curl https://api.hanzo.ai/v1/chat/completions \
   -H "Authorization: Bearer $HANZO_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"model":"zen-free","messages":[{"role":"user","content":"In one sentence: what is Hanzo?"}]}'
+  -d '{"model":"enso-auto","messages":[{"role":"user","content":"In one sentence: what is Hanzo?"}]}'
 ```
 
 It answers 200 in the OpenAI shape, the text at `choices[0].message.content`,
 with these headers:
 
 ```text
-x-hanzo-served: zen-free
+x-hanzo-served: enso-…
+x-routed-model: enso-…
 x-ratelimit-limit: …
 x-ratelimit-remaining: …
 x-ratelimit-reset: …
@@ -268,15 +268,15 @@ npm i hanzoai
 import { AiApi, Configuration } from 'hanzoai'
 const ai = new AiApi(new Configuration({ basePath: 'https://api.hanzo.ai', accessToken: process.env.HANZO_API_KEY }))
 const { data } = await ai.getModels()
-const free = data.data.filter((m) => m.free)
-console.log(`${data.data.length} models, ${free.length} free:`, free.slice(0, 6).map((m) => m.id).join(', '))
+const enso = data.data.filter((m) => m.id.startsWith('enso-')).map((m) => m.id).sort()
+console.log(`${data.data.length} models; Enso:`, enso.join(', '))
 ```
 
 ```text
-559 models, 33 free: cohere/north-mini-code:free, dots-studio/dots-3-note-preview:free, enso-free, fish-audio/s2.1-pro-free:free, free, google/gemma-4-26b-a4b-it:free
+… models; Enso: enso-auto, enso-flash, enso-max, enso-pro, enso-ultra
 ```
 
-Chat is `ai.postChatCompletions({ openaiChatCompletionRequest: { model: 'zen-free', messages } })`,
+Chat is `ai.postChatCompletions({ openaiChatCompletionRequest: { model: 'enso-auto', messages } })`,
 the same route as the curl. Python: `pip install "hanzoai>=8"` (Python 3.12+).
 `curl https://api.hanzo.ai/v1/models` lists the catalog with no key. The whole
 walk-through: [Quickstart](/docs/quickstart).
@@ -414,7 +414,7 @@ flags on `hanzo account keys create`.
 curl -X POST https://api.hanzo.ai/v1/account/keys \
   -H "Authorization: Bearer $HANZO_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"name":"agent","type":"secret","budget":{"month":2000},"limit":["model:zen-free"]}'
+  -d '{"name":"agent","type":"secret","budget":{"month":2000},"limit":["model:enso-auto"]}'
 ```
 
 **Cap a session.** One agent run gets its own ceiling, in micro-USD:
@@ -465,8 +465,8 @@ with the team.
 account and organization, and mints a key (step 1).
 
 **What is free?** A wallet account gets a small free allowance to try it
-(`GET /v1/allowance`). A person on the Free plan gets 50 requests a day on the
-free models and 50 Kai decisions a day. Signing up and minting a key need no
+(`GET /v1/allowance`). A person on the Free plan gets 50 requests a day through
+`enso-auto` and 50 Kai decisions a day. Signing up and minting a key need no
 card.
 
 **What does it cost after that?** Usage is per token: `zen6` is \$0.60 in and

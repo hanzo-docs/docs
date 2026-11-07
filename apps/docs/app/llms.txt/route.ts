@@ -67,7 +67,7 @@ const HEAD = [
   `- [Agents: start here](${ORIGIN}/docs/agents.md): a credential, the free tier, the first call, MCP, Kai, rate limits and spend control.`,
   `- [The prompt](${ORIGIN}/docs/agents/prompt.md): one block to hand any agent that builds on Hanzo.`,
   '- Key: `hanzo auth login`, then `hanzo account keys create --name agent --type secret`. With an inbox, the four-request email-code sequence on /docs/agents ends in the same key mint.',
-  '- Free: a wallet account gets a small free allowance to try it; read it live with `GET /v1/allowance` and `GET /v1/billing/tier` on api.hanzo.ai. A person on the Free plan gets 50 requests a day on `zen-free` and `enso-free`, and 50 Kai decisions a day. No card.',
+  '- Free: a wallet account gets a small free allowance to try it; read it live with `GET /v1/allowance` and `GET /v1/billing/tier` on api.hanzo.ai. A person on the Free plan gets 50 requests a day through `enso-auto`, the default, and 50 Kai decisions a day. No card.',
   '- Limits: a 429 with code `free_plan_cap` means the free allowance is used. Wait for `resets_at`, or raise it: `POST /v1/billing/crypto/deposit`, send to the address it returns, and calls past the allowance draw on the balance (`GET /v1/billing/balance`).',
   '- Pay: plans from $20 a month ([pricing](https://hanzo.ai/pricing)), card, Apple Pay or Google Pay at [hanzo.ai/pay](https://hanzo.ai/pay), or USDC and USDT over the API: `POST /v1/billing/crypto/deposit`.',
   '- Evaluate Kai: `POST /v1/decisions`; the frozen harness is [hanzoai/benchmarks](https://github.com/hanzoai/benchmarks) (`decision/`); published runs: [app.phishing](https://api.hanzo.ai/v1/research/runs?org=hanzo&benchmark=app.phishing).',
