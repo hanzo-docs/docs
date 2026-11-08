@@ -80,7 +80,7 @@ print(response.choices[0].message.content)
 `/v1/chat/completions` takes and returns the chat-completions JSON shape, which
 is why the Python tab is the `openai` client with its base URL moved: any client
 already written against that shape works here unchanged. Model ids are not
-portable across vendors, though — `zen6` and `enso` exist only here. [The
+portable across vendors, though — `zen6` and `enso-auto` exist only here. [The
 SDKs](/docs/sdks) covers what each language ships and when to reach past the
 chat route into the rest of `/v1`.
 

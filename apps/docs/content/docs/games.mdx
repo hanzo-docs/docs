@@ -86,7 +86,7 @@ curl https://api.hanzo.ai/v1/chat/completions \
   -H "Authorization: Bearer sk-..." \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "enso",
+    "model": "enso-auto",
     "messages": [{
       "role": "user",
       "content": "Write a complete single-file HTML snake game. Canvas, no dependencies. Arrow keys, growth on eating, score in the corner, game over on wall or self collision, restart button. Reply with only the HTML."
@@ -106,7 +106,7 @@ client = OpenAI(
 )
 
 game = client.chat.completions.create(
-    model="enso",
+    model="enso-auto",
     messages=[{"role": "user", "content": "Write a complete single-file HTML snake game..."}],
 )
 

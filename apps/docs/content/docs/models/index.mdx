@@ -11,7 +11,7 @@ ones you can download, and which ids the gateway serves right now.**
 
 | Family | Role | Weights | Reach it at | Status |
 |---|---|---|---|---|
-| **[Enso](/docs/models/enso)** | routes: three paid tiers, each a chain of frontier models under one id and one price, and the `auto` router | router code open ([hanzoai/engine](https://github.com/hanzoai/engine)); tiers hosted | `enso-auto`, `enso-flash`, `enso-pro`, `enso-ultra`; `model: "auto"` | shipped |
+| **[Enso](/docs/models/enso)** | routes: `enso-auto`, the default, and four paid tiers, each a chain of frontier models under one id and one price, and the `auto` router | router code open ([hanzoai/engine](https://github.com/hanzoai/engine)); tiers hosted | `enso-auto`, `enso-flash`, `enso-pro`, `enso-max`, `enso-ultra`; `model: "auto"` | shipped |
 | **[Kai](/docs/models/kai)** | decides: typed, calibrated answers to bounded questions | hosted, not published; served by API only | `model: "kai"` on [`POST /v1/decisions`](/docs/decisions) | live: kai-1.2, $0.021 per million input tokens |
 | **[Zen](/docs/models/zen)** | reasons: agentic coding that runs locally, marketing copy and assets; also vision, speech, embeddings | open, on [Hugging Face](https://huggingface.co/zenlm) | `zen*` ids on `/v1/chat/completions` | shipped |
 | **[Creative AI](/docs/models/creative)** | generates: cinematic video, high-fidelity imagery, 3D meshes, foley, voice, music | proprietary checkpoints over open foundations; private weights | studio nodes (`studio.hanzo.ai`) & gated API | research preview · [Apply](https://hanzo.ai/research-access?track=creative) |
@@ -86,7 +86,7 @@ covers what happens when the balance runs out.
 Hanzo AI maintains a public model and system card registry across [Hugging Face (`huggingface.co/hanzoai`)](https://huggingface.co/hanzoai) and [ZenLM (`huggingface.co/zenlm`)](https://huggingface.co/zenlm), organizing its first-party architecture across 5 functional families:
 
 1. **Kai — Unified Multimodal Decision Intelligence (`hanzoai/kai-*`)**: Calibrated, typed decision models. Hosted API on `POST /v1/decisions` (`kai-1.3`, `kai-1.4`, `kai-1.5`, `kai-1.6`, and the unified multimodal target `kai-1.7`), alongside specialized baselines (`kai-1-agent`, `kai-1-multilingual`).
-2. **Enso — Intelligent Routing (`hanzoai/enso-*`)**: Dynamic prompt routing across cost, latency, and quality tiers (`enso-auto`, `enso-flash`, `enso-pro`, `enso-ultra`, `enso-free`).
+2. **Enso — Intelligent Routing (`hanzoai/enso-*`)**: Dynamic prompt routing across cost, latency, and quality tiers (`enso-auto`, `enso-flash`, `enso-pro`, `enso-max`, `enso-ultra`).
 3. **Zen — Generative Intelligence (`zenlm/zen6*`)**: Open-weight foundation models for agentic coding, reasoning, and multimodality (`zen6`, `zen6-flash`, `zen6-coder`, `zen-vl`, `zen-embedding`, `zen-reranker`).
 4. **Guard — Safety & Oversight (`hanzoai/guard`, `zooai/lifeguard`)**: Deterministic policy gateways and consequence-grounded evaluation suites (redirected from `zoo-labs/lifeguard`).
 5. **Agent Systems (`hanzoai/kata`, `hanzoai/gen`)**: Autonomous DAG execution and software engineering agent runtimes.

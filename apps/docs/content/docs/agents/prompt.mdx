@@ -16,7 +16,7 @@ Base URL: https://api.hanzo.ai/v1 (chat completions in the OpenAI shape). Discov
 2. Get a key: POST https://api.hanzo.ai/v1/account/keys {"name":"agent","type":"secret"} with that token. The key is shown once.
 3. Read your allowance: GET https://api.hanzo.ai/v1/billing/tier with the key says your plan, what it allows and what is left; GET https://api.hanzo.ai/v1/billing/plans lists every plan and price.
 4. Top up: GET https://api.hanzo.ai/v1/billing/crypto/options, then POST https://api.hanzo.ai/v1/billing/crypto/deposit {"chain":"base","token":"usdc","amountCents":2000}. Send that token on that chain to the address it returns, and GET https://api.hanzo.ai/v1/billing/crypto/deposit/<id> until it says succeeded.
-5. Call: POST https://api.hanzo.ai/v1/chat/completions {"model":"zen-free","messages":[{"role":"user","content":"Hello"}]} with Authorization: Bearer <key>.
+5. Call: POST https://api.hanzo.ai/v1/chat/completions {"model":"enso-auto","messages":[{"role":"user","content":"Hello"}]} with Authorization: Bearer <key>.
 
 The whole path as one TypeScript file: https://hanzo.ai/agents#headless. Every request spelled out: https://docs.hanzo.ai/docs/agents. Talk to people at Hanzo: https://cal.com/hanzo.
 ```
