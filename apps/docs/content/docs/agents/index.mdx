@@ -320,9 +320,11 @@ Zed, in `settings.json`:
 `npx -y hanzo mcp` is the whole command: the `hanzo` package, then its `mcp`
 subcommand, the native MCP server over stdio. There is no `serve` to add.
 
-The hosted endpoint, `POST https://api.hanzo.ai/v1/mcp`, speaks MCP protocol
-2026-07-28 only. Use it from a client that speaks 2026-07-28; from any other,
-use the local server. More: [MCP](/docs/mcp).
+The hosted endpoint, `POST https://api.hanzo.ai/v1/mcp`, is streamable HTTP and
+answers `initialize` in the protocol version the client asks for (measured:
+2025-06-18, 2025-11-25 and 2026-07-28), so a client that sets request headers
+can use it as is. Per-client steps for both ways:
+[Agents](/docs/guides/coding/agents). More: [MCP](/docs/mcp).
 
 ### 6. Evaluate Kai yourself
 
@@ -488,5 +490,7 @@ plan.
 `free_plan_cap`, `resets_at` and `topup_url`. Wait for the reset, or top up in
 USDC or USDT over the API and go on.
 
-**Why does my client refuse the hosted MCP endpoint?** It speaks protocol
-2026-07-28 only. Run the local server above instead.
+**Why does my client refuse the hosted MCP endpoint?** Send your key as
+`Authorization: Bearer sk-...`, in the header your client's MCP settings name
+(`tools/list` answers without one, `tools/call` does not). A client that cannot
+set a header, or only runs local servers, uses the local server above.

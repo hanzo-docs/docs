@@ -211,8 +211,11 @@ The way in for an agent, second in the root sidebar.
 - **`/v1/research/runs` is the one `STAGED` path in `check-endpoints.ts`.**
   research is alpha, so the public document omits it, yet the read is open and
   is how a reader checks Kai's published runs. Exact path only.
-- The hosted `POST /v1/mcp` speaks protocol 2026-07-28 only, so the page sends
-  clients to the local server, `npx -y hanzo mcp`.
+- The hosted `POST /v1/mcp` is streamable HTTP and answers `initialize` in the
+  protocol version the client asks for (2025-06-18, 2025-11-25 and 2026-07-28
+  measured on 2026-11-09; 2025-03-26 is answered with 2026-07-28). The page
+  shows the local server, `npx -y hanzo mcp`; `guides/coding/agents` has each
+  client's steps for the hosted door and the local server.
 
 ## Agent readiness
 
