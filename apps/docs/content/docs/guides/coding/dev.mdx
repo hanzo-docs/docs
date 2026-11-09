@@ -1,0 +1,41 @@
+---
+title: Hanzo Dev
+description: "Hanzo's coding agent: install it, sign in, and add the hosted Hanzo MCP endpoint beside the local toolset it starts with."
+---
+
+## Set up
+
+```bash
+curl -fsSL hanzo.sh | sh      # or, on any OS: npm i -g hanzo
+hanzo login
+hanzo dev
+```
+
+Bare `hanzo` starts the same agent. Hanzo Dev reads its configuration from `~/.hanzo/dev/config.toml` and nothing from a `.codex` beside it.
+
+## Hanzo MCP
+
+Two ways to give Hanzo Dev Hanzo's tools. **API key** adds the hosted endpoint, [`https://api.hanzo.ai/v1/mcp`](/docs/mcp-tools), with a key from [hanzo.app](https://hanzo.app) sent as `Authorization: Bearer sk-...`. **Local** is `hanzo-mcp`, which Hanzo Dev starts with. Replace `sk-...` with your key.
+
+<Tabs items={["API key","Local"]}>
+<Tab value="API key">
+{/* verified against https://github.com/hanzoai/dev */}
+Add to `~/.hanzo/dev/config.toml`.
+
+```toml
+[mcp_servers.hanzo-cloud]
+url = "https://api.hanzo.ai/v1/mcp"
+http_headers = { Authorization = "Bearer sk-..." }
+```
+</Tab>
+<Tab value="Local">
+{/* verified against https://github.com/hanzoai/dev */}
+Already in `~/.hanzo/dev/config.toml` on a new install, so there is nothing to add. Install it with `curl -fsSL hanzo.sh | sh`.
+
+```toml
+[mcp_servers.hanzo]
+command = "hanzo-mcp"
+args = []
+```
+</Tab>
+</Tabs>

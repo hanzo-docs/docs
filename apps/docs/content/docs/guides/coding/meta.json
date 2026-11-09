@@ -1,14 +1,21 @@
 {
   "$schema": "../../../../.docs/json-schema/docs.meta.json",
   "title": "Coding tools",
-  "description": "Run every major coding agent from the Hanzo CLI, hand work to Enso and Kai, and see what each session used.",
+  "description": "Run every major coding agent from the Hanzo CLI, give any client the Hanzo MCP, hand work to Enso and Kai, and see what each session used.",
   "icon": "Terminal",
   "pages": [
     "index",
+    "dev",
     "claude-code",
+    "claude",
     "codex",
     "cursor",
+    "vscode",
+    "windsurf",
     "antigravity",
+    "warp",
+    "openclaw",
+    "nanoclaw",
     "agents",
     "desktop"
   ]

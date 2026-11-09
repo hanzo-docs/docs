@@ -1,0 +1,28 @@
+---
+title: Claude
+description: "Give Claude Desktop the Hanzo toolset: `hanzo-mcp` in claude_desktop_config.json. Claude Code has its own page."
+---
+
+## Hanzo MCP
+
+Claude takes Hanzo's tools one way, **Local**: `hanzo-mcp` on your machine, started with `npx -y hanzo mcp` (needs Node.js). With no key set it uses the sign-in `hanzo login` stored, so there is no key to paste ([MCP](/docs/mcp)).
+
+Claude takes a key only through request headers, which are a limited beta in its connector screen.
+
+{/* verified against https://modelcontextprotocol.io/docs/develop/connect-local-servers */}
+Claude Desktop: open `Settings > Developer > Edit Config`, then add to `claude_desktop_config.json`.
+
+```json
+{
+  "mcpServers": {
+    "hanzo": {
+      "command": "npx",
+      "args": ["-y", "hanzo", "mcp"]
+    }
+  }
+}
+```
+
+Claude Desktop reads `claude_desktop_config.json` from `~/Library/Application Support/Claude/` on macOS, `%APPDATA%\Claude\` on Windows and `~/.config/Claude/` on Linux. An app started from the Dock or the Start menu does not read your shell's PATH: if it cannot find `npx`, write the full path `which npx` prints as the `command`.
+
+claude.ai in the browser reaches remote servers only, from Anthropic's cloud, so the local server runs in Claude Desktop. Claude Code, in the terminal and the IDE extensions, is [its own page](/docs/guides/coding/claude-code).

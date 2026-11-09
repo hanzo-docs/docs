@@ -1,0 +1,20 @@
+---
+title: NanoClaw
+description: "Give a NanoClaw agent group the hosted Hanzo MCP endpoint."
+---
+
+## Hanzo MCP
+
+NanoClaw takes Hanzo's tools one way, **API key**: the hosted endpoint, [`https://api.hanzo.ai/v1/mcp`](/docs/mcp-tools), with a key from [hanzo.app](https://hanzo.app) sent as `Authorization: Bearer sk-...`. Replace `sk-...` with your key.
+
+NanoClaw runs servers inside its container, where `hanzo login` is not available.
+
+{/* verified against https://github.com/nanocoai/nanoclaw/blob/main/src/cli/resources/groups.ts */}
+Run in your terminal, with the id of the agent group that should get Hanzo. The second command restarts it.
+
+```bash
+ncl groups config add-mcp-server --id <group-id> --name hanzo-cloud --url https://api.hanzo.ai/v1/mcp --headers '{"Authorization":"Bearer sk-..."}'
+ncl groups restart --id <group-id>
+```
+
+NanoClaw keeps a group's servers in its database and writes them to the group's container configuration when the group starts, so `ncl groups restart` is what makes the new server load. The header is stored in that configuration. NanoClaw prefers its credentials proxy for secrets, and its docs say an endpoint that needs a static header is added as a separately named server with `--headers`, which is what this does.

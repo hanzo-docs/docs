@@ -1,0 +1,29 @@
+---
+title: OpenClaw
+description: "Give OpenClaw the Hanzo toolset and the hosted Hanzo MCP endpoint."
+---
+
+## Hanzo MCP
+
+Two ways to give OpenClaw Hanzo's tools. **API key** is the hosted endpoint, [`https://api.hanzo.ai/v1/mcp`](/docs/mcp-tools), with a key from [hanzo.app](https://hanzo.app) sent as `Authorization: Bearer sk-...`. **Local** is `hanzo-mcp` on your machine, started with `npx -y hanzo mcp` (needs Node.js). With no key set it uses the sign-in `hanzo login` stored, so there is no key to paste ([MCP](/docs/mcp)). Replace `sk-...` with your key.
+
+<Tabs items={["API key","Local"]}>
+<Tab value="API key">
+{/* verified against https://docs.openclaw.ai/cli/mcp/transports */}
+Run this with the Gateway stopped. It saves the server under `mcp.servers` in `~/.openclaw/openclaw.json`.
+
+```bash
+openclaw mcp set hanzo-cloud '{"url":"https://api.hanzo.ai/v1/mcp","transport":"streamable-http","headers":{"Authorization":"Bearer sk-..."}}'
+```
+</Tab>
+<Tab value="Local">
+{/* verified against https://docs.openclaw.ai/cli/mcp/registry */}
+Run this with the Gateway stopped.
+
+```bash
+openclaw mcp add hanzo --command npx --arg -y --arg hanzo --arg mcp
+```
+</Tab>
+</Tabs>
+
+OpenClaw keeps its servers under `mcp.servers` in `~/.openclaw/openclaw.json`. Saving a server with `openclaw mcp set` or `openclaw mcp add` needs the local Gateway stopped; `openclaw mcp list` shows what is saved.

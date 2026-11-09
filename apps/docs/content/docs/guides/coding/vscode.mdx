@@ -1,0 +1,55 @@
+---
+title: VS Code and Copilot
+description: "Give VS Code's agent mode, and GitHub Copilot in it, the Hanzo toolset and the hosted Hanzo MCP endpoint."
+---
+
+## Hanzo MCP
+
+Two ways to give VS Code / Copilot Hanzo's tools. **API key** is the hosted endpoint, [`https://api.hanzo.ai/v1/mcp`](/docs/mcp-tools), with a key from [hanzo.app](https://hanzo.app) sent as `Authorization: Bearer sk-...`. **Local** is `hanzo-mcp` on your machine, started with `npx -y hanzo mcp` (needs Node.js). With no key set it uses the sign-in `hanzo login` stored, so there is no key to paste ([MCP](/docs/mcp)). Replace `sk-...` with your key.
+
+<Tabs items={["API key","Local"]}>
+<Tab value="API key">
+{/* verified against https://code.visualstudio.com/docs/agents/reference/mcp-configuration */}
+Run `MCP: Open User Configuration` in the Command Palette and add this. VS Code asks for the key when the server first starts and stores it.
+
+```json
+{
+  "servers": {
+    "hanzo-cloud": {
+      "type": "http",
+      "url": "https://api.hanzo.ai/v1/mcp",
+      "headers": {
+        "Authorization": "Bearer ${input:hanzo-key}"
+      }
+    }
+  },
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "hanzo-key",
+      "description": "Hanzo API key",
+      "password": true
+    }
+  ]
+}
+```
+</Tab>
+<Tab value="Local">
+{/* verified against https://code.visualstudio.com/docs/agents/reference/mcp-configuration */}
+Run `MCP: Open User Configuration` in the Command Palette and add this.
+
+```json
+{
+  "servers": {
+    "hanzo": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "hanzo", "mcp"]
+    }
+  }
+}
+```
+</Tab>
+</Tabs>
+
+The same JSON works in `.vscode/mcp.json` to give one workspace the server. The API-key entry asks for the key instead of holding it, so the file is safe to commit.
