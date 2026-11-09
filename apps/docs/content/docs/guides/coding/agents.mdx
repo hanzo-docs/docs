@@ -1,7 +1,36 @@
 ---
 title: More agents
-description: "Gemini CLI, Qwen Code, OpenCode, Kilo Code, Crush, Pi, GitHub Copilot CLI, Amp, Grok Build, Goose, Aider, Hermes Agent, OpenHands, Open Interpreter, Cline, Continue, Kimi Code, Oh My Pi, Letta Code and Kode from `hanzo --<agent>`: how each takes the Hanzo toolset and Hanzo's models."
+description: "Hanzo MCP for each client, then Gemini CLI, Qwen Code, OpenCode, Kilo Code, Crush, Pi, GitHub Copilot CLI, Amp, Grok Build, Goose, Aider, Hermes Agent, OpenHands, Open Interpreter, Cline, Continue, Kimi Code, Oh My Pi, Letta Code and Kode from `hanzo --<agent>`."
 ---
+
+## Connect a client to Hanzo MCP
+
+Every client below takes Hanzo's tools in its own configuration, in one or both of two ways:
+
+- **API key.** The hosted endpoint, `https://api.hanzo.ai/v1/mcp` (streamable HTTP, [Cloud MCP](/docs/mcp-tools)), with `Authorization: Bearer sk-...`. Create a key at [hanzo.app](https://hanzo.app); [Authentication](/docs/api-keys) says what a key is and how to limit one. For a quick try, `hanzo login` and then `hanzo auth token` print a sign-in token the endpoint takes the same way.
+- **Local.** `npx -y hanzo mcp`, the native `hanzo-mcp` over stdio ([MCP](/docs/mcp)). It needs Node.js, and with no key set it uses the sign-in `hanzo login` stored. `curl -fsSL hanzo.sh | sh` or `npm i -g hanzo` installs the CLI that signs in.
+
+| Client | API key | Local | Steps |
+| --- | --- | --- | --- |
+| Hanzo Dev | yes | yes | [Hanzo Dev](/docs/guides/coding/dev#hanzo-mcp) |
+| Claude | no | yes | [Claude](/docs/guides/coding/claude#hanzo-mcp) |
+| OpenClaw | yes | yes | [OpenClaw](/docs/guides/coding/openclaw#hanzo-mcp) |
+| Hermes Agent | yes | yes | [Hermes Agent](/docs/guides/coding/agents#hanzo-mcp-in-hermes-agent) |
+| NanoClaw | yes | no | [NanoClaw](/docs/guides/coding/nanoclaw#hanzo-mcp) |
+| Claude Code | yes | yes | [Claude Code](/docs/guides/coding/claude-code#hanzo-mcp) |
+| Cursor | yes | yes | [Cursor](/docs/guides/coding/cursor#hanzo-mcp) |
+| Codex | yes | yes | [Codex](/docs/guides/coding/codex#hanzo-mcp) |
+| VS Code / Copilot | yes | yes | [VS Code / Copilot](/docs/guides/coding/vscode#hanzo-mcp) |
+| Windsurf | yes | yes | [Windsurf](/docs/guides/coding/windsurf#hanzo-mcp) |
+| Amp | yes | yes | [Amp](/docs/guides/coding/agents#hanzo-mcp-in-amp) |
+| Gemini CLI | yes | yes | [Gemini CLI](/docs/guides/coding/agents#hanzo-mcp-in-gemini-cli) |
+| Warp | yes | yes | [Warp](/docs/guides/coding/warp#hanzo-mcp) |
+| Grok Build | yes | yes | [Grok Build](/docs/guides/coding/agents#hanzo-mcp-in-grok-build) |
+| Antigravity | yes | yes | [Antigravity](/docs/guides/coding/antigravity#hanzo-mcp) |
+
+Each page has the exact file or command. A table cell says yes only where the client's own docs give a file or command for that way.
+
+## Run each agent from the Hanzo CLI
 
 Each agent here keeps its own login, settings and sessions. For one run, `hanzo --<agent>` hands it the Hanzo toolset the way that agent reads servers, and under `--cloud` it points the agent's model calls at api.hanzo.ai. Nothing is written into the agent's own configuration. Your Hanzo token reaches the agent through its environment, never its arguments.
 
@@ -17,6 +46,36 @@ hanzo --gemini "explain the build"
 - **Toolset:** added once, `gemini mcp add -s user hanzo ~/.local/bin/hanzo-mcp`. Gemini CLI reads a run's settings file only when root owns it, so `hanzo` cannot hand it one, and it loads MCP servers only in folders you have trusted.
 - **Acts without asking:** `--yolo`. `--ask` leaves its prompts.
 - **Models:** your Google account or `GEMINI_API_KEY`. Gemini CLI speaks only Google's API, so `--cloud` does not apply.
+
+### Hanzo MCP in Gemini CLI
+
+Two ways to give Gemini CLI Hanzo's tools. **API key** is the hosted endpoint, [`https://api.hanzo.ai/v1/mcp`](/docs/mcp-tools), with a key from [hanzo.app](https://hanzo.app) sent as `Authorization: Bearer sk-...`. **Local** is `hanzo-mcp` on your machine, started with `npx -y hanzo mcp` (needs Node.js). With no key set it uses the sign-in `hanzo login` stored, so there is no key to paste ([MCP](/docs/mcp)). Replace `sk-...` with your key.
+
+<Tabs items={["API key","Local"]}>
+<Tab value="API key">
+{/* verified against https://geminicli.com/docs/tools/mcp-server */}
+Run this command in your terminal. It adds the server to `~/.gemini/settings.json`.
+
+```bash
+gemini mcp add --transport http --scope user --header "Authorization: Bearer sk-..." hanzo-cloud https://api.hanzo.ai/v1/mcp
+```
+</Tab>
+<Tab value="Local">
+{/* verified against https://geminicli.com/docs/tools/mcp-server */}
+Add to `~/.gemini/settings.json`.
+
+```json
+{
+  "mcpServers": {
+    "hanzo": {
+      "command": "npx",
+      "args": ["-y", "hanzo", "mcp"]
+    }
+  }
+}
+```
+</Tab>
+</Tabs>
 
 ## Qwen Code
 
@@ -90,6 +149,38 @@ hanzo --amp "review the diff"
 - **Acts without asking:** `--dangerously-allow-all`.
 - **Models:** your Amp account (`amp login`). `--cloud` does not apply.
 
+### Hanzo MCP in Amp
+
+Two ways to give Amp Hanzo's tools. **API key** is the hosted endpoint, [`https://api.hanzo.ai/v1/mcp`](/docs/mcp-tools), with a key from [hanzo.app](https://hanzo.app) sent as `Authorization: Bearer sk-...`. **Local** is `hanzo-mcp` on your machine, started with `npx -y hanzo mcp` (needs Node.js). With no key set it uses the sign-in `hanzo login` stored, so there is no key to paste ([MCP](/docs/mcp)). Replace `sk-...` with your key.
+
+<Tabs items={["API key","Local"]}>
+<Tab value="API key">
+{/* verified against https://ampcode.com/docs/customize/mcp */}
+Add to `~/.config/amp/settings.json` (`amp config edit` opens it).
+
+```json
+{
+  "amp.mcpServers": {
+    "hanzo-cloud": {
+      "url": "https://api.hanzo.ai/v1/mcp",
+      "headers": {
+        "Authorization": "Bearer sk-..."
+      }
+    }
+  }
+}
+```
+</Tab>
+<Tab value="Local">
+{/* verified against https://ampcode.com/docs/customize/mcp */}
+Run this command in your terminal.
+
+```bash
+amp mcp add hanzo -- npx -y hanzo mcp
+```
+</Tab>
+</Tabs>
+
 ## Grok Build
 
 ```bash
@@ -102,6 +193,29 @@ xAI's Grok Build. Its installer also links a binary named `agent`, to Grok, as C
 - **Acts without asking:** `--always-approve`. Headless runs use `-p`.
 - **Toolset:** added once, `grok mcp add --scope user hanzo ~/.local/bin/hanzo-mcp`. Grok Build reads servers only from its saved configuration.
 - **Models:** your xAI account (`grok login` or `XAI_API_KEY`). `--cloud` does not apply.
+
+### Hanzo MCP in Grok Build
+
+Two ways to give Grok Build Hanzo's tools. **API key** is the hosted endpoint, [`https://api.hanzo.ai/v1/mcp`](/docs/mcp-tools), with a key from [hanzo.app](https://hanzo.app) sent as `Authorization: Bearer sk-...`. **Local** is `hanzo-mcp` on your machine, started with `npx -y hanzo mcp` (needs Node.js). With no key set it uses the sign-in `hanzo login` stored, so there is no key to paste ([MCP](/docs/mcp)). Replace `sk-...` with your key.
+
+<Tabs items={["API key","Local"]}>
+<Tab value="API key">
+{/* verified against https://docs.x.ai/build/features/mcp-servers */}
+Run this command in your terminal. It adds the server to `~/.grok/config.toml`.
+
+```bash
+grok mcp add --transport http hanzo-cloud https://api.hanzo.ai/v1/mcp --header "Authorization: Bearer sk-..."
+```
+</Tab>
+<Tab value="Local">
+{/* verified against https://docs.x.ai/build/features/mcp-servers */}
+Run this command in your terminal. It adds the server to `~/.grok/config.toml`.
+
+```bash
+grok mcp add hanzo -- npx -y hanzo mcp
+```
+</Tab>
+</Tabs>
 
 ## Goose
 
@@ -135,6 +249,36 @@ hanzo --hermes --cloud "summarise the open issues"
 - **On your own account:** Hermes keeps its home, `~/.hermes`, with its memory and skills, and the toolset is not attached, because Hermes reads servers only from its home.
 - **`--cloud`:** Hermes runs in a home of Hanzo's own, `~/.hanzo/hermes`. Its `config.yaml` names a `hanzo` provider at `https://api.hanzo.ai/v1`, reading your token from `HANZO_API_KEY`, and lists the Hanzo toolset as an MCP server.
 - **Acts without asking:** `--yolo`. Headless runs use `-z`.
+
+### Hanzo MCP in Hermes Agent
+
+Two ways to give Hermes Hanzo's tools. **API key** is the hosted endpoint, [`https://api.hanzo.ai/v1/mcp`](/docs/mcp-tools), with a key from [hanzo.app](https://hanzo.app) sent as `Authorization: Bearer sk-...`. **Local** is `hanzo-mcp` on your machine, started with `npx -y hanzo mcp` (needs Node.js). With no key set it uses the sign-in `hanzo login` stored, so there is no key to paste ([MCP](/docs/mcp)). Replace `sk-...` with your key.
+
+<Tabs items={["API key","Local"]}>
+<Tab value="API key">
+{/* verified against https://hermes-agent.nousresearch.com/docs/user-guide/features/mcp */}
+Add to `~/.hermes/config.yaml`, then run `/reload-mcp` in the chat.
+
+```yaml
+mcp_servers:
+  hanzo-cloud:
+    url: "https://api.hanzo.ai/v1/mcp"
+    headers:
+      Authorization: "Bearer sk-..."
+```
+</Tab>
+<Tab value="Local">
+{/* verified against https://hermes-agent.nousresearch.com/docs/user-guide/features/mcp */}
+Add to `~/.hermes/config.yaml`, then run `/reload-mcp` in the chat.
+
+```yaml
+mcp_servers:
+  hanzo:
+    command: "npx"
+    args: ["-y", "hanzo", "mcp"]
+```
+</Tab>
+</Tabs>
 
 ## OpenHands
 
