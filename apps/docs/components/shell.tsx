@@ -53,7 +53,11 @@ export function Shell({ children }: { children: ReactNode }) {
         <Rail />
         <YStack flex={1} minW={0} self="stretch" minH="100dvh">
           <Bar />
-          <YStack flex={1} minW={0}>
+          {/* Grows to fill a short page, never shrinks below its content. flex={1}
+              is `1 1 0px` in @hanzo/gui and a view has no content minimum, so the
+              page got only what the bar and the footer left of one screen, and
+              the footer drew over it. */}
+          <YStack grow={1} shrink={0} minW={0}>
             {children}
           </YStack>
           <Footer />
