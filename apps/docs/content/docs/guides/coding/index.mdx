@@ -1,6 +1,6 @@
 ---
 title: Coding tools
-description: "Run Claude Code, Codex, Cursor, Gemini CLI, Qwen Code, OpenCode, Goose, Hermes and every other major coding agent from the Hanzo CLI, hand work to Enso and Kai, and see what each session used."
+description: "Run Claude Code, Codex, Cursor, Gemini CLI, Qwen Code, OpenCode, Goose, Hermes and every other major coding agent from the Hanzo CLI, give any MCP client the Hanzo tools, hand work to Enso and Kai, and see what each session used."
 icon: Terminal
 ---
 
@@ -24,7 +24,7 @@ hanzo --claude "fix the failing test in api/users"   # one quoted task runs head
 
 | Agent | Start it | Install | Hanzo toolset | `--cloud` (its model calls on Hanzo) |
 | --- | --- | --- | --- | --- |
-| Hanzo Dev | `hanzo` or `hanzo dev` | hanzo.sh | yes | always on Hanzo |
+| [Hanzo Dev](/docs/guides/coding/dev) | `hanzo` or `hanzo dev` | hanzo.sh | yes | always on Hanzo |
 | [Claude Code](/docs/guides/coding/claude-code) | `hanzo --claude` | Anthropic | yes | yes |
 | [Codex](/docs/guides/coding/codex) | `hanzo --codex` | OpenAI | yes | yes |
 | [Cursor](/docs/guides/coding/cursor) | `hanzo --cursor` | Cursor | added once | no |
@@ -90,6 +90,10 @@ hanzo dev · session summary
 - `hanzo console` (press `6`) and `hanzo usage summary --range 7d` show the same usage across sessions, as does [platform.hanzo.ai](https://platform.hanzo.ai).
 
 Figures are labelled with their source and are never added across sources. Nothing in the block claims a speedup.
+
+## Hanzo MCP in your client
+
+Any MCP client takes Hanzo's tools without the wrapper, from the hosted endpoint with an API key or from `npx -y hanzo mcp`: [Connect a client to Hanzo MCP](/docs/guides/coding/agents#connect-a-client-to-hanzo-mcp) has the file or command for Claude, Claude Code, Cursor, Codex, VS Code, Windsurf, Amp, Gemini CLI, Warp, Grok Build, Hermes, OpenClaw, NanoClaw, Antigravity and Hanzo Dev.
 
 ## Desktop apps and editors
 

@@ -216,6 +216,23 @@ The way in for an agent, second in the root sidebar.
   measured on 2026-11-09; 2025-03-26 is answered with 2026-07-28). The page
   shows the local server, `npx -y hanzo mcp`; `guides/coding/agents` has each
   client's steps for the hosted door and the local server.
+- **MCP clients** are the table in `guides/coding/agents` (anchor
+  `#connect-a-client-to-hanzo-mcp`), a `## Hanzo MCP` section on each client's
+  page under `guides/coding/` (`#hanzo-mcp`) and a `### Hanzo MCP in <client>`
+  under Gemini CLI, Amp, Grok Build and Hermes Agent in `agents.mdx`
+  (`#hanzo-mcp-in-<client>`); the site links these anchors. The snippets are
+  the same words as the picker on hanzo.ai, `hanzoai/site` `lib/mcp.js`, which
+  names the page of each client's own docs it was checked against; each snippet
+  here carries that page as a `{/* verified against ... */}` comment. Change one
+  side, change the other. Two ways are published, API key (the hosted endpoint,
+  `Authorization: Bearer sk-...`, remote server `hanzo-cloud`) and Local
+  (`npx -y hanzo mcp`, server `hanzo`, which uses `hanzo login`). A client whose
+  docs give no file or command for a way has no tab for it, and says why in one
+  line (Claude's connector screen takes a key only in a limited beta, NanoClaw
+  runs servers in a container with no `hanzo login`). "Sign in with Hanzo"
+  (OAuth) is unwritten until it is live: when `SIGN_IN` flips to true in the
+  site's `lib/mcp.js`, add its tab to each page from that file's `signin`
+  entries and write the ChatGPT page, whose only way it is.
 
 ## Agent readiness
 
