@@ -13,6 +13,47 @@ hanzo --cursor
 
 This runs Cursor's agent CLI as `cursor-agent`, never a bare `agent`: xAI's Grok installer links an `agent` of its own. Install and sign in to it first, as you would to use it alone. `agent` and `cursor-agent` are accepted spellings of `cursor`.
 
+## Hanzo MCP
+
+Two ways to give Cursor Hanzo's tools. **API key** is the hosted endpoint, [`https://api.hanzo.ai/v1/mcp`](/docs/mcp-tools), with a key from [hanzo.app](https://hanzo.app) sent as `Authorization: Bearer sk-...`. **Local** is `hanzo-mcp` on your machine, started with `npx -y hanzo mcp` (needs Node.js). With no key set it uses the sign-in `hanzo login` stored, so there is no key to paste ([MCP](/docs/mcp)). Replace `sk-...` with your key.
+
+Cursor takes no MCP server for a single run, so `hanzo --cursor` cannot attach one. Add it once to `~/.cursor/mcp.json` and the editor and `cursor-agent` both load it.
+
+<Tabs items={["API key","Local"]}>
+<Tab value="API key">
+{/* verified against https://cursor.com/docs/mcp */}
+Add to `~/.cursor/mcp.json`.
+
+```json
+{
+  "mcpServers": {
+    "hanzo-cloud": {
+      "url": "https://api.hanzo.ai/v1/mcp",
+      "headers": {
+        "Authorization": "Bearer sk-..."
+      }
+    }
+  }
+}
+```
+</Tab>
+<Tab value="Local">
+{/* verified against https://cursor.com/docs/mcp */}
+Add to `~/.cursor/mcp.json`.
+
+```json
+{
+  "mcpServers": {
+    "hanzo": {
+      "command": "npx",
+      "args": ["-y", "hanzo", "mcp"]
+    }
+  }
+}
+```
+</Tab>
+</Tabs>
+
 ## What the wrapper does
 
 Cursor keeps its own login and its own backend. `hanzo --cursor` has no gateway route for it, so it always runs on Cursor's account, with or without `--cloud`. The wrapper:

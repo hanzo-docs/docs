@@ -13,6 +13,31 @@ hanzo --claude
 
 Give it a task as one quoted argument to run it headless: `hanzo --claude "fix the failing test in api/users"`. `claude-code` and `cc` are accepted spellings of `claude`.
 
+## Hanzo MCP
+
+Two ways to give Claude Code Hanzo's tools. **API key** is the hosted endpoint, [`https://api.hanzo.ai/v1/mcp`](/docs/mcp-tools), with a key from [hanzo.app](https://hanzo.app) sent as `Authorization: Bearer sk-...`. **Local** is `hanzo-mcp` on your machine, started with `npx -y hanzo mcp` (needs Node.js). With no key set it uses the sign-in `hanzo login` stored, so there is no key to paste ([MCP](/docs/mcp)). Replace `sk-...` with your key.
+
+`hanzo --claude` attaches the local server for one run and edits nothing. These entries put Hanzo in Claude Code's own configuration, so a plain `claude` has it too.
+
+<Tabs items={["API key","Local"]}>
+<Tab value="API key">
+{/* verified against https://code.claude.com/docs/en/mcp */}
+Run this command in your terminal.
+
+```bash
+claude mcp add --transport http --scope user hanzo-cloud https://api.hanzo.ai/v1/mcp --header "Authorization: Bearer sk-..."
+```
+</Tab>
+<Tab value="Local">
+{/* verified against https://code.claude.com/docs/en/mcp */}
+Run this command in your terminal.
+
+```bash
+claude mcp add --scope user hanzo -- npx -y hanzo mcp
+```
+</Tab>
+</Tabs>
+
 ## On your Claude plan (the default)
 
 Claude Code uses its own login in `~/.claude`, and its model calls go to Anthropic on your Claude plan. The wrapper adds:

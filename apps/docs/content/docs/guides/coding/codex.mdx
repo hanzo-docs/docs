@@ -13,6 +13,33 @@ hanzo --codex
 
 Give it a task as one quoted argument to run it headless: `hanzo --codex "port this module to the new store"`. Codex is its own tool here, never an alias of Hanzo Dev (`hanzo dev`), which shares its driver.
 
+## Hanzo MCP
+
+Two ways to give Codex Hanzo's tools. **API key** is the hosted endpoint, [`https://api.hanzo.ai/v1/mcp`](/docs/mcp-tools), with a key from [hanzo.app](https://hanzo.app) sent as `Authorization: Bearer sk-...`. **Local** is `hanzo-mcp` on your machine, started with `npx -y hanzo mcp` (needs Node.js). With no key set it uses the sign-in `hanzo login` stored, so there is no key to paste ([MCP](/docs/mcp)). Replace `sk-...` with your key.
+
+`hanzo --codex` attaches the local server for one run and leaves your `config.toml` alone. These entries put Hanzo in `~/.codex/config.toml`, so the Codex app, the IDE extension and a plain `codex` have it too.
+
+<Tabs items={["API key","Local"]}>
+<Tab value="API key">
+{/* verified against https://developers.openai.com/codex/mcp */}
+Add to `~/.codex/config.toml`.
+
+```toml
+[mcp_servers.hanzo-cloud]
+url = "https://api.hanzo.ai/v1/mcp"
+http_headers = { "Authorization" = "Bearer sk-..." }
+```
+</Tab>
+<Tab value="Local">
+{/* verified against https://developers.openai.com/codex/mcp */}
+Run this command in your terminal. It adds the server to `~/.codex/config.toml`.
+
+```bash
+codex mcp add hanzo -- npx -y hanzo mcp
+```
+</Tab>
+</Tabs>
+
 ## On your ChatGPT plan (the default)
 
 Codex uses its own login, ChatGPT plan or API key, and the wrapper leaves its environment alone. It adds:
