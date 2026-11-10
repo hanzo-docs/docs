@@ -77,15 +77,16 @@
 /docs/guides/kai      /docs/models/kai    301
 /llm               /docs/openapi/ai       301
 /network           /docs/network          301
-/self-host         /docs/network          301
+/self-host         /docs/self-hosting     301
+/self-hosting      /docs/self-hosting     301
+/air-gapped        /docs/self-hosting     301
+/airgap            /docs/self-hosting     301
 /node              /docs/proof-of-ai/node-operator  301
 
 # hanzo.ai CTAs linked bare /network, /node and /self-host plus a /quickstart
-# child under each; neither child ever had a page. The canonical page in each
-# case opens with its own start steps — /docs/network is the self-host story
-# ("the AI cloud you can run yourself") and the Node Operator Guide is how you
-# run a node — so the guessed children resolve to the page itself rather than to
-# a thin duplicate.
+# child under each; neither child ever had a page. Route /self-host/* to the
+# tested local & air-gapped deployment guide at /docs/self-hosting.
+/self-host/quickstart /docs/self-hosting               301
 /network/quickstart  /docs/network                    301
 /node/quickstart     /docs/proof-of-ai/node-operator  301
 

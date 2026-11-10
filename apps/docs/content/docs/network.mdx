@@ -24,9 +24,7 @@ curl -fsSL https://hanzo.sh | sh
 
 <Callout type="info">
 This is the story specified in **[HIP-0127 — V8 · Open Edition](https://hips.hanzo.ai)**:
-one binary, one contract, a network that is the cloud. Nothing here is a hosted
-tier you are locked into — every capability is the same open-source binary,
-whether it runs on our nodes or yours.
+one binary, one contract, a network that is the cloud. For step-by-step instructions to compile, boot, and smoke-test [`hanzoai/cloud`](https://github.com/hanzoai/cloud), [`hanzoai/engine`](https://github.com/hanzoai/engine), and [`hanzoai/iam`](https://github.com/hanzoai/iam) on your own machine or an air-gapped host, see **[Self-Hosting & Air-Gapped](/docs/self-hosting)**.
 </Callout>
 
 ## One binary, everywhere
@@ -135,6 +133,7 @@ customer self-host; the commands are identical.
 ## Learn more
 
 <Cards>
+  <Card title="Self-Hosting & Air-Gapped" href="/docs/self-hosting" description="Repo-by-repo map, ports, local boot commands, and offline staging smoke tests." />
   <Card title="Architecture & Philosophy" href="/docs/architecture" description="One binary, one contract, the ZAP wire — the engineering principles behind the network." />
   <Card title="The hanzo CLI" href="/docs/cli" description="Install, log in, and drive every capability from one Rust binary." />
   <Card title="ZAP Protocol" href="/docs/zap" description="Zero-Copy App Proto — the wire the Go and Rust halves speak." />

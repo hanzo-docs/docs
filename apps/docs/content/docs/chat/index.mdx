@@ -22,14 +22,17 @@ Available as a hosted service at [chat.hanzo.ai](https://chat.hanzo.ai) or self-
 
 ### Self-Hosted
 
+[`hanzoai/chat`](https://github.com/hanzoai/chat) (`@hanzo/chat`) is a static Vite + React client built on `@hanzo/ui` and `@hanzo/ai` that connects to `api.hanzo.ai` or a self-hosted stack:
+
 ```bash
 git clone https://github.com/hanzoai/chat
 cd chat
-cp .env.example .env
-# Edit .env with your HANZO_API_KEY
-docker compose up -d
-# Open http://localhost:3081
+pnpm install --no-frozen-lockfile
+pnpm dev
+# Open http://localhost:3090
 ```
+
+For an offline single-binary chat UI + local LLM server with zero Node.js or IAM setup, use [`hanzoai/engine`](https://github.com/hanzoai/engine) (`http://127.0.0.1:1234/ui`) — see [Self-Hosting & Air-Gapped](/docs/self-hosting) and [Chat Self-Hosting](/docs/chat/self-hosting).
 
 ### The call
 
@@ -118,7 +121,8 @@ chat route into the rest of `/v1`.
 |-------------|-----|
 | Production | `https://chat.hanzo.ai` |
 | API | `https://api.hanzo.ai/v1` |
-| Local | `http://localhost:3081` |
+| Local (`@hanzo/chat`) | `http://localhost:3090` |
+| Local (`hanzo-engine` UI) | `http://127.0.0.1:1234/ui` |
 
 ## Pricing
 

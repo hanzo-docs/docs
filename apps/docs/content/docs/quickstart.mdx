@@ -6,6 +6,7 @@ description: Install the CLI, log in, and make your first call — then see that
 
 
 **After this page you have a working credential and one call that answered.**
+*(Deploying on your own hardware or offline? Jump straight to [Self-Hosting & Air-Gapped](/docs/self-hosting).)*
 
 Hanzo is one cloud behind one key. Every capability — inference, identity,
 storage, money, agents — answers at `https://api.hanzo.ai`, and the CLI, the
@@ -233,20 +234,23 @@ the assertion as `winner`. [Graph](/docs/openapi/graph) is the rest of it.
 
 ## 6. Run the cloud locally
 
-The same binary that serves `api.hanzo.ai` runs on your machine:
+To run the open-source local cloud server ([`hanzoai/cloud`](https://github.com/hanzoai/cloud)) on your own machine with zero external services (requires Go `1.26.5`+ and `openssl`):
 
 ```bash
-hanzo host serve
+git clone https://github.com/hanzoai/cloud && cd cloud
+make dev
 ```
 
-`cloud` is the default, so that is the whole API. Name one service to run it
-alone: `hanzo host serve iam`, and likewise `kms`, `gateway`, `storage`,
-`pubsub`. `hanzo host start` runs the same thing in the background, with
-`status` and `stop` beside it.
+In a second shell, verify health and write a document to the encrypted local SQLite store:
 
-`hanzo up` is a different command — it boots k3s in a microVM and hands you a
-kubeconfig, which is what you want to run your own *cluster* rather than your
-own cloud. See [Run your own](/docs/network) for what each needs.
+```bash
+curl -sS http://127.0.0.1:9090/healthz
+curl -sS -X POST http://127.0.0.1:8080/v1/base/collections/notes \
+  -H "Content-Type: application/json" \
+  -d '{"doc":{"title":"hello"}}'
+```
+
+To add local open-weight model inference ([`hanzoai/engine`](https://github.com/hanzoai/engine)), local OIDC identity ([`hanzoai/iam`](https://github.com/hanzoai/iam)), or stage an offline bundle, see [Self-Hosting & Air-Gapped](/docs/self-hosting). `hanzo up` boots k3s in a microVM when you need a local Kubernetes cluster; see [The Network](/docs/network) for joining `hanzod` compute nodes.
 
 ## Where to go next
 

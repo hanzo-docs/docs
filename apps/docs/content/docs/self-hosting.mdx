@@ -1,0 +1,273 @@
+---
+icon: Server
+title: Self-Hosting & Air-Gapped
+description: Where each open-source component lives, how the local stack fits together, and step-by-step instructions to deploy and verify Hanzo locally or on an air-gapped host.
+---
+
+This guide covers how to deploy, wire, and smoke-test a local or air-gapped Hanzo installation from clean source and prebuilt binaries, with no connection to `api.hanzo.ai`.
+
+## Where everything lives
+
+The hosted cloud (`api.hanzo.ai`) and a self-hosted installation are built from the same open-source repositories under [`github.com/hanzoai`](https://github.com/hanzoai). Each repository owns one distinct boundary:
+
+| Component | Repository | Runtime | Default local ports | What runs offline today |
+|---|---|---|---|---|
+| **Cloud Core** | [`hanzoai/cloud`](https://github.com/hanzoai/cloud) | Single static Go binary (`CGO_ENABLED=0`) | `127.0.0.1:8080` (HTTP + console), `127.0.0.1:9090` (`/healthz`, `/readyz`, `/metrics`), `127.0.0.1:9653` (ZAP) | Encrypted SQLite document + KV store (`/v1/base`), durable task queue (`/v1/tasks`), functions (`/v1/functions`), embedded KMS (`/v1/kms`), MCP JSON-RPC (`/mcp`), OpenAPI spec (`/v1/openapi.json`) |
+| **Model Engine** | [`hanzoai/engine`](https://github.com/hanzoai/engine) | Single Rust binary (`hanzoai` or `hanzo-engine`) | `127.0.0.1:1234` (HTTP + `/ui`) | Local LLM, vision, audio, and embedding inference (`/v1/models`, `/v1/chat/completions`, `/v1/embeddings`, Anthropic `/v1/messages`) plus a built-in browser chat UI at `/ui` |
+| **Identity (IAM)** | [`hanzoai/iam`](https://github.com/hanzoai/iam) | Single Go binary + embedded SQLite | `127.0.0.1:8000` (HTTP) | OpenID Connect discovery, OAuth2 PKCE, JWKS (`/v1/iam/.well-known/jwks`), SCIM 2.0, and org JWTs for multi-tenant `cloud` and `/v1/kms` secrets |
+| **AI Router** | [`hanzoai/ai`](https://github.com/hanzoai/ai) | Go binary (`cmd/aid`) or `ghcr.io/hanzoai/ai` | `:8000` (configurable) | Multi-model routing, metering, and RAG across local `engine` nodes or upstream providers (optional for single-node local setups) |
+| **Chat Client** | [`hanzoai/chat`](https://github.com/hanzoai/chat) | Static Vite + React SPA (`@hanzo/chat`) | `localhost:3090` (dev) or any static file host | Multi-conversation web workspace pointed at a local stack via `VITE_HANZO_API` and `VITE_HANZO_IAM` (optional; `engine` already includes an embedded `/ui`) |
+| **CLI** | [`hanzoai/cli`](https://github.com/hanzoai/cli) | Single Rust binary (`hanzo`) | Client only | Terminal coding agent, MCP client, and `/v1` API client |
+
+<Callout type="info">
+**Start small.** You do not need Kubernetes, PostgreSQL, Redis, or all six repositories to validate an installation. For a clean local or air-gapped test, start with **Cloud Core** (`hanzoai/cloud`) and **Model Engine** (`hanzoai/engine`) — two static binaries backed by local files. Add **IAM** (`hanzoai/iam`) only when you need multi-user OIDC login or org-scoped KMS secrets.
+</Callout>
+
+### Local architecture
+
+```text
+Browser / OpenAI SDK / curl
+   │
+   ├──► 127.0.0.1:1234  hanzoai/engine   (LLM + embeddings: /v1/chat/completions, /v1/models, /ui)
+   │
+   ├──► 127.0.0.1:8080  hanzoai/cloud    (Data, queues, functions, KMS, MCP: /v1/base, /v1/tasks, /mcp)
+   │         │
+   │         └──► .dev/data/             (SQLCipher-encrypted SQLite files + .dev/master.key)
+   │
+   └──► 127.0.0.1:8000  hanzoai/iam      (Optional OIDC + JWKS issuer for org JWTs & /v1/kms)
+```
+
+---
+
+## 1. Deploy & test Cloud Core (`hanzoai/cloud`)
+
+**Prerequisites:** Go `1.26.5`+ and `openssl` (macOS or Linux; no C compiler, Docker, or Rust toolchain required).
+
+### Build and start
+
+```bash
+git clone https://github.com/hanzoai/cloud
+cd cloud
+make dev
+```
+
+What `make dev` does on first boot:
+1. Compiles `./cloud` with `CGO_ENABLED=0` (pure-Go SQLite + SQLCipher encryption, zero C dependencies).
+2. Generates a 32-byte encryption key at `.dev/master.key` (`0600`) and stores encrypted state under `.dev/data`.
+3. Binds **loopback only** (`127.0.0.1:8080` for HTTP and the embedded console, `127.0.0.1:9090` for health/metrics, `127.0.0.1:9653` for ZAP) and enables staged local functions (`CLOUD_ENABLE_STAGED=functions`).
+
+To run without `make` (for example in a systemd unit or air-gapped startup script):
+
+```bash
+CGO_ENABLED=0 go build -o cloud ./cmd/cloud
+mkdir -p .dev && (umask 077 && openssl rand -base64 32 > .dev/master.key)
+CLOUD_LISTEN=127.0.0.1:8080 \
+  CLOUD_DATA_DIR=.dev/data \
+  CLOUD_ENABLE_STAGED=functions \
+  CLOUD_KMS_MASTER_KEY_REF="$(cat .dev/master.key)" \
+  ./cloud
+```
+
+### Smoke-test the installation
+
+From a second terminal, run these four checks to confirm health, encrypted storage, MCP tool discovery, and the OpenAPI contract:
+
+```bash
+# 1. Liveness check (answers on port 9090)
+curl -sS http://127.0.0.1:9090/healthz
+
+# 2. Write a JSON document to the embedded SQLCipher store (/v1/base)
+curl -sS -X POST http://127.0.0.1:8080/v1/base/collections/notes \
+  -H "Content-Type: application/json" \
+  -d '{"doc":{"title":"airgap-smoke-test"}}'
+
+# 3. Read the collection back
+curl -sS http://127.0.0.1:8080/v1/base/collections/notes
+
+# 4. Verify the MCP JSON-RPC server exposes the registered tools
+curl -sS -X POST http://127.0.0.1:8080/mcp \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+```
+
+Expected responses:
+- `/healthz` returns `{"status":"ok"}`.
+- `POST /v1/base/collections/notes` returns the stored record with generated `id` and timestamps.
+- `GET /v1/base/collections/notes` returns `{"records":[...]}` containing your document.
+- `POST /mcp` returns `"tools":[...]` built from the exact same typed operation registry as `http://127.0.0.1:8080/v1/openapi.json`.
+
+<Callout type="warn">
+**Loopback & unauthenticated namespace:** Without an `Authorization: Bearer <jwt>` header, `cloud` writes to a dedicated local namespace so single-developer testing works with zero setup. Never change `CLOUD_LISTEN` from `127.0.0.1` to `0.0.0.0` until you place [Hanzo IAM](#4-optional-add-local-identity--kms-secrets-hanzoaiiam) in front of it. Also keep `.dev/master.key` safe — encrypted SQLite stores can only be opened by the key that created them (or set `CLOUD_DEV_UNENCRYPTED=1` for unencrypted scratch runs).
+</Callout>
+
+---
+
+## 2. Deploy & test local model inference (`hanzoai/engine`)
+
+`hanzoai/engine` serves open-weight models (Zen, Qwen, Llama, Gemma, DeepSeek, Mistral) over OpenAI-compatible `/v1/chat/completions` and `/v1/embeddings`, Anthropic-compatible `/v1/messages`, plus a self-contained web UI at `/ui`.
+
+### Download or build the binary
+
+Release tarballs are published at [`github.com/hanzoai/engine/releases/latest`](https://github.com/hanzoai/engine/releases/latest) for macOS (`arm64` / `amd64` with Metal) and Linux (`amd64` / `arm64` CPU, with cosign signatures):
+
+<Tabs items={['macOS (Apple Silicon)', 'Linux (x86_64)', 'Build from source (CUDA / Metal / CPU)']}>
+<Tab value="macOS (Apple Silicon)">
+```bash
+curl -fL https://github.com/hanzoai/engine/releases/latest/download/hanzoai-macos-arm64.tar.gz | tar xz
+```
+</Tab>
+<Tab value="Linux (x86_64)">
+```bash
+curl -fL https://github.com/hanzoai/engine/releases/latest/download/hanzoai-linux-amd64.tar.gz | tar xz
+```
+</Tab>
+<Tab value="Build from source (CUDA / Metal / CPU)">
+Requires Rust `1.88` or newer (`install.sh` auto-detects CUDA, Metal, or CPU features and installs `hanzo-engine` into `~/.cargo/bin`):
+
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/hanzoai/engine/main/install.sh | sh
+```
+</Tab>
+</Tabs>
+
+### Start a small test model (`zen-nano-0.6b`, ~1.2 GB RAM)
+
+```bash
+./hanzoai --serve-ip 127.0.0.1 --port 1234 run -m zenlm/zen-nano-0.6b
+```
+
+*(If you built `hanzo-engine` from source, run `hanzo-engine serve --host 127.0.0.1 -p 1234 -m zenlm/zen-nano-0.6b --no-advertise`, which also serves an interactive browser chat UI at `http://127.0.0.1:1234/ui`.)*
+
+### Smoke-test inference
+
+```bash
+# 1. Confirm the model is loaded
+curl -sS http://127.0.0.1:1234/v1/models
+
+# 2. Run a local completion (standard OpenAI wire format)
+curl -sS http://127.0.0.1:1234/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "zenlm/zen-nano-0.6b",
+    "messages": [{"role": "user", "content": "Reply with the single word pong."}],
+    "max_tokens": 16
+  }'
+```
+
+Any OpenAI-compatible SDK or agent can now use `base_url="http://127.0.0.1:1234/v1"` with any non-empty `api_key` string.
+
+---
+
+## 3. Running completely air-gapped (zero outbound network)
+
+Neither `cloud` nor `engine` phones home, requires a license server, or makes background telemetry calls. The **only** network fetches happen at build/download time (Go modules, release tarballs, and Hugging Face model weights).
+
+To stage an installation onto an air-gapped network:
+
+### Step A — On a connected staging machine
+
+```bash
+mkdir -p hanzo-airgap/{bin,weights}
+
+# 1. Build the static cloud binary (pure Go, zero dynamic libc links)
+git clone https://github.com/hanzoai/cloud
+(cd cloud && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ../hanzo-airgap/bin/cloud ./cmd/cloud)
+
+# 2. Fetch the Linux engine binary (or compile from source with CUDA for NVIDIA GPUs)
+curl -fL https://github.com/hanzoai/engine/releases/latest/download/hanzoai-linux-amd64.tar.gz \
+  | tar xz -C hanzo-airgap/bin
+
+# 3. Download model weights + tokenizer files into a plain directory
+pip install -U "huggingface_hub[cli]"
+hf download zenlm/zen-nano-0.6b --local-dir hanzo-airgap/weights/zen-nano-0.6b
+
+# 4. Archive for transfer
+tar czf hanzo-airgap.tar.gz hanzo-airgap/
+```
+
+*(If your policy requires compiling inside the air-gapped enclave instead of transferring binaries, run `go mod vendor` inside `cloud` and `cargo vendor` inside `engine` before archiving the source trees.)*
+
+### Step B — On the air-gapped target host
+
+```bash
+tar xzf hanzo-airgap.tar.gz
+cd hanzo-airgap
+
+# 1. Start Cloud Core offline
+mkdir -p data && (umask 077 && openssl rand -base64 32 > master.key)
+CLOUD_LISTEN=127.0.0.1:8080 \
+  CLOUD_DATA_DIR=./data \
+  CLOUD_ENABLE_STAGED=functions \
+  CLOUD_KMS_MASTER_KEY_REF="$(cat master.key)" \
+  ./bin/cloud &
+
+# 2. Start Model Engine from the local directory (HF_HUB_OFFLINE=1 blocks any hub lookup)
+HF_HUB_OFFLINE=1 ./bin/hanzoai --serve-ip 127.0.0.1 --port 1234 \
+  run -m ./weights/zen-nano-0.6b &
+```
+
+Re-run the `curl` smoke tests from Sections 1 and 2 against `127.0.0.1:9090/healthz`, `127.0.0.1:8080/v1/base/collections/notes`, and `127.0.0.1:1234/v1/chat/completions` to verify both services are healthy offline.
+
+---
+
+## 4. Optional: Add local Identity & KMS secrets (`hanzoai/iam`)
+
+`hanzoai/cloud` delegates authentication to an OIDC issuer via `{CLOUD_IAM_ISSUER}/v1/iam/.well-known/jwks` (defaulting to `http://127.0.0.1:8000`). Add [`hanzoai/iam`](https://github.com/hanzoai/iam) when you want multi-tenant org isolation or sealed secrets in `/v1/kms`:
+
+```bash
+git clone https://github.com/hanzoai/iam
+cd iam
+IAM_DEV_HOST_RELATIVE=1 go run . serve --http http://127.0.0.1:8000 --init-data init_data.json
+```
+
+Verify OIDC discovery and JWKS:
+
+```bash
+curl -sS http://127.0.0.1:8000/.well-known/openid-configuration
+curl -sS http://127.0.0.1:8000/v1/iam/.well-known/jwks
+```
+
+With a bearer token issued by that local IAM (`owner` claim matching `<org>`), `/v1/kms` seals and unwraps secrets under `.dev/data/orgs/<org>/kms.db`:
+
+```bash
+curl -sS -X POST http://127.0.0.1:8080/v1/kms/orgs/<org>/secrets \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"UPSTREAM_KEY","env":"dev","value":"example-secret"}'
+
+curl -sS "http://127.0.0.1:8080/v1/kms/orgs/<org>/secrets/UPSTREAM_KEY?env=dev" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+### Optional web chat client (`hanzoai/chat`)
+
+If you want the full multi-project web chat workspace ([`@hanzo/chat`](https://github.com/hanzoai/chat)) in addition to `hanzo-engine`'s built-in `/ui`, point its Vite build at your local API and IAM origins:
+
+```bash
+git clone https://github.com/hanzoai/chat
+cd chat
+pnpm install --no-frozen-lockfile
+VITE_HANZO_API=http://127.0.0.1:8080 VITE_HANZO_IAM=http://127.0.0.1:8000 pnpm dev
+```
+
+This serves the web client on `http://localhost:3090`.
+
+---
+
+## Known current boundaries
+
+To avoid surprises during evaluation, note three active boundaries in the current open-source cut:
+
+1. **CLI loopback host (`hanzoai/cloud#4`):** Running `hanzo host serve` or `hanzo network use local` in the `hanzo` CLI currently expects a separate `host` helper binary and stops with `no local cloud host`. Start `cloud` directly via `make dev` or `./cloud` and call its HTTP (`:8080`) or MCP (`/mcp`) endpoints directly.
+2. **`/v1/base` replaces standalone local `/v1/kv` and `/v1/sql`:** In local `cloud`, document collections, key-value records, and SQLite tables all live behind `/v1/base`.
+3. **External subsystems fail closed:** Routes in `cloud` that proxy optional companion daemons (`/v1/s3` on `127.0.0.1:9000`, `/v1/dns` on `127.0.0.1:8443`, `/v1/exec` on `127.0.0.1:8100`) return an explicit `503` until their upstream environment variables (`S3_ENDPOINT`, `HANZO_DNS_URL`, `CODE_EXEC_UPSTREAM`) are configured.
+
+---
+
+## Real-time assistance & support
+
+If you hit a missing detail while standing up a local, on-prem, or air-gapped environment:
+
+- **Discord (fastest path to core engineers):** Join [discord.gg/XthHQQj](https://discord.gg/XthHQQj) — post in `#general` or `#docs` for direct help from the engineers maintaining `cloud`, `engine`, and `iam`.
+- **GitHub Issues:** File reproduction steps or doc gaps directly on [`hanzoai/cloud`](https://github.com/hanzoai/cloud/issues), [`hanzoai/engine`](https://github.com/hanzoai/engine/issues), [`hanzoai/iam`](https://github.com/hanzoai/iam/issues), or [`hanzo-docs/docs`](https://github.com/hanzo-docs/docs/issues).
+- **Enterprise & air-gapped architecture onboarding:** Email [enterprise@hanzo.ai](mailto:enterprise@hanzo.ai) for dedicated deployment assistance, custom model weights, and security review support.
