@@ -21,6 +21,8 @@ The wallet is an ADDRESS, not an org: `account` echoes the key resolved within t
 
 `cash`, `line` and `credit` say where `available` came from, and add up to it. `cash` is money the customer paid — a settled card payment or a recorded wire. `credit` is money Hanzo minted: signup and promotional credit, admin grants. `line` is what is left of the org's postpaid credit line (`creditLimit`), and `due` what the account owes on it: usage the line paid for, invoiced, and paid down first by the next payment. A debit draws cash, then the line, then credit; granted credit never pays what is due. The three line fields are absent when the ledger did not report them.
 
+`prepaid` is `cash` plus `line`: what pays for a model of another maker (OpenAI, Anthropic, Google and the rest). Granted `credit` does not, unless the usage policy says so, so a picker that shows Top up on those models shows it when `prepaid` is 0 and never reads the credit rule itself; `GET /v1/ai/limits` `pays` is the policy's own answer, per class.
+
 The ledger is the caller's own org, taken from the VALIDATED IAM owner claim and never from a client header. No validated principal is 401. A balance that cannot be READ is 502, never 0: unknown is not broke.
 
 <Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
@@ -90,7 +92,7 @@ curl https://api.hanzo.ai/v1/billing/balance \
 ```
 </Tab>
 <Tab value="MCP">
-MCP reaches **billing** through the `billing` tool, which names its 39 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
+MCP reaches **billing** through the `billing` tool, which names its 45 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
 
 ```bash
 curl -X POST https://api.hanzo.ai/v1/mcp \
@@ -117,6 +119,8 @@ curl -X POST https://api.hanzo.ai/v1/mcp \
 Answers one row per BILLED call against the caller's org — transaction id, amount, timestamp and the metered unit. This is the raw charged ledger, not a rollup.
 
 Each row is stamped with a canonical `metadata.product` derived from what the meter persisted: `agent` becomes agents, `provisioning` becomes the provisioned kind, a token-metered row becomes inference, anything else keeps its metering surface. The ledger has no product field of its own, so this read is where that dimension is made real — from the SAME charged rows, never a second meter. A row that already carries its own product WINS, so the derivation stops the day the meter records one.
+
+Each row carries `name`: what its metered unit (`metadata.model`) reads as on a bill — `Desktop sandbox` for `desktop/visor`, `Agent sessions` for `session`. An AI model is its own name. Show `name`; `metadata.model` stays the unit the ledger keys on.
 
 `product=<id>` filters to one product server-side. `groupBy=product` reduces to `{product,requests,amountCents}` rollups instead of rows.
 
@@ -191,7 +195,7 @@ curl https://api.hanzo.ai/v1/billing/usage \
 ```
 </Tab>
 <Tab value="MCP">
-MCP reaches **billing** through the `billing` tool, which names its 39 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
+MCP reaches **billing** through the `billing` tool, which names its 45 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
 
 ```bash
 curl -X POST https://api.hanzo.ai/v1/mcp \

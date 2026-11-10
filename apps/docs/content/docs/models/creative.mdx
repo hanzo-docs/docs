@@ -56,6 +56,42 @@ The distinction between open foundation checkpoints and Hanzo proprietary models
 - **Key Use Cases**: Brand design systems, production concept art, typography-accurate editorial posters, game assets.
 - **Access Route**: [hanzo.ai/iro](https://hanzo.ai/iro) · [Apply for Research Access](https://hanzo.ai/research-access?model=iro)
 
+#### Hyperframe Graphic Compositor (`/v1/frame/generations` & `/v1/frame/edits`)
+For UI hero graphics, code diffs, and brand cards where diffusion models would otherwise hallucinate garbled text, Hanzo provides the **Hyperframe** endpoints (`POST /v1/frame/generations` and `POST /v1/frame/edits`, operation IDs `aiFrameGenerate` and `aiFrameEdit`):
+
+1. **Strict No-Text Diffusion Pass**: The gateway strips all copy, headlines, and diff instructions from the diffusion prompt and appends a strict no-text directive so `iro` renders a purely visual background canvas (dot-grids, contour geometry, dark hardware surfaces) with zero baked-in characters.
+2. **Composable `@hanzo/font` Layers**: The compositor auto-detects the dark terminal/panel bounding box and layers pixel-perfect `Zen` (sans) and `Zen Mono` (code/diff) typography, badges, pills, cards, or custom HTML/CSS on top, returning both a high-DPI PNG (`b64_json`), the reusable clean plate (`background_b64`), interactive HTML (`html`), and the structured `layers[]` stack.
+3. **Zero-Diffusion Layer Redesign (`/v1/frame/edits`)**: Pass `background_b64` and `layers` (or `layer_patches`, `headline`, `accent`, `layout`, `theme`, `instruction`) to `POST /v1/frame/edits` to redesign copy, reposition panels (`split-left`, `split-right`, `center-stack`), or switch themes (`light`, `glass`, `dark`) in ~15ms without re-running diffusion — or pass `edit_background: true` to regenerate the background plate while keeping all text and UI layers intact.
+
+```bash
+# 1. Generate a Hyperframe composite (strictly text-free diffusion + @hanzo/font layers)
+curl -fsSL https://api.hanzo.ai/v1/frame/generations \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "iro",
+    "prompt": "A white canvas with a soft dot-grid, one dark rounded terminal showing a small diff, thin black contour lines flowing out of it, monochrome",
+    "headline": "Describe the change.",
+    "accent": "Dev ships it.",
+    "layout": "split-left",
+    "theme": "light"
+  }'
+
+# 2. Redesign layers, layout, or theme in ~15ms with zero diffusion cost
+curl -fsSL https://api.hanzo.ai/v1/frame/edits \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "background_b64": "<background_b64 from step 1>",
+    "layout": "split-right",
+    "theme": "glass",
+    "layer_patches": [
+      {"id": "copy", "headline": "Edit layers.", "accent": "Instant redesign."},
+      {"id": "terminal", "terminal": {"title": "hanzo — frame/edits", "diff": ["@@ -1,2 +1,2 @@", "-mode: generate", "+mode: edit_layers"]}}
+    ]
+  }'
+```
+
 ### Mori — Geometric 3D Mesh Generation
 - **Role**: High-fidelity 3D asset creation with production-ready topologies, PBR material maps, and UV unwrapping.
 - **Foundation**: `zen-3d` (TRELLIS base, MIT).

@@ -1,6 +1,6 @@
 ---
 title: Vercel
-description: Vercel builds a repo and serves the result. Here that is two capabilities — /v1/platform (37) builds and runs an app, /v1/projects (27) serves a static export — and which one you want depends on whether your output needs a server.
+description: Vercel builds a repo and serves the result. Here that is two capabilities — /v1/platform (37) builds and runs an app, /v1/project (27) serves a static export — and which one you want depends on whether your output needs a server.
 ---
 
 Vercel takes a repository, builds it, and serves the output. Two capabilities
@@ -10,7 +10,7 @@ answer that, and picking the right one is the whole migration:
   the build (`POST /v1/platform/runner`, listed at `/v1/platform/builds`), a
   deploy, per-deployment logs, preview, promote, rollback, env and domains. This
   is the like-for-like Vercel replacement.
-- **`/v1/projects`** (27 operations) — a **static site**. You bring a built
+- **`/v1/project`** (27 operations) — a **static site**. You bring a built
   directory; it stores it as a content-addressed release and points a domain at
   one. No build, because there is nothing to build.
 
@@ -53,7 +53,7 @@ Step 3 answers 202 — an accepted deployment, not a live one — and comes back
 | Capability | What it does | Operations |
 |---|---|---|
 | `/v1/platform` | Builds a repo and runs it: deploy, per-deployment logs, preview, promote, rollback, env, domains | 37 |
-| `/v1/projects` | Serves a directory you already built, as content-addressed releases with domains and purge | 27 |
+| `/v1/project` | Serves a directory you already built, as content-addressed releases with domains and purge | 27 |
 | `/v1/function` | Publishes one handler with no app around it, and invokes it | 11 |
 
 ## Nouns
@@ -74,9 +74,9 @@ product surface; the right is the capability that answers it.
 | Instant rollback | `POST .../apps/{app}/rollback` |
 | Environment variables | `PUT .../apps/{app}/env` |
 | Domain, and verifying it | `.../apps/{app}/domains`, then `/{host}/verify` |
-| Purely static output | `/v1/projects` (27) — upload a directory, activate a release |
-| Rollback, static | `POST /v1/projects/{slug}/releases/{release}/activate` |
-| Edge cache purge | `POST /v1/projects/{slug}/purge` |
+| Purely static output | `/v1/project` (27) — upload a directory, activate a release |
+| Rollback, static | `POST /v1/project/{slug}/releases/{release}/activate` |
+| Edge cache purge | `POST /v1/project/{slug}/purge` |
 
 ### The rest of the platform
 
@@ -130,7 +130,7 @@ curl -sS -X POST \
 Static instead, when the output needs no server — enqueue, upload, complete:
 
 ```bash
-curl -sS -X POST https://api.hanzo.ai/v1/projects/my-site/deployments \
+curl -sS -X POST https://api.hanzo.ai/v1/project/my-site/deployments \
   -H "Authorization: Bearer $HANZO_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{"commit":"'"$GIT_SHA"'"}'
@@ -170,7 +170,7 @@ served, so pre-size them at build.
 `crons` ships with the deployment and disappears with it. `/v1/tasks` outlives
 any one deploy, which is what you want and is a different thing to port.
 
-**On the static plane specifically:** `/v1/projects` does not build and has no
+**On the static plane specifically:** `/v1/project` does not build and has no
 per-request compute, and its completion manifest is a single body subject to
 the edge limit — a full prerender of very many pages is what makes that bite.
 Those are properties of choosing the static plane over `/v1/platform`, not of

@@ -17,8 +17,11 @@ Non-streaming when it does. Streaming is a different transport (SSE) that the ge
 
 Implements the OpenAI-compatible chat completions API
 
+Reasoning effort is `reasoning_effort` (Responses: `reasoning.effort`). Send `auto`, or nothing, and enso-auto's router decides: it starts at Enso Flash and moves to a deeper tier only when the router or Kai judges the request needs it. The ladder: `instant` (no reasoning; `none` and `minimal` read instant) serves enso-flash with thinking off, `low` enso-flash, `medium` enso-pro, `high` enso-max, `max` enso-ultra (`xhigh` reads max). On a tier named outright the effort sets only how hard it thinks, and `instant` turns thinking off. Fast mode is `fast: true` (or `X-Fast: 1`): billed from prepaid balance on every plan at 2x the price on enso-auto and enso-flash, 3x on enso-pro and enso-max, 4x on enso-ultra, it asks prepaid rungs first, and a payer with no money of its own is refused prepaid_required.
+
 | Parameter | In | Required | Description |
 |---|---|---|---|
+| `X-Fast` | header | — | Fast mode, as the body's `fast`: "1" or "true". |
 | `X-Max-Cost` | header | — | The most this request may cost, in USD per 1,000 tokens. Routing picks only models under it; an org's own ceil |
 | `X-Max-Latency-Ms` | header | — | The slowest model this request accepts, in milliseconds. |
 | `frequency_penalty` | body | — |  |

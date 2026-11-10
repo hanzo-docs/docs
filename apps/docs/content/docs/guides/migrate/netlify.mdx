@@ -1,11 +1,11 @@
 ---
 title: Netlify
-description: Netlify serves a built directory, runs functions beside it, collects form posts and signs visitors in. Here that is /v1/projects (27) for the site, /v1/function (11) for the code and /v1/iam (159) for the people — and a deploy is one call, because the bytes never pass through the API.
+description: Netlify serves a built directory, runs functions beside it, collects form posts and signs visitors in. Here that is /v1/project (27) for the site, /v1/function (11) for the code and /v1/iam (159) for the people — and a deploy is one call, because the bytes never pass through the API.
 ---
 
 Netlify does five things: it serves a built directory, builds that directory
 from a repo, runs functions beside it, collects form posts, and signs visitors
-in. Three capabilities answer those — `/v1/projects` (27) is the site,
+in. Three capabilities answer those — `/v1/project` (27) is the site,
 `/v1/function` (11) is the code, `/v1/iam` (159) is the people — and a form
 post lands in the project's own Base data space, which is provisioned when the
 project is created.
@@ -29,13 +29,13 @@ curl -sS -X POST https://api.hanzo.ai/v1/account/keys \
   -d '{"type":"secret"}'
 
 # 2. claim the slug — it is the host label, the storage prefix and the handle
-curl -sS -X POST https://api.hanzo.ai/v1/projects \
+curl -sS -X POST https://api.hanzo.ai/v1/project \
   -H "Authorization: Bearer $HANZO_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{"name":"Acme WWW","slug":"acme-www"}'
 
 # 3. take a built directory live at https://acme-www.hanzo.app
-curl -sS -X POST https://api.hanzo.ai/v1/projects/acme-www/deploy \
+curl -sS -X POST https://api.hanzo.ai/v1/project/acme-www/deploy \
   -H "Authorization: Bearer $HANZO_API_KEY" \
   -H 'Content-Type: application/octet-stream' \
   --data-binary @dist.zip
@@ -49,7 +49,7 @@ slug, because the key already carried the org.
 
 | Capability | What it does | Operations |
 |---|---|---|
-| `/v1/projects` | The site: slug, archive deploy, releases, custom domains, cache purge | 27 |
+| `/v1/project` | The site: slug, archive deploy, releases, custom domains, cache purge | 27 |
 | `/v1/function` | The code beside it: node, python or deno, invoked by name | 11 |
 | `/v1/iam` | The people: signup, OAuth, SCIM, roles, invitations | 159 |
 
@@ -63,19 +63,19 @@ answers it.
 | Netlify | Hanzo |
 |---|---|
 | Team, addressed by account slug | Your org, taken from the validated key |
-| Site, addressed by `site_id` | Project, addressed by `slug` — `POST /v1/projects` |
-| `POST /api/v1/sites/{site_id}/deploys` with a zip | `POST /v1/projects/{slug}/deploy` — same archive, one call |
-| Digest deploy, then a PUT per required file | `POST /v1/projects/{slug}/deployments`, then `.../complete` |
-| Deploy history | `GET /v1/projects/{slug}/deployments` |
-| The published deploy | The active release — `GET /v1/projects/{slug}/releases` |
-| Restore an earlier deploy | `POST /v1/projects/{slug}/releases/{release}/activate` |
+| Site, addressed by `site_id` | Project, addressed by `slug` — `POST /v1/project` |
+| `POST /api/v1/sites/{site_id}/deploys` with a zip | `POST /v1/project/{slug}/deploy` — same archive, one call |
+| Digest deploy, then a PUT per required file | `POST /v1/project/{slug}/deployments`, then `.../complete` |
+| Deploy history | `GET /v1/project/{slug}/deployments` |
+| The published deploy | The active release — `GET /v1/project/{slug}/releases` |
+| Restore an earlier deploy | `POST /v1/project/{slug}/releases/{release}/activate` |
 | `*.netlify.app` subdomain | `<slug>.hanzo.app`, the same slug as a hostname label |
-| Custom domain and its DNS check | `POST /v1/projects/{slug}/domains`, then `/{host}/verify` |
-| Cache invalidation | `POST /v1/projects/{slug}/purge` — no redeploy, origin untouched |
-| Snippet injection | `GET /v1/projects/tags` — the first-party tag set, per site |
-| Open Graph preview image | `GET /v1/projects/{slug}/shot` — keyed by the deployment |
-| Deploy-to-Netlify button, starter templates | `POST /v1/projects/fork` |
-| Netlify Drop | `POST /v1/projects/sites/deploy` — a file manifest, no archive |
+| Custom domain and its DNS check | `POST /v1/project/{slug}/domains`, then `/{host}/verify` |
+| Cache invalidation | `POST /v1/project/{slug}/purge` — no redeploy, origin untouched |
+| Snippet injection | `GET /v1/project/tags` — the first-party tag set, per site |
+| Open Graph preview image | `GET /v1/project/{slug}/shot` — keyed by the deployment |
+| Deploy-to-Netlify button, starter templates | `POST /v1/project/fork` |
+| Netlify Drop | `POST /v1/project/sites/deploy` — a file manifest, no archive |
 
 ### Build and functions
 
@@ -148,7 +148,7 @@ curl -sS "https://api.netlify.com/api/v1/deploys/$DEPLOY_ID" \
 Hanzo, the same site:
 
 ```bash
-curl -sS -X POST "https://api.hanzo.ai/v1/projects/acme-www/deploy" \
+curl -sS -X POST "https://api.hanzo.ai/v1/project/acme-www/deploy" \
   -H "Authorization: Bearer $HANZO_API_KEY" \
   -H 'Content-Type: application/octet-stream' \
   --data-binary @dist.zip
@@ -160,7 +160,7 @@ state to poll.
 Past the 16 MiB edge body limit the bytes leave the API entirely:
 
 ```bash
-ID=$(curl -sS -X POST https://api.hanzo.ai/v1/projects/acme-www/deployments \
+ID=$(curl -sS -X POST https://api.hanzo.ai/v1/project/acme-www/deployments \
   -H "Authorization: Bearer $HANZO_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{"commit":"'"$GIT_SHA"'"}' | jq -r .id)
@@ -168,7 +168,7 @@ ID=$(curl -sS -X POST https://api.hanzo.ai/v1/projects/acme-www/deployments \
 # the 202 carries bucket, prefix and a 30-minute presigned POST policy that S3
 # confines to this deployment's prefix — CI writes its own files against it
 
-curl -sS -X POST "https://api.hanzo.ai/v1/projects/acme-www/deployments/$ID/complete" \
+curl -sS -X POST "https://api.hanzo.ai/v1/project/acme-www/deployments/$ID/complete" \
   -H "Authorization: Bearer $HANZO_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{"status":"live","keys":["index.html","assets/app.css"]}'
@@ -178,7 +178,7 @@ Rolling back is one statement, and nothing is rebuilt:
 
 ```bash
 curl -sS -X POST \
-  "https://api.hanzo.ai/v1/projects/acme-www/releases/$REL/activate" \
+  "https://api.hanzo.ai/v1/project/acme-www/releases/$REL/activate" \
   -H "Authorization: Bearer $HANZO_API_KEY"
 ```
 

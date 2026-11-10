@@ -25,6 +25,8 @@ carries its whole lineage.
 | Parameter | In | Required | Description |
 |---|---|---|---|
 | `avatar` | body | — | Avatar and Emoji are how the agent APPEARS. An image wins when both are given — it is the thing somebody made |
+| `avatar_licence` | body | — | AvatarLicence is the licence's short name, one line of up to 128 characters ("Public domain"). Like avatar_sou |
+| `avatar_source` | body | — | AvatarSource is the https page the avatar image is described on, up to 2048 characters. It belongs to the imag |
 | `cap_micro_usd` | body | — | The budget, required. An agent is not creatable without one: a zero cap would mean no limit and no record of i |
 | `computeRef` | body | — | ComputeRef optionally binds this bot to a visor machine. Opaque here, bounded at 256 characters, and not resol |
 | `description` | body | — | Description is the one line published as the description of the `agent_&lt;name&gt;` tool, which is how another agen |
@@ -34,8 +36,6 @@ carries its whole lineage.
 | `max_task_micro_usd` | body | — | MaxTaskMicroUSD is the ceiling for a single run, in micro-USD. A session cannot exceed it even when the period |
 | `model` | body | — | Model names the model to run on. Omit it to take the deployment's configured default; name one and it is check |
 | `name` | body | — | Name is the agent's org-unique handle and the only required field. It must match ^[A-Za-z0-9][A-Za-z0-9._-]&#123;0, |
-| `parent` | body | — | Parent is the agent spawning this one — its id or name, in the caller's org. The new agent answers to the org |
-| `period` | body | — | Period is the window the cap resets on: day, week or month. |
 
 <Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
 <Tab value="CLI">
@@ -50,7 +50,7 @@ hanzo agent create
 import { Configuration, AgentApi } from 'hanzoai';
 
 const api = new AgentApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
-const { data } = await api.postAgent({ avatar: "<avatar>", cap_micro_usd: 0 });
+const { data } = await api.postAgent({ avatar: "<avatar>", avatar_licence: "<avatar_licence>" });
 ```
 </Tab>
 <Tab value=".py">
@@ -59,7 +59,7 @@ from hanzoai.cloud import ApiClient, Configuration
 from hanzoai.cloud.api import AgentApi
 
 client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
-result = AgentApi(client).post_agent(avatar="<avatar>", cap_micro_usd=0)
+result = AgentApi(client).post_agent(avatar="<avatar>", avatar_licence="<avatar_licence>")
 ```
 </Tab>
 <Tab value=".go">
@@ -104,12 +104,12 @@ curl -X POST https://api.hanzo.ai/v1/agent \
   -H "Content-Type: application/json" \
   -d '{
        "avatar": "<avatar>",
-       "cap_micro_usd": 0
+       "avatar_licence": "<avatar_licence>"
      }'
 ```
 </Tab>
 <Tab value="MCP">
-MCP reaches **agent** through the `agent` tool, which names its 38 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
+MCP reaches **agent** through the `agent` tool, which names its 51 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
 
 ```bash
 curl -X POST https://api.hanzo.ai/v1/mcp \
@@ -212,7 +212,7 @@ curl -X POST https://api.hanzo.ai/v1/agent/<ref>/run \
 ```
 </Tab>
 <Tab value="MCP">
-MCP reaches **agent** through the `agent` tool, which names its 38 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
+MCP reaches **agent** through the `agent` tool, which names its 51 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
 
 ```bash
 curl -X POST https://api.hanzo.ai/v1/mcp \
@@ -232,13 +232,15 @@ curl -X POST https://api.hanzo.ai/v1/mcp \
 </Tab>
 </Tabs>
 
-## Returns one agent's execution history, newest first — each run's input, its output or its error, and how long it took.
+## Returns the caller's own runs of one agent, newest first — each run's input, its output or its error, and how long it took.
 
 `GET /v1/agent/{ref}/runs` · [reference →](/docs/openapi/agent)
 
-Returns one agent's execution history, newest first — each run's
-input, its output or its error, and how long it took. Every row is a run that
-actually happened.
+Returns the caller's own runs of one agent, newest first — each
+run's input, its output or its error, and how long it took. A run is the
+person's who asked for it, so another member's runs are not listed, nor an
+org admin's view of them; a run no person asked for (a schedule) is listed to a
+SuperAdmin alone. Every row is a run that actually happened.
 
 | Parameter | In | Required | Description |
 |---|---|---|---|

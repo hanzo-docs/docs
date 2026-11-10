@@ -33,6 +33,10 @@ A credential that is presented is verified, never merely shape-checked: a caller
 using /v1/models to ask "is my key working?" gets an honest answer, because a key
 that does not verify annotates nothing rather than reading as accepted.
 
+?id= narrows the listing to the models a page names, comma-separated and at most
+100, in the listing's order; an id nothing lists is absent. Without it the
+listing is whole, which is what every OpenAI-compatible caller reads.
+
 <Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
 <Tab value="CLI">
 ```bash
@@ -117,7 +121,7 @@ by construction, carries its full value.
 <Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
 <Tab value="CLI">
 ```bash
-hanzo account keys get
+hanzo account keys list
 ```
 </Tab>
 <Tab value="SDK">

@@ -71,7 +71,7 @@ domains:
     # `environment` is what a repository is before its agent starts — install,
     # start and secrets — so it files beside `agent`. `train` runs a training
     # job on a model and bills it by the second, so it files beside `ml`.
-    tags: [ai, zen, engine, ml, train, agent, environment, skills, eval, benchmark,
+    tags: [ai, zen, studio, engine, ml, train, agent, environment, skills, eval, benchmark,
            research, prompt, exec, sandbox, tool, ask, code, lsp, translate]
 
   - id: data
@@ -105,7 +105,7 @@ domains:
     # providers the fleet connects to; `channel` is one inbox across them.
     # `workflow` is the durable engine: work that survives a crash, every run
     # replayable.
-    tags: [workflow, pubsub, kafka, amqp, mq, notify, tel, auto, flow, webhook,
+    tags: [workflow, pubsub, kafka, amqp, mq, notify, email, tel, transport, auto, flow, webhook,
            channel, destination, provider]
 
   - id: observability
@@ -140,7 +140,7 @@ domains:
     # which agents answer to it; `tax` the W-9s, W-8s and 1099s companies
     # exchange from the payments that moved between them. Both file beside
     # books, the ledger they read.
-    tags: [commerce, billing, treasury, plan, pricing, allowance,
+    tags: [commerce, billing, treasury, plan, pricing, allowance, reward,
            marketplace, books, captable, referral, affiliate, author,
            licensing, x402, marketing, campaign, ad, experiment,
            principal, tax]
@@ -176,8 +176,8 @@ domains:
     # where to incorporate. It quotes state fees rather than metering our own, so
     # it is not Commerce.
     tags: [git, template, blueprint, bot, world, task, patrol, framework,
-           content, guide, help, meet, share, social, link, esign, dataroom,
-           company, standing, legal, pref, settings, function, sbom, seo]
+           content, form, library, guide, help, meet, share, social, link, esign, dataroom,
+           company, standing, legal, patent, pref, settings, function, sbom, seo]
 
   - id: chain
     title: "Chain"

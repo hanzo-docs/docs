@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-17T02:27:55.106Z",
+  "updated": "2026-11-10T00:40:09.136Z",
   "enso": [
     {
       "id": "enso-flash",
@@ -7,14 +7,19 @@
       "output": 1.65
     },
     {
+      "id": "enso-max",
+      "input": 4.3,
+      "output": 21.5
+    },
+    {
       "id": "enso-pro",
-      "input": 4.4,
-      "output": 22
+      "input": 3.3,
+      "output": 16.5
     },
     {
       "id": "enso-ultra",
-      "input": 5.5,
-      "output": 27.5
+      "input": 5.236,
+      "output": 26.18
     }
   ],
   "summary": {
@@ -22,16 +27,16 @@
     "cloudPlans": 11,
     "cloudRegions": 4,
     "decisionModels": 6,
-    "doAiModels": 18,
+    "doAiModels": 0,
     "ensoModels": 3,
     "featuredModels": 11,
     "freeModels": 74,
     "huggingfaceModels": 57,
     "openRouterModels": 340,
     "providers": 57,
-    "thirdPartyModels": 397,
-    "totalModels": 561,
-    "zenModels": 14
+    "thirdPartyModels": 407,
+    "totalModels": 414,
+    "zenModels": 8
   },
   "hanzoModels": [
     {
@@ -43,33 +48,20 @@
         "Embeddings"
       ],
       "fullName": "Zen Embedding",
+      "links": {
+        "github": "https://github.com/zenlm/zen-embedding",
+        "huggingface": "https://huggingface.co/zenlm/zen-embedding"
+      },
       "name": "zen-embedding",
       "owned_by": "zenlm",
       "pricing": {
-        "cacheRead": 0,
-        "cacheWrite": null,
+        "cacheRead": 0.01,
+        "cacheWrite": 0.0125,
         "input": 0.01,
         "output": 0.01
       },
       "provider": "Hanzo",
       "tier": "starter"
-    },
-    {
-      "context": null,
-      "description": "Text-to-sound-effects \u2014 generates Foley and ambient audio from a prompt.",
-      "family": "zen",
-      "features": [
-        "Text \u2192 Sound FX"
-      ],
-      "fullName": "Zen Foley",
-      "name": "zen-foley",
-      "owned_by": "zenlm",
-      "pricing": {
-        "perUnit": 0.15
-      },
-      "pricingUnit": "call",
-      "provider": "Hanzo",
-      "tier": "pro"
     },
     {
       "context": 128000,
@@ -79,101 +71,38 @@
         "128K context",
         "Safety classifier"
       ],
-      "fullName": "Zen Guard \u2014 Content Safety",
+      "fullName": "Zen Guard — Content Safety",
+      "links": {
+        "github": "https://github.com/zenlm/zen-guard",
+        "huggingface": "https://huggingface.co/zenlm/zen-guard"
+      },
       "name": "zen-guard",
       "owned_by": "zenlm",
       "pricing": {
-        "cacheRead": 0,
-        "cacheWrite": null,
-        "input": 0,
-        "output": 0
+        "cacheRead": 0.03,
+        "cacheWrite": 0.375,
+        "input": 0.3,
+        "output": 0.96
       },
       "provider": "Hanzo",
       "tier": "starter"
-    },
-    {
-      "context": null,
-      "description": "Text-to-image generation.",
-      "family": "zen",
-      "features": [
-        "Text \u2192 Image"
-      ],
-      "fullName": "Zen Image",
-      "name": "zen-image",
-      "owned_by": "zenlm",
-      "pricing": {
-        "perUnit": 0.24
-      },
-      "pricingUnit": "image",
-      "provider": "Hanzo",
-      "tier": "pro"
-    },
-    {
-      "context": null,
-      "description": "Text-to-music generation.",
-      "family": "zen",
-      "features": [
-        "Text \u2192 Music"
-      ],
-      "fullName": "Zen Music",
-      "name": "zen-music",
-      "owned_by": "zenlm",
-      "pricing": {
-        "perUnit": 0.3
-      },
-      "pricingUnit": "call",
-      "provider": "Hanzo",
-      "tier": "pro"
-    },
-    {
-      "context": null,
-      "description": "Cross-encoder reranker \u2014 scores (query, document) pairs to reorder retrieval results.",
-      "family": "zen",
-      "features": [
-        "Reranking",
-        "Retrieval"
-      ],
-      "fullName": "Zen Rerank",
-      "name": "zen-rerank",
-      "owned_by": "zenlm",
-      "pricing": {
-        "perUnit": 0.03
-      },
-      "pricingUnit": "call",
-      "provider": "Hanzo",
-      "tier": "starter"
-    },
-    {
-      "context": null,
-      "description": "Text-to-video \u2014 generates short clips from a prompt (async).",
-      "family": "zen",
-      "features": [
-        "Text \u2192 Video",
-        "Async"
-      ],
-      "fullName": "Zen Video",
-      "name": "zen-video",
-      "owned_by": "zenlm",
-      "pricing": {
-        "perUnit": 1.8
-      },
-      "pricingUnit": "clip",
-      "provider": "Hanzo",
-      "tier": "pro max"
     },
     {
       "context": 1000000,
-      "description": "Reads images and reasons over them \u2014 visual Q&A, document and chart understanding, grounded captioning.",
+      "description": "Reads images and reasons over them — visual Q&A, document and chart understanding, grounded captioning.",
       "family": "zen",
       "features": [
         "128K context",
         "Vision + Language"
       ],
-      "fullName": "Zen VL \u2014 Vision-Language",
+      "fullName": "Zen VL — Vision-Language",
+      "links": {
+        "github": "https://github.com/zenlm/zen-vl"
+      },
       "name": "zen-vl",
       "owned_by": "zenlm",
       "pricing": {
-        "cacheRead": 0,
+        "cacheRead": null,
         "cacheWrite": null,
         "input": 0,
         "output": 0
@@ -181,23 +110,6 @@
       "provider": "Hanzo",
       "tier": "pro",
       "vision": true
-    },
-    {
-      "context": null,
-      "description": "Text-to-speech \u2014 natural voice synthesis.",
-      "family": "zen",
-      "features": [
-        "Text \u2192 Speech"
-      ],
-      "fullName": "Zen Voice",
-      "name": "zen-voice",
-      "owned_by": "zenlm",
-      "pricing": {
-        "perUnit": 0.045
-      },
-      "pricingUnit": "call",
-      "provider": "Hanzo",
-      "tier": "pro"
     },
     {
       "context": 1000000,
@@ -211,10 +123,13 @@
         "OpenAI + Anthropic API"
       ],
       "fullName": "Zen5 (Default)",
+      "links": {
+        "github": "https://github.com/zenlm/zen5"
+      },
       "name": "zen5",
       "owned_by": "zenlm",
       "pricing": {
-        "cacheRead": 0.42,
+        "cacheRead": null,
         "cacheWrite": null,
         "input": 0,
         "output": 0
@@ -240,7 +155,7 @@
       "name": "zen5-coder",
       "owned_by": "zenlm",
       "pricing": {
-        "cacheRead": 0.42,
+        "cacheRead": null,
         "cacheWrite": null,
         "input": 0,
         "output": 0
@@ -266,7 +181,7 @@
       "name": "zen5-flash",
       "owned_by": "zenlm",
       "pricing": {
-        "cacheRead": 0.05292,
+        "cacheRead": null,
         "cacheWrite": null,
         "input": 0,
         "output": 0
@@ -293,7 +208,7 @@
       "name": "zen5-mini",
       "owned_by": "zenlm",
       "pricing": {
-        "cacheRead": 0.09,
+        "cacheRead": null,
         "cacheWrite": null,
         "input": 0,
         "output": 0
@@ -320,7 +235,7 @@
       "name": "zen5-pro",
       "owned_by": "zenlm",
       "pricing": {
-        "cacheRead": 0.010875,
+        "cacheRead": null,
         "cacheWrite": null,
         "input": 0,
         "output": 0
@@ -333,380 +248,17 @@
       "tier": "ultra"
     },
     {
-      "category": "specialty",
-      "context": null,
-      "description": "Text embeddings \u2014 hosted by Hanzo.",
-      "endpoint": "/v1/embeddings",
-      "features": [
-        "Text embeddings"
-      ],
-      "fullName": "All Mini Lm L6 V2",
-      "generation": "do-ai",
-      "name": "all-mini-lm-l6-v2",
-      "pricing": {
-        "input": 0.02,
-        "output": 0
-      },
-      "provider": "Hanzo",
-      "specs": {
-        "arch": "embedding"
-      },
-      "tier": "pro"
-    },
-    {
-      "category": "specialty",
-      "context": null,
-      "description": "Text embeddings \u2014 hosted by Hanzo.",
-      "endpoint": "/v1/embeddings",
-      "features": [
-        "Text embeddings"
-      ],
-      "fullName": "Bge M3",
-      "generation": "do-ai",
-      "name": "bge-m3",
-      "pricing": {
-        "input": 0.02,
-        "output": 0
-      },
-      "provider": "BAAI",
-      "specs": {
-        "arch": "embedding"
-      },
-      "tier": "pro"
-    },
-    {
-      "category": "specialty",
-      "context": null,
-      "description": "Reranking \u2014 hosted by Hanzo.",
-      "endpoint": "/v1/rerank",
-      "features": [
-        "Reranking"
-      ],
-      "fullName": "Bge Reranker V2 M3",
-      "generation": "do-ai",
-      "name": "bge-reranker-v2-m3",
-      "pricing": {
-        "input": 0.02,
-        "output": 0
-      },
-      "provider": "BAAI",
-      "specs": {
-        "arch": "rerank"
-      },
-      "tier": "pro"
-    },
-    {
-      "category": "specialty",
-      "context": null,
-      "description": "Text embeddings \u2014 hosted by Hanzo.",
-      "endpoint": "/v1/embeddings",
-      "features": [
-        "Text embeddings"
-      ],
-      "fullName": "E5 Large V2",
-      "generation": "do-ai",
-      "name": "e5-large-v2",
-      "pricing": {
-        "input": 0.02,
-        "output": 0
-      },
-      "provider": "Microsoft",
-      "specs": {
-        "arch": "embedding"
-      },
-      "tier": "pro"
-    },
-    {
-      "category": "specialty",
-      "context": null,
-      "description": "Text embeddings \u2014 hosted by Hanzo.",
-      "endpoint": "/v1/embeddings",
-      "features": [
-        "Text embeddings"
-      ],
-      "fullName": "Gte Large En V1.5",
-      "generation": "do-ai",
-      "name": "gte-large-en-v1.5",
-      "pricing": {
-        "input": 0.02,
-        "output": 0
-      },
-      "provider": "Alibaba",
-      "specs": {
-        "arch": "embedding"
-      },
-      "tier": "pro"
-    },
-    {
-      "category": "specialty",
-      "context": null,
-      "description": "Text embeddings \u2014 hosted by Hanzo.",
-      "endpoint": "/v1/embeddings",
-      "features": [
-        "Text embeddings"
-      ],
-      "fullName": "Multi Qa Mpnet Base Dot V1",
-      "generation": "do-ai",
-      "name": "multi-qa-mpnet-base-dot-v1",
-      "pricing": {
-        "input": 0.02,
-        "output": 0
-      },
-      "provider": "Hanzo",
-      "specs": {
-        "arch": "embedding"
-      },
-      "tier": "pro"
-    },
-    {
-      "category": "specialty",
-      "context": null,
-      "description": "Text-to-image \u2014 hosted by Hanzo.",
-      "endpoint": "/v1/images/generations",
-      "features": [
-        "Text-to-image"
-      ],
-      "fullName": "Openai Gpt Image 1",
-      "generation": "do-ai",
-      "name": "openai-gpt-image-1",
-      "pricing": {
-        "perUnit": 0.04
-      },
-      "pricingUnit": "image",
-      "provider": "OpenAI",
-      "specs": {
-        "arch": "image"
-      },
-      "tier": "pro"
-    },
-    {
-      "category": "specialty",
-      "context": null,
-      "description": "Text-to-image \u2014 hosted by Hanzo.",
-      "endpoint": "/v1/images/generations",
-      "features": [
-        "Text-to-image"
-      ],
-      "fullName": "Openai Gpt Image 1.5",
-      "generation": "do-ai",
-      "name": "openai-gpt-image-1.5",
-      "pricing": {
-        "perUnit": 0.04
-      },
-      "pricingUnit": "image",
-      "provider": "OpenAI",
-      "specs": {
-        "arch": "image"
-      },
-      "tier": "pro"
-    },
-    {
-      "category": "specialty",
-      "context": null,
-      "description": "Text-to-image \u2014 hosted by Hanzo.",
-      "endpoint": "/v1/images/generations",
-      "features": [
-        "Text-to-image"
-      ],
-      "fullName": "Openai Gpt Image 2",
-      "generation": "do-ai",
-      "name": "openai-gpt-image-2",
-      "pricing": {
-        "perUnit": 0.04
-      },
-      "pricingUnit": "image",
-      "provider": "OpenAI",
-      "specs": {
-        "arch": "image"
-      },
-      "tier": "pro"
-    },
-    {
-      "category": "specialty",
-      "context": null,
-      "description": "Text embeddings \u2014 hosted by Hanzo.",
-      "endpoint": "/v1/embeddings",
-      "features": [
-        "Text embeddings"
-      ],
-      "fullName": "Qwen3 Embedding 0.6b",
-      "generation": "do-ai",
-      "name": "qwen3-embedding-0.6b",
-      "pricing": {
-        "input": 0.02,
-        "output": 0
-      },
-      "provider": "Qwen",
-      "specs": {
-        "arch": "embedding"
-      },
-      "tier": "pro"
-    },
-    {
-      "category": "specialty",
-      "context": 32768,
-      "description": "Text-to-speech \u2014 hosted by Hanzo.",
-      "endpoint": "/v1/audio/speech",
-      "features": [
-        "Text-to-speech",
-        "33k context window"
-      ],
-      "fullName": "Qwen3 Tts Voicedesign",
-      "generation": "do-ai",
-      "name": "qwen3-tts-voicedesign",
-      "pricing": {
-        "perUnit": 5
-      },
-      "pricingUnit": "1M characters",
-      "provider": "Qwen",
-      "specs": {
-        "arch": "speech"
-      },
-      "tier": "pro"
-    },
-    {
-      "category": "specialty",
-      "context": null,
-      "description": "Automatic model routing \u2014 hosted by Hanzo.",
-      "endpoint": "/v1/chat/completions",
-      "features": [
-        "Automatic model routing"
-      ],
-      "fullName": "Router General",
-      "generation": "do-ai",
-      "name": "router:general",
-      "pricing": null,
-      "provider": "Hanzo",
-      "specs": {
-        "arch": "router"
-      },
-      "tier": "pro"
-    },
-    {
-      "category": "specialty",
-      "context": null,
-      "description": "Automatic model routing \u2014 hosted by Hanzo.",
-      "endpoint": "/v1/chat/completions",
-      "features": [
-        "Automatic model routing"
-      ],
-      "fullName": "Router Knowledge Base Document",
-      "generation": "do-ai",
-      "name": "router:knowledge-base-document",
-      "pricing": null,
-      "provider": "Hanzo",
-      "specs": {
-        "arch": "router"
-      },
-      "tier": "pro"
-    },
-    {
-      "category": "specialty",
-      "context": null,
-      "description": "Automatic model routing \u2014 hosted by Hanzo.",
-      "endpoint": "/v1/chat/completions",
-      "features": [
-        "Automatic model routing"
-      ],
-      "fullName": "Router Software Engineering",
-      "generation": "do-ai",
-      "name": "router:software-engineering",
-      "pricing": null,
-      "provider": "Hanzo",
-      "specs": {
-        "arch": "router"
-      },
-      "tier": "pro"
-    },
-    {
-      "category": "specialty",
-      "context": null,
-      "description": "Automatic model routing \u2014 hosted by Hanzo.",
-      "endpoint": "/v1/chat/completions",
-      "features": [
-        "Automatic model routing"
-      ],
-      "fullName": "Router Software Engineering 01",
-      "generation": "do-ai",
-      "name": "router:software-engineering-01",
-      "pricing": null,
-      "provider": "Hanzo",
-      "specs": {
-        "arch": "router"
-      },
-      "tier": "pro"
-    },
-    {
-      "category": "specialty",
-      "context": null,
-      "description": "Automatic model routing \u2014 hosted by Hanzo.",
-      "endpoint": "/v1/chat/completions",
-      "features": [
-        "Automatic model routing"
-      ],
-      "fullName": "Router Writing",
-      "generation": "do-ai",
-      "name": "router:writing",
-      "pricing": null,
-      "provider": "Hanzo",
-      "specs": {
-        "arch": "router"
-      },
-      "tier": "pro"
-    },
-    {
-      "category": "specialty",
-      "context": 256,
-      "description": "Text-to-image \u2014 hosted by Hanzo.",
-      "endpoint": "/v1/images/generations",
-      "features": [
-        "Text-to-image",
-        "256 context window"
-      ],
-      "fullName": "Stable Diffusion 3.5 Large",
-      "generation": "do-ai",
-      "name": "stable-diffusion-3.5-large",
-      "pricing": {
-        "perUnit": 0.04
-      },
-      "pricingUnit": "image",
-      "provider": "Stability AI",
-      "specs": {
-        "arch": "image"
-      },
-      "tier": "pro"
-    },
-    {
-      "category": "specialty",
-      "context": 100,
-      "description": "Text-to-video \u2014 hosted by Hanzo.",
-      "endpoint": "/v1/videos/generations",
-      "features": [
-        "Text-to-video",
-        "100 context window"
-      ],
-      "fullName": "Wan2 2 T2v A14b",
-      "generation": "do-ai",
-      "name": "wan2-2-t2v-a14b",
-      "pricing": {
-        "perUnit": 0.5
-      },
-      "pricingUnit": "video",
-      "provider": "Alibaba",
-      "specs": {
-        "arch": "video"
-      },
-      "tier": "pro"
-    },
-    {
-      "context": 900000,
-      "description": "Hanzo's proprietary frontier model \u2014 Opus-class reasoning by default with 1M-context overflow.",
+      "context": 1000000,
+      "description": "Hanzo's proprietary frontier model — Opus-class reasoning by default with 1M-context overflow.",
       "family": "enso",
       "features": [
         "1M context window",
         "Frontier reasoning"
       ],
       "fullName": "Enso",
+      "links": {
+        "github": "https://github.com/hanzoai/enso"
+      },
       "name": "enso",
       "owned_by": "hanzo",
       "pricing": {
@@ -719,7 +271,7 @@
       "tier": "ultra max"
     },
     {
-      "context": 900000,
+      "context": 1000000,
       "description": "Fast, economical Enso tier for high-volume, low-latency everyday work, with 1M-context overflow.",
       "family": "enso",
       "features": [
@@ -727,6 +279,9 @@
         "Low latency"
       ],
       "fullName": "Enso Flash",
+      "links": {
+        "github": "https://github.com/hanzoai/enso"
+      },
       "name": "enso-flash",
       "owned_by": "hanzo",
       "pricing": {
@@ -740,20 +295,23 @@
     },
     {
       "context": 1000000,
-      "description": "Adaptive fan-out \u2014 probes a task-appropriate model, escalates to a top-K panel only when needed, then verifies-then-selects the best answer.",
+      "description": "Adaptive fan-out — probes a task-appropriate model, escalates to a top-K panel only when needed, then verifies-then-selects the best answer.",
       "family": "enso",
       "features": [
         "200K context window",
         "Adaptive fan-out"
       ],
       "fullName": "Enso Ultra",
+      "links": {
+        "github": "https://github.com/hanzoai/enso"
+      },
       "name": "enso-ultra",
       "owned_by": "hanzo",
       "pricing": {
-        "cacheRead": 0.275,
-        "cacheWrite": 6.875,
-        "input": 5.5,
-        "output": 27.5
+        "cacheRead": 0.2618,
+        "cacheWrite": 6.545,
+        "input": 5.236,
+        "output": 26.18
       },
       "provider": "Hanzo",
       "tier": "ultra max"
@@ -761,50 +319,60 @@
     {
       "category": "specialty",
       "context": null,
-      "description": "Hanzo's decision model. $0.021 per million input tokens, half of Jev's $0.042. Output is free.",
+      "description": "Hanzo's decision model: a typed answer with a probability on every option, at POST /v1/decisions. A native decision writes 0 output tokens.",
       "endpoint": "/v1/decisions",
       "features": [
-        "Decisions",
-        "Calibrated probabilities"
+        "choice, score and noul questions",
+        "A probability on every option",
+        "0 output tokens"
       ],
       "fullName": "Kai",
+      "links": {
+        "github": "https://github.com/hanzoai/kai"
+      },
       "name": "kai",
       "owned_by": "hanzo",
       "pricing": {
-        "cacheRead": null,
-        "cacheWrite": null,
+        "cacheRead": 0.0021000000000000003,
+        "cacheWrite": 0.026250000000000002,
         "input": 0.021,
         "output": 0
       },
       "pricingUnit": "token",
       "provider": "Hanzo",
       "specs": {
-        "arch": "decision"
+        "arch": "Encoder (mmBERT-base, 22 layers × 768)",
+        "params": "322.1M encoder, 60.2M yes/no reader"
       },
       "tier": "starter"
     },
     {
       "category": "specialty",
       "context": null,
-      "description": "Hanzo's decision model. $0.021 per million input tokens, half of Jev's $0.042. Output is free.",
+      "description": "Hanzo's decision model: a typed answer with a probability on every option, at POST /v1/decisions. A native decision writes 0 output tokens.",
       "endpoint": "/v1/decisions",
       "features": [
-        "Decisions",
-        "Calibrated probabilities"
+        "choice, score and noul questions",
+        "A probability on every option",
+        "0 output tokens"
       ],
       "fullName": "Kai",
+      "links": {
+        "github": "https://github.com/hanzoai/kai"
+      },
       "name": "hanzo/kai",
       "owned_by": "hanzo",
       "pricing": {
-        "cacheRead": null,
-        "cacheWrite": null,
+        "cacheRead": 0.0021000000000000003,
+        "cacheWrite": 0.026250000000000002,
         "input": 0.021,
         "output": 0
       },
       "pricingUnit": "token",
       "provider": "Hanzo",
       "specs": {
-        "arch": "decision"
+        "arch": "Encoder (mmBERT-base, 22 layers × 768)",
+        "params": "322.1M encoder, 60.2M yes/no reader"
       },
       "tier": "starter"
     },
@@ -820,8 +388,8 @@
       "name": "typesafe/jev-1.13",
       "owned_by": "typesafe",
       "pricing": {
-        "cacheRead": null,
-        "cacheWrite": null,
+        "cacheRead": 0.004200000000000001,
+        "cacheWrite": 0.052500000000000005,
         "input": 0.042,
         "output": 0
       },
@@ -844,8 +412,8 @@
       "name": "~typesafe/jev-latest",
       "owned_by": "typesafe",
       "pricing": {
-        "cacheRead": null,
-        "cacheWrite": null,
+        "cacheRead": 0.004200000000000001,
+        "cacheWrite": 0.052500000000000005,
         "input": 0.042,
         "output": 0
       },
@@ -868,8 +436,8 @@
       "name": "zenlm/zen6",
       "owned_by": "hanzo",
       "pricing": {
-        "cacheRead": null,
-        "cacheWrite": null,
+        "cacheRead": 0.22799999999999998,
+        "cacheWrite": 2.8499999999999996,
         "input": 2.28,
         "output": 7.26
       },
@@ -892,8 +460,8 @@
       "name": "zenlm/zen6-flash",
       "owned_by": "hanzo",
       "pricing": {
-        "cacheRead": null,
-        "cacheWrite": null,
+        "cacheRead": 0.22799999999999998,
+        "cacheWrite": 2.8499999999999996,
         "input": 2.28,
         "output": 7.26
       },
@@ -906,14 +474,28 @@
     },
     {
       "family": "enso",
+      "fullName": "enso-max",
+      "name": "enso-max",
+      "owned_by": "hanzo",
+      "pricing": {
+        "cacheRead": 0.215,
+        "cacheWrite": 5.375,
+        "input": 4.3,
+        "output": 21.5
+      },
+      "provider": "Hanzo",
+      "context": 1000000
+    },
+    {
+      "family": "enso",
       "fullName": "enso-pro",
       "name": "enso-pro",
       "owned_by": "hanzo",
       "pricing": {
-        "cacheRead": 0.22,
-        "cacheWrite": 5.5,
-        "input": 4.4,
-        "output": 22
+        "cacheRead": 0.165,
+        "cacheWrite": 4.125,
+        "input": 3.3,
+        "output": 16.5
       },
       "provider": "Hanzo",
       "context": 1000000
@@ -999,18 +581,13 @@
     },
     "Anthropic": {
       "free": 0,
-      "paid": 30,
-      "total": 30
+      "paid": 32,
+      "total": 32
     },
     "Arcee": {
       "free": 0,
       "paid": 2,
       "total": 2
-    },
-    "Arcee-ai": {
-      "free": 0,
-      "paid": 1,
-      "total": 1
     },
     "Baidu": {
       "free": 1,
@@ -1054,12 +631,17 @@
     },
     "Deepseek": {
       "free": 0,
-      "paid": 15,
-      "total": 15
+      "paid": 17,
+      "total": 17
     },
     "Dots-studio": {
       "free": 1,
       "paid": 0,
+      "total": 1
+    },
+    "Elorian": {
+      "free": 0,
+      "paid": 1,
       "total": 1
     },
     "Fireworks": {
@@ -1069,8 +651,8 @@
     },
     "Google": {
       "free": 4,
-      "paid": 40,
-      "total": 44
+      "paid": 39,
+      "total": 43
     },
     "Gryphe": {
       "free": 0,
@@ -1084,13 +666,13 @@
     },
     "Ibm-granite": {
       "free": 0,
-      "paid": 2,
-      "total": 2
+      "paid": 1,
+      "total": 1
     },
     "Inception": {
       "free": 0,
-      "paid": 2,
-      "total": 2
+      "paid": 1,
+      "total": 1
     },
     "InclusionAI": {
       "free": 1,
@@ -1099,8 +681,8 @@
     },
     "Inclusionai": {
       "free": 0,
-      "paid": 3,
-      "total": 3
+      "paid": 4,
+      "total": 4
     },
     "Inference-net": {
       "free": 0,
@@ -1113,9 +695,9 @@
       "total": 3
     },
     "Liquid": {
-      "free": 1,
-      "paid": 1,
-      "total": 2
+      "free": 2,
+      "paid": 3,
+      "total": 5
     },
     "Mancer": {
       "free": 0,
@@ -1129,8 +711,8 @@
     },
     "Meta": {
       "free": 0,
-      "paid": 8,
-      "total": 8
+      "paid": 10,
+      "total": 10
     },
     "Meta-llama": {
       "free": 0,
@@ -1139,8 +721,8 @@
     },
     "Microsoft": {
       "free": 0,
-      "paid": 2,
-      "total": 2
+      "paid": 1,
+      "total": 1
     },
     "MiniMax": {
       "free": 0,
@@ -1149,8 +731,8 @@
     },
     "Minimax": {
       "free": 0,
-      "paid": 8,
-      "total": 8
+      "paid": 5,
+      "total": 5
     },
     "Minimaxai": {
       "free": 1,
@@ -1164,8 +746,8 @@
     },
     "Mistralai": {
       "free": 0,
-      "paid": 26,
-      "total": 26
+      "paid": 21,
+      "total": 21
     },
     "Moondream": {
       "free": 0,
@@ -1179,13 +761,13 @@
     },
     "Moonshotai": {
       "free": 0,
-      "paid": 8,
-      "total": 8
+      "paid": 9,
+      "total": 9
     },
     "Morph": {
       "free": 0,
-      "paid": 2,
-      "total": 2
+      "paid": 4,
+      "total": 4
     },
     "NVIDIA": {
       "free": 9,
@@ -1209,13 +791,13 @@
     },
     "Nousresearch": {
       "free": 0,
-      "paid": 3,
-      "total": 3
+      "paid": 1,
+      "total": 1
     },
     "Nvidia": {
-      "free": 6,
+      "free": 4,
       "paid": 7,
-      "total": 13
+      "total": 11
     },
     "OpenAI": {
       "free": 1,
@@ -1229,13 +811,18 @@
     },
     "Openai": {
       "free": 0,
-      "paid": 104,
-      "total": 104
+      "paid": 98,
+      "total": 98
     },
     "Openrouter": {
       "free": 1,
-      "paid": 5,
-      "total": 6
+      "paid": 6,
+      "total": 7
+    },
+    "Particle-ai": {
+      "free": 0,
+      "paid": 1,
+      "total": 1
     },
     "Pearl AI": {
       "free": 1,
@@ -1264,13 +851,18 @@
     },
     "Prism-ml": {
       "free": 0,
-      "paid": 1,
-      "total": 1
+      "paid": 2,
+      "total": 2
     },
     "Qwen": {
       "free": 0,
-      "paid": 43,
-      "total": 43
+      "paid": 44,
+      "total": 44
+    },
+    "Recursive": {
+      "free": 1,
+      "paid": 0,
+      "total": 1
     },
     "Reflection": {
       "free": 0,
@@ -1292,6 +884,11 @@
       "paid": 2,
       "total": 2
     },
+    "Ricursiveai": {
+      "free": 0,
+      "paid": 1,
+      "total": 1
+    },
     "Sakana": {
       "free": 0,
       "paid": 4,
@@ -1304,8 +901,8 @@
     },
     "Sao10k": {
       "free": 0,
-      "paid": 3,
-      "total": 3
+      "paid": 2,
+      "total": 2
     },
     "Scaledown": {
       "free": 0,
@@ -1334,8 +931,8 @@
     },
     "Tencent": {
       "free": 0,
-      "paid": 7,
-      "total": 7
+      "paid": 8,
+      "total": 8
     },
     "TheDrummer": {
       "free": 0,
@@ -1353,8 +950,8 @@
       "total": 2
     },
     "Thinkingmachines": {
-      "free": 2,
-      "paid": 2,
+      "free": 1,
+      "paid": 3,
       "total": 4
     },
     "Typesafe": {
@@ -1364,8 +961,8 @@
     },
     "Unbiased": {
       "free": 0,
-      "paid": 1,
-      "total": 1
+      "paid": 2,
+      "total": 2
     },
     "Undi95": {
       "free": 0,
@@ -1374,8 +971,8 @@
     },
     "Upstage": {
       "free": 0,
-      "paid": 3,
-      "total": 3
+      "paid": 2,
+      "total": 2
     },
     "Utter Project": {
       "free": 1,
@@ -1389,8 +986,8 @@
     },
     "X-ai": {
       "free": 0,
-      "paid": 8,
-      "total": 8
+      "paid": 10,
+      "total": 10
     },
     "Xiaomi": {
       "free": 0,
@@ -1404,8 +1001,8 @@
     },
     "Z-ai": {
       "free": 0,
-      "paid": 18,
-      "total": 18
+      "paid": 20,
+      "total": 20
     },
     "Zhipu": {
       "free": 9,
@@ -1459,16 +1056,16 @@
     }
   },
   "catalogue": {
-    "models": 561,
-    "makers": 60,
+    "models": 534,
+    "makers": 71,
     "kai": {
       "input": 0.021,
       "output": 0
     },
-    "captured": "2026-10-23"
+    "captured": "2026-11-10"
   },
   "meta": {
-    "captured": "2026-10-17",
+    "captured": "2026-11-10",
     "source": "live"
   }
 }
