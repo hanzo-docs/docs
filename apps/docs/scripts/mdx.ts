@@ -120,7 +120,8 @@ export const firstSentence = (s: string): string => {
     if (c === '.' && abbreviation(t.slice(0, i), t.slice(end + 1))) continue;
     return t.slice(0, end);
   }
-  return block.length && t.endsWith(':') ? `${t.slice(0, -1)}.` : t;
+  if (block.length && t.endsWith(':')) return `${t.slice(0, -1)}.`;
+  return t.replace(/,\s*…$/, ', etc.');
 };
 
 /**

@@ -586,7 +586,7 @@ const OPENS = new Set(
 
 export function unname(prose: string, id: string): string {
   let rest = prose;
-  const m = /^([A-Z][A-Za-z0-9]*) ([a-z]+)\b/.exec(prose);
+  const m = /^([A-Z][A-Za-z0-9]*) ([a-z]+(?:-[a-z]+)*)\b/.exec(prose);
   if (/^Is \S/.test(prose) && !/^[^.!]*\?/.test(prose)) rest = prose.slice(3);
   else if (m && goName(m[1], m[2], id))
     rest = prose.slice(m[1].length + 1 + (m[2] === 'is' || m[2] === 'are' ? m[2].length + 1 : 0));

@@ -217,7 +217,15 @@ Re-run the `curl` smoke tests from Sections 1 and 2 against `127.0.0.1:9090/heal
 ```bash
 git clone https://github.com/hanzoai/iam
 cd iam
-IAM_DEV_HOST_RELATIVE=1 go run . serve --http http://127.0.0.1:8000 --init-data init_data.json
+
+# Generate a local dev signing key + seed file once
+mkdir -p .dev/keys
+openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out .dev/keys/cert-dev
+printf '{"organizations":[{"owner":"admin","name":"hanzo"}],"certs":[{"owner":"admin","name":"cert-dev","cryptoAlgorithm":"RS256"}],"applications":[{"owner":"admin","name":"hanzo-dev","clientId":"hanzo-dev","organization":"hanzo","enablePassword":true}]}\n' > .dev/init_data.json
+
+# Boot local OIDC + JWKS on 127.0.0.1:8000 (ZAP on :19653 so it can run beside cloud's :9653)
+IAM_DEV_HOST_RELATIVE=1 IAM_SIGNING_KEYS=.dev/keys \
+  go run . serve --http http://127.0.0.1:8000 --zap 127.0.0.1:19653 --init-data .dev/init_data.json
 ```
 
 Verify OIDC discovery and JWKS:
