@@ -34,6 +34,7 @@ document at a ref its own `.spec-lock` names.
 | Kotlin | `ai.hanzo:hanzo-kotlin-cloud` | Gradle, built from source |
 | Java | `ai.hanzo:hanzo-java-cloud` on Maven Central | Gradle or Maven, from `mavenCentral()` |
 | C# | `Hanzo` on NuGet, namespace `Hanzo.AI` | `dotnet add package Hanzo` |
+| Godot 4 | [hanzoai/godot-sdk](https://github.com/hanzoai/godot-sdk) (`addons/hanzo_ai/`) or `Hanzo` on NuGet | Copy `addons/hanzo_ai/` or `dotnet add package Hanzo` |
 | C++ | [hanzo-cpp/sdk](https://github.com/hanzo-cpp/sdk) | CMake, from a tag |
 
 Swift, Kotlin and C++ are tagged and buildable but not on a package manager
@@ -120,6 +121,13 @@ using Hanzo.AI.Client;
 var config = new Configuration { AccessToken = Environment.GetEnvironmentVariable("HANZO_API_KEY") };
 
 var models = new AiApi(config).GetModels();
+```
+
+```gdscript tab="Godot (GDScript)"
+const HanzoClient := preload("res://addons/hanzo_ai/hanzo_client.gd")
+
+var hanzo := HanzoClient.new() # reads HANZO_API_KEY or ~/.hanzo/auth.json
+var models: Dictionary = hanzo.list_models()
 ```
 
 <Callout title="Why Go spells the method differently">

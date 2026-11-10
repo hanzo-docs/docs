@@ -1,26 +1,25 @@
 ---
 title: C#
-description: Hanzo on NuGet — the generated client for every /v1 capability, on HttpClient and Newtonsoft.Json.
+description: Hanzo on NuGet — the generated .NET 8+ client for every /v1 capability, plus handwritten helpers for Kai decisions, Zen Voice MP3 bytes, Cloud KV game saves, and Cloud Agents.
 ---
 
 # C#
 
-The C# client is generated from the API's own document onto `HttpClient` and
-Newtonsoft.Json. Every operation is a method with an `…Async` twin and a
-`…WithHttpInfo` form that also returns the status and headers.
+`Hanzo` (namespace `Hanzo.AI`, current release `8.5.1027`) is the official .NET 8+ client for `https://api.hanzo.ai`. It is generated from the live Hanzo Cloud OpenAPI specification onto `HttpClient` and `Newtonsoft.Json` across all 38 service surfaces (`AiApi`, `KvApi`, `AgentApi`, `BaseApi`, `IamApi`, `KmsApi`, `CommerceApi`, `OpenapiApi`, and more), and ships handwritten extensions for zero-config gateway setup (`Gateway.Configuration()`), binary MP3 synthesis (`PostAudioSpeechBytesAsync`), and agent execution (`PostAgentByRefRunAsync`).
+
+Every operation provides synchronous, `…Async`, and `…WithHttpInfo` methods.
 
 ## Install
 
-`Hanzo` is the package on NuGet. .NET 8 or newer.
+Install `Hanzo` on `.NET 8.0` or newer from NuGet or GitHub Packages (`https://nuget.pkg.github.com/hanzo-csharp/index.json`):
 
 ```bash
-dotnet add package Hanzo
+dotnet add package Hanzo --version 8.5.1027
 ```
 
-## The shape
+## Configuration
 
-One `Configuration`, one class per capability. `Gateway.Configuration()` reads
-`HANZO_API_KEY`, `HANZO_BASE_URL` and `HANZO_ORG_ID`:
+One `Configuration`, one class per capability. `Gateway.Configuration()` reads `HANZO_API_KEY` (falling back to `OPENAI_API_KEY`), `HANZO_BASE_URL` (default `https://api.hanzo.ai`), and `HANZO_ORG_ID`:
 
 ```csharp
 using Hanzo.AI;
@@ -28,24 +27,131 @@ using Hanzo.AI.Api;
 using Hanzo.AI.Model;
 
 var config = Gateway.Configuration();
+config.Timeout = TimeSpan.FromSeconds(90);
 
-AiModelList models = new AiApi(config).GetModels();
+var ai = new AiApi(config);
+AiModelList models = await ai.GetModelsAsync();
 ```
 
-Or set the credential yourself: `new Configuration { AccessToken = token }`.
-See [Authentication](/docs/api-keys).
+Or pass a credential explicitly with `new Configuration { AccessToken = token }`. See [Authentication](/docs/api-keys).
 
-The class is the capability and the method is the operation, both derived from
-the document: `post_chat_completions` is `AiApi.PostChatCompletions`. The
-[reference](/docs/openapi) prints the pair per operation. A refusal throws
-`Hanzo.AI.Client.ApiException`, which carries `ErrorCode` and `ErrorContent`.
+A refusal throws `Hanzo.AI.Client.ApiException`, carrying `ErrorCode` and `ErrorContent`. Optional numbers and flags are nullable (`T?`), so unset fields stay off the wire while explicit `0` or `false` values are serialized cleanly.
 
-A request carries the fields you set and only those: an optional number or flag
-is `T?`, an unset one is left off the wire, and an explicit `0` or `false` is
-sent.
+## Core `/v1` Flows
+
+### Zen 6 Chat Completions (`/v1/chat/completions`)
+
+Use `zen6-flash` for low-latency interactive responses, `zen6` for flagship reasoning (set `reasoning_effort = "low"` for interactive chat), and `zen6-coder` or `zen6-max` for synthesis:
+
+```csharp
+object completion = await ai.PostChatCompletionsAsync(new
+{
+    model = "zen6-flash",
+    max_tokens = 256,
+    messages = new[]
+    {
+        new { role = "system", content = "Answer concisely." },
+        new { role = "user", content = "Give one tip for deterministic multiplayer state sync." }
+    }
+});
+```
+
+### Kai Calibrated Decisions (`/v1/decisions`)
+
+Call [Kai](/docs/decisions) (`model = "kai"`) whenever C# code needs bounded probabilities over named options—routing, classification, policy gating, or game NPC tactics—with `usage.output_tokens == 0`:
+
+```csharp
+object decision = await ai.PostDecisionsAsync(new
+{
+    model = "kai",
+    state = new { player_distance_m = 6.5, npc_health = 0.85, line_of_sight = true },
+    questions = new
+    {
+        tactic = new
+        {
+            type = "choice",
+            instructions = "Choose the unit's immediate tactical state.",
+            criteria = new Dictionary<string, string>
+            {
+                ["patrol"] = "No target detected.",
+                ["attack"] = "Target visible within 15m and unit is healthy.",
+                ["retreat"] = "Health below 25% while under fire."
+            }
+        }
+    }
+});
+```
+
+### Zen Voice Binary MP3 Speech (`/v1/audio/speech`)
+
+`PostAudioSpeechBytesAsync` (handwritten in `AiApiSpeech.cs`) posts to `/v1/audio/speech` (`model = "zen-voice"`, default voice `"af_heart"`) and returns raw `byte[]` MP3 audio directly:
+
+```csharp
+byte[] mp3 = await ai.PostAudioSpeechBytesAsync(new
+{
+    model = "zen-voice",
+    voice = "af_heart",
+    input = "Checkpoint saved. Sector clear."
+});
+```
+
+### Revisioned Cloud KV State & Saves (`/v1/kv/{bucket}/{key}`)
+
+`KvApi` stores JSON or UTF-8 state with automatic per-key revision history. Bucket names take 1–64 `[A-Za-z0-9_]` characters (underscores, no hyphens):
+
+```csharp
+var kv = new KvApi(config);
+string bucket = "app_state_prod";
+
+await kv.PostKvByBucketAsync(bucket, new { history = 10 });
+await kv.PutKvByBucketAndKeyAsync(bucket, "slot_1", new
+{
+    value = "{\"scene\":\"outpost\",\"score\":1400}"
+});
+
+object latest = await kv.GetKvByBucketAndKeyAsync(bucket, "slot_1");
+object history = await kv.GetKvByBucketAndKeyHistoryAsync(bucket, "slot_1");
+await kv.DeleteKvByBucketAsync(bucket);
+```
+
+### Cloud Agents & MCP (`/v1/agent`, `/v1/mcp`)
+
+Create persistent cloud agents on `AgentApi`, run them via `PostAgentByRefRunAsync`, or invoke Cloud [MCP](/docs/mcp) tools over `OpenapiApi.PostMcpAsync`:
+
+```csharp
+var agents = new AgentApi(config);
+object agent = await agents.PostAgentAsync(new
+{
+    name = "ops-assistant",
+    model = "zen6-flash",
+    system = "Return terse operational summaries."
+});
+
+var mcp = new OpenapiApi(config);
+object tools = await mcp.PostMcpAsync(new
+{
+    jsonrpc = "2.0",
+    id = 1,
+    method = "tools/list",
+    @params = new { }
+});
+```
+
+## Godot 4 .NET & Game Backends
+
+`Hanzo` drops directly into **Godot 4 .NET** (`net8.0`) `.csproj` games to power cloud saves (`KvApi`), zero-token NPC & Director brains (`PostDecisionsAsync` on `kai`), dynamic NPC dialogue (`zen6-flash`), and spatial 3D radio audio (`new AudioStreamMP3 { Data = mp3 }` on `AudioStreamPlayer3D`).
+
+Run the full live game-backend slice from the SDK repo:
+
+```bash
+dotnet run --project examples -- game-backend
+```
+
+See the dedicated [Godot 4 SDK & Game Backend guide](/docs/sdks/godot) for both GDScript and C# Godot patterns.
 
 ## Resources
 
-- Source — [hanzo-csharp/sdk](https://github.com/hanzo-csharp/sdk)
-- Examples — [the six flows](https://github.com/hanzo-csharp/sdk/tree/main/examples) and a [Kai decision](https://github.com/hanzoai/kai/blob/main/examples/csharp/Program.cs)
+- Source & Releases — [hanzo-csharp/sdk (`v8.5.1027`)](https://github.com/hanzo-csharp/sdk/releases/tag/v8.5.1027)
+- Runnable Examples — [models, chat, kai, speech, kv, agents, mcp, and `game-backend`](https://github.com/hanzo-csharp/sdk/tree/main/examples)
+- Agent Skill — [`https://hanzoskills.com/csharp.md`](https://hanzoskills.com/csharp.md)
 - [Every `/v1` operation →](/docs/openapi)

@@ -11,6 +11,7 @@
     "kotlin",
     "java",
     "csharp",
+    "godot",
     "cpp",
     "iam",
     "---[AppWindow]Interface---",

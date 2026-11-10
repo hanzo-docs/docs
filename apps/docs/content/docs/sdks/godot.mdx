@@ -1,0 +1,178 @@
+---
+title: Godot 4
+description: Official GDScript addon and Godot 4 .NET (C#) integration for powering serverless game backends with Kai NPC & Director AI, Zen 6 dialogue, Zen Voice 3D MP3 audio, Cloud KV saves, Agents, and MCP.
+---
+
+# Godot 4
+
+Hanzo powers a complete serverless Godot 4 game backend over `https://api.hanzo.ai/v1`—combining calibrated NPC & AI Director decisions ([Kai](/docs/decisions)), dynamic character dialogue ([Zen 6](/docs/models/zen)), spatial 3D MP3 speech synthesis (`zen-voice`), revisioned cloud saves (`/v1/kv`), persistent Cloud Agents (`/v1/agent`), and [MCP](/docs/mcp) editor/runtime bridges.
+
+You can use either **pure GDScript** (zero external dependencies, desktop/mobile/OpenXR) or **Godot 4 .NET (C#)** via the [`Hanzo` NuGet SDK](/docs/sdks/csharp).
+
+## Install
+
+### Option A: Pure GDScript Addon (`hanzoai/godot-sdk` `v1.1.0`)
+
+Copy `addons/hanzo_ai/` from [`hanzoai/godot-sdk`](https://github.com/hanzoai/godot-sdk/releases/tag/v1.1.0) into your Godot 4 project and enable **Hanzo AI** under **Project → Project Settings → Plugins**:
+
+```bash
+git clone https://github.com/hanzoai/godot-sdk.git /tmp/hanzo-godot-sdk
+cp -r /tmp/hanzo-godot-sdk/addons/hanzo_ai ./addons/hanzo_ai
+```
+
+The addon provides two drop-in classes:
+
+- **`HanzoClient`** (`res://addons/hanzo_ai/hanzo_client.gd`) — Native Godot 4 TLS `HTTPClient` + async non-blocking `HTTPRequest` wrapper for `/v1/models`, `/v1/decisions`, `/v1/chat/completions`, `/v1/audio/speech` (`AudioStreamMP3`), `/v1/kv/{bucket}/{key}`, `/v1/agent`, `/v1/event`, and `/v1/mcp`. Automatically resolves `HANZO_API_KEY` from the environment or `~/.hanzo/auth.json`.
+- **`HanzoAgent3D`** (`res://addons/hanzo_ai/hanzo_agent_3d.gd`) — Spatial `Node3D` component binding an in-world NPC, radio, or diegetic terminal to Kai decisions, Zen 6 dialogue, and `AudioStreamPlayer3D` speech playback.
+
+### Option B: Godot 4 .NET (`Hanzo` `8.5.1027` on NuGet)
+
+In a Godot 4 `.NET` (`net8.0+`) project, install the [C# SDK](/docs/sdks/csharp):
+
+```bash
+dotnet add package Hanzo --version 8.5.1027
+```
+
+## Canonical Models for Games
+
+| Game Subsystem | Endpoint | Model ID | Notes |
+|---|---|---|---|
+| Tactical NPC State Machines & AI Director | `POST /v1/decisions` | `kai` | `usage.output_tokens == 0`; calibrated probabilities over named actions |
+| Fast Real-Time Barks & Radio Chatter | `POST /v1/chat/completions` | `zen6-flash` | Low-latency single-utterance dialogue |
+| Deep Lore, Quests & Narrative Characters | `POST /v1/chat/completions` | `zen6` | Pass `"reasoning_effort": "low"` for interactive pacing |
+| Diegetic 3D Voice & Radio Audio | `POST /v1/audio/speech` | `zen-voice` | Returns MP3 bytes decoded straight into `AudioStreamMP3` |
+
+## Complete Serverless Game Backend (GDScript)
+
+```gdscript
+extends Node
+
+const HanzoClient := preload("res://addons/hanzo_ai/hanzo_client.gd")
+
+var hanzo: RefCounted
+var emitter_3d: AudioStreamPlayer3D
+
+func _ready() -> void:
+    hanzo = HanzoClient.new()
+    emitter_3d = AudioStreamPlayer3D.new()
+    add_child(emitter_3d)
+
+# 1. Revisioned Cloud KV Checkpoints (/v1/kv/{bucket}/{key})
+# Bucket names take 1-64 [A-Za-z0-9_] characters (underscores, no hyphens).
+func save_run(slot: String, state: Dictionary) -> Dictionary:
+    var bucket := "my_godot_game_saves"
+    hanzo.create_kv_bucket(bucket, 10)
+    return hanzo.put_kv(bucket, slot, JSON.stringify(state))
+
+func load_run(slot: String) -> Dictionary:
+    var res: Dictionary = hanzo.get_kv("my_godot_game_saves", slot)
+    if not bool(res.get("ok", false)):
+        return {}
+    var raw := str(res.get("data", {}).get("value", ""))
+    var parsed: Variant = JSON.parse_string(raw)
+    return parsed if parsed is Dictionary else {}
+
+# 2. Zero-Output-Token NPC & Director Decisions (/v1/decisions on kai)
+func pick_npc_action(world_state: Dictionary) -> String:
+    var res: Dictionary = hanzo.decide(world_state, {
+        "action": {
+            "type": "choice",
+            "instructions": "Select the NPC's immediate combat action.",
+            "criteria": {
+                "patrol": "Area is quiet; no target or sound.",
+                "investigate_noise": "Gunshot or footsteps heard nearby.",
+                "stalk": "Target seen beyond 15m; shadow from cover.",
+                "attack": "Target visible within 15m and health above 40%.",
+                "flank": "Under fire at medium range with lateral cover.",
+                "retreat": "Health below 25% under active fire."
+            }
+        }
+    })
+    return str(res.get("data", {}).get("answers", {}).get("action", {}).get("choice", "patrol"))
+
+# 3. Zen 6 Dialogue + Zen Voice Spatial 3D AudioStreamMP3
+func speak_radio_line(situation: String) -> void:
+    var chat: Dictionary = hanzo.chat_completion(
+        [
+            {"role": "system", "content": "Give one terse 12-word radio callout in character."},
+            {"role": "user", "content": situation}
+        ],
+        "zen6-flash",
+        {"max_tokens": 120, "temperature": 0.6}
+    )
+    var line: String = hanzo.extract_message_text(chat)
+    if line == "":
+        return
+    var tts: Dictionary = hanzo.speech_mp3(line, "af_heart", "zen-voice")
+    var stream: AudioStreamMP3 = tts.get("stream")
+    if stream != null:
+        emitter_3d.stream = stream
+        emitter_3d.play()
+```
+
+## Godot 4 .NET (C#) Node Equivalent
+
+```csharp
+using Godot;
+using Hanzo.AI;
+using Hanzo.AI.Api;
+
+public partial class HanzoGameDirector : Node3D
+{
+    private AiApi _ai = null!;
+    private KvApi _kv = null!;
+    private AudioStreamPlayer3D _voice3D = null!;
+
+    public override async void _Ready()
+    {
+        var cfg = Gateway.Configuration();
+        _ai = new AiApi(cfg);
+        _kv = new KvApi(cfg);
+        _voice3D = new AudioStreamPlayer3D();
+        AddChild(_voice3D);
+
+        await _kv.PostKvByBucketAsync("godot_net_saves", new { history = 5 });
+        await _kv.PutKvByBucketAndKeyAsync("godot_net_saves", "autosave", new
+        {
+            value = "{\"wave\":3,\"tension\":0.74}"
+        });
+
+        byte[] mp3 = await _ai.PostAudioSpeechBytesAsync(new
+        {
+            model = "zen-voice",
+            voice = "af_heart",
+            input = "Autosave synced. Wave three approaching."
+        });
+        _voice3D.Stream = new AudioStreamMP3 { Data = mp3 };
+        _voice3D.Play();
+    }
+}
+```
+
+## Frame-Budget & Production Best Practices
+
+- **Never block `_process` or `_physics_process` (especially in OpenXR / VR)**: In live 60–120 Hz gameplay, call `HanzoClient`'s `Node`-parented async helpers (`decide_async`, `chat_completion_async`, `speech_mp3_async`), or dispatch synchronous calls onto `WorkerThreadPool.add_task(...)` and marshal results back via `call_deferred(...)`.
+- **Headless `SceneTree` TLS timing**: In CLI scripts (`extends SceneTree`, run via `godot --headless --path . -s`), Godot loads CA root certificates right before `_initialize()`. Run live HTTPS calls inside `_initialize()`, not `_init()`.
+- **Local offline mirror**: Pair `/v1/kv/{bucket}/{key}` cloud checkpoints with a local `user://hanzo_kv/` JSON mirror and deterministic local NPC fallbacks so single-player gameplay and CI (`HANZO_OFFLINE=1`) work without network connectivity.
+
+## Verification
+
+Run the 52-assertion SDK test suite and full game-backend slice headlessly:
+
+```bash
+# Offline unit & schema assertions (no API key needed)
+HANZO_OFFLINE=1 godot --headless --path . -s res://tests/sdk_check.gd
+
+# Live end-to-end verification against https://api.hanzo.ai/v1
+export HANZO_API_KEY="$(hanzo auth token)"
+godot --headless --path . -s res://tests/sdk_check.gd
+godot --headless --path . -s res://examples/game_backend.gd
+```
+
+## Resources
+
+- GDScript SDK & Release — [hanzoai/godot-sdk (`v1.1.0`)](https://github.com/hanzoai/godot-sdk/releases/tag/v1.1.0)
+- Runnable Godot Slices — [`game_backend.gd`, Kai NPC tactical AI, Zen 6 dialogue, Zen Voice 3D MP3, Cloud Agents, MCP, and C# node](https://github.com/hanzoai/godot-sdk/tree/main/examples)
+- C# / .NET SDK — [`Hanzo` on NuGet (`/docs/sdks/csharp`)](/docs/sdks/csharp)
+- Agent Skill — [`https://hanzoskills.com/godot.md`](https://hanzoskills.com/godot.md)
+- [Every `/v1` operation →](/docs/openapi)
