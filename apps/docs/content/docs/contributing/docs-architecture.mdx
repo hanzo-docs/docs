@@ -124,7 +124,7 @@ duplication, ever. Everything else is a hub section.
 ## Serving
 
 - **Primary:** static export → Cloudflare Pages project `hanzo-docs`
-  (`scripts/cf-pages-deploy.mjs`). The deploy token comes from KMS
+  (`scripts/cf-pages-deploy.ts`). The deploy token comes from KMS
   (`kms.hanzo.ai`) at run time — never hard-coded.
 - **In-cluster option:** `ghcr.io/hanzoai/docs` behind **hanzoai/ingress**
   (`k8s/docs-landing.yml`). No nginx, no caddy — the Hanzo ingress + static

@@ -355,7 +355,7 @@
     }
   },
   "scripts": {
-    "build": "tsup && tsc --emitDeclarationOnly && node scripts/copy-css.js",
+    "build": "tsup && tsc --emitDeclarationOnly && node scripts/copy-css.ts",
     "dev": "tsup --watch"
   },
   "dependencies": {

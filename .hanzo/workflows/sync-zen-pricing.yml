@@ -41,7 +41,7 @@ jobs:
         id: sync
         run: |
           set +e
-          node packages/zen-models/scripts/sync-pricing.mjs
+          node packages/zen-models/scripts/sync-pricing.ts
           CODE=$?
           set -e
           echo "exit_code=$CODE" >> "$GITHUB_OUTPUT"

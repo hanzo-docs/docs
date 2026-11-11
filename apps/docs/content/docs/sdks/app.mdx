@@ -136,12 +136,12 @@ export default function CalRoom() {
 
 What else hanzo.ai does to make that build and run:
 
-- **react-native-web.** `@hanzo/gui` renders through it, so `next.config.mjs`
+- **react-native-web.** `@hanzo/gui` renders through it, so `next.config.ts`
   aliases `react-native` to `react-native-web`, resolves `.web.*` files first,
   and transpiles `@hanzo/gui`, `@hanzo/ui`, `@hanzo/usage`, `@hanzo/tabs`,
   `react-native-web` and `react-native-svg`.
 - **Assets.** The apps name portraits and avatars by path (`/agents/<id>.png`,
-  `/bots/<name>.png`). `scripts/rooms-assets.mjs` copies `@hanzo/app/assets`
+  `/bots/<name>.png`). `scripts/rooms-assets.ts` copies `@hanzo/app/assets`
   into `public/` before every build and dev server.
 - **Paths.** Chat is `/chat` and `/chat/<id>`, Dev every path under `/dev`,
   Studio every path under `/studio`. The host serves the page that draws `App`

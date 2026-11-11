@@ -17,5 +17,8 @@
   },
   "files": [
     "src/*"
-  ]
+  ],
+  "scripts": {
+    "sync:pricing": "node ./scripts/sync-pricing.ts"
+  }
 }

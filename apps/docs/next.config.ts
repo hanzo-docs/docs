@@ -31,7 +31,7 @@ const assetPrefix = sectionAssetPrefix[process.env.DOCS_SECTION ?? ''];
 
 // Stub module that exports a no-op component for every named/default import.
 // Used as the resolution target for unresolvable upstream doc platform packages.
-const emptyProjectModule = path.resolve(__dirname, 'lib/empty-project-module.js');
+const emptyProjectModule = path.resolve(__dirname, 'lib/empty-project-module.ts');
 
 // @hanzo/gui is cross-platform, so its graph names `react-native` and ships
 // `.web.*` siblings beside native entries (react-native-svg under the icons is
@@ -83,14 +83,14 @@ const config: NextConfig = {
     resolveAlias: {
       ...collectionsAlias,
       ...parts,
-      '@docusaurus': './lib/empty-project-module.js',
-      '@theme': './lib/empty-project-module.js',
-      '@theme/Tabs': './lib/empty-project-module.js',
-      '@theme/TabItem': './lib/empty-project-module.js',
-      '@theme/CodeBlock': './lib/empty-project-module.js',
-      'nextra': './lib/empty-project-module.js',
-      '@mintlify': './lib/empty-project-module.js',
-      '@hanzo/icons': './lib/empty-project-module.js',
+      '@docusaurus': './lib/empty-project-module.ts',
+      '@theme': './lib/empty-project-module.ts',
+      '@theme/Tabs': './lib/empty-project-module.ts',
+      '@theme/TabItem': './lib/empty-project-module.ts',
+      '@theme/CodeBlock': './lib/empty-project-module.ts',
+      'nextra': './lib/empty-project-module.ts',
+      '@mintlify': './lib/empty-project-module.ts',
+      '@hanzo/icons': './lib/empty-project-module.ts',
     },
   },
   // HTTP redirects live in public/_redirects (Cloudflare Pages). This site

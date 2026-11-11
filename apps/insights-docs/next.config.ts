@@ -1,9 +1,9 @@
 import { createMDX } from '@hanzo/docs-mdx/next';
+import type { NextConfig } from 'next';
 
 const withMDX = createMDX();
 
-/** @type {import('next').NextConfig} */
-const config = {
+const config: NextConfig = {
   // Both ship ESM with 'use client' boundaries, so the client/server split
   // and the JSX runtime resolve only when the app build compiles them.
   transpilePackages: ['@hanzogui/shell', '@hanzo/brand'],

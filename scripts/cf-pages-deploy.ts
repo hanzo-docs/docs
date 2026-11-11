@@ -4,8 +4,32 @@
  * by batching uploads in smaller chunks to avoid EPIPE errors.
  */
 import { createHash } from 'crypto';
-import { readdir, readFile, stat } from 'fs/promises';
+import { readdir, readFile } from 'fs/promises';
 import { join, relative } from 'path';
+
+interface FileHashInfo {
+  path: string;
+  hash: string;
+  content: Buffer;
+  size: number;
+}
+
+interface FileDeployInfo extends FileHashInfo {
+  relativePath: string;
+}
+
+interface CfDeployment {
+  id: string;
+  url: string;
+  jwt?: string;
+  required_hashes?: string[];
+}
+
+interface CfApiResponse<T> {
+  success: boolean;
+  errors?: unknown[];
+  result: T;
+}
 
 const ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID || '94a3e3f299092abb1feda2a7481ea845';
 const PROJECT_NAME = process.env.CF_PAGES_PROJECT || 'hanzo-docs';
@@ -23,8 +47,8 @@ const BASE_URL = `https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/pa
 const BATCH_SIZE = 50; // files per upload batch
 const MAX_RETRIES = 3;
 
-async function getAllFiles(dir) {
-  const files = [];
+async function getAllFiles(dir: string): Promise<string[]> {
+  const files: string[] = [];
   const entries = await readdir(dir, { withFileTypes: true });
   for (const entry of entries) {
     const fullPath = join(dir, entry.name);
@@ -37,13 +61,13 @@ async function getAllFiles(dir) {
   return files;
 }
 
-async function hashFile(filePath) {
+async function hashFile(filePath: string): Promise<FileHashInfo> {
   const content = await readFile(filePath);
   const hash = createHash('sha256').update(content).digest('hex');
   return { path: filePath, hash, content, size: content.length };
 }
 
-async function apiCall(url, options = {}) {
+async function apiCall<T>(url: string, options: RequestInit = {}): Promise<CfApiResponse<T>> {
   const resp = await fetch(url, {
     ...options,
     headers: {
@@ -51,16 +75,16 @@ async function apiCall(url, options = {}) {
       ...options.headers,
     },
   });
-  const data = await resp.json();
+  const data = (await resp.json()) as CfApiResponse<T>;
   if (!data.success) {
     throw new Error(`CF API error: ${JSON.stringify(data.errors)}`);
   }
   return data;
 }
 
-async function createDeployment(hashes) {
+async function createDeployment(hashes: FileDeployInfo[]): Promise<CfDeployment> {
   // Step 1: Create deployment with manifest
-  const manifest = {};
+  const manifest: Record<string, string> = {};
   for (const { relativePath, hash } of hashes) {
     manifest[`/${relativePath}`] = hash;
   }
@@ -70,7 +94,7 @@ async function createDeployment(hashes) {
   formData.append('branch', process.env.CF_PAGES_BRANCH || 'main');
 
   console.log(`Creating deployment with ${Object.keys(manifest).length} files...`);
-  const data = await apiCall(`${BASE_URL}/deployments`, {
+  const data = await apiCall<CfDeployment>(`${BASE_URL}/deployments`, {
     method: 'POST',
     body: formData,
   });
@@ -78,10 +102,10 @@ async function createDeployment(hashes) {
   return data.result;
 }
 
-async function uploadBatch(files, jwt) {
+async function uploadBatch(files: FileDeployInfo[], jwt: string): Promise<unknown> {
   const formData = new FormData();
   for (const file of files) {
-    formData.append(file.hash, new Blob([file.content]), file.relativePath);
+    formData.append(file.hash, new Blob([new Uint8Array(file.content)]), file.relativePath);
   }
 
   const resp = await fetch('https://api.cloudflare.com/client/v4/pages/assets/upload', {
@@ -139,7 +163,7 @@ async function main() {
   console.log(`Need to upload ${filesToUpload.length} files (${fileInfos.length - filesToUpload.length} already cached)`);
 
   // Upload in batches
-  const batches = [];
+  const batches: FileDeployInfo[][] = [];
   for (let i = 0; i < filesToUpload.length; i += BATCH_SIZE) {
     batches.push(filesToUpload.slice(i, i + BATCH_SIZE));
   }
@@ -156,8 +180,9 @@ async function main() {
         break;
       } catch (err) {
         retries++;
+        const message = err instanceof Error ? err.message : String(err);
         if (retries >= MAX_RETRIES) {
-          console.error(`\nFailed batch ${i + 1} after ${MAX_RETRIES} retries: ${err.message}`);
+          console.error(`\nFailed batch ${i + 1} after ${MAX_RETRIES} retries: ${message}`);
           throw err;
         }
         console.warn(`\nRetrying batch ${i + 1} (attempt ${retries + 1})...`);
@@ -169,7 +194,8 @@ async function main() {
   console.log(`\nDeployment complete: ${deployment.url}`);
 }
 
-main().catch(err => {
-  console.error('Deploy failed:', err.message);
+main().catch((err: unknown) => {
+  const message = err instanceof Error ? err.message : String(err);
+  console.error('Deploy failed:', message);
   process.exit(1);
 });

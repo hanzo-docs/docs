@@ -13,14 +13,14 @@
  *   import * as ns from 'missing-pkg'; ns.Baz    -> () => null
  */
 
-function EmptyComponent() {
+function EmptyComponent(): null {
   return null;
 }
 
 EmptyComponent.displayName = 'EmptyProjectComponent';
 
 module.exports = new Proxy(EmptyComponent, {
-  get(_target, prop) {
+  get(_target: typeof EmptyComponent, prop: PropertyKey) {
     if (prop === '__esModule') return true;
     if (prop === 'default') return EmptyComponent;
     // Any named export returns the same no-op component

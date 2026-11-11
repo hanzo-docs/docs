@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * sync-pricing.mjs — Fetch live pricing from api.hanzo.ai and patch
+ * sync-pricing.ts — Fetch live pricing from api.hanzo.ai and patch
  * the static fallback values in models.ts and pricing.ts.
  *
  * Exit codes:
@@ -9,13 +9,35 @@
  *   2 — error (API down, parse failure, etc.)
  *
  * Usage:
- *   node packages/zen-models/scripts/sync-pricing.mjs
- *   node packages/zen-models/scripts/sync-pricing.mjs --dry-run
+ *   node packages/zen-models/scripts/sync-pricing.ts
+ *   node packages/zen-models/scripts/sync-pricing.ts --dry-run
  */
 
 import { readFileSync, writeFileSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+
+interface ModelPricing {
+  input: number | null
+  output: number | null
+  cacheRead: number | null
+  cacheWrite: number | null
+}
+
+interface ApiModel {
+  name: string
+  pricing?: {
+    input?: number | null
+    output?: number | null
+    cacheRead?: number | null
+    cacheWrite?: number | null
+  }
+}
+
+interface PricingApiResponse {
+  hanzoModels?: ApiModel[]
+  thirdPartyModels?: ApiModel[]
+}
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const SRC = resolve(__dirname, '..', 'src')
@@ -25,12 +47,12 @@ const PRICING_API = 'https://api.hanzo.ai/v1/pricing'
 const DRY_RUN = process.argv.includes('--dry-run')
 
 /** API model names that map to different source IDs. */
-const ID_ALIASES = {
+const ID_ALIASES: Record<string, string> = {
   'zen4.6': 'zen4.1',
 }
 
 /** Third-party API names that differ from pricing.ts names. */
-const TP_NAME_ALIASES = {
+const TP_NAME_ALIASES: Record<string, string> = {
   'R1': 'DeepSeek R1',
 }
 
@@ -42,13 +64,13 @@ const TP_NAME_ALIASES = {
  * Strip provider prefix from third-party model name.
  * API returns "Anthropic: Claude Opus 4.6" → we need "Claude Opus 4.6".
  */
-function stripProvider(name) {
+function stripProvider(name: string): string {
   const idx = name.indexOf(': ')
   return idx !== -1 ? name.slice(idx + 2) : name
 }
 
 /** Format a number for TypeScript source (null → 'null'). */
-function fmt(v) {
+function fmt(v: number | null | undefined): string {
   if (v == null) return 'null'
   return String(v)
 }
@@ -57,7 +79,7 @@ function fmt(v) {
  * In `source`, find `id: 'modelId'` then replace the nearest `pricing: { ... }`
  * within 800 chars. Returns updated source or null if no match.
  */
-function patchModelPricing(source, modelId, pricing) {
+function patchModelPricing(source: string, modelId: string, pricing: ModelPricing): string | null {
   const idNeedle = `id: '${modelId}'`
   const idx = source.indexOf(idNeedle)
   if (idx === -1) return null
@@ -70,7 +92,7 @@ function patchModelPricing(source, modelId, pricing) {
   // Match:  pricing: { input: X, output: Y, cacheRead: Z, cacheWrite: W }
   const pricingRe = /pricing:\s*\{[^}]*\}/
   const match = window.match(pricingRe)
-  if (!match) return null
+  if (!match || match.index === undefined) return null
 
   const newPricing = `pricing: { input: ${fmt(pricing.input)}, output: ${fmt(pricing.output)}, cacheRead: ${fmt(pricing.cacheRead)}, cacheWrite: ${fmt(pricing.cacheWrite)} }`
 
@@ -84,7 +106,7 @@ function patchModelPricing(source, modelId, pricing) {
  * In `source`, find `name: 'modelName'` inside the thirdPartyModels array,
  * then replace the nearest `pricing: { ... }` within 400 chars.
  */
-function patchThirdPartyPricing(source, modelName, pricing) {
+function patchThirdPartyPricing(source: string, modelName: string, pricing: ModelPricing): string | null {
   const nameNeedle = `name: '${modelName}'`
   const idx = source.indexOf(nameNeedle)
   if (idx === -1) return null
@@ -95,7 +117,7 @@ function patchThirdPartyPricing(source, modelName, pricing) {
 
   const pricingRe = /pricing:\s*\{[^}]*\}/
   const match = window.match(pricingRe)
-  if (!match) return null
+  if (!match || match.index === undefined) return null
 
   const newPricing = `pricing: { input: ${fmt(pricing.input)}, output: ${fmt(pricing.output)}, cacheRead: ${fmt(pricing.cacheRead)}, cacheWrite: ${fmt(pricing.cacheWrite)} }`
 
@@ -109,19 +131,19 @@ function patchThirdPartyPricing(source, modelName, pricing) {
 // Main
 // ---------------------------------------------------------------------------
 
-async function main() {
+async function main(): Promise<void> {
   // 1. Fetch live pricing
   console.log(`Fetching ${PRICING_API} ...`)
-  let data
+  let data: PricingApiResponse
   try {
     const res = await fetch(PRICING_API, { signal: AbortSignal.timeout(10_000) })
     if (!res.ok) {
       console.error(`API returned ${res.status}`)
       process.exit(2)
     }
-    data = await res.json()
+    data = (await res.json()) as PricingApiResponse
   } catch (err) {
-    console.error('Failed to fetch pricing API:', err.message)
+    console.error('Failed to fetch pricing API:', err instanceof Error ? err.message : String(err))
     process.exit(2)
   }
 
@@ -136,9 +158,9 @@ async function main() {
   for (const model of hanzoModels) {
     if (!model.pricing || model.pricing.input == null) continue
 
-    const pricing = {
-      input: model.pricing.input,
-      output: model.pricing.output,
+    const pricing: ModelPricing = {
+      input: model.pricing.input ?? null,
+      output: model.pricing.output ?? null,
       cacheRead: model.pricing.cacheRead ?? null,
       cacheWrite: model.pricing.cacheWrite ?? null,
     }
@@ -167,9 +189,9 @@ async function main() {
   for (const model of thirdPartyModels) {
     if (!model.pricing) continue
 
-    const pricing = {
-      input: model.pricing.input,
-      output: model.pricing.output,
+    const pricing: ModelPricing = {
+      input: model.pricing.input ?? null,
+      output: model.pricing.output ?? null,
       cacheRead: model.pricing.cacheRead ?? null,
       cacheWrite: model.pricing.cacheWrite ?? null,
     }
