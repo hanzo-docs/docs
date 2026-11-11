@@ -28,7 +28,7 @@ site:
   slug: docs-hanzo-ai
   dir: apps/docs/out
   build: bash scripts/site.sh
-  on: [main]
+  on: [main, publish-docs]
 
 # The KMS tenant the publish job reads its deploy token from.
 kms:
