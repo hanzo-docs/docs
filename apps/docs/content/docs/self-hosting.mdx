@@ -15,24 +15,29 @@ The hosted cloud (`api.hanzo.ai`) and a self-hosted installation are built from 
 | **Cloud Core** | [`hanzoai/cloud`](https://github.com/hanzoai/cloud) | Single static Go binary (`CGO_ENABLED=0`) | `127.0.0.1:8080` (HTTP + console), `127.0.0.1:9090` (`/healthz`, `/readyz`, `/metrics`), `127.0.0.1:9653` (ZAP) | Encrypted SQLite document + KV store (`/v1/base`), durable task queue (`/v1/tasks`), functions (`/v1/functions`), embedded KMS (`/v1/kms`), MCP JSON-RPC (`/mcp`), OpenAPI spec (`/v1/openapi.json`) |
 | **Model Engine** | [`hanzoai/engine`](https://github.com/hanzoai/engine) | Single Rust binary (`hanzoai` or `hanzo-engine`) | `127.0.0.1:1234` (HTTP + `/ui`) | Local LLM, vision, audio, and embedding inference (`/v1/models`, `/v1/chat/completions`, `/v1/embeddings`, Anthropic `/v1/messages`) plus a built-in browser chat UI at `/ui` |
 | **Identity (IAM)** | [`hanzoai/iam`](https://github.com/hanzoai/iam) | Single Go binary + embedded SQLite | `127.0.0.1:8000` (HTTP) | OpenID Connect discovery, OAuth2 PKCE, JWKS (`/v1/iam/.well-known/jwks`), SCIM 2.0, and org JWTs for multi-tenant `cloud` and `/v1/kms` secrets |
+| **Agentic Bot** | [`hanzoai/bot`](https://github.com/hanzoai/bot) | Node.js 22+ runtime (`hanzo-bot` / `@hanzo/bot`) | `ws://127.0.0.1:18789` (gateway) | Local multi-channel & CLI autonomous agent runtime wired to local `engine` (`:1234`) and local `cloud` (`:8080`) |
 | **AI Router** | [`hanzoai/ai`](https://github.com/hanzoai/ai) | Go binary (`cmd/aid`) or `ghcr.io/hanzoai/ai` | `:8000` (configurable) | Multi-model routing, metering, and RAG across local `engine` nodes or upstream providers (optional for single-node local setups) |
 | **Chat Client** | [`hanzoai/chat`](https://github.com/hanzoai/chat) | Static Vite + React SPA (`@hanzo/chat`) | `localhost:3090` (dev) or any static file host | Multi-conversation web workspace pointed at a local stack via `VITE_HANZO_API` and `VITE_HANZO_IAM` (optional; `engine` already includes an embedded `/ui`) |
-| **CLI** | [`hanzoai/cli`](https://github.com/hanzoai/cli) | Single Rust binary (`hanzo`) | Client only | Terminal coding agent, MCP client, and `/v1` API client |
+| **CLI** | [`hanzoai/cli`](https://github.com/hanzoai/cli) | Single Rust binary (`hanzo`) | Client only | Model pulls (`hanzo pull`), local engine launcher (`hanzo engine serve`), terminal coding agent, and `/v1` + MCP client |
 
 <Callout type="info">
-**Start small.** You do not need Kubernetes, PostgreSQL, Redis, or all six repositories to validate an installation. For a clean local or air-gapped test, start with **Cloud Core** (`hanzoai/cloud`) and **Model Engine** (`hanzoai/engine`) — two static binaries backed by local files. Add **IAM** (`hanzoai/iam`) only when you need multi-user OIDC login or org-scoped KMS secrets.
+**Start small.** You do not need Kubernetes, PostgreSQL, Redis, or all seven repositories to validate an installation. For a clean local or air-gapped test, start with **Cloud Core** (`hanzoai/cloud`) and **Model Engine** (`hanzoai/engine`) — two static binaries backed by local files — and optionally attach **Agentic Bot** (`hanzoai/bot`) or **IAM** (`hanzoai/iam`).
 </Callout>
 
 ### Local architecture
 
 ```text
-Browser / OpenAI SDK / curl
+Browser / OpenAI SDK / hanzo-bot / curl
    │
    ├──► 127.0.0.1:1234  hanzoai/engine   (LLM + embeddings: /v1/chat/completions, /v1/models, /ui)
+   │         │
+   │         └──► ~/.cache/huggingface/hub  (Model snapshots populated by `hanzo pull`)
    │
    ├──► 127.0.0.1:8080  hanzoai/cloud    (Data, queues, functions, KMS, MCP: /v1/base, /v1/tasks, /mcp)
    │         │
    │         └──► .dev/data/             (SQLCipher-encrypted SQLite files + .dev/master.key)
+   │
+   ├──► 127.0.0.1:18789 hanzoai/bot      (Optional local agentic gateway wired to :1234 + :8080)
    │
    └──► 127.0.0.1:8000  hanzoai/iam      (Optional OIDC + JWKS issuer for org JWTs & /v1/kms)
 ```
@@ -97,7 +102,7 @@ Expected responses:
 - `POST /mcp` returns `"tools":[...]` built from the exact same typed operation registry as `http://127.0.0.1:8080/v1/openapi.json`.
 
 <Callout type="warn">
-**Loopback & unauthenticated namespace:** Without an `Authorization: Bearer <jwt>` header, `cloud` writes to a dedicated local namespace so single-developer testing works with zero setup. Never change `CLOUD_LISTEN` from `127.0.0.1` to `0.0.0.0` until you place [Hanzo IAM](#4-optional-add-local-identity--kms-secrets-hanzoaiiam) in front of it. Also keep `.dev/master.key` safe — encrypted SQLite stores can only be opened by the key that created them (or set `CLOUD_DEV_UNENCRYPTED=1` for unencrypted scratch runs).
+**Loopback & unauthenticated namespace:** Without an `Authorization: Bearer <jwt>` header, `cloud` writes to a dedicated local namespace so single-developer testing works with zero setup. Never change `CLOUD_LISTEN` from `127.0.0.1` to `0.0.0.0` until you place [Hanzo IAM](#5-optional-add-local-identity--kms-secrets-hanzoaiiam) in front of it. Also keep `.dev/master.key` safe — encrypted SQLite stores can only be opened by the key that created them (or set `CLOUD_DEV_UNENCRYPTED=1` for unencrypted scratch runs).
 </Callout>
 
 ---
@@ -130,13 +135,22 @@ curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/hanzoai/e
 </Tab>
 </Tabs>
 
-### Start a small test model (`zen-nano-0.6b`, ~1.2 GB RAM)
+### Pull and start a local model (`zen-nano`, ~1.2 GB RAM)
+
+With the `hanzo` CLI (`curl -fsSL https://hanzo.sh | sh`) and `hanzo-engine` installed, pull any open-weight model into `~/.cache/huggingface/hub` and serve it locally:
 
 ```bash
-./hanzoai --serve-ip 127.0.0.1 --port 1234 run -m zenlm/zen-nano-0.6b
+# 1. Pull model weights locally (resolves short aliases or any <org>/<model> ID)
+hanzo pull zen-nano
+
+# 2. List locally cached models
+hanzo engine list
+
+# 3. Serve on http://127.0.0.1:1234/v1 (with built-in browser chat UI at /ui)
+hanzo engine serve zen-nano -- --host 127.0.0.1 -p 1234 --no-advertise
 ```
 
-*(If you built `hanzo-engine` from source, run `hanzo-engine serve --host 127.0.0.1 -p 1234 -m zenlm/zen-nano-0.6b --no-advertise`, which also serves an interactive browser chat UI at `http://127.0.0.1:1234/ui`.)*
+*(If you extracted the standalone `./hanzoai` release binary without the `hanzo` CLI, run `./hanzoai --serve-ip 127.0.0.1 --port 1234 run -m zenlm/zen-nano-0.6b`.)*
 
 ### Smoke-test inference
 
@@ -150,7 +164,7 @@ curl -sS http://127.0.0.1:1234/v1/chat/completions \
   -d '{
     "model": "zenlm/zen-nano-0.6b",
     "messages": [{"role": "user", "content": "Reply with the single word pong."}],
-    "max_tokens": 16
+    "max_tokens": 256
   }'
 ```
 
@@ -158,9 +172,61 @@ Any OpenAI-compatible SDK or agent can now use `base_url="http://127.0.0.1:1234/
 
 ---
 
-## 3. Running completely air-gapped (zero outbound network)
+## 3. Deploy & test the local Agentic Bot (`hanzoai/bot`)
 
-Neither `cloud` nor `engine` phones home, requires a license server, or makes background telemetry calls. The **only** network fetches happen at build/download time (Go modules, release tarballs, and Hugging Face model weights).
+[`hanzoai/bot`](https://github.com/hanzoai/bot) (`@hanzo/bot` / `hanzo-bot`) runs an autonomous tool-using agent gateway locally against your `hanzo-engine` (`:1234`) and `cloud` (`:8080`) endpoints — with no external API keys required.
+
+```bash
+# 1. Point a minimal config at your local engine (:1234)
+mkdir -p ~/.hanzo-local-bot/workspace
+cat > ~/.hanzo-local-bot/bot.json <<'EOF'
+{
+  "agents": {
+    "defaults": {
+      "workspace": "~/.hanzo-local-bot/workspace",
+      "model": { "primary": "local-engine/zenlm/zen-nano-0.6b" }
+    }
+  },
+  "models": {
+    "mode": "replace",
+    "providers": {
+      "local-engine": {
+        "baseUrl": "http://127.0.0.1:1234/v1",
+        "apiKey": "local",
+        "api": "openai-completions",
+        "models": [
+          {
+            "id": "zenlm/zen-nano-0.6b",
+            "name": "Zen Nano 0.6B (Local)",
+            "reasoning": false,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "contextWindow": 32768,
+            "maxTokens": 4096
+          }
+        ]
+      }
+    }
+  }
+}
+EOF
+
+# 2. Start the local gateway (Terminal A)
+BOT_SKIP_CHANNELS=1 BOT_STATE_DIR=~/.hanzo-local-bot \
+  BOT_CONFIG_PATH=~/.hanzo-local-bot/bot.json \
+  hanzo-bot gateway run --port 18789 --auth none
+
+# 3. Run an end-to-end agent turn against local Cloud Core (:8080) (Terminal B)
+BOT_STATE_DIR=~/.hanzo-local-bot BOT_CONFIG_PATH=~/.hanzo-local-bot/bot.json \
+  hanzo-bot agent --session-id smoke \
+  --message "Query http://127.0.0.1:8080/v1/base/collections/notes and summarize the records."
+```
+
+---
+
+## 4. Running completely air-gapped (zero outbound network)
+
+Neither `cloud`, `engine`, nor `hanzo-bot` phones home, requires a license server, or makes background telemetry calls. Once model weights are cached via `hanzo pull` (or copied into a local directory), `hanzo-engine` resolves weights directly from disk with no special offline environment variables needed.
 
 To stage an installation onto an air-gapped network:
 
@@ -177,9 +243,11 @@ git clone https://github.com/hanzoai/cloud
 curl -fL https://github.com/hanzoai/engine/releases/latest/download/hanzoai-linux-amd64.tar.gz \
   | tar xz -C hanzo-airgap/bin
 
-# 3. Download model weights + tokenizer files into a plain directory
-pip install -U "huggingface_hub[cli]"
-hf download zenlm/zen-nano-0.6b --local-dir hanzo-airgap/weights/zen-nano-0.6b
+# 3. Pull model weights locally (either via `hanzo pull` into ~/.cache/huggingface/hub
+#    or directly into a portable weights folder)
+hanzo pull zen-nano
+cp -RL ~/.cache/huggingface/hub/models--zenlm--zen-nano-0.6b/snapshots/* \
+  hanzo-airgap/weights/zen-nano-0.6b
 
 # 4. Archive for transfer
 tar czf hanzo-airgap.tar.gz hanzo-airgap/
@@ -193,7 +261,7 @@ tar czf hanzo-airgap.tar.gz hanzo-airgap/
 tar xzf hanzo-airgap.tar.gz
 cd hanzo-airgap
 
-# 1. Start Cloud Core offline
+# 1. Start Cloud Core
 mkdir -p data && (umask 077 && openssl rand -base64 32 > master.key)
 CLOUD_LISTEN=127.0.0.1:8080 \
   CLOUD_DATA_DIR=./data \
@@ -201,8 +269,8 @@ CLOUD_LISTEN=127.0.0.1:8080 \
   CLOUD_KMS_MASTER_KEY_REF="$(cat master.key)" \
   ./bin/cloud &
 
-# 2. Start Model Engine from the local directory (HF_HUB_OFFLINE=1 blocks any hub lookup)
-HF_HUB_OFFLINE=1 ./bin/hanzoai --serve-ip 127.0.0.1 --port 1234 \
+# 2. Start Model Engine directly from the staged weights directory
+./bin/hanzoai --serve-ip 127.0.0.1 --port 1234 \
   run -m ./weights/zen-nano-0.6b &
 ```
 
@@ -210,7 +278,7 @@ Re-run the `curl` smoke tests from Sections 1 and 2 against `127.0.0.1:9090/heal
 
 ---
 
-## 4. Optional: Add local Identity & KMS secrets (`hanzoai/iam`)
+## 5. Optional: Add local Identity & KMS secrets (`hanzoai/iam`)
 
 `hanzoai/cloud` delegates authentication to an OIDC issuer via `{CLOUD_IAM_ISSUER}/v1/iam/.well-known/jwks` (defaulting to `http://127.0.0.1:8000`). Add [`hanzoai/iam`](https://github.com/hanzoai/iam) when you want multi-tenant org isolation or sealed secrets in `/v1/kms`:
 
