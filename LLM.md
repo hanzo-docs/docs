@@ -213,7 +213,11 @@ The way in for an agent, second in the root sidebar.
   is how a reader checks Kai's published runs. Exact path only.
 - The hosted `POST /v1/mcp` is streamable HTTP and answers `initialize` in the
   protocol version the client asks for (2025-06-18, 2025-11-25 and 2026-07-28
-  measured on 2026-11-09; 2025-03-26 is answered with 2026-07-28). The page
+  measured on 2026-11-12; 2025-03-26 is answered with 2026-07-28), once the
+  request carries any bearer header: without one it is 401 with
+  `WWW-Authenticate: Bearer resource_metadata=...` (the protected-resource
+  metadata names hanzo.id, whose metadata has a registration endpoint), and a
+  key's validity is judged at `tools/call`. The page
   shows the local server, `npx -y hanzo mcp`; `guides/coding/agents` has each
   client's steps for the hosted door and the local server.
 - **MCP clients** are the table in `guides/coding/agents` (anchor

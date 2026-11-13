@@ -490,7 +490,9 @@ plan.
 `free_plan_cap`, `resets_at` and `topup_url`. Wait for the reset, or top up in
 USDC or USDT over the API and go on.
 
-**Why does my client refuse the hosted MCP endpoint?** Send your key as
-`Authorization: Bearer sk-...`, in the header your client's MCP settings name
-(`tools/list` answers without one, `tools/call` does not). A client that cannot
-set a header, or only runs local servers, uses the local server above.
+**Why does my client refuse the hosted MCP endpoint?** A request with no
+`Authorization` header gets 401 and `WWW-Authenticate: Bearer resource_metadata=...`.
+Send your key as `Authorization: Bearer sk-...`, in the header your client's MCP
+settings name ([each client's steps](/docs/guides/coding/agents#connect-a-client-to-hanzo-mcp)).
+A client that cannot set a header, or only runs local servers, uses the local
+server above.
