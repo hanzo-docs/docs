@@ -9,10 +9,10 @@
 | **Created** | 2026-11-18 |
 
 ## 1. Abstract
-The Hanzo Sensei Certification Standard establishes the definitive, verifiable framework for agentic proficiency within the Hanzo ecosystem. It replaces legacy hiring metrics with a cryptographic, ledger-backed proof-of-competence, ensuring that any developer carrying the 'Sensei' designation has demonstrated mastery of the native binary stack, local agentic orchestration, and OCI-native deployment.
+The Hanzo Sensei Certification Standard establishes the definitive, verifiable framework for agentic proficiency within the Hanzo ecosystem. It replaces legacy hiring metrics with a cryptographic, ledger-backed proof-of-competence.
 
-## 2. Motivation
-Traditional certifications are subjective and easily gamed. The Hanzo ecosystem requires a trust-less, verifiable method to ensure that practitioners are capable of maintaining, extending, and operating autonomous agentic systems. By codifying mastery into the stack itself, we align professional growth with the system's actual performance.
+## 2. The L3 Exclusive Gate
+The `sensei.group` marketplace lens is **exclusively reserved for L3-certified Sensei**. This ensures that high-end clients interacting through this lens have access only to the elite tier of verified masters capable of model training, fine-tuning, and large-scale agentic deployment.
 
 ## 3. Specification
 
@@ -25,17 +25,9 @@ A **Hanzo Sensei** is measured by:
 ### 3.2 Certification Tiers
 - **L1 Apprentice**: Proficiency in template orchestration (deploying via `hanzo up`).
 - **L2 Practitioner**: Proficiency in agentic workflow design (modifying agents for domain-specific automation).
-- **L3 Sensei**: Deep mastery of the entire stack (`hanzod` tuning, distributed swarm orchestration, OS-level hardening).
+- **L3 Sensei**: Deep mastery of the entire stack (`hanzod` tuning, distributed swarm orchestration, OS-level hardening). **Access to `sensei.group` is granted ONLY at this level.**
 
 ## 4. Business Model
-
 - **Free Certification**: All Hanzo Sensei Certification levels (L1-L3) remain free to grow the master pool.
 - **Premium Content**: A monthly subscription unlocks advanced compute, private model weights, and architectural deep-dives.
-- **Sensei Lens**: `sensei.group` acts as the exclusive high-end marketplace view for vetted Sensei practitioners.
-
-## 5. Implementation
-Certification is achieved through the **Certification Flywheel**:
-1. **Learn**: Master curriculum at `hanzo.university`.
-2. **Execute**: Build a project using the stack and verify locally via `hanzo up`.
-3. **Certify**: The system cryptographically signs the project's performance metrics and emits the "Hanzo Sensei" credential to the user's wallet on `hanzo.market`.
-4. **Deploy**: The credential unlocks access to high-value bounties and internship opportunities via `careers.hanzo.ai`.
+- **Sensei Lens**: `sensei.group` acts as the exclusive, high-end marketplace view for vetted L3 Sensei practitioners.
