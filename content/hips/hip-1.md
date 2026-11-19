@@ -27,7 +27,13 @@ A **Hanzo Sensei** is measured by:
 - **L2 Practitioner**: Proficiency in agentic workflow design (modifying agents for domain-specific automation).
 - **L3 Sensei**: Deep mastery of the entire stack (`hanzod` tuning, distributed swarm orchestration, OS-level hardening).
 
-## 4. Implementation
+## 4. Business Model
+
+- **Free Certification**: All Hanzo Sensei Certification levels (L1-L3) remain free to grow the master pool.
+- **Premium Content**: A monthly subscription unlocks advanced compute, private model weights, and architectural deep-dives.
+- **Sensei Lens**: `sensei.group` acts as the exclusive high-end marketplace view for vetted Sensei practitioners.
+
+## 5. Implementation
 Certification is achieved through the **Certification Flywheel**:
 1. **Learn**: Master curriculum at `hanzo.university`.
 2. **Execute**: Build a project using the stack and verify locally via `hanzo up`.
