@@ -4,14 +4,32 @@ description: "Sign up free with a wallet. Get an API key free. A small free allo
 icon: Bot
 ---
 
-Sign up free with a wallet. Get an API key free. A small free allowance to try
-it. Top up in USDC or USDT over the API to raise your limits and pay as you go.
-No human required.
+Sign up free with a wallet, email, or CLI. Get an API key free. Try **Enso**,
+**Kai**, **Zen** models, and the full API Platform with a free daily allowance —
+no card or human required. Top up in USDC or USDT over the API (or apply Startup
+Program credits at [hanzo.ai](https://hanzo.ai)) to raise limits and pay as you go.
 
-One key serves every model, Kai decisions and the rest of the platform at
-`https://api.hanzo.ai/v1`. Every request and its answer:
-[Headless, step by step](/docs/agents/headless). Every way to authenticate, in
-one Markdown file: [auth.md](https://docs.hanzo.ai/auth.md).
+### 3-step agent quickstart
+
+1. **Create an account (free)**: Sign in headlessly with any EVM/Solana wallet on
+   `https://hanzo.id`, use email-code sign-up, run `hanzo auth login`, or sign up
+   your team of agents, bots, and humans at [hanzo.ai](https://hanzo.ai).
+2. **Mint an API key (free)**: `POST https://api.hanzo.ai/v1/account/keys` (or
+   `hanzo account keys create --name agent --type secret`).
+3. **Call Enso, Kai, Zen & the API Platform**: Send OpenAI-compatible requests to
+   `POST https://api.hanzo.ai/v1/chat/completions` (`model: "enso-auto"` or any
+   `zen-*` model), call Kai decisions (`POST https://api.hanzo.ai/v1/decisions`),
+   or connect `hanzo-mcp`.
+
+> **Agent Skill Manifest**: Agents and bots can also load the self-serve onboarding
+> skill directly from [hanzoskills.com](https://hanzoskills.com) —
+> `curl https://hanzoskills.com/hanzo.md` or
+> `npx skills add https://hanzoskills.com/hanzo.md`.
+
+One key serves every model (Enso, Kai, Zen, and 100+ frontier models), Kai
+decisions, and the rest of the platform at `https://api.hanzo.ai/v1`. Every
+request and its answer: [Headless, step by step](/docs/agents/headless). Every
+way to authenticate, in one Markdown file: [auth.md](https://docs.hanzo.ai/auth.md).
 
 Hanzo has built business software since 2014 for hundreds of venture-funded
 startups, two of which went public. [About Hanzo](/docs/about/company).
