@@ -1,29 +1,36 @@
 ---
 title: Desktop
-description: Two desktop apps — one that runs agents on your own machine against local or remote models, one that puts Hanzo a keystroke away in your menubar — plus Hanzo's tools in Claude Desktop.
+description: Hanzo Desktop, the Hanzo app for your computer — download it, open it, sign in. No terminal. Plus Hanzo's tools in Claude Desktop.
 ---
 
-# Desktop apps
+# Hanzo Desktop
 
-Two apps, two jobs. **Hanzo Agents** runs on your machine and builds agents that
-can use models running locally or in the cloud. **Hanzo Menubar** is the
-one-keystroke assistant.
+**Hanzo Desktop is the Hanzo app on your computer**: Chat, Dev, Studio and your
+agents in one window, and a global hotkey that brings Hanzo to whatever you are
+doing. Agents can run against models on your own machine or on Hanzo Cloud. If
+you are not sure which Hanzo to install, install this one.
 
-## Hanzo Agents
+## Install
 
-Build agents that work together, handle payments, and automate workflows —
-against models running **on your own machine** or in the cloud, for macOS
-(Apple Silicon), Windows and Linux.
+1. Open **[hanzo.ai/download](https://hanzo.ai/download)**. The button offers the
+   latest build for your system: a `.dmg` for macOS (Apple Silicon and Intel), a
+   setup `.exe` for Windows, an AppImage or `.deb` for Linux (x86_64 and arm64).
+2. Install it like any other app, and open it.
+3. Choose **Sign in with Hanzo**. Your browser opens the Hanzo sign-in page (create
+   an account there if you have none) and hands you back to the app. Or choose
+   **Continue without login** to run on a local model with no account.
 
-Not published: its source and its builds are not public, so there is nothing to
-install.
+No terminal, no `curl`, `npm` or `brew`. Every build and its checksums are on
+[GitHub](https://github.com/hanzoai/desktop/releases/latest).
 
-## Hanzo Menubar
+Nothing to install at all: the same app runs in your browser at
+[hanzo.app](https://hanzo.app).
 
-A menubar / system-tray app with a global hotkey — **Cmd/Ctrl + Shift + Space** —
-for chat, quick actions, and agents over the same account you use everywhere else.
+## Desktop or the CLI?
 
-Not published: its builds are not public, so there is nothing to install.
+The [Hanzo CLI](/docs/cli) (`hanzo`) is for developers: it runs in a terminal,
+starts [Hanzo Dev](/docs/dev) (the coding agent) with `hanzo dev`, and drives your
+account and the cloud from scripts. You do not need it to use Hanzo Desktop.
 
 ## Claude Desktop
 
@@ -37,5 +44,6 @@ Claude Desktop's config (**Settings → Developer → Edit Config**) and restart
 
 ## Related
 
+- [hanzo.ai/download](https://hanzo.ai/download) — Desktop, the browser and editor extensions, and the developer tools
+- [CLI](/docs/cli) — the same capabilities from a terminal, for developers
 - [MCP](/docs/mcp) — the tools Claude Desktop gets from the Hanzo server
-- [CLI](/docs/cli) — the same capabilities from a terminal
