@@ -36,7 +36,7 @@ jobs:
       - name: Publish to the Sites plane
         uses: https://git.hanzo.ai/hanzoai/ci/.github/actions/site@v1
         with:
-          slug: bot
+          slug: bot-docs
           dir: apps/bot-docs/out
         env:
           KMS_CLIENT_ID: ${{ secrets.KMS_CLIENT_ID }}
