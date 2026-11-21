@@ -22,13 +22,15 @@
  * else.
  */
 
-import { readdir, readFile, writeFile, mkdir } from 'fs/promises';
+import { readdir, readFile, writeFile, mkdir, cp } from 'fs/promises';
 import { join, relative, dirname, resolve } from 'path';
 import { existsSync } from 'fs';
 import { homedir } from 'os';
 
 const SRC = resolve(process.argv[2] ?? join(homedir(), 'work/hanzobot/bot/docs'));
 const DEST = resolve(import.meta.dirname, '../content/docs');
+// The pictures the pages name at /assets/…: the app is a static export, so they ship from public/.
+const ASSETS = resolve(import.meta.dirname, '../public/assets');
 
 // Directories to include (top-level categories)
 const CATEGORIES = [
@@ -434,6 +436,12 @@ async function main() {
   }
 
   console.log(`\nConverted ${count} files`);
+
+  // The pages name their pictures at /assets/…; copy the ones the bot repo carries.
+  if (existsSync(join(SRC, 'assets'))) {
+    await cp(join(SRC, 'assets'), ASSETS, { recursive: true });
+    console.log('Copied assets');
+  }
 
   // Create meta.json files
   console.log('\nCreating meta.json files...');
