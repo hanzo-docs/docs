@@ -74,7 +74,7 @@ export default function Page() {
               Get Started
             </Link>
             <a
-              href="https://github.com/hanzoai/dev"
+              href="https://github.com/hanzoai/dev-v1"
               target="_blank"
               rel="noreferrer noopener"
               className={cn(buttonVariants({ variant: 'secondary' }), 'max-sm:text-sm')}
@@ -260,8 +260,8 @@ brew install hanzo-dev`}
             <div>
               <h4 className="font-medium mb-2">From Source</h4>
               <pre className="bg-black/20 rounded-lg p-3 text-xs overflow-x-auto font-mono">
-{`git clone https://github.com/hanzoai/dev
-cd dev/codex-rs && cargo build`}
+{`git clone https://github.com/hanzoai/dev-v1
+cd dev-v1/codex-rs && cargo build`}
               </pre>
             </div>
           </div>
@@ -282,7 +282,7 @@ cd dev/codex-rs && cargo build`}
               Read the Docs
             </Link>
             <a
-              href="https://github.com/hanzoai/dev"
+              href="https://github.com/hanzoai/dev-v1"
               target="_blank"
               rel="noreferrer noopener"
               className={cn(buttonVariants({ variant: 'secondary' }))}

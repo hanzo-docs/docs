@@ -10,7 +10,7 @@ export const linkItems: LinkItemType[] = [
   },
   {
     type: 'icon',
-    url: 'https://github.com/hanzoai/dev',
+    url: 'https://github.com/hanzoai/dev-v1',
     label: 'github',
     text: 'Github',
     icon: (
