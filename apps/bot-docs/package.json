@@ -49,6 +49,7 @@
     "@next/bundle-analyzer": "catalog:",
     "@next/env": "catalog:",
     "@next/eslint-plugin-next": "catalog:",
+    "@svgr/webpack": "^8.1.0",
     "@tailwindcss/postcss": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",

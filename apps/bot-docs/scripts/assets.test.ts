@@ -30,8 +30,7 @@ describe('the images a docs page names', () => {
     expect(missing).toEqual([]);
   });
 
-  it('has the icons a browser asks for by itself', () => {
-    expect(existsSync(join(ROOT, 'app/icon.svg'))).toBe(true);
-    expect(existsSync(join(ROOT, 'app/favicon.ico'))).toBe(true);
+  it('has the icon the layout names', () => {
+    expect(existsSync(join(PUBLIC, 'favicon.svg'))).toBe(true);
   });
 });

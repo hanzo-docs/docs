@@ -20,6 +20,7 @@ export const metadata = createMetadata({
   },
   description: 'One bot. Every role. Every channel. Full-blown computer-using AI agent that runs free on your Mac or deploys to the cloud starting at $5/mo.',
   metadataBase: baseUrl,
+  icons: { icon: '/favicon.svg' },
 });
 
 export const viewport: Viewport = {
