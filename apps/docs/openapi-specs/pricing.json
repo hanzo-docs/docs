@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-10T00:40:09.136Z",
+  "updated": "2026-11-23T02:01:02.171Z",
   "enso": [
     {
       "id": "enso-flash",
@@ -61,7 +61,7 @@
         "output": 0.01
       },
       "provider": "Hanzo",
-      "tier": "starter"
+      "tier": ""
     },
     {
       "context": 128000,
@@ -85,7 +85,7 @@
         "output": 0.96
       },
       "provider": "Hanzo",
-      "tier": "starter"
+      "tier": ""
     },
     {
       "context": 1000000,
@@ -108,7 +108,7 @@
         "output": 0
       },
       "provider": "Hanzo",
-      "tier": "pro",
+      "tier": "",
       "vision": true
     },
     {
@@ -129,17 +129,17 @@
       "name": "zen5",
       "owned_by": "zenlm",
       "pricing": {
-        "cacheRead": null,
-        "cacheWrite": null,
-        "input": 0,
-        "output": 0
+        "cacheRead": 0.22799999999999998,
+        "cacheWrite": 2.8499999999999996,
+        "input": 2.28,
+        "output": 7.26
       },
       "provider": "Hanzo",
       "specs": {
         "arch": "Zen frontier MoE",
         "params": "35B (3B active)"
       },
-      "tier": "pro"
+      "tier": ""
     },
     {
       "context": 1000000,
@@ -155,20 +155,20 @@
       "name": "zen5-coder",
       "owned_by": "zenlm",
       "pricing": {
-        "cacheRead": null,
-        "cacheWrite": null,
-        "input": 0,
-        "output": 0
+        "cacheRead": 0.22799999999999998,
+        "cacheWrite": 2.8499999999999996,
+        "input": 2.28,
+        "output": 7.26
       },
       "provider": "Hanzo",
       "specs": {
         "arch": "Zen Coder MoE",
         "params": "80B (MoE)"
       },
-      "tier": "pro"
+      "tier": ""
     },
     {
-      "context": 1000000,
+      "context": 65536,
       "description": "Smallest and cheapest text-only Zen5 chat tier. 4B-class dense, sub-100ms TTFT, 32K context. For high-volume routing and simple agent loops.",
       "family": "zen",
       "features": [
@@ -181,20 +181,20 @@
       "name": "zen5-flash",
       "owned_by": "zenlm",
       "pricing": {
-        "cacheRead": null,
-        "cacheWrite": null,
-        "input": 0,
-        "output": 0
+        "cacheRead": 0.02646,
+        "cacheWrite": 0.33075,
+        "input": 0.2646,
+        "output": 0.5292
       },
       "provider": "Hanzo",
       "specs": {
         "arch": "Zen dense",
         "params": "4B"
       },
-      "tier": "starter"
+      "tier": ""
     },
     {
-      "context": 1000000,
+      "context": 32768,
       "description": "Frontier agentic at the lowest cost in the family. Built on a 230B agentic MoE (10B active) (230B MoE / 10B active, released Feb 2026). 80.2% SWE-Bench Verified, 76.3% BrowseComp; trained on 200K+ real-world environments via large-scale RL.",
       "family": "zen",
       "features": [
@@ -208,17 +208,17 @@
       "name": "zen5-mini",
       "owned_by": "zenlm",
       "pricing": {
-        "cacheRead": null,
-        "cacheWrite": null,
-        "input": 0,
-        "output": 0
+        "cacheRead": 0.009,
+        "cacheWrite": 0.11249999999999999,
+        "input": 0.09,
+        "output": 0.39
       },
       "provider": "Hanzo",
       "specs": {
         "arch": "Zen MoE",
         "params": "230B (10B active)"
       },
-      "tier": "pro"
+      "tier": ""
     },
     {
       "context": 1000000,
@@ -235,44 +235,46 @@
       "name": "zen5-pro",
       "owned_by": "zenlm",
       "pricing": {
-        "cacheRead": null,
-        "cacheWrite": null,
-        "input": 0,
-        "output": 0
+        "cacheRead": 0.1305,
+        "cacheWrite": 1.6312499999999999,
+        "input": 1.305,
+        "output": 2.61
       },
       "provider": "Hanzo",
       "specs": {
         "arch": "Zen Flash MoE",
         "params": "284B (37B active)"
       },
-      "tier": "ultra"
+      "tier": ""
     },
     {
       "context": 1000000,
-      "description": "Hanzo's proprietary frontier model — Opus-class reasoning by default with 1M-context overflow.",
+      "description": "Adaptive Enso router — routes each request to Enso Flash, Pro, Max, or Ultra by reasoning depth and bills at the tier that answers, starting at Enso Flash.",
       "family": "enso",
       "features": [
         "1M context window",
         "Frontier reasoning"
       ],
-      "fullName": "Enso",
+      "fullName": "Enso Auto",
+      "id": "enso-auto",
       "links": {
         "github": "https://github.com/hanzoai/enso"
       },
-      "name": "enso",
+      "name": "enso-auto",
+      "order": 1,
       "owned_by": "hanzo",
       "pricing": {
         "cacheRead": 0.033,
         "cacheWrite": 0.4125,
-        "input": 0.33,
-        "output": 1.65
+        "input": 3.3,
+        "output": 16.5
       },
       "provider": "Hanzo",
-      "tier": "ultra max"
+      "tier": ""
     },
     {
       "context": 1000000,
-      "description": "Fast, economical Enso tier for high-volume, low-latency everyday work, with 1M-context overflow.",
+      "description": "Fast, economical Enso model for high-volume, low-latency everyday chat, coding, and tool calls.",
       "family": "enso",
       "features": [
         "1M context window",
@@ -283,6 +285,7 @@
         "github": "https://github.com/hanzoai/enso"
       },
       "name": "enso-flash",
+      "order": 2,
       "owned_by": "hanzo",
       "pricing": {
         "cacheRead": 0.033,
@@ -291,11 +294,11 @@
         "output": 1.65
       },
       "provider": "Hanzo",
-      "tier": "pro"
+      "tier": ""
     },
     {
       "context": 1000000,
-      "description": "Adaptive fan-out — probes a task-appropriate model, escalates to a top-K panel only when needed, then verifies-then-selects the best answer.",
+      "description": "Adaptive fan-out frontier model — probes a task-appropriate model, escalates to a top-K panel when needed, then verifies and selects the best answer.",
       "family": "enso",
       "features": [
         "200K context window",
@@ -306,6 +309,7 @@
         "github": "https://github.com/hanzoai/enso"
       },
       "name": "enso-ultra",
+      "order": 5,
       "owned_by": "hanzo",
       "pricing": {
         "cacheRead": 0.2618,
@@ -314,13 +318,14 @@
         "output": 26.18
       },
       "provider": "Hanzo",
-      "tier": "ultra max"
+      "tier": ""
     },
     {
       "category": "specialty",
-      "context": null,
-      "description": "Hanzo's decision model: a typed answer with a probability on every option, at POST /v1/decisions. A native decision writes 0 output tokens.",
+      "context": 131072,
+      "description": "Hanzo Kai — typed decision and structured judgment model answering at /v1/decisions under strict JSON schema.",
       "endpoint": "/v1/decisions",
+      "family": "kai",
       "features": [
         "choice, score and noul questions",
         "A probability on every option",
@@ -333,8 +338,8 @@
       "name": "kai",
       "owned_by": "hanzo",
       "pricing": {
-        "cacheRead": 0.0021000000000000003,
-        "cacheWrite": 0.026250000000000002,
+        "cacheRead": 0.0021,
+        "cacheWrite": 0.02625,
         "input": 0.021,
         "output": 0
       },
@@ -344,37 +349,7 @@
         "arch": "Encoder (mmBERT-base, 22 layers × 768)",
         "params": "322.1M encoder, 60.2M yes/no reader"
       },
-      "tier": "starter"
-    },
-    {
-      "category": "specialty",
-      "context": null,
-      "description": "Hanzo's decision model: a typed answer with a probability on every option, at POST /v1/decisions. A native decision writes 0 output tokens.",
-      "endpoint": "/v1/decisions",
-      "features": [
-        "choice, score and noul questions",
-        "A probability on every option",
-        "0 output tokens"
-      ],
-      "fullName": "Kai",
-      "links": {
-        "github": "https://github.com/hanzoai/kai"
-      },
-      "name": "hanzo/kai",
-      "owned_by": "hanzo",
-      "pricing": {
-        "cacheRead": 0.0021000000000000003,
-        "cacheWrite": 0.026250000000000002,
-        "input": 0.021,
-        "output": 0
-      },
-      "pricingUnit": "token",
-      "provider": "Hanzo",
-      "specs": {
-        "arch": "Encoder (mmBERT-base, 22 layers × 768)",
-        "params": "322.1M encoder, 60.2M yes/no reader"
-      },
-      "tier": "starter"
+      "tier": ""
     },
     {
       "category": "specialty",
@@ -446,7 +421,7 @@
       "specs": {
         "arch": "decision"
       },
-      "tier": "starter"
+      "tier": ""
     },
     {
       "category": "specialty",
@@ -470,12 +445,15 @@
       "specs": {
         "arch": "decision"
       },
-      "tier": "starter"
+      "tier": ""
     },
     {
+      "context": 1000000,
+      "description": "Extended frontier reasoning model for deep multi-step architecture, research, and autonomous coding loops.",
       "family": "enso",
-      "fullName": "enso-max",
+      "fullName": "Enso Max",
       "name": "enso-max",
+      "order": 4,
       "owned_by": "hanzo",
       "pricing": {
         "cacheRead": 0.215,
@@ -484,12 +462,15 @@
         "output": 21.5
       },
       "provider": "Hanzo",
-      "context": 1000000
+      "tier": ""
     },
     {
+      "context": 1000000,
+      "description": "Balanced frontier reasoning and coding model for production agents, tool use, and repo-scale engineering.",
       "family": "enso",
-      "fullName": "enso-pro",
+      "fullName": "Enso Pro",
       "name": "enso-pro",
+      "order": 3,
       "owned_by": "hanzo",
       "pricing": {
         "cacheRead": 0.165,
@@ -498,7 +479,7 @@
         "output": 16.5
       },
       "provider": "Hanzo",
-      "context": 1000000
+      "tier": ""
     }
   ],
   "tools": [
@@ -606,8 +587,8 @@
     },
     "Bytedance-seed": {
       "free": 0,
-      "paid": 6,
-      "total": 6
+      "paid": 3,
+      "total": 3
     },
     "Cognitivecomputations": {
       "free": 0,
@@ -615,9 +596,9 @@
       "total": 1
     },
     "Cohere": {
-      "free": 1,
+      "free": 0,
       "paid": 5,
-      "total": 6
+      "total": 5
     },
     "DeepCogito": {
       "free": 2,
@@ -634,11 +615,6 @@
       "paid": 17,
       "total": 17
     },
-    "Dots-studio": {
-      "free": 1,
-      "paid": 0,
-      "total": 1
-    },
     "Elorian": {
       "free": 0,
       "paid": 1,
@@ -651,8 +627,8 @@
     },
     "Google": {
       "free": 4,
-      "paid": 39,
-      "total": 43
+      "paid": 45,
+      "total": 49
     },
     "Gryphe": {
       "free": 0,
@@ -680,14 +656,19 @@
       "total": 5
     },
     "Inclusionai": {
-      "free": 0,
+      "free": 1,
       "paid": 4,
-      "total": 4
+      "total": 5
     },
     "Inference-net": {
       "free": 0,
       "paid": 2,
       "total": 2
+    },
+    "Kt": {
+      "free": 0,
+      "paid": 1,
+      "total": 1
     },
     "Kwaipilot": {
       "free": 0,
@@ -695,9 +676,9 @@
       "total": 3
     },
     "Liquid": {
-      "free": 2,
-      "paid": 3,
-      "total": 5
+      "free": 1,
+      "paid": 2,
+      "total": 3
     },
     "Mancer": {
       "free": 0,
@@ -716,8 +697,8 @@
     },
     "Meta-llama": {
       "free": 0,
-      "paid": 8,
-      "total": 8
+      "paid": 7,
+      "total": 7
     },
     "Microsoft": {
       "free": 0,
@@ -746,8 +727,8 @@
     },
     "Mistralai": {
       "free": 0,
-      "paid": 21,
-      "total": 21
+      "paid": 22,
+      "total": 22
     },
     "Moondream": {
       "free": 0,
@@ -761,13 +742,18 @@
     },
     "Moonshotai": {
       "free": 0,
-      "paid": 9,
-      "total": 9
+      "paid": 10,
+      "total": 10
     },
     "Morph": {
       "free": 0,
       "paid": 4,
       "total": 4
+    },
+    "Motif-technologies": {
+      "free": 0,
+      "paid": 1,
+      "total": 1
     },
     "NVIDIA": {
       "free": 9,
@@ -781,8 +767,8 @@
     },
     "Nex-agi": {
       "free": 0,
-      "paid": 2,
-      "total": 2
+      "paid": 3,
+      "total": 3
     },
     "Nous Research": {
       "free": 0,
@@ -811,8 +797,8 @@
     },
     "Openai": {
       "free": 0,
-      "paid": 98,
-      "total": 98
+      "paid": 106,
+      "total": 106
     },
     "Openrouter": {
       "free": 1,
@@ -820,9 +806,9 @@
       "total": 7
     },
     "Particle-ai": {
-      "free": 0,
+      "free": 1,
       "paid": 1,
-      "total": 1
+      "total": 2
     },
     "Pearl AI": {
       "free": 1,
@@ -856,8 +842,13 @@
     },
     "Qwen": {
       "free": 0,
-      "paid": 44,
-      "total": 44
+      "paid": 43,
+      "total": 43
+    },
+    "Radixark": {
+      "free": 0,
+      "paid": 1,
+      "total": 1
     },
     "Recursive": {
       "free": 1,
@@ -921,8 +912,8 @@
     },
     "Stepfun": {
       "free": 0,
-      "paid": 3,
-      "total": 3
+      "paid": 2,
+      "total": 2
     },
     "Swiss AI": {
       "free": 4,
@@ -931,8 +922,8 @@
     },
     "Tencent": {
       "free": 0,
-      "paid": 8,
-      "total": 8
+      "paid": 7,
+      "total": 7
     },
     "TheDrummer": {
       "free": 0,
@@ -950,9 +941,9 @@
       "total": 2
     },
     "Thinkingmachines": {
-      "free": 1,
-      "paid": 3,
-      "total": 4
+      "free": 0,
+      "paid": 5,
+      "total": 5
     },
     "Typesafe": {
       "free": 0,
@@ -961,8 +952,8 @@
     },
     "Unbiased": {
       "free": 0,
-      "paid": 2,
-      "total": 2
+      "paid": 3,
+      "total": 3
     },
     "Undi95": {
       "free": 0,
@@ -986,18 +977,13 @@
     },
     "X-ai": {
       "free": 0,
-      "paid": 10,
-      "total": 10
+      "paid": 9,
+      "total": 9
     },
     "Xiaomi": {
       "free": 0,
       "paid": 5,
       "total": 5
-    },
-    "Xingchen-agi": {
-      "free": 1,
-      "paid": 0,
-      "total": 1
     },
     "Z-ai": {
       "free": 0,
@@ -1056,16 +1042,16 @@
     }
   },
   "catalogue": {
-    "models": 534,
-    "makers": 71,
+    "models": 552,
+    "makers": 74,
     "kai": {
       "input": 0.021,
       "output": 0
     },
-    "captured": "2026-11-10"
+    "captured": "2026-11-23"
   },
   "meta": {
-    "captured": "2026-11-10",
+    "captured": "2026-11-23",
     "source": "live"
   }
 }
