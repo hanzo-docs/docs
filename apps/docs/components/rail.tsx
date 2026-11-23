@@ -32,6 +32,7 @@ export function Rail() {
     <>
       <YStack
         render="aside"
+        data-docs-rail=""
         aria-label="Documentation"
         position="sticky"
         t={0}
@@ -134,6 +135,7 @@ function Find({ drawer }: { drawer: boolean }) {
     <XStack
       render="button"
       type="button"
+      data-docs-search=""
       onPress={() => {
         if (drawer) setOpen(false);
         search.setOpen(true);

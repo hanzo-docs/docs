@@ -9,6 +9,110 @@
 :root {
   --font-sans: 'Zen', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'Zen Mono', ui-monospace, SFMono-Regular, monospace;
+  color-scheme: dark light;
+}
+
+/* Hanzo pure-black dark design system — scoped strictly to `.t_dark:not(.t_light)`
+   so light mode (`.t_light`) stays untouched even if SSR's `t_dark` lingers beside
+   `t_light` on <html>. `html.t_dark:not(.t_light):root` (0,3,1) outranks both
+   `:root` (0,1,0) and `:root.t_dark` (0,2,0) in @hanzo/ui's compiled stylesheet
+   regardless of CSS chunk order. */
+html.t_dark:not(.t_light):root,
+html.t_dark:not(.t_light) {
+  color-scheme: dark;
+
+  /* Base canvas */
+  --background: #000000;
+  --fd-background: #000000;
+  --surface-page: #000000;
+  --surface-0: #000000;
+  --bg-primary: #000000;
+  --pane-floor: #000000;
+  --sunken: #000000;
+  --color1: #000000;
+
+  /* Elevated surfaces: cards, sidebars, popovers, panels */
+  --card: #080808;
+  --fd-card: #080808;
+  --popover: #080808;
+  --fd-popover: #080808;
+  --surface-1: #080808;
+  --surface-card: #080808;
+  --surface-card-quiet: #080808;
+  --surface-overlay: rgba(8, 8, 8, 0.96);
+  --bg-card: #080808;
+  --panel: #080808;
+
+  /* Muted, code, hover, and input surfaces */
+  --muted: #0c0c0c;
+  --fd-muted: #0c0c0c;
+  --surface-2: #0c0c0c;
+  --bg-secondary: #0c0c0c;
+  --hover: #0c0c0c;
+  --codeGround: #0c0c0c;
+  --codeLine: #161616;
+  --backgroundHover: #0c0c0c;
+  --backgroundFocus: #0c0c0c;
+  --backgroundPress: #080808;
+  --backgroundActive: #111111;
+  --secondary: #111111;
+  --surface-3: #111111;
+  --surface-card-emphasis: #111111;
+  --bg-tertiary: #111111;
+  --raised: #111111;
+
+  /* Subtle hairlines & interactive hover/focus edges */
+  --border: rgba(255, 255, 255, 0.08);
+  --fd-border: rgba(255, 255, 255, 0.08);
+  --border-hairline: rgba(255, 255, 255, 0.08);
+  --edge: rgba(255, 255, 255, 0.08);
+  --borderColor: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --border-hairline-strong: rgba(255, 255, 255, 0.14);
+  --border-control: rgba(255, 255, 255, 0.14);
+  --border-focus: rgba(255, 255, 255, 0.14);
+  --input: rgba(255, 255, 255, 0.14);
+  --borderColorHover: rgba(255, 255, 255, 0.14);
+  --borderColorFocus: rgba(255, 255, 255, 0.14);
+
+  /* Header / navbar translucent backdrop */
+  --surface-header: rgba(0, 0, 0, 0.78);
+
+  /* WCAG AA/AAA text contrast */
+  --foreground: #e5e5e5;
+  --card-foreground: #e5e5e5;
+  --popover-foreground: #e5e5e5;
+  --text-primary: #fafafa;
+}
+
+/* Sub-theme inputs/surfaces in dark mode stay on the #0c0c0c/#111111 ladder. */
+html.t_dark:not(.t_light):root .t_Input,
+html.t_dark:not(.t_light):root .t_TextArea,
+html.t_dark:not(.t_light):root .t_surface1 {
+  --background: #0c0c0c;
+  --backgroundHover: #111111;
+  --backgroundFocus: #111111;
+  --borderColor: rgba(255, 255, 255, 0.08);
+  --borderColorHover: rgba(255, 255, 255, 0.14);
+  --borderColorFocus: rgba(255, 255, 255, 0.14);
+}
+
+/* Dark header backdrop and elevated sidebar surface, without touching light mode. */
+html.t_dark:not(.t_light) header[data-docs-header] {
+  background-color: var(--surface-header);
+  backdrop-filter: blur(12px);
+}
+
+html.t_dark:not(.t_light) aside[data-docs-rail] {
+  background-color: var(--surface-1);
+}
+
+html.t_dark:not(.t_light) button[data-docs-search] {
+  background-color: var(--surface-2);
+}
+
+html.t_dark:not(.t_light) button[data-docs-search]:hover {
+  background-color: var(--surface-3);
 }
 
 /* The theme class on <html> (gui's NextThemeProvider writes it) sets the
@@ -23,6 +127,7 @@
 }
 
 html {
+  background-color: var(--background);
   scrollbar-gutter: stable;
 }
 
@@ -50,5 +155,5 @@ body {
 }
 
 footer[data-hanzo-shell] {
-  background: #0a0a0a !important;
+  background: var(--background) !important;
 }

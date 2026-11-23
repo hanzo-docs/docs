@@ -28,6 +28,7 @@ export function Bar() {
   return (
     <XStack
       render="header"
+      data-docs-header=""
       position="sticky"
       t={0}
       z={30}
