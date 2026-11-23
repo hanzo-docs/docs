@@ -8,7 +8,10 @@
    gui's `$body` / `$mono` fonts read them. */
 :root {
   --font-sans: 'Zen', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'Zen Mono', ui-monospace, SFMono-Regular, monospace;
+  /* Improved monospace stack with fonts that have consistent box-drawing glyph widths.
+     JetBrains Mono and Fira Code have excellent box-drawing character support.
+     The fallback chain ensures consistent cell widths across platforms. */
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Source Code Pro', 'Zen Mono', ui-monospace, SFMono-Regular, monospace;
 }
 
 /* The theme class on <html> (gui's NextThemeProvider writes it) sets the
@@ -51,4 +54,11 @@ body {
 
 footer[data-hanzo-shell] {
   background: #0a0a0a !important;
+}
+
+/* Ensure code blocks never wrap and always show horizontal scrollbar when needed.
+   This prevents ASCII diagrams from wrapping and breaking alignment. */
+pre {
+  white-space: pre !important;
+  overflow-x: auto !important;
 }
