@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
     <title>Hanzo API Reference — the Open AI Cloud</title>
     <meta
       name="description"
@@ -15,7 +16,13 @@
       body {
         margin: 0;
         padding: 0;
-        background: #0a0a0a;
+        background: #000000;
+      }
+      .dark-mode {
+        --scalar-background-1: #000000;
+        --scalar-background-2: #080808;
+        --scalar-background-3: #0c0c0c;
+        --scalar-border-color: rgba(255, 255, 255, 0.08);
       }
       /* Anti-FOUC placeholder shown only until Scalar renders.
          Gated on html.booting — NOT on #app:empty — because Scalar mounts as a

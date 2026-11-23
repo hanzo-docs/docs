@@ -42,7 +42,7 @@ export function generate({ title, description, logo, site = 'My App' }: Generate
         width: '100%',
         height: '100%',
         color: 'white',
-        backgroundColor: 'rgb(10,10,10)',
+        backgroundColor: '#000000',
       }}
     >
       <div
