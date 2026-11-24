@@ -44,7 +44,7 @@ codex mcp add hanzo -- npx -y hanzo mcp
 
 Codex uses its own login, ChatGPT plan or API key, and the wrapper leaves its environment alone. It adds:
 
-- **The Hanzo toolset**, through Codex's `-c mcp_servers.hanzo.*` overrides. Your own `config.toml`, your servers and your `codex login` are untouched, because the wrapper never repoints `CODEX_HOME`. Codex can then hand work to Enso (`llm`), Kai (`kai_decide`) and Hanzo's search tools, billed to your Hanzo plan.
+- **The Hanzo toolset**, through Codex's `-c mcp_servers.hanzo.*` overrides. Your own `config.toml`, your servers and your `codex login` are untouched, because the wrapper never repoints `CODEX_HOME`. Codex can then hand work to Enso (`think` with `action="llm"`), Kai (`kai` with `action="decide"`), and Hanzo's `code` / `fetch` / `research` tools, billed to your Hanzo plan.
 - **The session** is registered in the cloud and, for a headless run, its events stream there. Pass `--no-link` to keep it local.
 - **The summary** at the end names every toolset call and the model it reached.
 

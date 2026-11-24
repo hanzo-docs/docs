@@ -330,7 +330,7 @@ function quickstart(p: Product, doc: Document, table: Map<string, CliCommand>, d
   L.push('## Quickstart');
   L.push('');
   L.push('```bash');
-  L.push(`export HANZO_API_KEY=${secretKey(doc).prefix}...   # console.hanzo.ai → API keys`);
+  L.push(`export HANZO_API_KEY=${secretKey(doc).prefix}...   # platform.hanzo.ai/api-keys`);
   L.push('```');
   L.push('');
   L.push(
@@ -800,7 +800,7 @@ function renderIndex(
   L.push('```');
   L.push('');
   L.push(
-    'Get a key at [console.hanzo.ai](https://console.hanzo.ai). New here? [Get started](/docs/guides) walks the same journeys as CLI, SDK, HTTP and MCP.',
+    'Get a key at [platform.hanzo.ai/api-keys](https://platform.hanzo.ai/api-keys). New here? [Get started](/docs/guides) walks the same journeys as CLI, SDK, HTTP and MCP.',
   );
   L.push('');
   L.push('## Start anywhere');

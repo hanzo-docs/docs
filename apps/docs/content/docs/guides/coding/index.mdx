@@ -54,14 +54,14 @@ hanzo --claude "fix the failing test in api/users"   # one quoted task runs head
 
 ## Hand work to Enso and Kai
 
-The Hanzo toolset is the native `hanzo-mcp` server, attached to the agent for that run only. Your own agent configuration is never edited. An agent on its own plan can use it to hand work off:
+The Hanzo toolset is the native `hanzo-mcp` server (19 canonical HIP-0300 tools), attached to the agent for that run only (`hanzo` auto-installs `hanzo-mcp` on first use if missing and auto-detects relevant skills from [hanzoskills.com](https://hanzoskills.com) into `~/.agents/skills/`). Your own agent configuration is never edited. An agent on its own plan can use it to hand work off:
 
-- **`llm`**: a request through Enso, Hanzo's router. Enso picks the model your plan pays for and says which one answered. Long reads, summaries and drafts can go here instead of the agent's own model.
-- **`kai_decide`**: typed questions (yes/no, choice, score) answered by Kai, Hanzo's decision model. Each answer comes with calibrated probabilities and its server latency. Classification, routing and checks over many items fit here.
-- **`code_search`, `code_context`, `web_search`, `web_read`, `research`**: search and reading on api.hanzo.ai.
-- **`fs`, `exec`, `git`, `code`, `lsp`, `browser`**: local tools that run on your machine.
+- **`think` (`action: "llm"`)**: a request through Enso, Hanzo's router, plus structured `think`, `critic`, `consensus`, and sub-agent delegation. Enso picks the model your plan pays for and says which one answered.
+- **`kai` (`action: "decide" | "choice" | "score" | "noul" | "run"`)**: typed decisions, action plans, command guards, injection screening, and log triage answered by Kai, Hanzo's decision model, with calibrated probabilities and server latency.
+- **`code` (`search`, `context`, `ask`, `index`), `fetch` (`search`, `read`, `vision`), `research`, `skills`**: cross-repo RAG, live web search/reading, autonomous research, and `hanzoskills.com` skill discovery on `api.hanzo.ai`.
+- **`fs`, `exec`, `git`, `workspace`, `browser`, `computer`, `tracker`, `coding`, `hanzo`**: local trigram search, classified shell, browser/CDP, desktop automation, cloud Tracker boards, autonomous coding runs, and the unified platform router.
 
-Tell the agent which jobs to hand off, or name the tool in your task: "use kai_decide to sort these 200 tickets by queue".
+Tell the agent which jobs to hand off, or name the tool in your task: "use `kai` (`action=decide`) to sort these 200 tickets by queue".
 
 ### Run the whole session on Hanzo
 

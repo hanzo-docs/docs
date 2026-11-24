@@ -44,14 +44,14 @@ Write the full path. An app started from the Dock, the Start menu or a launcher 
 | Grok Build | `grok mcp add --scope user hanzo /Users/you/.local/bin/hanzo-mcp` |
 | Zed, JetBrains AI Assistant | their MCP settings, with the same command |
 
-Then ask for the work by name: "use kai_decide to sort these 200 tickets by queue", "have llm summarise this log".
+Then ask for the work by name: "use `kai` (`action=decide`) to sort these 200 tickets by queue", "use `think` (`action=llm`) to summarise this log".
 
 ## The app's model on Hanzo
 
 An OpenAI-compatible model setting takes three values:
 
 - **Base URL:** `https://api.hanzo.ai/v1`
-- **API key:** a secret key (`sk-…`) from [console.hanzo.ai/api-keys](https://console.hanzo.ai/api-keys)
+- **API key:** a secret key (`sk-…`) from [platform.hanzo.ai/api-keys](https://platform.hanzo.ai/api-keys)
 - **Model:** `enso-auto`, which picks a model per request within your plan, or any id from `GET https://api.hanzo.ai/v1/models`
 
 An Anthropic-compatible setting takes `https://api.hanzo.ai` as its base and the same key.

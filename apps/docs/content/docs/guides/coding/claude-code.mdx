@@ -42,7 +42,7 @@ claude mcp add --scope user hanzo -- npx -y hanzo mcp
 
 Claude Code uses its own login in `~/.claude`, and its model calls go to Anthropic on your Claude plan. The wrapper adds:
 
-- **The Hanzo toolset.** The native `hanzo-mcp` that hanzo.sh installs beside `hanzo` is attached with `--mcp-config` for the run, through the CLI's own proxy, so Claude Code starts without waiting on it. Claude Code can then hand work to Enso (`llm`), Kai (`kai_decide`) and Hanzo's search tools, billed to your Hanzo plan. See [Hand work to Enso and Kai](/docs/guides/coding#hand-work-to-enso-and-kai).
+- **The Hanzo toolset.** The native `hanzo-mcp` (auto-installed beside `hanzo` if missing) is attached with `--mcp-config` for the run, through the CLI's lazy proxy, alongside auto-detected [hanzoskills.com](https://hanzoskills.com) skills. Claude Code can then hand work to Enso (`think` with `action="llm"`), Kai (`kai` with `action="decide"`), and Hanzo's `code` / `fetch` / `research` tools, billed to your Hanzo plan. See [Hand work to Enso and Kai](/docs/guides/coding#hand-work-to-enso-and-kai).
 - **The session** is registered in the cloud with its machine and directory. Pass `--no-link` to keep it local.
 - **The summary** at the end names every toolset call and the model it reached.
 

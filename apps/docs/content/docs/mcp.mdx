@@ -22,13 +22,29 @@ it runs. Bare `hanzo mcp` is stdio; `hanzo mcp -t sse` serves HTTP. Codex takes 
 same command: `codex mcp add hanzo -- npx -y hanzo mcp`. With `npm i -g hanzo`
 installed, `hanzo mcp` (or `hanzo-mcp`) runs it directly.
 
-That one command exposes the full surface:
+That one command exposes the full **19-tool canonical HIP-0300 surface** — one orthogonal, action-routed tool per capability, mirrored 1-to-1 across **Rust (`hanzo-mcp`)**, **TypeScript (`@hanzo/mcp`)**, and **Python (`hanzo-mcp` on PyPI)** over **stdio** and **streamable-http**:
 
-- **13 unified tools** — `fs`, `exec`, `code`, `git`, `fetch`, `workspace`, `ui`, plus optional `think`, `memory`, `hanzo`, `plan`, `tasks`, `mode`. One action-routed tool per capability (HIP-0300), so the client sees a small, stable set instead of hundreds of overlapping names.
-- **Cloud services** — the `hanzo` tool routes to your platform natively: IAM (identity), Commerce, Storage, and the AI API at `api.hanzo.ai/v1`, authenticated with your token.
-- **Your connectors** — GitHub, Slack, Google, Discord, X, and more, surfaced through the same connection once linked in the console.
-
-The same surface ships three ways — TypeScript (`@hanzo/mcp`), Python (`hanzo-mcp` on PyPI), and Rust (`hanzo-mcp::brain`) — mirrored 1-to-1, over the MCP **stdio** and **streamable-http** transports.
+| Tool | Actions / Capability |
+|------|----------------------|
+| **`fs`** | Filesystem & native `tgrep` trigram search (`read`, `write`, `edit`, `apply_patch`, `list`, `tree`, `search_text`, `stat`, `mkdir`, `rm`, `mv`, `cp`) |
+| **`exec`** | Process execution, classified shell policy, background jobs & ephemeral runners (`exec`, `ps`, `logs`, `kill`, `wait`, `npx`, `uvx`) |
+| **`code`** | Tree-sitter AST symbols, LSP, refactoring, `jq`, & cross-repo Cloud RAG (`symbols`, `outline`, `definition`, `references`, `diagnostics`, `rename`, `refactor`, `lsp`, `jq`, `search`, `context`, `ask`, `index`) |
+| **`git`** | Git version control & worktrees (`status`, `diff`, `log`, `commit`, `branch`, `checkout`, `blame`, `stash`, `worktree`) |
+| **`fetch`** | HTTP client, live web search, web reader & multimodal vision (`get`, `request`, `search`, `read`, `vision`) |
+| **`workspace`** | Project discovery, roots, config, mode & host system info (`detect`, `projects`, `config`, `system`, `mode`, `version`) |
+| **`browser`** | Web browser & CDP automation over ZAP (`navigate`, `snapshot`, `click`, `type`, `screenshot`, `evaluate`, `cdp`) |
+| **`computer`** | Native OS desktop screen, mouse, keyboard & GUI control (`screenshot`, `click`, `move`, `type`, `key`, `window`) |
+| **`ui`** | `@hanzo/ui` & `@hanzo/gui` design system registry (`search`, `get`, `blocks`, `install`, `tokens`) |
+| **`kai`** | **Single Kai decision & controller tool** (`decide`, `choice`, `score`, `noul`, `run`, `plan`, `list`, `triggers`, `compact`, `tool_select`, `next_action`, `command_guard`, `injection_screen`, `extract`, `log_triage`, `recover`, `agent_step`) |
+| **`think`** | Structured reasoning, multi-voice consensus, Enso LLM routing & sub-agent delegation (`think`, `critic`, `consensus`, `llm`, `models`, `agent`) |
+| **`plan`** | Step-by-step execution plans (`create`, `update`, `get`, `list`, `complete`) |
+| **`memory`** | Persistent memory & recall (`store`, `recall`, `search`, `list`, `delete`) |
+| **`tasks`** | Local private session todo list (`~/.hanzo/todos.json`: `list`, `add`, `update`, `complete`, `clear`) |
+| **`tracker`** | Cloud Tracker boards & work items (`/v1/tracker`: `boards`, `issues`, `create`, `update`) |
+| **`coding`** | Autonomous cloud coding sessions (`/v1/agent/coding`: `start`, `progress`, `changes`, `artifacts`, `tree`, `blob`, `steer`, `pull`, `merge`, `stop`) |
+| **`research`** | Hanzo Science studies, runs & evidence ledger (`/v1/research`: `studies`, `runs`, `start`, `status`, `ledger`, `artifacts`, `search`) |
+| **`skills`** | [hanzoskills.com](https://hanzoskills.com) & org skills (`search`, `detect`, `get`, `install`, `list` into `~/.agents/skills/<slug>/SKILL.md`) |
+| **`hanzo`** | Unified Hanzo Cloud platform router (`service` + `action`: `auth`, `iam`, `kms`/`vault`, `connectors`, `platform`, `compute`, `billing`, `s3`, `social`, and every fleet capability at `api.hanzo.ai/v1`) |
 
 ## Client setup
 

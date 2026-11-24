@@ -26,6 +26,24 @@ No terminal, no `curl`, `npm` or `brew`. Every build and its checksums are on
 Nothing to install at all: the same app runs in your browser at
 [hanzo.app](https://hanzo.app).
 
+## Local Cloud & Custom API Endpoint
+
+To point Hanzo Desktop at a local Cloud stack (`make up` in `hanzo-inc/universe` on `http://127.0.0.1:8000`), Devnet (`https://api-dev.hanzo.ai`), or any custom endpoint:
+
+1. Open **Settings → Environments & Machines → Cloud API Endpoint** (or **Settings → Advanced → Local services**).
+2. Select **`Local Cloud (make up)`** (`http://127.0.0.1:8000`), click **Test** to verify `/v1/health`, and click **Apply & Reload** (or launch from the terminal with `HANZO_CLOUD_API=http://127.0.0.1:8000 hanzo-desktop`).
+
+## Build & Install from Source
+
+Contributors building Hanzo Desktop from the unified `hanzo-inc/app` monorepo (`desktop/`):
+
+```bash
+make deps       # installs OS build deps (Ubuntu/Debian/Fedora/Arch/WSL2, macOS, Windows notes) + pnpm workspace
+make desktop    # builds desktop/src-tauri/target/release/hanzo-desktop (or macOS Hanzo.app)
+make install    # installs ~/.local/bin/hanzo-desktop + Dock launcher (or /Applications/Hanzo.app) and launches
+make linux-pkg  # packages distributable .deb and .rpm bundles
+```
+
 ## Desktop or the CLI?
 
 The [Hanzo CLI](/docs/cli) (`hanzo`) is for developers: it runs in a terminal,

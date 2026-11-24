@@ -16,7 +16,7 @@ const DIRECTORY: { title: string; links: { label: string; href: string }[] }[] =
       { label: 'Hanzo Chat', href: 'https://hanzo.chat' },
       { label: 'Hanzo App', href: 'https://hanzo.app' },
       { label: 'Hanzo Dev', href: 'https://hanzo.ai/dev' },
-      { label: 'Hanzo Cloud', href: 'https://console.hanzo.ai' },
+      { label: 'Hanzo Cloud', href: 'https://platform.hanzo.ai' },
       { label: 'Hanzo Base', href: 'https://hanzo.ai/base' },
       { label: 'Download app', href: 'https://hanzo.ai/download' },
       { label: 'Pricing', href: 'https://hanzo.ai/pricing' },

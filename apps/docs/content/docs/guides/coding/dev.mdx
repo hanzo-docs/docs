@@ -13,6 +13,10 @@ hanzo dev
 
 Bare `hanzo` starts the same agent. Hanzo Dev reads its configuration from `~/.hanzo/dev/config.toml` and nothing from a `.codex` beside it.
 
+Out of the box on every `hanzo` / `hanzo dev` launch:
+- **Native `hanzo-mcp` auto-install & IAM forwarding**: If `hanzo-mcp` is not yet on disk, `hanzo` downloads and SHA-256 verifies the native release binary automatically into `~/.local/bin/hanzo-mcp`, attaches all 19 canonical HIP-0300 tools (`mcp_servers.hanzo`) plus your org's hosted cloud tools (`https://api.hanzo.ai/v1/mcp`), and forwards your `hanzo login` IAM session (`HANZO_USER_KEY` / `HANZO_API_KEY` / `HANZO_ORG`) into `hanzo-mcp` with zero manual config.
+- **Automatic [hanzoskills.com](https://hanzoskills.com) skill detection**: `hanzo` inspects your workspace stack (`Cargo.toml`, `package.json`, `tauri.conf.json`, `pyproject.toml`, `go.mod`, `Dockerfile`, etc.) and prompt keywords, fetches matching skills from `https://hanzoskills.com` alongside your org's `/v1/tool/kit`, and syncs them into `~/.agents/skills/<slug>/SKILL.md` (set `HANZOSKILLS_DISABLE=1` to opt out).
+
 ## Hanzo MCP
 
 Two ways to give Hanzo Dev Hanzo's tools. **API key** adds the hosted endpoint, [`https://api.hanzo.ai/v1/mcp`](/docs/mcp-tools), with a key from [hanzo.app](https://hanzo.app) sent as `Authorization: Bearer sk-...`. **Local** is `hanzo-mcp`, which Hanzo Dev starts with. Replace `sk-...` with your key.
