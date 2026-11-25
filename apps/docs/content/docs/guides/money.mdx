@@ -1,13 +1,11 @@
 ---
-title: "Money"
-description: "Balance, then the usage that moved it."
+title: "Billing & Usage"
+description: "Read your credit balance and query itemized usage over a date window."
 ---
 
-**Balance, then the usage that moved it.**
+**Read your credit balance and query itemized usage over a date window.**
 
-> Neither takes an org: both derive the tenant server-side from the JWT `owner` claim, so a key can only read its own money. Both ids are cloud's cloud's, and so is the prose: it comes out of the handler's doc comment.
-
-/v1/billing/usage takes `start` and `end`, and both operations carry a typed 2xx body, so an SDK reads a struct rather than decoding by hand. Those are cloud's own declarations, from the handlers' `In`/`Out` types — not a shape anybody wrote here on their behalf.
+> Tenant scope is derived automatically from your API key. Pass optional `start` and `end` ISO-8601 timestamps to `/v1/billing/usage` to filter by date range.
 
 ## Prepaid credit the caller's org can still spend
 

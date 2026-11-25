@@ -3,9 +3,9 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Text, XStack } from '@hanzo/gui';
-import { Menu, PanelLeft } from '@hanzogui/lucide-icons-2';
+import { Menu, PanelLeft, Sparkle } from '@hanzogui/lucide-icons-2';
 import { Org, Short } from '@/components/account';
-import { Tool } from '@/components/action';
+import { Action, Tool } from '@/components/action';
 import { Brand } from '@/components/brand';
 import { BAR, useShell } from '@/components/shell';
 import { lit, nav } from '@/lib/nav';
@@ -22,7 +22,7 @@ import { loud, muted } from '@/lib/ink';
  * links live in the drawer there.
  */
 export function Bar() {
-  const { collapsed, setCollapsed, setOpen } = useShell();
+  const { collapsed, setCollapsed, setOpen, agentOpen, setAgentOpen } = useShell();
   const pathname = usePathname();
 
   return (
@@ -83,7 +83,26 @@ export function Bar() {
 
       <XStack flex={1} $md={{ display: 'none' }} />
 
-      <XStack items="center" gap={10} shrink={0}>
+      <XStack items="center" gap={8} shrink={0}>
+        <Action
+          tone={agentOpen ? 'loud' : 'line'}
+          render="button"
+          type="button"
+          data-docs-ask-ai=""
+          aria-expanded={agentOpen}
+          aria-label="Ask Hanzo AI (⌘I)"
+          onPress={() => setAgentOpen(!agentOpen)}
+        >
+          <Sparkle size={14} color={agentOpen ? '$background' : '$color11'} />
+          <Text
+            fontSize="$2"
+            lineHeight={18}
+            fontWeight="500"
+            color={agentOpen ? '$background' : '$color12'}
+          >
+            Ask AI
+          </Text>
+        </Action>
         <Org />
         <XStack display={collapsed ? 'flex' : 'none'} $max-md={{ display: 'flex' }}>
           <Short />

@@ -34,6 +34,7 @@ interface Flow {
   id: string;
   title: string;
   summary: string;
+  guideNote: string;
   notes: string;
   operations: string[];
 }
@@ -45,8 +46,9 @@ function readFlows(file: string): Flow[] {
   if (!raw || typeof raw !== 'object') return [];
   return Object.entries<any>(raw).map(([id, f]) => ({
     id,
-    title: titleOf(id),
+    title: String(f.title ?? titleOf(id)).trim(),
     summary: String(f.summary ?? '').trim(),
+    guideNote: String(f.guide_note ?? '').trim(),
     notes: String(f.notes ?? '').trim(),
     operations: f.operations ?? [],
   }));
@@ -140,8 +142,8 @@ function renderFlow(
   L.push(`**${text(flow.summary)}**`);
   L.push('');
   L.push(...doorNotice(doc, reach));
-  if (flow.notes) {
-    L.push(`> ${prose(flow.notes)}`);
+  if (flow.guideNote) {
+    L.push(`> ${prose(flow.guideNote)}`);
     L.push('');
   }
 
@@ -274,25 +276,30 @@ export async function genFlowPages(): Promise<void> {
     fs.writeFileSync(path.join(OUT_DIR, `${flow.id}.mdx`), renderFlow(flow, ops, doc, table, d, cat.meta.reach));
   }
   fs.writeFileSync(path.join(OUT_DIR, 'index.mdx'), renderIndex(flows, doc));
+  const dirOrder = ['cookbook', 'coding', 'integrations', 'migrate'];
+  const dirsOnDisk = fs
+    .readdirSync(OUT_DIR, { withFileTypes: true })
+    .filter((e) => e.isDirectory())
+    .map((e) => e.name);
+  const orderedDirs = [
+    ...dirOrder.filter((d) => dirsOnDisk.includes(d)),
+    ...dirsOnDisk.filter((d) => !dirOrder.includes(d)).sort(),
+  ];
+
   fs.writeFileSync(
     path.join(OUT_DIR, 'meta.json'),
     JSON.stringify(
       {
         title: 'Guides',
-        description: 'One task per page, each written as CLI, SDK, HTTP and MCP.',
+        description: 'Task-oriented walkthroughs across CLI, SDK, HTTP, and MCP.',
         // Not led by `index` — this folder's own `index.mdx` is its landing
-        // page already, and naming it publishes `Start > Start`.
-        // The flows, then the authored guide folders that live beside them.
-        // Read from disk rather than listed here, so adding one is a directory
-        // and not an edit to this generator.
+        // page already, and naming it publishes `Guides > Guides`.
         pages: [
+          '---Core Workflows---',
           ...flows.map((f) => f.id),
-          ...(fs.existsSync(path.join(OUT_DIR, 'kai.mdx')) ? ['kai'] : []),
-          ...fs
-            .readdirSync(OUT_DIR, { withFileTypes: true })
-            .filter((e) => e.isDirectory())
-            .map((e) => e.name)
-            .sort(),
+          ...(fs.existsSync(path.join(OUT_DIR, 'kai.mdx')) ? ['---Decision Model---', 'kai'] : []),
+          '---Recipes & Frameworks---',
+          ...orderedDirs,
         ],
       },
       null,

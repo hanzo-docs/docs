@@ -1,15 +1,11 @@
 ---
-title: "Chat"
-description: "One completion."
+title: "Chat Completions"
+description: "Send a prompt to Enso and receive a completion across 500+ models."
 ---
 
-**One completion.**
+**Send a prompt to Enso and receive a completion across 500+ models.**
 
-> POST /v1/chat/completions, the gateway's own inference route. The id lost its `v1` when the default version left the operationId; the address did not move.
-
-The document states that address and NOT its shape — no requestBody and no responses — so a generated method takes no prompt and hands back an opaque body. No language can ship this as an example that runs, and python, typescript and go each ship five. The flow keeps its place here because the operation is served: the day cloud's handler declares its In and Out types, the sixth example returns everywhere at once with nothing left to decide.
-
-Non-streaming when it does. Streaming is a different transport (SSE) that the generated clients return as an opaque body, so demonstrating it here would teach the wrong shape. Print choices[0].message.content.
+> Use `POST /v1/chat/completions` with `model: "auto"` (or any Zen, Claude, GPT, or Gemini ID) and read `choices[0].message.content`.
 
 ## Implements the OpenAI-compatible chat completions API
 

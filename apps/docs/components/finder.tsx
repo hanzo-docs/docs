@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { Fragment, useEffect, useMemo, useRef, useState, type ComponentProps, type ReactNode } from 'react';
 import { Input, Text, XStack, YStack } from '@hanzo/gui';
-import { ArrowRight, Check, ChevronRight, Hash, Search as Glass, Sparkle } from '@hanzogui/lucide-icons-2';
+import { ArrowRight, ChevronRight, Hash, Search as Glass, Sparkle } from '@hanzogui/lucide-icons-2';
 import { Dialog, DialogContent, DialogTitle } from '@hanzo/ui';
 import { useDocsSearch } from '@hanzo/docs-core/search/client';
 import type { SortedResult } from '@hanzo/docs-core/search';
@@ -13,7 +13,6 @@ import rehypeRaw from 'rehype-raw';
 import { loud, muted } from '@/lib/ink';
 import { Chips } from '@/components/chips';
 import { useTree } from '@/lib/tree';
-import { AGENT_SETUP_PROMPT } from '@/lib/agent-setup-prompt';
 
 /**
  * The search dialog. Full text over every page (the static index at
@@ -73,7 +72,6 @@ export default function Finder({ open, onOpenChange }: { open: boolean; onOpenCh
   const router = useRouter();
   const { tree } = useTree();
   const [tag, setTag] = useState<string | undefined>();
-  const [asked, setAsked] = useState(false);
   const { search, setSearch, query } = useDocsSearch({ type: 'flexsearch-static', from: '/v1/search', tag });
   const titles = useMemo(() => pages(tree.children), [tree]);
 
@@ -101,28 +99,25 @@ export default function Finder({ open, onOpenChange }: { open: boolean; onOpenCh
       }
     }
     if (Array.isArray(query.data)) for (const r of query.data) out.push({ ...r, kind: 'result' });
-    // A question is the fallback when the terms did not land, so it is last.
+    // A question opens the integrated Hanzo Agent panel with the query.
     if (q.length >= 3)
       out.push({
         kind: 'action',
         id: 'ask',
         node: (
           <XStack gap={8} items="center">
-            {asked ? <Check size={14} color="$color10" /> : <Sparkle size={14} color="$color10" />}
+            <Sparkle size={14} color="$color10" />
             <Text fontSize="$3" {...muted}>
-              {asked ? 'Copied — paste it into your agent' : <>Ask an agent <Text {...loud} fontWeight="500">“{q}”</Text></>}
+              Ask Hanzo Agent <Text {...loud} fontWeight="500">“{q}”</Text>
             </Text>
           </XStack>
         ),
-        run: () =>
-          void navigator.clipboard
-            .writeText(
-              `${AGENT_SETUP_PROMPT}\n\n---\n\nThen answer this using the Hanzo documentation at https://docs.hanzo.ai, and use the Hanzo skills at https://hanzoskills.com for any capability it touches:\n\n${q}`,
-            )
-            .then(() => setAsked(true)),
+        run: () => {
+          window.dispatchEvent(new CustomEvent('hanzo:ask-agent', { detail: q }));
+        },
       });
     return q ? out : null;
-  }, [search, query.data, titles, router, asked]);
+  }, [search, query.data, titles, router]);
 
   const [active, setActive] = useState(0);
   useEffect(() => setActive(0), [items]);
@@ -130,7 +125,6 @@ export default function Finder({ open, onOpenChange }: { open: boolean; onOpenCh
   const choose = (item: Item) => {
     if (item.kind === 'action') {
       item.run();
-      if (item.id === 'ask') return;
     } else router.push(item.url);
     onOpenChange(false);
   };

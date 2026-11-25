@@ -1,15 +1,11 @@
 ---
-title: "Hello"
-description: "Identity — prove the key works and print who it belongs to."
+title: "Verify Your API Key"
+description: "Confirm gateway reachability and verify that your API key authenticates."
 ---
 
-**Identity — prove the key works and print who it belongs to.**
+**Confirm gateway reachability and verify that your API key authenticates.**
 
-> Verified with a nonsense-sibling control: GET /v1/account/keys answers 403 &#123;"code":"forbidden","error":"sign in to manage API keys"&#125; with NO key and with a bogus one, while GET /v1/account/keys-zzq9 answers 404 — so the 403 is this route refusing, not a wildcard route. With a real key it returns the caller's own keys. An SDK's hello must be the call that says no.
-
-Both halves are what makes the flow readable: an unreachable gateway and a rejected credential both end in "no", and only the open call separates them.
-
-This replaces bot_authMe (GET /v1/bot/auth/me), which no longer resolves: cloud relays all of /v1/bot through one `app.All("/v1/bot/*")`, so the document has `/v1/bot/{wildcard1}` and no operation named that address. The old id existed only in bot/openapi.yaml, and a hand-authored id vanishes with the hand-authored spec — which is exactly why an id here must come from the served document.
+> Start with an unauthenticated `GET /v1/models` call to confirm connectivity, then call `GET /v1/account/keys` with your `HANZO_API_KEY` to verify your credentials.
 
 ## Returns the list of available models from the routing table.
 

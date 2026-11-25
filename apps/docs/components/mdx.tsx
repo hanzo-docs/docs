@@ -8,6 +8,7 @@ import { Hero } from '@/components/hero';
 import { ProductSection, ProductSections } from '@/components/product-section';
 import { ProviderStrip } from '@/components/provider-strip';
 import { Example } from '@/components/example';
+import { DeployButtonGenerator } from '@/components/deploy-button-generator';
 
 /**
  * Everything a docs page's MDX can render, by the name it is written with.
@@ -71,6 +72,8 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     InstallCatalog,
     // The API reference's examples, highlighted at render (lib/rehype-example).
     Example,
+    // Interactive Deploy Button & GitHub Badge generator.
+    DeployButtonGenerator,
     ...components,
   };
 }

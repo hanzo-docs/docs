@@ -99,21 +99,42 @@ function Node({ node }: { node: PageTree.Item | PageTree.Folder }) {
   return <Folder node={node} />;
 }
 
+const OPEN_SECTIONS = new Set([
+  'Start',
+  'Build AI Apps',
+  'Ship & Deploy',
+  'Guides',
+  'Core Workflows',
+  'Decision Model',
+  'Recipes & Frameworks',
+]);
+
 function Section({ name, nodes }: { name: ReactNode; nodes: PageTree.Node[] }) {
   const { path } = useTree();
-  const [open, setOpen] = useFold(nodes.some((node) => path.includes(node)));
+  const label = typeof name === 'string' ? name : '';
+  const defaultOpen = OPEN_SECTIONS.has(label) || nodes.some((node) => path.includes(node));
+  const [open, setOpen] = useFold(defaultOpen);
 
   return (
-    <YStack>
+    <YStack mt={6}>
       <Toggle open={open} onPress={() => setOpen(!open)}>
-        <Text flex={1} fontSize="$3" lineHeight={20} fontWeight="500" color="$color12" numberOfLines={1} text="left">
+        <Text
+          flex={1}
+          fontSize={12}
+          lineHeight={16}
+          fontWeight="600"
+          letterSpacing={0.2}
+          {...muted}
+          numberOfLines={1}
+          text="left"
+        >
           {name}
         </Text>
       </Toggle>
       {open && (
-        <Indent>
+        <YStack gap={1} mt={2}>
           <List nodes={nodes} />
-        </Indent>
+        </YStack>
       )}
     </YStack>
   );

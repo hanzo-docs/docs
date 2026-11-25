@@ -16,6 +16,7 @@ export const nav: Nav[] = [
   { text: 'Agents', url: '/docs/agents' },
   { text: 'Docs', url: '/docs', exact: true },
   { text: 'Guides', url: '/docs/guides' },
+  { text: 'Deploy', url: '/docs/deploy-button' },
   { text: 'Models', url: '/docs/models' },
   { text: 'APIs', url: '/docs/openapi' },
   { text: 'SDKs', url: '/docs/sdks' },

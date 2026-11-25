@@ -1,15 +1,11 @@
 ---
-title: "Tools"
-description: "List the MCP tools this key can reach."
+title: "Discover MCP Tools"
+description: "List every MCP tool and capability available to your API key."
 ---
 
-**List the MCP tools this key can reach.**
+**List every MCP tool and capability available to your API key.**
 
-> GET /v1/tool is the catalogue read: every tool the caller's org and project can reach, from every source, each flagged with whether it is activated. Assert the count is greater than zero and print three names.
-
-This flow named `mcp_rpc` (POST /v1/mcp, the JSON-RPC endpoint) until the document became the only authority on what exists. That endpoint IS live — POST /v1/mcp answers 200 with the tool list while POST /v1/mcp-zzq9 answers 404, so the address is real and the control refutes nothing — but cloud's emission does not declare it, so it has no operationId and no generated method. An example may not reach for an address the document does not carry: that is a hand-rolled HTTP call inside a generated client, the exact drift these SDKs exist to prevent. `POST /v1/mcp` returns here the release cloud declares it (LLM.md, "Handed to hanzo-inc/cloud").
-
-Note for whoever writes that declaration: JSON-RPC reports failure INSIDE a 200, so a client reads `error` before `result` and `result.isError` before `result.content`. The same endpoint with method=tools/call runs one.
+> `GET /v1/tool` lists every tool your organization and project can invoke, along with its activation status. To invoke tools directly over JSON-RPC, send `tools/call` to `POST /v1/mcp`.
 
 ## Lists every tool the caller's org and project can reach, from every source, each flagged with whether it is activated.
 

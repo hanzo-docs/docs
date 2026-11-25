@@ -6,6 +6,7 @@ import { Text } from '@hanzo/gui';
 import { Check, ChevronDown, Sparkle } from '@hanzogui/lucide-icons-2';
 import { DropdownMenu } from '@hanzo/ui';
 import { Action } from '@/components/action';
+import { useShell } from '@/components/shell';
 import { AGENT_SETUP_PROMPT } from '@/lib/agent-setup-prompt';
 import { muted } from '@/lib/ink';
 import { twinPath } from '@/lib/twin';
@@ -29,6 +30,7 @@ Hanzo capability are published at ${SKILLS}.`;
  */
 export function Agent() {
   const pathname = usePathname();
+  const { askAgent } = useShell();
   const [done, setDone] = useState(false);
   // Every page has a Markdown twin at `<page>.md` (scripts/twins.ts).
   const md = twinPath(pathname);
@@ -56,6 +58,11 @@ export function Agent() {
       }
       items={[
         { type: 'label', label: 'Use with Hanzo' },
+        {
+          key: 'docs-agent',
+          label: 'Ask Hanzo Agent about this page',
+          onSelect: () => askAgent(`Summarize this page (${pathname}) and show me the quickest way to use it.`),
+        },
         { key: 'app', label: 'Open in Hanzo App', onSelect: () => go('https://hanzo.app') },
         // `hanzo code` runs whichever coding backend the reader chose, in their
         // own terminal, so the command is copied rather than opened.

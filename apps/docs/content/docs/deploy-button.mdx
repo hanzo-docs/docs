@@ -1,0 +1,115 @@
+---
+title: Deploy Button & GitHub Badges
+description: Add one-click Ask, Edit, and Deploy buttons plus live GitHub profile charts to any README — with automatic 20% OSS contributor rewards.
+icon: Rocket
+---
+
+Add a **Deploy**, **Ask**, or **Edit** button to any GitHub repository README so visitors can deploy your project in one click, ask Hanzo AI about the codebase, or launch an interactive coding session in [Hanzo Dev](https://hanzo.app/dev).
+
+Every link supports Vercel-compatible query parameters (`repository-url`, `project-name`, `root-directory`, `env`) plus optional `via=` attribution so open-source maintainers earn **20% compute & deployment rewards**.
+
+## Action Buttons (32px)
+
+Our `32px` Vercel-style dark & light buttons feature the canonical Hanzo mark and match standard README button heights cleanly side-by-side:
+
+| Action | Preview | Image URL |
+| --- | --- | --- |
+| **Deploy** | [![Deploy with Hanzo](https://hanzo.app/badges/deploy-button.svg)](https://hanzo.app/deploy?repository-url=https%3A%2F%2Fgithub.com%2Fhanzoai%2Fhanzo) | `https://hanzo.app/badges/deploy-button.svg` |
+| **Deploy with Hanzo** | [![Deploy with Hanzo](https://hanzo.app/badges/deploy-with-hanzo-button.svg)](https://hanzo.app/deploy?repository-url=https%3A%2F%2Fgithub.com%2Fhanzoai%2Fhanzo) | `https://hanzo.app/badges/deploy-with-hanzo-button.svg` |
+| **Ask** | [![Ask Hanzo AI](https://hanzo.app/badges/ask-button.svg)](https://hanzo.app/dev/open?repo=https%3A%2F%2Fgithub.com%2Fhanzoai%2Fhanzo&action=ask) | `https://hanzo.app/badges/ask-button.svg` |
+| **Build** | [![Build with Hanzo](https://hanzo.app/badges/build-button.svg)](https://hanzo.app/dev/open?repo=https%3A%2F%2Fgithub.com%2Fhanzoai%2Fhanzo&action=edit) | `https://hanzo.app/badges/build-button.svg` |
+| **Edit** | [![Edit in Hanzo Dev](https://hanzo.app/badges/edit-button.svg)](https://hanzo.app/dev/open?repo=https%3A%2F%2Fgithub.com%2Fhanzoai%2Fhanzo&action=edit) | `https://hanzo.app/badges/edit-button.svg` |
+
+> Light-theme variants are available by appending `-light.svg` (e.g. `deploy-button-light.svg`, `ask-button-light.svg`, `edit-button-light.svg`) and pair automatically with GitHub's `<picture>` `prefers-color-scheme` tags.
+
+## Generate Your Own
+
+Configure a repository URL, project name, root directory, environment variables, and your GitHub handle (`via`) to generate ready-to-paste Markdown, HTML, or direct URLs:
+
+<DeployButtonGenerator />
+
+## Snippets
+
+<Tabs items={['Markdown', 'HTML', 'Adaptive Light/Dark']}>
+<Tab value="Markdown">
+```markdown
+[![Deploy with Hanzo](https://hanzo.app/badges/deploy-button.svg)](https://hanzo.app/deploy?repository-url=https%3A%2F%2Fgithub.com%2Fhanzoai%2Fnext-ai-starter&env=HANZO_API_KEY)
+[![Ask Hanzo AI](https://hanzo.app/badges/ask-button.svg)](https://hanzo.app/dev/open?repo=https%3A%2F%2Fgithub.com%2Fhanzoai%2Fnext-ai-starter&action=ask)
+[![Edit in Hanzo Dev](https://hanzo.app/badges/edit-button.svg)](https://hanzo.app/dev/open?repo=https%3A%2F%2Fgithub.com%2Fhanzoai%2Fnext-ai-starter&action=edit)
+```
+</Tab>
+<Tab value="HTML">
+```html
+<a href="https://hanzo.app/deploy?repository-url=https%3A%2F%2Fgithub.com%2Fhanzoai%2Fnext-ai-starter&env=HANZO_API_KEY">
+  <img src="https://hanzo.app/badges/deploy-button.svg" alt="Deploy with Hanzo" height="32" />
+</a>
+```
+</Tab>
+<Tab value="Adaptive Light/Dark">
+```html
+<a href="https://hanzo.app/deploy?repository-url=https%3A%2F%2Fgithub.com%2Fhanzoai%2Fnext-ai-starter">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://hanzo.app/badges/deploy-button.svg" />
+    <source media="(prefers-color-scheme: light)" srcset="https://hanzo.app/badges/deploy-button-light.svg" />
+    <img alt="Deploy with Hanzo" src="https://hanzo.app/badges/deploy-button.svg" height="32" />
+  </picture>
+</a>
+```
+</Tab>
+</Tabs>
+
+## Query Parameters
+
+The deployment flow accepts `https://hanzo.app/deploy`, `https://hanzo.app/new`, and `https://hanzo.app/new/clone` interchangeably — existing Vercel Deploy Button links work by swapping the host to `hanzo.app`.
+
+| Parameter | Required | Description |
+| --- | --- | --- |
+| `repository-url` | Yes | Public Git repository URL (supports `/tree/<branch>/<subdir>` paths for monorepos). |
+| `project-name` | No | Default project name pre-filled in the deployment form. |
+| `root-directory` | No | Subdirectory containing the app to build inside a monorepo. |
+| `env` | No | Comma-separated list of required environment variable names (e.g. `HANZO_API_KEY,DATABASE_URL`). |
+| `envDescription` | No | Helper text explaining where to obtain the required environment variables. |
+| `envLink` | No | URL to documentation explaining how to configure the environment variables. |
+| `build-command` | No | Override the auto-detected framework build command. |
+| `output-directory` | No | Override the auto-detected build output directory. |
+| `install-command` | No | Override the auto-detected package install command. |
+| `via` | No | OSS maintainer handle or wallet ID to receive 20% referral attribution. |
+
+For **Ask** and **Edit** buttons, use `https://hanzo.app/dev/open` with:
+
+| Parameter | Description |
+| --- | --- |
+| `repo` | GitHub `owner/repo` slug or full repository URL. |
+| `action` | `ask` (codebase Q&A), `edit` (interactive coding agent), or `deploy` (opens the deploy flow). |
+| `branch` | Optional branch name to inspect or check out. |
+| `prompt` | Optional initial instruction pre-loaded into Hanzo Dev. |
+| `via` | Optional OSS maintainer handle for 20% contributor attribution. |
+
+## Compact Shields & For-The-Badge Presets
+
+Need inline `20px` badges that line up pixel-for-pixel with `shields.io` and Google Colab badges, or `28px` For-The-Badge strips? Every preset is hosted at `https://hanzo.app/badges/`:
+
+- **20px Shields / Colab height**: `flat/ask.svg`, `flat/edit.svg`, `flat/deploy.svg`, `flat-square/deploy.svg`, `plastic/deploy.svg`
+- **28px For-The-Badge height**: `for-the-badge/ask.svg`, `for-the-badge/edit.svg`, `for-the-badge/deploy.svg`
+- **32px Action & Deploy Buttons**: `ask-button.svg`, `edit-button.svg`, `deploy-button.svg`, `deploy-with-hanzo-button.svg`
+
+## GitHub Profile Charts & Widgets (495px)
+
+Showcase live AI compute stats, top models, coding streaks, and activity heatmaps directly on your GitHub profile or project README:
+
+- **Activity Overview**: `https://hanzo.app/badges/cards/card-activity.svg`
+- **Top Models Breakdown**: `https://hanzo.app/badges/cards/card-models.svg`
+- **Coding Streak**: `https://hanzo.app/badges/cards/card-streak.svg`
+- **Contribution Heatmap**: `https://hanzo.app/badges/cards/card-heatmap.svg`
+
+> Customize `Ask`, `Build`, `Edit`, and `Deploy` buttons interactively at [hanzo.ai/button](https://hanzo.ai/button), or generate live GitHub profile stats and charts at [hanzo.ai/badge](https://hanzo.ai/badge).
+
+## Earn 20% OSS Contributor Rewards
+
+Append `&via=<your-handle>` to any **Deploy**, **Ask**, or **Edit** badge in your repository README:
+
+1. Visitors click your badge and launch a deployment or Hanzo Dev session with your repo pre-loaded.
+2. Hanzo attributes their session and deployment usage to your `via` handle.
+3. Connect your payout wallet in [Hanzo App Settings → Referrals](https://hanzo.app/settings/referrals) to receive up to **20% of AI compute and deployment revenue** generated from your open-source projects.
+
+See the [Referrals documentation](/docs/referrals) for payout schedules and attribution rules.

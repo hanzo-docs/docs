@@ -5,6 +5,7 @@ import { XStack } from '@hanzo/gui';
 import { DropdownMenu } from '@hanzo/ui';
 import { useTheme } from '@hanzogui/next-theme';
 import { HanzoMark } from '@hanzogui/shell';
+import { useShell } from '@/components/shell';
 import { twinPath } from '@/lib/twin';
 
 /**
@@ -14,6 +15,7 @@ import { twinPath } from '@/lib/twin';
 export function Corner() {
   const pathname = usePathname();
   const router = useRouter();
+  const { setAgentOpen } = useShell();
   const { resolvedTheme, setTheme } = useTheme();
   const md = twinPath(pathname);
 
@@ -55,6 +57,7 @@ export function Corner() {
         }
         items={[
           { type: 'label', label: 'Help & Community' },
+          { key: 'agent', label: 'Ask Hanzo Agent (⌘I)', onSelect: () => setAgentOpen(true) },
           { key: 'discord', label: 'Ask in #docs on Discord', onSelect: () => go('https://discord.gg/XthHQQj') },
           { key: 'contribute', label: 'Contribute to docs', onSelect: () => router.push('/docs/contributing') },
           { key: 'issue', label: 'Report a docs issue', onSelect: () => go('https://github.com/hanzo-docs/docs/issues/new') },

@@ -43,7 +43,11 @@
 
 flows:
   hello:
-    summary: Identity — prove the key works and print who it belongs to.
+    title: Verify Your API Key
+    summary: Confirm gateway reachability and verify that your API key authenticates.
+    guide_note: >-
+      Start with an unauthenticated `GET /v1/models` call to confirm connectivity, then call
+      `GET /v1/account/keys` with your `HANZO_API_KEY` to verify your credentials.
     # The route must FAIL on a bad key, which is the whole point of the flow, so
     # this choice is made by probing api.hanzo.ai rather than by reading the
     # document. Three candidates were disqualified for answering 200 to a caller
@@ -81,7 +85,11 @@ flows:
       from the served document.
 
   chat:
-    summary: One completion.
+    title: Chat Completions
+    summary: Send a prompt to Enso and receive a completion across 500+ models.
+    guide_note: >-
+      Use `POST /v1/chat/completions` with `model: "auto"` (or any Zen, Claude, GPT, or Gemini ID)
+      and read `choices[0].message.content`.
     operations: [post_chat_completions]
     notes: >-
       POST /v1/chat/completions, the gateway's own inference route. The id lost
@@ -103,7 +111,11 @@ flows:
       would teach the wrong shape. Print choices[0].message.content.
 
   money:
-    summary: Balance, then the usage that moved it.
+    title: Billing & Usage
+    summary: Read your credit balance and query itemized usage over a date window.
+    guide_note: >-
+      Tenant scope is derived automatically from your API key. Pass optional `start` and `end`
+      ISO-8601 timestamps to `/v1/billing/usage` to filter by date range.
     operations: [get_billing_balance, get_billing_usage]
     notes: >-
       Neither takes an org: both derive the tenant server-side from the JWT
@@ -117,7 +129,11 @@ flows:
       not a shape anybody wrote here on their behalf.
 
   store:
-    summary: KV round-trip — create a store, read it back, delete it.
+    title: Key-Value Storage
+    summary: Provision a managed key-value store, inspect it, and tear it down.
+    guide_note: >-
+      Uses `/v1/provisioning/kv` to create, inspect, and delete a managed KV store. Place cleanup
+      in `finally` or `defer` so failed runs never leak test stores.
     operations: [post_provisioning_kv, get_provisioning_kv_by_name, delete_provisioning_kv_by_name]
     notes: >-
       The delete belongs in the language's finally/defer, so a failed read still
@@ -133,7 +149,11 @@ flows:
       handler; only a mounted route can refuse).
 
   agent:
-    summary: Create an agent, run it, read the run back.
+    title: Create & Run an Agent
+    summary: Create an autonomous agent, trigger a run, and poll its run history.
+    guide_note: >-
+      Pass either the public `agent_...` ID or your org-unique agent name as `ref`. Agent runs
+      execute asynchronously — poll the runs endpoint until the status reaches a terminal state.
     operations:
       - post_agent
       - post_agent_by_ref_run
@@ -146,7 +166,11 @@ flows:
       example polls it until the run it started is terminal.
 
   tools:
-    summary: List the MCP tools this key can reach.
+    title: Discover MCP Tools
+    summary: List every MCP tool and capability available to your API key.
+    guide_note: >-
+      `GET /v1/tool` lists every tool your organization and project can invoke, along with its
+      activation status. To invoke tools directly over JSON-RPC, send `tools/call` to `POST /v1/mcp`.
     operations: [get_tool]
     notes: >-
       GET /v1/tool is the catalogue read: every tool the caller's org and
