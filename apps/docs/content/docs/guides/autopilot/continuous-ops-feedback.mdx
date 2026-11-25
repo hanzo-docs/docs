@@ -1,0 +1,113 @@
+---
+title: "Turn human overrides into weekly Kai & Enso upgrades"
+description: "Pipe every human operator override in your business workflows into Kai corrections and Enso feedback to drive weekly accuracy and margin improvements."
+product: autopilot
+level: specialist
+duration: 20 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`) with decision capture enabled"
+objectives:
+  - "Record human overrides against decision IDs via POST /v1/decisions/{decision}/corrections"
+  - "Pair overrides with Enso outcome signals on POST /v1/ai/feedback"
+  - "Schedule weekly Kai capability retraining and evaluation checks"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - AUTO 101
+  - KAI 301
+status: shipped
+---
+
+**Your human review queue is your highest-leverage training dataset.** Every time an operator overrides a routed ticket or edits a generated response, emit one structured correction so next week's autopilot makes fewer mistakes.
+
+## Architecture & contract
+
+Decision overrides flow into `/v1/decisions/{decision}/corrections` (feeding `POST /v1/capabilities/{name}/train`), while generative edits flow into `POST /v1/ai/feedback` (feeding Enso's learned router). Both stay strictly inside your org.
+
+**Primary endpoint:** `POST /v1/decisions/{decision}/corrections` · **Status:** `shipped` · **Level:** `specialist`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo decisions corrections create "$DECISION_ID" --data '{"question":"refund_route","expected":"csm_waiver","note":"Enterprise SLA"}'
+hanzo ai feedback --data '{"request_id":"chatcmpl-01J...","signal":"regenerate"}'
+hanzo capabilities corrections
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, DecisionsApi, AiApi } from 'hanzoai';
+
+const cfg = new Configuration({ accessToken: process.env.HANZO_API_KEY });
+await Promise.all([
+  new DecisionsApi(cfg).decisionsCorrect(process.env.DECISION_ID!, {
+    question: 'refund_route',
+    expected: 'csm_waiver',
+    note: 'Enterprise SLA override',
+  }),
+  new AiApi(cfg).postAiFeedback({ request_id: 'chatcmpl-01J...', signal: 'regenerate' }),
+]);
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import DecisionsApi, AiApi
+
+client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
+DecisionsApi(client).decisions_correct(os.environ["DECISION_ID"], {"question": "refund_route", "expected": "csm_waiver"})
+AiApi(client).post_ai_feedback({"request_id": "chatcmpl-01J...", "signal": "regenerate"})
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -s -X POST "https://api.hanzo.ai/v1/decisions/${DECISION_ID}/corrections" \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{"question":"refund_route","expected":"csm_waiver","note":"Enterprise SLA"}' | jq '.'
+
+curl -s -X POST https://api.hanzo.ai/v1/ai/feedback \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{"request_id":"chatcmpl-01J...","signal":"regenerate"}' | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "ai",
+      "arguments": {"op": "capabilitiesCorrections", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Verify `GET /v1/capabilities/corrections` increments captured counts for your target question key.
+
+## Production guardrails
+
+- Ensure capture is enabled (`PUT /v1/capabilities/capture`) before collecting overrides so rows are marked `captured` rather than `missing`.
+
+## Next steps & Hanzo University
+
+- [Teach Kai Your Business (KAI 301 Lab 01)](/docs/training/kai-capabilities)
+
+- **[AUTO 101 — Continuous Improvement](https://hanzo.university/continuous-improvement)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/continuous-improvement))
+- **[KAI 301 — Training Kai Decision Models](https://hanzo.university/kai-training-decision-models)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/kai-training-decision-models))

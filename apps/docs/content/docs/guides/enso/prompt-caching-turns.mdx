@@ -1,0 +1,131 @@
+---
+title: "Cut coding-agent turn costs 4.6x with prompt caching"
+description: "Structure long system instructions and repository context with cache_control to cut multi-turn coding agent costs by up to 4.6x on Enso."
+product: enso
+level: practitioner
+duration: 15 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`)"
+objectives:
+  - "Place stable prompt prefixes first and tag them with cache_control"
+  - "Verify cache hits via usage.prompt_tokens_details.cached_tokens"
+  - "Reduce 100k-token agent turns on enso-pro from $0.363 to $0.0795"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - ENS 201
+  - ENG 100
+status: shipped
+---
+
+**Unstructured dynamic prefixes invalidate prompt caches on every turn.** On a 100,000-token coding turn (`92k` cached, `6k` new, `2k` output), proper prefix caching cuts `enso-pro` turn cost from `\$0.363` to `\$0.0795` — a 4.6x savings.
+
+## Architecture & contract
+
+Place immutable system instructions, tool schemas, and repo summaries first, mark the boundary with `cache_control: {"type": "ephemeral"}`, and append volatile turn state (timestamps, diffs, user messages) strictly at the end.
+
+**Primary endpoint:** `POST /v1/chat/completions` · **Status:** `shipped` · **Level:** `practitioner`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo chat completions --data '{
+  "model": "enso-pro",
+  "messages": [
+    {
+      "role": "system",
+      "content": [{"type": "text", "text": "You are a systems engineer auditing Go services...", "cache_control": {"type": "ephemeral"}}]
+    },
+    {"role": "user", "content": "Review handler.go for race conditions."}
+  ]
+}'
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, AiApi } from 'hanzoai';
+
+const ai = new AiApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data } = await ai.postChatCompletions({
+  model: 'enso-pro',
+  messages: [
+    {
+      role: 'system',
+      content: [{ type: 'text', text: stableSystemPrompt, cache_control: { type: 'ephemeral' } }],
+    },
+    { role: 'user', content: 'Review handler.go for race conditions.' },
+  ],
+});
+console.log('Cached tokens:', data.usage?.prompt_tokens_details?.cached_tokens);
+```
+</Tab>
+<Tab value="Python">
+```python
+import os, requests
+
+payload = {
+    "model": "enso-pro",
+    "messages": [
+        {"role": "system", "content": [{"type": "text", "text": stable_prompt, "cache_control": {"type": "ephemeral"}}]},
+        {"role": "user", "content": "Review handler.go for race conditions."},
+    ],
+}
+r = requests.post("https://api.hanzo.ai/v1/chat/completions", headers={"Authorization": f"Bearer {os.environ['HANZO_API_KEY']}"}, json=payload).json()
+print("Cached tokens:", r.get("usage", {}).get("prompt_tokens_details", {}).get("cached_tokens", 0))
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -s https://api.hanzo.ai/v1/chat/completions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "enso-pro",
+    "messages": [
+      {"role": "system", "content": [{"type": "text", "text": "Stable repository context and rules...", "cache_control": {"type": "ephemeral"}}]},
+      {"role": "user", "content": "Review handler.go for race conditions."}
+    ]
+  }' | jq '.usage'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "eval",
+      "arguments": {"op": "get_eval_metrics", "input": {"range": "24h"}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Run the same request twice with different user turns and verify `usage.prompt_tokens_details.cached_tokens > 0` on turn 2.
+
+## Production guardrails
+
+- Never inject `Date.now()` or random request IDs inside the cached prefix — even one changed byte busts the cache.
+
+## Next steps & Hanzo University
+
+- [Enso Caching & Turn Economics](/docs/models/enso#caching)
+
+- **[ENS 201 — Enso Adaptive Intelligence](https://hanzo.university/enso-adaptive-intelligence)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/enso-adaptive-intelligence))
+- **[ENG 100 — Agentic Coding](https://hanzo.university/agentic-coding)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/agentic-coding))

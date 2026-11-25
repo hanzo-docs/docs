@@ -1,0 +1,115 @@
+---
+title: Automated security assessments
+description: "Run continuous secret scans (/v1/security/scans), risk scoring (/v1/risk/score), compliance verification (/v1/compliance/status), and trust-center coverage (/v1/trust/coverage)."
+icon: ClipboardCheck
+product: cyber
+level: practitioner
+duration: 20 min
+prerequisites:
+  - A Hanzo secret key (`sk-...`)
+objectives:
+  - Retrieve scan histories and masked finding details via `/v1/security/scans` and `/v1/security/findings`
+  - Evaluate operational risk features and policies via `/v1/risk/score`
+  - Export live framework control coverage via `/v1/trust/coverage/{framework}` and `/v1/compliance/status`
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - CYB 201
+  - CYB 401
+status: shipped
+---
+
+**Point-in-time annual audits decay the day after the PDF is signed.** Hanzo exposes continuous security posture, risk scoring, and framework control evidence through live `/v1/` endpoints so CI pipelines and customer trust portals read the same source of truth.
+
+## Continuous posture assessment across four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+# Org scan history and active findings
+hanzo security scans list
+hanzo security findings list
+
+# Compliance status & trust center controls
+hanzo compliance status
+hanzo trust coverage --framework soc2
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, SecurityApi, TrustApi, ComplianceApi } from 'hanzoai';
+
+const cfg = new Configuration({ accessToken: process.env.HANZO_API_KEY });
+const [scans, coverage, compliance] = await Promise.all([
+  new SecurityApi(cfg).getSecurityScans(),
+  new TrustApi(cfg).getTrustCoverageByFramework('soc2'),
+  new ComplianceApi(cfg).getComplianceStatus(),
+]);
+console.log({ scans: scans.data, coverage: coverage.data, compliance: compliance.data });
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import SecurityApi, TrustApi, ComplianceApi
+
+client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
+print(SecurityApi(client).get_security_scans())
+print(TrustApi(client).get_trust_coverage_by_framework("soc2"))
+print(ComplianceApi(client).get_compliance_status())
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+# 1. Recent security scans
+curl -s https://api.hanzo.ai/v1/security/scans \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+# 2. Trust center framework coverage (e.g. soc2)
+curl -s https://api.hanzo.ai/v1/trust/coverage/soc2 \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+# 3. Real-time risk score evaluation
+curl -s -X POST https://api.hanzo.ai/v1/risk/score \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"subject":"deploy_prod","features":{"new_secret_findings":0,"unverified_images":1}}' | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "trust",
+      "arguments": {"op": "get_trust_controls", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## CI release gate pattern
+
+Wire `POST /v1/security/scans` into every pull request:
+- Fail the build on any high-severity secret finding (`rule`, `path`, `line`, `fingerprint`).
+- Attach `GET /v1/sbom/{ref}` output to your release attestation.
+- Upload passing control evidence to `POST /v1/trust/evidence` so framework coverage stays current automatically.
+
+## Related courses & docs
+
+- [CYB 201 — Agentic Cybersecurity](https://hanzo.university/agentic-cybersecurity) ([Interactive Lab](https://hanzo.app/learn/agentic-cybersecurity))
+- [Vulnerability Validation](/docs/cybersecurity/vulnerability-validation) · [Autonomous Remediation](/docs/cybersecurity/remediation)

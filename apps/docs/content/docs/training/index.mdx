@@ -1,0 +1,80 @@
+---
+title: Training & optimization
+description: "Turn production outcomes and domain data into org-private intelligence across three training planes: Kai CPU capability training, Enso routing optimization, and Zen fine-tuning & RL."
+icon: Sliders
+product: platform
+level: practitioner
+duration: 15 min
+prerequisites:
+  - A Hanzo secret key (`sk-...`)
+  - Familiarity with [Choose your intelligence architecture](/docs/choose-architecture)
+objectives:
+  - Pick the lightest training plane that solves your failure mode
+  - Understand how Kai, Enso, and Zen training share one artifact, evaluation, and rollback model
+  - Navigate to runnable labs across CLI, SDK, HTTP `/v1/`, and MCP
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - KAI 301
+  - ENS 301
+  - ZEN 301
+  - RL 101
+  - ML 401
+status: shipped
+---
+
+**Never fine-tune a 27B generative model when a 50-row CPU decision capability or a routing reward fixes the problem.** Hanzo organizes training into three distinct planes ordered by speed, cost, and blast radius.
+
+## Three training planes
+
+| Plane | What changes | Hardware & speed | Canonical endpoint | Best for | Status |
+|---|---|---|---|---|---|
+| **[Kai Capabilities](/docs/training/kai-capabilities)** | Org-private calibration, linear head, or boost+veto pair over frozen Kai representations | CPU, seconds, zero re-encoding of captured states | `POST /v1/capabilities/{name}/train` | Domain-specific classification, support triage, fraud/risk gating, policy verdicts | `shipped` |
+| **[Enso Routing](/docs/training/enso-routing)** | Per-org learned bilinear routing utility and custom escalation blends | CPU, online reward ledger + held-out candidate promotion | `POST /v1/ai/feedback`, `POST /v1/benchmark/presets` | Cutting inference spend, hitting latency SLOs, preferring models that succeed on your tasks | `shipped` |
+| **[Zen Fine-Tuning & RL](/docs/training/zen-fine-tuning)** | LoRA, QLoRA, full weights, or on-policy RL adapters on open-weight Zen models | Managed GPU or BYO fleet, metered per device-second | `POST /v1/train/jobs`, `POST /v1/train/clients` | Proprietary writing style, domain code synthesis, specialized reasoning & tool schemas | `shipped` |
+
+## Shared safety & provenance invariants
+
+Every training plane on Hanzo obeys four non-negotiable guarantees:
+
+1. **Tenant isolation by default**: Captured states, corrections, feedback rewards, datasets, and trained weights belong strictly to your org. Base models never absorb another customer's data.
+2. **Held-out evaluation before publish**: A candidate cannot be published unless it clears its evaluation gate against the incumbent or base model (with explicit override audit when forced on GPU jobs).
+3. **Bit-for-bit blast-radius containment**: A Kai capability routes only behind its exact question key, type, and labels — every other question in the same request stays bit-for-bit identical to base Kai.
+4. **Instant rollback without retraining**: Every published artifact is content-addressed by SHA-256. Rolling back (`POST /v1/capabilities/{name}/rollback`) swaps the active pointer immediately.
+
+## Explore this section
+
+<Cards>
+  <Card title="Kai Capabilities (KAI 301 Lab 01)" href="/docs/training/kai-capabilities">
+    Flagship 9-step walkthrough: teach Kai your business on `POST /v1/capabilities/{name}/train`.
+  </Card>
+  <Card title="Enso Routing Optimization" href="/docs/training/enso-routing">
+    Train per-org routing policies with outcome rewards and custom `enso-*` blends.
+  </Card>
+  <Card title="Zen Fine-Tuning" href="/docs/training/zen-fine-tuning">
+    Launch LoRA, QLoRA, and full-weight training jobs on `/v1/train/jobs` and `/v1/ai/finetune/jobs`.
+  </Card>
+  <Card title="Datasets & Lineage" href="/docs/training/datasets">
+    Materialize versioned datasets, track lineage, and upload SHA-256 training artifacts.
+  </Card>
+  <Card title="Reinforcement Learning" href="/docs/training/reinforcement-learning">
+    Run DPO and GRPO loops via interactive `/v1/train/clients` with Kai verifiable rewards.
+  </Card>
+  <Card title="Evaluation Harnesses" href="/docs/training/evaluation">
+    Build datasets, LLM/Kai judges, rubrics, calibration gates, and live metric dashboards.
+  </Card>
+  <Card title="Model Registry" href="/docs/training/model-registry">
+    Manage SHA-256 checkpoints, promotion rules, multi-tenant serving, and instant rollbacks.
+  </Card>
+</Cards>
+
+## University courses
+
+- [KAI 301 — Training Kai Decision Models](https://hanzo.university/kai-training-decision-models) ([Interactive Lab](https://hanzo.app/learn/kai-training-decision-models))
+- [ENS 301 — Training Enso Orchestrators](https://hanzo.university/enso-training-orchestrators) ([Interactive Lab](https://hanzo.app/learn/enso-training-orchestrators))
+- [ZEN 301 — Zen Native Training](https://hanzo.university/zen-native-training) ([Interactive Lab](https://hanzo.app/learn/zen-native-training))
+- [RL 101 — Reinforcement Learning](https://hanzo.university/reinforcement-learning) ([Interactive Lab](https://hanzo.app/learn/reinforcement-learning))
+- [ML 401 — ML Systems](https://hanzo.university/ml-systems) ([Interactive Lab](https://hanzo.app/learn/ml-systems))

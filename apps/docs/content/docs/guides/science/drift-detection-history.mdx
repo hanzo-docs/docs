@@ -1,0 +1,106 @@
+---
+title: "Detect model quality and latency drift over time"
+description: "Track longitudinal model accuracy via GET /v1/benchmark/history and live org latency/cost/error trends via GET /v1/eval/metrics."
+product: science
+level: practitioner
+duration: 15 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`)"
+objectives:
+  - "Query chronological benchmark trajectories via GET /v1/benchmark/history"
+  - "Monitor live p50/p95 latency, error rate, and cost per model via GET /v1/eval/metrics"
+  - "Trigger alerts before silent degradation reaches customers"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - SCI 201
+status: shipped
+---
+
+**A single latest benchmark number cannot distinguish a model that improved from one that silently regressed.** Combine `GET /v1/benchmark/history` with live `GET /v1/eval/metrics` to catch drift early.
+
+## Architecture & contract
+
+`/v1/benchmark/history` returns chronologically ordered runs with run-to-run deltas; `/v1/eval/metrics` computes gap-filled time series and latency percentiles directly from your org's GenAI spans.
+
+**Primary endpoint:** `GET /v1/benchmark/history` · **Status:** `shipped` · **Level:** `practitioner`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo benchmark history --benchmark swe-bench-verified --model zen6-coder
+hanzo eval metrics
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, BenchmarkApi, EvalApi } from 'hanzoai';
+
+const cfg = new Configuration({ accessToken: process.env.HANZO_API_KEY });
+const [history, metrics] = await Promise.all([
+  new BenchmarkApi(cfg).getBenchmarkHistory('swe-bench-verified', 'zen6-coder'),
+  new EvalApi(cfg).getEvalMetrics('7d'),
+]);
+console.log({ history: history.data, metrics: metrics.data });
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import BenchmarkApi, EvalApi
+
+client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
+print(BenchmarkApi(client).get_benchmark_history(benchmark="swe-bench-verified", model="zen6-coder"))
+print(EvalApi(client).get_eval_metrics(range="7d"))
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -s "https://api.hanzo.ai/v1/benchmark/history?benchmark=swe-bench-verified&model=zen6-coder" \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+curl -s "https://api.hanzo.ai/v1/eval/metrics?range=7d&interval=1h" \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "benchmark",
+      "arguments": {"op": "get_benchmark_history", "input": {"benchmark": "swe-bench-verified", "model": "zen6-coder"}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Assert latency p95 and error rate sit within SLA bounds across the 7-day time series.
+
+## Production guardrails
+
+- Pin exact checkpoint hashes in critical workflows so upstream model changes never sneak into production unnoticed.
+
+## Next steps & Hanzo University
+
+- [Benchmarking Arena](/docs/science/benchmarking) · [O11y Traces & Metrics](/docs/guides/infrastructure/o11y-traces-and-metrics)
+
+- **[SCI 201 — Autonomous Research](https://hanzo.university/autonomous-research)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/autonomous-research))

@@ -1,0 +1,51 @@
+---
+title: "Science \u2014 Empirical AI & Autonomous Research"
+description: "Golden evaluation suites, Kai judges, exact-McNemar paired benchmarks, controlled A/B rollouts, dataset lineage, drift tracking, and research autopilot."
+icon: FlaskConical
+product: science
+level: foundations
+duration: 10 min
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - AUTO 101
+  - KAI 201
+  - ML 401
+  - SCI 101
+  - SCI 201
+  - SCI 301
+  - SCI 401
+status: shipped
+---
+
+**Apply empirical rigor to AI systems** — golden evaluation datasets (`/v1/eval`), Kai judges, exact-McNemar paired comparisons (`/v1/benchmark/compare`), deterministic A/B rollouts (`/v1/experiment`), dataset lineage (`/v1/dataset`), and Research Autopilot.
+
+## All 8 Science guides
+
+Eight runnable four-surface guides covering the complete scientific AI engineering lifecycle:
+
+| Guide | Primary Endpoint | Level | Duration | Course | Status |
+| --- | --- | --- | --- | --- | --- |
+| [Create and version golden evaluation datasets](/docs/guides/science/golden-eval-datasets) | `POST /v1/eval/datasets` | foundations | 15 min | [SCI 101](https://hanzo.university/science-discovery) | `shipped` |
+| [Register deterministic Kai and model evaluators](/docs/guides/science/reusable-kai-judges) | `POST /v1/eval/evaluators` | practitioner | 15 min | [SCI 101](https://hanzo.university/science-discovery), [KAI 201](https://hanzo.university/kai-decision-intelligence) | `shipped` |
+| [Compare two models validly with exact-McNemar tests](/docs/guides/science/paired-mcnemar-benchmark) | `GET /v1/benchmark/compare` | practitioner | 20 min | [SCI 201](https://hanzo.university/autonomous-research) | `shipped` |
+| [Run deterministic A/B rollouts on /v1/experiment](/docs/guides/science/controlled-ab-experiment) | `POST /v1/experiment` | practitioner | 20 min | [SCI 201](https://hanzo.university/autonomous-research) | `shipped` |
+| [Materialize datasets and verify provenance lineage](/docs/guides/science/dataset-lineage-snapshots) | `POST /v1/dataset/{name}/materialize` | practitioner | 15 min | [SCI 101](https://hanzo.university/science-discovery), [ML 401](https://hanzo.university/ml-systems) | `shipped` |
+| [Detect model quality and latency drift over time](/docs/guides/science/drift-detection-history) | `GET /v1/benchmark/history` | practitioner | 15 min | [SCI 201](https://hanzo.university/autonomous-research) | `shipped` |
+| [Arm outcome-triggered research autopilot loops](/docs/guides/science/automated-research-loop) | `POST /v1/auto/automations` | specialist | 25 min | [SCI 301](https://hanzo.university/research-autopilot) | `preview` |
+| [Close the continuous self-improvement loop safely](/docs/guides/science/recursive-harness-improvement) | `GET /v1/research/runs` | fellow | 30 min | [SCI 401](https://hanzo.university/recursive-improvement), [AUTO 101](https://hanzo.university/continuous-improvement) | `preview` |
+
+## Related documentation & courses
+
+- [Science & Research Overview](/docs/science) · [Self-Improvement](/docs/self-improvement)
+
+- **[AUTO 101 — Continuous Improvement](https://hanzo.university/continuous-improvement)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/continuous-improvement))
+- **[KAI 201 — Kai Decision Intelligence](https://hanzo.university/kai-decision-intelligence)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/kai-decision-intelligence))
+- **[ML 401 — ML Systems](https://hanzo.university/ml-systems)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/ml-systems))
+- **[SCI 101 — Science & Discovery](https://hanzo.university/science-discovery)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/science-discovery))
+- **[SCI 201 — Autonomous Research](https://hanzo.university/autonomous-research)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/autonomous-research))
+- **[SCI 301 — Research Autopilot](https://hanzo.university/research-autopilot)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/research-autopilot))
+- **[SCI 401 — Recursive Improvement](https://hanzo.university/recursive-improvement)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/recursive-improvement))

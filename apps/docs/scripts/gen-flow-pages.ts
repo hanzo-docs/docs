@@ -23,7 +23,38 @@ import { prose, text } from './mdx';
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = path.resolve(SCRIPT_DIR, '..');
 const FLOWS = path.join(APP_ROOT, 'openapi-specs/flows.yaml');
+const CATALOG_FILE = path.join(SCRIPT_DIR, 'guides-catalog.json');
 const OUT_DIR = path.join(APP_ROOT, 'content/docs/guides');
+
+interface GuideEntry {
+  slug: string;
+  title: string;
+  level: string;
+  duration: string;
+  status: string;
+  courses: string[];
+  endpoint: string;
+  lab?: string;
+}
+
+interface GuideCategory {
+  id: string;
+  title: string;
+  shortTitle: string;
+  icon: string;
+  description: string;
+  guides: GuideEntry[];
+}
+
+interface GuidesCatalog {
+  courses: Record<string, { slug: string; title: string }>;
+  categories: GuideCategory[];
+}
+
+function readCatalog(): GuidesCatalog | null {
+  if (!fs.existsSync(CATALOG_FILE)) return null;
+  return JSON.parse(fs.readFileSync(CATALOG_FILE, 'utf8')) as GuidesCatalog;
+}
 
 /**
  * flows.yaml's shape: a map of flow id to a summary, the operationIds in CALL
@@ -213,9 +244,9 @@ function renderIndex(flows: Flow[], doc: Document): string {
   L.push('| HTTP | `https://api.hanzo.ai/v1/<capability>` |');
   L.push('| MCP | one tool per capability, dispatched by operation |');
   L.push('');
-  L.push('## Tasks');
+  L.push('## Core four-surface tasks');
   L.push('');
-  L.push('Each page below does one thing, and does it on all four surfaces.');
+  L.push('Each page below does one core platform task, generated directly from the OpenAPI contract on all four surfaces.');
   L.push('');
   L.push('<Cards>');
   for (const f of flows) {
@@ -225,10 +256,53 @@ function renderIndex(flows: Flow[], doc: Document): string {
   }
   L.push('</Cards>');
   L.push('');
-  L.push('## Cookbook');
+
+  const catalog = readCatalog();
+  if (catalog) {
+    const totalGuides = catalog.categories.reduce((acc, c) => acc + c.guides.length, 0);
+    L.push(`## ${totalGuides} Flagship Practical Guides`);
+    L.push('');
+    L.push(
+      `Every practical guide below runs across **CLI**, **SDK** (TypeScript & Python), **HTTP \`/v1/\`**, and **MCP**, carries a clear release status (\`shipped\`, \`preview\`, or \`research\`), and links directly to its companion [Hanzo University](https://hanzo.university) course and [hanzo.app/learn](https://hanzo.app/learn) interactive lab.`,
+    );
+    L.push('');
+    L.push('<Cards>');
+    for (const cat of catalog.categories) {
+      L.push(
+        `  <Card title=${JSON.stringify(`${cat.title} (${cat.guides.length})`)} href="/docs/guides/${cat.id}">`,
+      );
+      L.push(`    ${text(cat.description)}`);
+      L.push('  </Card>');
+    }
+    L.push('</Cards>');
+    L.push('');
+
+    for (const cat of catalog.categories) {
+      L.push(`### ${cat.title} (${cat.guides.length})`);
+      L.push('');
+      L.push(`${cat.description} [Browse ${cat.shortTitle} hub →](/docs/guides/${cat.id})`);
+      L.push('');
+      L.push('| Guide | Primary Endpoint | Level | Duration | Course | Status |');
+      L.push('| --- | --- | --- | --- | --- | --- |');
+      for (const g of cat.guides) {
+        const courseLinks = g.courses
+          .map((code) => {
+            const c = catalog.courses[code];
+            return c ? `[${code}](https://hanzo.university/${c.slug})` : code;
+          })
+          .join(', ');
+        L.push(
+          `| [${text(g.title)}](/docs/guides/${cat.id}/${g.slug}) | \`${g.endpoint}\` | ${g.level} | ${g.duration} | ${courseLinks} | \`${g.status}\` |`,
+        );
+      }
+      L.push('');
+    }
+  }
+
+  L.push('## Cookbook & migrations');
   L.push('');
   L.push(
-    'Zen, Enso and Kai in one loop — route a request, triage with typed answers, gate an agent\'s command, drive an agent from programs: [the cookbook](/docs/guides/cookbook).',
+    'Zen, Enso and Kai in one loop — route a request, triage with typed answers, gate an agent\'s command, drive an agent from programs: [the cookbook](/docs/guides/cookbook). Also explore [coding agents](/docs/guides/coding), [integrations](/docs/guides/integrations), and [migrations](/docs/guides/migrate).',
   );
   L.push('');
   L.push(
@@ -250,11 +324,12 @@ export async function genFlowPages(): Promise<void> {
   const table = loadCliTable();
 
   // Remove only what this generator writes. The authored guide folders
-  // (migrate, integrations) are siblings of these files, so a recursive wipe
-  // would delete them on every build.
+  // (kai, enso, zen, science, cyber, autopilot, infrastructure, business,
+  // coding, cookbook, integrations, migrate) are siblings of these files,
+  // so a recursive wipe would delete them on every build.
   fs.mkdirSync(OUT_DIR, { recursive: true });
   for (const f of fs.readdirSync(OUT_DIR)) {
-    if (f !== 'kai.mdx' && (f.endsWith('.mdx') || f === 'meta.json')) fs.rmSync(path.join(OUT_DIR, f));
+    if (f.endsWith('.mdx') || f === 'meta.json') fs.rmSync(path.join(OUT_DIR, f));
   }
 
   let withCli = 0;
@@ -276,14 +351,16 @@ export async function genFlowPages(): Promise<void> {
     fs.writeFileSync(path.join(OUT_DIR, `${flow.id}.mdx`), renderFlow(flow, ops, doc, table, d, cat.meta.reach));
   }
   fs.writeFileSync(path.join(OUT_DIR, 'index.mdx'), renderIndex(flows, doc));
+  const catalog = readCatalog();
+  const catalogDirs = catalog ? catalog.categories.map((c) => c.id) : [];
   const dirOrder = ['cookbook', 'coding', 'integrations', 'migrate'];
   const dirsOnDisk = fs
     .readdirSync(OUT_DIR, { withFileTypes: true })
-    .filter((e) => e.isDirectory())
+    .filter((e) => e.isDirectory() && !catalogDirs.includes(e.name))
     .map((e) => e.name);
   const orderedDirs = [
-    ...dirOrder.filter((d) => dirsOnDisk.includes(d)),
-    ...dirsOnDisk.filter((d) => !dirOrder.includes(d)).sort(),
+    ...dirOrder.filter((dName) => dirsOnDisk.includes(dName)),
+    ...dirsOnDisk.filter((dName) => !dirOrder.includes(dName)).sort(),
   ];
 
   fs.writeFileSync(
@@ -291,13 +368,14 @@ export async function genFlowPages(): Promise<void> {
     JSON.stringify(
       {
         title: 'Guides',
-        description: 'Task-oriented walkthroughs across CLI, SDK, HTTP, and MCP.',
+        description: '50 flagship practical guides across 8 categories plus 6 core four-surface workflows.',
         // Not led by `index` — this folder's own `index.mdx` is its landing
         // page already, and naming it publishes `Guides > Guides`.
         pages: [
+          '---Intelligence Engineering---',
+          ...catalogDirs.filter((dName) => fs.existsSync(path.join(OUT_DIR, dName))),
           '---Core Workflows---',
           ...flows.map((f) => f.id),
-          ...(fs.existsSync(path.join(OUT_DIR, 'kai.mdx')) ? ['---Decision Model---', 'kai'] : []),
           '---Recipes & Frameworks---',
           ...orderedDirs,
         ],

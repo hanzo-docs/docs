@@ -1,0 +1,117 @@
+---
+title: "Create and version golden evaluation datasets"
+description: "Create org-scoped golden evaluation datasets and graded test items via /v1/eval/datasets to anchor every prompt and model release gate."
+product: science
+level: foundations
+duration: 15 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`)"
+objectives:
+  - "Create a named org evaluation dataset via POST /v1/eval/datasets"
+  - "Append graded input/expected items via POST /v1/eval/datasets/{name}/items"
+  - "Archive stale items without breaking historical run auditability"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - SCI 101
+status: shipped
+---
+
+**Every production AI incident should graduate into one permanent item in your golden evaluation dataset.** `/v1/eval/datasets` keeps versioned, tenant-private test suites ready for every CI check.
+
+## Architecture & contract
+
+Datasets are keyed by unique name inside your org. Re-posting metadata edits the dataset cleanly, while `/items` appends `(input, expected, metadata, status)` rows. Archived items remain readable for historical audits while excluded from active scoring.
+
+**Primary endpoint:** `POST /v1/eval/datasets` · **Status:** `shipped` · **Level:** `foundations`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo eval datasets create --data '{"name":"checkout-guardrails-v1","description":"Critical checkout & billing edge cases"}'
+hanzo eval datasets items create checkout-guardrails-v1 --data '{
+  "input": {"cart_total": 1200, "coupon": "EXPIRED2024"},
+  "expected": {"reject_coupon": true},
+  "status": "active"
+}'
+hanzo eval datasets items get checkout-guardrails-v1
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, EvalApi } from 'hanzoai';
+
+const evalApi = new EvalApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+await evalApi.postEvalDatasets({ name: 'checkout-guardrails-v1', description: 'Critical checkout edge cases' });
+await evalApi.postEvalDatasetsByNameItems('checkout-guardrails-v1', {
+  input: { cart_total: 1200, coupon: 'EXPIRED2024' },
+  expected: { reject_coupon: true },
+  status: 'active',
+});
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import EvalApi
+
+api = EvalApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+api.post_eval_datasets({"name": "checkout-guardrails-v1", "description": "Critical checkout edge cases"})
+api.post_eval_datasets_by_name_items(
+    "checkout-guardrails-v1",
+    {"input": {"cart_total": 1200, "coupon": "EXPIRED2024"}, "expected": {"reject_coupon": True}, "status": "active"},
+)
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/eval/datasets \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{"name":"checkout-guardrails-v1","description":"Critical checkout edge cases"}' | jq '.'
+
+curl -s -X POST https://api.hanzo.ai/v1/eval/datasets/checkout-guardrails-v1/items \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{"input":{"cart_total":1200,"coupon":"EXPIRED2024"},"expected":{"reject_coupon":true},"status":"active"}' | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "eval",
+      "arguments": {"op": "get_eval_datasets", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Fetch `GET /v1/eval/datasets/checkout-guardrails-v1/items` and confirm your graded item appears with `status: "active"`.
+
+## Production guardrails
+
+- Keep golden eval datasets strictly segregated from `/v1/train/artifacts` training splits to eliminate data leakage.
+
+## Next steps & Hanzo University
+
+- [Evaluation Harnesses](/docs/training/evaluation) · [Reusable Kai Judges](/docs/guides/science/reusable-kai-judges)
+
+- **[SCI 101 — Science & Discovery](https://hanzo.university/science-discovery)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/science-discovery))

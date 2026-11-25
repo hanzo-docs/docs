@@ -1,0 +1,11 @@
+{
+  "title": "Business",
+  "description": "Multi-tenant white-label isolation, usage-based billing ledgers, Marketplace distribution for agents and MCP tools, and offline cryptographic licensing.",
+  "icon": "Briefcase",
+  "pages": [
+    "multi-tenant-white-label",
+    "usage-metering-and-billing",
+    "marketplace-agent-listings",
+    "offline-enterprise-licensing"
+  ]
+}

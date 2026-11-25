@@ -1,0 +1,126 @@
+---
+title: "Run an interactive GRPO RL loop on /v1/train/clients"
+description: "Implement an interactive GRPO reinforcement-learning step over /v1/train/clients using sandbox unit-test verifiers and Kai rubrics."
+product: zen
+level: architect
+duration: 35 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`)"
+  - "Familiarity with [Reinforcement learning](/docs/training/reinforcement-learning)"
+objectives:
+  - "Allocate a live LoRA engine client via POST /v1/train/clients"
+  - "Sample K completions, score against deterministic verifiers, and run forward_backward + optim_step"
+  - "Save verified weights and release engine GPU memory cleanly"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - RL 101
+  - ZEN 301
+status: shipped
+---
+
+**Optimize directly for passing tests and domain rubrics instead of static imitation.** `/v1/train/clients` gives your trainer remote `sample`, `forward_backward`, `optim_step`, and `save_weights` primitives over managed GPUs.
+
+## Architecture & contract
+
+Your trainer loops over prompts, samples `K` candidate generations per prompt, evaluates each in `/v1/sandbox` + Kai (`POST /v1/decisions`), normalizes group advantages, sends gradients through `forward_backward`, steps the optimizer, and checkpoints via `save_weights`.
+
+**Primary endpoint:** `POST /v1/train/clients` · **Status:** `shipped` · **Level:** `architect`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+CLIENT_ID=$(hanzo train clients create --data '{"base_model":"zen6-flash","lora_rank":16}' | jq -r '.id')
+hanzo train clients sample "$CLIENT_ID" --data '{"prompts":["Write a URL-safe base64 encoder in Rust."],"n":4}'
+hanzo train clients save_weights "$CLIENT_ID" --data '{"name":"zen6-flash-grpo-v1"}'
+hanzo train clients rm "$CLIENT_ID"
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, TrainApi } from 'hanzoai';
+
+const train = new TrainApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data: c } = await train.postTrainClients({ base_model: 'zen6-flash', lora_rank: 16 });
+try {
+  const { data: samples } = await train.postTrainClientsByIdSample(c.id, { prompts: ['Write a URL-safe base64 encoder in Rust.'], n: 4 });
+  await train.postTrainClientsByIdForwardBackward(c.id, { batch: samples });
+  await train.postTrainClientsByIdOptimStep(c.id, { learning_rate: 1e-5 });
+  await train.postTrainClientsByIdSaveWeights(c.id, { name: 'zen6-flash-grpo-v1' });
+} finally {
+  await train.deleteTrainClientsById(c.id);
+}
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import TrainApi
+
+api = TrainApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+c = api.post_train_clients({"base_model": "zen6-flash", "lora_rank": 16})
+try:
+    samples = api.post_train_clients_by_id_sample(c["id"], {"prompts": ["Write a URL-safe base64 encoder in Rust."], "n": 4})
+    api.post_train_clients_by_id_forward_backward(c["id"], {"batch": samples})
+    api.post_train_clients_by_id_optim_step(c["id"], {"learning_rate": 1e-5})
+    api.post_train_clients_by_id_save_weights(c["id"], {"name": "zen6-flash-grpo-v1"})
+finally:
+    api.delete_train_clients_by_id(c["id"])
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+CLIENT_ID=$(curl -s -X POST https://api.hanzo.ai/v1/train/clients \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{"base_model":"zen6-flash","lora_rank":16}' | jq -r '.id')
+
+curl -s -X POST "https://api.hanzo.ai/v1/train/clients/${CLIENT_ID}/sample" \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{"prompts":["Write a URL-safe base64 encoder in Rust."],"n":4}' | jq '.'
+
+curl -s -X DELETE "https://api.hanzo.ai/v1/train/clients/${CLIENT_ID}" \
+  -H "Authorization: Bearer $HANZO_API_KEY"
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "train",
+      "arguments": {"op": "get_train_clients", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Confirm loss trend via `GET /v1/train/clients/{id}` and verify held-out unit-test pass rate rises against base `zen6-flash`.
+
+## Production guardrails
+
+- Always wrap client lifecycle in `try / finally` calling `DELETE /v1/train/clients/{id}` to prevent idle GPU charges.
+
+## Next steps & Hanzo University
+
+- [Reinforcement Learning Architecture](/docs/training/reinforcement-learning)
+
+- **[RL 101 — Reinforcement Learning](https://hanzo.university/reinforcement-learning)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/reinforcement-learning))
+- **[ZEN 301 — Zen Native Training](https://hanzo.university/zen-native-training)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/zen-native-training))

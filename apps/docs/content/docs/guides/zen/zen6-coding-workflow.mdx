@@ -1,0 +1,114 @@
+---
+title: "Ship code with zen6 and zen6-coder"
+description: "Use open-weight zen6 and zen6-coder across the CLI, SDKs, HTTP /v1/chat/completions, and hanzo dev for fast, predictable agentic software engineering."
+product: zen
+level: foundations
+duration: 15 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`)"
+objectives:
+  - "Call zen6 ($0.60/$2.40 per 1M) and zen6-coder ($1.65/$13.00 per 1M) on /v1/chat/completions"
+  - "Run hanzo dev or Claude Code backed by zen6"
+  - "Stream structured code patches with predictable open-weight pricing"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - ZEN 201
+  - ENG 100
+status: shipped
+---
+
+**Own your coding intelligence with Apache-2.0 Zen 6 weights.** `zen6` reads up to `1,000,000` tokens hosted and runs identically on your own hardware or on `api.hanzo.ai`.
+
+## Architecture & contract
+
+`zen6` is a 27.3B dense hybrid linear/full-attention architecture with bundled speculative drafting; `zen6-coder` optimizes multi-file editing and tool calling. Both speak the standard `/v1/chat/completions` wire.
+
+**Primary endpoint:** `POST /v1/chat/completions` · **Status:** `shipped` · **Level:** `foundations`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo chat completions --data '{
+  "model": "zen6-coder",
+  "messages": [{"role": "user", "content": "Write a thread-safe token bucket rate limiter in Go with unit tests."}]
+}'
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, AiApi } from 'hanzoai';
+
+const ai = new AiApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data } = await ai.postChatCompletions({
+  model: 'zen6-coder',
+  messages: [{ role: 'user', content: 'Write a thread-safe token bucket rate limiter in Go with unit tests.' }],
+});
+console.log(data);
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import AiApi
+
+api = AiApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+print(api.post_chat_completions(
+    model="zen6-coder",
+    messages=[{"role": "user", "content": "Write a thread-safe token bucket rate limiter in Go with unit tests."}],
+))
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -s https://api.hanzo.ai/v1/chat/completions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "zen6-coder",
+    "messages": [{"role": "user", "content": "Write a thread-safe token bucket rate limiter in Go with unit tests."}]
+  }' | jq -r '.choices[0].message.content'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "code",
+      "arguments": {"op": "get_code_health", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Verify the generated Go code compiles and passes `go test -race ./...` inside `/v1/sandbox`.
+
+## Production guardrails
+
+- Pair `zen6-coder` with [Agent Completion Gate](/docs/guides/kai/agent-completion-gate) so agent loops exit strictly on passing tests.
+
+## Next steps & Hanzo University
+
+- [Zen Model Reference](/docs/models/zen) · [Local Zen 6 Flash](/docs/guides/zen/local-zen6-flash)
+
+- **[ZEN 201 — Zen Model Engineering](https://hanzo.university/zen-model-engineering)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/zen-model-engineering))
+- **[ENG 100 — Agentic Coding](https://hanzo.university/agentic-coding)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/agentic-coding))

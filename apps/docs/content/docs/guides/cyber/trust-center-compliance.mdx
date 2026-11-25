@@ -1,0 +1,112 @@
+---
+title: "Export live SOC 2 coverage and risk posture scores"
+description: "Query live SOC 2 and compliance framework coverage (/v1/trust/coverage/{framework}), compliance posture (/v1/compliance/status), and operational risk scores (/v1/risk/score)."
+product: cyber
+level: architect
+duration: 20 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`)"
+objectives:
+  - "Fetch live control coverage for SOC 2 and other frameworks via /v1/trust"
+  - "Inspect org compliance status via /v1/compliance/status"
+  - "Evaluate real-time deployment risk via POST /v1/risk/score"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - CYB 401
+status: shipped
+---
+
+**Replace static compliance spreadsheets with live API-backed trust posture.** Enterprise buyers and CI pipelines read the exact same control evidence from `/v1/trust`, `/v1/compliance`, and `/v1/risk`.
+
+## Architecture & contract
+
+`/v1/trust` tracks frameworks, controls, policies, and attached evidence; `/v1/compliance` records verifications and audit decisions; `/v1/risk/score` evaluates structured risk features before sensitive actions.
+
+**Primary endpoint:** `GET /v1/trust/coverage/{framework}` · **Status:** `shipped` · **Level:** `architect`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo trust frameworks list
+hanzo trust coverage --framework soc2
+hanzo compliance status
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, TrustApi, ComplianceApi, RiskApi } from 'hanzoai';
+
+const cfg = new Configuration({ accessToken: process.env.HANZO_API_KEY });
+const [cov, status, risk] = await Promise.all([
+  new TrustApi(cfg).getTrustCoverageByFramework('soc2'),
+  new ComplianceApi(cfg).getComplianceStatus(),
+  new RiskApi(cfg).postRiskScore({ subject: 'release-v1.4', features: { open_criticals: 0 } }),
+]);
+console.log({ cov: cov.data, status: status.data, risk: risk.data });
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import TrustApi, ComplianceApi, RiskApi
+
+client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
+print(TrustApi(client).get_trust_coverage_by_framework("soc2"))
+print(ComplianceApi(client).get_compliance_status())
+print(RiskApi(client).post_risk_score({"subject": "release-v1.4", "features": {"open_criticals": 0}}))
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -s https://api.hanzo.ai/v1/trust/coverage/soc2 \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+curl -s https://api.hanzo.ai/v1/compliance/status \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+curl -s -X POST https://api.hanzo.ai/v1/risk/score \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{"subject":"release-v1.4","features":{"open_criticals":0}}' | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "compliance",
+      "arguments": {"op": "get_compliance_status", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Verify every active SOC 2 control carries fresh automated evidence timestamps.
+
+## Production guardrails
+
+- Never expose private internal risk rules to unauthenticated endpoints; publish customer-facing posture strictly via `/v1/trust/published/{org}`.
+
+## Next steps & Hanzo University
+
+- [Security Assessments](/docs/cybersecurity/assessments)
+
+- **[CYB 401 — Sovereign Zero-Trust AI](https://hanzo.university/sovereign-zero-trust-ai)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/sovereign-zero-trust-ai))

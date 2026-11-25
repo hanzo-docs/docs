@@ -1,0 +1,99 @@
+---
+title: "Compare two models validly with exact-McNemar tests"
+description: "Compare two models rigorously on common items using GET /v1/benchmark/compare with rescue/damage counts and exact-McNemar p-values."
+product: science
+level: practitioner
+duration: 20 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`)"
+objectives:
+  - "Eliminate subset artifacts by pairing arms strictly over n_common items"
+  - "Interpret rescue, damage, and exact-McNemar p-values"
+  - "Separate standardized harness scores from self-reported vendor claims"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - SCI 201
+status: shipped
+---
+
+**Unpaired leaderboard percentages lie whenever two models complete different item subsets.** `GET /v1/benchmark/compare` is the only valid head-to-head test: it pairs both models on `n_common` and computes an exact McNemar test.
+
+## Architecture & contract
+
+For every item both Arm A and Arm B completed, the arena tallies `rescue` (B passed, A failed) and `damage` (A passed, B failed) and outputs the two-sided exact McNemar `p`-value. Never declare a winner when `n_common` is too small or `p >= 0.05`.
+
+**Primary endpoint:** `GET /v1/benchmark/compare` · **Status:** `shipped` · **Level:** `practitioner`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo benchmark catalog
+hanzo benchmark compare --benchmark swe-bench-verified --a enso-pro --b zen6-coder
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, BenchmarkApi } from 'hanzoai';
+
+const bench = new BenchmarkApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data } = await bench.getBenchmarkCompare('swe-bench-verified', 'enso-pro', 'zen6-coder');
+console.log(data);
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import BenchmarkApi
+
+api = BenchmarkApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+print(api.get_benchmark_compare(benchmark="swe-bench-verified", a="enso-pro", b="zen6-coder"))
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -s "https://api.hanzo.ai/v1/benchmark/compare?benchmark=swe-bench-verified&a=enso-pro&b=zen6-coder" \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "benchmark",
+      "arguments": {"op": "get_benchmark_compare", "input": {"benchmark": "swe-bench-verified", "a": "enso-pro", "b": "zen6-coder"}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Check `n_common > 0`, `rescue`, `damage`, and `p_value` before making any model swap decision.
+
+## Production guardrails
+
+- Never blend vendor claims with standardized harness scores; `GET /v1/benchmark/leaderboard` prints both columns side by side for this reason.
+
+## Next steps & Hanzo University
+
+- [Benchmarking Arena](/docs/science/benchmarking)
+
+- **[SCI 201 — Autonomous Research](https://hanzo.university/autonomous-research)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/autonomous-research))

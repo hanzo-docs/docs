@@ -1,0 +1,118 @@
+---
+title: "Enforce X-Max-Cost and X-Max-Latency-Ms caps"
+description: "Cap per-request model spend and response latency using X-Max-Cost and X-Max-Latency-Ms headers on POST /v1/chat/completions."
+product: enso
+level: practitioner
+duration: 15 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`)"
+objectives:
+  - "Enforce per-request USD/1k-token ceilings with X-Max-Cost"
+  - "Enforce per-request latency budgets with X-Max-Latency-Ms"
+  - "Combine request headers with org-wide defaults in /v1/ai/org/settings"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - ENS 201
+status: shipped
+---
+
+**Never let a single interactive endpoint blow its latency SLO or unit-economics budget.** Pass `X-Max-Cost` and `X-Max-Latency-Ms` on any routed call — Enso narrows eligible models before selecting a rung.
+
+## Architecture & contract
+
+Org-level defaults live in `GET /v1/ai/org/settings`, and per-request headers always win when stricter. The rewrite happens before provider, pricing, and billing resolve, so the bill always matches the bounded model that served the request.
+
+**Primary endpoint:** `POST /v1/chat/completions` · **Status:** `shipped` · **Level:** `practitioner`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+# Check live Enso tier rates before setting bounds
+curl -s https://api.hanzo.ai/v1/models | jq -r '.data[] | select(.id | test("^enso-")) | "\(.id)\t\(.pricing.input_per_million)\t\(.pricing.output_per_million)"'
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+const res = await fetch('https://api.hanzo.ai/v1/chat/completions', {
+  method: 'POST',
+  headers: {
+    Authorization: `Bearer ${process.env.HANZO_API_KEY}`,
+    'Content-Type': 'application/json',
+    'X-Max-Cost': '0.002',
+    'X-Max-Latency-Ms': '1500',
+  },
+  body: JSON.stringify({
+    model: 'auto',
+    messages: [{ role: 'user', content: 'Summarize this release note in one sentence.' }],
+  }),
+});
+console.log('Routed:', res.headers.get('x-routed-model'), await res.json());
+```
+</Tab>
+<Tab value="Python">
+```python
+import os, requests
+
+r = requests.post(
+    "https://api.hanzo.ai/v1/chat/completions",
+    headers={
+        "Authorization": f"Bearer {os.environ['HANZO_API_KEY']}",
+        "X-Max-Cost": "0.002",
+        "X-Max-Latency-Ms": "1500",
+    },
+    json={"model": "auto", "messages": [{"role": "user", "content": "Summarize this release note in one sentence."}]},
+)
+print("Routed:", r.headers.get("X-Routed-Model"), r.json()["model"])
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -si https://api.hanzo.ai/v1/chat/completions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -H "X-Max-Cost: 0.002" \
+  -H "X-Max-Latency-Ms: 1500" \
+  -d '{"model":"auto","messages":[{"role":"user","content":"Summarize this release note in one sentence."}]}'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "ai",
+      "arguments": {"op": "get_ai_org_settings", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Verify `X-Routed-Model` matches `body.model` and its rate in `/v1/models` sits below your `X-Max-Cost` ceiling.
+
+## Production guardrails
+
+- Avoid setting `X-Max-Cost` below every enabled model in your org; check `/v1/models` first to verify eligible floors.
+
+## Next steps & Hanzo University
+
+- [Enso Routing Optimization](/docs/training/enso-routing) · [Route Cookbook](/docs/guides/cookbook/route)
+
+- **[ENS 201 — Enso Adaptive Intelligence](https://hanzo.university/enso-adaptive-intelligence)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/enso-adaptive-intelligence))

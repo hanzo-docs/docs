@@ -22,9 +22,9 @@ The CLI, the SDKs, the HTTP API and the MCP tools are generated from the same Op
 | HTTP | `https://api.hanzo.ai/v1/<capability>` |
 | MCP | one tool per capability, dispatched by operation |
 
-## Tasks
+## Core four-surface tasks
 
-Each page below does one thing, and does it on all four surfaces.
+Each page below does one core platform task, generated directly from the OpenAPI contract on all four surfaces.
 
 <Cards>
   <Card title="Verify Your API Key" href="/docs/guides/hello">
@@ -47,8 +47,145 @@ Each page below does one thing, and does it on all four surfaces.
   </Card>
 </Cards>
 
-## Cookbook
+## 50 Flagship Practical Guides
 
-Zen, Enso and Kai in one loop — route a request, triage with typed answers, gate an agent's command, drive an agent from programs: [the cookbook](/docs/guides/cookbook).
+Every practical guide below runs across **CLI**, **SDK** (TypeScript & Python), **HTTP `/v1/`**, and **MCP**, carries a clear release status (`shipped`, `preview`, or `research`), and links directly to its companion [Hanzo University](https://hanzo.university) course and [hanzo.app/learn](https://hanzo.app/learn) interactive lab.
+
+<Cards>
+  <Card title="Kai — Decision Intelligence (8)" href="/docs/guides/kai">
+    Calibrated choice, noul, and score decisions at $0.021/1M input tokens (0 output tokens), Decision Programs, and CPU org capability training.
+  </Card>
+  <Card title="Enso — Adaptive Routing & Orchestration (6)" href="/docs/guides/enso">
+    Multi-tier adaptive routing (enso-auto through enso-ultra), hard cost/latency bounds, prompt caching, outcome feedback rewards, and custom router blends.
+  </Card>
+  <Card title="Zen — Open-Weight Model Engineering (6)" href="/docs/guides/zen">
+    Apache-2.0 Zen 6 coding, ternary local inference, retrieval embeddings, managed LoRA fine-tuning, interactive GRPO RL, and checkpoint deployment.
+  </Card>
+  <Card title="Science — Empirical AI & Autonomous Research (8)" href="/docs/guides/science">
+    Golden evaluation suites, Kai judges, exact-McNemar paired benchmarks, controlled A/B rollouts, dataset lineage, drift tracking, and research autopilot.
+  </Card>
+  <Card title="Cybersecurity — OpenCyber & Sovereign Zero-Trust (7)" href="/docs/guides/cyber">
+    Deterministic shell command gates, CI secret scanning, container SBOM verification, sandboxed exploit validation, autonomous SecOps patching, and zero-trust hardening.
+  </Card>
+  <Card title="Autopilot — Business, Marketing & Agent Workforces (6)" href="/docs/guides/autopilot">
+    Durable webhook automations, human review checkpoints, brand-voice marketing campaigns, multi-agent workforces, spend budgets, and continuous feedback.
+  </Card>
+  <Card title="Infrastructure — Sovereign Cloud, GPUs & Observability (5)" href="/docs/guides/infrastructure">
+    Single-binary self-hosting, GPU cluster and BYO fleet management, ephemeral microVM sandboxes, zero-trust overlay networking, and AI observability.
+  </Card>
+  <Card title="Business — White-Label, Metering & Monetization (4)" href="/docs/guides/business">
+    Multi-tenant white-label isolation, usage-based billing ledgers, Marketplace distribution for agents and MCP tools, and offline cryptographic licensing.
+  </Card>
+</Cards>
+
+### Kai — Decision Intelligence (8)
+
+Calibrated choice, noul, and score decisions at $0.021/1M input tokens (0 output tokens), Decision Programs, and CPU org capability training. [Browse Kai hub →](/docs/guides/kai)
+
+| Guide | Primary Endpoint | Level | Duration | Course | Status |
+| --- | --- | --- | --- | --- | --- |
+| [Make your first calibrated Kai decision](/docs/guides/kai/first-decision) | `POST /v1/decisions` | foundations | 10 min | [KAI 201](https://hanzo.university/kai-decision-intelligence) | `shipped` |
+| [KAI 301 Lab 01: Teach Kai your business](/docs/guides/kai/train-business-capability) | `POST /v1/capabilities/{name}/train` | specialist | 45 min | [KAI 301](https://hanzo.university/kai-training-decision-models), [KAI 201](https://hanzo.university/kai-decision-intelligence) | `shipped` |
+| [Calibrate confidence & abstention thresholds](/docs/guides/kai/abstention-thresholds) | `POST /v1/decisions` | practitioner | 15 min | [KAI 201](https://hanzo.university/kai-decision-intelligence) | `shipped` |
+| [Author and run Decision Programs](/docs/guides/kai/decision-programs) | `POST /v1/decisions` | practitioner | 20 min | [KAI 201](https://hanzo.university/kai-decision-intelligence), [CYB 101](https://hanzo.university/ai-security-fundamentals) | `shipped` |
+| [Route support tickets at $0.021 per 1M tokens](/docs/guides/kai/support-triage) | `POST /v1/decisions` | practitioner | 15 min | [KAI 201](https://hanzo.university/kai-decision-intelligence), [PRA 104](https://hanzo.university/ai-practitioner) | `shipped` |
+| [Classify 51 languages without translation](/docs/guides/kai/multilingual-classification) | `POST /v1/decisions` | practitioner | 15 min | [KAI 201](https://hanzo.university/kai-decision-intelligence) | `shipped` |
+| [Stop autonomous coding loops deterministically](/docs/guides/kai/agent-completion-gate) | `POST /v1/decisions` | specialist | 20 min | [KAI 201](https://hanzo.university/kai-decision-intelligence), [ENG 100](https://hanzo.university/agentic-coding) | `shipped` |
+| [Gate Kai capability upgrades & automate rollback](/docs/guides/kai/capability-rollback-ci) | `POST /v1/capabilities/{name}/publish` | specialist | 20 min | [KAI 301](https://hanzo.university/kai-training-decision-models) | `shipped` |
+
+### Enso — Adaptive Routing & Orchestration (6)
+
+Multi-tier adaptive routing (enso-auto through enso-ultra), hard cost/latency bounds, prompt caching, outcome feedback rewards, and custom router blends. [Browse Enso hub →](/docs/guides/enso)
+
+| Guide | Primary Endpoint | Level | Duration | Course | Status |
+| --- | --- | --- | --- | --- | --- |
+| [Route prompts automatically with enso-auto](/docs/guides/enso/adaptive-tier-routing) | `POST /v1/chat/completions` | foundations | 10 min | [ENS 201](https://hanzo.university/enso-adaptive-intelligence), [PRA 104](https://hanzo.university/ai-practitioner) | `shipped` |
+| [Enforce X-Max-Cost and X-Max-Latency-Ms caps](/docs/guides/enso/cost-latency-bounds) | `POST /v1/chat/completions` | practitioner | 15 min | [ENS 201](https://hanzo.university/enso-adaptive-intelligence) | `shipped` |
+| [Cut coding-agent turn costs 4.6x with prompt caching](/docs/guides/enso/prompt-caching-turns) | `POST /v1/chat/completions` | practitioner | 15 min | [ENS 201](https://hanzo.university/enso-adaptive-intelligence), [ENG 100](https://hanzo.university/agentic-coding) | `shipped` |
+| [Train your org's learned router via outcome feedback](/docs/guides/enso/outcome-feedback-loop) | `POST /v1/ai/feedback` | specialist | 20 min | [ENS 301](https://hanzo.university/enso-training-orchestrators) | `shipped` |
+| [Compose private Enso router blends](/docs/guides/enso/custom-router-blends) | `POST /v1/benchmark/presets` | specialist | 20 min | [ENS 301](https://hanzo.university/enso-training-orchestrators) | `shipped` |
+| [Configure fast mode and zero-downtime tier failover](/docs/guides/enso/fast-mode-and-failover) | `POST /v1/chat/completions` | practitioner | 15 min | [ENS 201](https://hanzo.university/enso-adaptive-intelligence), [ARC 105](https://hanzo.university/ai-architect) | `shipped` |
+
+### Zen — Open-Weight Model Engineering (6)
+
+Apache-2.0 Zen 6 coding, ternary local inference, retrieval embeddings, managed LoRA fine-tuning, interactive GRPO RL, and checkpoint deployment. [Browse Zen hub →](/docs/guides/zen)
+
+| Guide | Primary Endpoint | Level | Duration | Course | Status |
+| --- | --- | --- | --- | --- | --- |
+| [Ship code with zen6 and zen6-coder](/docs/guides/zen/zen6-coding-workflow) | `POST /v1/chat/completions` | foundations | 15 min | [ZEN 201](https://hanzo.university/zen-model-engineering), [ENG 100](https://hanzo.university/agentic-coding) | `shipped` |
+| [Serve ternary zen6-flash locally on laptop or single GPU](/docs/guides/zen/local-zen6-flash) | `POST /v1/chat/completions` | practitioner | 20 min | [ZEN 201](https://hanzo.university/zen-model-engineering), [SYS 103](https://hanzo.university/systems-engineering) | `shipped` |
+| [Build retrieval pipelines with zen-embedding and rerank](/docs/guides/zen/embeddings-and-rerank) | `POST /v1/embeddings` | practitioner | 15 min | [ZEN 201](https://hanzo.university/zen-model-engineering) | `shipped` |
+| [Launch a managed LoRA fine-tuning job on Zen](/docs/guides/zen/lora-fine-tuning-job) | `POST /v1/train/jobs` | specialist | 30 min | [ZEN 301](https://hanzo.university/zen-native-training) | `shipped` |
+| [Run an interactive GRPO RL loop on /v1/train/clients](/docs/guides/zen/grpo-verifiable-rewards) | `POST /v1/train/clients` | architect | 35 min | [RL 101](https://hanzo.university/reinforcement-learning), [ZEN 301](https://hanzo.university/zen-native-training) | `shipped` |
+| [Publish and serve a regression-gated Zen checkpoint](/docs/guides/zen/deploy-private-checkpoint) | `POST /v1/train/jobs/{id}/publish` | specialist | 20 min | [ZEN 301](https://hanzo.university/zen-native-training), [ML 401](https://hanzo.university/ml-systems) | `shipped` |
+
+### Science — Empirical AI & Autonomous Research (8)
+
+Golden evaluation suites, Kai judges, exact-McNemar paired benchmarks, controlled A/B rollouts, dataset lineage, drift tracking, and research autopilot. [Browse Science hub →](/docs/guides/science)
+
+| Guide | Primary Endpoint | Level | Duration | Course | Status |
+| --- | --- | --- | --- | --- | --- |
+| [Create and version golden evaluation datasets](/docs/guides/science/golden-eval-datasets) | `POST /v1/eval/datasets` | foundations | 15 min | [SCI 101](https://hanzo.university/science-discovery) | `shipped` |
+| [Register deterministic Kai and model evaluators](/docs/guides/science/reusable-kai-judges) | `POST /v1/eval/evaluators` | practitioner | 15 min | [SCI 101](https://hanzo.university/science-discovery), [KAI 201](https://hanzo.university/kai-decision-intelligence) | `shipped` |
+| [Compare two models validly with exact-McNemar tests](/docs/guides/science/paired-mcnemar-benchmark) | `GET /v1/benchmark/compare` | practitioner | 20 min | [SCI 201](https://hanzo.university/autonomous-research) | `shipped` |
+| [Run deterministic A/B rollouts on /v1/experiment](/docs/guides/science/controlled-ab-experiment) | `POST /v1/experiment` | practitioner | 20 min | [SCI 201](https://hanzo.university/autonomous-research) | `shipped` |
+| [Materialize datasets and verify provenance lineage](/docs/guides/science/dataset-lineage-snapshots) | `POST /v1/dataset/{name}/materialize` | practitioner | 15 min | [SCI 101](https://hanzo.university/science-discovery), [ML 401](https://hanzo.university/ml-systems) | `shipped` |
+| [Detect model quality and latency drift over time](/docs/guides/science/drift-detection-history) | `GET /v1/benchmark/history` | practitioner | 15 min | [SCI 201](https://hanzo.university/autonomous-research) | `shipped` |
+| [Arm outcome-triggered research autopilot loops](/docs/guides/science/automated-research-loop) | `POST /v1/auto/automations` | specialist | 25 min | [SCI 301](https://hanzo.university/research-autopilot) | `preview` |
+| [Close the continuous self-improvement loop safely](/docs/guides/science/recursive-harness-improvement) | `GET /v1/research/runs` | fellow | 30 min | [SCI 401](https://hanzo.university/recursive-improvement), [AUTO 101](https://hanzo.university/continuous-improvement) | `preview` |
+
+### Cybersecurity — OpenCyber & Sovereign Zero-Trust (7)
+
+Deterministic shell command gates, CI secret scanning, container SBOM verification, sandboxed exploit validation, autonomous SecOps patching, and zero-trust hardening. [Browse Cyber hub →](/docs/guides/cyber)
+
+| Guide | Primary Endpoint | Level | Duration | Course | Status |
+| --- | --- | --- | --- | --- | --- |
+| [Enforce allow &lt; ask &lt; deny over agent shell commands](/docs/guides/cyber/command-risk-gate) | `POST /v1/decisions` | foundations | 15 min | [CYB 101](https://hanzo.university/ai-security-fundamentals), [KAI 201](https://hanzo.university/kai-decision-intelligence) | `shipped` |
+| [Scan code and pull requests for leaked secrets](/docs/guides/cyber/secret-leak-scanning) | `POST /v1/security/scans` | practitioner | 15 min | [CYB 201](https://hanzo.university/agentic-cybersecurity) | `shipped` |
+| [Audit container image SBOMs by digest before deploy](/docs/guides/cyber/container-sbom-audit) | `GET /v1/sbom/{ref}` | practitioner | 15 min | [CYB 201](https://hanzo.university/agentic-cybersecurity) | `shipped` |
+| [Validate vulnerabilities inside isolated microVMs](/docs/guides/cyber/sandboxed-exploit-repro) | `POST /v1/sandbox/lease` | specialist | 25 min | [CYB 201](https://hanzo.university/agentic-cybersecurity), [CYB 301](https://hanzo.university/autonomous-secops) | `shipped` |
+| [Automate regression-tested security patch PRs](/docs/guides/cyber/autonomous-secops-patching) | `POST /v1/auto/automations` | specialist | 25 min | [CYB 301](https://hanzo.university/autonomous-secops) | `shipped` |
+| [Enforce AuthZ policy checks and KMS secret isolation](/docs/guides/cyber/authz-and-kms-hardening) | `POST /v1/authz/check` | architect | 20 min | [CYB 401](https://hanzo.university/sovereign-zero-trust-ai) | `shipped` |
+| [Export live SOC 2 coverage and risk posture scores](/docs/guides/cyber/trust-center-compliance) | `GET /v1/trust/coverage/{framework}` | architect | 20 min | [CYB 401](https://hanzo.university/sovereign-zero-trust-ai) | `shipped` |
+
+### Autopilot — Business, Marketing & Agent Workforces (6)
+
+Durable webhook automations, human review checkpoints, brand-voice marketing campaigns, multi-agent workforces, spend budgets, and continuous feedback. [Browse Autopilot hub →](/docs/guides/autopilot)
+
+| Guide | Primary Endpoint | Level | Duration | Course | Status |
+| --- | --- | --- | --- | --- | --- |
+| [Build durable webhook-triggered business automations](/docs/guides/autopilot/event-driven-automations) | `POST /v1/auto/automations` | foundations | 15 min | [AUTO 201](https://hanzo.university/business-autopilot) | `shipped` |
+| [Pause high-risk autopilot runs for human approval](/docs/guides/autopilot/human-approval-gates) | `POST /v1/auto/automations/{id}/runs/{run}/review` | practitioner | 15 min | [AUTO 201](https://hanzo.university/business-autopilot) | `shipped` |
+| [Launch segmented multi-channel campaigns with Zen](/docs/guides/autopilot/agentic-marketing-campaigns) | `POST /v1/campaign` | practitioner | 20 min | [MKT 102](https://hanzo.university/agentic-marketing) | `shipped` |
+| [Coordinate role-scoped agents with A2A handoffs](/docs/guides/autopilot/multi-agent-workforce) | `POST /v1/agent` | architect | 25 min | [AUTO 301](https://hanzo.university/autonomous-organizations) | `shipped` |
+| [Enforce per-agent spend tracking and billing alerts](/docs/guides/autopilot/agent-spend-budgets) | `GET /v1/agent/{ref}/spend` | practitioner | 15 min | [AUTO 301](https://hanzo.university/autonomous-organizations) | `shipped` |
+| [Turn human overrides into weekly Kai & Enso upgrades](/docs/guides/autopilot/continuous-ops-feedback) | `POST /v1/decisions/{decision}/corrections` | specialist | 20 min | [AUTO 101](https://hanzo.university/continuous-improvement), [KAI 301](https://hanzo.university/kai-training-decision-models) | `shipped` |
+
+### Infrastructure — Sovereign Cloud, GPUs & Observability (5)
+
+Single-binary self-hosting, GPU cluster and BYO fleet management, ephemeral microVM sandboxes, zero-trust overlay networking, and AI observability. [Browse Infrastructure hub →](/docs/guides/infrastructure)
+
+| Guide | Primary Endpoint | Level | Duration | Course | Status |
+| --- | --- | --- | --- | --- | --- |
+| [Self-host Hanzo Cloud locally or air-gapped](/docs/guides/infrastructure/self-host-single-binary) | `GET /v1/models` | practitioner | 20 min | [SYS 103](https://hanzo.university/systems-engineering), [CYB 401](https://hanzo.university/sovereign-zero-trust-ai) | `shipped` |
+| [Manage GPU clusters and BYO compute fleets](/docs/guides/infrastructure/gpu-fleet-and-clusters) | `GET /v1/compute/gpus` | architect | 20 min | [ML 401](https://hanzo.university/ml-systems), [SYS 103](https://hanzo.university/systems-engineering) | `shipped` |
+| [Run untrusted code in ephemeral microVM sandboxes](/docs/guides/infrastructure/ephemeral-microvm-sandboxes) | `POST /v1/sandbox/lease` | practitioner | 15 min | [SYS 103](https://hanzo.university/systems-engineering), [ENG 100](https://hanzo.university/agentic-coding) | `shipped` |
+| [Connect private services over /v1/network zero-trust mesh](/docs/guides/infrastructure/zero-trust-overlay-mesh) | `GET /v1/network/identities` | architect | 20 min | [SYS 103](https://hanzo.university/systems-engineering), [CYB 401](https://hanzo.university/sovereign-zero-trust-ai) | `shipped` |
+| [Query AI latency, traces, logs, and unit economics](/docs/guides/infrastructure/o11y-traces-and-metrics) | `GET /v1/eval/metrics` | practitioner | 15 min | [ARC 105](https://hanzo.university/ai-architect), [SYS 103](https://hanzo.university/systems-engineering) | `shipped` |
+
+### Business — White-Label, Metering & Monetization (4)
+
+Multi-tenant white-label isolation, usage-based billing ledgers, Marketplace distribution for agents and MCP tools, and offline cryptographic licensing. [Browse Business hub →](/docs/guides/business)
+
+| Guide | Primary Endpoint | Level | Duration | Course | Status |
+| --- | --- | --- | --- | --- | --- |
+| [Isolate customer orgs, Base stores, and entitlements](/docs/guides/business/multi-tenant-white-label) | `GET /v1/entitlement/orgs/{org}` | architect | 25 min | [ENT 401](https://hanzo.university/build-your-ai-company), [ARC 105](https://hanzo.university/ai-architect) | `shipped` |
+| [Meter AI consumption, balances, and customer invoices](/docs/guides/business/usage-metering-and-billing) | `GET /v1/billing/usage` | practitioner | 20 min | [ENT 401](https://hanzo.university/build-your-ai-company) | `shipped` |
+| [Publish and monetize agents & tools on Marketplace](/docs/guides/business/marketplace-agent-listings) | `GET /v1/marketplace/listings` | practitioner | 20 min | [ENT 401](https://hanzo.university/build-your-ai-company) | `shipped` |
+| [Issue and verify offline cryptographic enterprise licenses](/docs/guides/business/offline-enterprise-licensing) | `POST /v1/licensing/issue` | architect | 20 min | [ENT 401](https://hanzo.university/build-your-ai-company), [CYB 401](https://hanzo.university/sovereign-zero-trust-ai) | `shipped` |
+
+## Cookbook & migrations
+
+Zen, Enso and Kai in one loop — route a request, triage with typed answers, gate an agent's command, drive an agent from programs: [the cookbook](/docs/guides/cookbook). Also explore [coding agents](/docs/guides/coding), [integrations](/docs/guides/integrations), and [migrations](/docs/guides/migrate).
 
 Every capability the API serves is in the [reference](/docs/openapi), and the same key reaches all of it.

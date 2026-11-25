@@ -1,0 +1,174 @@
+---
+title: "Make your first calibrated Kai decision"
+description: "Send your first typed choice, noul, and score questions to POST /v1/decisions with zero output tokens and calibrated probabilities."
+product: kai
+level: foundations
+duration: 10 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`) exported as `HANZO_API_KEY`"
+objectives:
+  - "Query choice, noul, and score question types in one POST /v1/decisions call"
+  - "Read calibrated probabilities, confidence, state_hash, and routing provenance"
+  - "Verify zero output tokens and sub-100 ms CPU latency"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - KAI 201
+status: shipped
+---
+
+**Replace fragile JSON-from-LLM classification with one calibrated forward pass.** Kai scores bounded options directly on CPU with `usage.output_tokens == 0`, costing `$0.021` per million input tokens.
+
+## Architecture & contract
+
+Kai reads your `state` beside each question independently: `choice` picks one label with a normalized distribution, `noul` returns `P(true)`, and `score` computes an ordinal expectation over ordered criteria. Because options are scored independently, shuffling label order never changes probabilities.
+
+**Primary endpoint:** `POST /v1/decisions` · **Status:** `shipped` · **Level:** `foundations`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo decisions create --model kai --data '{
+  "state": {"message": "Charged twice on my March invoice; second charge is still pending."},
+  "questions": {
+    "is_bug": {"type": "noul", "instructions": "Is this a software defect?"},
+    "team": {
+      "type": "choice",
+      "instructions": "Which team should handle this ticket?",
+      "criteria": {
+        "billing": "Charges, invoices, refunds, and subscriptions",
+        "account": "Login, SSO, and user profile management",
+        "engineering": "Product bugs and service errors"
+      }
+    },
+    "urgency": {"type": "score", "instructions": "How urgent is this?", "criteria": ["low", "medium", "high", "critical"]}
+  }
+}'
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, AiApi } from 'hanzoai';
+
+const ai = new AiApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data } = await ai.postDecisions({
+  model: 'kai',
+  state: { message: 'Charged twice on my March invoice; second charge is still pending.' },
+  questions: {
+    is_bug: { type: 'noul', instructions: 'Is this a software defect?' },
+    team: {
+      type: 'choice',
+      instructions: 'Which team should handle this ticket?',
+      criteria: {
+        billing: 'Charges, invoices, refunds, and subscriptions',
+        account: 'Login, SSO, and user profile management',
+        engineering: 'Product bugs and service errors',
+      },
+    },
+    urgency: { type: 'score', instructions: 'How urgent is this?', criteria: ['low', 'medium', 'high', 'critical'] },
+  },
+});
+console.log(data.answers, data.routing);
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import AiApi
+
+api = AiApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+res = api.post_decisions({
+    "model": "kai",
+    "state": {"message": "Charged twice on my March invoice; second charge is still pending."},
+    "questions": {
+        "is_bug": {"type": "noul", "instructions": "Is this a software defect?"},
+        "team": {
+            "type": "choice",
+            "instructions": "Which team should handle this ticket?",
+            "criteria": {
+                "billing": "Charges, invoices, refunds, and subscriptions",
+                "account": "Login, SSO, and user profile management",
+                "engineering": "Product bugs and service errors",
+            },
+        },
+        "urgency": {"type": "score", "instructions": "How urgent is this?", "criteria": ["low", "medium", "high", "critical"]},
+    },
+})
+print(res["answers"], res["routing"])
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -s https://api.hanzo.ai/v1/decisions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "kai",
+    "state": {"message": "Charged twice on my March invoice; second charge is still pending."},
+    "questions": {
+      "is_bug": {"type": "noul", "instructions": "Is this a software defect?"},
+      "team": {
+        "type": "choice",
+        "instructions": "Which team should handle this ticket?",
+        "criteria": {
+          "billing": "Charges, invoices, refunds, and subscriptions",
+          "account": "Login, SSO, and user profile management",
+          "engineering": "Product bugs and service errors"
+        }
+      },
+      "urgency": {"type": "score", "instructions": "How urgent is this?", "criteria": ["low", "medium", "high", "critical"]}
+    }
+  }' | jq '{id, answers, usage, routing, state_hash}'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "ai",
+      "arguments": {
+        "op": "post_decisions",
+        "input": {
+          "model": "kai",
+          "state": "Charged twice on March invoice",
+          "questions": {"is_bug": {"type": "noul", "instructions": "Is this a software defect?"}}
+        }
+      }
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Assert `usage.output_tokens == 0`.
+- Assert `answers.team.choice == "billing"` and `answers.team.probabilities` sums to `1.0`.
+- Record `id`, `state_hash`, and `routing.calibration` for downstream auditing.
+
+## Production guardrails
+
+- Keep `state` plus each question under `1,024` tokens (`routing.extrapolated == false`) for peak calibration; reads beyond `32,768` tokens fail with `422 state_too_long`.
+- Use `sk-` server keys; `pk-` publishable keys return `403`.
+
+## Next steps & Hanzo University
+
+- [Decisions API Reference](/docs/decisions) · [Calibrate Abstention Thresholds](/docs/guides/kai/abstention-thresholds)
+
+- **[KAI 201 — Kai Decision Intelligence](https://hanzo.university/kai-decision-intelligence)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/kai-decision-intelligence))

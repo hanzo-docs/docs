@@ -1,0 +1,66 @@
+---
+title: Science & research
+description: "Run empirical AI research on Hanzo: controlled experiments (/v1/experiment), paired benchmarking (/v1/benchmark), evaluation datasets (/v1/eval), and outcome-triggered research autopilot."
+icon: FlaskConical
+product: science
+level: practitioner
+duration: 15 min
+prerequisites:
+  - A Hanzo secret key (`sk-...`)
+objectives:
+  - Replace ad-hoc vibe checks with falsifiable studies, controlled A/B experiments, and paired benchmarks
+  - Map Hanzo's empirical planes (`/v1/experiment`, `/v1/benchmark`, `/v1/eval`, `/v1/research/runs`) to the scientific lifecycle
+  - Launch autonomous research pipelines governed by strict acceptance criteria
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - SCI 101
+  - SCI 201
+  - SCI 301
+  - SCI 401
+status: shipped
+---
+
+**Claims without paired measurements and pinned provenance are noise.** Hanzo Science turns prompt edits, model upgrades, agent harness patches, and routing changes into falsifiable experiments with cryptographic reproducibility.
+
+## Four empirical planes
+
+| Plane | Canonical endpoints | What it guarantees | Status |
+|---|---|---|---|
+| **Experiments** | `POST /v1/experiment`, `GET /v1/experiment/{id}/assign`, `POST /v1/experiment/{id}/analyze`, `POST /v1/experiment/{id}/decide` | Deterministic subject bucketing, controlled outcome analysis, audited winner promotion | `shipped` |
+| **Benchmarks** | `GET /v1/benchmark/catalog`, `GET /v1/benchmark/leaderboard`, `GET /v1/benchmark/compare`, `GET /v1/benchmark/history` | Standardized harness measurements separated from vendor claims; exact-McNemar paired comparisons (`n_common`) | `shipped` |
+| **Evaluations** | `POST /v1/eval/datasets`, `POST /v1/eval/evaluators`, `GET /v1/eval/runs`, `GET /v1/eval/metrics` | Golden datasets, reusable Kai/model judges, trace-linked scores, latency & cost percentiles | `shipped` |
+| **Research studies** | `GET /v1/research/runs` (public live), `POST /v1/research/studies`, `GET /v1/research/actions` | Versioned improvement studies, confidence-interval gating, draft findings, `improvement.reviewed` events | `preview` |
+
+## Explore Science & research
+
+<Cards>
+  <Card title="Scientific Method" href="/docs/science/scientific-method">
+    Write falsifiable hypotheses, pin baselines, and define rejection criteria before touching weights or prompts.
+  </Card>
+  <Card title="Studies & Experiments" href="/docs/science/studies-experiments">
+    Run controlled A/B variants on `/v1/experiment` and versioned improvement studies.
+  </Card>
+  <Card title="Research Autopilot" href="/docs/science/research-autopilot">
+    Subscribe durable automations to `improvement.reviewed` outcomes in isolated sandboxes.
+  </Card>
+  <Card title="Benchmarking Arena" href="/docs/science/benchmarking">
+    Compare models with exact-McNemar paired tests on `GET /v1/benchmark/compare` and track regressions over time.
+  </Card>
+  <Card title="Reproducibility" href="/docs/science/reproducibility">
+    Pin weights SHA-256, calibration hashes, `state_hash`, dataset digests, and git commits.
+  </Card>
+  <Card title="Continuous Improvement" href="/docs/science/continuous-improvement">
+    Close the recursive improvement loop safely across memory, skills, tools, and agent harnesses.
+  </Card>
+</Cards>
+
+## University track
+
+- [SCI 101 — Science & Discovery](https://hanzo.university/science-discovery) ([Interactive Lab](https://hanzo.app/learn/science-discovery))
+- [SCI 201 — Autonomous Research](https://hanzo.university/autonomous-research) ([Interactive Lab](https://hanzo.app/learn/autonomous-research))
+- [SCI 301 — Research Autopilot](https://hanzo.university/research-autopilot) ([Interactive Lab](https://hanzo.app/learn/research-autopilot))
+- [SCI 401 — Recursive Improvement](https://hanzo.university/recursive-improvement) ([Interactive Lab](https://hanzo.app/learn/recursive-improvement))

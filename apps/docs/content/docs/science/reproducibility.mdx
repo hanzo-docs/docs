@@ -1,0 +1,117 @@
+---
+title: Cryptographic reproducibility
+description: "Verify every AI decision, training run, and benchmark with SHA-256 weight digests, calibration hashes, state_hash, dataset lineage, and pinned git commits."
+icon: Fingerprint
+product: science
+level: architect
+duration: 20 min
+prerequisites:
+  - A Hanzo secret key (`sk-...`)
+objectives:
+  - Audit Kai decision receipts (`state_hash`, `routing.sha256`, `routing.calibration`)
+  - Trace dataset and artifact provenance across `/v1/dataset/{name}/lineage` and `/v1/train/artifacts`
+  - Enforce deterministic replay gates in CI before promoting models or Decision Programs
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - SCI 101
+  - ML 401
+  - CYB 401
+status: shipped
+---
+
+**If you cannot replay a decision six months later and prove which weights, calibration table, and input state produced it, your AI system is not auditable.** Every Hanzo intelligence surface emits machine-verifiable digests.
+
+## Reproducibility receipt anatomy
+
+| Surface | Emitted provenance fields | What it proves |
+|---|---|---|
+| **Kai Decisions** (`POST /v1/decisions`) | `state_hash` (`sha256:...`), `routing.checkpoint`, `routing.sha256`, `routing.calibration` (`cal_...`) | Exact input bytes, exact weight file, and exact temperature-calibration table |
+| **Datasets** (`GET /v1/dataset/{name}/lineage`) | Materialized snapshot ID, upstream transforms, row digest | Exact rows evaluated or trained on |
+| **Training Artifacts** (`GET /v1/train/artifacts/{sha256}`) | Content-addressed SHA-256 key verified by S3 on upload | Byte-identical dataset and checkpoint artifacts |
+| **Audit Log** (`GET /v1/audit`) | Principal identity, org, timestamp, action digest | Who promoted, rolled back, or authorized each change |
+
+## Verify provenance end-to-end
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+# Inspect materialized dataset lineage
+hanzo dataset lineage support-triage-2026q4
+
+# Verify content-addressed training artifacts
+hanzo train artifacts list
+
+# Query org audit trail for publication & promotion events
+hanzo audit list
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, DatasetApi, TrainApi } from 'hanzoai';
+
+const cfg = new Configuration({ accessToken: process.env.HANZO_API_KEY });
+const lineage = await new DatasetApi(cfg).getDatasetByNameLineage('support-triage-2026q4');
+const artifacts = await new TrainApi(cfg).getTrainArtifacts();
+console.log({ lineage: lineage.data, artifacts: artifacts.data });
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import DatasetApi, TrainApi
+
+client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
+print(DatasetApi(client).get_dataset_by_name_lineage("support-triage-2026q4"))
+print(TrainApi(client).get_train_artifacts())
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+# Check Kai decision receipt fields directly
+curl -s https://api.hanzo.ai/v1/decisions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"kai","state":"invoice #402 paid","questions":{"settled":{"type":"noul","instructions":"Is this invoice settled?"}}}' \
+  | jq '{id, state_hash, routing}'
+
+# Check audit trail
+curl -s https://api.hanzo.ai/v1/audit \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "audit",
+      "arguments": {"op": "get_audit", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Calibration pinning in Decision Programs
+
+Decision Programs pin `calibration` (`cal_...`) alongside `model: "kai"`. Because action thresholds (`>= 0.5`, `>= 0.85`) hold only for the calibration table they were validated against, running under a different calibration automatically demotes an `enforced` program to `shadow` until re-validated.
+
+## Related courses & docs
+
+- [SCI 101 — Science & Discovery](https://hanzo.university/science-discovery) ([Interactive Lab](https://hanzo.app/learn/science-discovery))
+- [ML 401 — ML Systems](https://hanzo.university/ml-systems) ([Interactive Lab](https://hanzo.app/learn/ml-systems))
+- [Model Registry](/docs/training/model-registry) · [Datasets & Lineage](/docs/training/datasets)

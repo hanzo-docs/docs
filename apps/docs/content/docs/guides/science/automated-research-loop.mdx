@@ -1,0 +1,129 @@
+---
+title: "Arm outcome-triggered research autopilot loops"
+description: "Subscribe durable automations on POST /v1/auto/automations to research improvement.reviewed events and inspect public research runs on GET /v1/research/runs."
+product: science
+level: specialist
+duration: 25 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`)"
+  - "Familiarity with [Research autopilot](/docs/science/research-autopilot)"
+objectives:
+  - "Query published research evidence at GET /v1/research/runs"
+  - "Arm an event-driven automation triggered by research improvement.reviewed"
+  - "Keep proposed patches gated behind permissions: ask and draft PR review"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - SCI 301
+status: preview
+---
+
+**Replace manual overnight scripts with event-driven Research Autopilot.** Whenever a study finishes scoring a baseline vs. candidate run, Hanzo wakes a sandboxed agent to investigate regressions or draft the next bounded experiment.
+
+## Architecture & contract
+
+The automation engine deduplicates `research / improvement.reviewed` events by exact evidence hash, injects study payloads as untrusted data, and enforces explicit `permissions: "ask"` so no autonomous research loop merges unreviewed code.
+
+**Primary endpoint:** `POST /v1/auto/automations` · **Status:** `preview` · **Level:** `specialist`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo auto automations create --data '{
+  "name": "Harness regression investigator",
+  "instructions": "Read the reviewed study evidence. Reproduce any regression in a sandbox and open a draft PR with measured proof.",
+  "event": {"source": "research", "name": "improvement.reviewed"},
+  "model": "zen6-coder",
+  "permissions": "ask"
+}'
+hanzo auto automations list
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, AutoApi } from 'hanzoai';
+
+const auto = new AutoApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data } = await auto.postAutoAutomations({
+  name: 'Harness regression investigator',
+  instructions: 'Read the reviewed study evidence. Reproduce any regression in a sandbox and open a draft PR.',
+  event: { source: 'research', name: 'improvement.reviewed' },
+  model: 'zen6-coder',
+  permissions: 'ask',
+});
+console.log(data);
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import AutoApi
+
+api = AutoApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+print(api.post_auto_automations({
+    "name": "Harness regression investigator",
+    "instructions": "Read the reviewed study evidence. Reproduce any regression in a sandbox and open a draft PR.",
+    "event": {"source": "research", "name": "improvement.reviewed"},
+    "model": "zen6-coder",
+    "permissions": "ask",
+}))
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+# 1. Inspect public published research runs (no key required)
+curl -s "https://api.hanzo.ai/v1/research/runs?limit=5" | jq '.'
+
+# 2. Arm an outcome-triggered research automation
+curl -s -X POST https://api.hanzo.ai/v1/auto/automations \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{
+    "name": "Harness regression investigator",
+    "instructions": "Read the reviewed study evidence. Reproduce any regression in a sandbox and open a draft PR.",
+    "event": {"source": "research", "name": "improvement.reviewed"},
+    "model": "zen6-coder",
+    "permissions": "ask"
+  }' | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "auto",
+      "arguments": {"op": "get_auto_automations", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Confirm the automation is armed (`GET /v1/auto/automations`) and trigger one dry run via `POST /v1/auto/automations/{id}/run`.
+
+## Production guardrails
+
+- Keep `permissions: "ask"` on every research automation; never grant silent production deploy tokens.
+
+## Next steps & Hanzo University
+
+- [Research Autopilot](/docs/science/research-autopilot) · [Self-Improvement](/docs/self-improvement)
+
+- **[SCI 301 — Research Autopilot](https://hanzo.university/research-autopilot)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/research-autopilot))

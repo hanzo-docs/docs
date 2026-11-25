@@ -1,0 +1,131 @@
+---
+title: Research autopilot
+description: "Automate hypothesis testing and evidence review using event-triggered automations (/v1/auto/automations), ephemeral sandboxes (/v1/sandbox), and human-gated draft PRs."
+icon: Bot
+product: science
+level: specialist
+duration: 30 min
+prerequisites:
+  - A Hanzo secret key (`sk-...`)
+  - Familiarity with [Studies & experiments](/docs/science/studies-experiments) and [Self-improvement](/docs/self-improvement)
+objectives:
+  - Arm an outcome-triggered automation on `POST /v1/auto/automations` for `research` `improvement.reviewed` events
+  - Execute reproducible candidate harnesses inside ephemeral `/v1/sandbox` leases
+  - Enforce review boundaries so research autopilot produces evidence and draft PRs without silent production merges
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - SCI 301
+  - SCI 201
+status: preview
+---
+
+**Research Autopilot turns new evaluation outcomes into bounded follow-up experiments — without timers, polling scripts, or unchecked merges.** When a study finishes reviewing baseline vs. candidate evidence, the durable automation engine wakes an agent against an isolated sandbox to propose and test the next hypothesis.
+
+## Architecture of an autonomous research loop
+
+1. **Trigger**: A study completes review and publishes an `improvement.reviewed` event carrying `review.status` (`improved`, `regressed`, `inconclusive`, `blocked`) plus baseline and candidate hashes.
+2. **Deduplicated dispatch**: `/v1/auto/automations` deduplicates by exact evidence digest so retried deliveries never duplicate runs.
+3. **Isolated execution**: The agent leases an ephemeral microVM via `POST /v1/sandbox/lease`, runs the benchmark harness, and uploads measured results.
+4. **Untrusted data boundary**: Incoming evidence is attached strictly as untrusted data — never executable instructions — and `permissions: "ask"` blocks any unapproved side effect.
+5. **Draft output**: Winning candidates open a draft PR with reproduction logs and paired benchmark deltas; humans (or CI gates) own merge and deploy.
+
+## Arm an outcome-triggered research automation
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo auto automations create --data '{
+  "name": "Continuous harness research",
+  "instructions": "Inspect recorded study evidence. Propose one bounded experiment or tested draft patch. Never fabricate measurements.",
+  "event": {"source": "research", "name": "improvement.reviewed"},
+  "model": "zen6-coder",
+  "permissions": "ask"
+}'
+
+# List armed automations and run history
+hanzo auto automations list
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, AutoApi } from 'hanzoai';
+
+const auto = new AutoApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data } = await auto.postAutoAutomations({
+  name: 'Continuous harness research',
+  instructions:
+    'Inspect recorded study evidence. Propose one bounded experiment or tested draft patch. Never fabricate measurements.',
+  event: { source: 'research', name: 'improvement.reviewed' },
+  model: 'zen6-coder',
+  permissions: 'ask',
+});
+console.log(data);
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import AutoApi
+
+api = AutoApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+res = api.post_auto_automations({
+    "name": "Continuous harness research",
+    "instructions": "Inspect recorded study evidence. Propose one bounded experiment or tested draft patch. Never fabricate measurements.",
+    "event": {"source": "research", "name": "improvement.reviewed"},
+    "model": "zen6-coder",
+    "permissions": "ask",
+})
+print(res)
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -X POST https://api.hanzo.ai/v1/auto/automations \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Continuous harness research",
+    "instructions": "Inspect recorded study evidence. Propose one bounded experiment or tested draft patch. Never fabricate measurements.",
+    "event": {"source": "research", "name": "improvement.reviewed"},
+    "model": "zen6-coder",
+    "permissions": "ask"
+  }'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "auto",
+      "arguments": {"op": "get_auto_automations", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Review and trigger manually
+
+- Trigger an on-demand verification pass: `POST https://api.hanzo.ai/v1/auto/automations/{id}/run`
+- Inspect past runs newest-first: `GET https://api.hanzo.ai/v1/auto/automations/{id}/runs`
+- Approve or reject a held run: `POST https://api.hanzo.ai/v1/auto/automations/{id}/runs/{run}/review`
+
+## Related courses & docs
+
+- [SCI 301 — Research Autopilot](https://hanzo.university/research-autopilot) ([Interactive Lab](https://hanzo.app/learn/research-autopilot))
+- [Continuous Improvement](/docs/science/continuous-improvement) · [Self-Improvement](/docs/self-improvement)

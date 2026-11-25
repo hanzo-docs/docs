@@ -49,7 +49,7 @@ curl https://api.hanzo.ai/v1/decisions \
 
 | Field | Type | Limit |
 |---|---|---|
-| `model` | `kai`, `typesafe/jev-1.13` or `~typesafe/jev-latest` | required |
+| `model` | `kai`, `kai-1.8`, `typesafe/jev-1.13` or `~typesafe/jev-latest` | required |
 | `state` | a string, object or array: whatever the questions are about | required; Kai reads each question with the state beside it (a string as is, anything else as its JSON text); see [Limits](#limits) |
 | `questions` | `{name: question}`; answers come back under the same names, in the same order | required; 1 to 100 |
 | `session_id`, `user` | strings | optional; at most 256 characters each |
@@ -271,4 +271,6 @@ Programs: questions composed into a graph that policy governs.
   - [cURL Script (`examples/curl/decisions.sh`)](https://github.com/hanzoai/kai/tree/main/examples/curl)
 - **[Modular Rust Recipes Crate (`kai-recipes`)](https://github.com/hanzoai/kai/tree/main/recipes/rust)**: Standalone Rust crate for typed question building and distribution scoring.
 - **[20 Enterprise Blueprints (`recipes/`)](https://github.com/hanzoai/kai/tree/main/recipes)**: Retail inventory audit, equipment readiness gates, returns triage, and agent control loops.
+- **[Teach Kai your business (KAI 301 Lab 01)](/docs/training/kai-capabilities)**: Train org-private Kai capabilities on CPU via `POST /v1/capabilities/{name}/train` from captured decision corrections, with held-out regression, calibration, abstention, latency, and adversarial evaluation and instant rollback.
+- **[Choose your intelligence architecture](/docs/choose-architecture)**: When to use Kai vs Enso vs Zen vs Science vs Cybersecurity vs Autopilot.
 - **[Cookbook & Pipelines](/docs/guides/cookbook)**: End-to-end integration patterns combining Enso routing, Kai structured decisions, and Zen reasoning.

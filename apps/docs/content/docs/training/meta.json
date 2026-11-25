@@ -1,0 +1,14 @@
+{
+  "title": "Training & optimization",
+  "description": "Train org-private Kai decision capabilities on CPU, optimize Enso routing policies, fine-tune Zen models, run RL loops, and gate promotions with datasets and evaluations.",
+  "icon": "Sliders",
+  "pages": [
+    "kai-capabilities",
+    "enso-routing",
+    "zen-fine-tuning",
+    "datasets",
+    "reinforcement-learning",
+    "evaluation",
+    "model-registry"
+  ]
+}

@@ -1,0 +1,153 @@
+{
+  "courses": {
+    "AUTO 101": { "slug": "continuous-improvement", "title": "Continuous Improvement" },
+    "KAI 201": { "slug": "kai-decision-intelligence", "title": "Kai Decision Intelligence" },
+    "KAI 301": { "slug": "kai-training-decision-models", "title": "Training Kai Decision Models" },
+    "ENS 201": { "slug": "enso-adaptive-intelligence", "title": "Enso Adaptive Intelligence" },
+    "ENS 301": { "slug": "enso-training-orchestrators", "title": "Training Enso Orchestrators" },
+    "ZEN 201": { "slug": "zen-model-engineering", "title": "Zen Model Engineering" },
+    "ZEN 301": { "slug": "zen-native-training", "title": "Zen Native Training" },
+    "ML 401": { "slug": "ml-systems", "title": "ML Systems" },
+    "SCI 101": { "slug": "science-discovery", "title": "Science & Discovery" },
+    "SCI 201": { "slug": "autonomous-research", "title": "Autonomous Research" },
+    "SCI 301": { "slug": "research-autopilot", "title": "Research Autopilot" },
+    "SCI 401": { "slug": "recursive-improvement", "title": "Recursive Improvement" },
+    "CYB 101": { "slug": "ai-security-fundamentals", "title": "AI Security Fundamentals" },
+    "CYB 201": { "slug": "agentic-cybersecurity", "title": "Agentic Cybersecurity" },
+    "CYB 301": { "slug": "autonomous-secops", "title": "Autonomous SecOps" },
+    "CYB 401": { "slug": "sovereign-zero-trust-ai", "title": "Sovereign Zero-Trust AI" },
+    "AUTO 201": { "slug": "business-autopilot", "title": "Business Autopilot" },
+    "AUTO 301": { "slug": "autonomous-organizations", "title": "Autonomous Organizations" },
+    "ENT 401": { "slug": "build-your-ai-company", "title": "Build Your AI Company" },
+    "ENG 100": { "slug": "agentic-coding", "title": "Agentic Coding" },
+    "RL 101": { "slug": "reinforcement-learning", "title": "Reinforcement Learning" },
+    "SYS 103": { "slug": "systems-engineering", "title": "Systems Engineering" },
+    "MKT 102": { "slug": "agentic-marketing", "title": "Agentic Marketing" },
+    "PRA 104": { "slug": "ai-practitioner", "title": "AI Practitioner" },
+    "ARC 105": { "slug": "ai-architect", "title": "AI Architect" }
+  },
+  "categories": [
+    {
+      "id": "kai",
+      "title": "Kai — Decision Intelligence",
+      "shortTitle": "Kai",
+      "icon": "Scale",
+      "description": "Calibrated choice, noul, and score decisions at $0.021/1M input tokens (0 output tokens), Decision Programs, and CPU org capability training.",
+      "guides": [
+        { "slug": "first-decision", "title": "Make your first calibrated Kai decision", "level": "foundations", "duration": "10 min", "status": "shipped", "courses": ["KAI 201"], "endpoint": "POST /v1/decisions" },
+        { "slug": "train-business-capability", "title": "KAI 301 Lab 01: Teach Kai your business", "level": "specialist", "duration": "45 min", "status": "shipped", "courses": ["KAI 301", "KAI 201"], "endpoint": "POST /v1/capabilities/{name}/train", "lab": "kai-301-lab-01" },
+        { "slug": "abstention-thresholds", "title": "Calibrate confidence & abstention thresholds", "level": "practitioner", "duration": "15 min", "status": "shipped", "courses": ["KAI 201"], "endpoint": "POST /v1/decisions" },
+        { "slug": "decision-programs", "title": "Author and run Decision Programs", "level": "practitioner", "duration": "20 min", "status": "shipped", "courses": ["KAI 201", "CYB 101"], "endpoint": "POST /v1/decisions" },
+        { "slug": "support-triage", "title": "Route support tickets at $0.021 per 1M tokens", "level": "practitioner", "duration": "15 min", "status": "shipped", "courses": ["KAI 201", "PRA 104"], "endpoint": "POST /v1/decisions" },
+        { "slug": "multilingual-classification", "title": "Classify 51 languages without translation", "level": "practitioner", "duration": "15 min", "status": "shipped", "courses": ["KAI 201"], "endpoint": "POST /v1/decisions" },
+        { "slug": "agent-completion-gate", "title": "Stop autonomous coding loops deterministically", "level": "specialist", "duration": "20 min", "status": "shipped", "courses": ["KAI 201", "ENG 100"], "endpoint": "POST /v1/decisions" },
+        { "slug": "capability-rollback-ci", "title": "Gate Kai capability upgrades & automate rollback", "level": "specialist", "duration": "20 min", "status": "shipped", "courses": ["KAI 301"], "endpoint": "POST /v1/capabilities/{name}/publish" }
+      ]
+    },
+    {
+      "id": "enso",
+      "title": "Enso — Adaptive Routing & Orchestration",
+      "shortTitle": "Enso",
+      "icon": "Route",
+      "description": "Multi-tier adaptive routing (enso-auto through enso-ultra), hard cost/latency bounds, prompt caching, outcome feedback rewards, and custom router blends.",
+      "guides": [
+        { "slug": "adaptive-tier-routing", "title": "Route prompts automatically with enso-auto", "level": "foundations", "duration": "10 min", "status": "shipped", "courses": ["ENS 201", "PRA 104"], "endpoint": "POST /v1/chat/completions" },
+        { "slug": "cost-latency-bounds", "title": "Enforce X-Max-Cost and X-Max-Latency-Ms caps", "level": "practitioner", "duration": "15 min", "status": "shipped", "courses": ["ENS 201"], "endpoint": "POST /v1/chat/completions" },
+        { "slug": "prompt-caching-turns", "title": "Cut coding-agent turn costs 4.6x with prompt caching", "level": "practitioner", "duration": "15 min", "status": "shipped", "courses": ["ENS 201", "ENG 100"], "endpoint": "POST /v1/chat/completions" },
+        { "slug": "outcome-feedback-loop", "title": "Train your org's learned router via outcome feedback", "level": "specialist", "duration": "20 min", "status": "shipped", "courses": ["ENS 301"], "endpoint": "POST /v1/ai/feedback" },
+        { "slug": "custom-router-blends", "title": "Compose private Enso router blends", "level": "specialist", "duration": "20 min", "status": "shipped", "courses": ["ENS 301"], "endpoint": "POST /v1/benchmark/presets" },
+        { "slug": "fast-mode-and-failover", "title": "Configure fast mode and zero-downtime tier failover", "level": "practitioner", "duration": "15 min", "status": "shipped", "courses": ["ENS 201", "ARC 105"], "endpoint": "POST /v1/chat/completions" }
+      ]
+    },
+    {
+      "id": "zen",
+      "title": "Zen — Open-Weight Model Engineering",
+      "shortTitle": "Zen",
+      "icon": "Sparkle",
+      "description": "Apache-2.0 Zen 6 coding, ternary local inference, retrieval embeddings, managed LoRA fine-tuning, interactive GRPO RL, and checkpoint deployment.",
+      "guides": [
+        { "slug": "zen6-coding-workflow", "title": "Ship code with zen6 and zen6-coder", "level": "foundations", "duration": "15 min", "status": "shipped", "courses": ["ZEN 201", "ENG 100"], "endpoint": "POST /v1/chat/completions" },
+        { "slug": "local-zen6-flash", "title": "Serve ternary zen6-flash locally on laptop or single GPU", "level": "practitioner", "duration": "20 min", "status": "shipped", "courses": ["ZEN 201", "SYS 103"], "endpoint": "POST /v1/chat/completions" },
+        { "slug": "embeddings-and-rerank", "title": "Build retrieval pipelines with zen-embedding and rerank", "level": "practitioner", "duration": "15 min", "status": "shipped", "courses": ["ZEN 201"], "endpoint": "POST /v1/embeddings" },
+        { "slug": "lora-fine-tuning-job", "title": "Launch a managed LoRA fine-tuning job on Zen", "level": "specialist", "duration": "30 min", "status": "shipped", "courses": ["ZEN 301"], "endpoint": "POST /v1/train/jobs" },
+        { "slug": "grpo-verifiable-rewards", "title": "Run an interactive GRPO RL loop on /v1/train/clients", "level": "architect", "duration": "35 min", "status": "shipped", "courses": ["RL 101", "ZEN 301"], "endpoint": "POST /v1/train/clients" },
+        { "slug": "deploy-private-checkpoint", "title": "Publish and serve a regression-gated Zen checkpoint", "level": "specialist", "duration": "20 min", "status": "shipped", "courses": ["ZEN 301", "ML 401"], "endpoint": "POST /v1/train/jobs/{id}/publish" }
+      ]
+    },
+    {
+      "id": "science",
+      "title": "Science — Empirical AI & Autonomous Research",
+      "shortTitle": "Science",
+      "icon": "FlaskConical",
+      "description": "Golden evaluation suites, Kai judges, exact-McNemar paired benchmarks, controlled A/B rollouts, dataset lineage, drift tracking, and research autopilot.",
+      "guides": [
+        { "slug": "golden-eval-datasets", "title": "Create and version golden evaluation datasets", "level": "foundations", "duration": "15 min", "status": "shipped", "courses": ["SCI 101"], "endpoint": "POST /v1/eval/datasets" },
+        { "slug": "reusable-kai-judges", "title": "Register deterministic Kai and model evaluators", "level": "practitioner", "duration": "15 min", "status": "shipped", "courses": ["SCI 101", "KAI 201"], "endpoint": "POST /v1/eval/evaluators" },
+        { "slug": "paired-mcnemar-benchmark", "title": "Compare two models validly with exact-McNemar tests", "level": "practitioner", "duration": "20 min", "status": "shipped", "courses": ["SCI 201"], "endpoint": "GET /v1/benchmark/compare" },
+        { "slug": "controlled-ab-experiment", "title": "Run deterministic A/B rollouts on /v1/experiment", "level": "practitioner", "duration": "20 min", "status": "shipped", "courses": ["SCI 201"], "endpoint": "POST /v1/experiment" },
+        { "slug": "dataset-lineage-snapshots", "title": "Materialize datasets and verify provenance lineage", "level": "practitioner", "duration": "15 min", "status": "shipped", "courses": ["SCI 101", "ML 401"], "endpoint": "POST /v1/dataset/{name}/materialize" },
+        { "slug": "drift-detection-history", "title": "Detect model quality and latency drift over time", "level": "practitioner", "duration": "15 min", "status": "shipped", "courses": ["SCI 201"], "endpoint": "GET /v1/benchmark/history" },
+        { "slug": "automated-research-loop", "title": "Arm outcome-triggered research autopilot loops", "level": "specialist", "duration": "25 min", "status": "preview", "courses": ["SCI 301"], "endpoint": "POST /v1/auto/automations" },
+        { "slug": "recursive-harness-improvement", "title": "Close the continuous self-improvement loop safely", "level": "fellow", "duration": "30 min", "status": "preview", "courses": ["SCI 401", "AUTO 101"], "endpoint": "GET /v1/research/runs" }
+      ]
+    },
+    {
+      "id": "cyber",
+      "title": "Cybersecurity — OpenCyber & Sovereign Zero-Trust",
+      "shortTitle": "Cyber",
+      "icon": "ShieldCheck",
+      "description": "Deterministic shell command gates, CI secret scanning, container SBOM verification, sandboxed exploit validation, autonomous SecOps patching, and zero-trust hardening.",
+      "guides": [
+        { "slug": "command-risk-gate", "title": "Enforce allow < ask < deny over agent shell commands", "level": "foundations", "duration": "15 min", "status": "shipped", "courses": ["CYB 101", "KAI 201"], "endpoint": "POST /v1/decisions" },
+        { "slug": "secret-leak-scanning", "title": "Scan code and pull requests for leaked secrets", "level": "practitioner", "duration": "15 min", "status": "shipped", "courses": ["CYB 201"], "endpoint": "POST /v1/security/scans" },
+        { "slug": "container-sbom-audit", "title": "Audit container image SBOMs by digest before deploy", "level": "practitioner", "duration": "15 min", "status": "shipped", "courses": ["CYB 201"], "endpoint": "GET /v1/sbom/{ref}" },
+        { "slug": "sandboxed-exploit-repro", "title": "Validate vulnerabilities inside isolated microVMs", "level": "specialist", "duration": "25 min", "status": "shipped", "courses": ["CYB 201", "CYB 301"], "endpoint": "POST /v1/sandbox/lease" },
+        { "slug": "autonomous-secops-patching", "title": "Automate regression-tested security patch PRs", "level": "specialist", "duration": "25 min", "status": "shipped", "courses": ["CYB 301"], "endpoint": "POST /v1/auto/automations" },
+        { "slug": "authz-and-kms-hardening", "title": "Enforce AuthZ policy checks and KMS secret isolation", "level": "architect", "duration": "20 min", "status": "shipped", "courses": ["CYB 401"], "endpoint": "POST /v1/authz/check" },
+        { "slug": "trust-center-compliance", "title": "Export live SOC 2 coverage and risk posture scores", "level": "architect", "duration": "20 min", "status": "shipped", "courses": ["CYB 401"], "endpoint": "GET /v1/trust/coverage/{framework}" }
+      ]
+    },
+    {
+      "id": "autopilot",
+      "title": "Autopilot — Business, Marketing & Agent Workforces",
+      "shortTitle": "Autopilot",
+      "icon": "Workflow",
+      "description": "Durable webhook automations, human review checkpoints, brand-voice marketing campaigns, multi-agent workforces, spend budgets, and continuous feedback.",
+      "guides": [
+        { "slug": "event-driven-automations", "title": "Build durable webhook-triggered business automations", "level": "foundations", "duration": "15 min", "status": "shipped", "courses": ["AUTO 201"], "endpoint": "POST /v1/auto/automations" },
+        { "slug": "human-approval-gates", "title": "Pause high-risk autopilot runs for human approval", "level": "practitioner", "duration": "15 min", "status": "shipped", "courses": ["AUTO 201"], "endpoint": "POST /v1/auto/automations/{id}/runs/{run}/review" },
+        { "slug": "agentic-marketing-campaigns", "title": "Launch segmented multi-channel campaigns with Zen", "level": "practitioner", "duration": "20 min", "status": "shipped", "courses": ["MKT 102"], "endpoint": "POST /v1/campaign" },
+        { "slug": "multi-agent-workforce", "title": "Coordinate role-scoped agents with A2A handoffs", "level": "architect", "duration": "25 min", "status": "shipped", "courses": ["AUTO 301"], "endpoint": "POST /v1/agent" },
+        { "slug": "agent-spend-budgets", "title": "Enforce per-agent spend tracking and billing alerts", "level": "practitioner", "duration": "15 min", "status": "shipped", "courses": ["AUTO 301"], "endpoint": "GET /v1/agent/{ref}/spend" },
+        { "slug": "continuous-ops-feedback", "title": "Turn human overrides into weekly Kai & Enso upgrades", "level": "specialist", "duration": "20 min", "status": "shipped", "courses": ["AUTO 101", "KAI 301"], "endpoint": "POST /v1/decisions/{decision}/corrections" }
+      ]
+    },
+    {
+      "id": "infrastructure",
+      "title": "Infrastructure — Sovereign Cloud, GPUs & Observability",
+      "shortTitle": "Infrastructure",
+      "icon": "Server",
+      "description": "Single-binary self-hosting, GPU cluster and BYO fleet management, ephemeral microVM sandboxes, zero-trust overlay networking, and AI observability.",
+      "guides": [
+        { "slug": "self-host-single-binary", "title": "Self-host Hanzo Cloud locally or air-gapped", "level": "practitioner", "duration": "20 min", "status": "shipped", "courses": ["SYS 103", "CYB 401"], "endpoint": "GET /v1/models" },
+        { "slug": "gpu-fleet-and-clusters", "title": "Manage GPU clusters and BYO compute fleets", "level": "architect", "duration": "20 min", "status": "shipped", "courses": ["ML 401", "SYS 103"], "endpoint": "GET /v1/compute/gpus" },
+        { "slug": "ephemeral-microvm-sandboxes", "title": "Run untrusted code in ephemeral microVM sandboxes", "level": "practitioner", "duration": "15 min", "status": "shipped", "courses": ["SYS 103", "ENG 100"], "endpoint": "POST /v1/sandbox/lease" },
+        { "slug": "zero-trust-overlay-mesh", "title": "Connect private services over /v1/network zero-trust mesh", "level": "architect", "duration": "20 min", "status": "shipped", "courses": ["SYS 103", "CYB 401"], "endpoint": "GET /v1/network/identities" },
+        { "slug": "o11y-traces-and-metrics", "title": "Query AI latency, traces, logs, and unit economics", "level": "practitioner", "duration": "15 min", "status": "shipped", "courses": ["ARC 105", "SYS 103"], "endpoint": "GET /v1/eval/metrics" }
+      ]
+    },
+    {
+      "id": "business",
+      "title": "Business — White-Label, Metering & Monetization",
+      "shortTitle": "Business",
+      "icon": "Briefcase",
+      "description": "Multi-tenant white-label isolation, usage-based billing ledgers, Marketplace distribution for agents and MCP tools, and offline cryptographic licensing.",
+      "guides": [
+        { "slug": "multi-tenant-white-label", "title": "Isolate customer orgs, Base stores, and entitlements", "level": "architect", "duration": "25 min", "status": "shipped", "courses": ["ENT 401", "ARC 105"], "endpoint": "GET /v1/entitlement/orgs/{org}" },
+        { "slug": "usage-metering-and-billing", "title": "Meter AI consumption, balances, and customer invoices", "level": "practitioner", "duration": "20 min", "status": "shipped", "courses": ["ENT 401"], "endpoint": "GET /v1/billing/usage" },
+        { "slug": "marketplace-agent-listings", "title": "Publish and monetize agents & tools on Marketplace", "level": "practitioner", "duration": "20 min", "status": "shipped", "courses": ["ENT 401"], "endpoint": "GET /v1/marketplace/listings" },
+        { "slug": "offline-enterprise-licensing", "title": "Issue and verify offline cryptographic enterprise licenses", "level": "architect", "duration": "20 min", "status": "shipped", "courses": ["ENT 401", "CYB 401"], "endpoint": "POST /v1/licensing/issue" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,120 @@
+---
+title: "Run untrusted code in ephemeral microVM sandboxes"
+description: "Lease hardware-isolated microVM sandboxes (/v1/sandbox/lease), execute untrusted code safely, inspect files, and reclaim quota cleanly."
+product: infrastructure
+level: practitioner
+duration: 15 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`)"
+objectives:
+  - "Check org sandbox quota via GET /v1/sandbox/quota"
+  - "Lease an ephemeral microVM and run isolated build/test commands"
+  - "Stop and release leases cleanly after execution"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - SYS 103
+  - ENG 100
+status: shipped
+---
+
+**Never run agent-generated code on your host kernel or shared build runner.** `/v1/sandbox` leases fast, hardware-isolated microVMs for every untrusted build, test run, or evaluation harness.
+
+## Architecture & contract
+
+Each sandbox has an isolated filesystem (`/v1/sandbox/{id}/fs`), exec interface (`/v1/sandbox/{id}/exec`), optional preview ports, and automatic TTL teardown so leaked processes cannot outlive a run.
+
+**Primary endpoint:** `POST /v1/sandbox/lease` · **Status:** `shipped` · **Level:** `practitioner`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo sandbox quota
+SANDBOX_ID=$(hanzo sandbox lease --data '{"image":"node:22-alpine","ttl_seconds":300}' | jq -r '.id')
+hanzo sandbox exec "$SANDBOX_ID" --data '{"cmd":["node","-v"]}'
+hanzo sandbox stop --data "{"id":"${SANDBOX_ID}"}"
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, SandboxApi } from 'hanzoai';
+
+const sb = new SandboxApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data: lease } = await sb.postSandboxLease({ image: 'node:22-alpine', ttl_seconds: 300 });
+try {
+  const { data: res } = await sb.postSandboxByIdExec(lease.id, { cmd: ['node', '-v'] });
+  console.log(res);
+} finally {
+  await sb.postSandboxStop({ id: lease.id });
+}
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import SandboxApi
+
+api = SandboxApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+lease = api.post_sandbox_lease({"image": "node:22-alpine", "ttl_seconds": 300})
+try:
+    print(api.post_sandbox_by_id_exec(lease["id"], {"cmd": ["node", "-v"]}))
+finally:
+    api.post_sandbox_stop({"id": lease["id"]})
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+SANDBOX_ID=$(curl -s -X POST https://api.hanzo.ai/v1/sandbox/lease \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{"image":"node:22-alpine","ttl_seconds":300}' | jq -r '.id')
+
+curl -s -X POST "https://api.hanzo.ai/v1/sandbox/${SANDBOX_ID}/exec" \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{"cmd":["node","-v"]}' | jq '.'
+
+curl -s -X POST https://api.hanzo.ai/v1/sandbox/stop \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d "{"id":"${SANDBOX_ID}"}"
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "sandbox",
+      "arguments": {"op": "get_sandbox_quota", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Confirm stdout prints the expected Node version and `stop` returns HTTP 200.
+
+## Production guardrails
+
+- Never pass long-lived `sk-` admin keys into sandbox environment variables; inject only short-lived scoped tokens when strictly needed.
+
+## Next steps & Hanzo University
+
+- [Sandboxes Concept](/docs/concepts/sandboxes)
+
+- **[SYS 103 — Systems Engineering](https://hanzo.university/systems-engineering)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/systems-engineering))
+- **[ENG 100 — Agentic Coding](https://hanzo.university/agentic-coding)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/agentic-coding))

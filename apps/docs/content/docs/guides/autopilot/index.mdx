@@ -1,0 +1,45 @@
+---
+title: "Autopilot \u2014 Business, Marketing & Agent Workforces"
+description: "Durable webhook automations, human review checkpoints, brand-voice marketing campaigns, multi-agent workforces, spend budgets, and continuous feedback."
+icon: Workflow
+product: autopilot
+level: foundations
+duration: 10 min
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - AUTO 101
+  - AUTO 201
+  - AUTO 301
+  - KAI 301
+  - MKT 102
+status: shipped
+---
+
+**Automate business operations, marketing, and agent workforces** — durable webhook automations (`/v1/auto`), human approval checkpoints, brand-voice campaigns (`/v1/campaign`), A2A multi-agent coordination (`/v1/agent`), spend budgets, and continuous override learning.
+
+## All 6 Autopilot guides
+
+Six runnable four-surface guides for building durable, budgeted autopilot systems:
+
+| Guide | Primary Endpoint | Level | Duration | Course | Status |
+| --- | --- | --- | --- | --- | --- |
+| [Build durable webhook-triggered business automations](/docs/guides/autopilot/event-driven-automations) | `POST /v1/auto/automations` | foundations | 15 min | [AUTO 201](https://hanzo.university/business-autopilot) | `shipped` |
+| [Pause high-risk autopilot runs for human approval](/docs/guides/autopilot/human-approval-gates) | `POST /v1/auto/automations/{id}/runs/{run}/review` | practitioner | 15 min | [AUTO 201](https://hanzo.university/business-autopilot) | `shipped` |
+| [Launch segmented multi-channel campaigns with Zen](/docs/guides/autopilot/agentic-marketing-campaigns) | `POST /v1/campaign` | practitioner | 20 min | [MKT 102](https://hanzo.university/agentic-marketing) | `shipped` |
+| [Coordinate role-scoped agents with A2A handoffs](/docs/guides/autopilot/multi-agent-workforce) | `POST /v1/agent` | architect | 25 min | [AUTO 301](https://hanzo.university/autonomous-organizations) | `shipped` |
+| [Enforce per-agent spend tracking and billing alerts](/docs/guides/autopilot/agent-spend-budgets) | `GET /v1/agent/{ref}/spend` | practitioner | 15 min | [AUTO 301](https://hanzo.university/autonomous-organizations) | `shipped` |
+| [Turn human overrides into weekly Kai & Enso upgrades](/docs/guides/autopilot/continuous-ops-feedback) | `POST /v1/decisions/{decision}/corrections` | specialist | 20 min | [AUTO 101](https://hanzo.university/continuous-improvement), [KAI 301](https://hanzo.university/kai-training-decision-models) | `shipped` |
+
+## Related documentation & courses
+
+- [Agents & Autopilot Overview](/docs/autopilot) · [Business Autopilot](/docs/autopilot/business)
+
+- **[AUTO 101 — Continuous Improvement](https://hanzo.university/continuous-improvement)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/continuous-improvement))
+- **[AUTO 201 — Business Autopilot](https://hanzo.university/business-autopilot)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/business-autopilot))
+- **[AUTO 301 — Autonomous Organizations](https://hanzo.university/autonomous-organizations)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/autonomous-organizations))
+- **[KAI 301 — Training Kai Decision Models](https://hanzo.university/kai-training-decision-models)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/kai-training-decision-models))
+- **[MKT 102 — Agentic Marketing](https://hanzo.university/agentic-marketing)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/agentic-marketing))

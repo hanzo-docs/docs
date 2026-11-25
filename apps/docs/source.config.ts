@@ -41,6 +41,30 @@ export const docs = defineDocs({
        * API routes only
        */
       method: z.string().optional(),
+      /**
+       * Canonical Intelligence Engineering guide & curriculum metadata
+       */
+      product: z
+        .enum([
+          'kai',
+          'enso',
+          'zen',
+          'science',
+          'cyber',
+          'autopilot',
+          'infrastructure',
+          'business',
+          'platform',
+        ])
+        .optional(),
+      level: z.enum(['foundations', 'practitioner', 'specialist', 'architect', 'fellow']).optional(),
+      duration: z.string().optional(),
+      prerequisites: z.array(z.string()).optional(),
+      objectives: z.array(z.string()).optional(),
+      surfaces: z.array(z.enum(['cli', 'sdk', 'http', 'mcp', 'ui'])).optional(),
+      lab: z.string().optional(),
+      related_courses: z.array(z.string()).optional(),
+      status: z.enum(['shipped', 'preview', 'research']).optional(),
     }),
     postprocess: {
       includeProcessedMarkdown: true,

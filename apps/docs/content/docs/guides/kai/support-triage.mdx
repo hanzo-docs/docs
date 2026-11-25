@@ -1,0 +1,157 @@
+---
+title: "Route support tickets at $0.021 per 1M tokens"
+description: "Classify high-volume customer support tickets with Kai at $0.021 per million input tokens and invoke Zen 6 only to draft the customer reply."
+product: kai
+level: practitioner
+duration: 15 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`)"
+objectives:
+  - "Run multi-question support triage (team, defect flag, urgency) in a single Kai call"
+  - "Gate automated replies on confidence >= 0.75"
+  - "Draft grounded customer responses with zen6 using the winning queue"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - KAI 201
+  - PRA 104
+status: shipped
+---
+
+**Running 100,000 500-token support triage decisions on Kai costs `$1.05` total — with zero output tokens.** Reserve generative compute (`zen6`) strictly for writing the final customer reply.
+
+## Architecture & contract
+
+Combine `POST /v1/decisions` (three typed questions in one CPU forward pass) with `POST /v1/chat/completions` (`model: "zen6"`). Tickets that fail Kai's confidence threshold skip automated reply generation and route directly to a human specialist.
+
+**Primary endpoint:** `POST /v1/decisions` · **Status:** `shipped` · **Level:** `practitioner`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+# 1. Classify ticket with Kai
+DEC=$(hanzo decisions create --model kai --data '{
+  "state": "Our webhook signature verification fails after rotating our signing secret.",
+  "questions": {
+    "team": {"type": "choice", "instructions": "Owner team?", "criteria": {"billing": "Payments", "platform": "Webhooks, APIs, SDKs", "security": "Keys and auth"}},
+    "urgency": {"type": "score", "instructions": "Urgency?", "criteria": ["low", "normal", "high", "urgent"]}
+  }
+}')
+echo "$DEC" | jq '.answers'
+
+# 2. Draft grounded reply with Zen 6
+hanzo chat completions --data '{"model":"zen6","messages":[{"role":"user","content":"Draft a concise 2-sentence troubleshooting reply for webhook signature failure after secret rotation."}]}'
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, AiApi } from 'hanzoai';
+
+const ai = new AiApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const ticket = 'Our webhook signature verification fails after rotating our signing secret.';
+const { data: dec } = await ai.postDecisions({
+  model: 'kai',
+  state: ticket,
+  questions: {
+    team: {
+      type: 'choice',
+      instructions: 'Owner team?',
+      criteria: { billing: 'Payments', platform: 'Webhooks, APIs, SDKs', security: 'Keys and auth' },
+    },
+  },
+});
+const queue = dec.answers.team.confidence >= 0.65 ? dec.answers.team.choice : 'manual_triage';
+const { data: reply } = await ai.postChatCompletions({
+  model: 'zen6',
+  messages: [
+    { role: 'system', content: `You represent the ${queue} team. Two concise sentences.` },
+    { role: 'user', content: ticket },
+  ],
+});
+console.log({ queue, reply });
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import AiApi
+
+api = AiApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+ticket = "Our webhook signature verification fails after rotating our signing secret."
+dec = api.post_decisions({
+    "model": "kai",
+    "state": ticket,
+    "questions": {
+        "team": {
+            "type": "choice",
+            "instructions": "Owner team?",
+            "criteria": {"billing": "Payments", "platform": "Webhooks, APIs, SDKs", "security": "Keys and auth"},
+        }
+    },
+})
+queue = dec["answers"]["team"]["choice"] if dec["answers"]["team"]["confidence"] >= 0.65 else "manual_triage"
+reply = api.post_chat_completions(
+    model="zen6",
+    messages=[{"role": "system", "content": f"You represent the {queue} team. Two concise sentences."}, {"role": "user", "content": ticket}],
+)
+print(queue, reply)
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -s https://api.hanzo.ai/v1/decisions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "kai",
+    "state": "Our webhook signature verification fails after rotating our signing secret.",
+    "questions": {
+      "team": {"type": "choice", "instructions": "Owner team?", "criteria": {"billing": "Payments", "platform": "Webhooks, APIs, SDKs", "security": "Keys and auth"}},
+      "urgency": {"type": "score", "instructions": "Urgency?", "criteria": ["low", "normal", "high", "urgent"]}
+    }
+  }' | jq '.answers'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "ai",
+      "arguments": {"op": "post_decisions", "input": {"model": "kai", "state": "Webhook signature fails after rotation", "questions": {"team": {"type": "choice", "instructions": "Owner?", "criteria": ["billing", "platform", "security"]}}}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Verify `usage.output_tokens == 0` on the Kai step.
+- Confirm low-confidence tickets escalate cleanly instead of sending generic replies.
+
+## Production guardrails
+
+- Log every misrouted ticket back via `POST /v1/decisions/{decision}/corrections` and train a custom capability once 30+ corrections accumulate.
+
+## Next steps & Hanzo University
+
+- [Triage Cookbook](/docs/guides/cookbook/triage) · [Teach Kai Your Business](/docs/training/kai-capabilities)
+
+- **[KAI 201 — Kai Decision Intelligence](https://hanzo.university/kai-decision-intelligence)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/kai-decision-intelligence))
+- **[PRA 104 — AI Practitioner](https://hanzo.university/ai-practitioner)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/ai-practitioner))

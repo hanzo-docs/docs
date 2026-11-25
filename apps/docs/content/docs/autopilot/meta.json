@@ -1,0 +1,10 @@
+{
+  "title": "Agents & Autopilot",
+  "description": "Durable business autopilot, agentic marketing, and budgeted multi-agent workforces on Hanzo.",
+  "icon": "Workflow",
+  "pages": [
+    "business",
+    "marketing",
+    "workforces"
+  ]
+}

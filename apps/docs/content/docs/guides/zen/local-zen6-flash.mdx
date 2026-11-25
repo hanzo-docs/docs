@@ -1,0 +1,119 @@
+---
+title: "Serve ternary zen6-flash locally on laptop or single GPU"
+description: "Download and serve ternary zen6-flash (5.95 GB) locally on Apple Silicon or a single GPU with zero cloud egress and OpenAI-compatible /v1/chat/completions."
+product: zen
+level: practitioner
+duration: 20 min
+prerequisites:
+  - "Hugging Face CLI (`hf`)"
+  - "Apple Silicon Mac (16 GB+ RAM) or single GPU"
+objectives:
+  - "Download Apache-2.0 ternary zen6-flash weights from Hugging Face"
+  - "Serve locally via hanzo engine serve or llama.cpp"
+  - "Switch seamlessly between local and hosted api.hanzo.ai with one base URL"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - ZEN 201
+  - SYS 103
+status: shipped
+---
+
+**Run a 27B-class coding and reasoning model offline on a laptop in 5.95 GB of RAM.** `zen6-flash` packs 1.77-bit ternary weights with a 2.06 GB speculative drafter under Apache-2.0.
+
+## Architecture & contract
+
+Because local `hanzo engine serve` exposes the exact same `/v1/chat/completions` contract as `https://api.hanzo.ai/v1/chat/completions`, your CLI, SDK, and `hanzo dev` workflows work unchanged offline or in air-gapped environments.
+
+**Primary endpoint:** `POST /v1/chat/completions` · **Status:** `shipped` · **Level:** `practitioner`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+# Download Apache-2.0 ternary weights and serve locally
+hf download zenlm/zen6-flash --local-dir ./zen6-flash
+hanzo engine serve ./zen6-flash
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, AiApi } from 'hanzoai';
+
+// Point basePath at local engine or omit for hosted api.hanzo.ai
+const ai = new AiApi(new Configuration({
+  basePath: process.env.HANZO_BASE_URL ?? 'https://api.hanzo.ai',
+  accessToken: process.env.HANZO_API_KEY,
+}));
+const { data } = await ai.postChatCompletions({
+  model: 'zen6-flash',
+  messages: [{ role: 'user', content: 'Explain zero-copy serialization in 3 bullets.' }],
+});
+console.log(data);
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import AiApi
+
+cfg = Configuration(
+    host=os.environ.get("HANZO_BASE_URL", "https://api.hanzo.ai"),
+    access_token=os.environ["HANZO_API_KEY"],
+)
+print(AiApi(ApiClient(cfg)).post_chat_completions(
+    model="zen6-flash",
+    messages=[{"role": "user", "content": "Explain zero-copy serialization in 3 bullets."}],
+))
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+# Identical request works against http://127.0.0.1:8731/v1 or https://api.hanzo.ai/v1
+curl -s https://api.hanzo.ai/v1/chat/completions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"zen6-flash","messages":[{"role":"user","content":"Explain zero-copy serialization in 3 bullets."}]}' | jq -r '.choices[0].message.content'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "engine",
+      "arguments": {"op": "get_engine_models", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Verify tokens/sec throughput locally and assert identical JSON schema when toggling `HANZO_BASE_URL`.
+
+## Production guardrails
+
+- Pin exact Hugging Face commit revisions in production air-gapped bundles rather than floating `main`.
+
+## Next steps & Hanzo University
+
+- [Self-Hosting & Air-Gapped](/docs/self-hosting) · [Zen 6 Weights](/docs/models/zen#zen-6-weights)
+
+- **[ZEN 201 — Zen Model Engineering](https://hanzo.university/zen-model-engineering)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/zen-model-engineering))
+- **[SYS 103 — Systems Engineering](https://hanzo.university/systems-engineering)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/systems-engineering))

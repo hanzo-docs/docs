@@ -1,0 +1,121 @@
+---
+title: Benchmarking arena
+description: "Query standardized harness scores, separate measured evidence from vendor claims, run exact-McNemar paired comparisons on /v1/benchmark/compare, and track score history over time."
+icon: Trophy
+product: science
+level: practitioner
+duration: 20 min
+prerequisites:
+  - A Hanzo secret key (`sk-...`)
+objectives:
+  - Inspect canonical benchmarks and leaderboards without blending harness scores with vendor claims
+  - Run valid paired arm-vs-arm significance tests via `GET /v1/benchmark/compare`
+  - Detect silent model regressions over time via `GET /v1/benchmark/history`
+  - Record org-private benchmark claims via `POST /v1/benchmark/claims`
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - SCI 101
+  - SCI 201
+  - ENS 301
+status: shipped
+---
+
+**A leaderboard snapshot hides two failure modes: vendor self-reporting inflation and silent model drift over time.** Hanzo's `/v1/benchmark` arena keeps standardized harness runs strictly separate from vendor claims and makes paired McNemar comparison the only valid head-to-head test.
+
+## Why paired comparison matters
+
+Comparing Model A's accuracy over 380 completed items against Model B's accuracy over 400 items creates a **subset artifact**: if Model A timed out on the 20 hardest items, its headline accuracy looks inflated. `GET /v1/benchmark/compare` pairs Model A and Model B strictly on **`n_common`** (items BOTH models completed) and returns:
+- **`rescue`**: items B solved that A missed
+- **`damage`**: items A solved that B missed
+- **Exact McNemar `p`-value**: statistical significance of `rescue` vs `damage`
+
+## Query the arena across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+# List canonical benchmarks
+hanzo benchmark catalog
+
+# Read standardized leaderboard beside vendor claims (never blended)
+hanzo benchmark leaderboard --benchmark swe-bench-verified
+
+# Paired exact-McNemar comparison on common items
+hanzo benchmark compare --benchmark swe-bench-verified --a enso-pro --b zen6-coder
+
+# Track historical score trajectory for drift detection
+hanzo benchmark history --benchmark swe-bench-verified --model zen6-coder
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, BenchmarkApi } from 'hanzoai';
+
+const bench = new BenchmarkApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data: cmp } = await bench.getBenchmarkCompare(
+  'swe-bench-verified',
+  'enso-pro',
+  'zen6-coder',
+);
+console.log(cmp);
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import BenchmarkApi
+
+api = BenchmarkApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+print(api.get_benchmark_compare(benchmark="swe-bench-verified", a="enso-pro", b="zen6-coder"))
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -s "https://api.hanzo.ai/v1/benchmark/leaderboard?benchmark=swe-bench-verified" \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+curl -s "https://api.hanzo.ai/v1/benchmark/compare?benchmark=swe-bench-verified&a=enso-pro&b=zen6-coder" \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+curl -s "https://api.hanzo.ai/v1/benchmark/history?benchmark=swe-bench-verified&model=zen6-coder" \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "benchmark",
+      "arguments": {
+        "op": "get_benchmark_compare",
+        "input": {"benchmark": "swe-bench-verified", "a": "enso-pro", "b": "zen6-coder"}
+      }
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Recording org-private claims
+
+Use `POST https://api.hanzo.ai/v1/benchmark/claims` to store internal evaluation claims scoped strictly to your authenticated org (never readable by other tenants unless explicitly marked `visibility: "public"`).
+
+## Related courses & docs
+
+- [SCI 201 — Autonomous Research](https://hanzo.university/autonomous-research) ([Interactive Lab](https://hanzo.app/learn/autonomous-research))
+- [Evaluation Harnesses](/docs/training/evaluation) · [Reproducibility](/docs/science/reproducibility)

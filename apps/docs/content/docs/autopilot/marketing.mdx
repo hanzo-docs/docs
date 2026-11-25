@@ -1,0 +1,122 @@
+---
+title: Marketing autopilot
+description: "Build brand-consistent, A/B-tested marketing engines using /v1/marketing/audiences, /v1/campaign, /v1/content/generate (Zen), and /v1/experiment."
+icon: Megaphone
+product: autopilot
+level: practitioner
+duration: 25 min
+prerequisites:
+  - A Hanzo secret key (`sk-...`)
+objectives:
+  - Segment and preview target audiences via `/v1/marketing/audiences`
+  - Draft brand-voice copy with Zen via `POST /v1/content/generate`
+  - Launch, monitor, and pause multi-channel campaigns via `/v1/campaign`
+  - Close the attribution loop with controlled A/B experiments (`/v1/experiment`)
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - MKT 102
+  - AUTO 201
+status: shipped
+---
+
+**Agentic marketing separates creative drafting, audience governance, and empirical measurement.** Zen generates on-brand copy and campaign drafts; Kai checks compliance and brand-safety rubrics; `/v1/campaign` and `/v1/marketing` handle scheduling, delivery, and metrics; `/v1/experiment` proves which variant lifted conversion.
+
+## End-to-end marketing autopilot pipeline
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+# 1. Create and preview a segmented audience
+hanzo marketing audiences create --data '{"name":"active-builders","filter":{"plan":"pro"}}'
+
+# 2. Create a multi-channel campaign
+hanzo campaign create --data '{"name":"zen6-launch","objective":"activation"}'
+
+# 3. Inspect campaign performance metrics
+hanzo campaign summary
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, MarketingApi, CampaignApi } from 'hanzoai';
+
+const cfg = new Configuration({ accessToken: process.env.HANZO_API_KEY });
+const audience = await new MarketingApi(cfg).postMarketingAudiences({
+  name: 'active-builders',
+  filter: { plan: 'pro' },
+});
+const campaign = await new CampaignApi(cfg).postCampaign({
+  name: 'zen6-launch',
+  objective: 'activation',
+});
+console.log({ audience: audience.data, campaign: campaign.data });
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import MarketingApi, CampaignApi
+
+client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
+print(MarketingApi(client).post_marketing_audiences({"name": "active-builders", "filter": {"plan": "pro"}}))
+print(CampaignApi(client).post_campaign({"name": "zen6-launch", "objective": "activation"}))
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+# 1. Generate brand-voice campaign copy into CMS as draft
+curl -s -X POST https://api.hanzo.ai/v1/content/generate \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"zen6","brief":"Announce Kai CPU capability training to existing platform developers.","tone":"concise, technical, evidence-first"}' | jq '.'
+
+# 2. Create & inspect campaign
+CAMP_ID=$(curl -s -X POST https://api.hanzo.ai/v1/campaign \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"zen6-launch","objective":"activation"}' | jq -r '.id')
+
+# 3. Read campaign metrics & pause immediately if anomaly detected
+curl -s "https://api.hanzo.ai/v1/campaign/${CAMP_ID}/metrics" \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "campaign",
+      "arguments": {"op": "get_campaign_summary", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Brand-safety & compliance gates
+
+Before invoking `POST https://api.hanzo.ai/v1/campaign/{id}/launch` or `POST https://api.hanzo.ai/v1/marketing/broadcasts/{id}/send`:
+
+1. Send every generated draft through `POST /v1/decisions` to verify zero unsubstantiated claims, prohibited phrases, or off-brand tone.
+2. Send a test broadcast first via `POST https://api.hanzo.ai/v1/marketing/broadcasts/{id}/test`.
+3. Attach subject assignment from `GET /v1/experiment/{id}/assign` so winning copy is promoted on measured click/conversion lift rather than opinions.
+
+## Related courses & docs
+
+- [MKT 102 — Agentic Marketing](https://hanzo.university/agentic-marketing) ([Interactive Lab](https://hanzo.app/learn/agentic-marketing))
+- [Agents Campaign Guide](/docs/agents/campaign) · [Studies & Experiments](/docs/science/studies-experiments)

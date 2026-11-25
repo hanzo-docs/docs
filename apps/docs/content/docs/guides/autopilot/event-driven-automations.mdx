@@ -1,0 +1,114 @@
+---
+title: "Build durable webhook-triggered business automations"
+description: "Create durable webhook- and schedule-driven business automations on POST /v1/auto/automations with automatic deduplication and run history."
+product: autopilot
+level: foundations
+duration: 15 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`)"
+objectives:
+  - "Create a durable automation on POST /v1/auto/automations"
+  - "Trigger on-demand runs and inspect versioned execution history"
+  - "Attach webhook event hooks via /v1/auto/hooks/{source}/{event}"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - AUTO 201
+status: shipped
+---
+
+**Ditch fragile cron jobs and ad-hoc glue servers.** `/v1/auto/automations` executes event- and schedule-driven AI workflows with durable state, retry recovery, and full run history.
+
+## Architecture & contract
+
+Automations run strictly under the authenticated creator's permissions — another member's automations are never exposed. Durable state guarantees failed deliveries resume without creating duplicate runs.
+
+**Primary endpoint:** `POST /v1/auto/automations` · **Status:** `shipped` · **Level:** `foundations`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo auto automations create --data '{
+  "name": "Daily billing anomaly digest",
+  "instructions": "Query 24h usage anomalies, summarize root causes, and notify ops.",
+  "model": "enso-flash",
+  "permissions": "ask"
+}'
+hanzo auto automations list
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, AutoApi } from 'hanzoai';
+
+const auto = new AutoApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data } = await auto.postAutoAutomations({
+  name: 'Daily billing anomaly digest',
+  instructions: 'Query 24h usage anomalies, summarize root causes, and notify ops.',
+  model: 'enso-flash',
+  permissions: 'ask',
+});
+console.log(data);
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import AutoApi
+
+api = AutoApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+print(api.post_auto_automations({
+    "name": "Daily billing anomaly digest",
+    "instructions": "Query 24h usage anomalies, summarize root causes, and notify ops.",
+    "model": "enso-flash",
+    "permissions": "ask",
+}))
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/auto/automations \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{"name":"Daily billing anomaly digest","instructions":"Query 24h usage anomalies and summarize root causes.","model":"enso-flash","permissions":"ask"}' | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "auto",
+      "arguments": {"op": "get_auto_automations", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Trigger one immediate run via `POST /v1/auto/automations/{id}/run` and inspect it on `GET /v1/auto/automations/{id}/runs`.
+
+## Production guardrails
+
+- Use `enso-flash` for routine summaries and reserve `enso-pro`/`zen6-coder` for complex engineering automations.
+
+## Next steps & Hanzo University
+
+- [Business Autopilot](/docs/autopilot/business)
+
+- **[AUTO 201 — Business Autopilot](https://hanzo.university/business-autopilot)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/business-autopilot))

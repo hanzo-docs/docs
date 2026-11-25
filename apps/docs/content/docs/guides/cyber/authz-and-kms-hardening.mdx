@@ -1,0 +1,110 @@
+---
+title: "Enforce AuthZ policy checks and KMS secret isolation"
+description: "Enforce explicit least-privilege checks via POST /v1/authz/check, store credentials strictly in /v1/kms/secrets, and verify mutations on GET /v1/audit."
+product: cyber
+level: architect
+duration: 20 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`)"
+objectives:
+  - "Evaluate fine-grained authorization tuples via POST /v1/authz/check"
+  - "Store and retrieve service secrets exclusively via /v1/kms/secrets"
+  - "Inspect immutable security audit trails on GET /v1/audit"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - CYB 401
+status: shipped
+---
+
+**Zero hardcoded credentials and zero implicit permissions.** Every service and agent verifies access with `POST /v1/authz/check` and reads secrets on demand from Hanzo KMS.
+
+## Architecture & contract
+
+Hanzo IAM authenticates who the principal is; AuthZ decides what `(subject, action, resource)` tuple is permitted; KMS injects scoped secret paths without persisting plaintext on disk; `/v1/audit` records every access.
+
+**Primary endpoint:** `POST /v1/authz/check` · **Status:** `shipped` · **Level:** `architect`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo kms health
+hanzo kms secrets list
+hanzo audit list
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, AuthzApi, KmsApi } from 'hanzoai';
+
+const cfg = new Configuration({ accessToken: process.env.HANZO_API_KEY });
+const [check, kms] = await Promise.all([
+  new AuthzApi(cfg).postAuthzCheck({ subject: 'agent:deploy', action: 'deploy', resource: 'app:billing' }),
+  new KmsApi(cfg).getKmsHealth(),
+]);
+console.log({ allowed: check.data, kms: kms.data });
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import AuthzApi, KmsApi
+
+client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
+print(AuthzApi(client).post_authz_check({"subject": "agent:deploy", "action": "deploy", "resource": "app:billing"}))
+print(KmsApi(client).get_kms_health())
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/authz/check \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{"subject":"agent:deploy","action":"deploy","resource":"app:billing"}' | jq '.'
+
+curl -s https://api.hanzo.ai/v1/kms/health \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+curl -s https://api.hanzo.ai/v1/audit \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "kms",
+      "arguments": {"op": "get_kms_health", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Verify an unauthorized subject returns `allowed: false` on `POST /v1/authz/check` and the check is logged in `/v1/audit`.
+
+## Production guardrails
+
+- Record KMS secret paths in documentation and runbooks — never log, commit, or echo secret values.
+
+## Next steps & Hanzo University
+
+- [Sovereign Zero-Trust AI](/docs/cybersecurity/sovereign-zero-trust)
+
+- **[CYB 401 — Sovereign Zero-Trust AI](https://hanzo.university/sovereign-zero-trust-ai)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/sovereign-zero-trust-ai))

@@ -1,0 +1,13 @@
+{
+  "title": "Enso",
+  "description": "Multi-tier adaptive routing (enso-auto through enso-ultra), hard cost/latency bounds, prompt caching, outcome feedback rewards, and custom router blends.",
+  "icon": "Route",
+  "pages": [
+    "adaptive-tier-routing",
+    "cost-latency-bounds",
+    "prompt-caching-turns",
+    "outcome-feedback-loop",
+    "custom-router-blends",
+    "fast-mode-and-failover"
+  ]
+}

@@ -1,0 +1,59 @@
+---
+title: Agents & Autopilot
+description: "Run continuous business workflows (/v1/auto), multi-channel marketing (/v1/campaign, /v1/marketing), and budgeted agent workforces (/v1/agent) with Kai gates and human approvals."
+icon: Workflow
+product: autopilot
+level: practitioner
+duration: 15 min
+prerequisites:
+  - A Hanzo secret key (`sk-...`)
+objectives:
+  - Orchestrate durable event- and schedule-driven automations across your business
+  - Combine Kai decision gates, Zen content/code synthesis, and Enso routing in one autopilot loop
+  - Bound autonomous workforces with explicit spend caps, permissions, and review queues
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - AUTO 101
+  - AUTO 201
+  - AUTO 301
+  - MKT 102
+status: shipped
+---
+
+**Autopilot replaces brittle cron scripts and unsupervised agent loops with durable, budgeted, approval-gated execution.** Every autopilot flow runs on Hanzo's native automation, workflow, agent, and billing planes under one IAM identity.
+
+## Three autopilot surfaces
+
+| Surface | Canonical endpoints | What it automates | Status |
+|---|---|---|---|
+| **[Business Autopilot](/docs/autopilot/business)** | `POST /v1/auto/automations`, `POST /v1/auto/flows`, `POST /v1/workflow` | Support triage, invoice/billing reactions, webhook event routing, CRM & ledger sync | `shipped` |
+| **[Marketing Autopilot](/docs/autopilot/marketing)** | `POST /v1/campaign`, `POST /v1/marketing/audiences`, `POST /v1/marketing/broadcasts`, `POST /v1/content/generate` | Audience segmentation, brand-voice Zen copy, multi-channel launches, A/B campaign optimization | `shipped` |
+| **[Agent Workforces](/docs/autopilot/workforces)** | `POST /v1/agent`, `POST /v1/agent/{ref}/run`, `GET /v1/agent/{ref}/spend`, `POST /v1/agent/a2a` | Multi-agent teams with role boundaries, hard spend caps, A2A handoffs, and human escalation | `shipped` |
+
+## Explore Agents & Autopilot
+
+<Cards>
+  <Card title="Business Autopilot" href="/docs/autopilot/business">
+    Wire event triggers, durable flows, Kai decision gates, and human review checkpoints.
+  </Card>
+  <Card title="Marketing Autopilot" href="/docs/autopilot/marketing">
+    Run segmented audiences, brand-voice content generation, multi-channel campaigns, and A/B tests.
+  </Card>
+  <Card title="Agent Workforces" href="/docs/autopilot/workforces">
+    Coordinate autonomous agent teams with spend tracking, A2A protocols, and escalation policies.
+  </Card>
+  <Card title="Coding Agents" href="/docs/coding">
+    Run `hanzo dev`, Claude Code, Codex, and Gemini CLI through Enso and Kai.
+  </Card>
+</Cards>
+
+## University courses
+
+- [AUTO 101 — Continuous Improvement](https://hanzo.university/continuous-improvement) ([Interactive Lab](https://hanzo.app/learn/continuous-improvement))
+- [AUTO 201 — Business Autopilot](https://hanzo.university/business-autopilot) ([Interactive Lab](https://hanzo.app/learn/business-autopilot))
+- [AUTO 301 — Autonomous Organizations](https://hanzo.university/autonomous-organizations) ([Interactive Lab](https://hanzo.app/learn/autonomous-organizations))
+- [MKT 102 — Agentic Marketing](https://hanzo.university/agentic-marketing) ([Interactive Lab](https://hanzo.app/learn/agentic-marketing))

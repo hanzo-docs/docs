@@ -1,0 +1,11 @@
+{
+  "title": "Build a business",
+  "description": "Launch white-label AI products, package private intelligence, monetize APIs & MCP tools, and operate a multi-tenant AI SaaS on Hanzo.",
+  "icon": "Briefcase",
+  "pages": [
+    "white-label",
+    "private-intelligence",
+    "monetize-api",
+    "ai-saas"
+  ]
+}

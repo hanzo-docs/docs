@@ -204,7 +204,8 @@ zero: 0.005 at 1,000, 0 at 10,000 and at 100,000. Jev refuses from 1,000.
 | Part | Status |
 |---|---|
 | **Kai**, the model | kai-1.2 (kai-1 with arm Z2's yes/no reader), served as `kai`; kai-1 measured above; weights not published |
-| **Endpoint**: `POST https://api.hanzo.ai/v1/decisions`, serving `kai` and Jev | live: `kai` is kai-1.2 (calibration `cal_e23c27a1f768bff7`) on image v0.4.5, on CPU on Hanzo's own infrastructure, at $0.021 per million input tokens; see [Decisions](/docs/decisions) |
+| **Endpoint**: `POST https://api.hanzo.ai/v1/decisions`, serving `kai`, `kai-1.8` and Jev | live on Hanzo's own infrastructure at $0.021 per million input tokens (0 output tokens); see [Decisions](/docs/decisions) |
+| **Org-private capability training**: `POST https://api.hanzo.ai/v1/capabilities/{name}/train` | shipped: CPU training over captured org decision states (calibration → head → boost+veto ladder) with held-out gates, publishing, and instant rollback; see [Teach Kai your business](/docs/training/kai-capabilities) |
 | **Decision Programs, Packages, policy gates** | landed, as a library |
 | **Programs on the wire** (`"program": "agent.preflight@1"`) | specified in HIP-1332 §17; not served |
 | **Kai inside Enso** | in progress; the agent programs are written, each set to `shadow` or `advisory`, and not yet wired into Enso |

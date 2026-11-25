@@ -1,0 +1,124 @@
+---
+title: Autonomous remediation & SecOps
+description: "Turn verified vulnerabilities into tested patch PRs using /v1/auto/automations, Zen 6 Coder, sandbox verification, and human-gated approval workflows."
+icon: Wrench
+product: cyber
+level: specialist
+duration: 25 min
+prerequisites:
+  - A Hanzo secret key (`sk-...`)
+  - Familiarity with [Sandboxed vulnerability validation](/docs/cybersecurity/vulnerability-validation)
+objectives:
+  - Wire verified security findings to automated remediation runs on `POST /v1/auto/automations`
+  - Require before/after test proofs and zero new secret findings before opening a draft PR
+  - Enforce explicit human review before merging security patches into main
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - CYB 301
+  - ENG 100
+status: shipped
+---
+
+**Detection without remediation just builds a bigger backlog.** Autonomous SecOps closes the loop between a confirmed finding and a minimal, regression-tested draft pull request ready for one-click security review.
+
+## Four gates every remediation patch must pass
+
+1. **Failing proof first**: The regression test reproduces the confirmed finding on the base commit (`exit != 0`).
+2. **Minimal diff**: `zen6-coder` (via `hanzo dev` or `/v1/agent/{ref}/run`) fixes the root cause without unrelated refactoring.
+3. **Full verification**: The new security test passes AND the full existing test suite plus `POST /v1/security/scans` pass with zero new findings.
+4. **Human merge authority**: The automation holds the patch at `review` (`POST /v1/auto/automations/{id}/runs/{run}/review`) and opens a draft PR — never pushing straight to production.
+
+## Automate SecOps patch preparation
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo auto automations create --data '{
+  "name": "SecOps verified finding patcher",
+  "instructions": "Take the validated reproducer test, author the smallest fix in an isolated branch, verify all tests and security scans pass, and open a draft PR.",
+  "model": "zen6-coder",
+  "permissions": "ask"
+}'
+
+# Inspect pending security review runs
+hanzo auto automations list
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, AutoApi } from 'hanzoai';
+
+const auto = new AutoApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data } = await auto.postAutoAutomations({
+  name: 'SecOps verified finding patcher',
+  instructions:
+    'Take the validated reproducer test, author the smallest fix in an isolated branch, verify all tests and security scans pass, and open a draft PR.',
+  model: 'zen6-coder',
+  permissions: 'ask',
+});
+console.log(data);
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import AutoApi
+
+api = AutoApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+res = api.post_auto_automations({
+    "name": "SecOps verified finding patcher",
+    "instructions": "Take the validated reproducer test, author the smallest fix in an isolated branch, verify all tests and security scans pass, and open a draft PR.",
+    "model": "zen6-coder",
+    "permissions": "ask",
+})
+print(res)
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/auto/automations \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "SecOps verified finding patcher",
+    "instructions": "Take the validated reproducer test, author the smallest fix in an isolated branch, verify all tests and security scans pass, and open a draft PR.",
+    "model": "zen6-coder",
+    "permissions": "ask"
+  }' | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "auto",
+      "arguments": {"op": "get_auto_runs", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Incident rollback path
+
+If a remediation patch or deployment triggers elevated error rates in `GET /v1/o11y` or `GET /v1/eval/metrics`, roll back immediately via `POST https://api.hanzo.ai/v1/deploy/applications/{name}/rollback` or `POST https://api.hanzo.ai/v1/capabilities/{name}/rollback`.
+
+## Related courses & docs
+
+- [CYB 301 — Autonomous SecOps](https://hanzo.university/autonomous-secops) ([Interactive Lab](https://hanzo.app/learn/autonomous-secops))
+- [Sovereign Zero-Trust AI](/docs/cybersecurity/sovereign-zero-trust)

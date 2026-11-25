@@ -1,0 +1,117 @@
+---
+title: Packaging private intelligence
+description: "Turn domain expertise and proprietary workflows into defensible, tenant-isolated Kai capabilities, custom Enso router blends, and fine-tuned Zen models."
+icon: LockKeyhole
+product: business
+level: architect
+duration: 20 min
+prerequisites:
+  - A Hanzo secret key (`sk-...`)
+  - Familiarity with [Training & optimization](/docs/training)
+objectives:
+  - Combine org-private Kai capabilities, Enso router presets, and fine-tuned Zen adapters into a defensible moat
+  - Protect intellectual property via tenant-scoped serving and SHA-256 artifact isolation
+  - Distribute licensed intelligence capabilities without exposing raw training corpora
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - ENT 401
+  - KAI 301
+  - ZEN 301
+status: shipped
+---
+
+**Prompt wrappers have zero defensibility — anyone can copy a system prompt in ten minutes.** Real AI moats come from verified feedback loops over proprietary operational data: calibrated Kai capabilities trained on your domain outcomes, org-specific Enso routing policies, and fine-tuned Zen weights.
+
+## The three-layer private intelligence moat
+
+1. **Decision moat (Kai Capabilities)**: Capture production states and domain expert corrections (`POST /v1/decisions/{decision}/corrections`) and train specialized CPU capabilities (`POST /v1/capabilities/{name}/train`). Your internal policies compile into calibrated sub-50 ms decision heads that never leak into public weights.
+2. **Economic moat (Enso Routing)**: Record objective task outcomes (`POST /v1/ai/feedback`) and define custom router blends (`POST /v1/benchmark/presets`) that deliver higher gross margin per customer request than competitors hardcoding frontier models.
+3. **Synthesis moat (Fine-Tuned Zen)**: Train LoRA/QLoRA or RL adapters (`POST /v1/train/jobs`, `/v1/train/clients`) on open-weight Apache-2.0 `zen6` so you own the adapter weights outright and can run them hosted or on your own GPUs.
+
+## Audit your org's private intelligence inventory
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+# Installed org-private Kai capabilities
+hanzo capabilities list
+
+# Org-private Enso router blends
+hanzo benchmark presets list
+
+# Fine-tuned Zen artifacts & jobs
+hanzo train jobs list
+hanzo train artifacts list
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, CapabilitiesApi, BenchmarkApi, TrainApi } from 'hanzoai';
+
+const cfg = new Configuration({ accessToken: process.env.HANZO_API_KEY });
+const [caps, presets, jobs] = await Promise.all([
+  new CapabilitiesApi(cfg).capabilitiesList(),
+  new BenchmarkApi(cfg).getBenchmarkPresets(),
+  new TrainApi(cfg).getTrainJobs(),
+]);
+console.log({ caps: caps.data, presets: presets.data, jobs: jobs.data });
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import CapabilitiesApi, BenchmarkApi, TrainApi
+
+client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
+print(CapabilitiesApi(client).capabilities_list())
+print(BenchmarkApi(client).get_benchmark_presets())
+print(TrainApi(client).get_train_jobs())
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -s https://api.hanzo.ai/v1/capabilities \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+curl -s https://api.hanzo.ai/v1/benchmark/presets \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+curl -s https://api.hanzo.ai/v1/train/jobs \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "train",
+      "arguments": {"op": "get_train_jobs", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Licensing & self-hosted delivery
+
+For enterprise customers requiring on-premise deployment of your packaged software or models, issue cryptographically signed offline licenses via `POST https://api.hanzo.ai/v1/licensing/issue` and verify them locally against `GET https://api.hanzo.ai/v1/licensing/pubkey`.
+
+## Related courses & docs
+
+- [ENT 401 — Build Your AI Company](https://hanzo.university/build-your-ai-company) ([Interactive Lab](https://hanzo.app/learn/build-your-ai-company))
+- [KAI 301 Lab 01: Teach Kai your business](/docs/training/kai-capabilities) · [Monetize APIs](/docs/business/monetize-api)

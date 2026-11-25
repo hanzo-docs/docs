@@ -1,0 +1,113 @@
+---
+title: "Build retrieval pipelines with zen-embedding and rerank"
+description: "Build high-precision semantic search by embedding documents with POST /v1/embeddings (zen-embedding) and re-scoring candidates with POST /v1/rerank."
+product: zen
+level: practitioner
+duration: 15 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`)"
+objectives:
+  - "Generate dense vectors via POST /v1/embeddings using zen-embedding"
+  - "Re-rank top-K vector candidates via POST /v1/rerank using zen-reranker"
+  - "Avoid mixing vector spaces across embedding model versions"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - ZEN 201
+status: shipped
+---
+
+**Vector search gets recall; cross-encoder reranking gets precision.** Pair `POST /v1/embeddings` (`zen-embedding`) with `POST /v1/rerank` (`zen-reranker`) before feeding context into Zen 6 or Kai.
+
+## Architecture & contract
+
+Encode documents once and store vectors in `/v1/index` or `/v1/base`. At query time, retrieve top-50 candidates by cosine similarity, then score `(query, candidate)` pairs with `POST /v1/rerank` to select the top-5 passages.
+
+**Primary endpoint:** `POST /v1/embeddings` · **Status:** `shipped` · **Level:** `practitioner`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+# Generate embeddings and rerank candidates via CLI
+hanzo embeddings create --data '{"model":"zen-embedding","input":["Kai answers bounded questions with 0 output tokens.","Enso routes prompts across tiers."]}'
+hanzo rerank create --data '{"model":"zen-reranker","query":"zero output tokens classification","documents":["Kai answers bounded questions with 0 output tokens.","Enso routes prompts across tiers."]}'
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+const headers = { Authorization: `Bearer ${process.env.HANZO_API_KEY}`, 'Content-Type': 'application/json' };
+const emb = await fetch('https://api.hanzo.ai/v1/embeddings', {
+  method: 'POST', headers,
+  body: JSON.stringify({ model: 'zen-embedding', input: ['Kai answers bounded questions.', 'Enso routes prompts.'] }),
+}).then((r) => r.json());
+
+const ranked = await fetch('https://api.hanzo.ai/v1/rerank', {
+  method: 'POST', headers,
+  body: JSON.stringify({ model: 'zen-reranker', query: 'bounded classification', documents: ['Kai answers bounded questions.', 'Enso routes prompts.'] }),
+}).then((r) => r.json());
+console.log({ dims: emb.data?.[0]?.embedding?.length, ranked });
+```
+</Tab>
+<Tab value="Python">
+```python
+import os, requests
+
+h = {"Authorization": f"Bearer {os.environ['HANZO_API_KEY']}"}
+emb = requests.post("https://api.hanzo.ai/v1/embeddings", headers=h, json={"model": "zen-embedding", "input": ["Kai answers bounded questions.", "Enso routes prompts."]}).json()
+ranked = requests.post("https://api.hanzo.ai/v1/rerank", headers=h, json={"model": "zen-reranker", "query": "bounded classification", "documents": ["Kai answers bounded questions.", "Enso routes prompts."]}).json()
+print(len(emb["data"][0]["embedding"]), ranked)
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/embeddings \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"zen-embedding","input":["Kai answers bounded questions with 0 output tokens.","Enso routes prompts across tiers."]}' | jq '.data | length'
+
+curl -s -X POST https://api.hanzo.ai/v1/rerank \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"zen-reranker","query":"zero output tokens classification","documents":["Kai answers bounded questions with 0 output tokens.","Enso routes prompts across tiers."]}' | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "search",
+      "arguments": {"op": "post_search", "input": {"query": "Kai calibration"}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Assert the top reranked document matches the exact semantic target with a clearly separated relevance score.
+
+## Production guardrails
+
+- Never mix `zen-embedding` and `zen-embedding-3` vectors in the same index — rebuild the index whenever upgrading embedding models.
+
+## Next steps & Hanzo University
+
+- [Zen Task Lines](/docs/models/zen#generations)
+
+- **[ZEN 201 — Zen Model Engineering](https://hanzo.university/zen-model-engineering)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/zen-model-engineering))

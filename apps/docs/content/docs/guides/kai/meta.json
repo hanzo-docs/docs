@@ -1,0 +1,15 @@
+{
+  "title": "Kai",
+  "description": "Calibrated choice, noul, and score decisions at $0.021/1M input tokens (0 output tokens), Decision Programs, and CPU org capability training.",
+  "icon": "Scale",
+  "pages": [
+    "first-decision",
+    "train-business-capability",
+    "abstention-thresholds",
+    "decision-programs",
+    "support-triage",
+    "multilingual-classification",
+    "agent-completion-gate",
+    "capability-rollback-ci"
+  ]
+}

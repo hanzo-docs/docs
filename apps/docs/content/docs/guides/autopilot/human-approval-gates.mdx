@@ -1,0 +1,109 @@
+---
+title: "Pause high-risk autopilot runs for human approval"
+description: "Hold high-consequence autopilot actions for explicit human review via POST /v1/auto/automations/{id}/runs/{run}/review and resume durably."
+product: autopilot
+level: practitioner
+duration: 15 min
+prerequisites:
+  - "An armed automation ID on `/v1/auto/automations`"
+objectives:
+  - "Configure permissions: ask on automations that touch money, customer comms, or production"
+  - "Inspect pending runs and submit approve/reject verdicts"
+  - "Resume paused workflow runs deterministically on POST /v1/auto/runs/{id}/resume"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - AUTO 201
+status: shipped
+---
+
+**Autonomy scales fastest when humans stay in the loop on irreversible actions.** Hanzo's durable review state lets an automation pause indefinitely without losing context until an authorized reviewer approves or rejects.
+
+## Architecture & contract
+
+When `permissions: "ask"` is set (or Kai confidence falls below threshold), the run checkpoints its state and emits a reviewable artifact. Submitting a review resumes or halts execution with full principal attribution.
+
+**Primary endpoint:** `POST /v1/auto/automations/{id}/runs/{run}/review` · **Status:** `shipped` · **Level:** `practitioner`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo auto automations runs "$AUTO_ID"
+hanzo auto automations runs review "$AUTO_ID" "$RUN_ID" --data '{"approved":true,"note":"Verified invoice amount"}'
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, AutoApi } from 'hanzoai';
+
+const auto = new AutoApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const runs = await auto.getAutoAutomationsByIdRuns(process.env.AUTO_ID!);
+console.log('Pending runs:', runs.data);
+await auto.postAutoAutomationsByIdRunsByRunReview(process.env.AUTO_ID!, process.env.RUN_ID!, {
+  approved: true,
+  note: 'Verified invoice amount',
+});
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import AutoApi
+
+api = AutoApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+print(api.get_auto_automations_by_id_runs(os.environ["AUTO_ID"]))
+api.post_auto_automations_by_id_runs_by_run_review(
+    os.environ["AUTO_ID"], os.environ["RUN_ID"], {"approved": True, "note": "Verified invoice amount"}
+)
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -s "https://api.hanzo.ai/v1/auto/automations/${AUTO_ID}/runs" \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+curl -s -X POST "https://api.hanzo.ai/v1/auto/automations/${AUTO_ID}/runs/${RUN_ID}/review" \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{"approved":true,"note":"Verified invoice amount"}' | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "auto",
+      "arguments": {"op": "get_auto_runs", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Confirm the run transitions cleanly from pending review to completed and records the reviewer identity.
+
+## Production guardrails
+
+- Always feed rejected autopilot proposals back as Kai corrections so future drafts stop repeating the mistake.
+
+## Next steps & Hanzo University
+
+- [Business Autopilot](/docs/autopilot/business) · [Continuous Ops Feedback](/docs/guides/autopilot/continuous-ops-feedback)
+
+- **[AUTO 201 — Business Autopilot](https://hanzo.university/business-autopilot)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/business-autopilot))

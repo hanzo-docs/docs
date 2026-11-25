@@ -1,0 +1,117 @@
+---
+title: Model registry & artifacts
+description: "Track SHA-256 checkpoints, LoRA adapters, Kai capabilities, and ML serving endpoints across /v1/train/artifacts, /v1/train/jobs/{id}/publish, /v1/models, and /v1/ml/models."
+icon: Package
+product: infrastructure
+level: architect
+duration: 20 min
+prerequisites:
+  - A Hanzo secret key (`sk-...`)
+objectives:
+  - Inspect SHA-256 content-addressed training artifacts and short-lived download URLs
+  - Promote validated checkpoints to org-private model routes
+  - Audit model access permissions and serving provenance
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - ML 401
+  - ZEN 301
+  - ARC 105
+status: shipped
+---
+
+**No floating tags in production.** Every dataset, LoRA adapter, merged checkpoint, and Kai capability artifact on Hanzo is keyed by the SHA-256 digest of its bytes and encrypted under your org's KMS prefix.
+
+## Artifact & serving lifecycle
+
+1. **Store**: Uploads and executor outputs register on `/v1/train/artifacts` (`checkpoint`, `capability`, `lora`, `basis`, or `merged`) with SHA-256 verification enforced by S3 on PUT.
+2. **Evaluate**: Held-out metrics attach to the job (`GET /v1/train/jobs/{id}/metrics`) or capability version (`GET /v1/capabilities/{name}`).
+3. **Publish**: `POST /v1/train/jobs/{id}/publish`, `POST /v1/ai/finetune/deploy`, or `POST /v1/capabilities/{name}/publish` binds a named route to that exact digest.
+4. **Serve & verify**: Responses report exact serving provenance (`routing.checkpoint`, `routing.sha256`, `routing.calibration`, `X-Hanzo-Served`).
+5. **Roll back or retire**: Roll back to the prior digest (`POST /v1/capabilities/{name}/rollback`) or remove artifacts (`DELETE /v1/train/artifacts/{sha256}`).
+
+## Inspect artifacts & published models
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+# List org-private training artifacts (datasets, adapters, checkpoints)
+hanzo train artifacts list
+
+# Inspect a specific artifact and obtain a 10-minute presigned download URL
+hanzo train artifacts get "$SHA256"
+
+# List live serving models visible to your org
+hanzo models list
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, TrainApi, AiApi } from 'hanzoai';
+
+const cfg = new Configuration({ accessToken: process.env.HANZO_API_KEY });
+const artifacts = await new TrainApi(cfg).getTrainArtifacts();
+const models = await new AiApi(cfg).getModels();
+console.log({ artifacts: artifacts.data, models: models.data });
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import TrainApi, AiApi
+
+client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
+print(TrainApi(client).get_train_artifacts())
+print(AiApi(client).get_models())
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+# List all org training artifacts
+curl https://api.hanzo.ai/v1/train/artifacts \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+# Get presigned 10-minute download address for one artifact
+curl "https://api.hanzo.ai/v1/train/artifacts/${SHA256}" \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+# List ML serving models
+curl https://api.hanzo.ai/v1/ml/models \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "train",
+      "arguments": {"op": "get_train_artifacts", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Serving custom ML models (`/v1/ml/models`)
+
+Non-LLM tabular, ranking, and risk models publish to `/v1/ml/models` and serve low-latency inference at `POST /v1/ml/models/{name}/predict` under the same tenant IAM and billing ledger.
+
+## Related courses & docs
+
+- [ML 401 — ML Systems](https://hanzo.university/ml-systems) ([Interactive Lab](https://hanzo.app/learn/ml-systems))
+- [ARC 105 — AI Architect](https://hanzo.university/ai-architect) ([Interactive Lab](https://hanzo.app/learn/ai-architect))
+- [Reproducibility](/docs/science/reproducibility) · [Private Intelligence](/docs/business/private-intelligence)

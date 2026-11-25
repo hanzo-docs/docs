@@ -1,0 +1,111 @@
+---
+title: "Query AI latency, traces, logs, and unit economics"
+description: "Query live GenAI latency percentiles, token spend, traces, logs, and alerts across /v1/eval/metrics, /v1/metrics/query, and /v1/o11y/alerts."
+product: infrastructure
+level: practitioner
+duration: 15 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`)"
+objectives:
+  - "Pull org AI overview metrics (cost, tokens, latency p50/p95, errors) from GET /v1/eval/metrics"
+  - "Run PromQL and trace queries against /v1/metrics/query and /v1/metrics/traces/query"
+  - "Inspect active alert rules on /v1/o11y/alerts"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - ARC 105
+  - SYS 103
+status: shipped
+---
+
+**You cannot optimize latency or unit economics in the dark.** Hanzo tags every model, tool, and HTTP span by org and project so observability and billing share one source of truth.
+
+## Architecture & contract
+
+`/v1/eval/metrics` summarizes GenAI spans (generations, tokens, cents, error rate, p50/p95 latency); `/v1/metrics/*` serves raw PromQL, log, and trace queries; `/v1/o11y/alerts` manages operational alerting.
+
+**Primary endpoint:** `GET /v1/eval/metrics` · **Status:** `shipped` · **Level:** `practitioner`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo eval metrics
+hanzo metrics health
+hanzo o11y alerts list
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, EvalApi, MetricsApi } from 'hanzoai';
+
+const cfg = new Configuration({ accessToken: process.env.HANZO_API_KEY });
+const [aiMetrics, health] = await Promise.all([
+  new EvalApi(cfg).getEvalMetrics('24h'),
+  new MetricsApi(cfg).getMetricsHealth(),
+]);
+console.log({ aiMetrics: aiMetrics.data, health: health.data });
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import EvalApi, MetricsApi
+
+client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
+print(EvalApi(client).get_eval_metrics(range="24h"))
+print(MetricsApi(client).get_metrics_health())
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -s "https://api.hanzo.ai/v1/eval/metrics?range=24h" \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+curl -s https://api.hanzo.ai/v1/metrics/health \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+curl -s https://api.hanzo.ai/v1/o11y/alerts \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "eval",
+      "arguments": {"op": "get_eval_metrics", "input": {"range": "24h"}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Assert `GET /v1/eval/metrics?range=24h` reflects recent model calls with accurate per-model latency breakdowns.
+
+## Production guardrails
+
+- Alert on `error_rate > 1%` and `p95_latency_ms` regressions rather than average latency alone.
+
+## Next steps & Hanzo University
+
+- [Drift Detection & History](/docs/guides/science/drift-detection-history)
+
+- **[ARC 105 — AI Architect](https://hanzo.university/ai-architect)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/ai-architect))
+- **[SYS 103 — Systems Engineering](https://hanzo.university/systems-engineering)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/systems-engineering))

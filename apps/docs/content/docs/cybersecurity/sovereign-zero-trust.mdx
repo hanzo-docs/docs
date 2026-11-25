@@ -1,0 +1,127 @@
+---
+title: Sovereign zero-trust AI
+description: "Operate regulated and air-gapped AI under your own identity, authorization (/v1/authz/check), KMS keys (/v1/kms/secrets), zero-trust overlay (/v1/network), and local open-weight Zen models."
+icon: Lock
+product: cyber
+level: architect
+duration: 30 min
+prerequisites:
+  - A Hanzo secret key (`sk-...`)
+  - Familiarity with [Self-Hosting & Air-Gapped](/docs/self-hosting)
+objectives:
+  - Enforce default-deny authorization on every service call with `POST /v1/authz/check`
+  - Manage runtime credentials exclusively through Hanzo KMS (`/v1/kms/secrets`)
+  - Isolate model inference and compute nodes on `/v1/network` zero-trust identities
+  - Deploy fully offline open-weight Zen models with zero external egress
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - CYB 401
+  - SYS 103
+  - ARC 105
+status: shipped
+---
+
+**Zero trust means no network perimeter, no hardcoded static tokens, and no silent third-party model egress.** Hanzo's cloud and self-hosted deployments share the exact same IAM, AuthZ, KMS, and zero-trust overlay contracts.
+
+## Four pillars of sovereign zero-trust AI
+
+1. **Unified Identity (Hanzo IAM)**: Every human, service account, and autonomous agent authenticates via OIDC/PKCE (`hanzo.id`) or scoped `sk-` keys. SuperAdmin privileges require an IAM-validated `owner == "admin"` claim in the reserved org — org admin never implies platform SuperAdmin.
+2. **Explicit Authorization (`POST /v1/authz/check`)**: Every read and mutation evaluates `(subject, action, resource)` against least-privilege policy before touching data or GPUs.
+3. **KMS-Backed Secrets (`/v1/kms/secrets`)**: Application secrets, signing keys, and provider tokens stay in KMS and inject ephemerally at runtime — never checked into git, env files, or prompts.
+4. **Zero-Trust Overlay & Local Weights (`/v1/network` + Zen 6)**: Services communicate over identity-authenticated overlay tunnels (`/v1/network/identities`, `/v1/network/services`), while open-weight Apache-2.0 `zen6` and `zen6-flash` run entirely on-premise or air-gapped.
+
+## Verify AuthZ, KMS & overlay identities
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+# Verify KMS health and list secret paths (values stay encrypted at rest)
+hanzo kms health
+hanzo kms secrets list
+
+# Check zero-trust overlay identities & services
+hanzo network identities list
+hanzo network services list
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, AuthzApi, KmsApi, NetworkApi } from 'hanzoai';
+
+const cfg = new Configuration({ accessToken: process.env.HANZO_API_KEY });
+const [allowed, kms, identities] = await Promise.all([
+  new AuthzApi(cfg).postAuthzCheck({
+    subject: 'agent:secops-bot',
+    action: 'read',
+    resource: 'repo:hanzoai/cloud',
+  }),
+  new KmsApi(cfg).getKmsHealth(),
+  new NetworkApi(cfg).getNetworkIdentities(),
+]);
+console.log({ allowed: allowed.data, kms: kms.data, identities: identities.data });
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import AuthzApi, KmsApi, NetworkApi
+
+client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
+print(AuthzApi(client).post_authz_check({"subject": "agent:secops-bot", "action": "read", "resource": "repo:hanzoai/cloud"}))
+print(KmsApi(client).get_kms_health())
+print(NetworkApi(client).get_network_identities())
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+# 1. Policy check before privileged tool action
+curl -s -X POST https://api.hanzo.ai/v1/authz/check \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"subject":"agent:secops-bot","action":"read","resource":"repo:hanzoai/cloud"}' | jq '.'
+
+# 2. Check KMS health & secret paths
+curl -s https://api.hanzo.ai/v1/kms/health \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+# 3. List zero-trust overlay identities
+curl -s https://api.hanzo.ai/v1/network/identities \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "kms",
+      "arguments": {"op": "get_kms_health", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Air-gapped deployment
+
+For defense, healthcare, and sovereign financial workloads with zero internet egress, pair [Self-Hosting & Air-Gapped](/docs/self-hosting) with local `zen6` / `zen6-flash` weights (`hf download zenlm/zen6-flash`) and local `hanzoai/cloud` + `hanzoai/iam`.
+
+## Related courses & docs
+
+- [CYB 401 — Sovereign Zero-Trust AI](https://hanzo.university/sovereign-zero-trust-ai) ([Interactive Lab](https://hanzo.app/learn/sovereign-zero-trust-ai))
+- [SYS 103 — Systems Engineering](https://hanzo.university/systems-engineering) ([Interactive Lab](https://hanzo.app/learn/systems-engineering))
+- [Self-Hosting & Air-Gapped](/docs/self-hosting) · [The Network](/docs/network)

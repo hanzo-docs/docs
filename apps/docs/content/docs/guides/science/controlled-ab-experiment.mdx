@@ -1,0 +1,114 @@
+---
+title: "Run deterministic A/B rollouts on /v1/experiment"
+description: "Bucket live subjects deterministically with GET /v1/experiment/{id}/assign, analyze outcomes via /analyze, and promote winners via /decide."
+product: science
+level: practitioner
+duration: 20 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`)"
+objectives:
+  - "Create a two-arm experiment on POST /v1/experiment"
+  - "Bucket subjects deterministically without polluting exposure logs"
+  - "Analyze significance and promote the winning arm atomically with audit provenance"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - SCI 201
+status: shipped
+---
+
+**Prove that a model or prompt upgrade moves real user metrics before rolling it to 100% of traffic.** `/v1/experiment` separates deterministic assignment, statistical analysis, and audited winner promotion.
+
+## Architecture & contract
+
+`assign` is a pure read that hashes `(experiment_id, subject)` consistently; your app logs an exposure event on `/v1/event` only when the user actually triggers the code path. `analyze` computes lift without mutating flags; `decide` atomically sets the winner to 100% and stamps the deciding principal.
+
+**Primary endpoint:** `POST /v1/experiment` · **Status:** `shipped` · **Level:** `practitioner`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo experiment create --data '{"name":"kai-triage-rollout","variants":[{"key":"control","weight":50},{"key":"kai_v2","weight":50}]}'
+hanzo experiment assign "$EXP_ID" --subject "org_123"
+hanzo experiment analyze "$EXP_ID"
+hanzo experiment decide "$EXP_ID" --data '{"winner":"kai_v2"}'
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, ExperimentApi } from 'hanzoai';
+
+const exp = new ExperimentApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data: created } = await exp.postExperiment({
+  name: 'kai-triage-rollout',
+  variants: [{ key: 'control', weight: 50 }, { key: 'kai_v2', weight: 50 }],
+});
+const { data: bucket } = await exp.getExperimentByIdAssign(created.id, 'org_123');
+console.log({ id: created.id, bucket });
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import ExperimentApi
+
+api = ExperimentApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+created = api.post_experiment({"name": "kai-triage-rollout", "variants": [{"key": "control", "weight": 50}, {"key": "kai_v2", "weight": 50}]})
+print(api.get_experiment_by_id_assign(created["id"], subject="org_123"))
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+EXP_ID=$(curl -s -X POST https://api.hanzo.ai/v1/experiment \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{"name":"kai-triage-rollout","variants":[{"key":"control","weight":50},{"key":"kai_v2","weight":50}]}' | jq -r '.id')
+
+curl -s "https://api.hanzo.ai/v1/experiment/${EXP_ID}/assign?subject=org_123" \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+curl -s -X POST "https://api.hanzo.ai/v1/experiment/${EXP_ID}/analyze" \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "experiment",
+      "arguments": {"op": "get_experiment", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Call `assign` twice for `subject=org_123` and assert identical arm assignment.
+- Verify `decide` stamps winner, credential, and timestamp.
+
+## Production guardrails
+
+- Pre-commit minimum sample size and stop dates before looking at interim p-values to avoid peeking bias.
+
+## Next steps & Hanzo University
+
+- [Studies & Controlled Experiments](/docs/science/studies-experiments)
+
+- **[SCI 201 — Autonomous Research](https://hanzo.university/autonomous-research)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/autonomous-research))
