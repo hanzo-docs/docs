@@ -1,6 +1,6 @@
 ---
 title: Desktop
-description: Hanzo Desktop, the Hanzo app for your computer — download it, open it, sign in. No terminal. Plus Hanzo's tools in Claude Desktop.
+description: Install Hanzo Desktop, understand macOS signing, and connect Hanzo to ChatGPT or Claude.
 ---
 
 # Hanzo Desktop
@@ -26,6 +26,27 @@ No terminal, no `curl`, `npm` or `brew`. Every build and its checksums are on
 Nothing to install at all: the same app runs in your browser at
 [hanzo.app](https://hanzo.app).
 
+### macOS signing and notarization
+
+Hanzo Desktop v1.1.83 for macOS was signed ad hoc and lacked an Apple
+notarization ticket. Gatekeeper can block this download even when its SHA-256
+checksum matches the one Hanzo publishes. The checksum confirms the file
+matches the published download. Developer ID signing and notarization allow
+macOS to verify the publisher and check Apple's notarization record.
+
+If macOS blocks the app, you can use [hanzo.app](https://hanzo.app) in your
+browser. Apple documents a per-app exception under **System Settings →
+Privacy & Security → Open Anyway** for downloads you have verified and trust.
+Follow [Apple's instructions for opening apps safely](https://support.apple.com/en-us/102445).
+
+With access to the Hanzo Desktop source, you can build and run it on your own
+Mac using the free Xcode tools and the commands in
+[Build from source](#build-from-source). A free Apple Account is sufficient for
+local development. A free account does not grant access to a private source
+repository or supply the Developer ID certificate and notarization used to
+distribute a release to other Macs. Those distribution features require Apple
+Developer Program membership. See [Apple's developer account overview](https://developer.apple.com/help/account/basics/about-your-developer-account).
+
 ## Local Cloud & Custom API Endpoint
 
 To point Hanzo Desktop at a local Cloud stack (`make up` in `hanzo-inc/universe` on `http://127.0.0.1:8000`), Devnet (`https://api-dev.hanzo.ai`), or any custom endpoint:
@@ -33,9 +54,11 @@ To point Hanzo Desktop at a local Cloud stack (`make up` in `hanzo-inc/universe`
 1. Open **Settings → Environments & Machines → Cloud API Endpoint** (or **Settings → Advanced → Local services**).
 2. Select **`Local Cloud (make up)`** (`http://127.0.0.1:8000`), click **Test** to verify `/v1/health`, and click **Apply & Reload** (or launch from the terminal with `HANZO_CLOUD_API=http://127.0.0.1:8000 hanzo-desktop`).
 
-## Build & Install from Source
+## Build from source
 
-Contributors building Hanzo Desktop from the unified `hanzo-inc/app` monorepo (`desktop/`):
+These commands run from the root of the [Hanzo app repository](https://github.com/hanzo-inc/app).
+You need access to that repository. On macOS, install Apple's Command Line Tools
+with `xcode-select --install` if they are missing.
 
 ```bash
 make deps       # installs OS build deps (Ubuntu/Debian/Fedora/Arch/WSL2, macOS, Windows notes) + pnpm workspace
@@ -50,15 +73,28 @@ The [Hanzo CLI](/docs/cli) (`hanzo`) is for developers: it runs in a terminal,
 starts [Hanzo Dev](/docs/dev) (the coding agent) with `hanzo dev`, and drives your
 account and the cloud from scripts. You do not need it to use Hanzo Desktop.
 
-## Claude Desktop
+## Connect Hanzo to ChatGPT or Claude
 
-Add Hanzo's tools to Anthropic's Claude Desktop with the
-[Hanzo MCP server](/docs/mcp#client-setup): paste its `mcpServers` entry into
-Claude Desktop's config (**Settings → Developer → Edit Config**) and restart.
+Use `https://api.hanzo.ai/v1/mcp` as the server URL for Hanzo Cloud tools.
+Choose **OAuth** and sign in at `https://hanzo.ai` when prompted.
 
-> **One identity, everywhere.** Sign in with Hanzo ([IAM](/docs/openapi/iam)
-> OAuth) or paste an `sk-` [API key](/docs/api-keys). The same account carries
-> your models, tools and usage across every surface.
+- **ChatGPT.** Open **Plugins**, select **+**, then **Add custom MCP server**.
+  Enter the URL, choose **OAuth**, and create and install the plugin. Your
+  workspace may require permission to add custom servers.
+  [ChatGPT setup](https://developers.openai.com/api/docs/guides/custom-mcp-server)
+- **Claude.** Open **Customize → Connectors → Add → Custom → Web**.
+  Enter the URL, choose **Sign in now**, and complete the Hanzo sign-in flow.
+  [Claude setup](https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp)
+
+### Use the local MCP server
+
+For local tools in Claude Desktop, add the [Hanzo MCP configuration](/docs/mcp#client-setup)
+under **Settings → Developer → Edit Config** and restart.
+
+To share one Chrome page with ChatGPT, run `hanzo-mcp share` through a private
+Secure MCP Tunnel on the computer running the Hanzo browser extension. The
+command requires you to select the browser, tab, and exact page URL.
+[Native browser sharing setup](https://github.com/hanzoai/mcp#share-a-browser-page-through-a-private-mcp-tunnel)
 
 ## Related
 
