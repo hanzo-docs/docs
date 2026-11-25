@@ -1,0 +1,110 @@
+---
+title: "Publish and serve a regression-gated Zen checkpoint"
+description: "Publish a regression-gated Zen training artifact via POST /v1/train/jobs/{id}/publish and serve it privately to your organization."
+product: zen
+level: specialist
+duration: 20 min
+prerequisites:
+  - "A completed training job ID on `/v1/train/jobs`"
+objectives:
+  - "Inspect output artifact SHA-256 hashes on GET /v1/train/jobs/{id}/artifacts"
+  - "Publish a passing job to an org-private model name"
+  - "Verify the published model resolves exclusively inside your org"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - ZEN 301
+  - ML 401
+status: shipped
+---
+
+**A checkpoint on S3 does nothing until it clears its regression budget and routes behind a stable org model name.** Publish completed artifacts atomically via `POST /v1/train/jobs/{id}/publish` or `POST /v1/ai/finetune/deploy`.
+
+## Architecture & contract
+
+Only jobs whose validation suites pass their declared regression budget publish cleanly without an audited `force` override. Published checkpoints inherit tenant IAM boundaries and bill under your org ledger.
+
+**Primary endpoint:** `POST /v1/train/jobs/{id}/publish` · **Status:** `shipped` · **Level:** `specialist`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo train jobs artifacts get "$JOB_ID"
+hanzo train jobs publish "$JOB_ID" --data '{"name":"zen6-flash-legal-v1"}'
+hanzo models list
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, TrainApi } from 'hanzoai';
+
+const train = new TrainApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const arts = await train.getTrainJobsByIdArtifacts(process.env.JOB_ID!);
+const pub = await train.postTrainJobsByIdPublish(process.env.JOB_ID!, { name: 'zen6-flash-legal-v1' });
+console.log({ artifacts: arts.data, published: pub.data });
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import TrainApi
+
+api = TrainApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+job_id = os.environ["JOB_ID"]
+print(api.get_train_jobs_by_id_artifacts(job_id))
+print(api.post_train_jobs_by_id_publish(job_id, {"name": "zen6-flash-legal-v1"}))
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -s "https://api.hanzo.ai/v1/train/jobs/${JOB_ID}/artifacts" \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+curl -s -X POST "https://api.hanzo.ai/v1/train/jobs/${JOB_ID}/publish" \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"zen6-flash-legal-v1"}' | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "train",
+      "arguments": {"op": "get_train_artifacts", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Call `POST /v1/chat/completions` with `model: "zen6-flash-legal-v1"` and verify it answers for your org key and refuses external keys.
+
+## Production guardrails
+
+- Keep the prior published checkpoint name active until shadow traffic confirms latency and quality SLOs.
+
+## Next steps & Hanzo University
+
+- [Model Registry & Artifacts](/docs/training/model-registry)
+
+- **[ZEN 301 — Zen Native Training](https://hanzo.university/zen-native-training)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/zen-native-training))
+- **[ML 401 — ML Systems](https://hanzo.university/ml-systems)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/ml-systems))

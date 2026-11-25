@@ -1,0 +1,107 @@
+---
+title: "Launch segmented multi-channel campaigns with Zen"
+description: "Segment audiences (/v1/marketing/audiences), generate brand-voice copy with Zen (/v1/content/generate), and launch measured campaigns (/v1/campaign)."
+product: autopilot
+level: practitioner
+duration: 20 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`)"
+objectives:
+  - "Create and preview target audiences via /v1/marketing/audiences"
+  - "Draft brand-voice campaign assets with Zen on POST /v1/content/generate"
+  - "Launch, monitor metrics, and pause campaigns cleanly on /v1/campaign"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - MKT 102
+status: shipped
+---
+
+**Turn product releases into segmented, brand-consistent multi-channel launches measured by real conversion.**
+
+## Architecture & contract
+
+Zen drafts copy into CMS drafts via `POST /v1/content/generate`; Kai checks brand-safety rubrics; `/v1/marketing/audiences` defines exact recipient segments; `/v1/campaign` coordinates delivery and live metrics with instant `/pause`.
+
+**Primary endpoint:** `POST /v1/campaign` · **Status:** `shipped` · **Level:** `practitioner`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo marketing audiences create --data '{"name":"pro-developers","filter":{"tier":"pro"}}'
+hanzo campaign create --data '{"name":"q4-release","objective":"adoption"}'
+hanzo campaign summary
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, MarketingApi, CampaignApi } from 'hanzoai';
+
+const cfg = new Configuration({ accessToken: process.env.HANZO_API_KEY });
+const [aud, camp] = await Promise.all([
+  new MarketingApi(cfg).postMarketingAudiences({ name: 'pro-developers', filter: { tier: 'pro' } }),
+  new CampaignApi(cfg).postCampaign({ name: 'q4-release', objective: 'adoption' }),
+]);
+console.log({ audience: aud.data, campaign: camp.data });
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import MarketingApi, CampaignApi
+
+client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
+print(MarketingApi(client).post_marketing_audiences({"name": "pro-developers", "filter": {"tier": "pro"}}))
+print(CampaignApi(client).post_campaign({"name": "q4-release", "objective": "adoption"}))
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/content/generate \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{"model":"zen6","brief":"Write a concise technical launch note for CPU Kai capability training.","tone":"direct, evidence-first"}' | jq '.'
+
+curl -s https://api.hanzo.ai/v1/campaign/summary \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "marketing",
+      "arguments": {"op": "get_marketing_audiences", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Preview audience counts via `POST /v1/marketing/audiences/{id}/preview` and send a test broadcast before launching live.
+
+## Production guardrails
+
+- Keep campaign launches behind human approval and monitor bounce/unsubscribe metrics on `GET /v1/campaign/{id}/metrics`.
+
+## Next steps & Hanzo University
+
+- [Marketing Autopilot](/docs/autopilot/marketing)
+
+- **[MKT 102 — Agentic Marketing](https://hanzo.university/agentic-marketing)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/agentic-marketing))

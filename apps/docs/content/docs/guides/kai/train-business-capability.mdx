@@ -1,0 +1,133 @@
+---
+title: "KAI 301 Lab 01: Teach Kai your business"
+description: "KAI 301 Lab 01 companion guide: enable capture, log ground-truth corrections, train an org-private Kai capability on CPU via POST /v1/capabilities/{name}/train, audit 5 release dimensions, and publish."
+product: kai
+level: specialist
+duration: 45 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`)"
+  - "At least 30 captured corrections on one question key"
+objectives:
+  - "Enable decision capture and submit ground-truth corrections"
+  - "Create and train a capability on CPU via POST /v1/capabilities/{name}/train"
+  - "Verify regression, calibration, abstention, latency, and adversarial gates before publishing"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+lab: kai-301-lab-01
+related_courses:
+  - KAI 301
+  - KAI 201
+status: shipped
+---
+
+**Companion 4-surface lab for [KAI 301 Lab 01: Teach Kai your business](/docs/training/kai-capabilities).** Turn domain corrections into a tenant-private Kai capability in seconds on CPU with zero re-encoding and bit-for-bit invariance on unrelated questions.
+
+## Architecture & contract
+
+`POST /v1/capabilities/{name}/train` fits the smallest correction that clears held-out evaluation against base Kai (**calibration → linear head → boost+veto pair**). Published capabilities attach strictly behind their exact `(question_key, type, labels)` route and support instant artifact rollback.
+
+**Primary endpoint:** `POST /v1/capabilities/{name}/train` · **Status:** `shipped` · **Level:** `specialist`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+# 1. Enable state capture and inspect captured corrections
+hanzo capabilities capture replace --data '{"enabled":true}'
+hanzo capabilities corrections
+
+# 2. Create draft capability bound to one question route and train on CPU
+hanzo capabilities create --data '{"name":"billing-refund-router","question":"refund_route"}'
+hanzo capabilities train billing-refund-router
+
+# 3. Inspect held-out evaluation report and publish if gate passed
+hanzo capabilities get billing-refund-router
+hanzo capabilities publish billing-refund-router
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, CapabilitiesApi } from 'hanzoai';
+
+const caps = new CapabilitiesApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+await caps.capabilitiesSetCapture({ enabled: true });
+await caps.capabilitiesCreate({ name: 'billing-refund-router', question: 'refund_route' });
+const trained = await caps.capabilitiesTrain('billing-refund-router');
+console.log('Evaluation:', trained.data);
+const published = await caps.capabilitiesPublish('billing-refund-router');
+console.log('Published:', published.data);
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import CapabilitiesApi
+
+api = CapabilitiesApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+api.capabilities_set_capture({"enabled": True})
+api.capabilities_create({"name": "billing-refund-router", "question": "refund_route"})
+trained = api.capabilities_train("billing-refund-router")
+print("Evaluation:", trained)
+print("Published:", api.capabilities_publish("billing-refund-router"))
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -s -X PUT https://api.hanzo.ai/v1/capabilities/capture \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{"enabled":true}'
+
+curl -s -X POST https://api.hanzo.ai/v1/capabilities \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{"name":"billing-refund-router","question":"refund_route"}'
+
+curl -s -X POST https://api.hanzo.ai/v1/capabilities/billing-refund-router/train \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+curl -s -X POST https://api.hanzo.ai/v1/capabilities/billing-refund-router/publish \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "describe",
+      "arguments": {"op": "capabilitiesTrain"}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Confirm `GET /v1/capabilities/billing-refund-router` shows `repaired > damaged`, passing calibration, and `100%` bit-for-bit invariance on unrelated questions.
+- Test an adversarial prompt-injection state and verify policy floors remain intact.
+
+## Production guardrails
+
+- Never force a failing version into production — `POST /v1/capabilities/{name}/publish` rejects non-passing versions with `409 not_publishable`.
+- If base Kai upgrades, re-run `/train` to clear `409 needs_validation`.
+
+## Next steps & Hanzo University
+
+- [Full 9-Step KAI 301 Lab 01 Walkthrough](/docs/training/kai-capabilities) · [Gate Capability Upgrades & Rollback](/docs/guides/kai/capability-rollback-ci)
+
+- **[KAI 301 — Training Kai Decision Models](https://hanzo.university/kai-training-decision-models)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/kai-training-decision-models))
+- **[KAI 201 — Kai Decision Intelligence](https://hanzo.university/kai-decision-intelligence)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/kai-decision-intelligence))

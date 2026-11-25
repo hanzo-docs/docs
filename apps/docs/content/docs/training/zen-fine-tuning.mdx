@@ -1,0 +1,161 @@
+---
+title: Zen fine-tuning
+description: "Fine-tune open-weight Zen models with LoRA, QLoRA, and full-weight jobs on /v1/train/jobs and /v1/ai/finetune/jobs — from SHA-256 dataset artifacts to regression-gated publishing."
+icon: Sparkle
+product: zen
+level: specialist
+duration: 35 min
+prerequisites:
+  - A Hanzo secret key (`sk-...`)
+  - A cleaned JSONL dataset verified under [Datasets & lineage](/docs/training/datasets)
+objectives:
+  - Query trainable Zen base models and nano-USD device pricing via `GET /v1/train/models`
+  - Upload SHA-256 dataset artifacts via `POST /v1/train/artifacts`
+  - Launch, stream metrics from, and publish a training job on `POST /v1/train/jobs`
+  - Deploy a completed checkpoint as a routable org-private model
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - ZEN 201
+  - ZEN 301
+  - ML 401
+status: shipped
+---
+
+**Fine-tune Zen when you need permanent domain synthesis, proprietary code conventions, or custom reasoning patterns baked into model weights.** All Zen training runs on your choice of Hanzo managed GPUs or your own registered BYO compute fleet, billed transparently by the device-second.
+
+## 1. Discover trainable base models & methods
+
+Query `GET /v1/train/models` to see every base model, supported adaptation method (`lora`, `qlora`, `full`), device-second rate in nano-USD, objective terms, and dataset schemas.
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo train models
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, TrainApi } from 'hanzoai';
+
+const train = new TrainApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data } = await train.getTrainModels();
+console.log(data);
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import TrainApi
+
+client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
+print(TrainApi(client).get_train_models())
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl https://api.hanzo.ai/v1/train/models \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "train",
+      "arguments": {"op": "get_train_models", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## 2. Upload content-addressed training data
+
+Compute the SHA-256 of your JSONL dataset and register it with `POST /v1/train/artifacts`. Hanzo returns a presigned S3 upload URL encrypted under your org's key (or `stored: true` if identical bytes are already deduplicated).
+
+```bash
+SHA=$(shasum -a 256 train.jsonl | awk '{print $1}')
+BYTES=$(wc -c < train.jsonl | tr -d ' ')
+
+curl -X POST https://api.hanzo.ai/v1/train/artifacts \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d "{\"sha256\":\"${SHA}\",\"bytes\":${BYTES},\"kind\":\"dataset\",\"name\":\"support-sft-v1\"}"
+```
+
+## 3. Submit a training job
+
+Submit the job via `POST /v1/train/jobs` (or use the managed preset wizard on `GET /v1/ai/finetune/presets` and `POST /v1/ai/finetune/jobs`). Always declare a validation split and regression budget so bad checkpoints never silently ship.
+
+<Tabs items={['CLI', 'HTTP']}>
+<Tab value="CLI">
+```bash
+hanzo train jobs create --data "{
+  \"base_model\": \"zen6-flash\",
+  \"adaptation\": \"lora\",
+  \"dataset_sha256\": \"${SHA}\",
+  \"hyperparameters\": {\"epochs\": 3, \"learning_rate\": 2e-4, \"lora_rank\": 16}
+}"
+```
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -X POST https://api.hanzo.ai/v1/train/jobs \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d "{
+    \"base_model\": \"zen6-flash\",
+    \"adaptation\": \"lora\",
+    \"dataset_sha256\": \"${SHA}\",
+    \"hyperparameters\": {\"epochs\": 3, \"learning_rate\": 2e-4, \"lora_rank\": 16}
+  }"
+```
+</Tab>
+</Tabs>
+
+## 4. Stream events, metrics & artifacts
+
+Follow live status transitions and validation suites without tight polling using cursor-based long polling (`GET /v1/train/jobs/{id}/events?wait=30`) and structured metric series (`GET /v1/train/jobs/{id}/metrics`):
+
+```bash
+JOB_ID="trj_..."
+hanzo train jobs get "$JOB_ID"
+hanzo train jobs metrics "$JOB_ID"
+hanzo train jobs artifacts get "$JOB_ID"
+```
+
+Need to abort early? `POST /v1/train/jobs/{id}/cancel` stops executors cleanly and meters only device-seconds actually consumed.
+
+## 5. Gate and publish to serving
+
+A succeeded job's artifact can be published under an org-private model name via `POST /v1/train/jobs/{id}/publish` (or deployed from the fine-tune studio via `POST /v1/ai/finetune/deploy`). Jobs that breach their regression budget are rejected at publish time unless explicitly forced with an audit trail.
+
+```bash
+curl -X POST "https://api.hanzo.ai/v1/train/jobs/${JOB_ID}/publish" \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "zen6-flash-support-v1"}'
+```
+
+Once published, call your fine-tuned model directly on `POST /v1/chat/completions` or route into it from a custom Enso preset.
+
+## Related courses & guides
+
+- [ZEN 201 — Zen Model Engineering](https://hanzo.university/zen-model-engineering) ([Interactive Lab](https://hanzo.app/learn/zen-model-engineering))
+- [ZEN 301 — Zen Native Training](https://hanzo.university/zen-native-training) ([Interactive Lab](https://hanzo.app/learn/zen-native-training))
+- [Zen Guides (6 recipes)](/docs/guides/zen) · [Model Registry](/docs/training/model-registry)

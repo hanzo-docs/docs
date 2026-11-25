@@ -1,0 +1,124 @@
+---
+title: "Gate Kai capability upgrades & automate rollback"
+description: "Automate continuous Kai capability retraining, held-out gate assertions, zero-downtime publishing, and instant rollback in CI."
+product: kai
+level: specialist
+duration: 20 min
+prerequisites:
+  - "A trained Kai capability created via [KAI 301 Lab 01](/docs/training/kai-capabilities)"
+objectives:
+  - "Retrain an existing org capability as new production corrections arrive"
+  - "Check pass/fail gate criteria programmatically before publishing"
+  - "Roll back immediately to the prior artifact without retraining on live regressions"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - KAI 301
+status: shipped
+---
+
+**Treat org-private Kai capabilities like production code deployments: retrain on a schedule, inspect held-out metrics in CI, publish atomically, and roll back in one API call if live drift appears.**
+
+## Architecture & contract
+
+While `POST /v1/capabilities/{name}/train` trains a candidate version, the currently installed version keeps answering live org traffic untouched. `POST /v1/capabilities/{name}/publish` atomically swaps traffic only if the candidate passed evaluation on the active base Kai checkpoint; `POST /v1/capabilities/{name}/rollback` restores the exact prior artifact without retraining.
+
+**Primary endpoint:** `POST /v1/capabilities/{name}/publish` · **Status:** `shipped` · **Level:** `specialist`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+# Retrain candidate version
+hanzo capabilities train billing-refund-router
+
+# Inspect latest version evaluation state
+hanzo capabilities get billing-refund-router
+
+# Publish if publishable, or roll back instantly if live alerts fire
+hanzo capabilities publish billing-refund-router
+hanzo capabilities rollback billing-refund-router
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, CapabilitiesApi } from 'hanzoai';
+
+const caps = new CapabilitiesApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const trained = await caps.capabilitiesTrain('billing-refund-router');
+const info = await caps.capabilitiesGet('billing-refund-router');
+console.log('Latest capability state:', info.data);
+// Roll back immediately on live anomaly:
+// await caps.capabilitiesRollback('billing-refund-router');
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import CapabilitiesApi
+
+api = CapabilitiesApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+api.capabilities_train("billing-refund-router")
+info = api.capabilities_get("billing-refund-router")
+print(info)
+# Instant rollback without retraining:
+# api.capabilities_rollback("billing-refund-router")
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+# 1. Retrain & inspect evaluation
+curl -s -X POST https://api.hanzo.ai/v1/capabilities/billing-refund-router/train \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+# 2. Publish passing candidate
+curl -s -X POST https://api.hanzo.ai/v1/capabilities/billing-refund-router/publish \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+# 3. Instant rollback to previous installed artifact
+curl -s -X POST https://api.hanzo.ai/v1/capabilities/billing-refund-router/rollback \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "describe",
+      "arguments": {"op": "capabilitiesRollback"}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Trigger `rollback` and confirm `GET /v1/capabilities/billing-refund-router` reports the prior version active immediately.
+- Trigger `disable` and confirm base Kai answers bit-for-bit on the very next decision.
+
+## Production guardrails
+
+- Handle `409 no_previous` gracefully when rolling back a capability that only ever published version 1 (use `/disable` instead).
+- Keep `DELETE /v1/capabilities/{name}` blocked until `/disable` runs first.
+
+## Next steps & Hanzo University
+
+- [Teach Kai Your Business (KAI 301 Lab 01)](/docs/training/kai-capabilities)
+
+- **[KAI 301 — Training Kai Decision Models](https://hanzo.university/kai-training-decision-models)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/kai-training-decision-models))

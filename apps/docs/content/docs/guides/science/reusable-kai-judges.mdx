@@ -1,0 +1,120 @@
+---
+title: "Register deterministic Kai and model evaluators"
+description: "Define reusable deterministic Kai and model evaluators via POST /v1/eval/evaluators and structured rubrics to grade outputs consistently."
+product: science
+level: practitioner
+duration: 15 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`)"
+objectives:
+  - "Register a named evaluator on POST /v1/eval/evaluators"
+  - "Inspect org rubrics, runs, and score series"
+  - "Prefer deterministic Kai judges over noisy generative LLM-as-a-judge prompts"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - SCI 101
+  - KAI 201
+status: shipped
+---
+
+**A noisy judge invalidates every experiment downstream.** Register versioned, reusable evaluators on `/v1/eval/evaluators` backed by Kai (`0` output tokens, deterministic per weights hash) or exact programmatic checks.
+
+## Architecture & contract
+
+Evaluators key by `name` inside your org, binding a `judge_model`, written `criteria`, and `score_name`. Every evaluation run writes trace-linked scores queryable on `GET /v1/eval/scores` and `GET /v1/eval/runs`.
+
+**Primary endpoint:** `POST /v1/eval/evaluators` · **Status:** `shipped` · **Level:** `practitioner`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo eval evaluators create --data '{
+  "name": "grounding-check",
+  "judge_model": "kai",
+  "score_name": "grounded",
+  "criteria": "Every factual claim in the answer is directly supported by the retrieved context."
+}'
+hanzo eval evaluators list
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, EvalApi } from 'hanzoai';
+
+const evalApi = new EvalApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data } = await evalApi.postEvalEvaluators({
+  name: 'grounding-check',
+  judge_model: 'kai',
+  score_name: 'grounded',
+  criteria: 'Every factual claim in the answer is directly supported by the retrieved context.',
+});
+console.log(data);
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import EvalApi
+
+api = EvalApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+print(api.post_eval_evaluators({
+    "name": "grounding-check",
+    "judge_model": "kai",
+    "score_name": "grounded",
+    "criteria": "Every factual claim in the answer is directly supported by the retrieved context.",
+}))
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/eval/evaluators \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{"name":"grounding-check","judge_model":"kai","score_name":"grounded","criteria":"Every factual claim in the answer is directly supported by the retrieved context."}' | jq '.'
+
+curl -s https://api.hanzo.ai/v1/eval/evaluators \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "eval",
+      "arguments": {"op": "get_eval_evaluators", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Confirm `GET /v1/eval/evaluators` lists `grounding-check` and inspect available rubrics via `GET /v1/eval/rubrics`.
+
+## Production guardrails
+
+- Validate every new judge against 20 human-labeled calibration examples before trusting it in CI release gates.
+
+## Next steps & Hanzo University
+
+- [Evaluation Harnesses](/docs/training/evaluation)
+
+- **[SCI 101 — Science & Discovery](https://hanzo.university/science-discovery)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/science-discovery))
+- **[KAI 201 — Kai Decision Intelligence](https://hanzo.university/kai-decision-intelligence)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/kai-decision-intelligence))

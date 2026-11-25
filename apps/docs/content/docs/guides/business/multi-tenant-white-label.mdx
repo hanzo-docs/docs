@@ -1,0 +1,113 @@
+---
+title: "Isolate customer orgs, Base stores, and entitlements"
+description: "Isolate customer organizations, Base datastores, and runtime plan entitlements via /v1/iam/organizations, /v1/base/bases/{org}, and /v1/entitlement/orgs/{org}."
+product: business
+level: architect
+duration: 25 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`)"
+objectives:
+  - "Enumerate tenant organizations on /v1/iam/organizations"
+  - "Resolve per-org Base datastore endpoints and plan entitlements"
+  - "Enforce tenant isolation across storage, secrets, and trained capabilities"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - ENT 401
+  - ARC 105
+status: shipped
+---
+
+**Ship enterprise-grade multi-tenancy on day one.** Every customer organization gets its own IAM identity boundary, Base store, KMS namespace, and plan entitlement resolution.
+
+## Architecture & contract
+
+Resolve tenant entitlements server-side from IAM-verified org claims (`GET /v1/entitlement/orgs/{org}`) before opening Base queries (`/v1/base/bases/{org}`) or routing into paid model tiers.
+
+**Primary endpoint:** `GET /v1/entitlement/orgs/{org}` · **Status:** `shipped` · **Level:** `architect`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo iam organizations list
+hanzo plan list
+hanzo entitlement orgs get acme-corp
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, PlanApi, EntitlementApi, BaseApi } from 'hanzoai';
+
+const cfg = new Configuration({ accessToken: process.env.HANZO_API_KEY });
+const [plans, ent, base] = await Promise.all([
+  new PlanApi(cfg).getPlan(),
+  new EntitlementApi(cfg).getEntitlementOrgsByOrg('acme-corp'),
+  new BaseApi(cfg).getBaseBasesByOrg('acme-corp'),
+]);
+console.log({ plans: plans.data, ent: ent.data, base: base.data });
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import PlanApi, EntitlementApi, BaseApi
+
+client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
+print(PlanApi(client).get_plan())
+print(EntitlementApi(client).get_entitlement_orgs_by_org("acme-corp"))
+print(BaseApi(client).get_base_bases_by_org("acme-corp"))
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -s https://api.hanzo.ai/v1/plan \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+curl -s https://api.hanzo.ai/v1/entitlement/orgs/acme-corp \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+curl -s https://api.hanzo.ai/v1/base/bases/acme-corp \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "entitlement",
+      "arguments": {"op": "get_entitlement", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Assert a tenant on a free plan is gated cleanly from enterprise-only model tiers via resolved entitlements.
+
+## Production guardrails
+
+- Never trust client-supplied `org` headers without verifying the authenticated IAM token's org membership.
+
+## Next steps & Hanzo University
+
+- [White-Label AI Products](/docs/business/white-label)
+
+- **[ENT 401 — Build Your AI Company](https://hanzo.university/build-your-ai-company)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/build-your-ai-company))
+- **[ARC 105 — AI Architect](https://hanzo.university/ai-architect)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/ai-architect))

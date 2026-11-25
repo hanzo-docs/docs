@@ -1,0 +1,101 @@
+---
+title: "Audit container image SBOMs by digest before deploy"
+description: "Retrieve complete Software Bill of Materials (SBOM) manifests for container images by digest or tag via GET /v1/sbom/{ref} before cluster promotion."
+product: cyber
+level: practitioner
+duration: 15 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`)"
+objectives:
+  - "Query image SBOMs by immutable digest on GET /v1/sbom/{ref}"
+  - "Check SBOM subsystem liveness on GET /v1/sbom/health"
+  - "Block deployments carrying unapproved or vulnerable packages"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - CYB 201
+status: shipped
+---
+
+**Never promote a container image whose dependency tree you cannot enumerate.** `GET /v1/sbom/{ref}` inspects every package inside an OCI image addressed by immutable SHA-256 digest.
+
+## Architecture & contract
+
+Address images by digest (`registry/repo@sha256:...`) rather than mutable `:latest` tags so the SBOM you audit in CI is byte-identical to the image Kubernetes pulls.
+
+**Primary endpoint:** `GET /v1/sbom/{ref}` · **Status:** `shipped` · **Level:** `practitioner`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+# Check SBOM service health and query an image manifest
+curl -s https://api.hanzo.ai/v1/sbom/health -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+const res = await fetch('https://api.hanzo.ai/v1/sbom/ghcr.io/hanzoai/cloud:latest', {
+  headers: { Authorization: `Bearer ${process.env.HANZO_API_KEY}` },
+});
+console.log(await res.json());
+```
+</Tab>
+<Tab value="Python">
+```python
+import os, requests
+
+r = requests.get(
+    "https://api.hanzo.ai/v1/sbom/ghcr.io/hanzoai/cloud:latest",
+    headers={"Authorization": f"Bearer {os.environ['HANZO_API_KEY']}"},
+)
+print(r.json())
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -s https://api.hanzo.ai/v1/sbom/health \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+curl -s "https://api.hanzo.ai/v1/sbom/ghcr.io/hanzoai/cloud:latest" \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "trust",
+      "arguments": {"op": "get_trust_controls", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Assert every deployed production image carries an archived SBOM artifact linked to its exact digest.
+
+## Production guardrails
+
+- Reject floating cluster tags in GitOps manifests; pin every image by `@sha256:...`.
+
+## Next steps & Hanzo University
+
+- [Security Assessments](/docs/cybersecurity/assessments)
+
+- **[CYB 201 — Agentic Cybersecurity](https://hanzo.university/agentic-cybersecurity)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/agentic-cybersecurity))

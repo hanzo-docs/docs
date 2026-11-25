@@ -1,0 +1,156 @@
+---
+title: "Classify 51 languages without translation"
+description: "Classify customer messages across 51 languages directly with Kai's multilingual encoder using English instructions and labels \u2014 no translation pass required."
+product: kai
+level: practitioner
+duration: 15 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`)"
+objectives:
+  - "Evaluate non-English states against English instructions and criteria"
+  - "Eliminate translation latency, cost, and semantic drift"
+  - "Maintain one unified label taxonomy across global regions"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - KAI 201
+status: shipped
+---
+
+**Skip the translation step.** Kai uses a 51-language multilingual encoder (`256,000`-token vocabulary, `0.9096` macro accuracy on MASSIVE), letting you keep one English schema while classifying Spanish, Japanese, Arabic, French, or German inputs directly.
+
+## Architecture & contract
+
+The question and multilingual `state` encode through the shared backbone while each English option encodes independently and attends cross-lingually. Option encodings cache across calls regardless of input language.
+
+**Primary endpoint:** `POST /v1/decisions` · **Status:** `shipped` · **Level:** `practitioner`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo decisions create --model kai --data '{
+  "state": "注文した商品が破損して届きました。全額返金をお願いできますか？",
+  "questions": {
+    "intent": {
+      "type": "choice",
+      "instructions": "What does the customer want?",
+      "criteria": {
+        "refund": "Requesting money back",
+        "replacement": "Requesting a replacement item",
+        "shipping_status": "Asking where an order is"
+      }
+    }
+  }
+}'
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, AiApi } from 'hanzoai';
+
+const ai = new AiApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data } = await ai.postDecisions({
+  model: 'kai',
+  state: '注文した商品が破損して届きました。全額返金をお願いできますか？',
+  questions: {
+    intent: {
+      type: 'choice',
+      instructions: 'What does the customer want?',
+      criteria: {
+        refund: 'Requesting money back',
+        replacement: 'Requesting a replacement item',
+        shipping_status: 'Asking where an order is',
+      },
+    },
+  },
+});
+console.log(data.answers.intent);
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import AiApi
+
+api = AiApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+res = api.post_decisions({
+    "model": "kai",
+    "state": "注文した商品が破損して届きました。全額返金をお願いできますか？",
+    "questions": {
+        "intent": {
+            "type": "choice",
+            "instructions": "What does the customer want?",
+            "criteria": {
+                "refund": "Requesting money back",
+                "replacement": "Requesting a replacement item",
+                "shipping_status": "Asking where an order is",
+            },
+        }
+    },
+})
+print(res["answers"]["intent"])
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -s https://api.hanzo.ai/v1/decisions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "kai",
+    "state": "注文した商品が破損して届きました。全額返金をお願いできますか？",
+    "questions": {
+      "intent": {
+        "type": "choice",
+        "instructions": "What does the customer want?",
+        "criteria": {
+          "refund": "Requesting money back",
+          "replacement": "Requesting a replacement item",
+          "shipping_status": "Asking where an order is"
+        }
+      }
+    }
+  }' | jq '.answers.intent'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "ai",
+      "arguments": {"op": "post_decisions", "input": {"model": "kai", "state": "Mi pedido llegó roto y quiero un reembolso.", "questions": {"intent": {"type": "choice", "instructions": "What does the customer want?", "criteria": {"refund": "Money back", "replacement": "New item", "status": "Order status"}}}}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Test identical customer intent in Japanese, Spanish, and German and assert all three return `choice == "refund"`.
+
+## Production guardrails
+
+- Keep regional slang or local legal terms covered in your `/v1/eval/datasets` golden set and add org corrections for locale-specific edge cases.
+
+## Next steps & Hanzo University
+
+- [Kai Benchmark Results (MASSIVE 51 Languages)](/docs/models/kai#results)
+
+- **[KAI 201 — Kai Decision Intelligence](https://hanzo.university/kai-decision-intelligence)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/kai-decision-intelligence))

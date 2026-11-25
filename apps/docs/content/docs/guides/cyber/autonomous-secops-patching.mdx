@@ -1,0 +1,119 @@
+---
+title: "Automate regression-tested security patch PRs"
+description: "Wire confirmed security findings to durable remediation automations on POST /v1/auto/automations backed by zen6-coder and human review gates."
+product: cyber
+level: specialist
+duration: 25 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`)"
+  - "A verified reproducer test"
+objectives:
+  - "Create a review-gated SecOps patch automation via POST /v1/auto/automations"
+  - "Enforce before/after test proofs and zero secret findings"
+  - "Approve or reject patch runs via POST /v1/auto/automations/{id}/runs/{run}/review"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - CYB 301
+status: shipped
+---
+
+**Shrink mean-time-to-remediate from weeks to minutes without sacrificing human merge control.** Pair confirmed reproducers with `zen6-coder` inside a review-gated automation.
+
+## Architecture & contract
+
+The automation checks out an isolated branch, verifies the reproducer fails on base, authors the smallest fix, runs the full test suite plus `POST /v1/security/scans`, and pauses at `review` for security sign-off.
+
+**Primary endpoint:** `POST /v1/auto/automations` · **Status:** `shipped` · **Level:** `specialist`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo auto automations create --data '{
+  "name": "SecOps minimal patcher",
+  "instructions": "Confirm failing security test, write minimal fix, run full test suite and secret scan, open draft PR.",
+  "model": "zen6-coder",
+  "permissions": "ask"
+}'
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, AutoApi } from 'hanzoai';
+
+const auto = new AutoApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data } = await auto.postAutoAutomations({
+  name: 'SecOps minimal patcher',
+  instructions: 'Confirm failing security test, write minimal fix, run full test suite and secret scan, open draft PR.',
+  model: 'zen6-coder',
+  permissions: 'ask',
+});
+console.log(data);
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import AutoApi
+
+api = AutoApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+print(api.post_auto_automations({
+    "name": "SecOps minimal patcher",
+    "instructions": "Confirm failing security test, write minimal fix, run full test suite and secret scan, open draft PR.",
+    "model": "zen6-coder",
+    "permissions": "ask",
+}))
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/auto/automations \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{
+    "name": "SecOps minimal patcher",
+    "instructions": "Confirm failing security test, write minimal fix, run full test suite and secret scan, open draft PR.",
+    "model": "zen6-coder",
+    "permissions": "ask"
+  }' | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "auto",
+      "arguments": {"op": "get_auto_automations", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Trigger a test run and verify it holds for review instead of pushing directly to `main`.
+
+## Production guardrails
+
+- Require an explicit passing regression test AND security team sign-off before merging any auth or crypto patch.
+
+## Next steps & Hanzo University
+
+- [Autonomous Remediation](/docs/cybersecurity/remediation)
+
+- **[CYB 301 — Autonomous SecOps](https://hanzo.university/autonomous-secops)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/autonomous-secops))

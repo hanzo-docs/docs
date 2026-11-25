@@ -1,0 +1,120 @@
+---
+title: Monetize APIs, agents & MCP tools
+description: "Meter usage, manage balances and invoices (/v1/billing), configure commerce products (/v1/commerce), issue cryptographic licenses (/v1/licensing), and publish to Hanzo Marketplace."
+icon: DollarSign
+product: business
+level: practitioner
+duration: 25 min
+prerequisites:
+  - A Hanzo secret key (`sk-...`)
+objectives:
+  - Track unit economics and customer balances via `/v1/billing/balance`, `/v1/billing/usage`, and `/v1/billing/ledger`
+  - Define commercial plans, products, and marketplace listings via `/v1/commerce` and `/v1/marketplace/listings`
+  - Issue and verify cryptographic licenses via `/v1/licensing`
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - ENT 401
+  - AUTO 201
+status: shipped
+---
+
+**Every AI call has real marginal cost — pricing without live per-tenant metering destroys gross margin.** Hanzo's commerce, billing, pricing, and marketplace APIs share the exact same double-entry ledger the inference gateway debits on every request.
+
+## Four monetization patterns
+
+1. **Usage-based API & token billing**: Read real-time consumption from `GET /v1/billing/usage` and `GET /v1/billing/ledger`, set spend alerts on `/v1/billing/alerts`, and collect invoices via `/v1/billing/invoices`.
+2. **Subscription + credit top-ups**: Define recurring tiers in `/v1/plan` backed by prepaid credit balances (`GET /v1/billing/credit-balance`).
+3. **Marketplace distribution**: Package agents, MCP tools, or templates as verified listings on `POST /v1/marketplace/listings` with escrow-backed delivery on `/v1/marketplace/jobs`.
+4. **Enterprise software licensing**: Mint signed license tokens (`POST /v1/licensing/issue`) for on-premise and air-gapped deployments verified via `POST /v1/licensing/verify`.
+
+## Inspect balances, pricing & marketplace listings
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+# Check balance, ledger entries, and current model pricing
+hanzo billing balance
+hanzo billing ledger
+hanzo pricing models
+
+# List marketplace listings and seller profile
+hanzo marketplace listings list
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, BillingApi, PricingApi, MarketplaceApi } from 'hanzoai';
+
+const cfg = new Configuration({ accessToken: process.env.HANZO_API_KEY });
+const [balance, pricing, listings] = await Promise.all([
+  new BillingApi(cfg).getBillingBalance(),
+  new PricingApi(cfg).getPricingModels(),
+  new MarketplaceApi(cfg).getMarketplaceListings(),
+]);
+console.log({ balance: balance.data, pricing: pricing.data, listings: listings.data });
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import BillingApi, PricingApi, MarketplaceApi
+
+client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
+print(BillingApi(client).get_billing_balance())
+print(PricingApi(client).get_pricing_models())
+print(MarketplaceApi(client).get_marketplace_listings())
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+# 1. Read balance & usage ledger
+curl -s https://api.hanzo.ai/v1/billing/balance \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+curl -s https://api.hanzo.ai/v1/billing/usage \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+# 2. Query live model pricing table
+curl -s https://api.hanzo.ai/v1/pricing/models \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+# 3. Inspect marketplace listings
+curl -s https://api.hanzo.ai/v1/marketplace/listings \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "billing",
+      "arguments": {"op": "get_billing_balance", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Gross-margin engineering rule
+
+Track `revenue_per_request` vs `model_cost_per_request` per customer org using `GET /v1/eval/metrics` and `GET /v1/billing/usage`. Move repetitive classification steps from generative models to Kai (`$0.021` per 1M input tokens, 0 output tokens) and enable Enso prompt caching (`cache_control`) to cut turn costs by up to 4.6x.
+
+## Related courses & docs
+
+- [ENT 401 — Build Your AI Company](https://hanzo.university/build-your-ai-company) ([Interactive Lab](https://hanzo.app/learn/build-your-ai-company))
+- [AI SaaS Blueprint](/docs/business/ai-saas) · [Money Flow Guide](/docs/guides/money)

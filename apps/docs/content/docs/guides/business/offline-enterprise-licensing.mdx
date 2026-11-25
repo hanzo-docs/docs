@@ -1,0 +1,110 @@
+---
+title: "Issue and verify offline cryptographic enterprise licenses"
+description: "Issue cryptographically signed software and model licenses via POST /v1/licensing/issue and verify them offline against GET /v1/licensing/pubkey."
+product: business
+level: architect
+duration: 20 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`)"
+objectives:
+  - "Mint signed enterprise license tokens on POST /v1/licensing/issue"
+  - "Verify licenses online (POST /v1/licensing/verify) or air-gapped using GET /v1/licensing/pubkey"
+  - "Bind releases and entitlements to hardware fingerprints"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - ENT 401
+  - CYB 401
+status: shipped
+---
+
+**Monetize air-gapped and on-premise deployments without phone-home telemetry.** `/v1/licensing` issues asymmetric signed license tokens your binary can verify completely offline against your public key or JWKS.
+
+## Architecture & contract
+
+Issue signed entitlements containing org, seat/GPU caps, and expiry via `POST /v1/licensing/issue`. Ship the matching public key (`GET /v1/licensing/pubkey` or `/v1/licensing/jwks`) inside your self-hosted binary for zero-egress verification.
+
+**Primary endpoint:** `POST /v1/licensing/issue` · **Status:** `shipped` · **Level:** `architect`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo licensing pubkey
+hanzo licensing releases list
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, LicensingApi } from 'hanzoai';
+
+const lic = new LicensingApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const [pubkey, releases] = await Promise.all([
+  lic.getLicensingPubkey(),
+  lic.getLicensingReleases(),
+]);
+console.log({ pubkey: pubkey.data, releases: releases.data });
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import LicensingApi
+
+api = LicensingApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+print(api.get_licensing_pubkey())
+print(api.get_licensing_releases())
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+# Retrieve public verification key & JWKS
+curl -s https://api.hanzo.ai/v1/licensing/pubkey \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+# Verify a presented license token
+curl -s -X POST https://api.hanzo.ai/v1/licensing/verify \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{"license":"<signed-license-token>"}' | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "licensing",
+      "arguments": {"op": "get_licensing_releases", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Verify a newly issued license validates cleanly both via `POST /v1/licensing/verify` and offline against `GET /v1/licensing/pubkey`.
+
+## Production guardrails
+
+- Rotate signing keys cleanly through `/v1/licensing/jwks` with overlapping validity windows so air-gapped customers never face sudden lockouts.
+
+## Next steps & Hanzo University
+
+- [Private Intelligence](/docs/business/private-intelligence) · [AI SaaS Blueprint](/docs/business/ai-saas)
+
+- **[ENT 401 — Build Your AI Company](https://hanzo.university/build-your-ai-company)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/build-your-ai-company))
+- **[CYB 401 — Sovereign Zero-Trust AI](https://hanzo.university/sovereign-zero-trust-ai)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/sovereign-zero-trust-ai))

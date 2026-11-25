@@ -1,0 +1,142 @@
+---
+title: "Stop autonomous coding loops deterministically"
+description: "Use Kai's noul questions to stop autonomous coding loops only when requirements are done AND verified by real test output."
+product: kai
+level: specialist
+duration: 20 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`)"
+objectives:
+  - "Replace generative 'are we done?' prompts with calibrated Kai noul predicates"
+  - "Require both task completion and passing test evidence before exiting the loop"
+  - "Prevent premature stops and runaway retry loops"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - KAI 201
+  - ENG 100
+status: shipped
+---
+
+**Autonomous agents fail in two symmetric ways: stopping after claiming success without running tests, or looping forever after tests already pass.** Gate loop exit with two calibrated Kai `noul` checks (`done` and `verified`).
+
+## Architecture & contract
+
+After every sandbox test execution, send the task specification, git diff summary, and raw test output as `state` to `POST /v1/decisions`. Exit the loop strictly when `answers.done.noul >= 0.65 && answers.verified.noul >= 0.65` AND the shell test command returned exit code `0`.
+
+**Primary endpoint:** `POST /v1/decisions` · **Status:** `shipped` · **Level:** `specialist`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo decisions create --model kai --data '{
+  "state": {
+    "task": "Fix off-by-one bug in pagination cursor and add regression test",
+    "diff_files": ["src/pagination.ts", "src/pagination.test.ts"],
+    "test_exit_code": 0,
+    "test_output": "14 passed, 0 failed (182ms)"
+  },
+  "questions": {
+    "done": {"type": "noul", "instructions": "Has the agent completed every part of the task?"},
+    "verified": {"type": "noul", "instructions": "Do the test results verify the fix actually passed?"}
+  }
+}' | jq '{done: .answers.done.noul, verified: .answers.verified.noul, stop: (.answers.done.noul >= 0.65 and .answers.verified.noul >= 0.65)}'
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, AiApi } from 'hanzoai';
+
+const ai = new AiApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data } = await ai.postDecisions({
+  model: 'kai',
+  state: {
+    task: 'Fix off-by-one bug in pagination cursor and add regression test',
+    test_exit_code: 0,
+    test_output: '14 passed, 0 failed',
+  },
+  questions: {
+    done: { type: 'noul', instructions: 'Has the agent completed every part of the task?' },
+    verified: { type: 'noul', instructions: 'Do the test results verify the fix actually passed?' },
+  },
+});
+const shouldStop = data.answers.done.noul >= 0.65 && data.answers.verified.noul >= 0.65;
+console.log({ shouldStop, answers: data.answers });
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import AiApi
+
+api = AiApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+res = api.post_decisions({
+    "model": "kai",
+    "state": {"task": "Fix pagination cursor bug", "test_exit_code": 0, "test_output": "14 passed, 0 failed"},
+    "questions": {
+        "done": {"type": "noul", "instructions": "Has the agent completed every part of the task?"},
+        "verified": {"type": "noul", "instructions": "Do the test results verify the fix actually passed?"},
+    },
+})
+stop = res["answers"]["done"]["noul"] >= 0.65 and res["answers"]["verified"]["noul"] >= 0.65
+print({"stop": stop, "answers": res["answers"]})
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -s https://api.hanzo.ai/v1/decisions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "kai",
+    "state": {"task": "Fix pagination cursor bug", "test_exit_code": 0, "test_output": "14 passed, 0 failed"},
+    "questions": {
+      "done": {"type": "noul", "instructions": "Has the agent completed every part of the task?"},
+      "verified": {"type": "noul", "instructions": "Do the test results verify the fix actually passed?"}
+    }
+  }' | jq '.answers'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "ai",
+      "arguments": {"op": "post_decisions", "input": {"model": "kai", "state": {"test_exit_code": 0, "test_output": "14 passed"}, "questions": {"verified": {"type": "noul", "instructions": "Did tests pass?"}}}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Feed a state with `test_exit_code: 1` and failing output — verify `verified` drops below `0.65` and the loop continues.
+- Feed passing output and verify clean exit.
+
+## Production guardrails
+
+- Always combine Kai's semantic check with a deterministic exit-code check (`exit_code == 0`) and a hard `max_turns` budget.
+
+## Next steps & Hanzo University
+
+- [Drive an Agent Loop Cookbook](/docs/guides/cookbook/loop)
+
+- **[KAI 201 — Kai Decision Intelligence](https://hanzo.university/kai-decision-intelligence)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/kai-decision-intelligence))
+- **[ENG 100 — Agentic Coding](https://hanzo.university/agentic-coding)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/agentic-coding))

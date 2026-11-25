@@ -1,0 +1,47 @@
+---
+title: "Zen \u2014 Open-Weight Model Engineering"
+description: "Apache-2.0 Zen 6 coding, ternary local inference, retrieval embeddings, managed LoRA fine-tuning, interactive GRPO RL, and checkpoint deployment."
+icon: Sparkle
+product: zen
+level: foundations
+duration: 10 min
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - ENG 100
+  - ML 401
+  - RL 101
+  - SYS 103
+  - ZEN 201
+  - ZEN 301
+status: shipped
+---
+
+**Build, serve, and fine-tune open-weight Zen models** — Apache-2.0 `zen6`, ternary `zen6-flash` (5.95 GB), `zen6-coder`, embeddings & reranking, managed LoRA jobs (`/v1/train/jobs`), and interactive GRPO reinforcement learning (`/v1/train/clients`).
+
+## All 6 Zen guides
+
+Six runnable four-surface guides spanning local serving, retrieval, LoRA fine-tuning, GRPO RL, and checkpoint deployment:
+
+| Guide | Primary Endpoint | Level | Duration | Course | Status |
+| --- | --- | --- | --- | --- | --- |
+| [Ship code with zen6 and zen6-coder](/docs/guides/zen/zen6-coding-workflow) | `POST /v1/chat/completions` | foundations | 15 min | [ZEN 201](https://hanzo.university/zen-model-engineering), [ENG 100](https://hanzo.university/agentic-coding) | `shipped` |
+| [Serve ternary zen6-flash locally on laptop or single GPU](/docs/guides/zen/local-zen6-flash) | `POST /v1/chat/completions` | practitioner | 20 min | [ZEN 201](https://hanzo.university/zen-model-engineering), [SYS 103](https://hanzo.university/systems-engineering) | `shipped` |
+| [Build retrieval pipelines with zen-embedding and rerank](/docs/guides/zen/embeddings-and-rerank) | `POST /v1/embeddings` | practitioner | 15 min | [ZEN 201](https://hanzo.university/zen-model-engineering) | `shipped` |
+| [Launch a managed LoRA fine-tuning job on Zen](/docs/guides/zen/lora-fine-tuning-job) | `POST /v1/train/jobs` | specialist | 30 min | [ZEN 301](https://hanzo.university/zen-native-training) | `shipped` |
+| [Run an interactive GRPO RL loop on /v1/train/clients](/docs/guides/zen/grpo-verifiable-rewards) | `POST /v1/train/clients` | architect | 35 min | [RL 101](https://hanzo.university/reinforcement-learning), [ZEN 301](https://hanzo.university/zen-native-training) | `shipped` |
+| [Publish and serve a regression-gated Zen checkpoint](/docs/guides/zen/deploy-private-checkpoint) | `POST /v1/train/jobs/{id}/publish` | specialist | 20 min | [ZEN 301](https://hanzo.university/zen-native-training), [ML 401](https://hanzo.university/ml-systems) | `shipped` |
+
+## Related documentation & courses
+
+- [Zen Model Reference](/docs/models/zen) · [Zen Fine-Tuning](/docs/training/zen-fine-tuning) · [Reinforcement Learning](/docs/training/reinforcement-learning)
+
+- **[ENG 100 — Agentic Coding](https://hanzo.university/agentic-coding)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/agentic-coding))
+- **[ML 401 — ML Systems](https://hanzo.university/ml-systems)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/ml-systems))
+- **[RL 101 — Reinforcement Learning](https://hanzo.university/reinforcement-learning)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/reinforcement-learning))
+- **[SYS 103 — Systems Engineering](https://hanzo.university/systems-engineering)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/systems-engineering))
+- **[ZEN 201 — Zen Model Engineering](https://hanzo.university/zen-model-engineering)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/zen-model-engineering))
+- **[ZEN 301 — Zen Native Training](https://hanzo.university/zen-native-training)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/zen-native-training))

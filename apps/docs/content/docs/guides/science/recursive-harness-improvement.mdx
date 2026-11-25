@@ -1,0 +1,113 @@
+---
+title: "Close the continuous self-improvement loop safely"
+description: "Combine local Hanzo Dev memory consolidation, Kai agent.learn@1 outcome hooks, and versioned study gates into a safe recursive improvement loop."
+product: science
+level: fellow
+duration: 30 min
+prerequisites:
+  - "Hanzo Dev CLI installed"
+  - "A Hanzo secret key (`sk-...`)"
+objectives:
+  - "Enable an independent local memory provider in Hanzo Dev"
+  - "Configure Kai [ops.learn] mode (shadow, advisory, enforced)"
+  - "Verify every proposed harness improvement with failing-before / passing-after proof"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - SCI 401
+  - AUTO 101
+status: preview
+---
+
+**Make everyday coding and operations compound into stronger memory, skills, tools, and agent harnesses.** Recursive improvement works only when every proposed upgrade is scoped, evidence-backed, and reviewable.
+
+## Architecture & contract
+
+Local memory consolidation extracts reusable preferences without falling back to billed foreground models; Kai's `agent.learn@1` chooses `none`, `memory`, `experiment`, or `improvement` after verified tool turns; harness changes ship strictly as draft PRs validated on held-out evals.
+
+**Primary endpoint:** `GET /v1/research/runs` · **Status:** `preview` · **Level:** `fellow`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+# Enable independent local memory route in Hanzo Dev
+dev memory enable --base-url http://127.0.0.1:8731/v1 --model zen6-flash
+dev memory status
+
+# Inspect live org AI metrics to track repeat-failure reduction
+hanzo eval metrics
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, EvalApi, AiApi } from 'hanzoai';
+
+const cfg = new Configuration({ accessToken: process.env.HANZO_API_KEY });
+const [metrics, feedback] = await Promise.all([
+  new EvalApi(cfg).getEvalMetrics('7d'),
+  new AiApi(cfg).postAiFeedback({ request_id: 'chatcmpl-01J...', signal: 'accept' }),
+]);
+console.log({ metrics: metrics.data, feedback: feedback.data });
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import EvalApi, AiApi
+
+client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
+print(EvalApi(client).get_eval_metrics(range="7d"))
+print(AiApi(client).post_ai_feedback({"request_id": "chatcmpl-01J...", "signal": "accept"}))
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+# Inspect public research record and org 7-day trend
+curl -s "https://api.hanzo.ai/v1/research/runs?limit=5" | jq '.'
+curl -s "https://api.hanzo.ai/v1/eval/metrics?range=7d" \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "eval",
+      "arguments": {"op": "get_eval_runs", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Verify `dev memory status` reports active independent local consolidation.
+- Confirm `kai.toml` sets `[ops.learn] mode = "advisory"` until shadow accuracy clears your bar.
+
+## Production guardrails
+
+- Keep person, workspace, and shared product scopes strictly isolated — private sessions never become shared training corpora.
+
+## Next steps & Hanzo University
+
+- [Continuous Improvement](/docs/science/continuous-improvement) · [Self-Improvement](/docs/self-improvement)
+
+- **[SCI 401 — Recursive Improvement](https://hanzo.university/recursive-improvement)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/recursive-improvement))
+- **[AUTO 101 — Continuous Improvement](https://hanzo.university/continuous-improvement)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/continuous-improvement))

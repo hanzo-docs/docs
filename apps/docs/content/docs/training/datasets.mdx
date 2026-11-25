@@ -1,0 +1,118 @@
+---
+title: Datasets & lineage
+description: "Curate, materialize, inspect provenance lineage, export splits, and store content-addressed SHA-256 training and evaluation datasets on /v1/dataset, /v1/eval/datasets, and /v1/train/artifacts."
+icon: Database
+product: platform
+level: practitioner
+duration: 20 min
+prerequisites:
+  - A Hanzo secret key (`sk-...`)
+objectives:
+  - Separate operational datasets (`/v1/dataset`), evaluation suites (`/v1/eval/datasets`), and immutable SHA-256 training artifacts (`/v1/train/artifacts`)
+  - Materialize reproducible point-in-time snapshots with full lineage graphs
+  - Prevent train/test leakage across Kai, Enso, and Zen training runs
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - ZEN 301
+  - SCI 101
+  - ML 401
+status: shipped
+---
+
+**Every model regression traces back to untracked data.** Hanzo separates mutable collection from immutable training snapshots so every checkpoint maps to an exact SHA-256 data digest.
+
+## Three dataset planes
+
+| Endpoint family | Purpose | Mutability | Primary consumer |
+|---|---|---|---|
+| `/v1/dataset` | Named org datasets with materialization, lineage, and export | Versioned snapshots via `materialize` | Risk models, structured feature pipelines, reproducible exports |
+| `/v1/eval/datasets` | Graded evaluation sets (`input`, `expected`, metadata, status) | Append/archive items; frozen at run time | Evaluation harnesses, LLM/Kai judges, release gates |
+| `/v1/train/artifacts` | Content-addressed byte blobs keyed by SHA-256 | Strictly immutable (encrypted per-org S3) | `POST /v1/train/jobs` datasets and output checkpoints |
+
+## Create, materialize & trace lineage
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo dataset create --data '{"name":"support-triage-2026q4","description":"Verified billing & product triage tickets"}'
+hanzo dataset materialize support-triage-2026q4
+hanzo dataset lineage support-triage-2026q4
+hanzo dataset export support-triage-2026q4
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, DatasetApi } from 'hanzoai';
+
+const ds = new DatasetApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+await ds.postDataset({ name: 'support-triage-2026q4' });
+const lineage = await ds.getDatasetByNameLineage('support-triage-2026q4');
+console.log(lineage.data);
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import DatasetApi
+
+client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
+ds = DatasetApi(client)
+ds.post_dataset({"name": "support-triage-2026q4"})
+print(ds.get_dataset_by_name_lineage("support-triage-2026q4"))
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -X POST https://api.hanzo.ai/v1/dataset \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"support-triage-2026q4","description":"Verified billing & product triage tickets"}'
+
+curl -X POST https://api.hanzo.ai/v1/dataset/support-triage-2026q4/materialize \
+  -H "Authorization: Bearer $HANZO_API_KEY"
+
+curl https://api.hanzo.ai/v1/dataset/support-triage-2026q4/lineage \
+  -H "Authorization: Bearer $HANZO_API_KEY"
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "dataset",
+      "arguments": {"op": "get_dataset_by_name_lineage", "input": {"name": "support-triage-2026q4"}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Decontamination & split hygiene
+
+Before uploading a dataset blob to `POST /v1/train/artifacts`:
+
+1. **Hash deduplication**: Deduplicate exact and near-duplicate user states by normalized SHA-256 before splitting train/validation/test.
+2. **Entity-level grouping**: Split by customer account, repository, or ticket thread — never put two turns of the same conversation in both train and holdout.
+3. **Holdout quarantine**: Store held-out test rows in `/v1/eval/datasets/{name}/items` and never export that dataset into training inputs.
+4. **PII & secret scrubbing**: Scan candidate corpora with `POST /v1/security/scans` before upload so credentials and secrets never enter weights.
+
+## Related courses & docs
+
+- [ZEN 301 — Zen Native Training](https://hanzo.university/zen-native-training) ([Interactive Lab](https://hanzo.app/learn/zen-native-training))
+- [SCI 101 — Science & Discovery](https://hanzo.university/science-discovery) ([Interactive Lab](https://hanzo.app/learn/science-discovery))
+- [Evaluation Harnesses](/docs/training/evaluation) · [Reproducibility](/docs/science/reproducibility)

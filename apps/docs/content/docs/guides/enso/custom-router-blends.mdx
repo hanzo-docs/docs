@@ -1,0 +1,116 @@
+---
+title: "Compose private Enso router blends"
+description: "Define and inspect named org-private router presets (enso-<name>) with ordered escalation arms and bounded fan-out via /v1/benchmark/presets."
+product: enso
+level: specialist
+duration: 20 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`)"
+objectives:
+  - "Inspect reference blends on GET /v1/benchmark/presets"
+  - "Create a private org router blend via POST /v1/benchmark/presets"
+  - "Pair custom blends with paired McNemar benchmarks before rollout"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - ENS 301
+status: shipped
+---
+
+**Compose exact model chains for compliance, budget, or latency-critical workloads.** `POST /v1/benchmark/presets` stores an org-scoped escalation blend resolved as `enso-<name>`.
+
+## Architecture & contract
+
+A blend specifies ordered `arms`, escalation rank, and `panel_width` (bounding parallel fan-out). Storing a preset registers the recipe without silently changing production traffic until you invoke it or promote it via an experiment.
+
+**Primary endpoint:** `POST /v1/benchmark/presets` · **Status:** `shipped` · **Level:** `specialist`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo benchmark presets list
+hanzo benchmark presets create --data '{
+  "name": "sovereign-code",
+  "arms": ["zen6-flash", "zen6-coder", "zen6"],
+  "panel_width": 1
+}'
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, BenchmarkApi } from 'hanzoai';
+
+const bench = new BenchmarkApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data } = await bench.postBenchmarkPresets({
+  name: 'sovereign-code',
+  arms: ['zen6-flash', 'zen6-coder', 'zen6'],
+  panel_width: 1,
+});
+console.log(data);
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import BenchmarkApi
+
+api = BenchmarkApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+print(api.post_benchmark_presets({
+    "name": "sovereign-code",
+    "arms": ["zen6-flash", "zen6-coder", "zen6"],
+    "panel_width": 1,
+}))
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/benchmark/presets \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"sovereign-code","arms":["zen6-flash","zen6-coder","zen6"],"panel_width":1}' | jq '.'
+
+curl -s https://api.hanzo.ai/v1/benchmark/presets \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "benchmark",
+      "arguments": {"op": "get_benchmark_presets", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Confirm `GET /v1/benchmark/presets` lists `enso-sovereign-code` with your exact ordered arm list.
+
+## Production guardrails
+
+- Benchmark your custom blend against `enso-pro` using `GET /v1/benchmark/compare` before switching production traffic.
+
+## Next steps & Hanzo University
+
+- [Paired McNemar Benchmarking](/docs/guides/science/paired-mcnemar-benchmark)
+
+- **[ENS 301 — Training Enso Orchestrators](https://hanzo.university/enso-training-orchestrators)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/enso-training-orchestrators))

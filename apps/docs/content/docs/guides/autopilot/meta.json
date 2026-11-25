@@ -1,0 +1,13 @@
+{
+  "title": "Autopilot",
+  "description": "Durable webhook automations, human review checkpoints, brand-voice marketing campaigns, multi-agent workforces, spend budgets, and continuous feedback.",
+  "icon": "Workflow",
+  "pages": [
+    "event-driven-automations",
+    "human-approval-gates",
+    "agentic-marketing-campaigns",
+    "multi-agent-workforce",
+    "agent-spend-budgets",
+    "continuous-ops-feedback"
+  ]
+}

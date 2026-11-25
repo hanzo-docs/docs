@@ -1,0 +1,160 @@
+---
+title: "Author and run Decision Programs"
+description: "Structure multi-question Kai Decision Programs with explicit thresholds, escalation rules, and monotonic allow < ask < deny policy modes."
+product: kai
+level: practitioner
+duration: 20 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`)"
+objectives:
+  - "Compose choice and noul questions into a deterministic Decision Program"
+  - "Join Kai verdicts monotonically with deterministic base policy on allow < ask < deny"
+  - "Promote programs safely from shadow to advisory to enforced"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - KAI 201
+  - CYB 101
+status: shipped
+---
+
+**A Decision Program separates what the model estimates from what policy permits.** Start every program in `shadow`, audit its agreement against real outcomes, and promote to `enforced` only when measured evidence justifies it.
+
+## Architecture & contract
+
+Every program defines `questions`, per-question `thresholds`, an escalation rule (`secret_exposure -> deny`, `network -> ask`), and a `mode` (`shadow`, `advisory`, or `enforced`). Under `enforced`, Kai can tighten your deterministic `base` verdict (`allow -> ask -> deny`) but can never loosen a deterministic `deny`.
+
+**Primary endpoint:** `POST /v1/decisions` · **Status:** `shipped` · **Level:** `practitioner`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo decisions create --model kai --data '{
+  "state": {"command": "rm -rf /var/lib/postgres/data"},
+  "questions": {
+    "verdict": {
+      "type": "choice",
+      "instructions": "Should the agent run this shell command?",
+      "criteria": {
+        "allow": "Read-only or confined to working repository",
+        "ask": "Modifies shared files or contacts network",
+        "deny": "Exposes secrets or destroys persistent data"
+      }
+    },
+    "production_impact": {"type": "noul", "instructions": "Could this command destroy shared or production data?"}
+  }
+}'
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, AiApi } from 'hanzoai';
+
+const rank = { allow: 0, ask: 1, deny: 2 } as const;
+const ai = new AiApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data } = await ai.postDecisions({
+  model: 'kai',
+  state: { command: 'rm -rf /var/lib/postgres/data' },
+  questions: {
+    verdict: {
+      type: 'choice',
+      instructions: 'Should the agent run this shell command?',
+      criteria: { allow: 'Read-only', ask: 'Writes or network', deny: 'Secrets or destructive' },
+    },
+    production_impact: { type: 'noul', instructions: 'Could this command destroy production data?' },
+  },
+});
+const base: keyof typeof rank = 'allow';
+const kaiVerdict: keyof typeof rank = data.answers.production_impact.noul >= 0.4 ? 'deny' : 'allow';
+const effective = rank[kaiVerdict] > rank[base] ? kaiVerdict : base;
+console.log({ base, kaiVerdict, effective });
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import AiApi
+
+RANK = {"allow": 0, "ask": 1, "deny": 2}
+api = AiApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+res = api.post_decisions({
+    "model": "kai",
+    "state": {"command": "rm -rf /var/lib/postgres/data"},
+    "questions": {
+        "verdict": {
+            "type": "choice",
+            "instructions": "Should the agent run this shell command?",
+            "criteria": {"allow": "Read-only", "ask": "Writes or network", "deny": "Secrets or destructive"},
+        },
+        "production_impact": {"type": "noul", "instructions": "Could this destroy production data?"},
+    },
+})
+base = "allow"
+kai_v = "deny" if res["answers"]["production_impact"]["noul"] >= 0.4 else "allow"
+effective = kai_v if RANK[kai_v] > RANK[base] else base
+print({"base": base, "kai": kai_v, "effective": effective})
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -s https://api.hanzo.ai/v1/decisions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "kai",
+    "state": {"command": "rm -rf /var/lib/postgres/data"},
+    "questions": {
+      "verdict": {
+        "type": "choice",
+        "instructions": "Should the agent run this shell command?",
+        "criteria": {"allow": "Read-only", "ask": "Writes or network", "deny": "Secrets or destructive"}
+      },
+      "production_impact": {"type": "noul", "instructions": "Could this destroy production data?"}
+    }
+  }' | jq '.answers'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "ai",
+      "arguments": {"op": "post_decisions", "input": {"model": "kai", "state": {"command": "git status"}, "questions": {"production_impact": {"type": "noul", "instructions": "Could this break production?"}}}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Test `git status` (expect `allow`) vs `rm -rf /var/lib/postgres/data` (expect `deny`).
+- Verify a deterministic `base = deny` stays `deny` even if Kai outputs `allow`.
+
+## Production guardrails
+
+- Always ship new Decision Programs in `shadow` first.
+- Check `routing.calibration` matches your validated calibration hash before honoring `enforced`.
+
+## Next steps & Hanzo University
+
+- [Kai Model Reference](/docs/models/kai#run-a-program) · [Command Risk Gate](/docs/guides/cyber/command-risk-gate)
+
+- **[KAI 201 — Kai Decision Intelligence](https://hanzo.university/kai-decision-intelligence)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/kai-decision-intelligence))
+- **[CYB 101 — AI Security Fundamentals](https://hanzo.university/ai-security-fundamentals)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/ai-security-fundamentals))

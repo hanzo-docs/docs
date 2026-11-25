@@ -1,0 +1,46 @@
+---
+title: "Cybersecurity \u2014 OpenCyber & Sovereign Zero-Trust"
+description: "Deterministic shell command gates, CI secret scanning, container SBOM verification, sandboxed exploit validation, autonomous SecOps patching, and zero-trust hardening."
+icon: ShieldCheck
+product: cyber
+level: foundations
+duration: 10 min
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - CYB 101
+  - CYB 201
+  - CYB 301
+  - CYB 401
+  - KAI 201
+status: shipped
+---
+
+**Defend AI agents, codebases, and sovereign infrastructure** — deterministic `allow < ask < deny` shell command gates, secret leak scanning (`/v1/security`), container SBOM auditing (`/v1/sbom`), sandboxed exploit reproduction, autonomous SecOps patching, and zero-trust hardening.
+
+## All 7 Cyber guides
+
+Seven runnable four-surface security guides covering threat defense through SOC 2 compliance:
+
+| Guide | Primary Endpoint | Level | Duration | Course | Status |
+| --- | --- | --- | --- | --- | --- |
+| [Enforce allow < ask < deny over agent shell commands](/docs/guides/cyber/command-risk-gate) | `POST /v1/decisions` | foundations | 15 min | [CYB 101](https://hanzo.university/ai-security-fundamentals), [KAI 201](https://hanzo.university/kai-decision-intelligence) | `shipped` |
+| [Scan code and pull requests for leaked secrets](/docs/guides/cyber/secret-leak-scanning) | `POST /v1/security/scans` | practitioner | 15 min | [CYB 201](https://hanzo.university/agentic-cybersecurity) | `shipped` |
+| [Audit container image SBOMs by digest before deploy](/docs/guides/cyber/container-sbom-audit) | `GET /v1/sbom/{ref}` | practitioner | 15 min | [CYB 201](https://hanzo.university/agentic-cybersecurity) | `shipped` |
+| [Validate vulnerabilities inside isolated microVMs](/docs/guides/cyber/sandboxed-exploit-repro) | `POST /v1/sandbox/lease` | specialist | 25 min | [CYB 201](https://hanzo.university/agentic-cybersecurity), [CYB 301](https://hanzo.university/autonomous-secops) | `shipped` |
+| [Automate regression-tested security patch PRs](/docs/guides/cyber/autonomous-secops-patching) | `POST /v1/auto/automations` | specialist | 25 min | [CYB 301](https://hanzo.university/autonomous-secops) | `shipped` |
+| [Enforce AuthZ policy checks and KMS secret isolation](/docs/guides/cyber/authz-and-kms-hardening) | `POST /v1/authz/check` | architect | 20 min | [CYB 401](https://hanzo.university/sovereign-zero-trust-ai) | `shipped` |
+| [Export live SOC 2 coverage and risk posture scores](/docs/guides/cyber/trust-center-compliance) | `GET /v1/trust/coverage/{framework}` | architect | 20 min | [CYB 401](https://hanzo.university/sovereign-zero-trust-ai) | `shipped` |
+
+## Related documentation & courses
+
+- [Cybersecurity Overview](/docs/cybersecurity) · [Sovereign Zero-Trust AI](/docs/cybersecurity/sovereign-zero-trust)
+
+- **[CYB 101 — AI Security Fundamentals](https://hanzo.university/ai-security-fundamentals)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/ai-security-fundamentals))
+- **[CYB 201 — Agentic Cybersecurity](https://hanzo.university/agentic-cybersecurity)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/agentic-cybersecurity))
+- **[CYB 301 — Autonomous SecOps](https://hanzo.university/autonomous-secops)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/autonomous-secops))
+- **[CYB 401 — Sovereign Zero-Trust AI](https://hanzo.university/sovereign-zero-trust-ai)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/sovereign-zero-trust-ai))
+- **[KAI 201 — Kai Decision Intelligence](https://hanzo.university/kai-decision-intelligence)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/kai-decision-intelligence))

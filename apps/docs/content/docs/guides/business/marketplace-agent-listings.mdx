@@ -1,0 +1,106 @@
+---
+title: "Publish and monetize agents & tools on Marketplace"
+description: "Publish verified agents, MCP tools, and templates on Hanzo Marketplace (/v1/marketplace/listings) and manage escrow-backed jobs (/v1/marketplace/jobs)."
+product: business
+level: practitioner
+duration: 20 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`)"
+objectives:
+  - "Browse and publish listings via /v1/marketplace/listings"
+  - "Track escrow-backed customer job lifecycles via /v1/marketplace/jobs"
+  - "Inspect seller payout verification on /v1/marketplace/seller"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - ENT 401
+status: shipped
+---
+
+**Distribute your agents, MCP tools, and vertical templates directly to Hanzo organizations.** `/v1/marketplace` handles discovery, installation, escrow-backed delivery, and seller payouts.
+
+## Architecture & contract
+
+Listings carry structured schemas and verification state (`/v1/marketplace/listings/{id}/verify`). Jobs follow a clean auditable state machine (`accept` → `deliver` → `release` or `dispute`) settled against verified seller payout accounts.
+
+**Primary endpoint:** `GET /v1/marketplace/listings` · **Status:** `shipped` · **Level:** `practitioner`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo marketplace listings list
+hanzo marketplace jobs list
+hanzo marketplace seller get
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, MarketplaceApi } from 'hanzoai';
+
+const mkt = new MarketplaceApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const [listings, jobs] = await Promise.all([
+  mkt.getMarketplaceListings(),
+  mkt.getMarketplaceJobs(),
+]);
+console.log({ listings: listings.data, jobs: jobs.data });
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import MarketplaceApi
+
+api = MarketplaceApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+print(api.get_marketplace_listings())
+print(api.get_marketplace_jobs())
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -s https://api.hanzo.ai/v1/marketplace/listings \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+curl -s https://api.hanzo.ai/v1/marketplace/jobs \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "marketplace",
+      "arguments": {"op": "get_marketplace_listings", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Confirm published listings pass `/verify` and appear in `GET /v1/marketplace/listings`.
+
+## Production guardrails
+
+- Complete seller payout verification (`/v1/marketplace/seller/payout/verify`) before pricing commercial listings.
+
+## Next steps & Hanzo University
+
+- [Monetize APIs & Agents](/docs/business/monetize-api)
+
+- **[ENT 401 — Build Your AI Company](https://hanzo.university/build-your-ai-company)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/build-your-ai-company))

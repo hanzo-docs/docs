@@ -1,0 +1,44 @@
+---
+title: "Infrastructure \u2014 Sovereign Cloud, GPUs & Observability"
+description: "Single-binary self-hosting, GPU cluster and BYO fleet management, ephemeral microVM sandboxes, zero-trust overlay networking, and AI observability."
+icon: Server
+product: infrastructure
+level: foundations
+duration: 10 min
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - ARC 105
+  - CYB 401
+  - ENG 100
+  - ML 401
+  - SYS 103
+status: shipped
+---
+
+**Operate sovereign AI infrastructure anywhere** — single-binary self-hosting, GPU clusters and BYO compute fleets (`/v1/compute`), ephemeral microVM sandboxes (`/v1/sandbox`), zero-trust overlay networking (`/v1/network`), and full-stack AI observability.
+
+## All 5 Infrastructure guides
+
+Five runnable four-surface infrastructure guides from laptop to air-gapped datacenter:
+
+| Guide | Primary Endpoint | Level | Duration | Course | Status |
+| --- | --- | --- | --- | --- | --- |
+| [Self-host Hanzo Cloud locally or air-gapped](/docs/guides/infrastructure/self-host-single-binary) | `GET /v1/models` | practitioner | 20 min | [SYS 103](https://hanzo.university/systems-engineering), [CYB 401](https://hanzo.university/sovereign-zero-trust-ai) | `shipped` |
+| [Manage GPU clusters and BYO compute fleets](/docs/guides/infrastructure/gpu-fleet-and-clusters) | `GET /v1/compute/gpus` | architect | 20 min | [ML 401](https://hanzo.university/ml-systems), [SYS 103](https://hanzo.university/systems-engineering) | `shipped` |
+| [Run untrusted code in ephemeral microVM sandboxes](/docs/guides/infrastructure/ephemeral-microvm-sandboxes) | `POST /v1/sandbox/lease` | practitioner | 15 min | [SYS 103](https://hanzo.university/systems-engineering), [ENG 100](https://hanzo.university/agentic-coding) | `shipped` |
+| [Connect private services over /v1/network zero-trust mesh](/docs/guides/infrastructure/zero-trust-overlay-mesh) | `GET /v1/network/identities` | architect | 20 min | [SYS 103](https://hanzo.university/systems-engineering), [CYB 401](https://hanzo.university/sovereign-zero-trust-ai) | `shipped` |
+| [Query AI latency, traces, logs, and unit economics](/docs/guides/infrastructure/o11y-traces-and-metrics) | `GET /v1/eval/metrics` | practitioner | 15 min | [ARC 105](https://hanzo.university/ai-architect), [SYS 103](https://hanzo.university/systems-engineering) | `shipped` |
+
+## Related documentation & courses
+
+- [Architecture](/docs/architecture) · [Self-Hosting & Air-Gapped](/docs/self-hosting) · [The Network](/docs/network)
+
+- **[ARC 105 — AI Architect](https://hanzo.university/ai-architect)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/ai-architect))
+- **[CYB 401 — Sovereign Zero-Trust AI](https://hanzo.university/sovereign-zero-trust-ai)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/sovereign-zero-trust-ai))
+- **[ENG 100 — Agentic Coding](https://hanzo.university/agentic-coding)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/agentic-coding))
+- **[ML 401 — ML Systems](https://hanzo.university/ml-systems)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/ml-systems))
+- **[SYS 103 — Systems Engineering](https://hanzo.university/systems-engineering)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/systems-engineering))

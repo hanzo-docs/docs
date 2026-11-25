@@ -1,0 +1,111 @@
+---
+title: "Meter AI consumption, balances, and customer invoices"
+description: "Read real-time balances, windowed token/tool usage, double-entry ledger rows, and customer invoices via /v1/billing/*."
+product: business
+level: practitioner
+duration: 20 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`)"
+objectives:
+  - "Query prepaid and credit balances on GET /v1/billing/balance"
+  - "Extract windowed model consumption on GET /v1/billing/usage?start=...&end=..."
+  - "Inspect immutable ledger entries and customer invoices"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - ENT 401
+status: shipped
+---
+
+**Meter every token, decision, and GPU-second from the same authoritative ledger the gateway debits.** Build accurate usage dashboards, overage alerts, and automated customer invoicing.
+
+## Architecture & contract
+
+Tenant scope derives server-side from the verified credential so one org can never read another org's financial data. Window `/v1/billing/usage` with ISO `start` and `end` parameters to reconcile monthly invoices against `GET /v1/billing/ledger`.
+
+**Primary endpoint:** `GET /v1/billing/usage` · **Status:** `shipped` · **Level:** `practitioner`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo billing balance
+hanzo billing ledger
+hanzo billing invoices list
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, BillingApi } from 'hanzoai';
+
+const billing = new BillingApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const [bal, usage, ledger] = await Promise.all([
+  billing.getBillingBalance(),
+  billing.getBillingUsage(),
+  billing.getBillingLedger(),
+]);
+console.log({ balance: bal.data, usage: usage.data, ledger: ledger.data });
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import BillingApi
+
+api = BillingApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+print(api.get_billing_balance())
+print(api.get_billing_usage())
+print(api.get_billing_ledger())
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -s https://api.hanzo.ai/v1/billing/balance \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+curl -s https://api.hanzo.ai/v1/billing/usage \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+curl -s https://api.hanzo.ai/v1/billing/invoices \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "billing",
+      "arguments": {"op": "get_billing_balance", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Reconcile total debits in `GET /v1/billing/ledger` against `GET /v1/billing/balance`.
+
+## Production guardrails
+
+- Handle HTTP `402 insufficient_balance` gracefully in customer apps with a direct top-up flow.
+
+## Next steps & Hanzo University
+
+- [Monetize APIs & Agents](/docs/business/monetize-api) · [Money Flow Guide](/docs/guides/money)
+
+- **[ENT 401 — Build Your AI Company](https://hanzo.university/build-your-ai-company)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/build-your-ai-company))

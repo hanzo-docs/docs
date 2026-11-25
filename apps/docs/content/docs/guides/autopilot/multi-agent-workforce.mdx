@@ -1,0 +1,110 @@
+---
+title: "Coordinate role-scoped agents with A2A handoffs"
+description: "Provision specialized role-scoped agents on POST /v1/agent, dispatch asynchronous runs, and coordinate structured handoffs over /v1/agent/a2a."
+product: autopilot
+level: architect
+duration: 25 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`)"
+objectives:
+  - "Create narrow, role-scoped agents on POST /v1/agent"
+  - "Run agents asynchronously by org-unique name and poll terminal status"
+  - "Coordinate multi-agent handoffs via /v1/agent/a2a and /v1/agent/briefs"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - AUTO 301
+status: shipped
+---
+
+**Decompose complex workflows into narrow specialist agents instead of one over-privileged monolith.** Each agent carries its own model tier, instructions, run history, and spend budget.
+
+## Architecture & contract
+
+Every agent is addressable by ID or org-unique name (`ref`). Runs execute asynchronously (`POST /v1/agent/{ref}/run`, `GET /v1/agent/{ref}/runs`), while structured work packets travel between specialists over `/v1/agent/a2a`.
+
+**Primary endpoint:** `POST /v1/agent` · **Status:** `shipped` · **Level:** `architect`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo agent create --data '{"name":"release-verifier","model":"enso-pro","instructions":"Verify build artifacts, run smoke checks, and summarize release readiness."}'
+hanzo agent run release-verifier --data '{"input":"Verify v2.4.1 staging endpoints"}'
+hanzo agent runs release-verifier
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, AgentApi } from 'hanzoai';
+
+const agents = new AgentApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+await agents.postAgent({
+  name: 'release-verifier',
+  model: 'enso-pro',
+  instructions: 'Verify build artifacts, run smoke checks, and summarize release readiness.',
+});
+const { data: run } = await agents.postAgentByRefRun('release-verifier', { input: 'Verify v2.4.1 staging endpoints' });
+console.log(run);
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import AgentApi
+
+api = AgentApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+api.post_agent({"name": "release-verifier", "model": "enso-pro", "instructions": "Verify build artifacts and release readiness."})
+print(api.post_agent_by_ref_run("release-verifier", {"input": "Verify v2.4.1 staging endpoints"}))
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/agent \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{"name":"release-verifier","model":"enso-pro","instructions":"Verify build artifacts and release readiness."}' | jq '.'
+
+curl -s -X POST https://api.hanzo.ai/v1/agent/release-verifier/run \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{"input":"Verify v2.4.1 staging endpoints"}' | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "agent",
+      "arguments": {"op": "get_agent", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Poll `GET /v1/agent/release-verifier/runs` until the run reaches a terminal status and inspect `GET /v1/agent/activity`.
+
+## Production guardrails
+
+- Give builder agents write access only inside isolated sandboxes or worktrees, and assign review/verification to a separate agent.
+
+## Next steps & Hanzo University
+
+- [Autonomous Organizations & Workforces](/docs/autopilot/workforces) · [Agent Flow Guide](/docs/guides/agent)
+
+- **[AUTO 301 — Autonomous Organizations](https://hanzo.university/autonomous-organizations)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/autonomous-organizations))

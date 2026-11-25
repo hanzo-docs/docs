@@ -1,0 +1,12 @@
+{
+  "title": "Infrastructure",
+  "description": "Single-binary self-hosting, GPU cluster and BYO fleet management, ephemeral microVM sandboxes, zero-trust overlay networking, and AI observability.",
+  "icon": "Server",
+  "pages": [
+    "self-host-single-binary",
+    "gpu-fleet-and-clusters",
+    "ephemeral-microvm-sandboxes",
+    "zero-trust-overlay-mesh",
+    "o11y-traces-and-metrics"
+  ]
+}

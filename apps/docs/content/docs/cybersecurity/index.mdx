@@ -1,0 +1,68 @@
+---
+title: Cybersecurity & sovereign defense
+description: "Defend AI agents, codebases, and cloud infrastructure with deterministic policy floors, OpenCyber scanning (/v1/security, /v1/sbom), sandboxed exploit validation, and sovereign zero-trust controls."
+icon: ShieldCheck
+product: cyber
+level: practitioner
+duration: 15 min
+prerequisites:
+  - A Hanzo secret key (`sk-...`)
+objectives:
+  - Map Hanzo's defense-in-depth primitives across identity, policy, scanning, sandboxing, and remediation
+  - Enforce deterministic `allow < ask < deny` floors over every agent action
+  - Navigate security assessments, SBOM inspection, and zero-trust deployment guides
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - CYB 101
+  - CYB 201
+  - CYB 301
+  - CYB 401
+status: shipped
+---
+
+**Never ask an autoregressive LLM to police its own shell commands.** Hanzo treats AI security as a systems engineering problem: deterministic policy floors, calibrated Kai risk gates, hardware-isolated sandboxes, secret and SBOM scanning, KMS secret zeroization, and fine-grained AuthZ.
+
+## Defense-in-depth stack
+
+| Layer | Canonical endpoints & primitives | Security guarantee | Status |
+|---|---|---|---|
+| **Identity & AuthZ** | Hanzo IAM (`hanzo.id`), `POST /v1/authz/check`, `GET /v1/audit` | Verified principal per request; explicit least-privilege authorization; tamper-evident audit logs | `shipped` |
+| **Secrets & KMS** | `GET /v1/kms/secrets`, `POST /v1/kms/secrets`, `POST /v1/security/scans` | Secrets stored in KMS, never in prompts or repos; rule-based secret leak scanning | `shipped` |
+| **Command & Prompt Gating** | `POST /v1/decisions` (`agent.command-risk@1`), `POST /v1/risk/score` | Calibrated `allow < ask < deny` verdicts that can only tighten — never loosen — deterministic policy | `shipped` |
+| **Execution Isolation** | `POST /v1/sandbox/lease`, `POST /v1/sandbox/{id}/exec` | Untrusted code, exploits, and tool execution confined to ephemeral microVMs | `shipped` |
+| **Supply Chain & Trust** | `GET /v1/sbom/{ref}`, `GET /v1/trust/coverage/{framework}`, `GET /v1/compliance/status` | Container digest SBOMs, continuous SOC 2 / compliance control coverage | `shipped` |
+| **Zero-Trust Network** | `GET /v1/network/identities`, `GET /v1/network/services` | Identity-authenticated overlay networking with air-gapped self-hosting support | `shipped` |
+
+## Explore Cybersecurity
+
+<Cards>
+  <Card title="Threat Modeling" href="/docs/cybersecurity/threat-modeling">
+    Model prompt injection, tool abuse, exfiltration, and supply-chain risks in agentic systems.
+  </Card>
+  <Card title="OpenCyber Architecture" href="/docs/cybersecurity/opencyber">
+    Combine Kai risk gates, `/v1/security/scans`, `/v1/sbom`, and ephemeral sandboxes into autonomous defense.
+  </Card>
+  <Card title="Security Assessments" href="/docs/cybersecurity/assessments">
+    Run secret scans, risk scoring, and compliance posture checks across repos and orgs.
+  </Card>
+  <Card title="Vulnerability Validation" href="/docs/cybersecurity/vulnerability-validation">
+    Eliminate scanner noise by reproducing findings deterministically inside `/v1/sandbox`.
+  </Card>
+  <Card title="Autonomous Remediation" href="/docs/cybersecurity/remediation">
+    Generate evidence-backed patches, run regression tests, and gate merges with human approvals.
+  </Card>
+  <Card title="Sovereign Zero-Trust AI" href="/docs/cybersecurity/sovereign-zero-trust">
+    Deploy IAM, AuthZ, KMS, overlay networking, and air-gapped Zen inference under your own keys.
+  </Card>
+</Cards>
+
+## University track
+
+- [CYB 101 — AI Security Fundamentals](https://hanzo.university/ai-security-fundamentals) ([Interactive Lab](https://hanzo.app/learn/ai-security-fundamentals))
+- [CYB 201 — Agentic Cybersecurity](https://hanzo.university/agentic-cybersecurity) ([Interactive Lab](https://hanzo.app/learn/agentic-cybersecurity))
+- [CYB 301 — Autonomous SecOps](https://hanzo.university/autonomous-secops) ([Interactive Lab](https://hanzo.app/learn/autonomous-secops))
+- [CYB 401 — Sovereign Zero-Trust AI](https://hanzo.university/sovereign-zero-trust-ai) ([Interactive Lab](https://hanzo.app/learn/sovereign-zero-trust-ai))

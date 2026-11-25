@@ -1,0 +1,110 @@
+---
+title: "Connect private services over /v1/network zero-trust mesh"
+description: "Register cryptographic workload identities, private services, and edge routers on /v1/network without exposing public ingress ports."
+product: infrastructure
+level: architect
+duration: 20 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`)"
+objectives:
+  - "Enumerate overlay identities on GET /v1/network/identities"
+  - "Inspect private zero-trust services and routers on /v1/network/services and /routers"
+  - "Connect laptops, GPU clusters, and cloud pods without public VPN bastions"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - SYS 103
+  - CYB 401
+status: shipped
+---
+
+**Expose zero public ports on your private GPU workers and internal databases.** `/v1/network` builds an identity-authenticated zero-trust overlay across cloud clusters, edge nodes, and developer workstations.
+
+## Architecture & contract
+
+Each node receives a cryptographic identity enrolled via Hanzo IAM; traffic flows strictly between explicitly authorized identities and services with end-to-end encryption.
+
+**Primary endpoint:** `GET /v1/network/identities` · **Status:** `shipped` · **Level:** `architect`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo network identities list
+hanzo network services list
+hanzo network routers list
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, NetworkApi } from 'hanzoai';
+
+const net = new NetworkApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const [identities, services, routers] = await Promise.all([
+  net.getNetworkIdentities(),
+  net.getNetworkServices(),
+  net.getNetworkRouters(),
+]);
+console.log({ identities: identities.data, services: services.data, routers: routers.data });
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import NetworkApi
+
+api = NetworkApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+print(api.get_network_identities())
+print(api.get_network_services())
+print(api.get_network_routers())
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -s https://api.hanzo.ai/v1/network/identities \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+curl -s https://api.hanzo.ai/v1/network/services \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "network",
+      "arguments": {"op": "get_network_identities", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Verify private GPU endpoints answer over their overlay service address while refusing direct public IP connections.
+
+## Production guardrails
+
+- Revoke decommissioned node identities immediately via `DELETE /v1/network/identities/{id}`.
+
+## Next steps & Hanzo University
+
+- [Sovereign Zero-Trust AI](/docs/cybersecurity/sovereign-zero-trust) · [The Network](/docs/network)
+
+- **[SYS 103 — Systems Engineering](https://hanzo.university/systems-engineering)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/systems-engineering))
+- **[CYB 401 — Sovereign Zero-Trust AI](https://hanzo.university/sovereign-zero-trust-ai)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/sovereign-zero-trust-ai))

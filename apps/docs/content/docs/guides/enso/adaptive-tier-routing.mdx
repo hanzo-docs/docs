@@ -1,0 +1,117 @@
+---
+title: "Route prompts automatically with enso-auto"
+description: "Send model: enso-auto with reasoning_effort to let Enso select the optimal model tier per request and inspect X-Routed-Model."
+product: enso
+level: foundations
+duration: 10 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`)"
+objectives:
+  - "Route everyday and hard prompts through one model ID (enso-auto)"
+  - "Control reasoning depth with reasoning_effort (instant, low, medium, high, max, auto)"
+  - "Read X-Routed-Model and X-Hanzo-Served response headers"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - ENS 201
+  - PRA 104
+status: shipped
+---
+
+**Stop hardcoding a single model ID across routine extractions and deep refactors.** `enso-auto` starts at `enso-flash` and escalates only when the router or Kai judges a prompt needs `enso-pro`, `enso-max`, or `enso-ultra`.
+
+## Architecture & contract
+
+Enso classifies each prompt on CPU (`12 µs` for the learned policy), filters to models your org can serve, and bills strictly at the tier that answered. `X-Routed-Model` and the response body's `routing` object report the chosen tier and reason.
+
+**Primary endpoint:** `POST /v1/chat/completions` · **Status:** `shipped` · **Level:** `foundations`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo chat completions --data '{
+  "model": "enso-auto",
+  "reasoning_effort": "auto",
+  "messages": [{"role": "user", "content": "Explain why a B-tree beats a hash index for range queries."}]
+}'
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, AiApi } from 'hanzoai';
+
+const ai = new AiApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data } = await ai.postChatCompletions({
+  model: 'enso-auto',
+  messages: [{ role: 'user', content: 'Explain why a B-tree beats a hash index for range queries.' }],
+});
+console.log(data);
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import AiApi
+
+api = AiApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+print(api.post_chat_completions(
+    model="enso-auto",
+    messages=[{"role": "user", "content": "Explain why a B-tree beats a hash index for range queries."}],
+))
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -si https://api.hanzo.ai/v1/chat/completions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "enso-auto",
+    "reasoning_effort": "auto",
+    "messages": [{"role": "user", "content": "Explain why a B-tree beats a hash index for range queries."}]
+  }'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "ai",
+      "arguments": {"op": "get_models", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Inspect `X-Routed-Model` in the HTTP response headers.
+- Compare a trivial one-line extraction (routes to `enso-flash`) vs. a multi-file architecture critique (escalates to `enso-pro`/`enso-max`).
+
+## Production guardrails
+
+- Pass `reasoning_effort: "instant"` for latency-sensitive formatting calls where extended thinking adds zero value.
+
+## Next steps & Hanzo University
+
+- [Enso Model Reference](/docs/models/enso) · [Cost & Latency Bounds](/docs/guides/enso/cost-latency-bounds)
+
+- **[ENS 201 — Enso Adaptive Intelligence](https://hanzo.university/enso-adaptive-intelligence)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/enso-adaptive-intelligence))
+- **[PRA 104 — AI Practitioner](https://hanzo.university/ai-practitioner)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/ai-practitioner))

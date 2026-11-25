@@ -1,0 +1,110 @@
+---
+title: "Materialize datasets and verify provenance lineage"
+description: "Materialize immutable point-in-time dataset snapshots, trace full upstream lineage, and export reproducible splits on /v1/dataset."
+product: science
+level: practitioner
+duration: 15 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`)"
+objectives:
+  - "Create and materialize a point-in-time dataset snapshot"
+  - "Query full lineage provenance on GET /v1/dataset/{name}/lineage"
+  - "Export snapshots for offline training or audit verification"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - SCI 101
+  - ML 401
+status: shipped
+---
+
+**Reproducibility starts with immutable data.** Materializing a dataset freezes the exact rows behind a training run or risk model so results can be audited months later.
+
+## Architecture & contract
+
+`POST /v1/dataset/{name}/materialize` produces a content-hashed snapshot linked to its parent transforms. `GET /v1/dataset/{name}/lineage` returns the full DAG from raw ingestion through filtering and labeling.
+
+**Primary endpoint:** `POST /v1/dataset/{name}/materialize` · **Status:** `shipped` · **Level:** `practitioner`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo dataset create --data '{"name":"fraud-features-2026q4","description":"Labeled chargeback & transaction features"}'
+hanzo dataset materialize fraud-features-2026q4
+hanzo dataset lineage fraud-features-2026q4
+hanzo dataset export fraud-features-2026q4
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, DatasetApi } from 'hanzoai';
+
+const ds = new DatasetApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+await ds.postDataset({ name: 'fraud-features-2026q4', description: 'Labeled chargeback features' });
+await ds.postDatasetByNameMaterialize('fraud-features-2026q4');
+const { data: lineage } = await ds.getDatasetByNameLineage('fraud-features-2026q4');
+console.log(lineage);
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import DatasetApi
+
+api = DatasetApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+api.post_dataset({"name": "fraud-features-2026q4", "description": "Labeled chargeback features"})
+api.post_dataset_by_name_materialize("fraud-features-2026q4")
+print(api.get_dataset_by_name_lineage("fraud-features-2026q4"))
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/dataset/fraud-features-2026q4/materialize \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+curl -s https://api.hanzo.ai/v1/dataset/fraud-features-2026q4/lineage \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "dataset",
+      "arguments": {"op": "get_dataset", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Record the materialized snapshot digest beside your training job metadata and verify lineage resolves cleanly.
+
+## Production guardrails
+
+- Never train directly on unmaterialized live tables whose rows change mid-experiment.
+
+## Next steps & Hanzo University
+
+- [Datasets & Lineage](/docs/training/datasets) · [Reproducibility](/docs/science/reproducibility)
+
+- **[SCI 101 — Science & Discovery](https://hanzo.university/science-discovery)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/science-discovery))
+- **[ML 401 — ML Systems](https://hanzo.university/ml-systems)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/ml-systems))

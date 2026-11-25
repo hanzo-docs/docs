@@ -1,0 +1,120 @@
+---
+title: Continuous & recursive improvement
+description: "Connect everyday work, Kai agent.learn@1 outcome hooks, local Hanzo Dev memory consolidation, and guarded draft PRs into a measurable self-improvement loop."
+icon: RefreshCw
+product: science
+level: fellow
+duration: 30 min
+prerequisites:
+  - Familiarity with [Self-improvement](/docs/self-improvement) and [Research autopilot](/docs/science/research-autopilot)
+objectives:
+  - Separate personal, workspace, and shared product learning scopes
+  - Configure Kai `agent.learn@1` hooks (`shadow`, `advisory`, `enforced`) safely
+  - Measure cumulative reduction in repeat failures and improved task completion
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - AUTO 101
+  - SCI 401
+status: preview
+---
+
+**An improvement is recursive when each pass strengthens the memory, skill, tool, capability, or harness that produces the next pass — while every promotion remains evidence-gated and reviewable.**
+
+See the full native architecture on [Self-improvement](/docs/self-improvement). This guide focuses on wiring the closed-loop engineering controls.
+
+## Seven stages of a verified improvement cycle
+
+| Stage | Mechanism on Hanzo | Artifact produced |
+|---|---|---|
+| 1. **Observe** | Production traces (`/v1/eval/traces`), corrections (`/v1/decisions/{decision}/corrections`), Enso feedback (`/v1/ai/feedback`) | Hashed outcome record |
+| 2. **Remember** | Scoped memory extraction in `hanzo dev` (`dev memory enable`) | Deduplicated personal or workspace memory |
+| 3. **Classify** | Kai `agent.learn@1` chooses `none`, `memory`, `experiment`, or `improvement` | Calibrated recommendation under `kai.toml` mode |
+| 4. **Hypothesize** | Improvement study or controlled experiment (`/v1/experiment`) | Falsifiable acceptance spec |
+| 5. **Build & Verify** | Isolated `/v1/sandbox` + `hanzo dev` regression harness | Failing-before / passing-after test proof |
+| 6. **Review & Publish** | Draft PR or `POST /v1/capabilities/{name}/publish` | Audited release |
+| 7. **Re-measure** | `GET /v1/eval/metrics` & `GET /v1/benchmark/history` | Longitudinal delta |
+
+## Wire the three continuous signals
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+# 1. Inspect local memory consolidation status in Hanzo Dev
+dev memory status
+
+# 2. Emit Enso routing feedback after verified task completion
+hanzo ai feedback --data '{"request_id":"chatcmpl-01J...","signal":"accept"}'
+
+# 3. Inspect org-wide quality and latency trend
+hanzo eval metrics
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, AiApi, EvalApi } from 'hanzoai';
+
+const cfg = new Configuration({ accessToken: process.env.HANZO_API_KEY });
+await new AiApi(cfg).postAiFeedback({ request_id: 'chatcmpl-01J...', signal: 'accept' });
+const metrics = await new EvalApi(cfg).getEvalMetrics('7d');
+console.log(metrics.data);
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import AiApi, EvalApi
+
+client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
+AiApi(client).post_ai_feedback({"request_id": "chatcmpl-01J...", "signal": "accept"})
+print(EvalApi(client).get_eval_metrics(range="7d"))
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -X POST https://api.hanzo.ai/v1/ai/feedback \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"request_id":"chatcmpl-01J...","signal":"accept"}'
+
+curl -s "https://api.hanzo.ai/v1/eval/metrics?range=7d" \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "eval",
+      "arguments": {"op": "get_eval_metrics", "input": {"range": "7d"}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Hard safety boundaries
+
+- **No silent scope escalation**: Personal preferences never leak into shared org skills or public product PRs.
+- **No self-authorized merges**: `agent.learn@1` cannot expand sandbox permissions, execute untrusted tool output as instructions, or merge its own PRs.
+- **Abstention means no-op**: If Kai times out or falls below confidence threshold, no follow-up learning action is spawned.
+
+## Related courses & docs
+
+- [AUTO 101 — Continuous Improvement](https://hanzo.university/continuous-improvement) ([Interactive Lab](https://hanzo.app/learn/continuous-improvement))
+- [SCI 401 — Recursive Improvement](https://hanzo.university/recursive-improvement) ([Interactive Lab](https://hanzo.app/learn/recursive-improvement))
+- [Self-Improvement Architecture](/docs/self-improvement)

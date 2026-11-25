@@ -1,0 +1,100 @@
+---
+title: "Train your org's learned router via outcome feedback"
+description: "Stream production acceptance, regeneration, and revert signals to POST /v1/ai/feedback to train your org's private Enso learned router."
+product: enso
+level: specialist
+duration: 20 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`)"
+  - "Routed completion IDs (`chatcmpl-...`)"
+objectives:
+  - "Map product and CI outcomes to canonical Enso reward signals"
+  - "Submit rewards via POST /v1/ai/feedback without uploading prompt text"
+  - "Verify org-private candidate router promotion rules"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - ENS 301
+status: shipped
+---
+
+**Turn every accepted diff, thumbs-up, or reverted patch into smarter routing.** `POST /v1/ai/feedback` teaches your org's bilinear routing utility which models win on your real workloads while storing zero prompt text.
+
+## Architecture & contract
+
+Each feedback event attaches a scalar reward (`accept`/`up` = `1.0`, `regenerate` = `0.25`, `down`/`switch`/`revert` = `0.0`) to `request_id`. Enso retrains candidate policies periodically and deploys a candidate strictly when it beats the incumbent on held-out reward.
+
+**Primary endpoint:** `POST /v1/ai/feedback` · **Status:** `shipped` · **Level:** `specialist`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo ai feedback --data '{"request_id":"chatcmpl-01J...","signal":"accept"}'
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, AiApi } from 'hanzoai';
+
+const ai = new AiApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+await ai.postAiFeedback({ request_id: 'chatcmpl-01J...', signal: 'accept' });
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import AiApi
+
+api = AiApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+api.post_ai_feedback({"request_id": "chatcmpl-01J...", "signal": "accept"})
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/ai/feedback \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"request_id":"chatcmpl-01J...","signal":"accept"}' | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "ai",
+      "arguments": {"op": "post_ai_feedback", "input": {"request_id": "chatcmpl-01J...", "signal": "accept"}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Emit both `accept` and `revert` signals in staging and verify HTTP `200` responses with recorded reward confirmation.
+
+## Production guardrails
+
+- Emit automatic objective signals (tests passed = `accept`, user switched model = `switch`) — explicit thumbs buttons alone skew toward outliers.
+
+## Next steps & Hanzo University
+
+- [Enso Routing Optimization](/docs/training/enso-routing)
+
+- **[ENS 301 — Training Enso Orchestrators](https://hanzo.university/enso-training-orchestrators)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/enso-training-orchestrators))

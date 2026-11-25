@@ -1,0 +1,105 @@
+---
+title: "Self-host Hanzo Cloud locally or air-gapped"
+description: "Boot the open-source single-binary Hanzo Cloud server locally or in an air-gapped datacenter using the exact same /v1/ contract as api.hanzo.ai."
+product: infrastructure
+level: practitioner
+duration: 20 min
+prerequisites:
+  - "Go 1.26.5+ and `openssl`, or the `hanzo` CLI"
+objectives:
+  - "Run hanzoai/cloud locally with encrypted embedded SQLite and zero external databases"
+  - "Verify identical /v1/ routes against localhost and hosted api.hanzo.ai"
+  - "Stage local open-weight Zen inference for offline operation"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - SYS 103
+  - CYB 401
+status: shipped
+---
+
+**The hosted cloud and the binary you run on your own metal are the same software.** Self-host `hanzoai/cloud` for air-gapped, sovereign, or zero-egress environments with identical SDKs and CLI commands.
+
+## Architecture & contract
+
+One Go binary bundles Base, KMS hooks, PubSub/JetStream, and API routing with zero mandatory external Postgres or Redis during local boot. For multi-node Kubernetes clusters, `hanzo up` provisions a Dockerless local microVM k3s cluster.
+
+**Primary endpoint:** `GET /v1/models` · **Status:** `shipped` · **Level:** `practitioner`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+git clone https://github.com/hanzoai/cloud && cd cloud
+make dev
+# Verify local health and models endpoint
+curl -sS http://127.0.0.1:9090/healthz
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, AiApi } from 'hanzoai';
+
+const local = new AiApi(new Configuration({
+  basePath: 'http://127.0.0.1:8080',
+  accessToken: process.env.HANZO_API_KEY,
+}));
+const { data } = await local.getModels();
+console.log(data);
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import AiApi
+
+client = ApiClient(Configuration(host="http://127.0.0.1:8080", access_token=os.environ["HANZO_API_KEY"]))
+print(AiApi(client).get_models())
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+# Same /v1/models contract works locally (http://127.0.0.1:8080) and hosted (https://api.hanzo.ai)
+curl -s https://api.hanzo.ai/v1/models | jq '.data | length'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "platform",
+      "arguments": {"op": "get_platform_health", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Verify `http://127.0.0.1:9090/healthz` returns HTTP 200 and a local `/v1/base` write persists across restarts.
+
+## Production guardrails
+
+- Keep root disk usage below 85% on self-hosted nodes and back up encrypted KMS root keys out of band.
+
+## Next steps & Hanzo University
+
+- [Self-Hosting & Air-Gapped](/docs/self-hosting) · [Architecture](/docs/architecture)
+
+- **[SYS 103 — Systems Engineering](https://hanzo.university/systems-engineering)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/systems-engineering))
+- **[CYB 401 — Sovereign Zero-Trust AI](https://hanzo.university/sovereign-zero-trust-ai)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/sovereign-zero-trust-ai))

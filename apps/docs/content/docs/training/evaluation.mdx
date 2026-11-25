@@ -1,0 +1,155 @@
+---
+title: Evaluation harnesses
+description: "Build reproducible eval datasets, reusable judges, rubrics, trace scoring, and overview metrics on /v1/eval/* to gate every model, prompt, and capability release."
+icon: CheckCircle
+product: science
+level: practitioner
+duration: 25 min
+prerequisites:
+  - A Hanzo secret key (`sk-...`)
+objectives:
+  - Create org-scoped evaluation datasets and graded items via `/v1/eval/datasets`
+  - Register reusable judges and rubrics on `/v1/eval/evaluators` and `/v1/eval/rubrics`
+  - Inspect runs, scores, traces, and cost/latency rollups on `/v1/eval/metrics`
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - SCI 101
+  - KAI 301
+  - ZEN 301
+status: shipped
+---
+
+**If you cannot measure a change on a frozen held-out set, you cannot tell an improvement from a regression.** Hanzo's `/v1/eval` plane provides tenant-isolated evaluation datasets, reusable judges, rubrics, and live GenAI telemetry in one contract.
+
+## Evaluation surface map
+
+| Endpoint | Role |
+|---|---|
+| `POST /v1/eval/datasets` / `GET /v1/eval/datasets/{name}` | Create or inspect a named evaluation dataset |
+| `POST /v1/eval/datasets/{name}/items` | Add graded `(input, expected, metadata, status)` test items |
+| `POST /v1/eval/evaluators` / `GET /v1/eval/evaluators` | Define reusable model or Kai judges keyed by name |
+| `GET /v1/eval/rubrics` | List structured scoring rubrics |
+| `GET /v1/eval/runs` / `GET /v1/eval/scores` | Query run outcomes and per-item score distributions |
+| `GET /v1/eval/traces` | Inspect traced spans behind scored outputs |
+| `GET /v1/eval/metrics` | Org AI overview board: totals, cost in cents, error rate, latency percentiles |
+
+## Build a release gate in four calls
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+# 1. Create a golden dataset
+hanzo eval datasets create --data '{"name":"refund-policy-golden","description":"50 hard billing refund cases"}'
+
+# 2. Add graded items
+hanzo eval datasets items create refund-policy-golden --data '{
+  "input": {"ticket": "Charged twice on invoice #9124", "plan": "pro"},
+  "expected": {"route": "auto_refund"},
+  "status": "active"
+}'
+
+# 3. Register a reusable evaluator
+hanzo eval evaluators create --data '{
+  "name": "refund-accuracy",
+  "judge_model": "kai",
+  "score_name": "route_correct",
+  "criteria": "Output matches expected refund workflow with zero policy violations."
+}'
+
+# 4. Inspect org AI telemetry & latency percentiles
+hanzo eval metrics
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, EvalApi } from 'hanzoai';
+
+const evalApi = new EvalApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+await evalApi.postEvalDatasets({
+  name: 'refund-policy-golden',
+  description: '50 hard billing refund cases',
+});
+await evalApi.postEvalDatasetsByNameItems('refund-policy-golden', {
+  input: { ticket: 'Charged twice on invoice #9124', plan: 'pro' },
+  expected: { route: 'auto_refund' },
+  status: 'active',
+});
+const metrics = await evalApi.getEvalMetrics('24h');
+console.log(metrics.data);
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import EvalApi
+
+api = EvalApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+api.post_eval_datasets({"name": "refund-policy-golden", "description": "50 hard billing refund cases"})
+api.post_eval_datasets_by_name_items(
+    "refund-policy-golden",
+    {"input": {"ticket": "Charged twice on invoice #9124", "plan": "pro"}, "expected": {"route": "auto_refund"}, "status": "active"},
+)
+print(api.get_eval_metrics(range="24h"))
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -X POST https://api.hanzo.ai/v1/eval/datasets \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"refund-policy-golden","description":"50 hard billing refund cases"}'
+
+curl -X POST https://api.hanzo.ai/v1/eval/datasets/refund-policy-golden/items \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"input":{"ticket":"Charged twice on invoice #9124","plan":"pro"},"expected":{"route":"auto_refund"},"status":"active"}'
+
+curl -X POST https://api.hanzo.ai/v1/eval/evaluators \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"refund-accuracy","judge_model":"kai","score_name":"route_correct","criteria":"Matches expected workflow with zero policy violations."}'
+
+curl "https://api.hanzo.ai/v1/eval/metrics?range=24h" \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "eval",
+      "arguments": {"op": "get_eval_metrics", "input": {"range": "24h"}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Five metrics every release gate should enforce
+
+1. **Task accuracy / pass rate** against pinned golden datasets.
+2. **Paired win/loss delta** (`rescue` vs `damage`) using `GET /v1/benchmark/compare` — never compare unaligned subsets.
+3. **Calibration (ECE)** on decision probabilities so abstention thresholds remain valid.
+4. **Latency p50 / p95** from `GET /v1/eval/metrics`.
+5. **Unit economics** (cents per 1,000 requests, cache hit rate) from `GET /v1/eval/metrics` and `GET /v1/billing/usage`.
+
+## Related docs & courses
+
+- [Benchmarking Arena](/docs/science/benchmarking) · [Studies & Experiments](/docs/science/studies-experiments)
+- [SCI 101 — Science & Discovery](https://hanzo.university/science-discovery) ([Interactive Lab](https://hanzo.app/learn/science-discovery))
+- [KAI 301 — Training Kai Decision Models](https://hanzo.university/kai-training-decision-models) ([Interactive Lab](https://hanzo.app/learn/kai-training-decision-models))

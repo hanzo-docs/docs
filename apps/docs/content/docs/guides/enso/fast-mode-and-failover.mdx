@@ -1,0 +1,118 @@
+---
+title: "Configure fast mode and zero-downtime tier failover"
+description: "Use Enso fast mode (fast: true / X-Fast: 1) for interactive latency SLAs while relying on ordered multi-vendor chain failover at one fixed tier price."
+product: enso
+level: practitioner
+duration: 15 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`) with prepaid balance for fast mode"
+objectives:
+  - "Enable fast mode per request via body flag or X-Fast header"
+  - "Understand ordered failover rungs and fixed tier pricing"
+  - "Inspect X-Hanzo-Served to audit which tier answered"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - ENS 201
+  - ARC 105
+status: shipped
+---
+
+**Vendor outages should never wake your on-call engineer.** Every Enso tier runs an ordered fallback chain under one model ID and one fixed price, while optional `fast: true` accelerates priority interactive turns.
+
+## Architecture & contract
+
+Failover steps sequentially — the next rung is called only on outage, rate limit, or refusal, never raced redundantly. Fast mode bills from prepaid balance (`2x` on `enso-auto`/`enso-flash`, `3x` on `enso-pro`/`enso-max`, `4x` on `enso-ultra`) and degrades gracefully to standard speed when prepaid balance is zero.
+
+**Primary endpoint:** `POST /v1/chat/completions` · **Status:** `shipped` · **Level:** `practitioner`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo chat completions --data '{
+  "model": "enso-pro",
+  "fast": true,
+  "messages": [{"role": "user", "content": "Diagnose HTTP 502 from upstream gRPC deadline exceeded."}]
+}'
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+const res = await fetch('https://api.hanzo.ai/v1/chat/completions', {
+  method: 'POST',
+  headers: {
+    Authorization: `Bearer ${process.env.HANZO_API_KEY}`,
+    'Content-Type': 'application/json',
+    'X-Fast': '1',
+  },
+  body: JSON.stringify({
+    model: 'enso-pro',
+    messages: [{ role: 'user', content: 'Diagnose HTTP 502 from upstream gRPC deadline exceeded.' }],
+  }),
+});
+console.log('Served by:', res.headers.get('x-hanzo-served'));
+```
+</Tab>
+<Tab value="Python">
+```python
+import os, requests
+
+r = requests.post(
+    "https://api.hanzo.ai/v1/chat/completions",
+    headers={"Authorization": f"Bearer {os.environ['HANZO_API_KEY']}", "X-Fast": "1"},
+    json={"model": "enso-pro", "messages": [{"role": "user", "content": "Diagnose HTTP 502 from upstream gRPC deadline exceeded."}]},
+)
+print("Served by:", r.headers.get("X-Hanzo-Served"))
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -si https://api.hanzo.ai/v1/chat/completions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -H "X-Fast: 1" \
+  -d '{"model":"enso-pro","fast":true,"messages":[{"role":"user","content":"Diagnose HTTP 502 from upstream gRPC deadline exceeded."}]}'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "billing",
+      "arguments": {"op": "get_billing_balance", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Check `X-Hanzo-Served: enso-pro` and compare time-to-first-token against standard mode.
+- Confirm billing balance via `GET /v1/billing/balance`.
+
+## Production guardrails
+
+- Reserve `fast: true` for live user-facing turns; keep background batch and autopilot runs on standard mode to save 2x–4x.
+
+## Next steps & Hanzo University
+
+- [Enso Fast Mode & Chains](/docs/models/enso#fast-mode)
+
+- **[ENS 201 — Enso Adaptive Intelligence](https://hanzo.university/enso-adaptive-intelligence)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/enso-adaptive-intelligence))
+- **[ARC 105 — AI Architect](https://hanzo.university/ai-architect)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/ai-architect))

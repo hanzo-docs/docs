@@ -1,0 +1,148 @@
+---
+title: Studies & controlled experiments
+description: "Assign deterministic A/B variants, analyze measured outcomes, promote winning rollouts on /v1/experiment, and record improvement studies."
+icon: Split
+product: science
+level: practitioner
+duration: 25 min
+prerequisites:
+  - A Hanzo secret key (`sk-...`)
+objectives:
+  - Create a controlled experiment and bucket subjects deterministically via `/v1/experiment/{id}/assign`
+  - Analyze measured outcomes via `POST /v1/experiment/{id}/analyze` without silent promotion
+  - Promote a verified winner atomically with `POST /v1/experiment/{id}/decide`
+  - Connect offline improvement studies to live A/B verification
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - SCI 201
+  - AUTO 101
+status: shipped
+---
+
+**Offline evals catch regressions before launch; controlled experiments prove impact on real traffic.** Hanzo separates variant assignment (pure deterministic read), statistical analysis (non-mutating), and rollout decision (audited production mutation) into explicit endpoints on `/v1/experiment`.
+
+## Controlled experiment lifecycle
+
+```mermaid
+flowchart LR
+    C["1. POST /v1/experiment<br/>(define control & candidate arms)"] --> A["2. GET /v1/experiment/{id}/assign<br/>(deterministic hash bucketing)"]
+    A --> E["3. Emit exposure & outcome<br/>POST /v1/event"]
+    E --> An["4. POST /v1/experiment/{id}/analyze<br/>(compute lift & intervals)"]
+    An --> D{"Statistically clear &<br/>guardrails green?"}
+    D -->|"Yes"| Win["5. POST /v1/experiment/{id}/decide<br/>(100% winner rollout + audit stamp)"]
+    D -->|"No"| Stop["Keep control / collect more samples"]
+```
+
+## Run an A/B experiment across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+# 1. Create experiment
+hanzo experiment create --data '{
+  "name": "enso-pro-vs-zen6-coder",
+  "hypothesis": "zen6-coder matches PR acceptance at lower unit cost",
+  "variants": [{"key": "control", "weight": 50}, {"key": "zen6_coder", "weight": 50}]
+}'
+
+# 2. Deterministic subject assignment (pure read; emit exposure via /v1/event)
+hanzo experiment assign "$EXP_ID" --subject "user_42"
+
+# 3. Analyze measured variant outcomes
+hanzo experiment analyze "$EXP_ID"
+
+# 4. Promote winner to 100% rollout once evidence clears threshold
+hanzo experiment decide "$EXP_ID" --data '{"winner": "zen6_coder"}'
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, ExperimentApi } from 'hanzoai';
+
+const exp = new ExperimentApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data: created } = await exp.postExperiment({
+  name: 'enso-pro-vs-zen6-coder',
+  variants: [
+    { key: 'control', weight: 50 },
+    { key: 'zen6_coder', weight: 50 },
+  ],
+});
+
+const { data: arm } = await exp.getExperimentByIdAssign(created.id, 'user_42');
+const { data: analysis } = await exp.postExperimentByIdAnalyze(created.id);
+console.log({ arm, analysis });
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import ExperimentApi
+
+api = ExperimentApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+created = api.post_experiment({
+    "name": "enso-pro-vs-zen6-coder",
+    "variants": [{"key": "control", "weight": 50}, {"key": "zen6_coder", "weight": 50}],
+})
+arm = api.get_experiment_by_id_assign(created["id"], subject="user_42")
+analysis = api.post_experiment_by_id_analyze(created["id"])
+print(arm, analysis)
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+EXP_ID=$(curl -s -X POST https://api.hanzo.ai/v1/experiment \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"enso-pro-vs-zen6-coder","variants":[{"key":"control","weight":50},{"key":"zen6_coder","weight":50}]}' | jq -r '.id')
+
+curl -s "https://api.hanzo.ai/v1/experiment/${EXP_ID}/assign?subject=user_42" \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+curl -s -X POST "https://api.hanzo.ai/v1/experiment/${EXP_ID}/analyze" \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+curl -s -X POST "https://api.hanzo.ai/v1/experiment/${EXP_ID}/decide" \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"winner":"zen6_coder"}' | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "experiment",
+      "arguments": {"op": "get_experiment", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+<Callout type="info">
+`GET /v1/experiment/{id}/assign` is intentionally a pure read: it hashes `subject` deterministically and records nothing. Always emit an exposure event (`POST /v1/event`) only when the subject actually renders or executes the assigned arm to avoid dilution bias.
+</Callout>
+
+## Improvement studies (`preview`)
+
+For offline benchmark and harness studies, **Customize → Learning → Research** (and the alpha `POST /v1/research/studies` / `GET /v1/research/actions` surface documented in [Self-improvement](/docs/self-improvement)) evaluates incoming candidate runs against a pinned baseline run and emits `improved`, `regressed`, `inconclusive`, or `blocked` draft findings automatically.
+
+## Related courses & docs
+
+- [SCI 201 — Autonomous Research](https://hanzo.university/autonomous-research) ([Interactive Lab](https://hanzo.app/learn/autonomous-research))
+- [Research Autopilot](/docs/science/research-autopilot) · [Benchmarking Arena](/docs/science/benchmarking)

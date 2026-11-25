@@ -1,0 +1,109 @@
+---
+title: "Enforce per-agent spend tracking and billing alerts"
+description: "Audit per-agent token consumption via GET /v1/agent/{ref}/spend and configure proactive billing alerts on /v1/billing/alerts."
+product: autopilot
+level: practitioner
+duration: 15 min
+prerequisites:
+  - "An active agent on `/v1/agent`"
+  - "A Hanzo secret key (`sk-...`)"
+objectives:
+  - "Query real-time spend per agent via GET /v1/agent/{ref}/spend"
+  - "Configure org-wide spend threshold alerts via POST /v1/billing/alerts"
+  - "Combine per-agent tracking with X-Max-Cost routing bounds"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - AUTO 301
+status: shipped
+---
+
+**Autonomous agents without hard spend ceilings are an unbounded credit card.** Track per-agent burn on `GET /v1/agent/{ref}/spend` and wire threshold alerts on `/v1/billing/alerts`.
+
+## Architecture & contract
+
+Every inference and tool call made by an agent debits the same double-entry billing ledger while attributing cost to `agent_ref`, making runaway loops immediately visible and stoppable.
+
+**Primary endpoint:** `GET /v1/agent/{ref}/spend` · **Status:** `shipped` · **Level:** `practitioner`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo agent spend release-verifier
+hanzo billing balance
+hanzo billing alerts list
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, AgentApi, BillingApi } from 'hanzoai';
+
+const cfg = new Configuration({ accessToken: process.env.HANZO_API_KEY });
+const [spend, balance, alerts] = await Promise.all([
+  new AgentApi(cfg).getAgentByRefSpend('release-verifier'),
+  new BillingApi(cfg).getBillingBalance(),
+  new BillingApi(cfg).getBillingAlerts(),
+]);
+console.log({ spend: spend.data, balance: balance.data, alerts: alerts.data });
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import AgentApi, BillingApi
+
+client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
+print(AgentApi(client).get_agent_by_ref_spend("release-verifier"))
+print(BillingApi(client).get_billing_balance())
+print(BillingApi(client).get_billing_alerts())
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -s https://api.hanzo.ai/v1/agent/release-verifier/spend \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+curl -s https://api.hanzo.ai/v1/billing/alerts \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "billing",
+      "arguments": {"op": "get_billing_alerts", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Trigger one agent run and verify `GET /v1/agent/{ref}/spend` increments cleanly.
+
+## Production guardrails
+
+- Set soft alert thresholds at 50% and 80% of monthly agent budget and enforce hard `X-Max-Cost` ceilings on every worker.
+
+## Next steps & Hanzo University
+
+- [Budgets Concept](/docs/concepts/budgets) · [Workforces](/docs/autopilot/workforces)
+
+- **[AUTO 301 — Autonomous Organizations](https://hanzo.university/autonomous-organizations)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/autonomous-organizations))

@@ -1,0 +1,13 @@
+{
+  "title": "Science & research",
+  "description": "Empirical AI engineering: falsifiable studies, controlled experiments, paired McNemar benchmarking, research autopilot, reproducibility, and recursive improvement.",
+  "icon": "FlaskConical",
+  "pages": [
+    "scientific-method",
+    "studies-experiments",
+    "research-autopilot",
+    "benchmarking",
+    "reproducibility",
+    "continuous-improvement"
+  ]
+}

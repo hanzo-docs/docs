@@ -1,0 +1,90 @@
+---
+title: AI SaaS reference blueprint
+description: "End-to-end production architecture for launching an AI-native SaaS on Hanzo: IAM auth, Base storage, Enso + Kai + Zen intelligence loop, event metering, and zero-downtime deployment."
+icon: Rocket
+product: business
+level: architect
+duration: 30 min
+prerequisites:
+  - A Hanzo account and secret key (`sk-...`)
+  - Familiarity with [Choose your intelligence architecture](/docs/choose-architecture)
+objectives:
+  - Wire authentication, tenant storage, intelligence routing, metering, and deployment using canonical `/v1/` endpoints
+  - Ship a production AI SaaS with full observability, rollback safety, and continuous learning built in from day one
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - ENT 401
+  - ARC 105
+  - SYS 103
+status: shipped
+---
+
+**One stack from first prototype to enterprise ARR.** This reference blueprint shows how every Hanzo capability snaps together to run a multi-tenant AI SaaS without stitching twelve disconnected SaaS vendors.
+
+```mermaid
+flowchart TD
+    User["Customer Browser / CLI"] --> IAM["Hanzo IAM · hanzo.id<br/>OIDC + PKCE + Org Claims"]
+    IAM --> Edge["Your App · /v1/deploy/applications"]
+    Edge --> Ent["Entitlements & AuthZ<br/>/v1/entitlement · /v1/authz/check"]
+    Edge --> Base["Tenant Data · /v1/base/bases/{org}<br/>Secrets · /v1/kms/secrets"]
+    Edge --> Intel["Intelligence Loop<br/>Kai /v1/decisions → Enso /v1/chat/completions → Zen 6"]
+    Intel --> Ev["Telemetry & Metering<br/>/v1/event · /v1/eval/metrics · /v1/billing/ledger"]
+    Ev --> Train["Continuous Moat<br/>/v1/capabilities/{name}/train · /v1/ai/feedback"]
+```
+
+## Five-step launch sequence
+
+<Steps>
+<Step>
+### 1. Authenticate & isolate tenants
+
+Use Hanzo IAM (`hanzo.id`) for login, SSO, and org scoping. Never write bespoke password hashing or session stores. Resolve per-org plan features via `GET https://api.hanzo.ai/v1/entitlement/orgs/{org}`.
+</Step>
+
+<Step>
+### 2. Store tenant state & secrets safely
+
+Persist structured application data in Hanzo Base (`POST https://api.hanzo.ai/v1/base/graphql`) and keep external connector credentials strictly inside Hanzo KMS (`/v1/kms/secrets`).
+</Step>
+
+<Step>
+### 3. Run the Kai + Enso + Zen intelligence loop
+
+- Gate inputs, route intents, and verify policy via `POST https://api.hanzo.ai/v1/decisions` (`model: "kai"`).
+- Route generative tasks via `POST https://api.hanzo.ai/v1/chat/completions` (`model: "enso-auto"`, bounded by `X-Max-Cost`).
+- Use `zen6` or `zen6-flash` when you need deterministic open-weight pricing or local/sovereign execution.
+</Step>
+
+<Step>
+### 4. Meter usage, events & quality
+
+Record product and economic events via `POST https://api.hanzo.ai/v1/event`, monitor latency and token spend in `GET https://api.hanzo.ai/v1/eval/metrics`, and bill org usage from `GET https://api.hanzo.ai/v1/billing/usage`.
+</Step>
+
+<Step>
+### 5. Deploy & roll back deterministically
+
+Ship application builds through `/v1/deploy/applications` and roll back instantly on anomaly via `POST https://api.hanzo.ai/v1/deploy/applications/{name}/rollback`.
+</Step>
+</Steps>
+
+## Verify your live stack in one shell check
+
+```bash
+# Verify auth, balance, deployed apps, and recent AI metrics
+hanzo auth show
+hanzo billing balance
+hanzo deploy applications list
+curl -s "https://api.hanzo.ai/v1/eval/metrics?range=24h" \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+```
+
+## Related courses & guides
+
+- [ENT 401 — Build Your AI Company](https://hanzo.university/build-your-ai-company) ([Interactive Lab](https://hanzo.app/learn/build-your-ai-company))
+- [ARC 105 — AI Architect](https://hanzo.university/ai-architect) ([Interactive Lab](https://hanzo.app/learn/ai-architect))
+- [Business Practical Guides (4 recipes)](/docs/guides/business) · [Hanzo for Startups](/docs/startups)

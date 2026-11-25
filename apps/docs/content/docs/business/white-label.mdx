@@ -1,0 +1,119 @@
+---
+title: White-label AI products
+description: "Build branded multi-tenant AI applications with isolated IAM organizations (/v1/iam/organizations), per-tenant Base datastores (/v1/base), KMS keys, and entitlements (/v1/entitlement)."
+icon: Layers
+product: business
+level: architect
+duration: 25 min
+prerequisites:
+  - A Hanzo secret key (`sk-...`)
+objectives:
+  - Provision isolated customer organizations via `/v1/iam/organizations`
+  - Enforce plan-based feature flags and quotas via `/v1/plan` and `/v1/entitlement`
+  - Keep customer data, secrets, and trained capabilities strictly partitioned by org
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - ENT 401
+  - CYB 401
+status: shipped
+---
+
+**Enterprise buyers demand strict tenant isolation, their own SSO, and zero cross-customer model leakage.** Hanzo's multi-tenancy model gives every customer organization its own IAM boundary, Base namespace, KMS prefix, billing ledger, and entitlement set out of the box.
+
+## Tenant isolation boundary
+
+| Layer | Isolation mechanism | Endpoint |
+|---|---|---|
+| **Identity & SSO** | Dedicated organization under Hanzo IAM (`hanzo.id`) with OIDC/SAML | `/v1/iam/organizations` |
+| **Application data** | Org-isolated Hanzo Base instance & GraphQL endpoint | `/v1/base/bases/{org}` |
+| **Secrets** | Per-org KMS encryption namespace | `/v1/kms/secrets` |
+| **Entitlements & quotas** | Plan subscriptions and resolved runtime entitlements | `/v1/plan`, `/v1/entitlement/orgs/{org}` |
+| **Intelligence** | Org-private Kai capabilities, Enso feedback ledgers, and Zen LoRA artifacts | `/v1/capabilities`, `/v1/train/artifacts` |
+
+## Provision & inspect tenant entitlements
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+# List organizations and plan catalog
+hanzo iam organizations list
+hanzo plan list
+
+# Inspect resolved entitlements for a tenant org
+hanzo entitlement orgs get acme-corp
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, IamApi, EntitlementApi, PlanApi } from 'hanzoai';
+
+const cfg = new Configuration({ accessToken: process.env.HANZO_API_KEY });
+const [plans, ents] = await Promise.all([
+  new PlanApi(cfg).getPlan(),
+  new EntitlementApi(cfg).getEntitlementOrgsByOrg('acme-corp'),
+]);
+console.log({ plans: plans.data, entitlements: ents.data });
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import PlanApi, EntitlementApi
+
+client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
+print(PlanApi(client).get_plan())
+print(EntitlementApi(client).get_entitlement_orgs_by_org("acme-corp"))
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+# 1. List available commercial plans
+curl -s https://api.hanzo.ai/v1/plan \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+# 2. Check resolved entitlements for a tenant org
+curl -s https://api.hanzo.ai/v1/entitlement/orgs/acme-corp \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+# 3. Inspect org's Base datastore binding
+curl -s https://api.hanzo.ai/v1/base/bases/acme-corp \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "entitlement",
+      "arguments": {"op": "get_entitlement", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## White-label checklist
+
+1. Never reuse a single shared `sk-` server key without passing verified tenant isolation boundaries.
+2. Separate `pk-` publishable browser keys from `sk-` server credentials ([API keys](/docs/api-keys)).
+3. Attach custom domains and TLS via `/v1/domain` and `/v1/ingress`.
+
+## Related courses & docs
+
+- [ENT 401 — Build Your AI Company](https://hanzo.university/build-your-ai-company) ([Interactive Lab](https://hanzo.app/learn/build-your-ai-company))
+- [Private Intelligence](/docs/business/private-intelligence) · [Multitenancy Concept](/docs/concepts/multitenancy)

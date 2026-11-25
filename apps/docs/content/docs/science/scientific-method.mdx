@@ -1,0 +1,118 @@
+---
+title: Computational scientific method
+description: "Turn engineering hunches into falsifiable AI hypotheses with pinned baselines, pre-registered acceptance thresholds, and cryptographic provenance."
+icon: Microscope
+product: science
+level: foundations
+duration: 20 min
+prerequisites:
+  - A Hanzo secret key (`sk-...`)
+objectives:
+  - Write a pre-registered hypothesis with explicit primary gain and zero-regression guardrails
+  - Pin baseline artifacts (commit, dataset SHA-256, model revision, calibration hash)
+  - Separate exploratory runs from decision-grade evidence
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - SCI 101
+  - AUTO 101
+status: shipped
+---
+
+**Most AI iteration fails because teams change the prompt, the model, and the eval set in the same commit.** Hanzo enforces five rules of computational experimentation across `/v1/eval`, `/v1/experiment`, and `/v1/benchmark`.
+
+## Five rules of a valid AI experiment
+
+1. **State the falsifiable hypothesis first**: Declare what changes (one independent variable), which metric must rise (`min_gain`), and which guardrails must not regress (`max_regression`).
+2. **Freeze the dataset**: Materialize a point-in-time snapshot (`POST /v1/dataset/{name}/materialize`) or pin an `/v1/eval/datasets/{name}` corpus so control and treatment evaluate the exact same items.
+3. **Require paired observations**: Compare two arms ONLY over `n_common` — the exact intersection of items both arms completed (`GET /v1/benchmark/compare`). Never compare one arm's easy subset against another arm's full run.
+4. **Report uncertainty**: Overlapping confidence intervals or under-powered samples (`n < min_questions`) resolve to `inconclusive`, never `improved`.
+5. **Bind authorization to evidence hashes**: Every verdict records the exact hashes of the baseline, candidate, dataset, and policy. Modifying evidence invalidates prior approvals automatically.
+
+## Inspect live published research runs
+
+Hanzo's public research record is open to verify without a key at `GET https://api.hanzo.ai/v1/research/runs`:
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo benchmark catalog
+hanzo eval datasets list
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, BenchmarkApi } from 'hanzoai';
+
+const bench = new BenchmarkApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data } = await bench.getBenchmarkCatalog();
+console.log(data);
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import BenchmarkApi
+
+client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
+print(BenchmarkApi(client).get_benchmark_catalog())
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+# Public research runs (no API key required)
+curl -s "https://api.hanzo.ai/v1/research/runs?limit=5" | jq '.'
+
+# Canonical benchmark catalog
+curl -s https://api.hanzo.ai/v1/benchmark/catalog \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "benchmark",
+      "arguments": {"op": "get_benchmark_catalog", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Pre-registration template
+
+Keep this schema in version control beside every prompt, router blend, or harness change:
+
+```json
+{
+  "hypothesis": "Switching support triage from generative JSON to Kai reduces p95 latency >= 70% at equal or higher macro F1.",
+  "baseline": { "model": "enso-pro", "commit": "a1b2c3d" },
+  "candidate": { "model": "kai", "capability": "billing-refund-router@v2" },
+  "dataset": "refund-policy-golden",
+  "min_questions": 50,
+  "acceptance": [
+    { "metric": "macro_f1", "direction": "higher", "min_gain": 0.0, "max_regression": 0.01 },
+    { "metric": "latency_p95_ms", "direction": "lower", "min_gain": 150, "max_regression": 0 }
+  ]
+}
+```
+
+## Next steps
+
+- [Studies & Controlled Experiments](/docs/science/studies-experiments)
+- [SCI 101 — Science & Discovery](https://hanzo.university/science-discovery) ([Interactive Lab](https://hanzo.app/learn/science-discovery))

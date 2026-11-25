@@ -1,0 +1,15 @@
+{
+  "title": "Science",
+  "description": "Golden evaluation suites, Kai judges, exact-McNemar paired benchmarks, controlled A/B rollouts, dataset lineage, drift tracking, and research autopilot.",
+  "icon": "FlaskConical",
+  "pages": [
+    "golden-eval-datasets",
+    "reusable-kai-judges",
+    "paired-mcnemar-benchmark",
+    "controlled-ab-experiment",
+    "dataset-lineage-snapshots",
+    "drift-detection-history",
+    "automated-research-loop",
+    "recursive-harness-improvement"
+  ]
+}

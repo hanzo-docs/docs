@@ -1,0 +1,122 @@
+---
+title: "Launch a managed LoRA fine-tuning job on Zen"
+description: "Upload a SHA-256 dataset to /v1/train/artifacts and launch a managed LoRA fine-tuning job on Zen 6 via POST /v1/train/jobs."
+product: zen
+level: specialist
+duration: 30 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`)"
+  - "A deduplicated JSONL training file"
+objectives:
+  - "Query trainable base models and device-second pricing on GET /v1/train/models"
+  - "Register a content-addressed dataset via POST /v1/train/artifacts"
+  - "Create and monitor a LoRA job via POST /v1/train/jobs and /metrics"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - ZEN 301
+status: shipped
+---
+
+**Fine-tune open-weight Zen models with content-addressed provenance and metered GPU billing.** Every dataset and resulting LoRA adapter is verified by SHA-256.
+
+## Architecture & contract
+
+Register input bytes on `/v1/train/artifacts`, launch a LoRA job on `/v1/train/jobs` targeting managed GPUs or your registered BYO fleet, stream status via long-polled `/events`, and inspect validation series on `/metrics`.
+
+**Primary endpoint:** `POST /v1/train/jobs` · **Status:** `shipped` · **Level:** `specialist`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo train models
+hanzo train jobs create --data '{
+  "base_model": "zen6-flash",
+  "adaptation": "lora",
+  "dataset_sha256": "'"$DATASET_SHA256"'",
+  "hyperparameters": {"epochs": 3, "learning_rate": 2e-4, "lora_rank": 16}
+}'
+hanzo train jobs list
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, TrainApi } from 'hanzoai';
+
+const train = new TrainApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data: job } = await train.postTrainJobs({
+  base_model: 'zen6-flash',
+  adaptation: 'lora',
+  dataset_sha256: process.env.DATASET_SHA256!,
+  hyperparameters: { epochs: 3, learning_rate: 2e-4, lora_rank: 16 },
+});
+console.log('Submitted job:', job);
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import TrainApi
+
+api = TrainApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+job = api.post_train_jobs({
+    "base_model": "zen6-flash",
+    "adaptation": "lora",
+    "dataset_sha256": os.environ["DATASET_SHA256"],
+    "hyperparameters": {"epochs": 3, "learning_rate": 2e-4, "lora_rank": 16},
+})
+print(job)
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -s https://api.hanzo.ai/v1/train/models \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+curl -s -X POST https://api.hanzo.ai/v1/train/jobs \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d "{"base_model":"zen6-flash","adaptation":"lora","dataset_sha256":"${DATASET_SHA256}","hyperparameters":{"epochs":3,"learning_rate":0.0002,"lora_rank":16}}" | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "train",
+      "arguments": {"op": "get_train_jobs", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Stream `GET /v1/train/jobs/{id}/metrics` and confirm validation loss declines without diverging from training loss.
+
+## Production guardrails
+
+- Scan corpora with `POST /v1/security/scans` before uploading to `/v1/train/artifacts` so secrets never enter weights.
+
+## Next steps & Hanzo University
+
+- [Zen Fine-Tuning Guide](/docs/training/zen-fine-tuning) · [Deploy Private Checkpoint](/docs/guides/zen/deploy-private-checkpoint)
+
+- **[ZEN 301 — Zen Native Training](https://hanzo.university/zen-native-training)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/zen-native-training))

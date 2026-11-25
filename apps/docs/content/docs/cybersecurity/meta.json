@@ -1,0 +1,13 @@
+{
+  "title": "Cybersecurity",
+  "description": "AI threat modeling, OpenCyber agentic security, automated assessments, sandboxed vulnerability validation, autonomous remediation, and sovereign zero-trust AI.",
+  "icon": "ShieldCheck",
+  "pages": [
+    "threat-modeling",
+    "opencyber",
+    "assessments",
+    "vulnerability-validation",
+    "remediation",
+    "sovereign-zero-trust"
+  ]
+}

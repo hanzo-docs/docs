@@ -1,0 +1,153 @@
+---
+title: Enso routing optimization
+description: "Train per-org Enso learned routing policies with outcome feedback (POST /v1/ai/feedback), custom escalation blends (POST /v1/benchmark/presets), and hard cost/latency ceilings."
+icon: Route
+product: enso
+level: specialist
+duration: 25 min
+prerequisites:
+  - A Hanzo secret key (`sk-...`)
+  - Familiarity with [Enso model tiers](/docs/models/enso)
+objectives:
+  - Bound Enso routing per request with `X-Max-Cost` and `X-Max-Latency-Ms`
+  - Feed real user and CI outcomes into `POST /v1/ai/feedback`
+  - Define custom org router blends (`enso-<name>`) via `POST /v1/benchmark/presets`
+  - Evaluate candidate routing policies with paired benchmarks before promotion
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - ENS 201
+  - ENS 301
+status: shipped
+---
+
+**Enso optimizes which generative model answers each request — without sending prompt text into shared training sets.** Every routing call runs in microseconds on CPU, honors your hard cost and latency headers, and learns from your org's own outcome signals.
+
+## 1. Bound every call with cost and latency ceilings
+
+Send `model: "enso-auto"` (or `model: "auto"`) with `X-Max-Cost` (USD per 1,000 tokens) and `X-Max-Latency-Ms` (milliseconds). Read `X-Routed-Model` and `X-Hanzo-Served` from the response headers alongside `id` (`chatcmpl-...`).
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo chat completions --data '{
+  "model": "enso-auto",
+  "reasoning_effort": "auto",
+  "messages": [{"role": "user", "content": "Refactor this SQL migration to be idempotent."}]
+}'
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, AiApi } from 'hanzoai';
+
+const ai = new AiApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const { data } = await ai.postChatCompletions({
+  model: 'enso-auto',
+  messages: [{ role: 'user', content: 'Refactor this SQL migration to be idempotent.' }],
+});
+console.log(data);
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import AiApi
+
+client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
+resp = AiApi(client).post_chat_completions(
+    model="enso-auto",
+    messages=[{"role": "user", "content": "Refactor this SQL migration to be idempotent."}],
+)
+print(resp)
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -si https://api.hanzo.ai/v1/chat/completions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -H "X-Max-Cost: 0.005" \
+  -H "X-Max-Latency-Ms: 4000" \
+  -d '{
+    "model": "enso-auto",
+    "messages": [{"role": "user", "content": "Refactor this SQL migration to be idempotent."}]
+  }'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "benchmark",
+      "arguments": {"op": "get_benchmark_presets", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## 2. Teach the learned router with outcome rewards
+
+Attach an objective outcome to every routed `request_id` via `POST /v1/ai/feedback`. Enso stores only anonymized request features and the scalar reward — **never prompt or completion text** — scoped strictly to your org.
+
+| `signal` | Reward weight | When to emit |
+|---|---|---|
+| `accept`, `up` | `1.0` | User accepted output, PR merged, or tests passed on first try |
+| `regenerate` | `0.25` | Output needed a retry |
+| `down`, `switch`, `abandon`, `revert` | `0.0` | User switched models, reverted patch, or tests failed |
+| `rating` (`1`, `2`, `3`) | `0.0`, `0.5`, `1.0` | Explicit graded rubric outcome |
+| `dismiss` | ignored | No signal recorded |
+
+```bash
+curl -X POST https://api.hanzo.ai/v1/ai/feedback \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"request_id": "chatcmpl-01J...", "signal": "accept"}'
+```
+
+Each retraining cycle fits a candidate bilinear policy over your org's reward ledger and promotes it **only if it beats the incumbent on held-out reward**.
+
+## 3. Compose custom org router blends (`enso-<name>`)
+
+When you need explicit arm ordering and bounded fan-out width, inspect existing blends and store an org preset via `POST /v1/benchmark/presets`:
+
+```bash
+# Inspect reference blends
+curl https://api.hanzo.ai/v1/benchmark/presets \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+# Store an org-private blend resolved as enso-code-fast
+curl -X POST https://api.hanzo.ai/v1/benchmark/presets \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "code-fast",
+    "arms": ["zen6-flash", "zen6-coder", "enso-pro"],
+    "panel_width": 2
+  }'
+```
+
+## 4. Validate routing changes with paired benchmarks
+
+Before changing default routing strategy (`GET /v1/ai/org/settings`), run a controlled A/B experiment (`POST /v1/experiment`) or compare two arms on paired items (`GET /v1/benchmark/compare?benchmark=...&a=enso-pro&b=zen6-coder`) so cost savings never hide accuracy drops.
+
+## Related courses & guides
+
+- [ENS 201 — Enso Adaptive Intelligence](https://hanzo.university/enso-adaptive-intelligence) ([Interactive Lab](https://hanzo.app/learn/enso-adaptive-intelligence))
+- [ENS 301 — Training Enso Orchestrators](https://hanzo.university/enso-training-orchestrators) ([Interactive Lab](https://hanzo.app/learn/enso-training-orchestrators))
+- [Enso Guides (6 recipes)](/docs/guides/enso) · [Enso Model Reference](/docs/models/enso)

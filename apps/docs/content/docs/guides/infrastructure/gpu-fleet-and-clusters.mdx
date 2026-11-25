@@ -1,0 +1,113 @@
+---
+title: "Manage GPU clusters and BYO compute fleets"
+description: "Inspect GPU capacity, scale Kubernetes compute pools, and monitor BYO training fleet workers on /v1/compute/*."
+product: infrastructure
+level: architect
+duration: 20 min
+prerequisites:
+  - "A Hanzo secret key (`sk-...`)"
+objectives:
+  - "Query available GPU inventory and alerts on /v1/compute/gpus"
+  - "Inspect managed clusters and node pools on /v1/compute/clusters"
+  - "Monitor registered BYO fleet workers and jobs on /v1/compute/fleet"
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - ML 401
+  - SYS 103
+status: shipped
+---
+
+**Run training and inference across Hanzo managed GPUs or your own bare-metal fleet through one compute API.** `/v1/compute` unifies GPU inventory, cluster pools, machines, and BYO fleet workers.
+
+## Architecture & contract
+
+Managed GPU clusters expose pool scaling (`POST /v1/compute/clusters/{clusterId}/pools/{poolId}/scale`), while your own on-premise GPUs register as fleet workers (`/v1/compute/fleet/workers`) capable of claiming `/v1/train/jobs`.
+
+**Primary endpoint:** `GET /v1/compute/gpus` · **Status:** `shipped` · **Level:** `architect`
+
+## Run it across all four surfaces
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+hanzo compute gpus list
+hanzo compute clusters list
+hanzo compute fleet workers
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, ComputeApi } from 'hanzoai';
+
+const compute = new ComputeApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const [gpus, clusters, fleet] = await Promise.all([
+  compute.getComputeGpus(),
+  compute.getComputeClusters(),
+  compute.getComputeFleetWorkers(),
+]);
+console.log({ gpus: gpus.data, clusters: clusters.data, fleet: fleet.data });
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import ComputeApi
+
+api = ComputeApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+print(api.get_compute_gpus())
+print(api.get_compute_clusters())
+print(api.get_compute_fleet_workers())
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+curl -s https://api.hanzo.ai/v1/compute/gpus \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+curl -s https://api.hanzo.ai/v1/compute/clusters \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+curl -s https://api.hanzo.ai/v1/compute/fleet/workers \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -s -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "compute",
+      "arguments": {"op": "get_compute_gpus", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Verify the outcome
+
+- Check `GET /v1/compute/gpus/alerts` returns zero thermal or ECC hardware alerts before launching multi-hour training jobs.
+
+## Production guardrails
+
+- Configure idle scale-to-zero on dev GPU pools and monitor device-second rates on `GET /v1/train/models`.
+
+## Next steps & Hanzo University
+
+- [The Network](/docs/network) · [Zen Fine-Tuning](/docs/training/zen-fine-tuning)
+
+- **[ML 401 — ML Systems](https://hanzo.university/ml-systems)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/ml-systems))
+- **[SYS 103 — Systems Engineering](https://hanzo.university/systems-engineering)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/systems-engineering))

@@ -1,0 +1,49 @@
+---
+title: "Kai \u2014 Decision Intelligence"
+description: "Calibrated choice, noul, and score decisions at $0.021/1M input tokens (0 output tokens), Decision Programs, and CPU org capability training."
+icon: Scale
+product: kai
+level: foundations
+duration: 10 min
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - CYB 101
+  - ENG 100
+  - KAI 201
+  - KAI 301
+  - PRA 104
+status: shipped
+---
+
+**Master Hanzo Kai (`POST /v1/decisions` and `POST /v1/capabilities/{name}/train`)** — calibrated probability distributions over bounded questions with `0` output tokens, `$0.021` per 1M input tokens (50% cheaper than TypeSafe Jev), 51-language support, Decision Programs, and CPU org capability training.
+
+> Migrating from TypeSafe Jev? See [Migrate from Jev](/docs/guides/migrate/jev) or jump straight into [KAI 301 Lab 01: Teach Kai your business](/docs/training/kai-capabilities).
+
+## All 8 Kai guides
+
+Eight runnable four-surface guides covering first decisions through custom CPU training and CI rollback:
+
+| Guide | Primary Endpoint | Level | Duration | Course | Status |
+| --- | --- | --- | --- | --- | --- |
+| [Make your first calibrated Kai decision](/docs/guides/kai/first-decision) | `POST /v1/decisions` | foundations | 10 min | [KAI 201](https://hanzo.university/kai-decision-intelligence) | `shipped` |
+| [KAI 301 Lab 01: Teach Kai your business](/docs/guides/kai/train-business-capability) | `POST /v1/capabilities/{name}/train` | specialist | 45 min | [KAI 301](https://hanzo.university/kai-training-decision-models), [KAI 201](https://hanzo.university/kai-decision-intelligence) | `shipped` |
+| [Calibrate confidence & abstention thresholds](/docs/guides/kai/abstention-thresholds) | `POST /v1/decisions` | practitioner | 15 min | [KAI 201](https://hanzo.university/kai-decision-intelligence) | `shipped` |
+| [Author and run Decision Programs](/docs/guides/kai/decision-programs) | `POST /v1/decisions` | practitioner | 20 min | [KAI 201](https://hanzo.university/kai-decision-intelligence), [CYB 101](https://hanzo.university/ai-security-fundamentals) | `shipped` |
+| [Route support tickets at $0.021 per 1M tokens](/docs/guides/kai/support-triage) | `POST /v1/decisions` | practitioner | 15 min | [KAI 201](https://hanzo.university/kai-decision-intelligence), [PRA 104](https://hanzo.university/ai-practitioner) | `shipped` |
+| [Classify 51 languages without translation](/docs/guides/kai/multilingual-classification) | `POST /v1/decisions` | practitioner | 15 min | [KAI 201](https://hanzo.university/kai-decision-intelligence) | `shipped` |
+| [Stop autonomous coding loops deterministically](/docs/guides/kai/agent-completion-gate) | `POST /v1/decisions` | specialist | 20 min | [KAI 201](https://hanzo.university/kai-decision-intelligence), [ENG 100](https://hanzo.university/agentic-coding) | `shipped` |
+| [Gate Kai capability upgrades & automate rollback](/docs/guides/kai/capability-rollback-ci) | `POST /v1/capabilities/{name}/publish` | specialist | 20 min | [KAI 301](https://hanzo.university/kai-training-decision-models) | `shipped` |
+
+## Related documentation & courses
+
+- [Decisions API Reference](/docs/decisions) · [Kai Model Card & Benchmarks](/docs/models/kai) · [Teach Kai Your Business (KAI 301 Lab 01)](/docs/training/kai-capabilities)
+
+- **[CYB 101 — AI Security Fundamentals](https://hanzo.university/ai-security-fundamentals)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/ai-security-fundamentals))
+- **[ENG 100 — Agentic Coding](https://hanzo.university/agentic-coding)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/agentic-coding))
+- **[KAI 201 — Kai Decision Intelligence](https://hanzo.university/kai-decision-intelligence)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/kai-decision-intelligence))
+- **[KAI 301 — Training Kai Decision Models](https://hanzo.university/kai-training-decision-models)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/kai-training-decision-models))
+- **[PRA 104 — AI Practitioner](https://hanzo.university/ai-practitioner)** ([Launch interactive lab on hanzo.app/learn](https://hanzo.app/learn/ai-practitioner))

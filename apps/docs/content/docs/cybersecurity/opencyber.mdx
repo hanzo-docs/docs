@@ -1,0 +1,129 @@
+---
+title: OpenCyber agentic security
+description: "Compose OpenCyber defense pipelines on Hanzo: secret-detection scans (/v1/security), container SBOM verification (/v1/sbom), calibrated Kai triage, and microVM sandboxes."
+icon: Shield
+product: cyber
+level: practitioner
+duration: 25 min
+prerequisites:
+  - A Hanzo secret key (`sk-...`)
+  - Familiarity with [Threat modeling](/docs/cybersecurity/threat-modeling)
+objectives:
+  - Combine `/v1/security/scans`, `/v1/sbom/{ref}`, `/v1/risk/score`, and `/v1/sandbox` into an automated security gate
+  - Separate detection, deterministic reproduction, and remediation into isolated permissions
+  - Audit rule catalogs and scan histories across repositories
+surfaces:
+  - cli
+  - sdk
+  - http
+  - mcp
+related_courses:
+  - CYB 201
+  - CYB 101
+status: shipped
+---
+
+**OpenCyber is Hanzo's composable security architecture for defending code, containers, and autonomous agents continuously.** Instead of a monolithic black-box scanner that dumps unverified alerts, OpenCyber wires four narrow capabilities together:
+
+```mermaid
+flowchart LR
+    Code["Repo / PR / Container"] --> Scan["1. Detect<br/>POST /v1/security/scans<br/>GET /v1/sbom/{ref}"]
+    Scan --> Triage["2. Triage<br/>Kai /v1/decisions + /v1/risk/score"]
+    Triage --> Repro["3. Validate<br/>Isolated /v1/sandbox reproducer"]
+    Repro --> Fix["4. Remediate<br/>hanzo dev draft patch + regression test"]
+    Fix --> Gate["5. Approve<br/>AuthZ + human sign-off"]
+```
+
+## Run an OpenCyber detection & SBOM check
+
+<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+# Inspect active secret-detection rule catalog
+hanzo security rules
+
+# Submit a batch of files for secret & credential scanning
+hanzo security scans create --data '{
+  "files": [
+    {"path": "config/deploy.env", "content": "DATABASE_URL=postgres://app@db.internal/prod"}
+  ]
+}'
+
+# Inspect findings across the org
+hanzo security findings list
+```
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python']}>
+<Tab value="TypeScript">
+```ts
+import { Configuration, SecurityApi } from 'hanzoai';
+
+const sec = new SecurityApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
+const rules = await sec.getSecurityRules();
+const scan = await sec.postSecurityScans({
+  files: [{ path: 'config/deploy.env', content: 'DATABASE_URL=postgres://app@db.internal/prod' }],
+});
+console.log({ ruleCount: rules.data, scan: scan.data });
+```
+</Tab>
+<Tab value="Python">
+```python
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import SecurityApi
+
+api = SecurityApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+print(api.get_security_rules())
+print(api.post_security_scans({
+    "files": [{"path": "config/deploy.env", "content": "DATABASE_URL=postgres://app@db.internal/prod"}]
+}))
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+# 1. List active secret-detection rules
+curl -s https://api.hanzo.ai/v1/security/rules \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+
+# 2. Scan candidate files
+curl -s -X POST https://api.hanzo.ai/v1/security/scans \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"files":[{"path":"config/deploy.env","content":"DATABASE_URL=postgres://app@db.internal/prod"}]}' | jq '.'
+
+# 3. Inspect container image SBOM by digest or tag
+curl -s "https://api.hanzo.ai/v1/sbom/ghcr.io/hanzoai/cloud:latest" \
+  -H "Authorization: Bearer $HANZO_API_KEY" | jq '.'
+```
+</Tab>
+<Tab value="MCP">
+```bash
+curl -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "security",
+      "arguments": {"op": "get_security_findings", "input": {}}
+    }
+  }'
+```
+</Tab>
+</Tabs>
+
+## Separation of duties inside OpenCyber
+
+- **Scanner identity** holds read-only access to repositories, digests, and `/v1/security/scans`.
+- **Validator identity** runs strictly inside an ephemeral `/v1/sandbox` with no production secrets and no egress to internal networks.
+- **Remediation identity** opens draft PRs only; merge and deployment stay under branch protection and human approval.
+
+## Related courses & docs
+
+- [CYB 201 — Agentic Cybersecurity](https://hanzo.university/agentic-cybersecurity) ([Interactive Lab](https://hanzo.app/learn/agentic-cybersecurity))
+- [Security Assessments](/docs/cybersecurity/assessments) · [Vulnerability Validation](/docs/cybersecurity/vulnerability-validation)
