@@ -56,3 +56,4 @@ CLAUDE.md
 apps/*/AGENTS.md
 .code/
 .claude/worktrees/
+examples/marble-cms/.env
