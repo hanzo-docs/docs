@@ -241,9 +241,11 @@
 /docs/openapi/tools        /docs/openapi/tool         301
 /docs/openapi/flags        /docs/openapi/flag         301
 /docs/openapi/functions    /docs/openapi/function     301
-/docs/openapi/channels     /docs/openapi/channel      301
+/docs/openapi/channel      /docs/openapi/social       301
+/docs/openapi/channels     /docs/openapi/social       301
 /docs/openapi/integrations /docs/guides/integrations  301
 /docs/openapi/projects     /docs/openapi/project      301
+/docs/openapi/projects/get-projects-tags /docs/openapi/project 301
 # visor is retired; compute is the plane it named.
 /docs/openapi/visor        /docs/openapi/compute      301
 
@@ -258,9 +260,10 @@
 # Marketing & agent strip deep links (hanzo.ai -> docs.hanzo.ai)
 /docs/design               /docs/apps/design          301
 /docs/cli/agents           /docs/cli/agent            301
-/docs/integrations/slack   /docs/openapi/channel      301
+/docs/integrations/slack   https://docs.hanzo.bot/docs/channels/slack  301
 
 # Hanzo Bot documentation deep links without /docs prefix
+/channels/channel-routing  https://docs.hanzo.bot/docs/concepts/channel-routing 301
 /channels/line             https://docs.hanzo.bot/docs/channels/line            301
 /channels/mattermost       https://docs.hanzo.bot/docs/channels/mattermost      301
 /channels/whatsapp         https://docs.hanzo.bot/docs/channels/whatsapp        301
