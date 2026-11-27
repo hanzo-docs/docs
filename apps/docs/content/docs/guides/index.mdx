@@ -1,49 +1,59 @@
 ---
-title: Guides
-description: "One task per page, each written four ways: a CLI command, an SDK call, an HTTP request and an MCP tool."
+title: Guides & Tutorials
+description: "End-to-end architectural guides across App, CLI (hanzo start / up / dev), TypeScript/Python/Go/Rust SDKs, /v1 HTTP, and HIP-0300 MCP."
 icon: Rocket
 ---
 
-One key authenticates every request. `sk-` keys resolve to a user and belong on a server; `pk-` keys resolve only to an organisation and are safe in a browser.
+One key authenticates every request across our cloud (`https://api.hanzo.ai/v1`) and your own self-hosted OSS Cloud (`hanzo up`). `sk-` keys resolve to a user or service and belong on a server; `pk-` keys resolve only to an organisation and are safe in a browser.
 
 ```bash
 export HANZO_API_KEY=sk-...     # platform.hanzo.ai/api-keys
-hanzo auth login                # or sign in through Hanzo IAM
+hanzo auth login                # or sign in through Hanzo IAM (hanzo.id)
 ```
 
-## Four surfaces, one contract
+## Five Surfaces, One `/v1` Contract
 
-The CLI, the SDKs, the HTTP API and the MCP tools are generated from the same OpenAPI document. A command, a method, a path and a tool that do the same thing are the same operation under four names, so what you learn on one surface holds on the others.
+Every capability in Hanzo OSS Cloud is generated from one OpenAPI specification, so what you learn on one surface holds across all five:
 
-| Surface | Address |
+| Surface | How You Reach It |
 | --- | --- |
-| CLI | `hanzo <capability> <verb>` |
-| SDK | a method per operation, in your language |
-| HTTP | `https://api.hanzo.ai/v1/<capability>` |
-| MCP | one tool per capability, dispatched by operation |
+| **App & Desktop** | [hanzo.app](https://hanzo.app), [platform.hanzo.ai](https://platform.hanzo.ai), and [Hanzo Desktop](/docs/apps/desktop) |
+| **CLI & Local Cloud** | `hanzo start`, `hanzo up`, `hanzo dev`, and `hanzo <capability> <verb>` |
+| **SDKs** | Typed clients in TypeScript, Python (`hanzoai>=8`), Go (`/v8`), Rust, C#, C++, Swift & Kotlin |
+| **HTTP `/v1/*`** | `https://api.hanzo.ai/v1/<capability>` (or `http://localhost:8000/v1/<capability>`) |
+| **HIP-0300 MCP** | 19 local operator tools (`npx -y @hanzo/mcp serve`) + hosted `POST /v1/mcp` |
 
-## Core four-surface tasks
+## Core OSS Cloud & Stack Guides
 
-Each page below does one core platform task, generated directly from the OpenAPI contract on all four surfaces.
+Start here to boot your local `k3s` runtime, ship a multi-tenant AI application, route 500+ models, run microVM agent sandboxes, wire MCP tools, index hybrid RAG stores, meter x402 payments, and hack on `hanzoai/*`:
 
 <Cards>
-  <Card title="Verify Your API Key" href="/docs/guides/hello">
-    Confirm gateway reachability and verify that your API key authenticates.
+  <Card title="Boot Local OSS Cloud & Warm k3s (hanzo up)" href="/docs/guides/local-cloud">
+    Master the 3-layer lifecycle (hanzo start, hanzo up, hanzo dev), hanzod controller, and isolated multi-project namespaces.
   </Card>
-  <Card title="Chat Completions" href="/docs/guides/chat">
-    Send a prompt to Enso and receive a completion across 500+ models.
+  <Card title="Deploy a Full-Stack AI App to Edge & Zero-Trust K8s" href="/docs/guides/hello">
+    Verify API keys, wire /v1/iam OIDC, /v1/kms secrets, and /v1/pubsub events, and ship from hanzo up to production.
   </Card>
-  <Card title="Billing & Usage" href="/docs/guides/money">
-    Read your credit balance and query itemized usage over a date window.
+  <Card title="Route 500+ Models & Local Inference (Enso, Zen & Engine)" href="/docs/guides/chat">
+    Unified /v1/chat/completions with Enso adaptive routing, Zen 6 open weights, cost/latency caps, and offline hanzo engine.
   </Card>
-  <Card title="Key-Value Storage" href="/docs/guides/store">
-    Provision a managed key-value store, inspect it, and tear it down.
+  <Card title="Build Autonomous Agents, MicroVM Sandboxes & Swarms" href="/docs/guides/agent">
+    Stateful agents on /v1/agent, hardware-isolated /v1/sandbox microVMs, VFS snapshots, and multi-agent A2A orchestration.
   </Card>
-  <Card title="Create & Run an Agent" href="/docs/guides/agent">
-    Create an autonomous agent, trigger a run, and poll its run history.
+  <Card title="Wire HIP-0300 MCP, Skills & Custom Tool Pipelines" href="/docs/guides/tools">
+    Attach the 19-tool hanzo-mcp server, load 1,477+ progressive skills from hanzoskills.com, and invoke hosted /v1/mcp tools.
   </Card>
-  <Card title="Discover MCP Tools" href="/docs/guides/tools">
-    List every MCP tool and capability available to your API key.
+  <Card title="Hybrid RAG: Vector Search, SQL, KV & Realtime Base" href="/docs/guides/store">
+    Embed with zen-embedding-2, run hybrid BM25 + vector search, join relational state in Hanzo Base, cache in KV, and store in S3.
+  </Card>
+  <Card title="Agentic Commerce: Subscriptions, AI Credits & x402 Payments" href="/docs/guides/money">
+    Meter per-token spend, enforce org budgets, run SaaS subscriptions on Hanzo Commerce, and settle x402 & USDC micropayments.
+  </Card>
+  <Card title="Calibrated Decisions & Routing with Kai" href="/docs/guides/kai">
+    Replace brittle LLM classifiers with calibrated choice, boolean, and score decisions at $0.021/1M input tokens (0 output tokens).
+  </Card>
+  <Card title="Self-Host & Hack on the Complete OSS Stack (hanzoai/*)" href="/docs/guides/oss-stack">
+    Architectural map of `hanzoai/{cli,cloud,engine,dev-v1,gen,vm,visor,vfs,mcp,base,commerce,iam,kms}` and the canonical `Makefile` contract.
   </Card>
 </Cards>
 

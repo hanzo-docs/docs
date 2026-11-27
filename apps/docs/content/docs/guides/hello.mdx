@@ -1,206 +1,189 @@
 ---
-title: "Verify Your API Key"
-description: "Confirm gateway reachability and verify that your API key authenticates."
+title: "Deploy a Full-Stack AI App to Edge & Zero-Trust K8s"
+description: "Verify gateway credentials, wire /v1/iam OIDC auth, /v1/kms secrets, /v1/function compute, and /v1/pubsub events, and ship from hanzo up to production."
+icon: Rocket
 ---
 
-**Confirm gateway reachability and verify that your API key authenticates.**
+Build, verify, and ship a production multi-tenant AI application end-to-end: confirm gateway reachability and key scopes, load encrypted secrets from **Hanzo KMS**, publish durable **JetStream PubSub** events, and deploy static + serverless workloads to **Hanzo Sites & Zero-Trust K8s**.
 
-> Start with an unauthenticated `GET /v1/models` call to confirm connectivity, then call `GET /v1/account/keys` with your `HANZO_API_KEY` to verify your credentials.
+## 1. Verify Gateway Reachability & API Key Scope
 
-## Returns the list of available models from the routing table.
+`GET /v1/models` is public by design (confirming network reachability without credentials), while `GET /v1/account/keys` enforces strict bearer authentication and returns your key's tenant scope (`sk-` server secret keys vs `pk-` browser publishable keys).
 
-`GET /v1/models` · [reference →](/docs/openapi/ai)
-
-Returns the list of available models from the routing table.
-
-PUBLIC BY DESIGN, AND IT DOES NOT AUTHENTICATE — that is the whole contract, so it
-is stated here rather than left to be inferred. The catalogue is the same for
-everyone (listAvailableModels takes no principal), docs.hanzo.ai fetches it from
-the browser, and every policy layer around it says so: the authz filter lists
-"models" as public, filter_balance does not gate it, the rate limiter excludes it,
-and cloud's spend.Reachable carries /v1/models/ as "the model catalog the shell
-reads for discovery".
-
-SO THE Authorization HEADER IS NOT AN ADMISSION CHECK HERE. It is read for ONE
-thing — annotating gated SKUs with the caller's own access standing — and
-annotation degrades to nothing when there is no verified principal.
-
-A credential that is presented is verified, never merely shape-checked: a caller
-using /v1/models to ask "is my key working?" gets an honest answer, because a key
-that does not verify annotates nothing rather than reading as accepted.
-
-?id= narrows the listing to the models a page names, comma-separated and at most
-100, in the listing's order; an id nothing lists is absent. Without it the
-listing is whole, which is what every OpenAI-compatible caller reads.
-
-<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tabs items={['CLI', 'App', 'SDK', 'HTTP', 'MCP']}>
 <Tab value="CLI">
 ```bash
+# Authenticate via Hanzo IAM (hanzo.id) and verify active keys
+hanzo auth login
 hanzo models list
-```
-</Tab>
-<Tab value="SDK">
-<Tabs items={['.ts', '.py', '.go', '.rs', '.java']}>
-<Tab value=".ts">
-```ts
-import { Configuration, AiApi } from 'hanzoai';
-
-const api = new AiApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
-const { data } = await api.getModels();
-```
-</Tab>
-<Tab value=".py">
-```python
-from hanzoai.cloud import ApiClient, Configuration
-from hanzoai.cloud.api import AiApi
-
-client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
-result = AiApi(client).get_models()
-```
-</Tab>
-<Tab value=".go">
-```go
-cfg := hanzoai.NewConfiguration()
-cfg.AddDefaultHeader("Authorization", "Bearer "+os.Getenv("HANZO_API_KEY"))
-client := hanzoai.NewAPIClient(cfg)
-
-resp, _, err := client.AiAPI.GetModels(context.Background()).Execute()
-if err != nil {
-	return err
-}
-```
-</Tab>
-<Tab value=".rs">
-```rust
-use hanzo_client::apis::{configuration::Configuration, ai_api};
-
-let mut cfg = Configuration::new();
-cfg.bearer_access_token = std::env::var("HANZO_API_KEY").ok();
-
-let result = ai_api::get_models(&cfg, Default::default()).await?;
-```
-</Tab>
-<Tab value=".java">
-```java
-import ai.hanzo.cloud.ApiClient;
-import ai.hanzo.cloud.api.AiApi;
-
-ApiClient client = new ApiClient();
-client.setBearerToken(System.getenv("HANZO_API_KEY"));
-
-var result = new AiApi(client).getModels();
-```
-</Tab>
-</Tabs>
-</Tab>
-<Tab value="HTTP">
-```bash
-curl https://api.hanzo.ai/v1/models \
-  -H "Authorization: Bearer $HANZO_API_KEY"
-```
-</Tab>
-<Tab value="MCP">
-MCP declares no tool for **ai** — `tools/list` on `https://api.hanzo.ai/v1/mcp` names the products it does reach. Use HTTP or an SDK.
-</Tab>
-</Tabs>
-
-## Returns the API keys the caller may see, newest first: their own, or every key the org holds when the caller administers it.
-
-`GET /v1/account/keys` · [reference →](/docs/openapi/account)
-
-Returns the API keys the caller may see, newest first: their own, or
-every key the org holds when the caller administers it. Each is its own
-credential with its own name, prefix, status, expiry and limit. Revoked keys
-stay listed. No secret material comes back; a publishable key, which is public
-by construction, carries its full value.
-
-<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
-<Tab value="CLI">
-```bash
 hanzo account keys list
 ```
 </Tab>
+<Tab value="App">
+1. Sign in at [hanzo.app](https://hanzo.app) or [platform.hanzo.ai/api-keys](https://platform.hanzo.ai/api-keys).
+2. Mint a server `sk-...` key for backend compute and a `pk-...` key for browser telemetry.
+3. Describe your full-stack app in **Hanzo App** or click **Deploy with Hanzo** on any GitHub/Forge repo.
+</Tab>
 <Tab value="SDK">
-<Tabs items={['.ts', '.py', '.go', '.rs', '.java']}>
-<Tab value=".ts">
+<Tabs items={['TypeScript', 'Python', 'Go', 'Rust']}>
+<Tab value="TypeScript">
 ```ts
-import { Configuration, AccountApi } from 'hanzoai';
+// npm i hanzoai
+import { AccountApi, AiApi, Configuration } from 'hanzoai';
 
-const api = new AccountApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
-const { data } = await api.getAccountKeys();
+const cfg = new Configuration({ accessToken: process.env.HANZO_API_KEY });
+const { data: catalog } = await new AiApi(cfg).getModels();
+const { data: keys } = await new AccountApi(cfg).getAccountKeys();
+
+console.log(`Gateway live (${catalog.data?.length} models), verified keys:`, keys);
 ```
 </Tab>
-<Tab value=".py">
+<Tab value="Python">
 ```python
+# pip install "hanzoai>=8"
+import os
 from hanzoai.cloud import ApiClient, Configuration
-from hanzoai.cloud.api import AccountApi
+from hanzoai.cloud.api import AccountApi, AiApi
 
 client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
-result = AccountApi(client).get_account_keys()
+models = AiApi(client).get_models()
+keys = AccountApi(client).get_account_keys()
+print(f"Verified {len(models.data or [])} models; keys active: {bool(keys)}")
 ```
 </Tab>
-<Tab value=".go">
+<Tab value="Go">
 ```go
+// go get github.com/hanzoai/go-sdk/v8
 cfg := hanzoai.NewConfiguration()
 cfg.AddDefaultHeader("Authorization", "Bearer "+os.Getenv("HANZO_API_KEY"))
 client := hanzoai.NewAPIClient(cfg)
 
-resp, _, err := client.AccountAPI.GetAccountKeys(context.Background()).Execute()
-if err != nil {
-	return err
-}
+_, _, err := client.AiAPI.GetModels(ctx).Execute()
+keys, _, err := client.AccountAPI.GetAccountKeys(ctx).Execute()
 ```
 </Tab>
-<Tab value=".rs">
+<Tab value="Rust">
 ```rust
-use hanzo_client::apis::{configuration::Configuration, account_api};
+// cargo add hanzo-client
+use hanzo_client::apis::{account_api, ai_api, configuration::Configuration};
 
 let mut cfg = Configuration::new();
 cfg.bearer_access_token = std::env::var("HANZO_API_KEY").ok();
 
-let result = account_api::get_account_keys(&cfg, Default::default()).await?;
-```
-</Tab>
-<Tab value=".java">
-```java
-import ai.hanzo.cloud.ApiClient;
-import ai.hanzo.cloud.api.AccountApi;
-
-ApiClient client = new ApiClient();
-client.setBearerToken(System.getenv("HANZO_API_KEY"));
-
-var result = new AccountApi(client).getAccountKeys();
+let _models = ai_api::get_models(&cfg, Default::default()).await?;
+let _keys = account_api::get_account_keys(&cfg, Default::default()).await?;
 ```
 </Tab>
 </Tabs>
 </Tab>
 <Tab value="HTTP">
 ```bash
-curl https://api.hanzo.ai/v1/account/keys \
+# 1. Open reachability probe (no credential required)
+curl -fsSL https://api.hanzo.ai/v1/models | jq '.data | length'
+
+# 2. Strict credential & org-scope verification (403 on invalid/missing key)
+curl -fsSL https://api.hanzo.ai/v1/account/keys \
   -H "Authorization: Bearer $HANZO_API_KEY"
 ```
 </Tab>
 <Tab value="MCP">
-MCP reaches **account** through the `account` tool, which names its 6 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
-
 ```bash
 curl -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-       "jsonrpc": "2.0",
-       "id": 1,
-       "method": "tools/call",
-       "params": {
-         "name": "describe",
-         "arguments": {
-           "op": "get_account_appearance"
-         }
-       }
-     }'
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": { "name": "account", "arguments": { "op": "list_account_keys" } }
+  }'
 ```
 </Tab>
 </Tabs>
 
----
+## 2. Wire IAM OIDC, KMS Secrets & JetStream PubSub
 
-Every command, call and tool above is generated from the same OpenAPI document that generates the SDKs themselves — the four surfaces are projections of one doc comment, so they cannot disagree.
+Every service in your app shares one identity plane (`/v1/iam`), reads zero-trust runtime secrets from `/v1/kms`, and emits asynchronous domain events over `/v1/pubsub`:
+
+<Tabs items={['CLI', 'TypeScript SDK', 'Python SDK', 'HTTP']}>
+<Tab value="CLI">
+```bash
+# Store encrypted project secrets in Hanzo KMS
+hanzo kms secrets set WEBHOOK_SIGNING_SECRET "whsec_prod_..."
+
+# Publish a durable JetStream event for background workers
+hanzo pubsub publish app.deployments '{"project":"acme-web","env":"production"}'
+```
+</Tab>
+<Tab value="TypeScript SDK">
+```ts
+import { Configuration, PubsubApi } from 'hanzoai';
+
+const cfg = new Configuration({ accessToken: process.env.HANZO_API_KEY });
+const pubsub = new PubsubApi(cfg);
+
+// Verify OIDC discovery + emit a typed deployment event
+const oidc = await fetch('https://api.hanzo.ai/v1/iam/.well-known/openid-configuration').then((r) => r.json());
+await pubsub.postPubsubPublish({
+  subject: 'app.deployments',
+  data: { issuer: oidc.issuer, project: 'acme-web', deployedAt: new Date().toISOString() },
+});
+```
+</Tab>
+<Tab value="Python SDK">
+```python
+# pip install "hanzoai>=8"
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import PubsubApi
+
+client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
+PubsubApi(client).post_pubsub_publish(
+    body={"subject": "app.deployments", "data": {"project": "acme-web", "status": "live"}}
+)
+```
+</Tab>
+<Tab value="HTTP">
+```bash
+# Read OIDC configuration for multi-tenant login
+curl -fsSL https://api.hanzo.ai/v1/iam/.well-known/openid-configuration
+
+# Fetch runtime secrets from Hanzo KMS
+curl -fsSL https://api.hanzo.ai/v1/kms/secrets/acme-web \
+  -H "Authorization: Bearer $HANZO_API_KEY"
+
+# Publish a JetStream event
+curl -X POST https://api.hanzo.ai/v1/pubsub/publish \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"subject":"app.deployments","data":{"project":"acme-web"}}'
+```
+</Tab>
+</Tabs>
+
+## 3. Deploy Edge Sites, Serverless Functions & Zero-Trust K8s
+
+Move seamlessly from local iteration (`hanzo up`) to global edge static hosting (`/v1/project/{slug}/deploy`), serverless functions (`/v1/function`), and GitOps Kubernetes reconciliation (`/v1/deploy/applications`):
+
+```bash
+# 1. Test full stack locally on warm k3s
+hanzo up
+
+# 2. Ship static frontend + edge routes to Hanzo Sites and Zero-Trust K8s
+hanzo deploy --project acme-web
+
+# 3. Verify live deployment & serverless functions over HTTP
+curl -X POST https://api.hanzo.ai/v1/project/acme-web/deploy \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"branch":"main"}'
+
+curl -fsSL https://api.hanzo.ai/v1/deploy/applications \
+  -H "Authorization: Bearer $HANZO_API_KEY"
+```
+
+## Next Steps
+
+- [Boot Local OSS Cloud & Warm k3s (`hanzo up`)](/docs/guides/local-cloud) — run the entire platform locally before pushing to production.
+- [Route 500+ Models & Local Inference](/docs/guides/chat) — add Enso adaptive routing and Zen 6 open weights to your deployed app.
+- [Deploy Button & Badges](/docs/deploy-button) — generate one-click `Deploy with Hanzo` badges for your repository.

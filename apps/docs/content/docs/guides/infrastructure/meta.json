@@ -1,5 +1,5 @@
 {
-  "title": "Infrastructure",
+  "title": "Sovereign Cloud & GPUs",
   "description": "Single-binary self-hosting, GPU cluster and BYO fleet management, ephemeral microVM sandboxes, zero-trust overlay networking, and AI observability.",
   "icon": "Server",
   "pages": [

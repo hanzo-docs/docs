@@ -1,5 +1,5 @@
 {
-  "title": "Cyber",
+  "title": "Cybersecurity & Zero-Trust",
   "description": "Deterministic shell command gates, CI secret scanning, container SBOM verification, sandboxed exploit validation, autonomous SecOps patching, and zero-trust hardening.",
   "icon": "ShieldCheck",
   "pages": [

@@ -275,12 +275,22 @@ export function ModelsCatalog({ request }: { request?: ReactNode }) {
       </XStack>
 
       {groups.map((f) => {
+        const cleanId = f.id.replace(/^(?:family|provider)-/, '');
+        const resolvedKey = PROVIDER_ICONS[providerKey(cleanId)]
+          ? cleanId
+          : PROVIDER_ICONS[providerKey(f.name)]
+            ? f.name
+            : null;
         const isProvider = f.id.startsWith('provider-');
         const Icon = FAMILY_ICON[f.icon ?? ''] ?? Box;
         return (
           <YStack key={f.id} render="section" gap={8}>
             <XStack gap={8} items="center">
-              {isProvider ? <ProviderChip name={f.name} /> : <Icon size={16} color="$color12" />}
+              {resolvedKey || isProvider ? (
+                <ProviderChip name={resolvedKey ?? f.name} />
+              ) : (
+                <Icon size={16} color="$color12" />
+              )}
               <Text render="h3" fontSize={16} fontWeight="600" color="$color12">
                 {f.name}
               </Text>

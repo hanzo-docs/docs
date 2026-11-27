@@ -323,14 +323,11 @@ export async function genFlowPages(): Promise<void> {
   const d = door(cat.tools);
   const table = loadCliTable();
 
-  // Remove only what this generator writes. The authored guide folders
-  // (kai, enso, zen, science, cyber, autopilot, infrastructure, business,
-  // coding, cookbook, integrations, migrate) are siblings of these files,
-  // so a recursive wipe would delete them on every build.
+  // Validate every flow operationId in flows.yaml against the live OpenAPI
+  // document, CLI command table, and MCP tool map. Authored flagship guides and
+  // meta.json under content/docs/guides/ are tracked in git and preserved intact;
+  // generated fallback stubs are emitted only if a flow page is absent on disk.
   fs.mkdirSync(OUT_DIR, { recursive: true });
-  for (const f of fs.readdirSync(OUT_DIR)) {
-    if (f.endsWith('.mdx') || f === 'meta.json') fs.rmSync(path.join(OUT_DIR, f));
-  }
 
   let withCli = 0;
   let withMcp = 0;
@@ -348,42 +345,51 @@ export async function genFlowPages(): Promise<void> {
       if (table.has(`${op.method.toUpperCase()} ${op.path}`)) withCli++;
       if (mcp(op, doc, d)) withMcp++;
     }
-    fs.writeFileSync(path.join(OUT_DIR, `${flow.id}.mdx`), renderFlow(flow, ops, doc, table, d, cat.meta.reach));
+    const target = path.join(OUT_DIR, `${flow.id}.mdx`);
+    if (!fs.existsSync(target)) {
+      fs.writeFileSync(target, renderFlow(flow, ops, doc, table, d, cat.meta.reach));
+    }
   }
-  fs.writeFileSync(path.join(OUT_DIR, 'index.mdx'), renderIndex(flows, doc));
-  const catalog = readCatalog();
-  const catalogDirs = catalog ? catalog.categories.map((c) => c.id) : [];
-  const dirOrder = ['cookbook', 'coding', 'integrations', 'migrate'];
-  const dirsOnDisk = fs
-    .readdirSync(OUT_DIR, { withFileTypes: true })
-    .filter((e) => e.isDirectory() && !catalogDirs.includes(e.name))
-    .map((e) => e.name);
-  const orderedDirs = [
-    ...dirOrder.filter((dName) => dirsOnDisk.includes(dName)),
-    ...dirsOnDisk.filter((dName) => !dirOrder.includes(dName)).sort(),
-  ];
+  const indexTarget = path.join(OUT_DIR, 'index.mdx');
+  if (!fs.existsSync(indexTarget)) {
+    fs.writeFileSync(indexTarget, renderIndex(flows, doc));
+  }
+  const metaTarget = path.join(OUT_DIR, 'meta.json');
+  if (!fs.existsSync(metaTarget)) {
+    const catalog = readCatalog();
+    const catalogDirs = catalog ? catalog.categories.map((c) => c.id) : [];
+    const dirOrder = ['cookbook', 'coding', 'integrations', 'migrate'];
+    const dirsOnDisk = fs
+      .readdirSync(OUT_DIR, { withFileTypes: true })
+      .filter((e) => e.isDirectory() && !catalogDirs.includes(e.name))
+      .map((e) => e.name);
+    const orderedDirs = [
+      ...dirOrder.filter((dName) => dirsOnDisk.includes(dName)),
+      ...dirsOnDisk.filter((dName) => !dirOrder.includes(dName)).sort(),
+    ];
 
-  fs.writeFileSync(
-    path.join(OUT_DIR, 'meta.json'),
-    JSON.stringify(
-      {
-        title: 'Guides',
-        description: '50 flagship practical guides across 8 categories plus 6 core four-surface workflows.',
-        // Not led by `index` — this folder's own `index.mdx` is its landing
-        // page already, and naming it publishes `Guides > Guides`.
-        pages: [
-          '---Intelligence Engineering---',
-          ...catalogDirs.filter((dName) => fs.existsSync(path.join(OUT_DIR, dName))),
-          '---Core Workflows---',
-          ...flows.map((f) => f.id),
-          '---Recipes & Frameworks---',
-          ...orderedDirs,
-        ],
-      },
-      null,
-      2,
-    ) + '\n',
-  );
+    fs.writeFileSync(
+      metaTarget,
+      JSON.stringify(
+        {
+          title: 'Guides & Tutorials',
+          description: 'End-to-end OSS Cloud & Stack architectural guides plus 50 flagship Intelligence Engineering labs.',
+          pages: [
+            '---Core OSS Cloud & Stack---',
+            'local-cloud',
+            ...flows.map((f) => f.id),
+            'oss-stack',
+            '---Intelligence Engineering---',
+            ...catalogDirs.filter((dName) => fs.existsSync(path.join(OUT_DIR, dName))),
+            '---Agents, Recipes & Migrations---',
+            ...orderedDirs,
+          ],
+        },
+        null,
+        2,
+      ) + '\n',
+    );
+  }
 
   console.log(
     `[flows] ${flows.length} flows, ${total} operations — ${withCli} with a CLI command, ` +

@@ -1,0 +1,64 @@
+---
+title: "Self-Host & Hack on the Complete OSS Stack (hanzoai/*)"
+description: "Complete architectural map of hanzoai/{cli,node,vm,cloud,gen,dev-v1,engine,visor,vfs,mcp,base,commerce,iam,kms}, canonical Makefile targets, and contributor setup."
+icon: GitBranch
+---
+
+Every layer of the Hanzo AI Operating System is built in the open across **Go** (control plane, IAM, KMS, Base, Commerce, Gateway) and **Rust** (CLI, inference engine, coding agent, microVM hypervisor, VFS, ZAP wire protocol) — speaking HTTP `/v1/*` and zero-copy [ZAP](/docs/zap) across boundaries, never brittle cross-language FFI.
+
+## Complete `hanzoai/*` Repository Map
+
+| Layer | Repository | Language | Role in the Stack |
+| --- | --- | --- | --- |
+| **Unified CLI & Daemon** | [`hanzoai/cli`](https://github.com/hanzoai/cli) | Rust | `hanzo` CLI + `hanzod` daemon (`hanzo start`, `hanzo up`, `hanzo deploy`, generated `/v1` verbs) |
+| **OSS Cloud Control Plane** | [`hanzoai/cloud`](https://github.com/hanzoai/cloud) | Go + TS | Single-binary `/v1` API gateway, AI router, console UI (`ghcr.io/hanzoai/cloud-oss:main`) |
+| **Inference & Enso Router** | [`hanzoai/engine`](https://github.com/hanzoai/engine) | Rust | High-throughput local/cluster LLM & embedding server + open Enso routing engine |
+| **Terminal Coding Agent** | [`hanzoai/dev-v1`](https://github.com/hanzoai/dev-v1) | Rust | `hanzo dev` autonomous coding agent with multi-agent mesh and native ACP/ZAP |
+| **Managed Agent Runtime** | [`hanzoai/gen`](https://github.com/hanzoai/gen) | Go + Rust | Stateful `/v1/agent` execution loops, durable runs, A2A handoffs, and tool dispatch |
+| **HIP-0300 MCP Server** | [`hanzoai/mcp`](https://github.com/hanzoai/mcp) | TS / Rust | Canonical 19-tool Model Context Protocol server (`@hanzo/mcp`) |
+| **MicroVM & Substrate** | [`hanzoai/vm`](https://github.com/hanzoai/vm) · [`hanzoai/visor`](https://github.com/hanzoai/visor) | Rust + Go | Hardware-isolated microVMs, warm local `k3s` VM host, and `/v1/sandbox` fleet scheduler |
+| **Snapshot Filesystem** | [`hanzoai/vfs`](https://github.com/hanzoai/vfs) | Rust | Copy-on-write virtual filesystem for instant agent sandbox branching & rollback |
+| **Compute Node** | [`hanzoai/node`](https://github.com/hanzoai/node) | Rust | Sovereign node daemon joining local/cluster GPUs to Hanzo Network |
+| **Identity & Secrets** | [`hanzoai/iam`](https://github.com/hanzoai/iam) · [`hanzoai/kms`](https://github.com/hanzoai/kms) | Go | OIDC/SAML/Web3 identity (`hanzo.id`) and envelope-encrypted secret vaults |
+| **Realtime Data & Billing** | [`hanzoai/base`](https://github.com/hanzoai/base) · [`hanzoai/commerce`](https://github.com/hanzoai/commerce) | Go | Realtime SQL/GraphQL/Auth backend and usage metering, subscriptions & x402 ledger |
+
+## Canonical Repository `Makefile` Contract
+
+Every core `hanzoai/*` repository implements the same standard `Makefile` targets so contributors, interns, and autonomous coding agents can boot, test, and ship any service without guessing flags:
+
+```bash
+make up       # Reconcile local dependencies & start service on warm k3s (`hanzo up`)
+make down     # Tear down this repo's namespace cleanly without stopping sister repos
+make dev      # Run hot-reloading local development loop against local OSS Cloud
+make test     # Execute unit + integration test suites deterministically
+make lint     # Static analysis, formatting, and OpenAPI / schema contract checks
+```
+
+## 5-Minute Contributor & Local OS Setup
+
+```bash
+# 1. Install the Hanzo CLI + Dev agent + MCP server
+curl -fsSL https://hanzo.sh | sh
+
+# 2. Boot warm k3s substrate + local OSS Cloud (`ghcr.io/hanzoai/cloud-oss:main`)
+hanzo start
+hanzo up --cloud
+
+# 3. Clone any OSS subsystem (from GitHub or forge.hanzo.ai) and hack locally
+git clone https://github.com/hanzoai/cloud.git ~/work/hanzo/cloud
+cd ~/work/hanzo/cloud
+make dev
+
+# 4. Let Hanzo Dev implement, test, and verify changes against your local cloud
+hanzo dev "add integration test for /v1/kv bucket TTL expiration and run make test"
+```
+
+## Progressive Repository Index (`hanzoskills.com` & `forge.hanzo.ai`)
+
+Working with an AI agent across multiple repositories? Point it at [hanzoskills.com/CLAUDE.md](https://hanzoskills.com/CLAUDE.md) so it navigates **2,832+ open-source repositories** on [forge.hanzo.ai](https://forge.hanzo.ai) and [github.com/hanzoai](https://github.com/hanzoai) via 3-tier progressive disclosure.
+
+## Next Steps
+
+- [Boot Local OSS Cloud & Warm k3s (`hanzo up`)](/docs/guides/local-cloud) — master the 3-layer local cluster lifecycle.
+- [Engineering Philosophy (HIP-0127)](/docs/architecture/philosophy) — why Hanzo enforces one OpenAPI contract, thin SDKs, and ZAP over FFI.
+- [Browse Upstream Project Docs](/docs/projects) — mirrored documentation for individual `hanzoai/*` open-source packages.

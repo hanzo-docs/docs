@@ -4,45 +4,45 @@ import { Listing } from '@/components/mdx/code';
 import { shikiConfig } from '@/lib/shiki';
 
 /**
- * The three paths, ordered by how much you type. Each carries its real first
- * step — these are commands that work, not illustrative pseudocode.
+ * The three entry paths: Build with App, Build with CLI, Build with Platform.
+ * Each carries its real first step — commands and requests that work out of the box.
  */
 const PATHS = [
   {
     id: 'app',
-    eyebrow: 'No code',
+    eyebrow: 'Visual & Agentic OS',
     title: 'Build with App',
-    body: 'Describe what you want in English. Chat, agents and MCP tools in the browser — nothing to install.',
+    body: 'Describe what you want in English or work inside Hanzo Desktop, Studio, Bot & Team — full-stack apps, workflows, media, and MCP tools ready out of the box.',
     href: 'https://hanzo.app',
     external: true,
     cta: 'Open hanzo.app',
     lang: 'You type',
     grammar: 'text',
-    code: 'Build me a multiplayer snake game with a\nleaderboard, and deploy it.',
+    code: 'Build a real-time customer support workspace with Kai triage,\nx402 usage billing, and deploy it to production.',
   },
   {
     id: 'cli',
-    eyebrow: 'In your terminal',
-    title: 'Build with Dev',
-    body: 'Our coding agent, in your repo. It reads the codebase, writes the change and runs the tests.',
+    eyebrow: 'Local Runtime & Coding Agent',
+    title: 'Build with CLI',
+    body: 'Boot your local k3s runtime & OSS Cloud (hanzo start, hanzo up), deploy multi-project apps, and ship code in your repo with hanzo dev.',
     href: '/docs/cli',
     external: false,
     cta: 'Read the CLI docs',
     lang: 'Terminal',
     grammar: 'bash',
-    code: 'curl -fsSL https://hanzo.sh | sh\nhanzo auth login\nhanzo dev "add a leaderboard to the game"',
+    code: 'curl -fsSL https://hanzo.sh | sh\nhanzo up\nhanzo dev "add live leaderboard + x402 billing and deploy"',
   },
   {
-    id: 'api',
-    eyebrow: 'Lower level',
-    title: 'Build with API',
-    body: 'Over 400 models behind one REST endpoint. One bearer token works across every service we run.',
-    href: '/docs/openapi',
+    id: 'platform',
+    eyebrow: 'OSS Cloud, SDKs & /v1 APIs',
+    title: 'Build with Platform',
+    body: '500+ models behind one key (Enso, Kai, Zen), plus ~110 self-hostable OSS Cloud capabilities (/v1/iam, /v1/kms, /v1/base, /v1/kv, /v1/vector, /v1/pubsub, /v1/commerce, /v1/sandbox, Zero-Trust K8s) in our cloud or on your own hardware.',
+    href: '/docs/architecture',
     external: false,
-    cta: 'Read the API reference',
+    cta: 'Explore the Platform',
     lang: 'Request',
     grammar: 'bash',
-    code: 'curl https://api.hanzo.ai/v1/chat/completions \\\n  -H "Authorization: Bearer sk-..." \\\n  -d \'{"model":"enso-auto","messages":[...]}\'',
+    code: 'curl https://api.hanzo.ai/v1/chat/completions \\\n  -H "Authorization: Bearer $HANZO_API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d \'{"model":"enso-auto","messages":[{"role":"user","content":"Design our /v1 architecture"}]}\'',
   },
 ] as const;
 

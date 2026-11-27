@@ -1,325 +1,171 @@
 ---
-title: "Key-Value Storage"
-description: "Provision a managed key-value store, inspect it, and tear it down."
+title: "Hybrid RAG: Vector Search, SQL, KV & Realtime Base"
+description: "Provision managed data stores, generate zen-embedding-2 vectors, index documents in /v1/index & /v1/search, join relational state in /v1/base, cache in /v1/kv, and persist artifacts in /v1/s3."
+icon: Database
 ---
 
-**Provision a managed key-value store, inspect it, and tear it down.**
+Build low-latency hybrid Retrieval-Augmented Generation (RAG) and stateful applications on one unified `/v1` data plane — combining **`zen-embedding-2`** vectors, hybrid semantic + BM25 search (`/v1/index`, `/v1/search`), relational **Hanzo Base** (`/v1/base`, `/v1/provisioning/sql`), sub-millisecond **KV** (`/v1/kv`), and S3-compatible object storage (`/v1/s3`).
 
-> Uses `/v1/provisioning/kv` to create, inspect, and delete a managed KV store. Place cleanup in `finally` or `defer` so failed runs never leak test stores.
+## 1. Provision Managed KV, Vector & SQL Stores
 
-## Launches your org's OWN key-value instance and answers with its `kv://` connection string.
+Provision dedicated data stores in your project namespace (and tear down ephemeral test stores cleanly inside `finally` / `defer`):
 
-`POST /v1/provisioning/kv` · [reference →](/docs/openapi/provisioning)
-
-Launches your org's OWN key-value instance and answers with its `kv://`
-connection string.
-
-The instance is yours alone — a deployment in your own tenant namespace, so its
-admin credential is naturally scoped to you and no other tenant shares the
-process. Off-cluster this fails closed with 503 rather than handing back a
-shared one.
-
-| Parameter | In | Required | Description |
-|---|---|---|---|
-| `instance` | body | — | Instance binds a DEDICATED add-on to the app instance whose &lt;instance&gt;-addons Secret receives the &lt;KIND&gt;_URL ( |
-| `name` | body | — | Name is the org-unique slug for the new resource, matching ^[a-z0-9]([a-z0-9-]&#123;0,38&#125;[a-z0-9])?$. Every physica |
-
-<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tabs items={['CLI', 'App', 'SDK', 'HTTP', 'MCP']}>
 <Tab value="CLI">
 ```bash
-hanzo provisioning kv create
+# Provision managed KV, Vector, and SQL instances
+hanzo provisioning kv create rag-cache
+hanzo provisioning vector create docs-vectors
+hanzo provisioning sql create app-db
+
+# Write and read sub-millisecond KV entries
+hanzo kv set rag-cache cursor:latest "2026-11-26T00:00:00Z"
+hanzo kv get rag-cache cursor:latest
 ```
+</Tab>
+<Tab value="App">
+Open [platform.hanzo.ai](https://platform.hanzo.ai) → **Data Plane** (or local Console after `hanzo up`):
+
+1. Inspect **Base** tables, realtime WebSocket subscriptions, row-level AuthZ rules, and GraphQL schemas visually.
+2. Browse **Index / Vector** collections, **KV** buckets, and **S3** artifacts from one dashboard.
 </Tab>
 <Tab value="SDK">
-<Tabs items={['.ts', '.py', '.go', '.rs', '.java']}>
-<Tab value=".ts">
+<Tabs items={['TypeScript', 'Python', 'Go', 'Rust']}>
+<Tab value="TypeScript">
 ```ts
+// npm i hanzoai
 import { Configuration, ProvisioningApi } from 'hanzoai';
 
-const api = new ProvisioningApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
-const { data } = await api.postProvisioningKv({ instance: "<instance>", name: "<name>" });
+const prov = new ProvisioningApi(
+  new Configuration({ accessToken: process.env.HANZO_API_KEY }),
+);
+
+await prov.postProvisioningKv({ name: 'rag-cache' });
+try {
+  const { data: store } = await prov.getProvisioningKvByName('rag-cache');
+  console.log('KV store online:', store);
+} finally {
+  await prov.deleteProvisioningKvByName('rag-cache');
+}
 ```
 </Tab>
-<Tab value=".py">
+<Tab value="Python">
 ```python
+# pip install "hanzoai>=8"
+import os
 from hanzoai.cloud import ApiClient, Configuration
 from hanzoai.cloud.api import ProvisioningApi
 
-client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
-result = ProvisioningApi(client).post_provisioning_kv(instance="<instance>", name="<name>")
+api = ProvisioningApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+api.post_provisioning_kv(body={"name": "rag-cache"})
+try:
+    info = api.get_provisioning_kv_by_name("rag-cache")
+    print("Provisioned KV:", info)
+finally:
+    api.delete_provisioning_kv_by_name("rag-cache")
 ```
 </Tab>
-<Tab value=".go">
+<Tab value="Go">
 ```go
+// go get github.com/hanzoai/go-sdk/v8
 cfg := hanzoai.NewConfiguration()
 cfg.AddDefaultHeader("Authorization", "Bearer "+os.Getenv("HANZO_API_KEY"))
 client := hanzoai.NewAPIClient(cfg)
 
-resp, _, err := client.ProvisioningAPI.PostProvisioningKv(context.Background()).Execute()
-if err != nil {
-	return err
-}
+_, _, err := client.ProvisioningAPI.PostProvisioningKv(ctx).Execute()
+defer client.ProvisioningAPI.DeleteProvisioningKvByName(ctx, "rag-cache").Execute()
+store, _, err := client.ProvisioningAPI.GetProvisioningKvByName(ctx, "rag-cache").Execute()
 ```
 </Tab>
-<Tab value=".rs">
+<Tab value="Rust">
 ```rust
+// cargo add hanzo-client
 use hanzo_client::apis::{configuration::Configuration, provisioning_api};
 
 let mut cfg = Configuration::new();
 cfg.bearer_access_token = std::env::var("HANZO_API_KEY").ok();
 
-let result = provisioning_api::post_provisioning_kv(&cfg, Default::default()).await?;
-```
-</Tab>
-<Tab value=".java">
-```java
-import ai.hanzo.cloud.ApiClient;
-import ai.hanzo.cloud.api.ProvisioningApi;
-
-ApiClient client = new ApiClient();
-client.setBearerToken(System.getenv("HANZO_API_KEY"));
-
-var result = new ProvisioningApi(client).postProvisioningKv();
+let _created = provisioning_api::post_provisioning_kv(&cfg, Default::default()).await?;
+let _info = provisioning_api::get_provisioning_kv_by_name(&cfg, "rag-cache").await?;
+let _deleted = provisioning_api::delete_provisioning_kv_by_name(&cfg, "rag-cache").await?;
 ```
 </Tab>
 </Tabs>
 </Tab>
 <Tab value="HTTP">
 ```bash
+# Provision & inspect a managed KV store
 curl -X POST https://api.hanzo.ai/v1/provisioning/kv \
   -H "Authorization: Bearer $HANZO_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{
-       "instance": "<instance>",
-       "name": "<name>"
-     }'
-```
-</Tab>
-<Tab value="MCP">
-MCP reaches **provisioning** through the `provisioning` tool, which names its 28 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
+  -d '{"name":"rag-cache"}'
 
-```bash
-curl -X POST https://api.hanzo.ai/v1/mcp \
-  -H "Content-Type: application/json" \
-  -d '{
-       "jsonrpc": "2.0",
-       "id": 1,
-       "method": "tools/call",
-       "params": {
-         "name": "describe",
-         "arguments": {
-           "op": "get_provisioning_datastore"
-         }
-       }
-     }'
-```
-</Tab>
-</Tabs>
-
-## Returns one Hanzo KV store's metadata.
-
-`GET /v1/provisioning/kv/{name}` · [reference →](/docs/openapi/provisioning)
-
-Returns one Hanzo KV store's metadata. It carries the store's status,
-its instance address and the Valkey user it authenticates as ("default", the
-only user a requirepass instance has) — never the password. A still-booting
-instance reads "provisioning", reconciled from the operator's live view.
-
-| Parameter | In | Required | Description |
-|---|---|---|---|
-| `name` | path | yes | Name is the resource's org-unique slug, from the path. Lower-cased and trimmed before lookup, exactly as it wa |
-
-<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
-<Tab value="CLI">
-```bash
-hanzo provisioning kv get <name>
-```
-</Tab>
-<Tab value="SDK">
-<Tabs items={['.ts', '.py', '.go', '.rs', '.java']}>
-<Tab value=".ts">
-```ts
-import { Configuration, ProvisioningApi } from 'hanzoai';
-
-const api = new ProvisioningApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
-const { data } = await api.getProvisioningKvByName({ name: 'name' });
-```
-</Tab>
-<Tab value=".py">
-```python
-from hanzoai.cloud import ApiClient, Configuration
-from hanzoai.cloud.api import ProvisioningApi
-
-client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
-result = ProvisioningApi(client).get_provisioning_kv_by_name(name='name')
-```
-</Tab>
-<Tab value=".go">
-```go
-cfg := hanzoai.NewConfiguration()
-cfg.AddDefaultHeader("Authorization", "Bearer "+os.Getenv("HANZO_API_KEY"))
-client := hanzoai.NewAPIClient(cfg)
-
-resp, _, err := client.ProvisioningAPI.GetProvisioningKvByName(context.Background()).Execute()
-if err != nil {
-	return err
-}
-```
-</Tab>
-<Tab value=".rs">
-```rust
-use hanzo_client::apis::{configuration::Configuration, provisioning_api};
-
-let mut cfg = Configuration::new();
-cfg.bearer_access_token = std::env::var("HANZO_API_KEY").ok();
-
-let result = provisioning_api::get_provisioning_kv_by_name(&cfg, Default::default()).await?;
-```
-</Tab>
-<Tab value=".java">
-```java
-import ai.hanzo.cloud.ApiClient;
-import ai.hanzo.cloud.api.ProvisioningApi;
-
-ApiClient client = new ApiClient();
-client.setBearerToken(System.getenv("HANZO_API_KEY"));
-
-var result = new ProvisioningApi(client).getProvisioningKvByName();
-```
-</Tab>
-</Tabs>
-</Tab>
-<Tab value="HTTP">
-```bash
-curl https://api.hanzo.ai/v1/provisioning/kv/<name> \
+curl -fsSL https://api.hanzo.ai/v1/provisioning/kv/rag-cache \
   -H "Authorization: Bearer $HANZO_API_KEY"
 ```
 </Tab>
 <Tab value="MCP">
-Tool `provisioning`, op `get_provisioning_kv_by_name` — POST the JSON-RPC envelope to `https://api.hanzo.ai/v1/mcp`.
-
 ```bash
 curl -X POST https://api.hanzo.ai/v1/mcp \
   -H "Authorization: Bearer $HANZO_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-       "jsonrpc": "2.0",
-       "id": 1,
-       "method": "tools/call",
-       "params": {
-         "name": "provisioning",
-         "arguments": {
-           "op": "get_provisioning_kv_by_name",
-           "input": {
-             "name": "<name>"
-           }
-         }
-       }
-     }'
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": { "name": "kv", "arguments": { "op": "get_kv_by_bucket_by_key" } }
+  }'
 ```
 </Tab>
 </Tabs>
 
-## Deprovisions one Hanzo KV store.
+## 2. Embed Documents & Run Hybrid Vector + BM25 Search
 
-`DELETE /v1/provisioning/kv/{name}` · [reference →](/docs/openapi/provisioning)
-
-Deprovisions one Hanzo KV store. It reverts any app instance bound to
-it back to Base BEFORE tearing down the org's dedicated Valkey instance, then
-deletes the sealed credential and removes the metadata row. Answers 204 with
-no body; a second call is a 404.
-
-| Parameter | In | Required | Description |
-|---|---|---|---|
-| `name` | path | yes | Name is the resource's org-unique slug, from the path. Lower-cased and trimmed before lookup, exactly as it wa |
-
-<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
-<Tab value="CLI">
-```bash
-hanzo provisioning kv rm <name>
-```
-</Tab>
-<Tab value="SDK">
-<Tabs items={['.ts', '.py', '.go', '.rs', '.java']}>
-<Tab value=".ts">
-```ts
-import { Configuration, ProvisioningApi } from 'hanzoai';
-
-const api = new ProvisioningApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
-const { data } = await api.deleteProvisioningKvByName({ name: 'name' });
-```
-</Tab>
-<Tab value=".py">
-```python
-from hanzoai.cloud import ApiClient, Configuration
-from hanzoai.cloud.api import ProvisioningApi
-
-client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
-result = ProvisioningApi(client).delete_provisioning_kv_by_name(name='name')
-```
-</Tab>
-<Tab value=".go">
-```go
-cfg := hanzoai.NewConfiguration()
-cfg.AddDefaultHeader("Authorization", "Bearer "+os.Getenv("HANZO_API_KEY"))
-client := hanzoai.NewAPIClient(cfg)
-
-resp, _, err := client.ProvisioningAPI.DeleteProvisioningKvByName(context.Background()).Execute()
-if err != nil {
-	return err
-}
-```
-</Tab>
-<Tab value=".rs">
-```rust
-use hanzo_client::apis::{configuration::Configuration, provisioning_api};
-
-let mut cfg = Configuration::new();
-cfg.bearer_access_token = std::env::var("HANZO_API_KEY").ok();
-
-let result = provisioning_api::delete_provisioning_kv_by_name(&cfg, Default::default()).await?;
-```
-</Tab>
-<Tab value=".java">
-```java
-import ai.hanzo.cloud.ApiClient;
-import ai.hanzo.cloud.api.ProvisioningApi;
-
-ApiClient client = new ApiClient();
-client.setBearerToken(System.getenv("HANZO_API_KEY"));
-
-var result = new ProvisioningApi(client).deleteProvisioningKvByName();
-```
-</Tab>
-</Tabs>
-</Tab>
-<Tab value="HTTP">
-```bash
-curl -X DELETE https://api.hanzo.ai/v1/provisioning/kv/<name> \
-  -H "Authorization: Bearer $HANZO_API_KEY"
-```
-</Tab>
-<Tab value="MCP">
-MCP reaches **provisioning** through the `provisioning` tool, which names its 28 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
+Combine `POST /v1/embeddings` (`zen-embedding-2`) with `/v1/index/indexes/{uid}/documents` and `/v1/index/indexes/{uid}/search` so exact identifiers (SKUs, error codes) and semantic concepts retrieve together:
 
 ```bash
-curl -X POST https://api.hanzo.ai/v1/mcp \
+# 1. Generate dense retrieval vectors with zen-embedding-2
+curl -X POST https://api.hanzo.ai/v1/embeddings \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-       "jsonrpc": "2.0",
-       "id": 1,
-       "method": "tools/call",
-       "params": {
-         "name": "describe",
-         "arguments": {
-           "op": "get_provisioning_datastore"
-         }
-       }
-     }'
+    "model": "zen-embedding-2",
+    "dimensions": 768,
+    "input": "title: Zero-Trust KMS | text: Rotate envelope keys per tenant namespace."
+  }'
+
+# 2. Index documents and query hybrid BM25 + semantic search
+curl -X POST https://api.hanzo.ai/v1/index/indexes/kb/documents \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '[{"id":"doc_1","title":"Zero-Trust KMS","body":"Rotate envelope keys per tenant namespace."}]'
+
+curl -X POST https://api.hanzo.ai/v1/index/indexes/kb/search \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"q":"tenant envelope key rotation","limit":5}'
 ```
-</Tab>
-</Tabs>
 
----
+## 3. Join Realtime Base (`hanzoai/base`) & S3 Object Artifacts
 
-Every command, call and tool above is generated from the same OpenAPI document that generates the SDKs themselves — the four surfaces are projections of one doc comment, so they cannot disagree.
+Store raw PDFs, datasets, and model checkpoints in `/v1/s3` while keeping structured metadata and tenant ACLs in `/v1/base`:
+
+```bash
+# Create an S3 artifact bucket and list objects
+curl -X POST https://api.hanzo.ai/v1/s3/buckets \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"rag-artifacts"}'
+
+# Query tenant-scoped relational records via Hanzo Base GraphQL
+curl -X POST https://api.hanzo.ai/v1/base/graphql \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"query":"{ documents(limit: 5) { id title s3Key } }"}'
+```
+
+## Next Steps
+
+- [Embeddings & Rerank Pipelines](/docs/guides/zen/embeddings-and-rerank) — precision retrieval tuning with `zen-embedding-2` and `zen-reranker`.
+- [Multi-Tenant White-Label Isolation](/docs/guides/business/multi-tenant-white-label) — isolate per-customer Base, KV, and S3 stores.
+- [Data API Reference](/docs/openapi/base) — inspect every `/v1/base`, `/v1/index`, `/v1/kv`, and `/v1/s3` operation.

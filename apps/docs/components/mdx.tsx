@@ -7,6 +7,7 @@ import { ModelsCatalog, ConnectorsCatalog, InstallCatalog } from '@/components/c
 import { Hero } from '@/components/hero';
 import { ProductSection, ProductSections } from '@/components/product-section';
 import { ProviderStrip } from '@/components/provider-strip';
+import { BrandIcon } from '@/components/brand-icon';
 import { Example } from '@/components/example';
 import { DeployButtonGenerator } from '@/components/deploy-button-generator';
 
@@ -66,6 +67,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     ProductSection,
     ProductSections,
     ProviderStrip,
+    BrandIcon,
     // Live catalogs, fetched at runtime.
     ModelsCatalog,
     ConnectorsCatalog,

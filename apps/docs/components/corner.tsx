@@ -5,16 +5,19 @@ import { XStack } from '@hanzo/gui';
 import { DropdownMenu } from '@hanzo/ui';
 import { useTheme } from '@hanzogui/next-theme';
 import { HanzoMark } from '@hanzogui/shell';
+import { useSearch } from '@/components/search';
 import { useShell } from '@/components/shell';
 import { twinPath } from '@/lib/twin';
 
 /**
- * Floating H mark in the bottom-right corner of the viewport, matching hanzo.ai:
- * Help, Discord #docs, contributor guide, Markdown copy, and theme toggle.
+ * Floating bare @hanzo/logo H-ribbon mark in the bottom-right corner of the viewport
+ * (no outer circle border/ring), matching hanzo.ai:
+ * Ask Hanzo AI (⌘K), Hanzo Agent (⌘I), Discord #docs, contributor guide, Markdown copy, and theme toggle.
  */
 export function Corner() {
   const pathname = usePathname();
   const router = useRouter();
+  const search = useSearch();
   const { setAgentOpen } = useShell();
   const { resolvedTheme, setTheme } = useTheme();
   const md = twinPath(pathname);
@@ -30,34 +33,35 @@ export function Corner() {
   };
 
   return (
-    <XStack position="fixed" b={14} r={14} z={40}>
+    <XStack position="fixed" b={16} r={16} z={40}>
       <DropdownMenu
         placement="top-end"
-        minWidth={236}
+        minWidth={240}
         trigger={
           <XStack
             render="button"
             type="button"
-            aria-label="Help and preferences"
-            title="Help and preferences"
-            width={36}
-            height={36}
-            rounded={999}
+            aria-label="Ask Hanzo AI and preferences"
+            title="Ask Hanzo AI and preferences"
+            p={4}
             items="center"
             justify="center"
             cursor="pointer"
-            bg="$panel"
-            borderWidth={1}
-            borderColor="$borderColor"
-            opacity={0.9}
-            hoverStyle={{ opacity: 1, borderColor: '$color8', bg: '$hover' }}
+            bg="transparent"
+            borderWidth={0}
+            color="$color12"
+            opacity={0.78}
+            hoverStyle={{ opacity: 1 }}
           >
-            <HanzoMark size={20} animate brandMenu />
+            <HanzoMark size={22} animate brandMenu />
           </XStack>
         }
         items={[
+          { type: 'label', label: 'Hanzo AI' },
+          { key: 'search-ai', label: 'Ask Hanzo AI (⌘K)', onSelect: () => search.setOpen(true) },
+          { key: 'agent', label: 'Open Hanzo Agent (⌘I)', onSelect: () => setAgentOpen(true) },
+          { type: 'separator' },
           { type: 'label', label: 'Help & Community' },
-          { key: 'agent', label: 'Ask Hanzo Agent (⌘I)', onSelect: () => setAgentOpen(true) },
           { key: 'discord', label: 'Ask in #docs on Discord', onSelect: () => go('https://discord.gg/XthHQQj') },
           { key: 'contribute', label: 'Contribute to docs', onSelect: () => router.push('/docs/contributing') },
           { key: 'issue', label: 'Report a docs issue', onSelect: () => go('https://github.com/hanzo-docs/docs/issues/new') },

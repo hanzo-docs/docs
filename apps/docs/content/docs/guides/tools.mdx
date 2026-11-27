@@ -1,115 +1,143 @@
 ---
-title: "Discover MCP Tools"
-description: "List every MCP tool and capability available to your API key."
+title: "Wire HIP-0300 MCP, Skills & Custom Tool Pipelines"
+description: "Attach the 19-tool HIP-0300 hanzo-mcp server, load 1,477+ progressive skills from hanzoskills.com, discover /v1/tool capabilities, and invoke hosted JSON-RPC tools at POST /v1/mcp."
+icon: Wrench
 ---
 
-**List every MCP tool and capability available to your API key.**
+Give any coding agent, IDE, or autonomous bot two unified tool layers with one API key:
 
-> `GET /v1/tool` lists every tool your organization and project can invoke, along with its activation status. To invoke tools directly over JSON-RPC, send `tools/call` to `POST /v1/mcp`.
+1. **Local HIP-0300 Workspace MCP (`@hanzo/mcp`)** — 19 orthogonal operator tools (`fs`, `exec`, `code`, `git`, `fetch`, `browser`, `computer`, `memory`, `plan`, `kai`, `agent`, `think`, `ui`, `workspace`, and peers) designed to keep context token footprint minimal.
+2. **Hosted Cloud MCP (`POST https://api.hanzo.ai/v1/mcp` & `GET /v1/tool`)** — zero-install Streamable HTTP access to ~110 Hanzo Cloud capabilities plus Slack, GitHub, GitLab, Linear, Discord, and Notion connectors.
 
-## Lists every tool the caller's org and project can reach, from every source, each flagged with whether it is activated.
+## 1. Attach HIP-0300 MCP to Every Coding Agent & IDE
 
-`GET /v1/tool` · [reference →](/docs/openapi/tool)
+```bash
+# Claude Code (user-wide across every repository)
+claude mcp add --scope user hanzo -- npx -y @hanzo/mcp serve
+claude mcp add --transport http hanzo-cloud https://api.hanzo.ai/v1/mcp \
+  --header "Authorization: Bearer $HANZO_API_KEY"
 
-Lists every tool the caller's org and project can reach, from every
-source, each flagged with whether it is activated. This is the discovery
-surface: one flat set of names spanning connector actions, user functions,
-zap-service routes, agents, skills and the org's own external MCP servers,
-deduplicated by name so the highest-precedence source wins a collision. It
-lists; it does not call — dispatch is POST /v1/tool/call.
+# OpenAI Codex
+codex mcp add hanzo -- npx -y @hanzo/mcp serve
 
-| Parameter | In | Required | Description |
-|---|---|---|---|
-| `source` | query | — | Source keeps only tools from one source — connector, function, zap-service, agent, skill or mcp. Empty keeps e |
-| `activated` | query | — | Activated keeps only the tools activated for the caller's org and project, and only when it is exactly the str |
+# Cursor / Windsurf / VS Code / Gemini CLI / Antigravity MCP JSON
+# {"mcpServers":{"hanzo":{"command":"npx","args":["-y","@hanzo/mcp","serve"]}}}
+```
 
-<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+Load progressive skills on demand from [hanzoskills.com](https://hanzoskills.com) without bloating context:
+
+```bash
+curl -fsSL https://hanzoskills.com/CLAUDE.md >> ./CLAUDE.md
+curl -fsSL https://hanzoskills.com/AGENTS.md >> ./AGENTS.md
+```
+
+## 2. Discover & Invoke Cloud Tools Across All 5 Surfaces
+
+<Tabs items={['CLI', 'App', 'SDK', 'HTTP', 'MCP']}>
 <Tab value="CLI">
 ```bash
-hanzo tool get
+# List activated tools and connected MCP servers for your organization
+hanzo tool list
+hanzo tool catalog
 ```
+</Tab>
+<Tab value="App">
+Open [hanzo.app](https://hanzo.app) → **Tools & Connectors**:
+
+1. Toggle OAuth connectors (GitHub, Slack, Discord, Google Workspace, Stripe, Linear) once per org.
+2. Every connected tool immediately becomes callable in **Hanzo Chat**, **Hanzo Dev**, **Hanzo Bot**, and over `POST /v1/mcp`.
 </Tab>
 <Tab value="SDK">
-<Tabs items={['.ts', '.py', '.go', '.rs', '.java']}>
-<Tab value=".ts">
+<Tabs items={['TypeScript', 'Python', 'Go', 'Rust']}>
+<Tab value="TypeScript">
 ```ts
-import { Configuration, ToolApi } from 'hanzoai';
+// npm i hanzoai
+import { Configuration, ToolsApi } from 'hanzoai';
 
-const api = new ToolApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
-const { data } = await api.getTool();
+const tools = new ToolsApi(
+  new Configuration({ accessToken: process.env.HANZO_API_KEY }),
+);
+
+const { data } = await tools.getTool();
+console.log('Activated org tools:', data);
 ```
 </Tab>
-<Tab value=".py">
+<Tab value="Python">
 ```python
+# pip install "hanzoai>=8"
+import os
 from hanzoai.cloud import ApiClient, Configuration
-from hanzoai.cloud.api import ToolApi
+from hanzoai.cloud.api import ToolsApi
 
-client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
-result = ToolApi(client).get_tool()
+api = ToolsApi(ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"])))
+active_tools = api.get_tool()
+print("Tools available:", active_tools)
 ```
 </Tab>
-<Tab value=".go">
+<Tab value="Go">
 ```go
+// go get github.com/hanzoai/go-sdk/v8
 cfg := hanzoai.NewConfiguration()
 cfg.AddDefaultHeader("Authorization", "Bearer "+os.Getenv("HANZO_API_KEY"))
 client := hanzoai.NewAPIClient(cfg)
 
-resp, _, err := client.ToolAPI.GetTool(context.Background()).Execute()
-if err != nil {
-	return err
-}
+tools, _, err := client.ToolsAPI.GetTool(ctx).Execute()
 ```
 </Tab>
-<Tab value=".rs">
+<Tab value="Rust">
 ```rust
-use hanzo_client::apis::{configuration::Configuration, tool_api};
+// cargo add hanzo-client
+use hanzo_client::apis::{configuration::Configuration, tools_api};
 
 let mut cfg = Configuration::new();
 cfg.bearer_access_token = std::env::var("HANZO_API_KEY").ok();
 
-let result = tool_api::get_tool(&cfg, Default::default()).await?;
-```
-</Tab>
-<Tab value=".java">
-```java
-import ai.hanzo.cloud.ApiClient;
-import ai.hanzo.cloud.api.ToolApi;
-
-ApiClient client = new ApiClient();
-client.setBearerToken(System.getenv("HANZO_API_KEY"));
-
-var result = new ToolApi(client).getTool();
+let tools = tools_api::get_tool(&cfg, Default::default()).await?;
 ```
 </Tab>
 </Tabs>
 </Tab>
 <Tab value="HTTP">
 ```bash
-curl https://api.hanzo.ai/v1/tool \
+# List activated tools and inspect the registry catalog
+curl -fsSL https://api.hanzo.ai/v1/tool \
   -H "Authorization: Bearer $HANZO_API_KEY"
+
+# Execute a registered tool directly via HTTP
+curl -X POST https://api.hanzo.ai/v1/tool/call \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"search","arguments":{"query":"HIP-0300 tool surface"}}'
 ```
 </Tab>
 <Tab value="MCP">
-MCP reaches **tool** through the `tool` tool, which names its 20 operations with its own verbs — this one among them, under a name only MCP declares. `describe` explains any of them:
-
 ```bash
+# Enumerate subsystem tools and invoke an operation via JSON-RPC 2.0
 curl -X POST https://api.hanzo.ai/v1/mcp \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{
-       "jsonrpc": "2.0",
-       "id": 1,
-       "method": "tools/call",
-       "params": {
-         "name": "describe",
-         "arguments": {
-           "op": "list_tools"
-         }
-       }
-     }'
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
 ```
 </Tab>
 </Tabs>
 
----
+## 3. Register Custom Remote MCP & ZAP Tool Servers
 
-Every command, call and tool above is generated from the same OpenAPI document that generates the SDKs themselves — the four surfaces are projections of one doc comment, so they cannot disagree.
+Mount your own internal microservices or high-throughput [ZAP](/docs/zap) binary endpoints into your organization's unified tool plane so every authorized agent inherits them automatically:
+
+```bash
+curl -X POST https://api.hanzo.ai/v1/tool/mcp/servers \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "internal-erp",
+    "transport": "http",
+    "url": "https://erp.internal.example.com/mcp"
+  }'
+```
+
+## Next Steps
+
+- [Skills, MCP, Desktop & Business OS](/docs/skills) — copy-paste universal setup prompt for every coding agent and browser extension.
+- [MCP Overview](/docs/mcp) & [Cloud MCP Tools Reference](/docs/mcp-tools) — browse every generated tool schema.
+- [ZAP Zero-Copy App Protocol](/docs/zap) — binary wire transport between Go and Rust tool servers.

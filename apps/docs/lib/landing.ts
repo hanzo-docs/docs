@@ -72,27 +72,52 @@ export const agentNote = {
   start: { label: 'Agents: start here', href: '/docs/agents' },
 };
 
-/** Coding agents and IDEs that work out of the box with Hanzo's gateway and MCP tools. */
+/** Coding agents, IDEs, frameworks, and bots that work out of the box with Hanzo's gateway and MCP tools. */
 export const codingAgents = [
-  { id: 'hanzo-dev', name: 'Hanzo Dev', spec: 'dev' },
-  { id: 'claudecode', name: 'Claude Code', spec: 'claude' },
-  { id: 'codex', name: 'Codex', spec: 'codex' },
-  { id: 'google', name: 'Gemini CLI', spec: 'gemini' },
-  { id: 'cursor', name: 'Cursor', spec: 'IDE' },
-  { id: 'openclaw', name: 'OpenClaw', spec: 'openclaw' },
-  { id: 'antigravity', name: 'Antigravity', spec: 'agy' },
-  { id: 'zed', name: 'Zed', spec: 'IDE' },
-  { id: 'opencode', name: 'OpenCode', spec: 'opencode' },
-  { id: 'cline', name: 'Cline', spec: 'VS Code' },
-  { id: 'aider', name: 'Aider', spec: 'aider' },
-  { id: 'continue', name: 'Continue', spec: 'IDE' },
+  { id: 'hanzo-dev', name: 'Hanzo Dev', spec: 'dev', href: '/docs/dev' },
+  { id: 'hanzo-bot', name: 'Hanzo Bot', spec: 'bot', href: '/docs/apps/comms' },
+  { id: 'hanzo-ide', name: 'Hanzo IDE', spec: 'IDE', href: '/docs/apps/ides' },
+  { id: 'claudecode', name: 'Claude Code', spec: 'claude', href: '/docs/guides/coding/claude-code' },
+  { id: 'codex', name: 'OpenAI Codex', spec: 'codex', href: '/docs/guides/coding/codex' },
+  { id: 'cursor', name: 'Cursor', spec: 'IDE', href: '/docs/guides/coding/cursor' },
+  { id: 'gemini-cli', name: 'Gemini CLI', spec: 'gemini', href: '/docs/guides/coding' },
+  { id: 'antigravity', name: 'Antigravity', spec: 'agy', href: '/docs/guides/coding/antigravity' },
+  { id: 'windsurf', name: 'Windsurf', spec: 'IDE', href: '/docs/guides/coding/windsurf' },
+  { id: 'vscode', name: 'VS Code', spec: 'IDE', href: '/docs/guides/coding/vscode' },
+  { id: 'zed', name: 'Zed', spec: 'IDE', href: '/docs/dev/integrations/zed' },
+  { id: 'openclaw', name: 'OpenClaw', spec: 'openclaw', href: '/docs/guides/coding/openclaw' },
+  { id: 'langgraph', name: 'LangGraph', spec: 'SDK', href: '/docs/guides/integrations/langgraph' },
+  { id: 'vercel-ai-sdk', name: 'Vercel AI SDK', spec: 'SDK', href: '/docs/guides/integrations/vercel-ai-sdk' },
+  { id: 'discord', name: 'Discord & Slack', spec: 'bots', href: '/docs/skills' },
+  { id: 'telegram', name: 'Telegram Bots', spec: 'bots', href: '/docs/skills' },
 ] as const;
 
-/** The three doors, in descending order of how much you type. */
+/** The three entry paths: Build with App, Build with CLI, Build with Platform. */
 export const doors = (models: string) => [
-  { eyebrow: 'No code', title: 'Build with App', body: 'Describe it in English and watch it build. Chat, agents and MCP tools in the browser.', href: 'https://hanzo.app', brand: 'hanzo' },
-  { eyebrow: 'In your terminal', title: 'Build with Dev', body: 'Our coding agent, in your repo. Or bring Claude Code and Codex — they work here too.', href: '/docs/cli', brand: 'hanzo-dev' },
-  { eyebrow: 'Lower level', title: 'Build with API', body: `${models} models behind one REST endpoint, with SDKs for every language we ship.`, href: '/docs/openapi', brand: 'enso' },
+  {
+    eyebrow: 'Visual & Agentic OS',
+    title: 'Build with App',
+    body: 'Describe what you want in English or work inside Hanzo Desktop, Studio, Bot & Team — full-stack apps, workflows, media, and MCP tools ready out of the box.',
+    href: 'https://hanzo.app',
+    cta: 'Open hanzo.app',
+    brand: 'hanzo',
+  },
+  {
+    eyebrow: 'Local Runtime & Coding Agent',
+    title: 'Build with CLI',
+    body: 'Boot your local k3s runtime & OSS Cloud (`hanzo start`, `hanzo up`), deploy multi-project apps, and ship code in your repo with `hanzo dev`.',
+    href: '/docs/cli',
+    cta: 'Read the CLI docs',
+    brand: 'hanzo-dev',
+  },
+  {
+    eyebrow: 'OSS Cloud, SDKs & /v1 APIs',
+    title: 'Build with Platform',
+    body: `${models} models behind one key (\`Enso\`, \`Kai\`, \`Zen\`), plus ~110 self-hostable OSS Cloud capabilities (\`/v1/iam\`, \`/v1/kms\`, \`/v1/base\`, \`/v1/kv\`, \`/v1/vector\`, \`/v1/pubsub\`, \`/v1/commerce\`, \`/v1/sandbox\`, Zero-Trust K8s) in our cloud (\`platform.hanzo.ai\` / \`api.hanzo.ai\`) or on your own hardware.`,
+    href: '/docs/architecture',
+    cta: 'Explore the Platform',
+    brand: 'enso',
+  },
 ];
 
 export const quickstart = {

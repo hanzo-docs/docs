@@ -281,12 +281,12 @@ export function Landing({ install, use, catalogue }: { install: ReactNode; use: 
             </Text>
           </Text>
 
-          {/* Works with every coding agent & IDE */}
-          <XStack mt={8} flexWrap="wrap" gap={8} justify="center" maxW={840}>
+          {/* Works with every coding agent, IDE & bot */}
+          <XStack mt={8} flexWrap="wrap" gap={8} justify="center" maxW={860}>
             {codingAgents.map((a) => (
               <XStack
                 key={a.id}
-                render={<Link href="/docs/cli" prefetch={false} />}
+                render={<Link href={a.href} prefetch={false} />}
                 gap={7}
                 px={12}
                 py={7}
@@ -306,7 +306,7 @@ export function Landing({ install, use, catalogue }: { install: ReactNode; use: 
           </XStack>
         </YStack>
 
-        {/* The three doors, in descending order of how much you type. */}
+        {/* The three doors: Build with App, Build with CLI, Build with Platform. */}
         <YStack position="relative" mt={40} width="100%" maxW={896}>
           <Grid columns={{ min: 260, max: 3 }} gap={16}>
             {doors(models).map((d) => (
@@ -323,9 +323,15 @@ export function Landing({ install, use, catalogue }: { install: ReactNode; use: 
                   </Text>
                   <ArrowRight size={16} color="$color10" />
                 </XStack>
-                <Text fontSize={14} lineHeight={22} whiteSpace="normal" {...muted}>
-                  {d.body}
+                <Text flex={1} fontSize={14} lineHeight={22} whiteSpace="normal" {...muted}>
+                  {mono(d.body)}
                 </Text>
+                <XStack gap={5} items="center" pt={4}>
+                  <Text fontSize={12} fontWeight="600" color="$color12">
+                    {d.cta}
+                  </Text>
+                  <ArrowRight size={13} color="$color12" />
+                </XStack>
               </YStack>
             ))}
           </Grid>

@@ -1,0 +1,168 @@
+---
+title: "Boot Local OSS Cloud & Warm k3s (hanzo up)"
+description: "Run the complete self-hosted Hanzo OSS Cloud, warm k3s substrate, hanzod controller, and multi-project workloads locally with hanzo start and hanzo up."
+icon: Server
+---
+
+Run the **exact same Hanzo OSS Cloud** (`ghcr.io/hanzoai/cloud-oss:main`) that powers `api.hanzo.ai` and `platform.hanzo.ai` directly on your laptop, workstation, or private bare-metal server — backed by a warm local `k3s` Kubernetes substrate and the `hanzod` runtime controller.
+
+## Three-Layer Lifecycle Architecture
+
+Hanzo separates **infrastructure substrate**, **platform & project workloads**, and **active coding loops** into three clean CLI layers so stopping one project never tears down your cluster or sister apps:
+
+| Layer | Commands | Scope & Lifecycle |
+| --- | --- | --- |
+| **1. Infrastructure Substrate** | `hanzo start` · `hanzo stop` · `hanzo restart` | Boots/halts the warm local `k3s` Kubernetes cluster (`hanzoai/vm` on macOS/Windows, native cgroups/containerd on Linux) and `hanzod` daemon. Stays warm across projects. |
+| **2. Platform & Project Workloads** | `hanzo up` · `hanzo down` · `hanzo status` | Reconciles `hanzo.yaml` / `compose.yaml` into isolated Kubernetes namespaces (e.g. `hanzo-cloud`, `solar-crm`) so multiple apps run side-by-side without port collisions. |
+| **3. Interactive Coding & Models** | `hanzo dev` · `hanzo pull` · `hanzo engine serve` | Runs the terminal coding agent (`hanzoai/dev-v1`) with HIP-0300 MCP tools and optional local `zen6-flash` weights against your local or cloud `/v1` gateway. |
+
+## 1. Boot the Warm Local k3s Runtime & OSS Cloud
+
+<Tabs items={['CLI', 'Desktop App', 'SDK', 'HTTP', 'MCP']}>
+<Tab value="CLI">
+```bash
+# 1. Install the ~15 MB Rust CLI
+curl -fsSL https://hanzo.sh | sh
+
+# 2. Boot warm k3s substrate + hanzod daemon (idempotent, sub-second once warm)
+hanzo start
+
+# 3. Bring up the full OSS Cloud control plane (IAM, KMS, Base, KV, Vector, PubSub, Gateway)
+hanzo up --cloud
+
+# 4. Inspect live services, endpoints, and isolated project namespaces
+hanzo status
+```
+</Tab>
+<Tab value="Desktop App">
+Open **Hanzo Desktop** ([hanzo.ai/download](https://hanzo.ai/download)) → **Local Cloud**:
+
+1. Toggle **Local k3s & OSS Cloud** to **Running** — Desktop invokes `hanzod` under the hood and mounts your local kubeconfig automatically.
+2. Open the local Console at `http://localhost:8000` (or link it to your org at [platform.hanzo.ai](https://platform.hanzo.ai) for unified hybrid telemetry).
+3. Inspect running pods, IAM tenants, KMS vaults, and local model VRAM from one pane.
+</Tab>
+<Tab value="SDK">
+<Tabs items={['TypeScript', 'Python', 'Go', 'Rust']}>
+<Tab value="TypeScript">
+```ts
+// npm i hanzoai
+import { AiApi, Configuration } from 'hanzoai';
+
+const basePath = process.env.HANZO_BASE_URL ?? 'http://localhost:8000';
+const ai = new AiApi(
+  new Configuration({ basePath, accessToken: process.env.HANZO_API_KEY }),
+);
+
+const { data } = await ai.getModels();
+console.log(`Connected to ${basePath} — ${data.data?.length ?? 0} models routed`);
+```
+</Tab>
+<Tab value="Python">
+```python
+# pip install "hanzoai>=8"
+import os
+from hanzoai.cloud import ApiClient, Configuration
+from hanzoai.cloud.api import AiApi
+
+cfg = Configuration(
+    host=os.environ.get("HANZO_BASE_URL", "http://localhost:8000"),
+    access_token=os.environ.get("HANZO_API_KEY", ""),
+)
+models = AiApi(ApiClient(cfg)).get_models()
+print("Local/Cloud models ready:", len(models.data or []))
+```
+</Tab>
+<Tab value="Go">
+```go
+// go get github.com/hanzoai/go-sdk/v8
+cfg := hanzoai.NewConfiguration()
+cfg.Servers = hanzoai.ServerConfigurations{{URL: os.Getenv("HANZO_BASE_URL")}}
+cfg.AddDefaultHeader("Authorization", "Bearer "+os.Getenv("HANZO_API_KEY"))
+
+client := hanzoai.NewAPIClient(cfg)
+models, _, err := client.AiAPI.GetModels(ctx).Execute()
+```
+</Tab>
+<Tab value="Rust">
+```rust
+// cargo add hanzo-client
+use hanzo_client::apis::{ai_api, configuration::Configuration};
+
+let mut cfg = Configuration::new();
+cfg.base_path = std::env::var("HANZO_BASE_URL")
+    .unwrap_or_else(|_| "http://localhost:8000".into());
+cfg.bearer_access_token = std::env::var("HANZO_API_KEY").ok();
+
+let models = ai_api::get_models(&cfg, Default::default()).await?;
+```
+</Tab>
+</Tabs>
+</Tab>
+<Tab value="HTTP">
+```bash
+# Point HANZO_BASE_URL at localhost:8000 (local OSS Cloud) or https://api.hanzo.ai
+export HANZO_BASE_URL="${HANZO_BASE_URL:-http://localhost:8000}"
+
+# Verify local cloud gateway + cluster health
+curl -fsSL "$HANZO_BASE_URL/v1/models" | jq '.data | length'
+curl -fsSL https://api.hanzo.ai/v1/deploy/health \
+  -H "Authorization: Bearer $HANZO_API_KEY"
+```
+</Tab>
+<Tab value="MCP">
+```bash
+# Attach the 19-tool HIP-0300 MCP server pointed at your local OSS Cloud
+HANZO_BASE_URL=http://localhost:8000 npx -y @hanzo/mcp serve
+```
+</Tab>
+</Tabs>
+
+## 2. Run Multi-Project Apps Side-by-Side (`Cloud` + `Solar CRM`)
+
+Because `hanzo up` scopes every repository to its own Kubernetes namespace and ingress hostname on the shared warm `k3s` cluster, you can run `ghcr.io/hanzoai/cloud-oss:main` alongside business apps (like Solar CRM, Commerce, or Studio) and tear down one without disturbing the others:
+
+```bash
+# Terminal 1: Keep Hanzo OSS Cloud running in namespace `hanzo-cloud`
+cd ~/work/hanzo/cloud && hanzo up
+
+# Terminal 2: Boot a multi-service app in its own isolated namespace `solar-crm`
+cd ~/work/solar-crm && hanzo up
+
+# Tear down ONLY solar-crm — `hanzo-cloud` and warm k3s stay online!
+cd ~/work/solar-crm && hanzo down
+
+# Halt the entire local k3s VM/substrate when finished for the day
+hanzo stop
+```
+
+## 3. Declarative `hanzo.yaml` Workload Contract
+
+Drop a `hanzo.yaml` at the root of any repository so `hanzo up` locally and `hanzo deploy` in production reconcile the exact same services, secrets, and `/v1` bindings:
+
+```yaml title="hanzo.yaml"
+name: solar-crm
+org: acme
+
+services:
+  web:
+    build: ./apps/web
+    port: 3000
+    env:
+      NEXT_PUBLIC_HANZO_URL: ${HANZO_BASE_URL}
+  worker:
+    build: ./services/worker
+     subscribe: ["crm.leads.*"]
+
+capabilities:
+  iam: true
+  kms: true
+  base: true
+  kv: [sessions]
+  pubsub: [crm]
+```
+
+## Next Steps
+
+- [Deploy a Full-Stack AI App to Edge & Zero-Trust K8s](/docs/guides/hello) — wire `/v1/iam`, `/v1/kms`, `/v1/function`, and `/v1/pubsub` into a live deployment.
+- [Self-Host & Hack on the Complete OSS Stack](/docs/guides/oss-stack) — explore all `hanzoai/*` repositories and the canonical `Makefile` contract.
+- [Self-Hosting & Air-Gapped Reference](/docs/self-hosting) — production Helm charts, TLS, and offline model bundles.

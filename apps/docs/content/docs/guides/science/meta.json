@@ -1,5 +1,5 @@
 {
-  "title": "Science",
+  "title": "Empirical AI & Evaluations",
   "description": "Golden evaluation suites, Kai judges, exact-McNemar paired benchmarks, controlled A/B rollouts, dataset lineage, drift tracking, and research autopilot.",
   "icon": "FlaskConical",
   "pages": [

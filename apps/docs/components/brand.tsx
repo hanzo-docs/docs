@@ -2,21 +2,22 @@
 
 import Link from 'next/link';
 import { XStack } from '@hanzo/gui';
-import { HanzoWordmark } from '@hanzogui/shell';
+import { HanzoMark, HanzoWordmark } from '@hanzogui/shell';
 
 /**
- * The wordmark at the top left (`Hanzo Docs`).
- * The H mark sits at the bottom-right corner (`components/corner.tsx`), matching hanzo.ai.
+ * Official @hanzo/logo 67x67 H-ribbon mark + wordmark at the top left (`Hanzo Docs`).
  */
 export function Brand() {
   return (
     <XStack
       render={<Link href="/" prefetch={false} aria-label="Hanzo Docs, home" />}
       items="center"
+      gap={9}
       color="$color12"
       minW={0}
     >
-      <HanzoWordmark label="Hanzo Docs" size={22} brandMenu />
+      <HanzoMark size={19} brandMenu />
+      <HanzoWordmark label="Hanzo Docs" size={21} brandMenu />
     </XStack>
   );
 }

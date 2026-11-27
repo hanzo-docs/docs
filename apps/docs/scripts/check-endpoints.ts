@@ -40,7 +40,7 @@ const SKIP = ['projects/'];
 // `<id>` counts as a path segment: pages write `releases/rel_<id>/activate` and
 // stopping at the `<` left the truncated `releases/rel_` to be reported as an
 // unknown route, which is a complaint about punctuation, not about the API.
-const ENDPOINT = /https?:\/\/api\.hanzo\.ai(\/v1\/[A-Za-z0-9_\-{}<>/.]*)/g;
+const ENDPOINT = /https?:\/\/api\.hanzo\.ai(\/v1\/[A-Za-z0-9_\-{}<>/.$]*)/g;
 
 function walk(dir: string, out: string[] = []): string[] {
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -69,7 +69,13 @@ const segments = (p: string): string[] =>
     .replace(/\/$/, '')
     .split('/')
     .filter(Boolean)
-    .map((s) => (/^\{wildcard/.test(s) ? REST : /^[{<].*[}>]$/.test(s) ? ANY : s));
+    .map((s) =>
+      /^\{wildcard/.test(s)
+        ? REST
+        : /^[{<].*[}>]$/.test(s) || /^\$[A-Za-z_][A-Za-z0-9_]*$/.test(s)
+          ? ANY
+          : s,
+    );
 
 /** Does `a` name `b`, or a prefix of it? Placeholders match any one segment. */
 const names = (a: string[], b: string[]): boolean => {
@@ -135,6 +141,12 @@ const STAGED = [
   '/v1/transport/agent',
   '/v1/transport/inbox',
   '/v1/transport/slack/send',
+  // Headless agentic commerce checkout & discovery endpoints (docs/agentic-commerce.mdx).
+  '/v1/billing/discovery',
+  '/v1/billing/catalog',
+  '/v1/billing/checkouts',
+  '/v1/billing/orders',
+  '/v1/billing/topup/crypto',
 ];
 
 export function checkEndpoints(): { checked: number; unknown: Array<[string, string]> } {

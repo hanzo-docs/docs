@@ -1,94 +1,106 @@
 ---
-title: "Chat Completions"
-description: "Send a prompt to Enso and receive a completion across 500+ models."
+title: "Route 500+ Models & Local Inference (Enso, Zen & Engine)"
+description: "Call 500+ frontier and open-weight models through POST /v1/chat/completions with Enso adaptive routing, Zen 6 open weights, cost/latency caps, caching, and offline Engine inference."
+icon: Sparkle
 ---
 
-**Send a prompt to Enso and receive a completion across 500+ models.**
+Every model on Hanzo — **Enso** adaptive tiers, **Zen 6** open weights, and 500+ frontier models across OpenAI, Anthropic, Google Gemini, xAI Grok, Meta Llama, Qwen, DeepSeek, and Mistral — speaks one OpenAI-compatible `/v1/chat/completions` contract, online at `https://api.hanzo.ai/v1` or offline via `hanzo engine`.
 
-> Use `POST /v1/chat/completions` with `model: "auto"` (or any Zen, Claude, GPT, or Gemini ID) and read `choices[0].message.content`.
+## Routing Tiers & Open Weights at a Glance
 
-## Implements the OpenAI-compatible chat completions API
+| Model ID | Behavior | Ideal Workload |
+| --- | --- | --- |
+| `enso-auto` / `auto` | Starts on Flash; escalates to Pro/Max/Ultra only when Kai judges prompt complexity warrants it | Default production traffic & multi-turn agents |
+| `enso-flash` · `enso-pro` · `enso-max` · `enso-ultra` | Explicit capability tiers with automatic cross-provider failover and prompt caching | SLA-bound production services |
+| `zen6` · `zen6-coder` | 27B Apache-2.0 open-weight multimodal & agentic coding model (up to 1M context) | Code generation, tool calling, sovereign deployments |
+| `zen6-flash` | 5.95 GB ternary weights running natively on Apple Silicon Metal or single GPU | Sub-second local/offline inference |
 
-`POST /v1/chat/completions` · [reference →](/docs/openapi/ai)
+## 1. Adaptive Routing with Hard Cost & Latency Bounds
 
-Implements the OpenAI-compatible chat completions API
+Pass `X-Max-Cost` (USD per 1K tokens) and `X-Max-Latency-Ms` headers so Enso guarantees your unit economics and p99 latency on every turn:
 
-Reasoning effort is `reasoning_effort` (Responses: `reasoning.effort`). Send `auto`, or nothing, and enso-auto's router decides: it starts at Enso Flash and moves to a deeper tier only when the router or Kai judges the request needs it. The ladder: `instant` (no reasoning; `none` and `minimal` read instant) serves enso-flash with thinking off, `low` enso-flash, `medium` enso-pro, `high` enso-max, `max` enso-ultra (`xhigh` reads max). On a tier named outright the effort sets only how hard it thinks, and `instant` turns thinking off. Fast mode is `fast: true` (or `X-Fast: 1`): billed from prepaid balance on every plan at 2x the price on enso-auto and enso-flash, 3x on enso-pro and enso-max, 4x on enso-ultra, it asks prepaid rungs first, and a payer with no money of its own is refused prepaid_required.
-
-| Parameter | In | Required | Description |
-|---|---|---|---|
-| `X-Fast` | header | — | Fast mode, as the body's `fast`: "1" or "true". |
-| `X-Max-Cost` | header | — | The most this request may cost, in USD per 1,000 tokens. Routing picks only models under it; an org's own ceil |
-| `X-Max-Latency-Ms` | header | — | The slowest model this request accepts, in milliseconds. |
-| `frequency_penalty` | body | — |  |
-| `function_call` | body | — |  |
-| `functions` | body | — |  |
-| `logit_bias` | body | — |  |
-| `logprobs` | body | — |  |
-| `max_completion_tokens` | body | — |  |
-| `max_tokens` | body | — |  |
-| `messages` | body | — |  |
-| `metadata` | body | — |  |
-| `model` | body | — |  |
-| `n` | body | — |  |
-| `parallel_tool_calls` | body | — |  |
-
-<Tabs items={['CLI', 'SDK', 'HTTP', 'MCP']}>
+<Tabs items={['CLI', 'App', 'SDK', 'HTTP', 'MCP']}>
 <Tab value="CLI">
 ```bash
-hanzo chat completions
+# Interactive chat or single-shot completion routed by Enso
+hanzo run --model enso-auto "Design a zero-downtime Postgres migration plan"
+
+# Inspect live model IDs and per-million-token pricing
+hanzo models list
 ```
+</Tab>
+<Tab value="App">
+Open [hanzo.chat](https://hanzo.chat) or [hanzo.app](https://hanzo.app):
+
+1. Select **Enso Auto** to route turns automatically across Zen 6, Claude, GPT, and Gemini, or pin **Zen 6** for open-weight execution.
+2. Enable **Side-by-Side Arena** to compare latency, token cost, and reasoning traces across multiple models simultaneously.
 </Tab>
 <Tab value="SDK">
-<Tabs items={['.ts', '.py', '.go', '.rs', '.java']}>
-<Tab value=".ts">
+<Tabs items={['TypeScript', 'Python', 'Go', 'Rust']}>
+<Tab value="TypeScript">
 ```ts
-import { Configuration, AiApi } from 'hanzoai';
+// npm i openai  (or: npm i hanzoai)
+import OpenAI from 'openai';
 
-const api = new AiApi(new Configuration({ accessToken: process.env.HANZO_API_KEY }));
-const { data } = await api.postChatCompletions({ frequency_penalty: 0, function_call: "<function_call>" });
+const client = new OpenAI({
+  apiKey: process.env.HANZO_API_KEY,
+  baseURL: 'https://api.hanzo.ai/v1',
+  defaultHeaders: {
+    'X-Max-Cost': '0.005',
+    'X-Max-Latency-Ms': '2500',
+  },
+});
+
+const completion = await client.chat.completions.create({
+  model: 'enso-auto',
+  messages: [
+    { role: 'system', content: 'Return concise architectural recommendations.' },
+    { role: 'user', content: 'Compare JetStream vs Kafka for multi-tenant agent events.' },
+  ],
+});
+
+console.log(completion.model, completion.choices[0]?.message.content);
 ```
 </Tab>
-<Tab value=".py">
+<Tab value="Python">
 ```python
-from hanzoai.cloud import ApiClient, Configuration
-from hanzoai.cloud.api import AiApi
+# pip install "hanzoai>=8" openai
+import os
+from openai import OpenAI
 
-client = ApiClient(Configuration(access_token=os.environ["HANZO_API_KEY"]))
-result = AiApi(client).post_chat_completions(frequency_penalty=0, function_call="<function_call>")
+client = OpenAI(
+    api_key=os.environ["HANZO_API_KEY"],
+    base_url="https://api.hanzo.ai/v1",
+    default_headers={"X-Max-Cost": "0.005", "X-Max-Latency-Ms": "2500"},
+)
+
+resp = client.chat.completions.create(
+    model="enso-auto",
+    messages=[{"role": "user", "content": "Write an idempotent webhook handler in Python."}],
+)
+print(resp.model, resp.choices[0].message.content)
 ```
 </Tab>
-<Tab value=".go">
+<Tab value="Go">
 ```go
+// go get github.com/hanzoai/go-sdk/v8
 cfg := hanzoai.NewConfiguration()
 cfg.AddDefaultHeader("Authorization", "Bearer "+os.Getenv("HANZO_API_KEY"))
+cfg.AddDefaultHeader("X-Max-Cost", "0.005")
 client := hanzoai.NewAPIClient(cfg)
 
-resp, _, err := client.AiAPI.PostChatCompletions(context.Background()).Execute()
-if err != nil {
-	return err
-}
+resp, _, err := client.AiAPI.PostChatCompletions(ctx).Execute()
 ```
 </Tab>
-<Tab value=".rs">
+<Tab value="Rust">
 ```rust
-use hanzo_client::apis::{configuration::Configuration, ai_api};
+// cargo add hanzo-client
+use hanzo_client::apis::{ai_api, configuration::Configuration};
 
 let mut cfg = Configuration::new();
 cfg.bearer_access_token = std::env::var("HANZO_API_KEY").ok();
 
-let result = ai_api::post_chat_completions(&cfg, Default::default()).await?;
-```
-</Tab>
-<Tab value=".java">
-```java
-import ai.hanzo.cloud.ApiClient;
-import ai.hanzo.cloud.api.AiApi;
-
-ApiClient client = new ApiClient();
-client.setBearerToken(System.getenv("HANZO_API_KEY"));
-
-var result = new AiApi(client).postChatCompletions();
+let reply = ai_api::post_chat_completions(&cfg, Default::default()).await?;
 ```
 </Tab>
 </Tabs>
@@ -98,17 +110,72 @@ var result = new AiApi(client).postChatCompletions();
 curl -X POST https://api.hanzo.ai/v1/chat/completions \
   -H "Authorization: Bearer $HANZO_API_KEY" \
   -H "Content-Type: application/json" \
+  -H "X-Max-Cost: 0.005" \
+  -H "X-Max-Latency-Ms: 2500" \
   -d '{
-       "frequency_penalty": 0,
-       "function_call": "<function_call>"
-     }'
+    "model": "enso-auto",
+    "reasoning_effort": "medium",
+    "messages": [
+      { "role": "user", "content": "Summarize three invariants of zero-trust service meshes." }
+    ]
+  }'
 ```
 </Tab>
 <Tab value="MCP">
-MCP declares no tool for **ai** — `tools/list` on `https://api.hanzo.ai/v1/mcp` names the products it does reach. Use HTTP or an SDK.
+Configure any MCP-capable host (`Claude Code`, `Cursor`, `Hanzo Dev`) to route inference through `https://api.hanzo.ai/v1` while invoking `kai` and workspace tools over HIP-0300 MCP (`npx -y @hanzo/mcp serve`).
 </Tab>
 </Tabs>
 
----
+## 2. Streaming SSE & Structured JSON Schema Outputs
 
-Every command, call and tool above is generated from the same OpenAPI document that generates the SDKs themselves — the four surfaces are projections of one doc comment, so they cannot disagree.
+Enforce strict JSON Schema conformance for downstream pipelines and stream tokens over Server-Sent Events (`stream: true`):
+
+```bash
+curl -N -X POST https://api.hanzo.ai/v1/chat/completions \
+  -H "Authorization: Bearer $HANZO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "zen6",
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "release_risk",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "properties": {
+            "summary": { "type": "string" },
+            "breakingChanges": { "type": "boolean" },
+            "rollbackPlan": { "type": "string" }
+          },
+          "required": ["summary", "breakingChanges", "rollbackPlan"],
+          "additionalProperties": false
+        }
+      }
+    },
+    "messages": [{ "role": "user", "content": "Audit dropping column legacy_token from users." }]
+  }'
+```
+
+## 3. Offline & Air-Gapped Local Inference (`hanzo engine`)
+
+Pull ternary `zen6-flash` weights once and serve the exact same `/v1/chat/completions` contract locally on Metal, CUDA, or CPU with zero external network egress:
+
+```bash
+# Download open-weight Zen 6 Flash locally
+hanzo pull zenlm/zen6-flash
+
+# Start Hanzo Engine (`hanzoai/engine`) on localhost:8080
+hanzo engine serve --model zenlm/zen6-flash --port 8080
+
+# Point your existing SDK or CLI at localhost — zero code changes
+HANZO_BASE_URL=http://localhost:8080 curl -X POST http://localhost:8080/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{"model":"zen6-flash","messages":[{"role":"user","content":"Write a lock-free ring buffer in Rust."}]}'
+```
+
+## Next Steps
+
+- [Enso Adaptive Routing Guides](/docs/guides/enso) — prompt caching (4.6x turn savings), custom router blends, and outcome feedback loops.
+- [Zen Open-Weight Engineering Guides](/docs/guides/zen) — LoRA fine-tuning, interactive GRPO RL, and private checkpoint deployment.
+- [Calibrated Decisions & Routing with Kai](/docs/guides/kai) — replace brittle classification prompts with `$0.021 / 1M` typed `POST /v1/decisions` calls.

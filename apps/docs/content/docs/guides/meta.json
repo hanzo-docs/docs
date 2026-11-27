@@ -1,0 +1,29 @@
+{
+  "title": "Guides & Tutorials",
+  "description": "End-to-end OSS Cloud & Stack architectural guides across App, CLI, SDKs, /v1 HTTP, and HIP-0300 MCP.",
+  "icon": "Rocket",
+  "defaultOpen": true,
+  "pages": [
+    "local-cloud",
+    "hello",
+    "chat",
+    "agent",
+    "tools",
+    "store",
+    "money",
+    "oss-stack",
+    "coding",
+    "cookbook",
+    "integrations",
+    "migrate",
+    "---Intelligence Engineering (50 Labs)---",
+    "kai",
+    "enso",
+    "zen",
+    "science",
+    "cyber",
+    "autopilot",
+    "infrastructure",
+    "business"
+  ]
+}

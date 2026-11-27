@@ -1,6 +1,6 @@
 {
   "$schema": "../../../../.docs/json-schema/docs.meta.json",
-  "title": "Migrate",
+  "title": "Migrate to Hanzo",
   "description": "45 vendors and tools, each mapped to the capability that answers it.",
   "icon": "ArrowRightLeft",
   "pages": [

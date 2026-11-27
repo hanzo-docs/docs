@@ -100,10 +100,12 @@ function Node({ node }: { node: PageTree.Item | PageTree.Folder }) {
 }
 
 const OPEN_SECTIONS = new Set([
+  'Getting Started',
   'Start',
   'Build AI Apps',
   'Ship & Deploy',
   'Guides',
+  'Guides & Tutorials',
   'Core Workflows',
   'Decision Model',
   'Recipes & Frameworks',
