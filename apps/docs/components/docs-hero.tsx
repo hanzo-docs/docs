@@ -3,8 +3,15 @@
 import { useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { Text, XStack, YStack } from '@hanzo/gui';
+import { LayoutGrid, Server, Terminal } from '@hanzogui/lucide-icons-2';
 import { Action } from '@/components/action';
 import { muted } from '@/lib/ink';
+
+const DOOR_ICONS = {
+  app: LayoutGrid,
+  cli: Terminal,
+  platform: Server,
+} as const;
 
 // The masthead. Three doors, one model, and nothing else above the fold.
 //
@@ -51,6 +58,7 @@ export function DocsHero({ doors }: { doors: Door[] }) {
       <XStack gap={12} $max-sm={{ flexDirection: 'column' }}>
         {doors.map((d) => {
           const on = d.id === active;
+          const DoorIcon = DOOR_ICONS[d.id as keyof typeof DOOR_ICONS] ?? LayoutGrid;
           return (
             <YStack
               key={d.id}
@@ -61,7 +69,7 @@ export function DocsHero({ doors }: { doors: Door[] }) {
               onPress={() => setActive(d.id)}
               aria-pressed={on}
               flex={1}
-              gap={6}
+              gap={8}
               p={18}
               rounded="$5"
               borderWidth={1}
@@ -71,9 +79,24 @@ export function DocsHero({ doors }: { doors: Door[] }) {
               cursor="pointer"
               hoverStyle={{ borderColor: '$color8' }}
             >
-              <Text fontSize="$1" fontWeight="500" {...muted}>
-                {d.eyebrow}
-              </Text>
+              <XStack width="100%" justify="space-between" items="center" gap={8}>
+                <Text fontSize="$1" fontWeight="500" {...muted}>
+                  {d.eyebrow}
+                </Text>
+                <XStack
+                  width={26}
+                  height={26}
+                  rounded={7}
+                  bg={on ? '$background' : '$hover'}
+                  borderWidth={1}
+                  borderColor="$borderColor"
+                  items="center"
+                  justify="center"
+                  shrink={0}
+                >
+                  <DoorIcon size={14} color={on ? '$color12' : '$color10'} />
+                </XStack>
+              </XStack>
               <Text fontSize={15} fontWeight="600" color="$color12">
                 {d.title} {on ? '→' : ''}
               </Text>

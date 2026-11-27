@@ -56,7 +56,7 @@ import {
  * page ships tokens rather than a highlighter.
  */
 
-const ICONS = { Activity, Code2, Database, FileJson2, Globe, LayoutGrid, Package, Server, Shield, ShoppingCart, Sparkle, Workflow };
+const ICONS = { Activity, Code2, Database, FileJson2, Globe, LayoutGrid, Package, Server, Shield, ShoppingCart, Sparkle, Terminal, Workflow };
 
 /** Text with `backticks`, the backticked runs set in the mono face. */
 function mono(text: string): ReactNode {
@@ -309,31 +309,36 @@ export function Landing({ install, use, catalogue }: { install: ReactNode; use: 
         {/* The three doors: Build with App, Build with CLI, Build with Platform. */}
         <YStack position="relative" mt={40} width="100%" maxW={896}>
           <Grid columns={{ min: 260, max: 3 }} gap={16}>
-            {doors(models).map((d) => (
-              <YStack key={d.title} render={go(d.href)} {...CARD} p={24} gap={8} hoverStyle={{ bg: '$hover', borderColor: '$color8' }}>
-                <XStack justify="space-between" items="center">
-                  <Text fontSize={12} fontWeight="500" {...muted}>
-                    {d.eyebrow}
+            {doors(models).map((d) => {
+              const DoorIcon = ICONS[d.icon];
+              return (
+                <YStack key={d.title} render={go(d.href)} {...CARD} p={24} gap={8} hoverStyle={{ bg: '$hover', borderColor: '$color8' }}>
+                  <XStack justify="space-between" items="center">
+                    <Text fontSize={12} fontWeight="500" {...muted}>
+                      {d.eyebrow}
+                    </Text>
+                    <XStack width={28} height={28} rounded={8} bg="$hover" borderWidth={1} borderColor="$borderColor" items="center" justify="center">
+                      <DoorIcon size={15} color="$color12" />
+                    </XStack>
+                  </XStack>
+                  <XStack gap={6} items="center">
+                    <Text fontSize={18} fontWeight="600" color="$color12">
+                      {d.title}
+                    </Text>
+                    <ArrowRight size={16} color="$color10" />
+                  </XStack>
+                  <Text flex={1} fontSize={14} lineHeight={22} whiteSpace="normal" {...muted}>
+                    {mono(d.body)}
                   </Text>
-                  <BrandIcon name={d.brand} size={16} />
-                </XStack>
-                <XStack gap={6} items="center">
-                  <Text fontSize={18} fontWeight="600" color="$color12">
-                    {d.title}
-                  </Text>
-                  <ArrowRight size={16} color="$color10" />
-                </XStack>
-                <Text flex={1} fontSize={14} lineHeight={22} whiteSpace="normal" {...muted}>
-                  {mono(d.body)}
-                </Text>
-                <XStack gap={5} items="center" pt={4}>
-                  <Text fontSize={12} fontWeight="600" color="$color12">
-                    {d.cta}
-                  </Text>
-                  <ArrowRight size={13} color="$color12" />
-                </XStack>
-              </YStack>
-            ))}
+                  <XStack gap={5} items="center" pt={4}>
+                    <Text fontSize={12} fontWeight="600" color="$color12">
+                      {d.cta}
+                    </Text>
+                    <ArrowRight size={13} color="$color12" />
+                  </XStack>
+                </YStack>
+              );
+            })}
           </Grid>
         </YStack>
       </YStack>

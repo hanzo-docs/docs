@@ -93,32 +93,33 @@ export const codingAgents = [
 ] as const;
 
 /** The three entry paths: Build with App, Build with CLI, Build with Platform. */
-export const doors = (models: string) => [
-  {
-    eyebrow: 'Visual & Agentic OS',
-    title: 'Build with App',
-    body: 'Describe what you want in English or work inside Hanzo Desktop, Studio, Bot & Team — full-stack apps, workflows, media, and MCP tools ready out of the box.',
-    href: 'https://hanzo.app',
-    cta: 'Open hanzo.app',
-    brand: 'hanzo',
-  },
-  {
-    eyebrow: 'Local Runtime & Coding Agent',
-    title: 'Build with CLI',
-    body: 'Boot your local k3s runtime & OSS Cloud (`hanzo start`, `hanzo up`), deploy multi-project apps, and ship code in your repo with `hanzo dev`.',
-    href: '/docs/cli',
-    cta: 'Read the CLI docs',
-    brand: 'hanzo-dev',
-  },
-  {
-    eyebrow: 'OSS Cloud, SDKs & /v1 APIs',
-    title: 'Build with Platform',
-    body: `${models} models behind one key (\`Enso\`, \`Kai\`, \`Zen\`), plus ~110 self-hostable OSS Cloud capabilities (\`/v1/iam\`, \`/v1/kms\`, \`/v1/base\`, \`/v1/kv\`, \`/v1/vector\`, \`/v1/pubsub\`, \`/v1/commerce\`, \`/v1/sandbox\`, Zero-Trust K8s) in our cloud (\`platform.hanzo.ai\` / \`api.hanzo.ai\`) or on your own hardware.`,
-    href: '/docs/architecture',
-    cta: 'Explore the Platform',
-    brand: 'enso',
-  },
-];
+export const doors = (models: string) =>
+  [
+    {
+      eyebrow: 'Visual & Agentic OS',
+      title: 'Build with App',
+      body: 'Describe what you want in English or work inside Hanzo Desktop, Studio, Bot & Team — full-stack apps, workflows, media, and MCP tools ready out of the box.',
+      href: 'https://hanzo.app',
+      cta: 'Open hanzo.app',
+      icon: 'LayoutGrid' as const,
+    },
+    {
+      eyebrow: 'Local Runtime & Coding Agent',
+      title: 'Build with CLI',
+      body: 'Boot your local k3s runtime & OSS Cloud (`hanzo start`, `hanzo up`), deploy multi-project apps, and ship code in your repo with `hanzo dev`.',
+      href: '/docs/cli',
+      cta: 'Read the CLI docs',
+      icon: 'Terminal' as const,
+    },
+    {
+      eyebrow: 'OSS Cloud, SDKs & /v1 APIs',
+      title: 'Build with Platform',
+      body: `${models} models behind one key (\`Enso\`, \`Kai\`, \`Zen\`), plus ~110 self-hostable OSS Cloud capabilities (\`/v1/iam\`, \`/v1/kms\`, \`/v1/base\`, \`/v1/kv\`, \`/v1/vector\`, \`/v1/pubsub\`, \`/v1/commerce\`, \`/v1/sandbox\`, Zero-Trust K8s) in our cloud (\`platform.hanzo.ai\` / \`api.hanzo.ai\`) or on your own hardware.`,
+      href: '/docs/architecture',
+      cta: 'Explore the Platform',
+      icon: 'Server' as const,
+    },
+  ] as const;
 
 export const quickstart = {
   title: 'Quick Start',

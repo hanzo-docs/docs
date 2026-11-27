@@ -1,16 +1,20 @@
-// Official full-color brand SVGs & colors for model families, model providers,
+// Official brand SVGs & colors for model families, model providers,
 // coding agents, IDEs, frameworks, and bots.
 //
+// Color policy:
+// - Hanzo marks (`hanzo`, `enso`, `kai`, `hanzo-dev`, `hanzo-bot`, `hanzo-ide`)
+//   and monochrome-brand logos (`x-ai`, `cursor`, `vercel`, `moonshotai`, `github`, `x`, etc.)
+//   ALWAYS render in crisp `currentColor` — NEVER tinted with random colors.
+// - Zoo / ZenLM (`zen`, `zenlm`, `zoo`) renders the official Zoo additive-RGB mark.
+// - Third-party color brands render ONLY their authentic official brand hexes.
+//
 // HTML parser rule: inside <svg>, a `<path .../>` has no closing tag in HTML5
-// and swallows every sibling after it until </svg>. When React 19 hydrates
-// dangerouslySetInnerHTML on a <span>, a second element nested inside the first
-// in the SSR DOM mismatches the flat client tree (#418). Explicit closing tags
-// (`<path ...></path>`, `<circle ...></circle>`, `<polygon ...></polygon>`, `<rect ...></rect>`)
-// parse flat in both HTML and XML.
+// and swallows every sibling after it until </svg>. Explicit closing tags
+// (`<path ...></path>`, `<circle ...></circle>`, `<rect ...></rect>`) parse flat
+// in both HTML and XML for React 19 SSR hydration.
 
 // Canonical Zoo / ZenLM additive-RGB color mark (exact geometry from zoo-color-logo.svg,
-// viewBox="242 241 540 540", zero outer stroke ring, zero <clipPath> IDs so multiple
-// instances on one page never collide).
+// viewBox="242 241 540 540", zero outer stroke ring, zero <clipPath> IDs).
 const ZEN_SVG =
   `<svg viewBox="242 241 540 540" fill="none">` +
   `<path d="M279.06 374.47A234 234 0 0 0 746.84 377.76A270 270 0 0 0 279.06 374.47Z" fill="#00A652"></path>` +
@@ -22,23 +26,23 @@ const ZEN_SVG =
   `<path d="M504.00 406.76A234 234 0 0 0 409.55 578.89A234 234 0 0 0 598.85 586.68A234 234 0 0 0 504.00 406.76Z" fill="#FFFFFF"></path>` +
   `</svg>`;
 
-// Colorful Enso adaptive router brush ring.
+// Enso brush circle in crisp monochrome currentColor.
 const ENSO_SVG =
-  `<svg viewBox="0 0 24 24" fill="none">` +
-  `<path d="M12 2.4C17.6 2.4 21.8 6.8 21.6 12.4C21.5 15.2 20.2 17.7 18.2 19.4L16.7 17.8C18.3 16.4 19.4 14.4 19.5 12.1C19.7 7.8 16.3 4.5 12 4.5C11.4 4.5 11 4 11 3.4C11 2.8 11.4 2.4 12 2.4Z" fill="#38BDF8"></path>` +
-  `<path d="M18.2 19.4C16.5 20.8 14.3 21.5 11.9 21.5C6.9 21.5 2.8 17.7 2.5 12.8L4.6 12.7C4.9 16.5 8.1 19.4 11.9 19.4C13.8 19.4 15.5 18.8 16.7 17.8L18.2 19.4Z" fill="#818CF8"></path>` +
-  `<path d="M2.5 12.8C2.2 8.7 4.7 5.1 8.4 3.6C9.1 3.3 9.7 3.8 9.6 4.4C9.5 4.9 9 5.3 8.5 5.5C5.7 6.8 4.2 9.6 4.5 12.7L2.5 12.8Z" fill="#2DD4BF"></path>` +
+  `<svg viewBox="0 0 24 24" fill="currentColor">` +
+  `<path d="M12 2.4C17.6 2.4 21.8 6.8 21.6 12.4C21.5 15.2 20.2 17.7 18.2 19.4L16.7 17.8C18.3 16.4 19.4 14.4 19.5 12.1C19.7 7.8 16.3 4.5 12 4.5C11.4 4.5 11 4 11 3.4C11 2.8 11.4 2.4 12 2.4Z"></path>` +
+  `<path d="M18.2 19.4C16.5 20.8 14.3 21.5 11.9 21.5C6.9 21.5 2.8 17.7 2.5 12.8L4.6 12.7C4.9 16.5 8.1 19.4 11.9 19.4C13.8 19.4 15.5 18.8 16.7 17.8L18.2 19.4Z" opacity="0.82"></path>` +
+  `<path d="M2.5 12.8C2.2 8.7 4.7 5.1 8.4 3.6C9.1 3.3 9.7 3.8 9.6 4.4C9.5 4.9 9 5.3 8.5 5.5C5.7 6.8 4.2 9.6 4.5 12.7L2.5 12.8Z" opacity="0.62"></path>` +
   `</svg>`;
 
-// Kai calibrated decision prism.
+// Kai calibrated decision diamond in crisp monochrome currentColor.
 const KAI_SVG =
   `<svg viewBox="0 0 24 24" fill="none">` +
-  `<path d="M12 2L21.5 12L12 22L2.5 12L12 2Z" fill="#F59E0B" fill-opacity="0.18" stroke="#F59E0B" stroke-width="2"></path>` +
-  `<path d="M12 6.2L17.8 12L12 17.8L6.2 12L12 6.2Z" fill="#FBBF24" fill-opacity="0.32"></path>` +
-  `<circle cx="12" cy="12" r="3.4" fill="#F59E0B"></circle>` +
+  `<path d="M12 2L21.5 12L12 22L2.5 12L12 2Z" stroke="currentColor" stroke-width="2"></path>` +
+  `<path d="M12 6.4L17.6 12L12 17.6L6.4 12L12 6.4Z" fill="currentColor" fill-opacity="0.28"></path>` +
+  `<circle cx="12" cy="12" r="3" fill="currentColor"></circle>` +
   `</svg>`;
 
-// Canonical @hanzo/logo 67x67 H-ribbon geometry (NEVER the 5-square checkerboard).
+// Canonical @hanzo/logo 67x67 H-ribbon geometry in monochrome currentColor.
 const HANZO_SVG =
   `<svg viewBox="0 0 67 67" fill="currentColor">` +
   `<path d="M22.21 67V44.6369H0V67H22.21Z"></path>` +
@@ -50,34 +54,35 @@ const HANZO_SVG =
   `<path d="M66.7198 67V44.6369H44.5098V67H66.7198Z"></path>` +
   `</svg>`;
 
+// Hanzo Dev terminal coding agent glyph in monochrome currentColor (never blue).
 const HANZO_DEV_SVG =
-  `<svg viewBox="0 0 67 67" fill="none">` +
-  `<path d="M22.21 67V44.6369H0V67H22.21Z" fill="currentColor"></path>` +
-  `<path d="M66.7038 22.3184H22.2534L0.0878906 44.6367H44.4634L66.7038 22.3184Z" fill="#38BDF8"></path>` +
-  `<path d="M22.21 0H0V22.3184H22.21V0Z" fill="currentColor"></path>` +
-  `<path d="M66.7198 0H44.5098V22.3184H66.7198V0Z" fill="#38BDF8"></path>` +
-  `<path d="M66.7198 67V44.6369H44.5098V67H66.7198Z" fill="currentColor"></path>` +
+  `<svg viewBox="0 0 24 24" fill="none">` +
+  `<rect x="2.5" y="3.5" width="19" height="17" rx="3.5" stroke="currentColor" stroke-width="1.8"></rect>` +
+  `<path d="M7 9.2L10.4 12L7 14.8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>` +
+  `<path d="M12.5 15H17" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>` +
   `</svg>`;
 
+// Hanzo Bot autonomous agent glyph in monochrome currentColor.
 const HANZO_BOT_SVG =
   `<svg viewBox="0 0 24 24" fill="none">` +
-  `<rect x="3" y="6" width="18" height="14" rx="4" fill="#A855F7" fill-opacity="0.18" stroke="#A855F7" stroke-width="2"></rect>` +
-  `<path d="M12 2v4" stroke="#38BDF8" stroke-width="2" stroke-linecap="round"></path>` +
-  `<circle cx="12" cy="2" r="1.5" fill="#38BDF8"></circle>` +
-  `<circle cx="9" cy="12.5" r="1.7" fill="#38BDF8"></circle>` +
-  `<circle cx="15" cy="12.5" r="1.7" fill="#A855F7"></circle>` +
-  `<path d="M8.5 16.5h7" stroke="#A855F7" stroke-width="1.8" stroke-linecap="round"></path>` +
+  `<rect x="3.5" y="6.5" width="17" height="13" rx="3.8" stroke="currentColor" stroke-width="1.8"></rect>` +
+  `<path d="M12 2.5v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>` +
+  `<circle cx="12" cy="2.5" r="1.4" fill="currentColor"></circle>` +
+  `<circle cx="9.2" cy="12.5" r="1.5" fill="currentColor"></circle>` +
+  `<circle cx="14.8" cy="12.5" r="1.5" fill="currentColor"></circle>` +
+  `<path d="M9 16.2h6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>` +
   `</svg>`;
 
+// Hanzo IDE split-pane editor glyph in monochrome currentColor.
 const HANZO_IDE_SVG =
   `<svg viewBox="0 0 24 24" fill="none">` +
-  `<rect x="2" y="3" width="20" height="18" rx="3.5" fill="#22D3EE" fill-opacity="0.14" stroke="#22D3EE" stroke-width="1.8"></rect>` +
-  `<path d="M8 3v18" stroke="#22D3EE" stroke-width="1.5" stroke-opacity="0.55"></path>` +
-  `<path d="M12.2 9.5L15 12l-2.8 2.5" stroke="#22D3EE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>` +
-  `<path d="M16.2 15h2.6" stroke="#818CF8" stroke-width="2" stroke-linecap="round"></path>` +
+  `<rect x="2.5" y="3.5" width="19" height="17" rx="3.2" stroke="currentColor" stroke-width="1.8"></rect>` +
+  `<path d="M8.2 3.5v17" stroke="currentColor" stroke-width="1.5" stroke-opacity="0.65"></path>` +
+  `<path d="M12.4 9.5L15.2 12l-2.8 2.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path>` +
+  `<path d="M16.2 14.8h2.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"></path>` +
   `</svg>`;
 
-// 4-color Google Gemini star (no <defs> IDs — four crisp quadrant petals).
+// Official 4-color Google Gemini star.
 const GEMINI_SVG =
   `<svg viewBox="0 0 24 24" fill="none">` +
   `<path d="M12 0C12 5.2 14.2 8.7 18.7 10.6L12 12V0Z" fill="#4285F4"></path>` +
@@ -90,13 +95,14 @@ const GEMINI_SVG =
   `<path d="M10.6 5.3C11.3 3.7 12 2 12 0V12L10.6 5.3Z" fill="#FCC934"></path>` +
   `</svg>`;
 
+// Gemini CLI: neutral terminal frame + official Google Gemini 4-color spark.
 const GEMINI_CLI_SVG =
   `<svg viewBox="0 0 24 24" fill="none">` +
-  `<rect x="2" y="3" width="20" height="18" rx="3.5" fill="#4285F4" fill-opacity="0.14" stroke="#4285F4" stroke-width="1.7"></rect>` +
-  `<path d="M6.2 9.2L9.2 12L6.2 14.8" stroke="#4285F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>` +
-  `<path d="M15.5 7.5C15.5 9.8 16.7 11 19 11C16.7 11 15.5 12.2 15.5 14.5C15.5 12.2 14.3 11 12 11C14.3 11 15.5 9.8 15.5 7.5Z" fill="#D96570"></path>` +
-  `<path d="M15.5 7.5C15.5 9.8 16.7 11 19 11H15.5V7.5Z" fill="#4285F4"></path>` +
-  `<path d="M15.5 14.5C15.5 12.2 14.3 11 12 11H15.5V14.5Z" fill="#F4B400"></path>` +
+  `<rect x="2.5" y="3.5" width="19" height="17" rx="3.5" stroke="currentColor" stroke-width="1.6" stroke-opacity="0.7"></rect>` +
+  `<path d="M6.2 9.4L9 12L6.2 14.6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path>` +
+  `<path d="M15.4 7.4C15.4 9.7 16.6 10.9 18.9 10.9C16.6 10.9 15.4 12.1 15.4 14.4C15.4 12.1 14.2 10.9 11.9 10.9C14.2 10.9 15.4 9.7 15.4 7.4Z" fill="#D96570"></path>` +
+  `<path d="M15.4 7.4C15.4 9.7 16.6 10.9 18.9 10.9H15.4V7.4Z" fill="#4285F4"></path>` +
+  `<path d="M15.4 14.4C15.4 12.1 14.2 10.9 11.9 10.9H15.4V14.4Z" fill="#F4B400"></path>` +
   `</svg>`;
 
 // Mistral official 5-band stepped pixel M.
@@ -114,29 +120,33 @@ const MISTRAL_SVG =
   `<rect x="17.16" y="17.16" width="3.44" height="3.44" fill="#E10500"></rect>` +
   `</svg>`;
 
+// Meta official #0081FB infinity mark.
 const META_SVG = `<svg viewBox="0 0 24 24" fill="#0081FB"><path d="M6.897 4c-1.751 0-3.214.656-4.388 1.969C1.335 7.28 0.5 9.29 0.5 12c0 2.711.835 4.72 1.999 6.031C3.683 19.344 5.146 20 6.897 20c1.485 0 2.86-.579 4.126-1.737.656-.6 1.326-1.425 2.01-2.476l.95 1.482c.683 1.05 1.353 1.876 2.01 2.476C17.259 19.42 18.634 20 20.12 20c1.75 0 3.213-.656 4.387-1.969C25.68 16.72 26.5 14.711 26.5 12c0-2.71-.82-4.72-1.993-6.031C23.333 4.656 21.87 4 20.12 4c-1.486 0-2.861.579-4.127 1.737-.657.6-1.327 1.425-2.01 2.476l-.95-1.482c-.684-1.05-1.354-1.876-2.01-2.476C9.757 4.58 8.382 4 6.897 4zm0 2.667c.86 0 1.674.365 2.442 1.095.524.498 1.084 1.24 1.68 2.227l.992 1.644-.992 1.644c-.596.987-1.156 1.729-1.68 2.227-.768.73-1.582 1.095-2.442 1.095-.98 0-1.79-.398-2.43-1.195C3.828 14.607 3.5 13.473 3.5 12c0-1.473.328-2.607.967-3.404.64-.797 1.45-1.195 2.43-1.195zm13.223 0c.98 0 1.79.398 2.43 1.195.639.797.967 1.931.967 3.404 0 1.473-.328 2.607-.967 3.404-.64.797-1.45 1.195-2.43 1.195-.86 0-1.674-.365-2.442-1.095-.524-.498-1.084-1.24-1.68-2.227l-.992-1.644.992-1.644c.596-.987 1.156-1.729 1.68-2.227.768-.73 1.582-1.095 2.442-1.095z" transform="scale(0.88 1) translate(0.2 0)"></path></svg>`;
 
+// xAI / Grok official monochrome mark in currentColor.
 const GROK_SVG =
-  `<svg viewBox="0 0 24 24" fill="none">` +
-  `<path d="m3.005 8.858 8.783 12.544h3.904L6.908 8.858z" fill="currentColor"></path>` +
-  `<path d="M6.905 15.825 3 21.402h3.907l1.951-2.788z" fill="#F97316"></path>` +
-  `<path d="M16.585 2l-6.75 9.64 1.953 2.79L20.492 2z" fill="#F97316"></path>` +
-  `<path d="M17.292 7.965v13.437h3.2V3.395z" fill="currentColor"></path>` +
+  `<svg viewBox="0 0 24 24" fill="currentColor">` +
+  `<path d="m3.005 8.858 8.783 12.544h3.904L6.908 8.858z"></path>` +
+  `<path d="M6.905 15.825 3 21.402h3.907l1.951-2.788z"></path>` +
+  `<path d="M16.585 2l-6.75 9.64 1.953 2.79L20.492 2z"></path>` +
+  `<path d="M17.292 7.965v13.437h3.2V3.395z"></path>` +
   `</svg>`;
 
+// Cohere official forest + coral mark.
 const COHERE_SVG =
   `<svg viewBox="0 0 24 24" fill="none">` +
   `<path d="M9.8 14.4c-1.8 0-3.3-1.4-3.3-3.2 0-1.8 1.5-3.2 3.3-3.2h7.1c2.8 0 5.1-2.2 5.1-5S19.7-2 16.9-2H9.8C4.4-2 0 2.3 0 7.6s4.4 9.6 9.8 9.6h.8c1.5 0 2.7-1.2 2.7-2.8 0-1.5-1.2-2.7-2.7-2.7h-.8z" transform="translate(0.5 3.5) scale(0.95)" fill="#39594D"></path>` +
   `<circle cx="17.2" cy="19.3" r="4.4" fill="#FF7759"></circle>` +
   `</svg>`;
 
+// Moonshot / Kimi official monochrome mark in currentColor.
 const MOONSHOT_SVG =
-  `<svg viewBox="0 0 24 24" fill="none">` +
-  `<circle cx="12" cy="12" r="9.5" fill="#3B82F6" fill-opacity="0.2"></circle>` +
-  `<path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 0 1-6.32-12.9A6.5 6.5 0 0 0 15 15.5a6.47 6.47 0 0 0 3.9-1.3A8 8 0 0 1 12 20z" fill="#00D4AA"></path>` +
-  `<circle cx="15.8" cy="8.2" r="2.1" fill="#3B82F6"></circle>` +
+  `<svg viewBox="0 0 24 24" fill="currentColor">` +
+  `<path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 0 1-6.32-12.9A6.5 6.5 0 0 0 15 15.5a6.47 6.47 0 0 0 3.9-1.3A8 8 0 0 1 12 20z"></path>` +
+  `<circle cx="15.8" cy="8.2" r="2.1"></circle>` +
   `</svg>`;
 
+// Slack official 4-color octothorpe.
 const SLACK_SVG =
   `<svg viewBox="0 0 24 24" fill="none">` +
   `<path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zm1.271 0a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313z" fill="#E01E5A"></path>` +
@@ -145,35 +155,37 @@ const SLACK_SVG =
   `<path d="M15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zm0-1.268a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z" fill="#ECB22E"></path>` +
   `</svg>`;
 
+// Windsurf / Codeium official #00D4AA teal mark.
 const WINDSURF_SVG =
-  `<svg viewBox="0 0 24 24" fill="none">` +
-  `<path d="M2 16.5C5.2 9.5 8.8 6 13.5 6c-1.8 3.2-2.3 5.8-1.5 8.2C14.8 10.6 18.2 8.5 22 8.5c-2.6 5.8-6.4 9.5-11.5 9.5-2.6 0-4.2-1.2-4.8-3.4C4.5 16 3.3 16.5 2 16.5Z" fill="#00D4AA"></path>` +
-  `<path d="M12 14.2C14.8 10.6 18.2 8.5 22 8.5c-2.1 4.7-5.1 8-9 9.1-.8-1-.9-2.1-1-3.4Z" fill="#38BDF8"></path>` +
+  `<svg viewBox="0 0 24 24" fill="#00D4AA">` +
+  `<path d="M2 16.5C5.2 9.5 8.8 6 13.5 6c-1.8 3.2-2.3 5.8-1.5 8.2C14.8 10.6 18.2 8.5 22 8.5c-2.6 5.8-6.4 9.5-11.5 9.5-2.6 0-4.2-1.2-4.8-3.4C4.5 16 3.3 16.5 2 16.5Z"></path>` +
   `</svg>`;
 
+// VS Code official #007ACC / #24ADF3 ribbon.
 const VSCODE_SVG =
   `<svg viewBox="0 0 24 24" fill="none">` +
   `<path d="M17.5 1.8L7.4 11.1 3.3 8 1.5 9v6l1.8 1 4.1-3.1 10.1 9.3 5-2.4V4.2l-5-2.4ZM17.5 16.9L10.9 12l6.6-4.9v9.8Z" fill="#24ADF3"></path>` +
   `<path d="M17.5 1.8v5.3L10.9 12 7.4 11.1 17.5 1.8Z" fill="#007ACC"></path>` +
   `</svg>`;
 
+// LangGraph graph mark in crisp monochrome currentColor.
 const LANGGRAPH_SVG =
   `<svg viewBox="0 0 24 24" fill="none">` +
-  `<path d="M6.5 6.5L17.5 8.5L14.5 18L6.5 15.5Z" stroke="#10B981" stroke-width="1.8" stroke-linejoin="round"></path>` +
-  `<path d="M6.5 6.5L14.5 18" stroke="#34D399" stroke-width="1.5" stroke-opacity="0.7"></path>` +
-  `<circle cx="6.5" cy="6.5" r="3" fill="#10B981"></circle>` +
-  `<circle cx="17.5" cy="8.5" r="3" fill="#34D399"></circle>` +
-  `<circle cx="14.5" cy="18" r="3" fill="#059669"></circle>` +
-  `<circle cx="6.5" cy="15.5" r="2.5" fill="#2DD4BF"></circle>` +
+  `<path d="M6.5 6.5L17.5 8.5L14.5 18L6.5 15.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path>` +
+  `<path d="M6.5 6.5L14.5 18" stroke="currentColor" stroke-width="1.5" stroke-opacity="0.65"></path>` +
+  `<circle cx="6.5" cy="6.5" r="2.8" fill="currentColor"></circle>` +
+  `<circle cx="17.5" cy="8.5" r="2.8" fill="currentColor"></circle>` +
+  `<circle cx="14.5" cy="18" r="2.8" fill="currentColor"></circle>` +
+  `<circle cx="6.5" cy="15.5" r="2.4" fill="currentColor"></circle>` +
   `</svg>`;
 
-const VERCEL_AI_SVG =
-  `<svg viewBox="0 0 24 24" fill="none">` +
-  `<path d="M12 3L22 20.5H2L12 3Z" fill="currentColor"></path>` +
-  `<path d="M12 3L22 20.5H13.5L12 3Z" fill="#38BDF8" fill-opacity="0.85"></path>` +
-  `<path d="M12 10.5L17.7 20.5H6.3L12 10.5Z" fill="#F43F5E" fill-opacity="0.85"></path>` +
+// Vercel official monochrome triangle in currentColor.
+const VERCEL_SVG =
+  `<svg viewBox="0 0 24 24" fill="currentColor">` +
+  `<path d="M12 3L22 20.5H2L12 3Z"></path>` +
   `</svg>`;
 
+// Telegram official #26A5E4 mark.
 const TELEGRAM_SVG =
   `<svg viewBox="0 0 24 24" fill="#26A5E4">` +
   `<path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.828.94z"></path>` +
@@ -197,21 +209,23 @@ export const PROVIDER_ICONS: Record<string, string> = {
   gemini: GEMINI_SVG,
   'gemini-cli': GEMINI_CLI_SVG,
   gemma: `<svg viewBox="0 0 24 24" fill="#4285F4"><path d="M11.04 19.32Q12 21.51 12 24q0-2.49.93-4.68.96-2.19 2.58-3.81t3.81-2.55Q21.51 12 24 12q-2.49 0-4.68-.93a12.3 12.3 0 0 1-3.81-2.58 12.3 12.3 0 0 1-2.58-3.81Q12 2.49 12 0q0 2.49-.96 4.68-.93 2.19-2.55 3.81a12.3 12.3 0 0 1-3.81 2.58Q2.49 12 0 12q2.49 0 4.68.96 2.19.93 3.81 2.55t2.55 3.81"></path></svg>`,
-  cursor: `<svg viewBox="0 0 24 24" fill="none"><path d="M11.503.131 1.891 5.678a.84.84 0 0 0-.42.726v11.188c0 .3.162.575.42.724l9.609 5.55a1 1 0 0 0 .998 0l9.61-5.55a.84.84 0 0 0 .42-.724V6.404a.84.84 0 0 0-.42-.726L12.497.131a1.01 1.01 0 0 0-.996 0" fill="#22D3EE" fill-opacity="0.24"></path><path d="M2.657 6.338h18.55c.263 0 .43.287.297.515L12.23 22.918c-.062.107-.229.064-.229-.06V12.335a.59.59 0 0 0-.295-.51l-9.11-5.257c-.109-.063-.064-.23.061-.23" fill="#22D3EE"></path></svg>`,
-  antigravity: `<svg viewBox="0 0 24 24" fill="none"><path d="M18.925 20.692c1.25.938 3.125.313 1.875-1.25C17.363 15.067 15.488 3.505 12.05 3.505v9.375c3.125 0 2.5 5 6.875 7.812Z" fill="#8B5CF6"></path><path d="M12.05 3.505c-3.437 0-5.312 11.562-8.75 15.937-1.25 1.563.625 2.188 1.875 1.25 4.375-2.812 3.75-7.812 6.875-7.812V3.505Z" fill="#4285F4"></path></svg>`,
+  // Cursor official 3D cube in monochrome currentColor.
+  cursor: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.503.131 1.891 5.678a.84.84 0 0 0-.42.726v11.188c0 .3.162.575.42.724l9.609 5.55a1 1 0 0 0 .998 0l9.61-5.55a.84.84 0 0 0 .42-.724V6.404a.84.84 0 0 0-.42-.726L12.497.131a1.01 1.01 0 0 0-.996 0" opacity="0.26"></path><path d="M2.657 6.338h18.55c.263 0 .43.287.297.515L12.23 22.918c-.062.107-.229.064-.229-.06V12.335a.59.59 0 0 0-.295-.51l-9.11-5.257c-.109-.063-.064-.23.061-.23"></path></svg>`,
+  antigravity: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.925 20.692c1.25.938 3.125.313 1.875-1.25C17.363 15.067 15.488 3.505 12.05 3.505v9.375c3.125 0 2.5 5 6.875 7.812Z" opacity="0.72"></path><path d="M12.05 3.505c-3.437 0-5.312 11.562-8.75 15.937-1.25 1.563.625 2.188 1.875 1.25 4.375-2.812 3.75-7.812 6.875-7.812V3.505Z"></path></svg>`,
   windsurf: WINDSURF_SVG,
   vscode: VSCODE_SVG,
   openclaw: `<svg viewBox="0 0 24 24" fill="#FF4D4D"><path d="M13.835 0c-1.888.062-3.479 1.622-3.368 3.575-.787-.239-1.693-.143-2.362.404-.978.8-1.454 2.473-1.225 4.716.077.752.275 1.539.512 2.276-.812-.454-1.762-.892-2.559-.869-1.186.034-1.894.756-2.023 1.55-.191 1.185.647 2.536 2.129 3.606.876.633 1.981 1.124 3.012 1.48-.349.493-.577.968-.581 1.386-.011 1.074 1.057 1.805 2.475 2.369 2.455.976 6.132 1.868 8.353 3.249.439.273.816.298 1.079.239.527-.118.882-.741.727-1.36-.339-1.36-1.812-2.164-3.271-2.992-1.269-.72-2.617-1.391-3.47-2.201.959-.089 2.027-.273 2.912-.633 2.587-1.053 4.39-3.047 4.749-5.321.185-1.171-.083-2.062-.587-2.57-.585-.591-1.588-.734-2.596-.331.491-1.381.613-2.751.404-3.83-.285-1.474-1.277-2.28-2.463-2.375a2.4 2.4 0 0 0-.23-.013c-.129-.017-.289-.002-.482-.019-.194-.017-.395-.083-.614-.076Z"></path></svg>`,
-  hermesagent: `<svg viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0Zm0 2.07c5.484 0 9.93 4.446 9.93 9.93 0 5.484-4.446 9.93-9.93 9.93-5.484 0-9.93-4.446-9.93-9.93 0-5.484 4.446-9.93 9.93-9.93Zm-1.2 4.18v4.92H6.6v1.66h4.2v4.92h2.4v-4.92h4.2v-1.66h-4.2V6.25h-2.4Z"></path></svg>`,
-  zed: `<svg viewBox="0 0 24 24" fill="#38BDF8"><path d="M3 4h18v3.2L9.4 17H21v3H3v-3.2L14.6 7H3V4Z"></path></svg>`,
-  opencode: `<svg viewBox="0 0 24 24" fill="#A855F7"><path d="M3 4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4Zm4.3 4.3a1 1 0 0 0 0 1.4L9.58 12l-2.29 2.3a1 1 0 1 0 1.42 1.4l3-3a1 1 0 0 0 0-1.4l-3-3a1 1 0 0 0-1.42 0ZM13 15a1 1 0 1 0 0 2h4a1 1 0 1 0 0-2h-4Z"></path></svg>`,
-  cline: `<svg viewBox="0 0 24 24" fill="#818CF8"><path d="M12 2a2 2 0 0 1 2 2v1h3a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V8a3 3 0 0 1 3-3h3V4a2 2 0 0 1 2-2Zm-3.5 8a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Zm7 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3ZM9 16h6v1.5H9V16Z"></path></svg>`,
-  aider: `<svg viewBox="0 0 24 24" fill="#14B8A6"><path d="M12 2L3 20h3.6l1.9-4h7l1.9 4H21L12 2Zm0 5.4L14.6 13H9.4L12 7.4Z"></path></svg>`,
-  continue: `<svg viewBox="0 0 24 24" fill="#EC4899"><path d="M5 4l10 8-10 8V4Zm11 0h3v16h-3V4Z"></path></svg>`,
-  goose: `<svg viewBox="0 0 24 24" fill="#FB923C"><path d="M15.5 3a3.5 3.5 0 0 1 3.5 3.5c0 .9-.34 1.72-.9 2.34L21 11h-3c0 5-3.5 9-8.5 9S2 16.5 2 13h7c2 0 3.5-1.5 3.5-3.5V6.5A3.5 3.5 0 0 1 15.5 3Z"></path></svg>`,
+  hermesagent: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0Zm0 2.07c5.484 0 9.93 4.446 9.93 9.93 0 5.484-4.446 9.93-9.93 9.93-5.484 0-9.93-4.446-9.93-9.93 0-5.484 4.446-9.93 9.93-9.93Zm-1.2 4.18v4.92H6.6v1.66h4.2v4.92h2.4v-4.92h4.2v-1.66h-4.2V6.25h-2.4Z"></path></svg>`,
+  // Zed official #084CCF blue Z mark.
+  zed: `<svg viewBox="0 0 24 24" fill="#084CCF"><path d="M3 4h18v3.2L9.4 17H21v3H3v-3.2L14.6 7H3V4Z"></path></svg>`,
+  opencode: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4Zm4.3 4.3a1 1 0 0 0 0 1.4L9.58 12l-2.29 2.3a1 1 0 1 0 1.42 1.4l3-3a1 1 0 0 0 0-1.4l-3-3a1 1 0 0 0-1.42 0ZM13 15a1 1 0 1 0 0 2h4a1 1 0 1 0 0-2h-4Z"></path></svg>`,
+  cline: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a2 2 0 0 1 2 2v1h3a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V8a3 3 0 0 1 3-3h3V4a2 2 0 0 1 2-2Zm-3.5 8a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Zm7 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3ZM9 16h6v1.5H9V16Z"></path></svg>`,
+  aider: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L3 20h3.6l1.9-4h7l1.9 4H21L12 2Zm0 5.4L14.6 13H9.4L12 7.4Z"></path></svg>`,
+  continue: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 4l10 8-10 8V4Zm11 0h3v16h-3V4Z"></path></svg>`,
+  goose: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 3a3.5 3.5 0 0 1 3.5 3.5c0 .9-.34 1.72-.9 2.34L21 11h-3c0 5-3.5 9-8.5 9S2 16.5 2 13h7c2 0 3.5-1.5 3.5-3.5V6.5A3.5 3.5 0 0 1 15.5 3Z"></path></svg>`,
   langgraph: LANGGRAPH_SVG,
-  vercel: VERCEL_AI_SVG,
-  'vercel-ai-sdk': VERCEL_AI_SVG,
+  vercel: VERCEL_SVG,
+  'vercel-ai-sdk': VERCEL_SVG,
   meta: META_SVG,
   llama: META_SVG,
   'meta-llama': META_SVG,
@@ -230,15 +244,15 @@ export const PROVIDER_ICONS: Record<string, string> = {
   moonshotai: MOONSHOT_SVG,
   moonshot: MOONSHOT_SVG,
   kimi: MOONSHOT_SVG,
-  perplexity: `<svg viewBox="0 0 24 24" fill="#20B8CD"><path d="M19.785 0v7.272H22.5V17.62h-2.935V24l-7.037-6.194v6.145h-1.091v-6.152L4.392 24v-6.465H1.5V7.188h2.884V0l7.053 6.494V.19h1.09v6.49L19.786 0zm-7.257 9.044v7.319l5.946 5.234V14.44l-5.946-5.397zm-1.099-.08l-5.946 5.398v7.235l5.946-5.234V8.965zm8.136 7.58h1.844V8.349H13.46l6.105 5.54v2.655zm-8.982-8.28H2.59v8.195h1.8v-2.576l6.192-5.62zM5.475 2.476v4.71h5.115l-5.115-4.71zm13.219 0l-5.115 4.71h5.115v-4.71z"></path></svg>`,
-  alibaba: `<svg viewBox="0 0 24 24" fill="#FF6A00"><path d="M17.583 11.429c-2.579-1.26-4.739-3.681-4.739-3.681l-.792-.054s-2.067 2.387-4.769 3.694c-1.855.897-2.905.134-3.035-.193-.22-.556-.214-2.008 1.547-2.851 1.441-.691 3.173.488 3.913 1.077.152.121.377.081.466-.089.11-.209.257-.539.32-.692a.296.296 0 0 0-.094-.346c-.913-.705-2.617-1.749-4.514-1.363-2.596.529-3.797 2.456-3.797 4.462 0 2.094 1.874 4.19 4.58 4.19 2.707 0 5.424-2.369 5.424-2.369s2.717 2.369 5.424 2.369c2.706 0 4.58-2.096 4.58-4.19 0-2.006-1.201-3.933-3.797-4.462-1.897-.386-3.601.658-4.514 1.363a.296.296 0 0 0-.094.346c.063.153.21.483.32.692.089.17.314.21.466.089.74-.589 2.472-1.768 3.913-1.077 1.761.843 1.767 2.295 1.547 2.851-.13.327-1.18 1.09-3.035.193z"></path></svg>`,
+  perplexity: `<svg viewBox="0 0 24 24" fill="#20808D"><path d="M19.785 0v7.272H22.5V17.62h-2.935V24l-7.037-6.194v6.145h-1.091v-6.152L4.392 24v-6.465H1.5V7.188h2.884V0l7.053 6.494V.19h1.09v6.49L19.786 0zm-7.257 9.044v7.319l5.946 5.234V14.44l-5.946-5.397zm-1.099-.08l-5.946 5.398v7.235l5.946-5.234V8.965zm8.136 7.58h1.844V8.349H13.46l6.105 5.54v2.655zm-8.982-8.28H2.59v8.195h1.8v-2.576l6.192-5.62zM5.475 2.476v4.71h5.115l-5.115-4.71zm13.219 0l-5.115 4.71h5.115v-4.71z"></path></svg>`,
+  alibaba: `<svg viewBox="0 0 24 24" fill="#FF6A00"><path d="M17.583 11.429c-2.579-1.26-4.739-3.681-4.739-3.681l-.792-.054s-2.067 2.387-4.769 3.694c-1.855.897-2.905.134-3.035-.193-.22-.556-.214-2.008 1.547-2.851 1.441-.691 3.173.488 3.913 1.077.152.121.377.081.466-.089.11-.209.257-.539.32-.692a.296.296 0 0 0-.094-.346c-.913-.705-2.617-1.749-4.514-1.363-2.596.529-3.797 2.456-3.797 4.462 0 2.094 1.874 4.19 4.58 4.19 2.707 0 5.424-2.369 5.424-2.369s2.717 2.369 5.424 2.369c2.706 0 4.58-2.096 4.58-2.096 0-2.006-1.201-3.933-3.797-4.462-1.897-.386-3.601.658-4.514 1.363a.296.296 0 0 0-.094.346c.063.153.21.483.32.692.089.17.314.21.466.089.74-.589 2.472-1.768 3.913-1.077 1.761.843 1.767 2.295 1.547 2.851-.13.327-1.18 1.09-3.035.193z"></path></svg>`,
   amazon: `<svg viewBox="0 0 24 24" fill="#FF9900"><path d="M15.93 17.09c-2.7 2-6.62 3.06-9.99 3.06-4.73 0-8.99-1.75-12.2-4.66-.25-.23-.03-.54.28-.36 3.48 2.02 7.78 3.24 12.22 3.24 3 0 6.3-.62 9.34-1.91.45-.2.84.3.35.63zm1.12-1.28c-.35-.44-2.29-.21-3.16-.11-.27.03-.31-.2-.07-.37 1.55-1.09 4.09-.78 4.39-.41.3.37-.08 2.92-1.54 4.14-.22.19-.44.09-.34-.16.33-.82 1.07-2.65.72-3.09z" transform="translate(4 0)"></path></svg>`,
   microsoft: `<svg viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="9.5" height="9.5" fill="#F25022"></rect><rect x="12.5" y="2" width="9.5" height="9.5" fill="#7FBA00"></rect><rect x="2" y="12.5" width="9.5" height="9.5" fill="#00A4EF"></rect><rect x="12.5" y="12.5" width="9.5" height="9.5" fill="#FFB900"></rect></svg>`,
-  nousresearch: `<svg viewBox="0 0 24 24" fill="#A78BFA"><path d="M4 3h3.5l9 12.5V3H20v18h-3.5L7.5 8.5V21H4V3z"></path></svg>`,
-  ai21: `<svg viewBox="0 0 24 24" fill="#EC4899"><path d="M7 4L1 20h3.2l1.3-3.8h6L12.8 20H16L10 4H7zm1.5 3.6L10.6 13.5H6.4L8.5 7.6zM18.5 4v16H22V4h-3.5z"></path></svg>`,
+  nousresearch: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 3h3.5l9 12.5V3H20v18h-3.5L7.5 8.5V21H4V3z"></path></svg>`,
+  ai21: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4L1 20h3.2l1.3-3.8h6L12.8 20H16L10 4H7zm1.5 3.6L10.6 13.5H6.4L8.5 7.6zM18.5 4v16H22V4h-3.5z"></path></svg>`,
   ibm: `<svg viewBox="0 0 24 24" fill="#0F62FE"><path d="M0 5v1.333h4.364V5zm5.818 0v1.333h9.818C14.773 5.48 13.5 5 11.636 5zm12.364 0v1.333H24V5zM0 7.667V9h4.364V7.667zm5.818 0V9h10.75a2.65 2.65 0 0 0-.314-1.333zm12.364 0V9H24V7.667zM1.455 10.333v1.334h1.454v-1.334zm5.818 0v1.334h8.268a2.66 2.66 0 0 0 .87-1.334zm12.363 0v1.334h2.91v-1.334zM1.455 13v1.333h1.454V13zm5.818 0v1.333h9.138A2.66 2.66 0 0 0 15.54 13zm12.363 0v1.333h2.91V13zM0 15.667V17h4.364v-1.333zm5.818 0V17h10.436c.19-.414.3-.868.314-1.333zm12.364 0V17H24v-1.333zM0 18.333V19.667h4.364v-1.334zm5.818 0V19.667h5.818c1.864 0 3.137-.48 4-1.334zm12.364 0V19.667H24v-1.334z"></path></svg>`,
   tencent: `<svg viewBox="0 0 24 24" fill="#0052D9"><path d="M9.974 1.358C7.078 4.46 5.21 8.599 4.864 13.063l-.021.309-.958-.915a7.392 7.392 0 0 1-2.29-5.349c0-.597.073-1.192.216-1.771L.135 6.969A9.696 9.696 0 0 0 0 8.604c0 2.637 1.073 5.161 2.977 6.98l3.607 3.445c.171 1.664.614 3.29 1.31 4.812l1.622-.742a15.324 15.324 0 0 1-1.088-3.832l7.015 6.699 1.236-1.294-9.92-9.474c.235-4.355 2.046-8.406 5.091-11.455L9.974 1.358zm5.922 2.419-1.236 1.294 8.078 7.714a7.392 7.392 0 0 1-1.564 8.71l1.236 1.294A9.18 9.18 0 0 0 24 16.3c0-2.495-1.015-4.883-2.816-6.603l-5.288-5.92z"></path></svg>`,
-  xiaomi: `<svg viewBox="0 0 24 24" fill="#EF6200"><path d="M19.58 0H4.42C1.979 0 0 1.979 0 4.42v15.16C0 22.021 1.979 24 4.42 24h15.16c2.441 0 4.42-1.979 4.42-4.42V4.42C24 1.979 22.021 0 19.58 0ZM15.5 17.562a.438.438 0 0 1-.438.438h-1.897a.438.438 0 0 1-.438-.438v-5.74c0-.897-.076-1.608-.456-2.012-.348-.37-.922-.482-1.747-.482H6.773v8.234a.438.438 0 0 1-.438.438H4.438A.438.438 0 0 1 4 17.562V6.438C4 6.196 4.196 6 4.438 6h6.633c1.694 0 2.893.347 3.553 1.031.66.684.876 1.883.876 3.577v6.954Zm-4.965 0a.438.438 0 0 1-.438.438H8.2a.438.438 0 0 1-.438-.438v-5.734c0-.242.196-.438.438-.438h1.897c.242 0 .438.196.438.438v5.734Zm9.465 0a.438.438 0 0 1-.438.438h-1.897a.438.438 0 0 1-.438-.438V6.438c0-.242.196-.438.438-.438h1.897c.242 0 .438.196.438.438v11.124Z"></path></svg>`,
+  xiaomi: `<svg viewBox="0 0 24 24" fill="#FF6900"><path d="M19.58 0H4.42C1.979 0 0 1.979 0 4.42v15.16C0 22.021 1.979 24 4.42 24h15.16c2.441 0 4.42-1.979 4.42-4.42V4.42C24 1.979 22.021 0 19.58 0ZM15.5 17.562a.438.438 0 0 1-.438.438h-1.897a.438.438 0 0 1-.438-.438v-5.74c0-.897-.076-1.608-.456-2.012-.348-.37-.922-.482-1.747-.482H6.773v8.234a.438.438 0 0 1-.438.438H4.438A.438.438 0 0 1 4 17.562V6.438C4 6.196 4.196 6 4.438 6h6.633c1.694 0 2.893.347 3.553 1.031.66.684.876 1.883.876 3.577v6.954Zm-4.965 0a.438.438 0 0 1-.438.438H8.2a.438.438 0 0 1-.438-.438v-5.734c0-.242.196-.438.438-.438h1.897c.242 0 .438.196.438.438v5.734Zm9.465 0a.438.438 0 0 1-.438.438h-1.897a.438.438 0 0 1-.438-.438V6.438c0-.242.196-.438.438-.438h1.897c.242 0 .438.196.438.438v11.124Z"></path></svg>`,
   github: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"></path></svg>`,
   gitlab: `<svg viewBox="0 0 24 24" fill="#FC6D26"><path d="m23.6004 9.5927-.0337-.0862L20.3.9814a.851.851 0 0 0-.3362-.405.8748.8748 0 0 0-.9997.0539.8748.8748 0 0 0-.29.4399l-2.2055 6.748H7.5375l-2.2057-6.748a.8573.8573 0 0 0-.29-.4412.8748.8748 0 0 0-.9997-.0537.8585.8585 0 0 0-.3362.4049L.4332 9.5015l-.0325.0862a6.0657 6.0657 0 0 0 2.0119 7.0105l.0113.0087.03.0213 4.976 3.7264 2.462 1.8633 1.4995 1.1321a1.0085 1.0085 0 0 0 1.2197 0l1.4995-1.1321 2.4619-1.8633 5.006-3.7489.0125-.01a6.0682 6.0682 0 0 0 2.0094-7.0034Z"></path></svg>`,
   discord: `<svg viewBox="0 0 24 24" fill="#5865F2"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"></path></svg>`,
@@ -247,40 +261,40 @@ export const PROVIDER_ICONS: Record<string, string> = {
   x: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"></path></svg>`,
 };
 
-/** Brand hex colors for model families, providers, coding agents, and connectors. */
+/** Authentic brand hex colors ONLY (monochrome marks stay `currentColor`). */
 export const PROVIDER_COLORS: Record<string, string> = {
-  enso: '#38BDF8',
-  kai: '#F59E0B',
+  enso: 'currentColor',
+  kai: 'currentColor',
   zen: '#00A652',
   zenlm: '#00A652',
   zoo: '#00A652',
   hanzo: 'currentColor',
-  'hanzo-dev': '#38BDF8',
-  'hanzo-bot': '#A855F7',
-  'hanzo-ide': '#22D3EE',
+  'hanzo-dev': 'currentColor',
+  'hanzo-bot': 'currentColor',
+  'hanzo-ide': 'currentColor',
   anthropic: '#D97757',
   claudecode: '#D97757',
   openai: '#10A37F',
   codex: '#10A37F',
   google: '#4285F4',
   gemini: '#4285F4',
-  'gemini-cli': '#4285F4',
+  'gemini-cli': 'currentColor',
   gemma: '#4285F4',
-  cursor: '#22D3EE',
-  antigravity: '#4285F4',
+  cursor: 'currentColor',
+  antigravity: 'currentColor',
   windsurf: '#00D4AA',
   vscode: '#24ADF3',
   openclaw: '#FF4D4D',
-  hermesagent: '#F59E0B',
-  zed: '#38BDF8',
-  opencode: '#A855F7',
-  cline: '#818CF8',
-  aider: '#14B8A6',
-  continue: '#EC4899',
-  goose: '#FB923C',
-  langgraph: '#10B981',
-  vercel: '#38BDF8',
-  'vercel-ai-sdk': '#38BDF8',
+  hermesagent: 'currentColor',
+  zed: '#084CCF',
+  opencode: 'currentColor',
+  cline: 'currentColor',
+  aider: 'currentColor',
+  continue: 'currentColor',
+  goose: 'currentColor',
+  langgraph: 'currentColor',
+  vercel: 'currentColor',
+  'vercel-ai-sdk': 'currentColor',
   meta: '#0081FB',
   llama: '#0081FB',
   'meta-llama': '#0081FB',
@@ -296,18 +310,18 @@ export const PROVIDER_COLORS: Record<string, string> = {
   'z-ai': '#3B5BDB',
   glm: '#3B5BDB',
   minimax: '#FF4D6D',
-  moonshotai: '#00D4AA',
-  moonshot: '#00D4AA',
-  kimi: '#00D4AA',
-  perplexity: '#20B8CD',
+  moonshotai: 'currentColor',
+  moonshot: 'currentColor',
+  kimi: 'currentColor',
+  perplexity: '#20808D',
   alibaba: '#FF6A00',
   amazon: '#FF9900',
   microsoft: '#00A4EF',
-  nousresearch: '#A78BFA',
-  ai21: '#EC4899',
+  nousresearch: 'currentColor',
+  ai21: 'currentColor',
   ibm: '#0F62FE',
   tencent: '#0052D9',
-  xiaomi: '#EF6200',
+  xiaomi: '#FF6900',
   github: 'currentColor',
   gitlab: '#FC6D26',
   discord: '#5865F2',
